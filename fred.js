@@ -117,6 +117,7 @@ Fred.Layer = Class.create({
 
 Fred.Polygon = Class.create({
 	initialize: function(points) {
+		this.point_size = 12
 		if (points) this.points = points
 		else this.points = []
 	},
@@ -131,14 +132,19 @@ Fred.Polygon = Class.create({
 	draw: function() {
 		this.apply_style()
 		$C.begin_path()
+		var over_point = false
 		this.points.each(function(point){
 			$C.line_to(point.x,point.y)
 			$C.save()
 				$C.opacity(0.2)
+				if (Fred.Geometry.distance(Fred.pointer_x,Fred.pointer_y,point.x,point.y) < this.point_size) {
+					$C.opacity(0.4)
+					over_point = true
+				}
 				$C.fill_style('#222')
-				$C.rect(point.x-6,point.y-6,12,12)
+				$C.rect(point.x-this.point_size/2,point.y-this.point_size/2,this.point_size,this.point_size)
 			$C.restore()
-		})
+		},this)
 		if (this.style.stroke) $C.stroke(this.style.stroke)
 		if (this.style.fill) $C.fill(this.style.fill)
 	}
@@ -179,6 +185,9 @@ Fred.tools.pen = new Fred.Tool('draw polygons',{
 	}
 })
 
-
-
+Fred.Geometry = {
+	distance: function(x1,y1,x2,y2) {
+		return Math.sqrt(Math.pow(Math.abs(x1-x2),2) + Math.pow(Math.abs(y1-y2),2))
+	}
+}
 
