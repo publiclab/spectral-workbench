@@ -10,20 +10,21 @@ Fred = {
 	times: [],
 	init: function(args) {
 		Fred.element = $('fred')
-		Fred.active_tool = Fred.tools.pen
-		//Object.extend(Fred.defaults,args)
-		Fred.add_layer('main',{active:true})
-		Fred.add_layer('background')
+		Fred.select_tool('pen')
+		new Fred.Layer('main',{active:true})
+		new Fred.Layer('background')
 		Fred.active_layer = Fred.layers.first()
+		$C = Fred.active_layer.canvas
+		//Event handling setup:
 		Fred.observe('mousemove',Fred.on_mousemove)
 		//Fred.observe('mouseup',Fred.on_mouseup)
+		//Set up the main Fred DOM element:
 		Fred.element.style.position = 'absolute'
 		Fred.element.style.top = 0
 		Fred.element.style.left = 0
 		Fred.resize(Fred.width,Fred.height)
-		$C.canvas = Fred.active_layer.canvas
+		//main loop:
 		setInterval(Fred.draw.bind(this),30)
-		
 	},
 	resize: function(width,height) {
 		if (width[width.length-1] == '%') Fred.width = parseInt(document.viewport.getWidth()*100/width.substr(0,width.length-1))
@@ -35,8 +36,6 @@ Fred = {
 		Fred.layers.each(function(layer){
 			layer.element.width = Fred.width
 			layer.element.height = Fred.height
-			//layer.element.style.width = width
-			//layer.element.style.height = height
 		})
 	},
 	on_mousemove: function(event) {
@@ -44,15 +43,10 @@ Fred = {
 		Fred.pointer_y = Event.pointerY(event)
 		Fred.draw()
 	},
-	// move to Fred.Layer.initialize:
-	add_layer: function(name,args) {
-		//validate uniqueness of name in validation namespace
-		var new_layer = new Fred.Layer(name,args)
-	},
 	select_tool: function(tool) {
-		Fred.active_tool.deselect()
-		Fred.active_tool = tool
-		tool.select()
+		if (Fred.active_tool) Fred.active_tool.deselect()
+		Fred.active_tool = Fred.tools[tool]
+		Fred.active_tool.select()
 	},
         /**
 	 * Binds all events to the 'fred' DOM element. Use instead of native Prototype observe.
@@ -74,6 +68,12 @@ Fred = {
 	},
 	draw: function() {
 		Fred.fire('fred:predraw')
+		//calculate fps:
+		Fred.timestamp = Fred.date.getTime()
+		Fred.times.unshift(Fred.timestamp)
+		if (Fred.times.length > 100) Fred.times.pop()
+		Fred.fps = parseInt(Fred.times.length/(Fred.timestamp - Fred.times.last())*1000)
+		Fred.date = new Date
 		this.layers.each(function(layer){layer.draw()})
 		Fred.fire('fred:postdraw')
 	}
@@ -81,6 +81,7 @@ Fred = {
 
 Fred.Layer = Class.create({
 	initialize: function(name,args) {
+		//validate uniqueness of name in validation namespace
 		Fred.layers.push(this)
 		Fred.element.insert("<canvas style='position:absolute;top:0;left:0;' id='"+name+"'></canvas>")
 		this.name = name
@@ -93,25 +94,19 @@ Fred.Layer = Class.create({
 		this.element.height = Fred.height
 		this.canvas = $(name).getContext('2d')
 		Object.extend(this,args)
+		// default styles
+		strokeStyle('#222')
+		fillStyle('#eee')
 	},
 	draw: function() {
-		//fps
-		Fred.timestamp = Fred.date.getTime()
-		Fred.times.unshift(Fred.timestamp)
-		if (Fred.times.length > 100) Fred.times.pop()
-		Fred.fps = parseInt(Fred.times.length/(Fred.timestamp - Fred.times.last())*1000)
-		//console.log(Fred.fps)
-		Fred.date = new Date
-		
-		$C.canvas = this.canvas
-		$C.clear()
-		$C.stroke_style('#222')
-		$C.fill_style('#eee')
-		$C.rect(0,0,Fred.width,Fred.height)
-		$C.fill()
-		this.objects.each(function(object){
-			object.draw()
-		})	
+		$C = this.canvas
+		clear()
+		if (this.last_draw != Fred.timestamp) {
+			this.last_draw = Fred.timestamp
+			this.objects.each(function(object){
+				object.draw()
+			})
+		}
 	}
 }) 
 
@@ -127,26 +122,26 @@ Fred.Polygon = Class.create({
 		stroke: 'red'
 	},
 	apply_style: function() {
-		$C.line_width(2)
+		lineWidth(2)
 	},
 	draw: function() {
 		this.apply_style()
-		$C.begin_path()
+		beginPath()
 		var over_point = false
 		this.points.each(function(point){
-			$C.line_to(point.x,point.y)
-			$C.save()
-				$C.opacity(0.2)
+			lineTo(point.x,point.y)
+			save()
+				opacity(0.2)
 				if (Fred.Geometry.distance(Fred.pointer_x,Fred.pointer_y,point.x,point.y) < this.point_size) {
-					$C.opacity(0.4)
+					opacity(0.4)
 					over_point = true
 				}
-				$C.fill_style('#222')
-				$C.rect(point.x-this.point_size/2,point.y-this.point_size/2,this.point_size,this.point_size)
-			$C.restore()
+				fillStyle('#222')
+				rect(point.x-this.point_size/2,point.y-this.point_size/2,this.point_size,this.point_size)
+			restore()
 		},this)
-		if (this.style.stroke) $C.stroke(this.style.stroke)
-		if (this.style.fill) $C.fill(this.style.fill)
+		if (this.style.stroke) stroke(this.style.stroke)
+		if (this.style.fill) fill(this.style.fill)
 	}
 })
 
@@ -177,10 +172,13 @@ Fred.tools.pen = new Fred.Tool('draw polygons',{
 		if (!this.polygon) this.polygon = new Fred.Polygon()
 		// close polygon if you click on first point
 		var on_final = (this.polygon.points.length > 0 && ((this.polygon.points.first().x - Fred.pointer_x > Fred.click_radius) && (this.polygon.points.first().y - Fred.pointer_y > Fred.click_radius)))
-		if (on_final && this.polygon.points.length > 1) Fred.active_layer.objects.push(this.polygon)
-		else if (!on_final) this.polygon.points.push({x:Fred.pointer_x,y:Fred.pointer_y})
+		if (on_final && this.polygon.points.length > 1) {
+			Fred.active_layer.objects.push(this.polygon)
+			this.polygon = false
+		} else if (!on_final) this.polygon.points.push({x:Fred.pointer_x,y:Fred.pointer_y})
 	},
 	draw: function() {
+		//console.log(Fred.timestamp)
 		if (this.polygon) this.polygon.draw()
 	}
 })
