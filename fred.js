@@ -177,6 +177,8 @@ Fred.tools.pen = new Fred.Tool('draw polygons',{
 			this.polygon = false
 		} else if (!on_final) this.polygon.points.push({x:Fred.pointer_x,y:Fred.pointer_y})
 	},
+	on_touchstart: this.on_mousedown,
+	on_touchend: this.on_mouseup,
 	draw: function() {
 		//console.log(Fred.timestamp)
 		if (this.polygon) this.polygon.draw()
