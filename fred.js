@@ -159,10 +159,12 @@ Fred.tools.pen = new Fred.Tool('draw polygons',{
 	polygon: false,
 	deselect: function() {
 		Fred.stop_observing('mouseup',this.on_mouseup)
+		Fred.stop_observing('touchend',this.on_touchend)
 		Fred.stop_observing('fred:postdraw',this.draw)
 	},
 	select: function() {
 		Fred.observe('mouseup',this.on_mouseup.bindAsEventListener(this))
+		Fred.observe('touchend',this.on_touchend.bindAsEventListener(this))
 		Fred.observe('fred:postdraw',this.draw.bindAsEventListener(this))
 	},
 	on_mousedown: function() {
@@ -177,8 +179,12 @@ Fred.tools.pen = new Fred.Tool('draw polygons',{
 			this.polygon = false
 		} else if (!on_final) this.polygon.points.push({x:Fred.pointer_x,y:Fred.pointer_y})
 	},
-	on_touchstart: this.on_mousedown,
-	on_touchend: this.on_mouseup,
+	on_touchstart: function(e) {
+		this.on_mousedown(e)
+	},
+	on_touchend: function(e) {
+		this.on_mouseup(e)
+	},
 	draw: function() {
 		//console.log(Fred.timestamp)
 		if (this.polygon) this.polygon.draw()
