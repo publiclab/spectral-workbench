@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8">
+
+	<title>Bespin Plugin Guide</title>
+
+	<link rel="stylesheet" type="text/css" href="../css/reset.css">
+	<link rel="stylesheet" type="text/css" href="../css/stylesheet.css" media="screen,projection">
+	<link rel="stylesheet" type="text/css" href="../css/colorful.css">
+</head>
+<body>
+
+<!-- MAIN CONTAINER -->
+<div id="main-container">
+
+<!-- MENU -->
+<ul id="menu">
+	<li><a href="../index.html" title="Home">Home</a></li>
+	<li><a href="../userguide/index.html" title="User Guide">Using Bespin</a></li>
+	<li class="current"><a href="../pluginguide/index.html" title="Plugin Guide">Creating Plugins</a></li>
+	<li><a href="../embedding/index.html" title="Embedding Bespin in your app">Embedding</a></li>
+	<li><a href="../devguide/index.html" title="Developer's Guide">Developing Bespin</a></li>
+</ul>
+<!-- / MENU -->
+
+<h1 id="web-title">Bespin Plugin Guide</h1>
+<h2 id="web-subtitle">Writing and Running Tests</h2>
+
+<!-- INDEX PAGE -->
+
+<!-- MAIN COLUMN -->
+<div id="maincol">
+<p>For core Bespin code, our goal is to have "very good" code coverage. Plugins
+that are not part of the Bespin core can have whatever level of code coverage
+you're comfortable with. The tools you need to do testing are included with
+Bespin in a plugin called "PluginDev".</p>
+<dl>
+<dt>very good code coverage</dt>
+<dd>Everything that can be readily tested without a huge amount of work.
+This means that some parts of the UI will not have automated tests,
+but we want everything else to have automated tests.</dd>
+</dl>
+<h2>Writing Unit Tests</h2>
+<p>The unit test library is based on SproutCore's core_test which is, in turn,
+based on the <a href="http://wiki.commonjs.org/wiki/Unit_Testing/1.0">CommonJS Unit Testing 1.0 API</a>. 
+SproutCore's test infrastructure (the core_test framework) is a modified 
+version of <a href="http://docs.jquery.com/QUnit">QUnit</a>.
+The CommonJS API doesn't define a way to do asynchronous testing in the
+1.0 version, so the mechanism for async testing is borrowed from QUnit.</p>
+<p>Here is an example test module:</p>
+<div class="codehilite"><pre><span class="n">var</span> <span class="n">t</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s">&quot;PluginDev&quot;</span><span class="p">);</span>
+
+<span class="n">exports</span><span class="o">.</span><span class="n">testBooleans</span> <span class="o">=</span> <span class="n">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">ok</span><span class="p">(</span><span class="n">true</span><span class="p">,</span> <span class="s">&quot;This one&#39;s good&quot;</span><span class="p">);</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">ok</span><span class="p">(</span><span class="mi">2</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="s">&quot;This one&#39;s a failure&quot;</span><span class="p">);</span>
+<span class="p">};</span>
+
+<span class="n">exports</span><span class="o">.</span><span class="n">testAsync</span> <span class="o">=</span> <span class="n">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">setTimeout</span><span class="p">(</span><span class="n">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">t</span><span class="o">.</span><span class="n">ok</span><span class="p">(</span><span class="n">true</span><span class="p">,</span> <span class="s">&quot;Got back from my timeout&quot;</span><span class="p">);</span>
+        <span class="n">t</span><span class="o">.</span><span class="n">start</span><span class="p">();</span>
+    <span class="p">},</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span><span class="mi">100</span><span class="p">);</span>
+<span class="p">};</span>
+
+<span class="n">exports</span><span class="o">.</span><span class="n">testEquality</span> <span class="o">=</span> <span class="n">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">equal</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s">&quot;actual was 2*2, expected 4&quot;</span><span class="p">);</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">deepEqual</span><span class="p">([{</span><span class="n">a:1</span><span class="p">}],</span> <span class="p">[{</span><span class="n">a:1</span><span class="p">}],</span> <span class="s">&quot;deepEqual compares the objects recursively&quot;</span><span class="p">);</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">notEqual</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
+<span class="p">};</span>
+</pre></div>
+
+
+<p>The tests are very straightforward to write:</p>
+<ol>
+<li>Make functions that start with "test" that you export from your module.</li>
+<li>Use the various assertion functions available in PluginDev. In our tests, we import this module as "t" for convenience.</li>
+<li>When performing asynchronous actions, call stop with a timeout. Once the action is done, call start again.</li>
+</ol>
+<h2>Running the Tests</h2>
+<p>As of this writing, the test results are displayed to the browser console,
+so you will need <a href="http://getfirebug.com/">Firebug</a> or the developer tools
+available for Safari and Chrome. To run the tests from your browser, fire up 
+the development server load up the editor as normal. Log in to the editor.</p>
+<p>In the console, run:</p>
+<div class="codehilite"><pre><span class="n">tiki</span><span class="o">.</span><span class="n">async</span><span class="p">(</span><span class="s">&quot;PluginDev&quot;</span><span class="p">);</span>
+<span class="n">var</span> <span class="n">t</span> <span class="o">=</span> <span class="n">tiki</span><span class="o">.</span><span class="nb">require</span><span class="p">(</span><span class="s">&quot;PluginDev&quot;</span><span class="p">);</span>
+</pre></div>
+
+
+<p>This loads the PluginDev plugin for you. In addition to providing all of the assertions, PluginDev also provides a convenient way to run the tests. Run:</p>
+<div class="codehilite"><pre><span class="n">t</span><span class="o">.</span><span class="n">runTest</span><span class="p">(</span><span class="s">&quot;PluginName:path/to/testmodule&quot;</span><span class="p">)</span>
+</pre></div>
+
+
+<p>This will load and execute your test. As a bonus, if you run this again, it will reload your plugin and then run the test. So, you can switch back and forth between editor and browser, just pushing up arrow in between. It'll be even better when your editor is in your browser!</p>
+</div>
+<!-- / MAIN COLUMN -->
+
+<!-- SIDEBAR -->
+<div id="sidebar">
+
+
+
+
+<h2 class="compact">Contents</h2>
+<ul class="compact">
+<li><a href="index.html">Introduction</a></li>
+<li><a href="distributing.html">Distributing Plugins</a></li>
+<li><a href="editorapi.html">Editor API</a></li>
+<li><a href="testing.html">Automated Testing</a></li>
+<li><a href="template.html">Templates</a></li>
+<li><a href="theme.html">Themes</a></li>
+<li><a href="syntax.html">Syntax Highlighting</a></li>
+<li><a href="keymapping.html">Keymapping</a></li>
+</ul>
+
+
+
+
+
+
+
+</div>
+<!-- / SIDEBAR -->
+
+<!-- / MAIN CONTAINER -->
+</div>
+
+<!-- FOOTER -->
+<div id="footer">
+	<!-- COLUMN ONE -->
+	<div>
+	<h2 class="compact">Useful Links</h2>
+	<ul class="compact">
+		<li><a href="http://mozillalabs.com/bespin/">Bespin project home page</a></li>
+		<li><a href="https://wiki.mozilla.org/Labs/Bespin">Wiki</a></li>
+	</ul>
+	</div>
+	<!-- / COLUMN ONE -->
+
+	<!-- COLUMN TWO -->
+	<div>
+	<h2 class="compact">Developer Resources</h2>
+	<ul class="compact">
+	  <li><a href="http://hg.mozilla.org/labs/bespinclient/">Main Code Repository</a></li>
+	  <li><a href="http://hg.mozilla.org/labs/bespinserver/">Python server repository</a></li>
+		<li><a href="http://groups.google.com/group/bespin-core/">bespin-core mailing list for developers</a></li>
+		<li><a href="http://groups.google.com/group/bespin-commits/">bespin-commits mailing list for repository commit messages</a></li>
+		<li><a href="https://bugzilla.mozilla.org/buglist.cgi?product=bespin">Bug List</a></li>
+	</ul>
+	</div>
+	<!-- / COLUMN TWO -->
+
+	<!-- COLUMN THREE -->
+	<div>
+	<h2 class="compact">Get Help</h2>
+	<ul class="compact">
+		<li>The <a href="http://groups.google.com/group/bespin/">Bespin mailing list</a></li>
+		<li>Via IRC: <a href="irc://irc.mozilla.org/bespin">#bespin on irc.mozilla.org</a></li>
+	</ul>
+
+	<h2 class="compact">Documentation Template</h2>
+	<ul class="compact">
+		<li>Adapted from a design by <a href="http://www.mgrabovsky.is-game.com/">Matěj Grabovský</a></li>
+	</ul>
+	</div>
+	<!-- / COLUMN THREE -->
+</div>
+<!-- / FOOTER -->
+
+</body>
+</html>

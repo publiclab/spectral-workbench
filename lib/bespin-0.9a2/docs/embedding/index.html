@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8">
+
+	<title>Bespin Embedded Guide</title>
+
+	<link rel="stylesheet" type="text/css" href="../css/reset.css">
+	<link rel="stylesheet" type="text/css" href="../css/stylesheet.css" media="screen,projection">
+	<link rel="stylesheet" type="text/css" href="../css/colorful.css">
+</head>
+<body>
+
+<!-- MAIN CONTAINER -->
+<div id="main-container">
+
+<!-- MENU -->
+<ul id="menu">
+	<li><a href="../index.html" title="Home">Home</a></li>
+	<li><a href="../userguide/index.html" title="User Guide">Using Bespin</a></li>
+	<li><a href="../pluginguide/index.html" title="Plugin Guide">Creating Plugins</a></li>
+	<li class="current"><a href="../embedding/index.html" title="Embedding Bespin in your app">Embedding</a></li>
+	<li><a href="../devguide/index.html" title="Developer's Guide">Developing Bespin</a></li>
+</ul>
+<!-- / MENU -->
+
+<h1 id="web-title">Bespin Embedded Guide</h1>
+<h2 id="web-subtitle">Introduction</h2>
+
+<!-- INDEX PAGE -->
+
+<!-- MAIN COLUMN -->
+<div id="maincol">
+<h1>Compressed vs. Uncompressed</h1>
+<p>The Drop In package comes with both compressed and uncompressed JavaScript
+and CSS files. For live site use, you will likely want to use the compressed
+JavaScript because it is <em>much</em> smaller than the uncompressed version.
+If you are trying to troubleshoot a problem, you should use the uncompressed
+version.</p>
+<p><code>BespinEmbedded.uncompressed.js</code> is uncompressed. <code>BespinEmbedded.js</code> 
+is compressed.</p>
+<p>I suggest that you have your HTML refer to BespinEmbedded.js and just put
+the version of the file you need in place at that URL. The examples that
+follow all make the assumption that you're doing just that.</p>
+<h1>How to embed Bespin in your site</h1>
+<h2>Level 1: Upgrade an element</h2>
+<p>The easiest thing to do to get Bespin working on your website is to simply
+include the Bespin script in your page, and mark the elements that you wish to
+use with Bespin with the <code>class="bespin</code> attribute. Download the
+Bespin Embedded release and put the files from the "prebuilt"
+directory on your web server.</p>
+<p>To use Bespin on your page, you would then add lines like the following to
+the &lt;head&gt; element on your page:</p>
+<div class="codehilite"><pre><span class="nt">&lt;link</span> <span class="na">id=</span><span class="s">&quot;bespin_base&quot;</span> <span class="na">href=</span><span class="s">&quot;/path/to&quot;</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;/path/to/BespinEmbedded.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+</pre></div>
+
+
+<p>The bespin_base link tag is important to tell Bespin where to find
+other resources (such as the stylesheets, plugins, etc.)</p>
+<p>Then, elsewhere on your page, you can transform an element (such as a
+&lt;div&gt; or &lt;textarea&gt;) into a Bespin editor:</p>
+<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;bespin&quot;</span><span class="nt">&gt;</span>Initial contents<span class="nt">&lt;/div&gt;</span>
+</pre></div>
+
+
+<p>There are a number of options to customize how Bespin loads. You can request
+Bespin to use these as follows:</p>
+<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;bespin&quot;</span> <span class="na">data-bespinoptions=</span><span class="s">&#39;{ &quot;stealFocus&quot;:true, &quot;syntax&quot;: &quot;js&quot; }&#39;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+</pre></div>
+
+
+<p>data-bespinoptions uses a JSON structure (so make sure you <a href="http://json.org/" title="The JSON Spec">follow the rules</a>
+about escaping strings).</p>
+<p>The element to be upgraded does not have to be a div, though there is a known
+issue that other element types such as textarea are not working right now.</p>
+<p>Bespin does not allow multiple elements in a page to become Bespin editors -
+there can only be one.</p>
+<h2>Level 2: Manual Upgrade</h2>
+<p>Sometimes the element to upgrade might be dynamically created, or you might want
+to have Bespin as an option that is only loaded when the user selects a 'Use
+Bespin' option. In this case just inserting <code>class="bespin"</code> after page load
+won't work, and you'll need to tell Bespin to use an element:</p>
+<div class="codehilite"><pre><span class="nt">&lt;link</span> <span class="na">id=</span><span class="s">&quot;bespin_base&quot;</span> <span class="na">href=</span><span class="s">&quot;/path/to&quot;</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;/path/to/BespinEmbedded.js&quot;</span><span class="nt">&gt;</span><span class="o">&lt;</span><span class="nx">script</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="nx">script</span><span class="o">&gt;</span>
+    <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">&quot;edit&quot;</span><span class="p">);</span>
+    <span class="nx">bespin</span><span class="p">.</span><span class="nx">useBespin</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+<span class="nt">&lt;/script&gt;</span>
+
+<span class="nt">&lt;textarea</span> <span class="na">id=</span><span class="s">&quot;edit&quot;</span><span class="nt">&gt;</span>Initial contents<span class="nt">&lt;/textarea&gt;</span>
+</pre></div>
+
+
+<p>Rather than passing in a node, you can also simply pass in an string identifier
+as follows:</p>
+<div class="codehilite"><pre><span class="nx">bespin</span><span class="p">.</span><span class="nx">useBespin</span><span class="p">(</span><span class="s2">&quot;edit&quot;</span><span class="p">);</span>
+</pre></div>
+
+
+<p>And as with level 1 above, you can also use options to customize the display:</p>
+<div class="codehilite"><pre><span class="nx">bespin</span><span class="p">.</span><span class="nx">useBespin</span><span class="p">(</span><span class="s2">&quot;edit&quot;</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">stealFocus</span><span class="o">:</span> <span class="kc">true</span>
+<span class="p">});</span>
+</pre></div>
+
+
+<p>Because this is JavaScript, the strict demands of JSON are not applicable here,
+where they are when using data-bespinoptions.</p>
+<h2>Interaction</h2>
+<p>It is possible to interact with a Bespin instance on a page, to alter contents
+for example.</p>
+<p>When using manual upgrade of an element, the <code>useBespin()</code> function returns a
+promise. The resolved promise has as first argument the <em>environment</em> variable:</p>
+<div class="codehilite"><pre><span class="nx">bespin</span><span class="p">.</span><span class="nx">useBespin</span><span class="p">(</span><span class="s2">&quot;edit&quot;</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">env</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Get the editor.</span>
+    <span class="kd">var</span> <span class="nx">editor</span> <span class="o">=</span> <span class="nx">env</span><span class="p">.</span><span class="nx">editor</span><span class="p">;</span>
+    <span class="c1">// Change the value and move to the secound lien.</span>
+    <span class="nx">editor</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="s2">&quot;Initial Content\nWith 2 lines&quot;</span><span class="p">;</span>
+    <span class="nx">editor</span><span class="p">.</span><span class="nx">setLineNumber</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+<span class="p">},</span> <span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;Launch failed: &quot;</span> <span class="o">+</span> <span class="nx">error</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+
+
+<p>When the Bespin was created dynamically (using a div with <code>class="bespin"</code>), you
+can get the Bespin <code>environment</code> instance from the DOM node as the <code>bespin</code> 
+variable on the node.</p>
+<p>Creating the Bespin dynamically takes some time and the Bespin might not be ready
+when the page fires the <code>onLoad</code> event. Accessing the dynamically created Bespin
+is save after the onBespinLoad event is fired:</p>
+<div class="codehilite"><pre><span class="nb">window</span><span class="p">.</span><span class="nx">onBespinLoad</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">edit</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">&quot;edit&quot;</span><span class="p">);</span>
+    <span class="c1">// Get the environment variable.</span>
+    <span class="kd">var</span> <span class="nx">env</span> <span class="o">=</span> <span class="nx">edit</span><span class="p">.</span><span class="nx">bespin</span><span class="p">;</span>
+    <span class="c1">// Get the editor.</span>
+    <span class="kd">var</span> <span class="nx">editor</span> <span class="o">=</span> <span class="nx">env</span><span class="p">.</span><span class="nx">editor</span><span class="p">;</span>
+    <span class="c1">// Change the value and move to the secound line.</span>
+    <span class="nx">editor</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="s2">&quot;Initial Content\nWith 2 lines&quot;</span><span class="p">;</span>
+    <span class="nx">editor</span><span class="p">.</span><span class="nx">setLineNumber</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+<span class="p">};</span>
+</pre></div>
+
+
+<p>It's possible to change any settings (as in those defined by the 'set' command
+where the command line is available). Note that the same settings apply to
+all editors on the page. To change a setting use:</p>
+<div class="codehilite"><pre><span class="nx">env</span><span class="p">.</span><span class="nx">settings</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s2">&quot;fontsize&quot;</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
+</pre></div>
+
+
+<p>To change the initial context for the syntax highlighter run:</p>
+<div class="codehilite"><pre><span class="nx">env</span><span class="p">.</span><span class="nx">editor</span><span class="p">.</span><span class="nx">syntax</span> <span class="o">=</span> <span class="s2">&quot;html&quot;</span><span class="p">;</span>
+</pre></div>
+
+
+<p>The complete <a href="../pluginguide/editorapi.html" title="Editor API">Bespin editor API</a> is documented elsewhere.</p>
+<h2>Dimensions</h2>
+<p>Bespin always has to know the absolute size of the element it's contained in.
+Because parts of Bespin depend on absolute position and size (mainly the canvas
+elements) it's necessary to tell Bespin that its container dimension changed.
+You can do this by:</p>
+<div class="codehilite"><pre><span class="nx">env</span><span class="p">.</span><span class="nx">dimensionsChanged</span><span class="p">();</span>
+</pre></div>
+
+
+<p>Where <code>env</code> is the environment variable of the Bespin that container's size changed.</p>
+<h1>Embedding Bespin in XULRunner</h1>
+<p>Bespin's use of web workers and other features requires it to be loaded via
+resource:// urls if used in XULRunner iframes.</p>
+</div>
+<!-- / MAIN COLUMN -->
+
+<!-- SIDEBAR -->
+<div id="sidebar">
+
+
+
+
+
+
+<h2 class="compact">Contents</h2>
+<ul class="compact">
+<li><a href="index.html">Introduction</a></li>
+<li><a href="building.html">Creating a Custom, Embedded Bespin</a></li>
+<li><a href="appconfig.html">Application Configuration</a></li>
+<li><a href="installing.html">Installing Plugins</a></li>
+</ul>
+
+
+
+
+
+</div>
+<!-- / SIDEBAR -->
+
+<!-- / MAIN CONTAINER -->
+</div>
+
+<!-- FOOTER -->
+<div id="footer">
+	<!-- COLUMN ONE -->
+	<div>
+	<h2 class="compact">Useful Links</h2>
+	<ul class="compact">
+		<li><a href="http://mozillalabs.com/bespin/">Bespin project home page</a></li>
+		<li><a href="https://wiki.mozilla.org/Labs/Bespin">Wiki</a></li>
+	</ul>
+	</div>
+	<!-- / COLUMN ONE -->
+
+	<!-- COLUMN TWO -->
+	<div>
+	<h2 class="compact">Developer Resources</h2>
+	<ul class="compact">
+	  <li><a href="http://hg.mozilla.org/labs/bespinclient/">Main Code Repository</a></li>
+	  <li><a href="http://hg.mozilla.org/labs/bespinserver/">Python server repository</a></li>
+		<li><a href="http://groups.google.com/group/bespin-core/">bespin-core mailing list for developers</a></li>
+		<li><a href="http://groups.google.com/group/bespin-commits/">bespin-commits mailing list for repository commit messages</a></li>
+		<li><a href="https://bugzilla.mozilla.org/buglist.cgi?product=bespin">Bug List</a></li>
+	</ul>
+	</div>
+	<!-- / COLUMN TWO -->
+
+	<!-- COLUMN THREE -->
+	<div>
+	<h2 class="compact">Get Help</h2>
+	<ul class="compact">
+		<li>The <a href="http://groups.google.com/group/bespin/">Bespin mailing list</a></li>
+		<li>Via IRC: <a href="irc://irc.mozilla.org/bespin">#bespin on irc.mozilla.org</a></li>
+	</ul>
+
+	<h2 class="compact">Documentation Template</h2>
+	<ul class="compact">
+		<li>Adapted from a design by <a href="http://www.mgrabovsky.is-game.com/">Matěj Grabovský</a></li>
+	</ul>
+	</div>
+	<!-- / COLUMN THREE -->
+</div>
+<!-- / FOOTER -->
+
+</body>
+</html>

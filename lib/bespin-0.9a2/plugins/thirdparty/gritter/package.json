@@ -1,0 +1,13 @@
+{
+    "version": "1.6.0",
+    "dependencies": {
+        "jquery": "1.4.2",
+        "theme_manager_base": "0.0.0"
+    },
+    "provides": [
+        {
+            "ep": "themestyles",
+            "url": ["jquery.gritter.less"]
+        }
+    ]
+}
