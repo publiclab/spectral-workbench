@@ -15,15 +15,11 @@ Fred = {
 		new Fred.Layer('background')
 		Fred.active_layer = Fred.layers.first()
 		$C = Fred.active_layer.canvas
-		//Event handling setup:
 		Fred.observe('mousemove',Fred.on_mousemove)
-		//Fred.observe('mouseup',Fred.on_mouseup)
-		//Set up the main Fred DOM element:
 		Fred.element.style.position = 'absolute'
 		Fred.element.style.top = 0
 		Fred.element.style.left = 0
 		Fred.resize(Fred.width,Fred.height)
-		//main loop:
 		setInterval(Fred.draw.bind(this),30)
 	},
 	resize: function(width,height) {
@@ -47,28 +43,28 @@ Fred = {
 		if (Fred.active_tool) Fred.active_tool.deselect()
 		Fred.active_tool = Fred.tools[tool]
 		Fred.active_tool.select()
+		events = [	'on_mousedown',
+				'on_mousemove',
+				'on_mouseup',
+				'dblclick',
+				'on_touchstart',
+				'on_touchmove',
+				'on_touchend',
+				'on_touchmove',
+				'on_gesturestart',
+				'on_gestureend']
 	},
-        /**
-	 * Binds all events to the 'fred' DOM element. Use instead of native Prototype observe.
-	 */
 	observe: function(a,b,c) {
 		Fred.element.observe(a,b,c)
 	},
-	/**	
-	 * Fires events. Use instead of native Prototype observe.
-	 */
 	fire: function(a,b,c) {
 		Fred.element.fire(a,b,c)
 	},
-	/**
-	 * Unbinds all events from the main canvas. 
-	 */
 	stop_observing: function(a,b,c) {
 		Fred.element.stopObserving(a,b,c)
 	},
 	draw: function() {
 		Fred.fire('fred:predraw')
-		//calculate fps:
 		Fred.timestamp = Fred.date.getTime()
 		Fred.times.unshift(Fred.timestamp)
 		if (Fred.times.length > 100) Fred.times.pop()
@@ -81,7 +77,6 @@ Fred = {
 
 Fred.Layer = Class.create({
 	initialize: function(name,args) {
-		//validate uniqueness of name in validation namespace
 		Fred.layers.push(this)
 		Fred.element.insert("<canvas style='position:absolute;top:0;left:0;' id='"+name+"'></canvas>")
 		this.name = name
@@ -94,7 +89,6 @@ Fred.Layer = Class.create({
 		this.element.height = Fred.height
 		this.canvas = $(name).getContext('2d')
 		Object.extend(this,args)
-		// default styles
 		strokeStyle('#222')
 		fillStyle('#eee')
 	},
@@ -108,13 +102,31 @@ Fred.Layer = Class.create({
 			})
 		}
 	}
-}) 
+})
 
+Fred.Point = Class.create({
+	initialize: function(x,y) {
+		this.x = x
+		this.y = y
+		this.bezier = new Array
+		this.bezier[0] = false // first bezier point, optional
+		this.bezier[1] = false // second bezier point, optional
+	},
+	add_bezier: function(x,y) {
+		this.bezier.push([x,y])
+		if (this.bezier.length > 2) this.bezier.splice(0,1)
+	},
+	is_bezier: function() {
+		if (this.bezier.length > 0) return true
+		else return false
+	}
+})
 Fred.Polygon = Class.create({
 	initialize: function(points) {
 		this.point_size = 12
 		if (points) this.points = points
 		else this.points = []
+		this.selected = true
 	},
 	name: 'untitled polygon',
 	style: {
@@ -136,8 +148,8 @@ Fred.Polygon = Class.create({
 					opacity(0.4)
 					over_point = true
 				}
-				fillStyle('#222')
-				rect(point.x-this.point_size/2,point.y-this.point_size/2,this.point_size,this.point_size)
+				strokeStyle('#22a')
+				strokeRect(point.x-this.point_size/2,point.y-this.point_size/2,this.point_size,this.point_size)
 			restore()
 		},this)
 		if (this.style.stroke) stroke(this.style.stroke)
@@ -158,12 +170,16 @@ Fred.Tool = Class.create({
 Fred.tools.pen = new Fred.Tool('draw polygons',{
 	polygon: false,
 	deselect: function() {
+		Fred.stop_observing('mousedown',this.on_mouseup)
 		Fred.stop_observing('mouseup',this.on_mouseup)
+		Fred.stop_observing('touchstart',this.on_touchend)
 		Fred.stop_observing('touchend',this.on_touchend)
 		Fred.stop_observing('fred:postdraw',this.draw)
 	},
 	select: function() {
+		Fred.observe('mousedown',this.on_mouseup.bindAsEventListener(this))
 		Fred.observe('mouseup',this.on_mouseup.bindAsEventListener(this))
+		Fred.observe('touchstart',this.on_touchend.bindAsEventListener(this))
 		Fred.observe('touchend',this.on_touchend.bindAsEventListener(this))
 		Fred.observe('fred:postdraw',this.draw.bindAsEventListener(this))
 	},
@@ -172,12 +188,11 @@ Fred.tools.pen = new Fred.Tool('draw polygons',{
 	},
 	on_mouseup: function() {
 		if (!this.polygon) this.polygon = new Fred.Polygon()
-		// close polygon if you click on first point
 		var on_final = (this.polygon.points.length > 0 && ((this.polygon.points.first().x - Fred.pointer_x > Fred.click_radius) && (this.polygon.points.first().y - Fred.pointer_y > Fred.click_radius)))
 		if (on_final && this.polygon.points.length > 1) {
 			Fred.active_layer.objects.push(this.polygon)
 			this.polygon = false
-		} else if (!on_final) this.polygon.points.push({x:Fred.pointer_x,y:Fred.pointer_y})
+		} else if (!on_final) this.polygon.points.push(new Fred.Point(Fred.pointer_x,Fred.pointer_y))
 	},
 	on_touchstart: function(e) {
 		this.on_mousedown(e)
@@ -186,14 +201,15 @@ Fred.tools.pen = new Fred.Tool('draw polygons',{
 		this.on_mouseup(e)
 	},
 	draw: function() {
-		//console.log(Fred.timestamp)
 		if (this.polygon) this.polygon.draw()
 	}
 })
+
 
 Fred.Geometry = {
 	distance: function(x1,y1,x2,y2) {
 		return Math.sqrt(Math.pow(Math.abs(x1-x2),2) + Math.pow(Math.abs(y1-y2),2))
 	}
 }
+
 
