@@ -1,0 +1,24 @@
+FRED:
+
+Simple, stripped down JavaScript layered drawing environment with multitouch events, with an eye towards tablet web/vector authoring.
+
+===========================================
+
+For more information, contact jeff@unterbahn.com
+There is usually a reasonably recent demo available at http://fred.unterbahn.com
+
+===========================================
+
+To contribute, please fork the project in Github: https://github.com/jywarren/fred, Then send pull requests! 
+
+You'll have to edit the files in <fred root>/src/, then run 'rake build' from the Fred root directory and it'll compile everything in the /src/ directory into /fred.js, stripping out comments as it goes. This helps maintain ordering of the source loading, and also helps with minification.
+
+You can also just create new tools in /tools/, adding them to Fred.tools, just as the pen tool is: Fred.tools.pen
+
+Tools 'take over' mouse events and must have:
+
+- <tool>.select() and <tool>.deselect() methods which are called when the tool is selected with Fred.select_tool('pen')
+	- the deselect() method is called when you switch to a different tool, and must unsubscribe the tools listeners
+- <tool>.draw() method which is called every frame
+- <tool>.description, a string which describes the tool (used in tooltips and menus) 
+
