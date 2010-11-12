@@ -30,6 +30,7 @@ Fred.Polygon = Class.create({
 				strokeRect(point.x-this.point_size/2,point.y-this.point_size/2,this.point_size,this.point_size)
 			restore()
 		},this)
+		if (this.closed) lineTo(this.points[0].x,this.points[0].y)
 		if (this.style.stroke) stroke(this.style.stroke)
 		if (this.style.fill) fill(this.style.fill)
 	}

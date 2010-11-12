@@ -152,6 +152,7 @@ Fred.Polygon = Class.create({
 				strokeRect(point.x-this.point_size/2,point.y-this.point_size/2,this.point_size,this.point_size)
 			restore()
 		},this)
+		if (this.closed) lineTo(this.points[0].x,this.points[0].y)
 		if (this.style.stroke) stroke(this.style.stroke)
 		if (this.style.fill) fill(this.style.fill)
 	}
@@ -170,29 +171,38 @@ Fred.Tool = Class.create({
 Fred.tools.pen = new Fred.Tool('draw polygons',{
 	polygon: false,
 	deselect: function() {
-		Fred.stop_observing('mousedown',this.on_mouseup)
+		Fred.stop_observing('dblclick',this.on_dblclick)
+		Fred.stop_observing('mousedown',this.on_mousedown)
 		Fred.stop_observing('mouseup',this.on_mouseup)
-		Fred.stop_observing('touchstart',this.on_touchend)
+		Fred.stop_observing('touchstart',this.on_touchstart)
 		Fred.stop_observing('touchend',this.on_touchend)
 		Fred.stop_observing('fred:postdraw',this.draw)
 	},
 	select: function() {
-		Fred.observe('mousedown',this.on_mouseup.bindAsEventListener(this))
+		Fred.observe('dblclick',this.on_dblclick.bindAsEventListener(this))
+		Fred.observe('mousedown',this.on_mousedown.bindAsEventListener(this))
 		Fred.observe('mouseup',this.on_mouseup.bindAsEventListener(this))
-		Fred.observe('touchstart',this.on_touchend.bindAsEventListener(this))
+		Fred.observe('touchstart',this.on_touchstart.bindAsEventListener(this))
 		Fred.observe('touchend',this.on_touchend.bindAsEventListener(this))
 		Fred.observe('fred:postdraw',this.draw.bindAsEventListener(this))
 	},
 	on_mousedown: function() {
-
+		if (this.polygon) {
+			var on_final = (this.polygon.points.length > 0 && ((Math.abs(this.polygon.points[0].x - Fred.pointer_x) < Fred.click_radius) && (Math.abs(this.polygon.points[0].y - Fred.pointer_y) < Fred.click_radius)))
+			if (on_final && this.polygon.points.length > 1) {
+				this.polygon.closed = true
+				this.complete_polygon()
+			} else if (!on_final) this.polygon.points.push(new Fred.Point(Fred.pointer_x,Fred.pointer_y))
+		} else {
+			this.polygon = new Fred.Polygon
+		}
+	},
+	on_dblclick: function() {
+		if (this.polygon.points.length > 1) {
+			this.complete_polygon()
+		}
 	},
 	on_mouseup: function() {
-		if (!this.polygon) this.polygon = new Fred.Polygon()
-		var on_final = (this.polygon.points.length > 0 && ((this.polygon.points.first().x - Fred.pointer_x > Fred.click_radius) && (this.polygon.points.first().y - Fred.pointer_y > Fred.click_radius)))
-		if (on_final && this.polygon.points.length > 1) {
-			Fred.active_layer.objects.push(this.polygon)
-			this.polygon = false
-		} else if (!on_final) this.polygon.points.push(new Fred.Point(Fred.pointer_x,Fred.pointer_y))
 	},
 	on_touchstart: function(e) {
 		this.on_mousedown(e)
@@ -202,6 +212,11 @@ Fred.tools.pen = new Fred.Tool('draw polygons',{
 	},
 	draw: function() {
 		if (this.polygon) this.polygon.draw()
+	},
+	complete_polygon: function() {
+		Fred.active_layer.objects.push(this.polygon)
+		this.polygon = false
+		Fred.stop_observing('fred:postdraw',this.draw)
 	}
 })
 
