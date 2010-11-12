@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8">
+
+	<title>Bespin Plugin Guide</title>
+
+	<link rel="stylesheet" type="text/css" href="../css/reset.css">
+	<link rel="stylesheet" type="text/css" href="../css/stylesheet.css" media="screen,projection">
+	<link rel="stylesheet" type="text/css" href="../css/colorful.css">
+</head>
+<body>
+
+<!-- MAIN CONTAINER -->
+<div id="main-container">
+
+<!-- MENU -->
+<ul id="menu">
+	<li><a href="../index.html" title="Home">Home</a></li>
+	<li><a href="../userguide/index.html" title="User Guide">Using Bespin</a></li>
+	<li class="current"><a href="../pluginguide/index.html" title="Plugin Guide">Creating Plugins</a></li>
+	<li><a href="../embedding/index.html" title="Embedding Bespin in your app">Embedding</a></li>
+	<li><a href="../devguide/index.html" title="Developer's Guide">Developing Bespin</a></li>
+</ul>
+<!-- / MENU -->
+
+<h1 id="web-title">Bespin Plugin Guide</h1>
+<h2 id="web-subtitle">Keymapping</h2>
+
+<!-- INDEX PAGE -->
+
+<!-- MAIN COLUMN -->
+<div id="maincol">
+<h2>Introduction</h2>
+<p>The keyboard mapping mechanism built into Bespin is designed to be extensible
+in a declarative way. This design allows a wide variety of keyboard mappings to
+be implemented without writing any code.</p>
+<h2>Quick Start</h2>
+<p>Whenever a key combination like Cmd+C or a new character like <code>c</code> is detected
+in the editor, Bespin's keyboard manager component searches through the
+keybinding rules, selects the first binding that matches, and executes the
+associated command. Keystrokes not handled in this way are inserted as ordinary
+text.</p>
+<p>In the simplest case, a keymapping plugin looks something like this:</p>
+<div class="codehilite"><pre><span class="s2">&quot;define metadata&quot;</span><span class="p">;</span>
+<span class="p">({</span>
+    <span class="s2">&quot;provides&quot;</span><span class="o">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;ep&quot;</span><span class="o">:</span> <span class="s2">&quot;command&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;alert&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;key&quot;</span><span class="o">:</span> <span class="s2">&quot;ctrl_i&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;pointer&quot;</span><span class="o">:</span> <span class="s2">&quot;#showMessage&quot;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">});</span>
+<span class="s2">&quot;end&quot;</span><span class="p">;</span>
+
+<span class="nx">exports</span><span class="p">.</span><span class="nx">showMessage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">alert</span><span class="p">(</span><span class="s2">&quot;Greetings from the cloud!&quot;</span><span class="p">);</span>
+<span class="p">};</span>
+</pre></div>
+
+
+<p>When this plugin is loaded and the user presses <em>Ctrl+I</em> on the keyboard, then
+the command <code>showMessage</code> is executed.</p>
+<p>For most use cases, this is all that is needed. For those interested in adding
+more advanced keybindings such as those used in the vi and Emacs plugins, read
+on.</p>
+<h2>How Key Detection Works</h2>
+<p>Before diving into more complex use cases, an understanding of the way key
+commands work in Bespin is needed.</p>
+<p>Whenever a key is pressed while a modifier key (<em>Meta</em>, <em>Cmd</em>, <em>Ctrl</em>, or
+<em>Alt</em>) is held down, the Bespin framework handles the browser's key event,
+performs translation, which most notably involves the creation of a <em>symbolic
+name</em>, and forwards the event to the Bespin keyboard manager. Some examples of
+symbolic names are:</p>
+<div class="codehilite"><pre><span class="n">Ctrl</span><span class="o">+</span><span class="n">A</span>       <span class="o">-&gt;</span> <span class="n">ctrl_a</span>
+<span class="n">Alt</span><span class="o">+</span><span class="n">C</span>        <span class="o">-&gt;</span> <span class="n">alt_c</span>
+<span class="n">Meta</span><span class="o">+</span><span class="n">Shift</span><span class="o">+</span><span class="n">Z</span> <span class="o">-&gt;</span> <span class="n">meta_shift_z</span> <span class="ow">or</span> <span class="n">ctrl_shift_z</span>
+</pre></div>
+
+
+<p>The symbolic names are used to match against the "key" property above or the
+"regex" property (demonstrated later).</p>
+<p>Keys pressed without a modifier key (as well as input events from other
+sources, such as IMEs) are also forwarded to the keyboard manager. The symbolic
+name for such events are simply equal to the text that would be inserted for
+each event.</p>
+<p><em>NB:</em> To aid the creation of cross-platform keybindings, by default the <em>Meta</em>
+key is treated as though it were the <em>Ctrl</em> key. To avoid this and match the
+<em>Meta</em> key explicitly, set the property <code>handleMetaKey</code> on the keybinding to
+true.</p>
+<h2>A simple vim-style keymapping</h2>
+<p>A simple vim-style modal keymapping looks like this:</p>
+<div class="codehilite"><pre><span class="s2">&quot;define metadata&quot;</span><span class="p">;</span>
+<span class="p">({</span>
+    <span class="s2">&quot;dependencies&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;canon&quot;</span><span class="o">:</span> <span class="s2">&quot;0.0&quot;</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;provides&quot;</span><span class="o">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;ep&quot;</span><span class="o">:</span> <span class="s2">&quot;keymapping&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;handleMetaKey&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+            <span class="s2">&quot;states&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;start&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;key&quot;</span><span class="o">:</span>      <span class="s2">&quot;i&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;then&quot;</span><span class="o">:</span>     <span class="s2">&quot;insertMode&quot;</span>
+                    <span class="p">}</span>
+                <span class="p">],</span>
+                <span class="s2">&quot;insertMode&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;key&quot;</span><span class="o">:</span>      <span class="s2">&quot;escape&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;then&quot;</span><span class="o">:</span>     <span class="s2">&quot;start&quot;</span>
+                    <span class="p">}</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">});</span>
+<span class="s2">&quot;end&quot;</span><span class="p">;</span>
+</pre></div>
+
+
+<p>Keymappings support multiple <em>states</em>, which correspond to the <em>modes</em> of modal
+keymappings such as vi. The start state is always called <code>start</code>. Mode
+transitions occur via the <code>then</code>, property. In the example, pressing <em>I</em>
+triggers a switch to the state <code>insertMode</code>, which corresponds to vi's
+insert mode. Pressing <em>Esc</em> in insert mode triggers a switch back to the start
+state, corresponding to vi's normal mode.</p>
+<p>The value of the <code>key</code> property is treated as a regex. So, for example, you
+could match either the <em>K</em> key or the up arrow key with one binding:</p>
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="s2">&quot;key&quot;</span><span class="o">:</span>      <span class="s2">&quot;(k|up)&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;exec&quot;</span><span class="o">:</span>     <span class="s2">&quot;move up&quot;</span><span class="p">,</span>
+<span class="p">},</span>
+</pre></div>
+
+
+<p>Remember that the text which this regex is matched against is the symbolic name
+of the key. So this binding will not match <em>Ctrl+Up</em>, <em>Meta+Up</em>, etc.</p>
+<h2>Buffering</h2>
+<p>More complex keymappings such as vi and Emacs typically feature commands that
+consist of multiple keystrokes. To support these, the keyboard manager stores
+all key events that have not yet mapped to a key binding in a <em>keyboard
+buffer</em>. After a binding matches, the buffer is cleared.</p>
+<p>The buffer is simply a string of symbolic names, so for example the sequence of
+keys <em>d, 2, d</em> maps to the string <code>"d2d"</code>, and the sequence <em>Ctrl+A</em> maps to
+the string <code>"ctrl_a"</code>.</p>
+<p><em>NB:</em> On some international keyboards, the Alt key is used to insert special
+characters. For instance, on a German keyboard, Alt+8 inserts the <code>{</code>
+character. The keyboard manager is designed to detect this situation and, in
+this case, will report the symbolic name <code>"{"</code>, not <code>"alt_8"</code>.</p>
+<p>To access the characters stored in the buffer, the <code>regex</code> property rather than
+the <code>key</code> property must be used:</p>
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="s2">&quot;regex&quot;</span><span class="o">:</span>    <span class="s2">&quot;dd&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;exec&quot;</span><span class="o">:</span>     <span class="s2">&quot;deleteLines&quot;</span><span class="p">,</span>
+<span class="p">},</span>
+</pre></div>
+
+
+<p>The supplied regex is anchored to the end of the buffer; for example, the value
+of the <code>regex</code> property in this example corresponds to the regex <code>/dd$/</code>
+(matched against the contents of the buffer).</p>
+<h2>Command arguments</h2>
+<p>It's possible to use the <code>regex</code> property to extract arguments that are passed
+to commands:</p>
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="s2">&quot;regex&quot;</span><span class="o">:</span>    <span class="s2">&quot;([0-9]*)j&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;exec&quot;</span><span class="o">:</span>     <span class="s2">&quot;vim moveDown&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;params&quot;</span><span class="o">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="o">:</span>     <span class="s2">&quot;n&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;match&quot;</span><span class="o">:</span>    <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;type&quot;</span><span class="o">:</span>     <span class="s2">&quot;number&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;defaultValue&quot;</span><span class="o">:</span>     <span class="mi">1</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">},</span>
+</pre></div>
+
+
+<p>Let the <em>keyboard buffer</em> be "10j", then the <code>regex</code> will match. The part of
+the RegExp to match the number - ([0-9]*) - is grouped. Grouped parts of a RegExp
+can be used as arguments. The arguments/params to pass to the command are defined
+within the <code>params</code> section. <code>name</code> specifies the name of the argument. <code>type</code>
+can be "<em>number</em>" or "<em>text</em>". <code>match</code> means the match/group of the RegExp to use
+for this argument. In this example the matched numbers are used as
+argument for "n", where "n" means how many lines to move down. To access the
+match of the first group, <code>match</code> has to be <em>1</em>. Counting starts at 1 and not 0
+as this is parallel to how you access the groups in normal JS-RegExp-Exec-Results
+where 0 represents the entire part of the matched text.
+If there is no match, then the <code>defaultValue</code> will be used.</p>
+<h2>Using predicates</h2>
+<p>In the same way you use predicates for commands you can use them for bindings:</p>
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="s2">&quot;regex&quot;</span><span class="o">:</span>    <span class="s2">&quot;([0-9]*)j&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;exec&quot;</span><span class="o">:</span>     <span class="s2">&quot;vim moveDown&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;params&quot;</span><span class="o">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="o">:</span>     <span class="s2">&quot;n&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;match&quot;</span><span class="o">:</span>    <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;type&quot;</span><span class="o">:</span>     <span class="s2">&quot;number&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;defaultValue&quot;</span><span class="o">:</span>     <span class="mi">1</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;predicates&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;isCommandKey&quot;</span><span class="o">:</span> <span class="kc">false</span>
+    <span class="p">}</span>
+<span class="p">},</span>
+</pre></div>
+
+
+<p>The predicate <em>isCommandKey</em> is set by the KeyboardManager. If the <em>symbolic name</em>
+is a combination of a command key (CTRL/ALT/META) + a key, then <code>isCommandKey</code>
+will be true, otherwise it's false.</p>
+<h2>Match the symbolic name and the buffer</h2>
+<p>So far, we can match either the <em>keyboard buffer</em> or the <em>symbolic name</em>, but
+not both. If you want to detect the "return" key and use former typed numbers as
+argument, you can write:</p>
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="s2">&quot;regex&quot;</span><span class="o">:</span>    <span class="p">[</span> <span class="s2">&quot;([0-9]*)&quot;</span><span class="p">,</span> <span class="s2">&quot;(j|down|return)&quot;</span> <span class="p">],</span>
+    <span class="s2">&quot;exec&quot;</span><span class="o">:</span>     <span class="s2">&quot;vim moveDown&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;params&quot;</span><span class="o">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="o">:</span>     <span class="s2">&quot;n&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;match&quot;</span><span class="o">:</span>    <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;type&quot;</span><span class="o">:</span>     <span class="s2">&quot;number&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;defaultValue&quot;</span><span class="o">:</span>     <span class="mi">1</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">},</span>
+</pre></div>
+
+
+<p>The <code>regex</code> property is an array now. Internal, this is converted to</p>
+<div class="codehilite"><pre><span class="nx">regex</span> <span class="o">=</span> <span class="p">[</span> <span class="s2">&quot;([0-9]*)&quot;</span><span class="p">,</span> <span class="s2">&quot;(j|down|return)&quot;</span> <span class="p">];</span>
+
+<span class="nx">key</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">RegExp</span><span class="p">(</span><span class="s2">&quot;^&quot;</span> <span class="o">+</span> <span class="nx">regex</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;$&quot;</span><span class="p">);</span>
+<span class="nx">regex</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">RegExp</span><span class="p">(</span><span class="nx">regex</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;$&quot;</span><span class="p">);</span>
+</pre></div>
+
+
+<p>which means that the second element of the <code>regex</code> array has to match the <em>symbolic
+name</em> and the items in the array combined have to match the <em>keyboard buffer</em>.
+This way, you can make sure that the user has not typed "1", "r", "e", "t", "u", "r", "n"
+as individual characters which then matches the binding. The combination
+of of a <code>key</code> and <code>regex</code> property is not allowed.</p>
+<h2>Disallow matches</h2>
+<p>Disallow matches is a way to tell the KeyboardManager to not use a binding if the
+<code>regex</code> property matches certain groups.</p>
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="s2">&quot;regex&quot;</span><span class="o">:</span>  <span class="p">[</span> <span class="s2">&quot;(meta_[0-9]*)*&quot;</span><span class="p">,</span> <span class="s2">&quot;([0-9]+)&quot;</span> <span class="p">],</span>
+    <span class="s2">&quot;disallowMatches&quot;</span><span class="o">:</span>  <span class="p">[</span> <span class="mi">1</span> <span class="p">],</span>
+    <span class="s2">&quot;exec&quot;</span><span class="o">:</span> <span class="s2">&quot;insertText&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;params&quot;</span><span class="o">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;match&quot;</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s2">&quot;type&quot;</span><span class="o">:</span> <span class="s2">&quot;text&quot;</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;predicates&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;isCommandKey&quot;</span><span class="o">:</span> <span class="kc">false</span>
+    <span class="p">}</span>
+<span class="p">},</span>
+</pre></div>
+
+
+<p>Let's say the <em>keyboard buffer</em> looks like "meta_12". In this case, the RegExp
+will match the <em>buffer</em> and the first matched group will be "meta_1". But as we
+specified in the <code>disallowMatches</code> property that the first group is not allowed
+to match, this binding doesn't fit.</p>
+<h2>Further reading</h2>
+<p>To get more familiar with keymappings in Bespin, take a look at the files
+<code>plugins/samples/vim.js</code> and <code>plugins/samples/emacs.js</code> for starter
+implementations of the vim and Emacs keybindings, respectively.</p>
+</div>
+<!-- / MAIN COLUMN -->
+
+<!-- SIDEBAR -->
+<div id="sidebar">
+
+
+
+
+<h2 class="compact">Contents</h2>
+<ul class="compact">
+<li><a href="index.html">Introduction</a></li>
+<li><a href="distributing.html">Distributing Plugins</a></li>
+<li><a href="editorapi.html">Editor API</a></li>
+<li><a href="testing.html">Automated Testing</a></li>
+<li><a href="template.html">Templates</a></li>
+<li><a href="theme.html">Themes</a></li>
+<li><a href="syntax.html">Syntax Highlighting</a></li>
+<li><a href="keymapping.html">Keymapping</a></li>
+</ul>
+
+
+
+
+
+
+
+</div>
+<!-- / SIDEBAR -->
+
+<!-- / MAIN CONTAINER -->
+</div>
+
+<!-- FOOTER -->
+<div id="footer">
+	<!-- COLUMN ONE -->
+	<div>
+	<h2 class="compact">Useful Links</h2>
+	<ul class="compact">
+		<li><a href="http://mozillalabs.com/bespin/">Bespin project home page</a></li>
+		<li><a href="https://wiki.mozilla.org/Labs/Bespin">Wiki</a></li>
+	</ul>
+	</div>
+	<!-- / COLUMN ONE -->
+
+	<!-- COLUMN TWO -->
+	<div>
+	<h2 class="compact">Developer Resources</h2>
+	<ul class="compact">
+	  <li><a href="http://hg.mozilla.org/labs/bespinclient/">Main Code Repository</a></li>
+	  <li><a href="http://hg.mozilla.org/labs/bespinserver/">Python server repository</a></li>
+		<li><a href="http://groups.google.com/group/bespin-core/">bespin-core mailing list for developers</a></li>
+		<li><a href="http://groups.google.com/group/bespin-commits/">bespin-commits mailing list for repository commit messages</a></li>
+		<li><a href="https://bugzilla.mozilla.org/buglist.cgi?product=bespin">Bug List</a></li>
+	</ul>
+	</div>
+	<!-- / COLUMN TWO -->
+
+	<!-- COLUMN THREE -->
+	<div>
+	<h2 class="compact">Get Help</h2>
+	<ul class="compact">
+		<li>The <a href="http://groups.google.com/group/bespin/">Bespin mailing list</a></li>
+		<li>Via IRC: <a href="irc://irc.mozilla.org/bespin">#bespin on irc.mozilla.org</a></li>
+	</ul>
+
+	<h2 class="compact">Documentation Template</h2>
+	<ul class="compact">
+		<li>Adapted from a design by <a href="http://www.mgrabovsky.is-game.com/">Matěj Grabovský</a></li>
+	</ul>
+	</div>
+	<!-- / COLUMN THREE -->
+</div>
+<!-- / FOOTER -->
+
+</body>
+</html>

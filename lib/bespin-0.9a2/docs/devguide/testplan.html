@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8">
+
+	<title>Bespin Developer's Guide</title>
+
+	<link rel="stylesheet" type="text/css" href="../css/reset.css">
+	<link rel="stylesheet" type="text/css" href="../css/stylesheet.css" media="screen,projection">
+	<link rel="stylesheet" type="text/css" href="../css/colorful.css">
+</head>
+<body>
+
+<!-- MAIN CONTAINER -->
+<div id="main-container">
+
+<!-- MENU -->
+<ul id="menu">
+	<li><a href="../index.html" title="Home">Home</a></li>
+	<li><a href="../userguide/index.html" title="User Guide">Using Bespin</a></li>
+	<li><a href="../pluginguide/index.html" title="Plugin Guide">Creating Plugins</a></li>
+	<li><a href="../embedding/index.html" title="Embedding Bespin in your app">Embedding</a></li>
+	<li class="current"><a href="../devguide/index.html" title="Developer's Guide">Developing Bespin</a></li>
+</ul>
+<!-- / MENU -->
+
+<h1 id="web-title">Bespin Developer's Guide</h1>
+<h2 id="web-subtitle">Manual Test Plan</h2>
+
+<!-- INDEX PAGE -->
+
+<!-- MAIN COLUMN -->
+<div id="maincol">
+<p>Before shipping a release, we need to manually check some things out for three 
+reasons:</p>
+<ol>
+<li>It's not always possible or practical to programmatically test things</li>
+<li>Even when things can be tested automatically, we'll want to be sure that 
+   things <em>look</em> right</li>
+<li>The docs still need to be reviewed.</li>
+</ol>
+<h2>Automated Tests</h2>
+<p>Within Bespin, you can use the "test" command to run the tests for plugins.</p>
+<h2>Browsers To Test In</h2>
+<p>We should test Embedded and server-based code in:</p>
+<ol>
+<li>Firefox <em>without Firebug</em></li>
+<li>Chrome</li>
+<li>Safari</li>
+</ol>
+<h2>Bespin Embedded</h2>
+<p>Start by creating a new release:</p>
+<div class="codehilite"><pre><span class="n">paver</span> <span class="n">release_embed</span>
+</pre></div>
+
+
+<p>Note: when trying things out in Embedded, it's often <em>much</em> faster to avoid the
+compression step. You can do this by running</p>
+<div class="codehilite"><pre><span class="n">dryice</span> <span class="n">dropin</span><span class="o">.</span><span class="n">json</span>
+</pre></div>
+
+
+<p>This is normally run as part of release_embed.</p>
+<p>You'll find the release in <code>tmp/BespinEmbedded-DropIn-VERSION/</code> and
+<code>tmp/BespinEmbedded-Customizable-VERSION/</code>. Next, you'll want 
+to make sure the release works. Make sure that you're in the virtualenv (you 
+should see <code>(bespinclient)</code> at the beginning of your command prompt).
+If you aren't in the virtualenv, run</p>
+<div class="codehilite"><pre><span class="n">source</span> <span class="n">bin</span><span class="o">/</span><span class="n">activate</span>
+</pre></div>
+
+
+<p>Once you're set, you can take a look at the sample.html:</p>
+<div class="codehilite"><pre><span class="n">cd</span> <span class="n">tmp</span><span class="o">/</span><span class="n">BespinEmbedded</span><span class="o">-</span><span class="n">DropIn</span><span class="o">-</span><span class="n">VERSION</span>
+<span class="n">static</span> <span class="o">.</span> <span class="n">localhost:8080</span>
+</pre></div>
+
+
+<p>Point your web browser at <a href="http://localhost:8080/samples/sample.html">http://localhost:8080/samples/sample.html</a> <sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup>.</p>
+<p>Make sure that the <strong>editor displays fine</strong> and that you can <strong>successfully resize 
+the window</strong> without any strange effects.</p>
+<p>Next, get out of the virtualenv by running:</p>
+<div class="codehilite"><pre><span class="n">deactivate</span>
+</pre></div>
+
+
+<p>Then, try to run and test a build:</p>
+<div class="codehilite"><pre><span class="n">cd</span> <span class="n">tmp</span><span class="o">/</span><span class="n">BespinEmbedded</span><span class="o">-</span><span class="n">Customizable</span><span class="o">-</span><span class="n">VERSION</span>
+<span class="n">dryice</span> <span class="n">sample</span><span class="o">.</span><span class="n">json</span>
+<span class="n">cd</span> <span class="n">tmp</span>
+<span class="n">static</span> <span class="o">.</span> <span class="n">localhost:8080</span>
+</pre></div>
+
+
+<p>Point your web browser at <a href="http://localhost:8080/samples/sample.html">http://localhost:8080/samples/sample.html</a> <sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup>.</p>
+<p>This editor should work as well.</p>
+<h2>Editor Behavior</h2>
+<p>As we use Bespin to edit itself more, there will be less need for this test.
+Until that time, we should test common editor behavior:</p>
+<ul>
+<li>Arrows move the insertion point around</li>
+<li>Shift+arrows change the selection</li>
+<li>Alt+arrows move a word at a time</li>
+<li>Home and End move to the beginning and end of the line</li>
+<li>Page Up and Page Down scroll one screenful at a time</li>
+<li>Cmd+X, Cmd+C, Cmd+V perform the appropriate clipboard operations, both into
+  and out of the editor</li>
+<li>Basic selection works</li>
+<li>Moving to the edge of the screen while selecting scrolls the editor</li>
+<li>Backspace and delete work appropriately</li>
+<li>HTML and JavaScript are correctly highlighted (for the former, use
+  <a href="http://localhost:8080/samples/html.html">samples/html.html</a>).</li>
+</ul>
+<h2>Documentation</h2>
+<p>Finally, run</p>
+<div class="codehilite"><pre><span class="n">paver</span> <span class="n">docs</span>
+</pre></div>
+
+
+<p>Compare the <a href="../releases/index.html">Release Notes</a> with <a href="https://bugzilla.mozilla.org/">Bugzilla</a> to
+ensure that everything is covered. This will also give you an idea for the kinds
+of documentation changes that would have been required for this release.</p>
+<p><strong>Skim through the docs</strong> to make sure everything looks reasonable for this
+release. You should obviously <strong>pay attention to any areas that have changed
+in this release</strong> and ensure that they are correct.</p>
+<div class="footnote">
+<hr>
+<ol>
+<li id="fn:1">
+<p>You can't just open sample.html directly in Firefox, because you'll get 
+a permission denied error. The Python "static" package includes this easy
+command line static file server. You can successfully open sample.html
+in Safari and Chrome.&#160;<a href="#fnref:1" rev="footnote" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+</div>
+<!-- / MAIN COLUMN -->
+
+<!-- SIDEBAR -->
+<div id="sidebar">
+
+
+
+
+
+
+
+
+<h2 class="compact">Contents</h2>
+<ul class="compact">
+<li><a href="index.html">Getting Started</a></li>
+<li><a href="tour.html">A Tour of the Code</a></li>
+<li><a href="testplan.html">Manual Test Plan</a></li>
+</ul>
+
+
+
+</div>
+<!-- / SIDEBAR -->
+
+<!-- / MAIN CONTAINER -->
+</div>
+
+<!-- FOOTER -->
+<div id="footer">
+	<!-- COLUMN ONE -->
+	<div>
+	<h2 class="compact">Useful Links</h2>
+	<ul class="compact">
+		<li><a href="http://mozillalabs.com/bespin/">Bespin project home page</a></li>
+		<li><a href="https://wiki.mozilla.org/Labs/Bespin">Wiki</a></li>
+	</ul>
+	</div>
+	<!-- / COLUMN ONE -->
+
+	<!-- COLUMN TWO -->
+	<div>
+	<h2 class="compact">Developer Resources</h2>
+	<ul class="compact">
+	  <li><a href="http://hg.mozilla.org/labs/bespinclient/">Main Code Repository</a></li>
+	  <li><a href="http://hg.mozilla.org/labs/bespinserver/">Python server repository</a></li>
+		<li><a href="http://groups.google.com/group/bespin-core/">bespin-core mailing list for developers</a></li>
+		<li><a href="http://groups.google.com/group/bespin-commits/">bespin-commits mailing list for repository commit messages</a></li>
+		<li><a href="https://bugzilla.mozilla.org/buglist.cgi?product=bespin">Bug List</a></li>
+	</ul>
+	</div>
+	<!-- / COLUMN TWO -->
+
+	<!-- COLUMN THREE -->
+	<div>
+	<h2 class="compact">Get Help</h2>
+	<ul class="compact">
+		<li>The <a href="http://groups.google.com/group/bespin/">Bespin mailing list</a></li>
+		<li>Via IRC: <a href="irc://irc.mozilla.org/bespin">#bespin on irc.mozilla.org</a></li>
+	</ul>
+
+	<h2 class="compact">Documentation Template</h2>
+	<ul class="compact">
+		<li>Adapted from a design by <a href="http://www.mgrabovsky.is-game.com/">Matěj Grabovský</a></li>
+	</ul>
+	</div>
+	<!-- / COLUMN THREE -->
+</div>
+<!-- / FOOTER -->
+
+</body>
+</html>

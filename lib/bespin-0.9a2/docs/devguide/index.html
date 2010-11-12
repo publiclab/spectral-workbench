@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8">
+
+	<title>Bespin Developer's Guide</title>
+
+	<link rel="stylesheet" type="text/css" href="../css/reset.css">
+	<link rel="stylesheet" type="text/css" href="../css/stylesheet.css" media="screen,projection">
+	<link rel="stylesheet" type="text/css" href="../css/colorful.css">
+</head>
+<body>
+
+<!-- MAIN CONTAINER -->
+<div id="main-container">
+
+<!-- MENU -->
+<ul id="menu">
+	<li><a href="../index.html" title="Home">Home</a></li>
+	<li><a href="../userguide/index.html" title="User Guide">Using Bespin</a></li>
+	<li><a href="../pluginguide/index.html" title="Plugin Guide">Creating Plugins</a></li>
+	<li><a href="../embedding/index.html" title="Embedding Bespin in your app">Embedding</a></li>
+	<li class="current"><a href="../devguide/index.html" title="Developer's Guide">Developing Bespin</a></li>
+</ul>
+<!-- / MENU -->
+
+<h1 id="web-title">Bespin Developer's Guide</h1>
+<h2 id="web-subtitle">Getting Started</h2>
+
+<!-- INDEX PAGE -->
+
+<!-- MAIN COLUMN -->
+<div id="maincol">
+<h2>Installing the Bespin Server</h2>
+<p>Important note: The Bespin Server is going to undergo a complete rework.
+You can read more about this in the <a href="http://groups.google.com/group/bespin/browse_thread/thread/6de8c718d64232a0">Bespin Server Roadmap</a>
+that was posted to the mailing list.</p>
+<p>To work on Bespin, you'll need to install the Bespin server on your local computer.</p>
+<p>You can easily get Bespin's Python server running on your local Mac or Linux machine (see note about Windows below).</p>
+<h2>Prerequisites</h2>
+<p>You will need the following installed on your system to get Bespin up and running: </p>
+<ul>
+<li>Mercurial </li>
+<li>Python 2.5 or 2.6 </li>
+</ul>
+<p>Python 2.6 is preferred.</p>
+<p><strong>NOTE FOR LINUX USERS:</strong> <em>If you are running on a Linux system, you will likely need a "python-dev" and "ruby1.8-dev" (on Ubuntu; possibly "python-devel" elsewhere) package installed, if you do not already have it. If you want to build the embedded release, you will want libyaml: the package on Ubuntu is "libyaml-dev".</em> </p>
+<p><strong>NOTE FOR MAC USERS:</strong> <em>You will need Xcode installed.</em> </p>
+<p><strong>NOTE FOR WINDOWS USERS:</strong> <em>Most Bespin developers are using unix-like platforms. Bespin's server should be able to run on Windows, though. You'll need a C compiler, and you can use Microsoft's free [http://www.microsoft.com/Express/VC/ Visual C++] compiler. As an alternative, you can use [http://www.cygwin.com/ Cygwin] or [http://www.mingw.org/ MinGW] to have a unix-like environment on your Windows system.</em></p>
+<h2>Getting Started</h2>
+<p>Run:</p>
+<div class="codehilite"><pre><span class="n">hg</span> <span class="n">clone</span> <span class="n">http:</span><span class="sr">//</span><span class="n">hg</span><span class="o">.</span><span class="n">mozilla</span><span class="o">.</span><span class="n">org</span><span class="sr">/labs/</span><span class="n">bespinclient</span><span class="o">/</span>
+<span class="n">hg</span> <span class="n">clone</span> <span class="n">http:</span><span class="sr">//</span><span class="n">hg</span><span class="o">.</span><span class="n">mozilla</span><span class="o">.</span><span class="n">org</span><span class="sr">/labs/</span><span class="n">bespinserver</span><span class="o">/</span>
+<span class="n">cd</span> <span class="n">bespinclient</span>
+</pre></div>
+
+
+<p>This will get the Bespin client and Python Bespin server code checked out. The <code>bespinclient/</code> directory is the "main" directory that you'll use.</p>
+<p>To set up Bespin for the first time, run:</p>
+<div class="codehilite"><pre><span class="n">python</span> <span class="n">bootstrap</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="nb">no</span><span class="o">-</span><span class="n">site</span><span class="o">-</span><span class="n">packages</span>
+</pre></div>
+
+
+<p>to get the environment set up. This is built around <a href="virtualenv">http://pypi.python.org/pypi/virtualenv</a>. Please watch for helpful hints and instructions on screen.</p>
+<p>In Unix-like environments, the next step is to activate the virtualenv using this command:</p>
+<div class="codehilite"><pre><span class="n">source</span> <span class="n">bin</span><span class="o">/</span><span class="n">activate</span>
+</pre></div>
+
+
+<p>on Windows, the command is Scripts/activate.bat</p>
+<p>Once the virtualenv is activate, you need to get the server set up:</p>
+<div class="codehilite"><pre><span class="n">paver</span> <span class="n">install_server</span>
+</pre></div>
+
+
+<p>And the first time around, you're also going to want to get a database set up:</p>
+<div class="codehilite"><pre><span class="n">paver</span> <span class="n">create_db</span>
+</pre></div>
+
+
+<p>If you have some trouble on macos x like the error message: ImportError: No module named `xxx'
+It's probably cause the server side is not completely installed so try:</p>
+<div class="codehilite"><pre><span class="n">cd</span> <span class="o">../</span><span class="n">bespinserver</span>
+<span class="n">paver</span> <span class="n">develop</span>
+<span class="n">paver</span> <span class="n">create_db</span>
+</pre></div>
+
+
+<h2>Starting the development server</h2>
+<p>If you are no longer (or not yet) in the virtualenv environment run within the bespinclient directory:</p>
+<p>source bin/activate</p>
+<p>To start the server execute:</p>
+<p>paver start</p>
+<p>This will start the Bespin server. You can now access the Bespin editor at http://localhost:8080/ in you browser.</p>
+<p>Have fun!</p>
+<h2>Coding Conventions</h2>
+<p>JavaScript code should follow the <a href="http://javascript.crockford.com/code.html">Crockford Code Conventions</a>. With a few minor modifications:</p>
+<ul>
+<li>
+<p>Namespaces: Crockford does not mention namespaces, probably because owning the global namespace allows you to use as much as you want. Our code is likely to be used in many different places so we should not pollute the global namespace needlessly. Our code is organized in [http://commonjs.org/specs/modules/1.0.html CommonJS] modules, so every variable should either be a "var" or attached to the "exports" object.</p>
+</li>
+<li>
+<p>_private: We agree that prefixing variables with an underscore provides no actual protection, however we think of it as a warning. "Use of this member is unsupported and likely to break without warning in future revisions". In early versions of Bespin where we are experimenting a lot, allowing 3rd parties to join in the experiment is valuable. As Bespin becomes more stable and finalized, we might expect underscored members to be replaced with closure scoped variables.</p>
+</li>
+<li>
+<p>Documentation: Bespin JavaScript is documented with <a href="http://code.google.com/p/jsdoc-toolkit/w/list">JSDoc</a>, which in practice means prefixing functions with a set of comments that use various tags.</p>
+</li>
+<li>
+<p>var first: The standard recommends putting var statements as the first statements in the function body. Crockford doesn't always follow this advice and we reserve the right to follow this lead ;-)</p>
+</li>
+</ul>
+</div>
+<!-- / MAIN COLUMN -->
+
+<!-- SIDEBAR -->
+<div id="sidebar">
+
+
+
+
+
+
+
+
+<h2 class="compact">Contents</h2>
+<ul class="compact">
+<li><a href="index.html">Getting Started</a></li>
+<li><a href="tour.html">A Tour of the Code</a></li>
+<li><a href="testplan.html">Manual Test Plan</a></li>
+</ul>
+
+
+
+</div>
+<!-- / SIDEBAR -->
+
+<!-- / MAIN CONTAINER -->
+</div>
+
+<!-- FOOTER -->
+<div id="footer">
+	<!-- COLUMN ONE -->
+	<div>
+	<h2 class="compact">Useful Links</h2>
+	<ul class="compact">
+		<li><a href="http://mozillalabs.com/bespin/">Bespin project home page</a></li>
+		<li><a href="https://wiki.mozilla.org/Labs/Bespin">Wiki</a></li>
+	</ul>
+	</div>
+	<!-- / COLUMN ONE -->
+
+	<!-- COLUMN TWO -->
+	<div>
+	<h2 class="compact">Developer Resources</h2>
+	<ul class="compact">
+	  <li><a href="http://hg.mozilla.org/labs/bespinclient/">Main Code Repository</a></li>
+	  <li><a href="http://hg.mozilla.org/labs/bespinserver/">Python server repository</a></li>
+		<li><a href="http://groups.google.com/group/bespin-core/">bespin-core mailing list for developers</a></li>
+		<li><a href="http://groups.google.com/group/bespin-commits/">bespin-commits mailing list for repository commit messages</a></li>
+		<li><a href="https://bugzilla.mozilla.org/buglist.cgi?product=bespin">Bug List</a></li>
+	</ul>
+	</div>
+	<!-- / COLUMN TWO -->
+
+	<!-- COLUMN THREE -->
+	<div>
+	<h2 class="compact">Get Help</h2>
+	<ul class="compact">
+		<li>The <a href="http://groups.google.com/group/bespin/">Bespin mailing list</a></li>
+		<li>Via IRC: <a href="irc://irc.mozilla.org/bespin">#bespin on irc.mozilla.org</a></li>
+	</ul>
+
+	<h2 class="compact">Documentation Template</h2>
+	<ul class="compact">
+		<li>Adapted from a design by <a href="http://www.mgrabovsky.is-game.com/">Matěj Grabovský</a></li>
+	</ul>
+	</div>
+	<!-- / COLUMN THREE -->
+</div>
+<!-- / FOOTER -->
+
+</body>
+</html>

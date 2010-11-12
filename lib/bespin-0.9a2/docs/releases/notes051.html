@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8">
+
+	<title>Bespin 0.5.1 Release Notes</title>
+
+	<link rel="stylesheet" type="text/css" href="../css/reset.css">
+	<link rel="stylesheet" type="text/css" href="../css/stylesheet.css" media="screen,projection">
+	<link rel="stylesheet" type="text/css" href="../css/colorful.css">
+</head>
+<body>
+
+<!-- MAIN CONTAINER -->
+<div id="main-container">
+
+<!-- MENU -->
+<ul id="menu">
+	<li><a href="../index.html" title="Home">Home</a></li>
+	<li><a href="../userguide/index.html" title="User Guide">Using Bespin</a></li>
+	<li><a href="../pluginguide/index.html" title="Plugin Guide">Creating Plugins</a></li>
+	<li><a href="../embedding/index.html" title="Embedding Bespin in your app">Embedding</a></li>
+	<li><a href="../devguide/index.html" title="Developer's Guide">Developing Bespin</a></li>
+</ul>
+<!-- / MENU -->
+
+<h1 id="web-title">Bespin 0.5.1 Release Notes</h1>
+
+
+<!-- INDEX PAGE -->
+
+<!-- MAIN COLUMN -->
+<div id="maincol">
+<p><a href="index.html">Up</a> - <a href="notes06.html">Next Release</a> - <a href="notes05.html">Previous Release</a></p>
+<h2>Known Bugs</h2>
+<p>This release is a <em>preview release</em>. We wanted to get this out to embedders 
+so that they could try it out and give us feedback on the new packaging.</p>
+<ul>
+<li>The BespinEmbedded.js file is larger than we'd like it to be, but optimizing
+  its size is not easy at this stage. We'll be looking at ways to shrink it
+  further from release to release. <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=528479">bug 528479</a></li>
+<li>Currently, Bespin is putting three objects into your page's global namespace:
+  SC, ENV and tiki. <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=528480">bug 528480</a></li>
+<li>In development, the SproutCore test runner is not yet working, likely due 
+  to the new "Tiki" module loader that Bespin is using. 
+  <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=528482">bug 528482</a></li>
+</ul>
+<h2>Features</h2>
+<ul>
+<li>You can now log in to Bespin and sign up. 
+    <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=530242">bug 530242</a></li>
+<li><em>Embedded</em> new option: dontHookWindowResizeEvent. Bespin will now
+    automatically listen for resize events and do the right thing with the
+    editor. This option lets you turn that behavior off.</li>
+</ul>
+<h2>Plugins</h2>
+<ul>
+<li>startup extension point: called when Bespin is done initializing. Use this
+    sparingly, because plugins that use this are basically not lazily loaded.</li>
+</ul>
+<h2>Bug Fixes</h2>
+<ul>
+<li><em>Embedded</em> A great many fixes with resizing.</li>
+</ul>
+<h2>Infrastructure</h2>
+<ul>
+<li>The gutter in the editor has now been broken out into a separate component.</li>
+<li>There is now a CanvasMixin that makes creating &lt;canvas&gt;-based components 
+    easier.</li>
+<li><code>paver start</code> now launches both SproutCore's Abbot build server (sc-server)
+    <em>and</em> Bespin's Python server. Abbot's server sits in front on port 4020
+    and proxies requests to Bespin's server on port 8080. All of the server
+    requests are prefixed with /server/</li>
+<li>The server now automatically serves up the plugin metadata in 
+    <code>plugins/bespin-supported</code> in the <code>bespinclient</code> project.
+    The URL for this is http://localhost:4020/server/plugin/register/defaults</li>
+<li>The Settings API has been cleaned up dramatically.</li>
+<li>When installing the server for development, the development sqlite database
+    is automatically created for you. 
+    <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=531985">bug 531985</a></li>
+</ul>
+</div>
+<!-- / MAIN COLUMN -->
+
+<!-- SIDEBAR -->
+<div id="sidebar">
+
+
+
+
+
+
+
+
+
+
+</div>
+<!-- / SIDEBAR -->
+
+<!-- / MAIN CONTAINER -->
+</div>
+
+<!-- FOOTER -->
+<div id="footer">
+	<!-- COLUMN ONE -->
+	<div>
+	<h2 class="compact">Useful Links</h2>
+	<ul class="compact">
+		<li><a href="http://mozillalabs.com/bespin/">Bespin project home page</a></li>
+		<li><a href="https://wiki.mozilla.org/Labs/Bespin">Wiki</a></li>
+	</ul>
+	</div>
+	<!-- / COLUMN ONE -->
+
+	<!-- COLUMN TWO -->
+	<div>
+	<h2 class="compact">Developer Resources</h2>
+	<ul class="compact">
+	  <li><a href="http://hg.mozilla.org/labs/bespinclient/">Main Code Repository</a></li>
+	  <li><a href="http://hg.mozilla.org/labs/bespinserver/">Python server repository</a></li>
+		<li><a href="http://groups.google.com/group/bespin-core/">bespin-core mailing list for developers</a></li>
+		<li><a href="http://groups.google.com/group/bespin-commits/">bespin-commits mailing list for repository commit messages</a></li>
+		<li><a href="https://bugzilla.mozilla.org/buglist.cgi?product=bespin">Bug List</a></li>
+	</ul>
+	</div>
+	<!-- / COLUMN TWO -->
+
+	<!-- COLUMN THREE -->
+	<div>
+	<h2 class="compact">Get Help</h2>
+	<ul class="compact">
+		<li>The <a href="http://groups.google.com/group/bespin/">Bespin mailing list</a></li>
+		<li>Via IRC: <a href="irc://irc.mozilla.org/bespin">#bespin on irc.mozilla.org</a></li>
+	</ul>
+
+	<h2 class="compact">Documentation Template</h2>
+	<ul class="compact">
+		<li>Adapted from a design by <a href="http://www.mgrabovsky.is-game.com/">Matěj Grabovský</a></li>
+	</ul>
+	</div>
+	<!-- / COLUMN THREE -->
+</div>
+<!-- / FOOTER -->
+
+</body>
+</html>

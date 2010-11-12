@@ -140,6 +140,7 @@ Fred.Polygon = Class.create({
 		this.apply_style()
 		beginPath()
 		var over_point = false
+		moveTo(this.points.first().x,this.points.first().y)
 		this.points.each(function(point){
 			lineTo(point.x,point.y)
 			save()

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8">
+
+	<title>Bespin Embedded Guide</title>
+
+	<link rel="stylesheet" type="text/css" href="../css/reset.css">
+	<link rel="stylesheet" type="text/css" href="../css/stylesheet.css" media="screen,projection">
+	<link rel="stylesheet" type="text/css" href="../css/colorful.css">
+</head>
+<body>
+
+<!-- MAIN CONTAINER -->
+<div id="main-container">
+
+<!-- MENU -->
+<ul id="menu">
+	<li><a href="../index.html" title="Home">Home</a></li>
+	<li><a href="../userguide/index.html" title="User Guide">Using Bespin</a></li>
+	<li><a href="../pluginguide/index.html" title="Plugin Guide">Creating Plugins</a></li>
+	<li class="current"><a href="../embedding/index.html" title="Embedding Bespin in your app">Embedding</a></li>
+	<li><a href="../devguide/index.html" title="Developer's Guide">Developing Bespin</a></li>
+</ul>
+<!-- / MENU -->
+
+<h1 id="web-title">Bespin Embedded Guide</h1>
+<h2 id="web-subtitle">Application Configuration</h2>
+
+<!-- INDEX PAGE -->
+
+<!-- MAIN COLUMN -->
+<div id="maincol">
+<h1>Gluing Bespin Together</h1>
+<p>Bespin is built as a dynamic, customizable editor. It's created out of a
+collection of plugins so that it can start out as something that just
+replaces a textarea and grow via plugins to a complete client/server 
+development environment.</p>
+<p>Bespin includes a plugin called <em>appconfig</em> which is responsible for
+gluing all of the desired available pieces together. It will instantiate
+objects that are used behind the scenes throughout Bespin and will also
+create components that provide the user interface that you see.</p>
+<p><em>appconfig</em> has sane default behavior for a few of the supported Bespin plugins.
+For example, if the <em>command_line</em> plugin is available, Bespin will
+automatically include it when it sets up the GUI.</p>
+<h2>Calling appconfig</h2>
+<p>When you use Bespin Embedded, you will generally call the bespin.useBespin 
+function to get Bespin running. This, in turn, calls appconfig.launch
+with your config. The useBespin function merges configuration that is
+provided in your dryice manifest (see <a href="building.html">the building doc</a>
+for more information about manifests) with the configuration that is
+passed in by the page.</p>
+<p>This setup gives you a lot of flexibility in how you configure your
+Bespin.</p>
+<h2>objects</h2>
+<p>The configuration object can have a property of "objects" on it.
+config.objects defines a collection of objects that need to be
+created and used across Bespin. config.objects is an object. The
+keys on the object will become the names of the created objects
+and the values define how the object is created. Here's a simple
+example config:</p>
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nx">objects</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">settings</span><span class="o">:</span> <span class="p">{}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>appconfig will register an object with the name <code>settings</code> in the
+Bespin plugin catalog (<code>bespin:plugins#catalog</code>). To create that
+object, Bespin will look for a <code>factory</code> extension with the name
+<code>settings</code>. That factory doesn't require any additional parameters.</p>
+<p>Here's a more complex example:</p>
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nx">objects</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">server</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">factory</span><span class="o">:</span> <span class="s2">&quot;bespin_server&quot;</span>
+        <span class="p">},</span>
+        <span class="nx">filesource</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">factory</span><span class="o">:</span> <span class="s2">&quot;bespin_filesource&quot;</span><span class="p">,</span>
+            <span class="nx">arguments</span><span class="o">:</span> <span class="p">[</span>
+                <span class="s2">&quot;server&quot;</span>
+            <span class="p">],</span>
+            <span class="nx">objects</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;0&quot;</span><span class="o">:</span> <span class="s2">&quot;server&quot;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nx">files</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">arguments</span><span class="o">:</span> <span class="p">[</span>
+                <span class="s2">&quot;filesource&quot;</span>
+            <span class="p">],</span>
+            <span class="s2">&quot;objects&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;0&quot;</span><span class="o">:</span> <span class="s2">&quot;filesource&quot;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>The <code>server</code> object will be created by looking up a factory extension called
+<code>bespin_server</code>. There are no arguments for that one. The <code>filesource</code>
+is created by finding the <code>bespin_filesource</code> factory and passing in
+the arguments provided. Here's the tricky bit: that factory actually needs
+a bespin_server instance, not the string "server". The <code>objects</code> property
+for <code>filesource</code> says to replace element <code>0</code> in the arguments array with
+the object called <code>server</code>. The plugin catalog knows to create the
+server first, and then create the filesource.</p>
+<p>Finally, <code>files</code> works a lot like <code>filesource</code>. Since there is no
+<code>factory</code> property, the factory name is assumed to be <code>files</code>. That
+object will be passed the <code>filesource</code> object that is created. Through
+this mechanism, it's very easy to configure Bespin to use a file source
+other than the Bespin server.</p>
+<h2>gui</h2>
+<p>Bespin's graphical user interface is wired up by plugging GUI components
+into a "border-style" layout. There are presently 5 zones: north, east,
+south, west and center. Generally, you'd stick the editor in the center.
+The GUI components are objects that are created via the config.objects
+mechanism described in the previous section.</p>
+<p>By default, if there's an <code>editor</code> object available and there's nothing
+explicitly placed in the center, then the editor is placed there. Here's
+what that line of code looks like:</p>
+<div class="codehilite"><pre><span class="nx">config</span><span class="p">.</span><span class="nx">gui</span><span class="p">.</span><span class="nx">center</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">component</span><span class="o">:</span> <span class="s2">&quot;editor&quot;</span> <span class="p">};</span>
+</pre></div>
+
+
+<p>Setting up the GUI is as simple as that. <code>config.gui.</code><em>location</em> is
+an object that specifies a component. The component value is the
+object name that is looked up.</p>
+<p>A component is an object that has an <code>element</code> defined on it. That is
+the DOM element that will be plugged into the overall layout.</p>
+<p>Speaking of layout, it's worth noting that the border layout is built
+upon the CSS3 Flexible Box Model and the component elements are
+placed into the GUI by just adding a class name matching the
+zone (for example, "north"). It should be possible for a theme to change
+the way these are laid out.</p>
+<h2>settings</h2>
+<p>You can also set settings (such as tabstop or theme) by adding a settings
+object to the config.</p>
+</div>
+<!-- / MAIN COLUMN -->
+
+<!-- SIDEBAR -->
+<div id="sidebar">
+
+
+
+
+
+
+<h2 class="compact">Contents</h2>
+<ul class="compact">
+<li><a href="index.html">Introduction</a></li>
+<li><a href="building.html">Creating a Custom, Embedded Bespin</a></li>
+<li><a href="appconfig.html">Application Configuration</a></li>
+<li><a href="installing.html">Installing Plugins</a></li>
+</ul>
+
+
+
+
+
+</div>
+<!-- / SIDEBAR -->
+
+<!-- / MAIN CONTAINER -->
+</div>
+
+<!-- FOOTER -->
+<div id="footer">
+	<!-- COLUMN ONE -->
+	<div>
+	<h2 class="compact">Useful Links</h2>
+	<ul class="compact">
+		<li><a href="http://mozillalabs.com/bespin/">Bespin project home page</a></li>
+		<li><a href="https://wiki.mozilla.org/Labs/Bespin">Wiki</a></li>
+	</ul>
+	</div>
+	<!-- / COLUMN ONE -->
+
+	<!-- COLUMN TWO -->
+	<div>
+	<h2 class="compact">Developer Resources</h2>
+	<ul class="compact">
+	  <li><a href="http://hg.mozilla.org/labs/bespinclient/">Main Code Repository</a></li>
+	  <li><a href="http://hg.mozilla.org/labs/bespinserver/">Python server repository</a></li>
+		<li><a href="http://groups.google.com/group/bespin-core/">bespin-core mailing list for developers</a></li>
+		<li><a href="http://groups.google.com/group/bespin-commits/">bespin-commits mailing list for repository commit messages</a></li>
+		<li><a href="https://bugzilla.mozilla.org/buglist.cgi?product=bespin">Bug List</a></li>
+	</ul>
+	</div>
+	<!-- / COLUMN TWO -->
+
+	<!-- COLUMN THREE -->
+	<div>
+	<h2 class="compact">Get Help</h2>
+	<ul class="compact">
+		<li>The <a href="http://groups.google.com/group/bespin/">Bespin mailing list</a></li>
+		<li>Via IRC: <a href="irc://irc.mozilla.org/bespin">#bespin on irc.mozilla.org</a></li>
+	</ul>
+
+	<h2 class="compact">Documentation Template</h2>
+	<ul class="compact">
+		<li>Adapted from a design by <a href="http://www.mgrabovsky.is-game.com/">Matěj Grabovský</a></li>
+	</ul>
+	</div>
+	<!-- / COLUMN THREE -->
+</div>
+<!-- / FOOTER -->
+
+</body>
+</html>

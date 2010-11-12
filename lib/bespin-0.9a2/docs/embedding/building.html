@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8">
+
+	<title>Bespin Embedded Guide</title>
+
+	<link rel="stylesheet" type="text/css" href="../css/reset.css">
+	<link rel="stylesheet" type="text/css" href="../css/stylesheet.css" media="screen,projection">
+	<link rel="stylesheet" type="text/css" href="../css/colorful.css">
+</head>
+<body>
+
+<!-- MAIN CONTAINER -->
+<div id="main-container">
+
+<!-- MENU -->
+<ul id="menu">
+	<li><a href="../index.html" title="Home">Home</a></li>
+	<li><a href="../userguide/index.html" title="User Guide">Using Bespin</a></li>
+	<li><a href="../pluginguide/index.html" title="Plugin Guide">Creating Plugins</a></li>
+	<li class="current"><a href="../embedding/index.html" title="Embedding Bespin in your app">Embedding</a></li>
+	<li><a href="../devguide/index.html" title="Developer's Guide">Developing Bespin</a></li>
+</ul>
+<!-- / MENU -->
+
+<h1 id="web-title">Bespin Embedded Guide</h1>
+<h2 id="web-subtitle">Building</h2>
+
+<!-- INDEX PAGE -->
+
+<!-- MAIN COLUMN -->
+<div id="maincol">
+<p>If you have a Bespin Embedded Customizable package, you can build your own
+custom version of Bespin Embedded, with just the plugins you want. </p>
+<h2>Prerequisites</h2>
+<p>You will need Python 2.5 or 2.6 in order to build a custom Bespin. If you're using Python 2.5, you will also need to install simplejson.</p>
+<h2>The Manifest</h2>
+<p>To define what is included in your build, you will create a .json file called
+the "manifest". It can have any name you want, as you'll see in the next section.</p>
+<p>Here is a simple manifest:</p>
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="s2">&quot;include_tests&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="s2">&quot;plugins&quot;</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;embedded&quot;</span><span class="p">,</span> <span class="s2">&quot;command_line&quot;</span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>You'll want the <code>embedded</code> plugin, to be sure. This plugin actually does 
+nothing other than include a collection of plugins that are required to make
+the editor work. When you list a 
+plugin in the manifest, the plugin and all of its dependencies will be
+incorporated into the final build.</p>
+<h2>Manifest Options</h2>
+<dl>
+<dt>include_tests</dt>
+<dd>should the output include Bespin's test suite?
+This is useful if you're doing Bespin development in Bespin.</dd>
+<dt>include_sample</dt>
+<dd>should the final output directory include a <code>samples</code> directory that
+contains HTML files that show off the editor?</dd>
+<dt>jquery</dt>
+<dd>Bespin uses jQuery for its utility functions. By default, Bespin will
+use its own private copy of jQuery. The jquery build option can be
+set to either "global" or "builtin". When jquery="global", Bespin
+will use the jQuery that is on "window".</dd>
+<dt>output_dir</dt>
+<dd>directory where the finished files should be placed. Note that this
+directory will be recreated with each build. Do not point to a directory
+that you don't want to have deleted. The default is <code>build</code>.</dd>
+<dt>plugins</dt>
+<dd>list of plugins (but you don't need to list their dependencies) to include
+in the build output</dd>
+<dt>dynamic_plugins</dt>
+<dd>list of plugins that should be available for dynamic loading. These will
+end up in a "plugins" directory and their metadata will be available to
+your Embedded Bespin plugin system</dd>
+<dt>search_path</dt>
+<dd>provide a list of relative (to the current directory) or absolute paths
+to search for plugins. These paths are added to the beginning of the
+search path. The directories within the "plugins" directory in the current
+directory are automatically added to the end of the search path.</dd>
+<dt>config</dt>
+<dd>the default <a href="appconfig.html">appconfig</a> to use in the build</dd>
+</dl>
+<h2>Using Bespin with your own jQuery</h2>
+<p>Bespin uses jQuery for utility functions. Additionally, some Bespin plugins use
+various jQuery plugins for higher-level user interface widgets. If you are 
+already using jQuery on your page, you can set jquery="global" in your manifest
+file, and you will end up with a smaller Bespin build that does not include
+jQuery.</p>
+<p><em>Important Note</em>: you should ensure that the Bespin plugins that use jQuery
+plugins do not interfere with jQuery plugins that you are using elsewhere
+on your page.</p>
+<h2>Writing Your Own Plugins</h2>
+<p>One of the main reasons to use the Customizable package is that you want to,
+well, customize Bespin. Generally speaking, this means adding your own
+collection of plugins. Let's create a "hello world" style plugin to see how
+we can build it into Bespin.</p>
+<p>Start by creating a directory <em>next to</em> your Bespin Embedded directory.
+The reason we create this directory next to your Bespin directory is that 
+you're likely to update Bespin from time to time and you wouldn't want to
+overwrite your plugins. We'll call the directory "MyPlugins".</p>
+<p>In the same directory as the MyPlugins directory, create a "mybespin.json"
+manifest that looks like this:</p>
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="s">&quot;output_dir&quot;</span><span class="p">:</span> <span class="s">&quot;tmp&quot;</span><span class="p">,</span>
+    <span class="s">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s">&quot;embedded&quot;</span><span class="p">,</span> <span class="s">&quot;hello_world&quot;</span><span class="p">],</span>
+    <span class="s">&quot;include_sample&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span>
+    <span class="s">&quot;search_path&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s">&quot;../MyPlugins&quot;</span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Finally, we create the plugin itself. This is a file called hello_world.js
+in the MyPlugins directory that you just created.</p>
+<div class="codehilite"><pre><span class="s">&quot;define metadata&quot;</span><span class="p">;</span>
+<span class="p">({</span>
+    <span class="s">&quot;provides&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s">&quot;ep&quot;</span><span class="p">:</span> <span class="s">&quot;command&quot;</span><span class="p">,</span>
+            <span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="s">&quot;alert&quot;</span><span class="p">,</span>
+            <span class="s">&quot;key&quot;</span><span class="p">:</span> <span class="s">&quot;ctrl_i&quot;</span><span class="p">,</span>
+            <span class="s">&quot;pointer&quot;</span><span class="p">:</span> <span class="s">&quot;#showMessage&quot;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">});</span>
+<span class="s">&quot;end&quot;</span><span class="p">;</span>
+
+<span class="n">exports</span><span class="o">.</span><span class="n">showMessage</span> <span class="o">=</span> <span class="n">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">alert</span><span class="p">(</span><span class="s">&quot;Greetings from the Cloud!&quot;</span><span class="p">);</span>
+<span class="p">};</span>
+</pre></div>
+
+
+<p>OK, now we're all set to try out our new plugin in a customized Bespin.
+We'll use the dryice tool (described in more detail in the next section)
+to create the build. Switch to the Bespin Embedded directory and then
+run:</p>
+<div class="codehilite"><pre><span class="n">python</span> <span class="n">dryice</span><span class="o">.</span><span class="n">py</span> <span class="o">../</span><span class="n">mybespin</span><span class="o">.</span><span class="n">json</span>
+<span class="n">cd</span> <span class="n">tmp</span>
+</pre></div>
+
+
+<p>If you look at the files in your tmp directory, you'll see a fresh
+BespinEmbedded.js. That one will actually include your plugin! Open the
+sample.html file in your web browser, click on the editor and press
+cmd-I (ctrl-I on Windows) and you'll see your alert pop up.</p>
+<h2>The dryice Server</h2>
+<p>If you're hacking on plugins purely with the Bespin Embedded Customizable
+package, it gets annoying to have to re-run dryice every time you make a
+change. For this reason, dryice has a simple server that you can run. The
+simplest way to get going is:</p>
+<div class="codehilite"><pre><span class="n">python</span> <span class="n">dryice</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">s</span> <span class="mi">8080</span> <span class="o">../</span><span class="n">mybespin</span><span class="o">.</span><span class="n">json</span>
+</pre></div>
+
+
+<p>This will start the server on port 8080, using the manifest file that
+we created in the previous section. Just point your browser to
+<a href="">http://localhost:8080/</a> and you should see your custom Bespin build!
+It will be rebuilt each time you reload the page.</p>
+<h2>Building</h2>
+<p>Use the "dryice" command line tool to build according to the manifest.</p>
+<p>Run "dryice -h" for up-to-date usage information.</p>
+<p>Generally speaking, using dryice is just a matter of pointing the tool at
+your manifest file, which describes what needs to be built.</p>
+<p>After the JavaScript files are generated, you will likely want to compress 
+those files for faster loading over the internet. dryice can do this for
+you, using the Closure Compiler for the JavaScript. Thise is included in the
+in the "compressors" directory. To activate dryice compression, run a 
+command like this one:</p>
+<div class="codehilite"><pre><span class="n">dryice</span> <span class="o">-</span><span class="n">j</span> <span class="n">compressors</span><span class="o">/</span><span class="n">compiler</span><span class="o">.</span><span class="n">jar</span> <span class="n">MANIFEST</span><span class="o">.</span><span class="n">JSON</span>
+</pre></div>
+
+
+<p>If you're testing out your builds, leaving the compression step off is
+a good idea, because it takes far longer to run the compressors than it does
+for dryice to do its work.</p>
+<p>Also of note: you can override options in the manifest file using the
+-D flag. You use -Dkey=value, and you can have multiple of them on the command
+line. Note that the <code>value</code> part of that should be a JSON value. So, if it's
+a string, it should be enclosed in quotes. Reminder: in many Unix shells
+you'll need to put a backslash before the " character so that the shell knows
+that you want to include that literally in the parameter to the command.</p>
+</div>
+<!-- / MAIN COLUMN -->
+
+<!-- SIDEBAR -->
+<div id="sidebar">
+
+
+
+
+
+
+<h2 class="compact">Contents</h2>
+<ul class="compact">
+<li><a href="index.html">Introduction</a></li>
+<li><a href="building.html">Creating a Custom, Embedded Bespin</a></li>
+<li><a href="appconfig.html">Application Configuration</a></li>
+<li><a href="installing.html">Installing Plugins</a></li>
+</ul>
+
+
+
+
+
+</div>
+<!-- / SIDEBAR -->
+
+<!-- / MAIN CONTAINER -->
+</div>
+
+<!-- FOOTER -->
+<div id="footer">
+	<!-- COLUMN ONE -->
+	<div>
+	<h2 class="compact">Useful Links</h2>
+	<ul class="compact">
+		<li><a href="http://mozillalabs.com/bespin/">Bespin project home page</a></li>
+		<li><a href="https://wiki.mozilla.org/Labs/Bespin">Wiki</a></li>
+	</ul>
+	</div>
+	<!-- / COLUMN ONE -->
+
+	<!-- COLUMN TWO -->
+	<div>
+	<h2 class="compact">Developer Resources</h2>
+	<ul class="compact">
+	  <li><a href="http://hg.mozilla.org/labs/bespinclient/">Main Code Repository</a></li>
+	  <li><a href="http://hg.mozilla.org/labs/bespinserver/">Python server repository</a></li>
+		<li><a href="http://groups.google.com/group/bespin-core/">bespin-core mailing list for developers</a></li>
+		<li><a href="http://groups.google.com/group/bespin-commits/">bespin-commits mailing list for repository commit messages</a></li>
+		<li><a href="https://bugzilla.mozilla.org/buglist.cgi?product=bespin">Bug List</a></li>
+	</ul>
+	</div>
+	<!-- / COLUMN TWO -->
+
+	<!-- COLUMN THREE -->
+	<div>
+	<h2 class="compact">Get Help</h2>
+	<ul class="compact">
+		<li>The <a href="http://groups.google.com/group/bespin/">Bespin mailing list</a></li>
+		<li>Via IRC: <a href="irc://irc.mozilla.org/bespin">#bespin on irc.mozilla.org</a></li>
+	</ul>
+
+	<h2 class="compact">Documentation Template</h2>
+	<ul class="compact">
+		<li>Adapted from a design by <a href="http://www.mgrabovsky.is-game.com/">Matěj Grabovský</a></li>
+	</ul>
+	</div>
+	<!-- / COLUMN THREE -->
+</div>
+<!-- / FOOTER -->
+
+</body>
+</html>

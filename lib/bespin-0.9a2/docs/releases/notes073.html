@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8">
+
+	<title>Bespin 0.7.3 Release Notes</title>
+
+	<link rel="stylesheet" type="text/css" href="../css/reset.css">
+	<link rel="stylesheet" type="text/css" href="../css/stylesheet.css" media="screen,projection">
+	<link rel="stylesheet" type="text/css" href="../css/colorful.css">
+</head>
+<body>
+
+<!-- MAIN CONTAINER -->
+<div id="main-container">
+
+<!-- MENU -->
+<ul id="menu">
+	<li><a href="../index.html" title="Home">Home</a></li>
+	<li><a href="../userguide/index.html" title="User Guide">Using Bespin</a></li>
+	<li><a href="../pluginguide/index.html" title="Plugin Guide">Creating Plugins</a></li>
+	<li><a href="../embedding/index.html" title="Embedding Bespin in your app">Embedding</a></li>
+	<li><a href="../devguide/index.html" title="Developer's Guide">Developing Bespin</a></li>
+</ul>
+<!-- / MENU -->
+
+<h1 id="web-title">Bespin 0.7.3 Release Notes</h1>
+
+
+<!-- INDEX PAGE -->
+
+<!-- MAIN COLUMN -->
+<div id="maincol">
+<p><a href="index.html">Up</a> - <a href="nodes08.html">Next Release</a> - <a href="notes072.html">Previous Release</a></p>
+<h2>Known Issues</h2>
+<p>Bespin 0.7.3 is <em>alpha</em> software. It is still under active development
+and APIs are subject to change. Bespin 0.7 marks the first server release
+since the Bespin project Reboot. There is still a bit of work required
+before the server reaches feature and polish parity with 0.4.4. However, Bespin
+0.7 also does a number of things that 0.4.4 didn't.</p>
+<p>For <em>Bespin Embedded</em>:</p>
+<ul>
+<li>Bespin Embedded does not attach correctly to a textarea (bug 535819;
+  workaround: change the textarea to a div first)</li>
+<li>There is no CSS syntax highlighting yet (bug 547272)</li>
+<li>The editor does not yet support tab characters (bug 543999)</li>
+<li>The Embedded editor remains larger than we'd like, but shrinking
+  it down is low priority at the moment</li>
+</ul>
+<p>For <em>Bespin Server</em>:</p>
+<ul>
+<li>Collaboration is not done yet (bug 554943)</li>
+<li>The File Explorer is still missing (bug 554945)</li>
+<li>The "svn" commands have not been resurrected (bug 554625)</li>
+<li>project import and export have not been resurrected (bug 554946 and 
+  bug 554947)</li>
+<li>The command line does not yet support aliases, which means that you may
+  need to use different names for some of the commands you're used to
+  in earlier Bespins (bug 543968)</li>
+</ul>
+<h2>Changes</h2>
+<ul>
+<li>The fileextension extension point has been eliminated. Syntax highlighters
+  now directly report which file extensions they are designed to work with.</li>
+</ul>
+<h2>Features</h2>
+<ul>
+<li>The open command is now bound to cmd/ctrl-O (bug 560943)</li>
+<li>The file completion for the open command now allows you to press
+  ALT-# to select a given file from the list quickly and without
+  leaving the keyboard. This also works with any other completion
+  menu (bug 555958)</li>
+<li>The display of a completion result when the result is not a prefix
+  match has been improved. It now displays 
+  what_you_typed -&gt; what_it_completes_to (bug 555959)</li>
+<li><code>ep</code> command will list the extension points in your Bespin or provide details
+  about a single extension point. This makes it a lot easier to write extensions.</li>
+<li><code>plugin info</code> command lists details about a given plugin and what it provides.</li>
+<li>The preview command is back (bug 554958)</li>
+<li>The Bespin Embedded API has been improved, with many new methods (bug 545208)</li>
+<li>The password recovery feature is back (bug 558323)</li>
+<li>You can now log in using your email address or username. (Note that
+  if your email address is associated with more than one account, you
+  will have to log in with your username.)</li>
+<li>The editor now supports a "read only" mode, that is going to be used
+  in future features.</li>
+<li>Plugins can now have an ordering set. So, for example, you can install
+  both vim and emacs keybindings and explicitly set that one of them
+  has precedence. (bug 558790)</li>
+</ul>
+<h2>Fixes</h2>
+<ul>
+<li>The "saveas" command was not always working. This was largely due to
+  bad error reporting (bug 558670)</li>
+<li>Pressing enter quickly after typing the last character on the command
+  line can lead to the last character of input getting chopped off
+  (bug 554952)</li>
+<li>CSS in user-created plugins is now served up properly (bug 561070)</li>
+<li>Better error messages for the "plugin add" command (bug 558316)</li>
+<li>Settings defined by plugins were not always loading (bug 559020)</li>
+<li>plugin install from a URL now works again. So you can, for example,
+  toss a plugin up as a gist on GitHub and then install it with
+  plugin install. (bug 558310)</li>
+<li>Installing a plugin with a command in it would not allow you to run 
+  the command immediately (you'd have to reload the page). This
+  works properly now, without reloads. (bug 556345)</li>
+<li>The "version" command works properly (bug 552672)</li>
+<li>The correct cursor is now used for the editor (bug 561332)</li>
+</ul>
+</div>
+<!-- / MAIN COLUMN -->
+
+<!-- SIDEBAR -->
+<div id="sidebar">
+
+
+
+
+
+
+
+
+
+
+</div>
+<!-- / SIDEBAR -->
+
+<!-- / MAIN CONTAINER -->
+</div>
+
+<!-- FOOTER -->
+<div id="footer">
+	<!-- COLUMN ONE -->
+	<div>
+	<h2 class="compact">Useful Links</h2>
+	<ul class="compact">
+		<li><a href="http://mozillalabs.com/bespin/">Bespin project home page</a></li>
+		<li><a href="https://wiki.mozilla.org/Labs/Bespin">Wiki</a></li>
+	</ul>
+	</div>
+	<!-- / COLUMN ONE -->
+
+	<!-- COLUMN TWO -->
+	<div>
+	<h2 class="compact">Developer Resources</h2>
+	<ul class="compact">
+	  <li><a href="http://hg.mozilla.org/labs/bespinclient/">Main Code Repository</a></li>
+	  <li><a href="http://hg.mozilla.org/labs/bespinserver/">Python server repository</a></li>
+		<li><a href="http://groups.google.com/group/bespin-core/">bespin-core mailing list for developers</a></li>
+		<li><a href="http://groups.google.com/group/bespin-commits/">bespin-commits mailing list for repository commit messages</a></li>
+		<li><a href="https://bugzilla.mozilla.org/buglist.cgi?product=bespin">Bug List</a></li>
+	</ul>
+	</div>
+	<!-- / COLUMN TWO -->
+
+	<!-- COLUMN THREE -->
+	<div>
+	<h2 class="compact">Get Help</h2>
+	<ul class="compact">
+		<li>The <a href="http://groups.google.com/group/bespin/">Bespin mailing list</a></li>
+		<li>Via IRC: <a href="irc://irc.mozilla.org/bespin">#bespin on irc.mozilla.org</a></li>
+	</ul>
+
+	<h2 class="compact">Documentation Template</h2>
+	<ul class="compact">
+		<li>Adapted from a design by <a href="http://www.mgrabovsky.is-game.com/">Matěj Grabovský</a></li>
+	</ul>
+	</div>
+	<!-- / COLUMN THREE -->
+</div>
+<!-- / FOOTER -->
+
+</body>
+</html>

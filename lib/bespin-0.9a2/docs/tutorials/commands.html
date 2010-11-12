@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8">
+
+	<title>Bespin Tutorials</title>
+
+	<link rel="stylesheet" type="text/css" href="../css/reset.css">
+	<link rel="stylesheet" type="text/css" href="../css/stylesheet.css" media="screen,projection">
+	<link rel="stylesheet" type="text/css" href="../css/colorful.css">
+</head>
+<body>
+
+<!-- MAIN CONTAINER -->
+<div id="main-container">
+
+<!-- MENU -->
+<ul id="menu">
+	<li><a href="../index.html" title="Home">Home</a></li>
+	<li><a href="../userguide/index.html" title="User Guide">Using Bespin</a></li>
+	<li><a href="../pluginguide/index.html" title="Plugin Guide">Creating Plugins</a></li>
+	<li><a href="../embedding/index.html" title="Embedding Bespin in your app">Embedding</a></li>
+	<li><a href="../devguide/index.html" title="Developer's Guide">Developing Bespin</a></li>
+</ul>
+<!-- / MENU -->
+
+<h1 id="web-title">Bespin Tutorials</h1>
+<h2 id="web-subtitle">Manipulating Text Through Commands</h2>
+
+<!-- INDEX PAGE -->
+
+<!-- MAIN COLUMN -->
+<div id="maincol">
+<h1>Introduction</h1>
+<p>This tutorial was originally written for Bespin 0.9.</p>
+<p>In this tutorial, we'll be creating new commands that allow Bespin to work
+with <a href="http://daringfireball.net/projects/markdown/">Markdown</a> formatted
+text.</p>
+<p>For this tutorial, <strong>you'll need the markdown_js plugin</strong> which is available
+from the Plugin Gallery.</p>
+<h2>Setting Up</h2>
+<p>With this tutorial, we're starting from the very basics. You'll need Python
+(preferably 2.6) to do custom Bespin plugin development. If you don't have
+Python already, you can get it <a href="http://python.org/">prebuilt for your platform</a>
+with little fuss.</p>
+<p>You'll also need Bespin Embedded, which you can get from the
+<a href="http://ftp.mozilla.org/pub/mozilla.org/labs/bespin/Embedded/">releases directory on ftp.mozilla.org</a>.</p>
+<p>Make a directory called <code>bespintutorial</code>. Uncompress the BespinEmbedded package
+in there and rename the directory from the tarfile <code>bespin</code> (so you'll have
+<code>bespintutorial/bespin/</code>). On a Mac, you can do these things from the Terminal
+command line:</p>
+<div class="codehilite"><pre><span class="nb">mkdir</span> <span class="n">bespintutorial</span>
+<span class="n">cd</span> <span class="n">bespintutorial</span>
+<span class="n">cp</span> <span class="o">~</span><span class="sr">/Downloads/</span><span class="n">BespinEmbedded</span><span class="o">-</span><span class="n">VERSION</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span> <span class="o">.</span>
+<span class="n">tar</span> <span class="n">xzf</span> <span class="n">BespinEmbedded</span><span class="o">-</span><span class="n">VERSION</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
+<span class="n">mv</span> <span class="n">BespinEmbedded</span><span class="o">-</span><span class="n">VERSION</span> <span class="n">bespin</span>
+</pre></div>
+
+
+<h2>The Manifest</h2>
+<p>Bespin's build tool, dryice, uses a "manifest" file in JSON format to describe
+what it needs to build and where to find all of the parts. Open up your
+text editor to create a file called <code>manifest.json</code> in the <code>bespintutorial</code>
+directory. Here's what will go into the file at this step:</p>
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="s2">&quot;output_dir&quot;</span><span class="o">:</span> <span class="s2">&quot;../build&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;plugins&quot;</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;embedded&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;search_path&quot;</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;..&quot;</span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>We'll be running the build from the <code>bespin</code> directory, so those <code>..</code> in
+the manifest are referring to the <code>bespintutorial</code> directory.</p>
+<p>Now, we'll fire up the dryice server. This command assumes at Python is
+on your path:</p>
+<div class="codehilite"><pre><span class="n">cd</span> <span class="n">bespin</span>
+<span class="n">python</span> <span class="n">dryice</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">s</span> <span class="mi">8080</span> <span class="o">../</span><span class="n">manifest</span><span class="o">.</span><span class="n">json</span>
+</pre></div>
+
+
+<p>After running that command, you can open up your browser to 
+http://localhost:8080/ and you should see the Bespin editor that dryice
+just built for us.</p>
+<p>Next, place the <code>markdown_js.js</code> file which you got from the Plugin Gallery
+into the <code>bespintutorial</code> directory.</p>
+<h2>Getting Our Plugin Going</h2>
+<p>Now, we'll create a new file called <code>markdown.js</code>. This is our Bespin plugin
+file. Bespin plugins all have a metadata section, so let's put that at the
+top of our file to get us going:</p>
+<div class="codehilite"><pre><span class="s2">&quot;define metadata&quot;</span><span class="p">;</span>
+<span class="p">({</span>
+    <span class="s2">&quot;dependencies&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;markdown_js&quot;</span><span class="o">:</span> <span class="s2">&quot;0.1.2&quot;</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+<span class="s2">&quot;end&quot;</span><span class="p">;</span>
+</pre></div>
+
+
+<p>So, that's our whole plugin for now. All we're saying is that our plugin
+depends on the <code>markdown_js</code> plugin (version 0.1.2). Now we have to tell
+dryice about our new plugin, so we'll add it to the plugins line
+of our manifest.json file:</p>
+<div class="codehilite"><pre><span class="s">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s">&quot;embedded&quot;</span><span class="p">,</span> <span class="s">&quot;markdown&quot;</span><span class="p">],</span>
+</pre></div>
+
+
+<p>You should be able to reload http://localhost:8080/ and have things still work.</p>
+<h2>Making Our Plugin Do Something</h2>
+<p>Since we're going to be making commands, it would be most convenient for us
+at this point to have a command line. So, we'll add the <code>command_line</code>
+plugin to our manifest.json file:</p>
+<div class="codehilite"><pre><span class="s">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s">&quot;embedded&quot;</span><span class="p">,</span> <span class="s">&quot;markdown&quot;</span><span class="p">,</span> <span class="s">&quot;command_line&quot;</span><span class="p">],</span>
+</pre></div>
+
+
+<p>Reload the page in your browser and you should see the command line at the
+bottom. I also like being able to press cmd-J (ctrl-J on Windows/Linux) to
+switch between the command line and the editor. The uicommands plugin gives
+us that, so let's enable that, too:</p>
+<div class="codehilite"><pre><span class="s">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s">&quot;embedded&quot;</span><span class="p">,</span> <span class="s">&quot;markdown&quot;</span><span class="p">,</span> <span class="s">&quot;command_line&quot;</span><span class="p">,</span> <span class="s">&quot;uicommands&quot;</span><span class="p">],</span>
+</pre></div>
+
+
+<p>Now we're ready to make our first command. We're going to make a command
+that:</p>
+<ol>
+<li>converts the Markdown text we've entered to HTML</li>
+<li>puts that HTML in a new window so we can preview it.</li>
+</ol>
+<p>Let's write a function that does these things.</p>
+<div class="codehilite"><pre><span class="kd">var</span> <span class="nx">env</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;environment&#39;</span><span class="p">).</span><span class="nx">env</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">markdown</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;markdown_js&quot;</span><span class="p">);</span>
+
+<span class="nx">exports</span><span class="p">.</span><span class="nx">preview</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">args</span><span class="p">,</span> <span class="nx">request</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">text</span> <span class="o">=</span> <span class="nx">env</span><span class="p">.</span><span class="nx">editor</span><span class="p">.</span><span class="nx">selectedText</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">text</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">text</span> <span class="o">=</span> <span class="nx">env</span><span class="p">.</span><span class="nx">editor</span><span class="p">.</span><span class="nx">value</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="kd">var</span> <span class="nx">popup</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;_blank&quot;</span><span class="p">,</span> <span class="s2">&quot;location=no,menubar=no&quot;</span><span class="p">);</span>
+    <span class="nx">popup</span><span class="p">.</span><span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">markdown</span><span class="p">.</span><span class="nx">toHTML</span><span class="p">(</span><span class="nx">text</span><span class="p">);</span>
+    <span class="nx">request</span><span class="p">.</span><span class="nx">done</span><span class="p">();</span>
+<span class="p">};</span>
+</pre></div>
+
+
+<p>The first two lines import other modules that we'll be needing. The
+<code>environment</code> plugin is always available in Bespin, and the <code>env</code>
+variable inside of there is very handy, as we'll soon see. We also
+import the <code>markdown_js</code> module that we declared in our dependencies.
+We'll call it <code>markdown</code> when we use it in this module for convenience.</p>
+<p>If you're not familiar with <a href="http://commonjs.org/specs/modules/1.0/">CommonJS Modules</a>,
+you'll find that they're simple to work with. You use the <code>require</code> function to
+import modules and you put anything you want to be available outside of the
+module on the <code>exports</code> object. We're going to make a function called <code>preview</code>
+available from this module.</p>
+<p>Bespin command functions all take two parameters: <code>args</code> and <code>request</code>.
+<code>args</code> contains the incoming arguments to the command and <code>request</code> provides
+methods for working with this particular request from the user. Of these, the
+commands we'll be making here today only make use of <code>request.done()</code>, which
+signals that we have finished all of our processing.</p>
+<p>Now, let's focus on the body of the function:</p>
+<div class="codehilite"><pre><span class="kd">var</span> <span class="nx">text</span> <span class="o">=</span> <span class="nx">env</span><span class="p">.</span><span class="nx">editor</span><span class="p">.</span><span class="nx">selectedText</span><span class="p">;</span>
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">text</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">text</span> <span class="o">=</span> <span class="nx">env</span><span class="p">.</span><span class="nx">editor</span><span class="p">.</span><span class="nx">value</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kd">var</span> <span class="nx">popup</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;_blank&quot;</span><span class="p">,</span> <span class="s2">&quot;location=no,menubar=no&quot;</span><span class="p">);</span>
+<span class="nx">popup</span><span class="p">.</span><span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">markdown</span><span class="p">.</span><span class="nx">toHTML</span><span class="p">(</span><span class="nx">text</span><span class="p">);</span>
+<span class="nx">request</span><span class="p">.</span><span class="nx">done</span><span class="p">();</span>
+</pre></div>
+
+
+<p>The first line gets us the currently selected text. If the user selected only
+a portion of the document, we'll preview that. The next line looks to see
+if there was any selected text. If there wasn't, then we just grab all of the
+text from the editor.</p>
+<p>Next, we use the standard window.open call to make a new window. A call to <code>markdown.toHTML</code> will give us the HTML version of our text and we drop
+that into our new window and we're all set!</p>
+<p>We need to register our new command with Bespin.</p>
+<p>Since we're going to create more than one Markdown related command, we'll
+plan to create a top-level <code>markdown</code> command with subcommands. The
+command we're working on now is <code>markdown preview</code>. We need to add
+a new <code>provides</code> section to our JSON metadata. Here's what that looks like:</p>
+<div class="codehilite"><pre><span class="s">&quot;provides&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s">&quot;ep&quot;</span><span class="p">:</span> <span class="s">&quot;command&quot;</span><span class="p">,</span>
+        <span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="s">&quot;markdown&quot;</span><span class="p">,</span>
+        <span class="s">&quot;description&quot;</span><span class="p">:</span> <span class="s">&quot;commands for working with markdown files&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s">&quot;ep&quot;</span><span class="p">:</span> <span class="s">&quot;command&quot;</span><span class="p">,</span>
+        <span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="s">&quot;markdown preview&quot;</span><span class="p">,</span>
+        <span class="s">&quot;description&quot;</span><span class="p">:</span> <span class="s">&quot;preview the HTML form of this markdown text&quot;</span><span class="p">,</span>
+        <span class="s">&quot;pointer&quot;</span><span class="p">:</span> <span class="s">&quot;#preview&quot;</span>
+    <span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+
+
+<p><code>provides</code> gives a list of extensions that are provided by this plugin.
+Each of those will have an <code>ep</code> at a minimum. That's the "extension point"
+that we're plugging into. Our first extension is a command and we give
+the command a name (which is what the user types) and a description that
+will appear in help text.</p>
+<p>The second extension is for our preview command. It has a name and description
+as well. But, since this command is not just a holder for other commands,
+it also has a <code>pointer</code>. The <code>pointer</code> tells Bespin where to find the object
+(in this case, a function) for the extension. <code>#preview</code> is equivalent to
+<code>markdown:index#preview</code> which means the <code>preview</code> function in the <code>index</code>
+module in the <code>markdown</code> plugin.</p>
+<p>Your complete file should now look like this:</p>
+<div class="codehilite"><pre><span class="s">&quot;define metadata&quot;</span><span class="p">;</span>
+<span class="p">({</span>
+    <span class="s">&quot;dependencies&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">&quot;markdown_js&quot;</span><span class="p">:</span> <span class="s">&quot;0.1.2&quot;</span>
+    <span class="p">},</span>
+    <span class="s">&quot;provides&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s">&quot;ep&quot;</span><span class="p">:</span> <span class="s">&quot;command&quot;</span><span class="p">,</span>
+            <span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="s">&quot;markdown&quot;</span><span class="p">,</span>
+            <span class="s">&quot;description&quot;</span><span class="p">:</span> <span class="s">&quot;commands for working with markdown files&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s">&quot;ep&quot;</span><span class="p">:</span> <span class="s">&quot;command&quot;</span><span class="p">,</span>
+            <span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="s">&quot;markdown preview&quot;</span><span class="p">,</span>
+            <span class="s">&quot;description&quot;</span><span class="p">:</span> <span class="s">&quot;preview the HTML form of this markdown text&quot;</span><span class="p">,</span>
+            <span class="s">&quot;pointer&quot;</span><span class="p">:</span> <span class="s">&quot;#preview&quot;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">});</span>
+<span class="s">&quot;end&quot;</span><span class="p">;</span>
+
+<span class="n">var</span> <span class="n">env</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s">&#39;environment&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">env</span><span class="p">;</span>
+<span class="n">var</span> <span class="n">markdown</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s">&quot;markdown_js&quot;</span><span class="p">);</span>
+
+<span class="n">exports</span><span class="o">.</span><span class="n">preview</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">request</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">var</span> <span class="n">text</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">selectedText</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">text</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">value</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">var</span> <span class="n">popup</span> <span class="o">=</span> <span class="n">window</span><span class="o">.</span><span class="nb">open</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="s">&quot;_blank&quot;</span><span class="p">,</span> <span class="s">&quot;location=no,menubar=no&quot;</span><span class="p">);</span>
+    <span class="n">popup</span><span class="o">.</span><span class="n">document</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">innerHTML</span> <span class="o">=</span> <span class="n">markdown</span><span class="o">.</span><span class="n">toHTML</span><span class="p">(</span><span class="n">text</span><span class="p">);</span>
+    <span class="n">request</span><span class="o">.</span><span class="n">done</span><span class="p">();</span>
+<span class="p">};</span>
+</pre></div>
+
+
+<p>Let's come up with some sample Markdown to use. How about this:</p>
+<div class="codehilite"><pre><span class="c1"># Markdown Test #</span>
+
+<span class="n">This</span> <span class="n">is</span> <span class="n">a</span> <span class="o">*</span><span class="n">simple</span><span class="o">*</span> <span class="n">test</span> <span class="n">of</span> <span class="n">Markdown</span><span class="o">.</span>
+
+<span class="o">*</span> <span class="n">one</span>
+<span class="o">*</span> <span class="n">two</span>
+<span class="o">*</span> <span class="n">three</span>
+</pre></div>
+
+
+<p>Reload your browser, select all of the text and paste in that text. Then,
+jump down to the command line and run the <code>markdown preview</code> command. You
+should see a new window popup with the HTML version of the text there.</p>
+<p>Congratulations! You've extended Bespin with a new command.</p>
+<h2>Keyboard Shortcut</h2>
+<p>Previewing the HTML seems like a very useful feature. Why don't we add a 
+keyboard shortcut so that we don't need to go to the command line each time.
+To do this, we just need to add a <code>key</code> to the <code>markdown preview</code> metadata, 
+like so:</p>
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="s">&quot;ep&quot;</span><span class="p">:</span> <span class="s">&quot;command&quot;</span><span class="p">,</span>
+    <span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="s">&quot;markdown preview&quot;</span><span class="p">,</span>
+    <span class="s">&quot;description&quot;</span><span class="p">:</span> <span class="s">&quot;preview the HTML form of this markdown text&quot;</span><span class="p">,</span>
+    <span class="s">&quot;key&quot;</span><span class="p">:</span> <span class="s">&quot;ctrl_shift_p&quot;</span><span class="p">,</span>
+    <span class="s">&quot;pointer&quot;</span><span class="p">:</span> <span class="s">&quot;#preview&quot;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Now, cmd-shift-P on the Mac or ctrl-shift-P on Windows/Linux will run
+the <code>markdown preview</code> command. This also means that we can run the
+<code>markdown preview</code> command even if we don't have the command line plugin
+in our build.</p>
+<p>An aside about keyboard shortcuts: the <code>key</code> defined in command metadata
+like this is the lowest priority keyboard binding. A keymapping plugin can
+redefine the keys as can user preferences.</p>
+<h2>Replacing Text</h2>
+<p>One more common requirement of commands is that they need to be able to
+manipulate the text in some fashion and then put the manipulated version
+back into the editor.</p>
+<p>We'll make a <code>markdown convert</code> command that converts the text to HTML
+and then puts the text back into the editor. As before, we'll start
+by writing a function that does this conversion and we'll place it at
+the bottom of our file:</p>
+<div class="codehilite"><pre><span class="n">exports</span><span class="o">.</span><span class="n">convert</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">request</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">var</span> <span class="n">allOrSelection</span> <span class="o">=</span> <span class="s">&#39;selectedText&#39;</span><span class="p">;</span>
+    <span class="n">var</span> <span class="n">text</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">selectedText</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">text</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">allOrSelection</span> <span class="o">=</span> <span class="s">&#39;value&#39;</span><span class="p">;</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">value</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">var</span> <span class="n">html</span> <span class="o">=</span> <span class="n">markdown</span><span class="o">.</span><span class="n">toHTML</span><span class="p">(</span><span class="n">text</span><span class="p">);</span>
+    <span class="n">env</span><span class="o">.</span><span class="n">editor</span><span class="p">[</span><span class="n">allOrSelection</span><span class="p">]</span> <span class="o">=</span> <span class="n">html</span><span class="p">;</span>
+    <span class="n">request</span><span class="o">.</span><span class="n">done</span><span class="p">();</span>
+<span class="p">};</span>
+</pre></div>
+
+
+<p>In this function, we're going to do the same kind of thing we did in the 
+<code>preview</code> function. We'll work with the user's selection, if there is one,
+and the complete text otherwise. In this case, we need to keep track
+of which it was so that, when we do the replacement, we're only replacing
+the text that the user had selected.</p>
+<p>Once we've gotten our text, we can use <code>markdown.toHTML</code> to do the conversion.
+Then, we put the text back into the editor (going into either <code>selectedText</code>
+or <code>value</code>, depending on where the text came from originally).</p>
+<p>We need to tell Bespin about our new command, so we'll add another object
+to the <code>provides</code> part of our metadata.</p>
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="s2">&quot;ep&quot;</span><span class="o">:</span> <span class="s2">&quot;command&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;markdown convert&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;description&quot;</span><span class="o">:</span> <span class="s2">&quot;convert the selected text to HTML&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;pointer&quot;</span><span class="o">:</span> <span class="s2">&quot;#convert&quot;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Looks just like the <code>markdown preview</code> command, doesn't it?</p>
+<p>Reload the page in your browser, paste in the sample markdown text and
+then run the <code>markdown convert</code> command. You should see the text converted
+to HTML. Try converting just a section of the text, and you'll see that just
+that portion of the file is modified.</p>
+<p>That was easy, wasn't it?</p>
+<h2>Undo</h2>
+<p>Try converting the Markdown to HTML and then pressing cmd/ctrl-Z.</p>
+<h2>Submitting to the Bespin Plugin Gallery</h2>
+<p>Once you've completed creating a plugin that you want to share with the
+rest of the world, you should add a little more to the metadata before
+uploading your plugin to the <a href="http://bespinplugins.mozillalabs.com/">Bespin Plugin Gallery</a>.</p>
+<p>We'll add version, license and maintainer information:</p>
+<div class="codehilite"><pre><span class="s">&quot;version&quot;</span><span class="p">:</span> <span class="s">&quot;1.0.0&quot;</span><span class="p">,</span>
+<span class="s">&quot;maintainers&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="s">&quot;Kevin Dangoor&quot;</span><span class="p">,</span>
+        <span class="s">&quot;email&quot;</span><span class="p">:</span> <span class="s">&quot;kid@blazingthings.com&quot;</span><span class="p">,</span>
+        <span class="s">&quot;web&quot;</span><span class="p">:</span> <span class="s">&quot;http://blueskyonmars.com/&quot;</span>
+    <span class="p">}</span>
+<span class="p">],</span>
+<span class="s">&quot;licenses&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s">&quot;type&quot;</span><span class="p">:</span> <span class="s">&quot;MPL&quot;</span><span class="p">,</span>
+        <span class="s">&quot;url&quot;</span><span class="p">:</span> <span class="s">&quot;http://www.mozilla.org/MPL/MPL-1.1.html&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s">&quot;type&quot;</span><span class="p">:</span> <span class="s">&quot;GPL&quot;</span><span class="p">,</span>
+        <span class="s">&quot;url&quot;</span><span class="p">:</span> <span class="s">&quot;http://creativecommons.org/licenses/GPL/2.0/&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s">&quot;type&quot;</span><span class="p">:</span> <span class="s">&quot;LGPL&quot;</span><span class="p">,</span>
+        <span class="s">&quot;url&quot;</span><span class="p">:</span> <span class="s">&quot;http://creativecommons.org/licenses/LGPL/2.1/&quot;</span>
+    <span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+
+
+<p>Bespin Plugin metadata is actually a superset of the 
+<a href="http://wiki.commonjs.org/wiki/Packages/1.0">CommonJS package</a>
+metadata. As specified there, the version numbers should follow
+the <a href="http://semver.org/">Semantic Versioning</a> numbering so that
+useful information about compatibility can be picked up from the
+version number alone.</p>
+<p>I added myself as a maintainer and made this plugin available under
+the tri-license that Bespin itself is available under.</p>
+<p>With all of this metadata in place, the final plugin file looks like this:</p>
+<div class="codehilite"><pre><span class="s">&quot;define metadata&quot;</span><span class="p">;</span>
+<span class="p">({</span>
+    <span class="s">&quot;dependencies&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">&quot;markdown_js&quot;</span><span class="p">:</span> <span class="s">&quot;0.1.2&quot;</span>
+    <span class="p">},</span>
+    <span class="s">&quot;provides&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s">&quot;ep&quot;</span><span class="p">:</span> <span class="s">&quot;command&quot;</span><span class="p">,</span>
+            <span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="s">&quot;markdown&quot;</span><span class="p">,</span>
+            <span class="s">&quot;description&quot;</span><span class="p">:</span> <span class="s">&quot;commands for working with markdown files&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s">&quot;ep&quot;</span><span class="p">:</span> <span class="s">&quot;command&quot;</span><span class="p">,</span>
+            <span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="s">&quot;markdown preview&quot;</span><span class="p">,</span>
+            <span class="s">&quot;description&quot;</span><span class="p">:</span> <span class="s">&quot;preview the HTML form of this markdown text&quot;</span><span class="p">,</span>
+            <span class="s">&quot;key&quot;</span><span class="p">:</span> <span class="s">&quot;ctrl_shift_p&quot;</span><span class="p">,</span>
+            <span class="s">&quot;pointer&quot;</span><span class="p">:</span> <span class="s">&quot;#preview&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s">&quot;ep&quot;</span><span class="p">:</span> <span class="s">&quot;command&quot;</span><span class="p">,</span>
+            <span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="s">&quot;markdown convert&quot;</span><span class="p">,</span>
+            <span class="s">&quot;description&quot;</span><span class="p">:</span> <span class="s">&quot;convert the selected text to HTML&quot;</span><span class="p">,</span>
+            <span class="s">&quot;pointer&quot;</span><span class="p">:</span> <span class="s">&quot;#convert&quot;</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="s">&quot;version&quot;</span><span class="p">:</span> <span class="s">&quot;1.0.0&quot;</span><span class="p">,</span>
+    <span class="s">&quot;maintainers&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="s">&quot;Kevin Dangoor&quot;</span><span class="p">,</span>
+            <span class="s">&quot;email&quot;</span><span class="p">:</span> <span class="s">&quot;kid@blazingthings.com&quot;</span><span class="p">,</span>
+            <span class="s">&quot;web&quot;</span><span class="p">:</span> <span class="s">&quot;http://blueskyonmars.com/&quot;</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="s">&quot;licenses&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s">&quot;type&quot;</span><span class="p">:</span> <span class="s">&quot;MPL&quot;</span><span class="p">,</span>
+            <span class="s">&quot;url&quot;</span><span class="p">:</span> <span class="s">&quot;http://www.mozilla.org/MPL/MPL-1.1.html&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s">&quot;type&quot;</span><span class="p">:</span> <span class="s">&quot;GPL&quot;</span><span class="p">,</span>
+            <span class="s">&quot;url&quot;</span><span class="p">:</span> <span class="s">&quot;http://creativecommons.org/licenses/GPL/2.0/&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s">&quot;type&quot;</span><span class="p">:</span> <span class="s">&quot;LGPL&quot;</span><span class="p">,</span>
+            <span class="s">&quot;url&quot;</span><span class="p">:</span> <span class="s">&quot;http://creativecommons.org/licenses/LGPL/2.1/&quot;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">});</span>
+<span class="s">&quot;end&quot;</span><span class="p">;</span>
+
+<span class="n">var</span> <span class="n">env</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s">&#39;environment&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">env</span><span class="p">;</span>
+<span class="n">var</span> <span class="n">markdown</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s">&quot;markdown_js&quot;</span><span class="p">);</span>
+
+<span class="n">exports</span><span class="o">.</span><span class="n">preview</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">request</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">var</span> <span class="n">text</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">selectedText</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">text</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">value</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">var</span> <span class="n">popup</span> <span class="o">=</span> <span class="n">window</span><span class="o">.</span><span class="nb">open</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="s">&quot;_blank&quot;</span><span class="p">,</span> <span class="s">&quot;location=no,menubar=no&quot;</span><span class="p">);</span>
+    <span class="n">popup</span><span class="o">.</span><span class="n">document</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">innerHTML</span> <span class="o">=</span> <span class="n">markdown</span><span class="o">.</span><span class="n">toHTML</span><span class="p">(</span><span class="n">text</span><span class="p">);</span>
+    <span class="n">request</span><span class="o">.</span><span class="n">done</span><span class="p">();</span>
+<span class="p">};</span>
+
+<span class="n">exports</span><span class="o">.</span><span class="n">convert</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">request</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">var</span> <span class="n">allOrSelection</span> <span class="o">=</span> <span class="s">&#39;selectedText&#39;</span><span class="p">;</span>
+    <span class="n">var</span> <span class="n">text</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">selectedText</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">text</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">allOrSelection</span> <span class="o">=</span> <span class="s">&#39;value&#39;</span><span class="p">;</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">value</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">var</span> <span class="n">html</span> <span class="o">=</span> <span class="n">markdown</span><span class="o">.</span><span class="n">toHTML</span><span class="p">(</span><span class="n">text</span><span class="p">);</span>
+    <span class="n">env</span><span class="o">.</span><span class="n">editor</span><span class="p">[</span><span class="n">allOrSelection</span><span class="p">]</span> <span class="o">=</span> <span class="n">html</span><span class="p">;</span>
+    <span class="n">request</span><span class="o">.</span><span class="n">done</span><span class="p">();</span>
+<span class="p">};</span>
+</pre></div>
+
+
+<p>We can upload this single .js file to the plugin gallery to share it with others.
+Once we do, we'll have a change to add images and further description of the
+plugin if we wish. You can actually add a description to the plugin metadata
+itself, if you wish.</p>
+<h2>The End</h2>
+<p>In this tutorial, we created a brand new plugin that leveraged an existing 
+JavaScript library to do useful text transformation in Bespin. Key concepts
+covered:</p>
+<ul>
+<li>using dryice server mode to test new plugins</li>
+<li>plugin structure and metadata</li>
+<li>the mechanics of creating an extension</li>
+<li>how to write command extensions</li>
+<li>how to manipulate the text in the editor</li>
+</ul>
+</div>
+<!-- / MAIN COLUMN -->
+
+<!-- SIDEBAR -->
+<div id="sidebar">
+
+
+
+
+
+
+
+
+
+
+</div>
+<!-- / SIDEBAR -->
+
+<!-- / MAIN CONTAINER -->
+</div>
+
+<!-- FOOTER -->
+<div id="footer">
+	<!-- COLUMN ONE -->
+	<div>
+	<h2 class="compact">Useful Links</h2>
+	<ul class="compact">
+		<li><a href="http://mozillalabs.com/bespin/">Bespin project home page</a></li>
+		<li><a href="https://wiki.mozilla.org/Labs/Bespin">Wiki</a></li>
+	</ul>
+	</div>
+	<!-- / COLUMN ONE -->
+
+	<!-- COLUMN TWO -->
+	<div>
+	<h2 class="compact">Developer Resources</h2>
+	<ul class="compact">
+	  <li><a href="http://hg.mozilla.org/labs/bespinclient/">Main Code Repository</a></li>
+	  <li><a href="http://hg.mozilla.org/labs/bespinserver/">Python server repository</a></li>
+		<li><a href="http://groups.google.com/group/bespin-core/">bespin-core mailing list for developers</a></li>
+		<li><a href="http://groups.google.com/group/bespin-commits/">bespin-commits mailing list for repository commit messages</a></li>
+		<li><a href="https://bugzilla.mozilla.org/buglist.cgi?product=bespin">Bug List</a></li>
+	</ul>
+	</div>
+	<!-- / COLUMN TWO -->
+
+	<!-- COLUMN THREE -->
+	<div>
+	<h2 class="compact">Get Help</h2>
+	<ul class="compact">
+		<li>The <a href="http://groups.google.com/group/bespin/">Bespin mailing list</a></li>
+		<li>Via IRC: <a href="irc://irc.mozilla.org/bespin">#bespin on irc.mozilla.org</a></li>
+	</ul>
+
+	<h2 class="compact">Documentation Template</h2>
+	<ul class="compact">
+		<li>Adapted from a design by <a href="http://www.mgrabovsky.is-game.com/">Matěj Grabovský</a></li>
+	</ul>
+	</div>
+	<!-- / COLUMN THREE -->
+</div>
+<!-- / FOOTER -->
+
+</body>
+</html>

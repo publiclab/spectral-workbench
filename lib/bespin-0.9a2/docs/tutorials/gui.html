@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8">
+
+	<title>Bespin Tutorials</title>
+
+	<link rel="stylesheet" type="text/css" href="../css/reset.css">
+	<link rel="stylesheet" type="text/css" href="../css/stylesheet.css" media="screen,projection">
+	<link rel="stylesheet" type="text/css" href="../css/colorful.css">
+</head>
+<body>
+
+<!-- MAIN CONTAINER -->
+<div id="main-container">
+
+<!-- MENU -->
+<ul id="menu">
+	<li><a href="../index.html" title="Home">Home</a></li>
+	<li><a href="../userguide/index.html" title="User Guide">Using Bespin</a></li>
+	<li><a href="../pluginguide/index.html" title="Plugin Guide">Creating Plugins</a></li>
+	<li><a href="../embedding/index.html" title="Embedding Bespin in your app">Embedding</a></li>
+	<li><a href="../devguide/index.html" title="Developer's Guide">Developing Bespin</a></li>
+</ul>
+<!-- / MENU -->
+
+<h1 id="web-title">Bespin Tutorials</h1>
+<h2 id="web-subtitle">Adding to the GUI</h2>
+
+<!-- INDEX PAGE -->
+
+<!-- MAIN COLUMN -->
+<div id="maincol">
+<h1>Introduction</h1>
+<p>Since Bespin is a webapp, any Bespin command could conceivably pop up some bit
+of user interface to interact with the user. It's just a matter of creating some
+DOM nodes and placing them on the screen.</p>
+<p>But, if you want something a bit more persistent and integrated, you'll need
+to learn a bit about how Bespin's GUI is put together. That's what this tutorial
+is about.</p>
+<p>At the same time, we're going to talk about how Bespin plugins can themselves
+be pluggable.</p>
+<p>In this tutorial, we assume that you're already familiar with using dryice and
+the basics of making plugins. We're also going to assume a directory structure
+like the one from the <a href="commands.html">commands tutorial</a>.</p>
+<p>By the end of this tutorial, we'll have something that looks toolbar-like. 
+We're not trying to create a fully-functional toolbar here, because the 
+focus is on hooking in to Bespin's GUI.</p>
+<p>This tutorial should work with Bespin 0.9a1 or later. However, there
+is a <strong>bug in Firefox 3.6.x that will cause the toolbar to not display
+properly</strong>. Bespin 0.9a2 has a workaround for this, and the bug itself
+is fixed in Firefox versions after 3.6.x.</p>
+<h2>Creating Our Plugin</h2>
+<p>As with the commands tutorial, we're assuming that you're working within a
+directory called <code>bespintutorial</code> that has Bespin itself in a subdirectory
+called <code>bespin</code>.</p>
+<p>In plugins that have user interface elements, you will almost always need
+to create a "multi file plugin". That just means we'll be creating a 
+directory rather than a single .js file.</p>
+<p>We'll create a directory called <code>tutorialtoolbar</code>. To turn it into a plugin,
+we need to create a file called <code>package.json</code> in the <code>tutorialtoolbar</code>
+directory.</p>
+<p>We also need a dryice manifest so that we can see our plugin in action.
+Create a file called <code>toolbar.json</code> in the <code>bespintutorial</code> directory.
+Here's what we'll put in it to start with:</p>
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="s2">&quot;output_dir&quot;</span><span class="o">:</span> <span class="s2">&quot;../build&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;plugins&quot;</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;embedded&quot;</span><span class="p">,</span> <span class="s2">&quot;tutorialtoolbar&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;search_path&quot;</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;..&quot;</span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Switch to the <code>bespin</code> directory and run:</p>
+<div class="codehilite"><pre><span class="n">python</span> <span class="n">dryice</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">s</span> <span class="mi">8080</span> <span class="o">../</span><span class="n">toolbar</span><span class="o">.</span><span class="n">json</span>
+</pre></div>
+
+
+<p>You shouldn't get any errors from dryice. That means that it was able to find
+our tutorialtoolbar plugin. If you open your browser to http://localhost:8080/,
+you'll see a normal looking Bespin. Now we just need to put something in our 
+plugin.</p>
+<h2>Creating A Simple View</h2>
+<p>For a first step, we'll just toss a string up on the screen. In the
+<code>tutorialtoolbar</code> directory, create a new file called <code>index.js</code>.
+Here's how our toolbar component will start out:</p>
+<div class="codehilite"><pre><span class="nx">exports</span><span class="p">.</span><span class="nx">ToolbarView</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">elem</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s2">&quot;div&quot;</span><span class="p">);</span>
+    <span class="nx">elem</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="s2">&quot;&lt;b&gt;Toolbar!&lt;/b&gt;&quot;</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">element</span> <span class="o">=</span> <span class="nx">elem</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+
+
+<p>We're creating a <code>Toolbar</code> class. When a new <code>Toolbar</code> is created,
+it gets a new element which just has our string in it. We
+set that to <code>element</code> on the instance. This is the key to GUI components
+that are integrated into Bespin's UI: they just offer up an <code>element</code>
+that Bespin will put in place.</p>
+<p>The next step is telling the Bespin system about our new component.
+We do that in the <code>package.json</code> file, which will now look like this:</p>
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="s2">&quot;provides&quot;</span><span class="o">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;ep&quot;</span><span class="o">:</span> <span class="s2">&quot;factory&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;tutorialtoolbar&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;action&quot;</span><span class="o">:</span> <span class="s2">&quot;new&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;pointer&quot;</span><span class="o">:</span> <span class="s2">&quot;#ToolbarView&quot;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>The factory extension point is used for extensions that provide components
+for Bespin to automatically instantiate. That may sound kind of vague,
+but you'll see in a moment that it's actually easy to use. The <code>action</code>
+tells Bespin that it's going to be creating a new instance and the
+<code>pointer</code> is telling Bespin to look in the tutorialtoolbar plugin's
+<code>index</code> module for something called <code>ToolbarView</code>.</p>
+<p>We've written code that will generate our initial toolbar and we've told
+Bespin that this is available. The next step is to tell Bespin to put
+one into the UI. This can be done either in the dryice manifest file or
+even at runtime when <code>useBespin</code> is called. We'll do it in the manifest
+file (<code>toolbar.json</code>). Here's the new manifest:</p>
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="s2">&quot;output_dir&quot;</span><span class="o">:</span> <span class="s2">&quot;../build&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;plugins&quot;</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;embedded&quot;</span><span class="p">,</span> <span class="s2">&quot;tutorialtoolbar&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;search_path&quot;</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;..&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;config&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;objects&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;toolbar&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;factory&quot;</span><span class="o">:</span> <span class="s2">&quot;tutorialtoolbar&quot;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;gui&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;north&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;component&quot;</span><span class="o">:</span> <span class="s2">&quot;toolbar&quot;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>The new section is the <code>config</code> section. This provides the application
+configuration (about which you can read more in the <a href="../embedding/appconfig.html">Embedder's Guide</a>).</p>
+<p>The <code>objects</code> part of the config is telling Bespin to create a "global"
+(global within Bespin) object called <code>toolbar</code>. Bespin will look for
+a factory called <code>tutorialtoolbar</code>, which happens to be what we defined
+in the <code>package.json</code> file.</p>
+<p>The <code>gui</code> part of the config is telling Bespin to toss the component
+(object) that we created with the name <code>toolbar</code> into the "north" part
+of the interface. Bespin uses a simple "border layout" with north, south,
+east, west and center locations. So, our toolbar should appear at the top
+of the page.</p>
+<p>Refresh your browser, and you should see our Toolbar! appear at the top.
+<em>If it appears at the bottom, you've witnessed the bug mentioned in the
+introduction.</em></p>
+<h2>CSS3 Flexible Box Model (an aside)</h2>
+<p>CSS3 includes a module called the Flexible Box Model (sometimes called flexbox), 
+which Paul Rouget did a great job of introducing 
+<a href="http://hacks.mozilla.org/2010/04/the-css-3-flexible-box-model/">in this Mozilla Hacks article</a>. </p>
+<p>Traditionally, HTML+CSS have been quite nice for laying out documents
+but not so great for laying out user interfaces. Flexbox
+makes laying out UI a far easier process.</p>
+<p>Bespin uses flexbox to create the border layout. When you declare that a GUI
+component belongs in the "north", all Bespin has to do is add the "north" 
+class to the element, and it pops into the right place.</p>
+<p>Flexbox would also be a great way to create a toolbar, but we're not
+going to go that far in this tutorial.</p>
+<p>By using flexbox, we let the browser do all of the layout which is generally
+faster and smoother than JavaScript-based layouts.</p>
+<h2>Making Our Toolbar Pluggable</h2>
+<p>One of Bespin's main features is that it is customizable and extendable.
+While it's certainly possible to make a static toolbar with a certain
+collection of functions, it's a lot more interesting to create a toolbar
+that is itself pluggable. Plus, that's part of the point of our tutorial.</p>
+<p>We'll start by defining an extension point of our own in <code>package.json</code>.
+Add this as another item in the <code>provides</code> list in <code>package.json</code>:</p>
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="s2">&quot;ep&quot;</span><span class="o">:</span> <span class="s2">&quot;extensionpoint&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;tutorialtoolbaritem&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;description&quot;</span><span class="o">:</span> <span class="s2">&quot;Toolbar item views&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;params&quot;</span><span class="o">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;description&quot;</span><span class="o">:</span> <span class="s2">&quot;name of this toolbar item&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;type&quot;</span><span class="o">:</span> <span class="s2">&quot;string&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;pointer&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;description&quot;</span><span class="o">:</span> <span class="s2">&quot;pointer to a component that can be instantiated with new and has an element defined on it.&quot;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Extension points themselves are defined via the <code>extensionpoint</code> extension
+point. Seems a bit circular, but it works. We're creating an extension point
+called <code>tutorialtoolbaritem</code>. Bespin is designed to be introspectable,
+so we provide some documentation about the extension point via the <code>description</code>
+and <code>params</code> properties.</p>
+<p>We're going to make <code>tutorialtoolbaritem</code>s look a lot like Bespin's GUI components
+(an object with an <code>element</code> property).</p>
+<p>Now, we need to make our toolbar go out and find the registered <code>tutorialtoolbaritem</code>s.
+We'll change <code>index.js</code> to look like this:</p>
+<div class="codehilite"><pre><span class="kd">var</span> <span class="nx">catalog</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;bespin:plugins&quot;</span><span class="p">).</span><span class="nx">catalog</span><span class="p">;</span>
+
+<span class="nx">exports</span><span class="p">.</span><span class="nx">ToolbarView</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">elem</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s2">&quot;menu&quot;</span><span class="p">);</span>
+    <span class="nx">elem</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s1">&#39;class&#39;</span><span class="p">,</span> <span class="s2">&quot;tutorial-toolbar&quot;</span><span class="p">);</span>
+    <span class="nx">elem</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="s2">&quot;toolbar&quot;</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">element</span> <span class="o">=</span> <span class="nx">elem</span><span class="p">;</span>
+
+    <span class="k">this</span><span class="p">.</span><span class="nx">_items</span> <span class="o">=</span> <span class="p">[];</span>
+
+    <span class="kd">var</span> <span class="nx">extensions</span> <span class="o">=</span> <span class="nx">catalog</span><span class="p">.</span><span class="nx">getExtensions</span><span class="p">(</span><span class="s1">&#39;tutorialtoolbaritem&#39;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+    <span class="nx">extensions</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">ext</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">ext</span><span class="p">.</span><span class="nx">load</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">item</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">item</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">item</span><span class="p">();</span>
+            <span class="nx">self</span><span class="p">.</span><span class="nx">_items</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">item</span><span class="p">);</span>
+            <span class="nx">elem</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">element</span><span class="p">);</span>
+        <span class="p">});</span>
+    <span class="p">});</span>
+<span class="p">};</span>
+</pre></div>
+
+
+<p>The first thing we're going to do is change the element we're creating into 
+an <a href="http://www.w3.org/TR/html5/interactive-elements.html#menus">HTML5 menu element</a>.
+By giving it a type of <code>toolbar</code>, we're letting the browser know that we're
+creating a toolbar. Right now, the browsers don't render the toolbar in any
+special way, but we can use CSS to render the toolbar however we wish.</p>
+<p>Next, we'll make a list to keep track of the items we find. Speaking of finding
+the items, we need to talk to the plugin catalog about that. In the first line
+of the file, we imported the catalog. Now, we call getExtensions which will
+return all of the <code>tutorialtoolbaritem</code>s.</p>
+<p>We use <code>var self = this</code> because we've got some nested callbacks and that's
+a bit nicer to look at than binding each function individually. Then, we loop
+through the list of extensions and call <code>load</code> on each one.</p>
+<p>The <code>load</code> function returns a <em>Promise</em>. Promises provide a convenient way
+to manage callbacks for asynchronous behavior. For our purposes here, the
+only difference between a Promise and a normal callback function is that 
+we don't pass the callback directly to <code>load</code>. Instead, we call <code>then</code>
+on the promise and pass the callback to that.</p>
+<p>Back in our metadata for the <code>tutorialtoolbaritem</code> extension point, we defined the
+<code>pointer</code> property as a <em>pointer to a component that can be instantiated with 
+new and has an element defined on it.</em> So, when we <code>load</code> the extension, that's
+what we're going to get back. With the tutorialtoolbar item in hand, we can
+call <code>new</code> on it, add that new instance to our items list and then add 
+the instance's element to our toolbar.</p>
+<p>And, with that, we have created a dynamically extendable toolbar.</p>
+<h2>Adding Some Items</h2>
+<p>Of course, if we reload our Bespin, the toolbar will be rather boring. We
+haven't added any toolbar items!</p>
+<p>With the infrastructure that we put in place in the last section, we can
+create <code>tutorialtoolbaritem</code>s in any plugin. For convenience, we'll just
+add a couple of items in the tutorialtoolbar plugin.</p>
+<p>We'll make a new module (file) for them in the <code>tutorialtoolbar</code> directory
+called <code>items.js</code>. At this stage, we're not going to make our toolbar items
+<em>do</em> anything, but we just want to have something to display. Here is
+our <code>items.js</code> file:</p>
+<div class="codehilite"><pre><span class="nx">exports</span><span class="p">.</span><span class="nx">Logo</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">li</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;li&#39;</span><span class="p">);</span>
+    <span class="nx">li</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="s2">&quot;Logo here&quot;</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">element</span> <span class="o">=</span> <span class="nx">li</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="nx">exports</span><span class="p">.</span><span class="nx">OpenFileIndicator</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">li</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;li&#39;</span><span class="p">);</span>
+    <span class="nx">li</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="s2">&quot;SampleProject &amp;mdash; readme.txt&quot;</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">element</span> <span class="o">=</span> <span class="nx">li</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="nx">exports</span><span class="p">.</span><span class="nx">Save</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">li</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;li&#39;</span><span class="p">);</span>
+    <span class="nx">li</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="s2">&quot;Save&quot;</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">element</span> <span class="o">=</span> <span class="nx">li</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="nx">exports</span><span class="p">.</span><span class="nx">PositionIndicator</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">li</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;li&#39;</span><span class="p">);</span>
+    <span class="nx">li</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="s2">&quot;Row 0, Column 0&quot;</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">element</span> <span class="o">=</span> <span class="nx">li</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+
+
+<p>As you can see, each one of these functions does nothing but create an
+<code>li</code> element (as per the HTML5 spec for menus) and add that element
+to the instance on the <code>element</code> property.</p>
+<p>One more thing to do before we can see our toolbar. We need to register
+the extensions for our <code>tutorialtoolbar</code> extension point. Back in
+<code>package.json</code>, we're going to add these four more items to our
+<code>provides</code> property:</p>
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="s2">&quot;ep&quot;</span><span class="o">:</span> <span class="s2">&quot;tutorialtoolbaritem&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;logo&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;pointer&quot;</span><span class="o">:</span> <span class="s2">&quot;items#Logo&quot;</span>
+<span class="p">},</span>
+<span class="p">{</span>
+    <span class="s2">&quot;ep&quot;</span><span class="o">:</span> <span class="s2">&quot;tutorialtoolbaritem&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;openfileindicator&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;pointer&quot;</span><span class="o">:</span> <span class="s2">&quot;items#OpenFileIndicator&quot;</span>
+<span class="p">},</span>
+<span class="p">{</span>
+    <span class="s2">&quot;ep&quot;</span><span class="o">:</span> <span class="s2">&quot;tutorialtoolbaritem&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;save&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;pointer&quot;</span><span class="o">:</span> <span class="s2">&quot;items#Save&quot;</span>
+<span class="p">},</span>
+<span class="p">{</span>
+    <span class="s2">&quot;ep&quot;</span><span class="o">:</span> <span class="s2">&quot;tutorialtoolbaritem&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;positionindicator&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;pointer&quot;</span><span class="o">:</span> <span class="s2">&quot;items#PositionIndicator&quot;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>You can see that each one of these refers to the <code>items</code> module in the
+pointer, since that's where we put these items.</p>
+<p>For reference, here's the complete <code>package.json</code> file at this stage:</p>
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="s2">&quot;provides&quot;</span><span class="o">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;ep&quot;</span><span class="o">:</span> <span class="s2">&quot;factory&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;tutorialtoolbar&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;action&quot;</span><span class="o">:</span> <span class="s2">&quot;new&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;pointer&quot;</span><span class="o">:</span> <span class="s2">&quot;#ToolbarView&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;ep&quot;</span><span class="o">:</span> <span class="s2">&quot;extensionpoint&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;toolbaritem&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;description&quot;</span><span class="o">:</span> <span class="s2">&quot;Toolbar item views&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;params&quot;</span><span class="o">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;description&quot;</span><span class="o">:</span> <span class="s2">&quot;name of this toolbar item&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;type&quot;</span><span class="o">:</span> <span class="s2">&quot;string&quot;</span>
+                <span class="p">},</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;pointer&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;description&quot;</span><span class="o">:</span> <span class="s2">&quot;pointer to a component that can be instantiated with new and has an element defined on it.&quot;</span>
+                <span class="p">}</span>
+            <span class="p">]</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;ep&quot;</span><span class="o">:</span> <span class="s2">&quot;tutorialtoolbaritem&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;logo&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;pointer&quot;</span><span class="o">:</span> <span class="s2">&quot;items#Logo&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;ep&quot;</span><span class="o">:</span> <span class="s2">&quot;tutorialtoolbaritem&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;openfileindicator&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;pointer&quot;</span><span class="o">:</span> <span class="s2">&quot;items#OpenFileIndicator&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;ep&quot;</span><span class="o">:</span> <span class="s2">&quot;tutorialtoolbaritem&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;save&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;pointer&quot;</span><span class="o">:</span> <span class="s2">&quot;items#Save&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;ep&quot;</span><span class="o">:</span> <span class="s2">&quot;tutorialtoolbaritem&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;positionindicator&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;pointer&quot;</span><span class="o">:</span> <span class="s2">&quot;items#PositionIndicator&quot;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>With that, we've done everything we need to do to see our toolbar. Let's
+reload the page. You should see something that looks like this:</p>
+<p><img alt="Toolbar displayed as list" src="ToolbarAsList.png"></p>
+<p>It worked! It has our items in it! Doesn't look much like a toolbar, though,
+does it?</p>
+<h2>Styling Your Plugins</h2>
+<p>To make our toolbar look like a toolbar, we need to add some styles. In order
+to support themes properly, Bespin uses <a href="http://lesscss.org">LESS</a>, which is
+an extended CSS syntax.</p>
+<p>In the <code>tutorialtoolbar</code> directory, create a <code>resources</code> directory. In there,
+create a file called <code>toolbar.less</code>. We need to tell Bespin's theme manager
+about this file, so we need to add one more thing to the <code>provides</code> property
+in <code>package.json</code>:</p>
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="s2">&quot;ep&quot;</span><span class="o">:</span> <span class="s2">&quot;themestyles&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;url&quot;</span><span class="o">:</span> <span class="p">[</span> <span class="s2">&quot;toolbar.less&quot;</span> <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p><code>themestyles</code> extensions provide URLs (relative to the plugin's resources 
+directory) to the LESS files that this plugin needs to have loaded. The
+theme manager will automatically load these files as needed.</p>
+<p>And what's in this mysterious <code>toolbar.less</code> file?</p>
+<div class="codehilite"><pre><span class="nc">.bespin</span> <span class="p">{</span>
+    <span class="o">.</span><span class="n">tutorial</span><span class="o">-</span><span class="n">toolbar</span> <span class="err">{</span>
+        <span class="k">display</span><span class="o">:</span> <span class="k">block</span><span class="p">;</span>
+        <span class="k">background-color</span><span class="o">:</span> <span class="m">#000</span><span class="p">;</span>
+        <span class="k">border-bottom</span><span class="o">:</span> <span class="k">solid</span> <span class="m">#424038</span> <span class="m">1px</span><span class="p">;</span>
+        <span class="o">-</span><span class="n">moz</span><span class="o">-</span><span class="n">box</span><span class="o">-</span><span class="n">shadow</span><span class="o">:</span> <span class="m">0px</span> <span class="m">0px</span> <span class="m">3px</span> <span class="m">3px</span> <span class="m">#000</span><span class="p">;</span>
+        <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">box</span><span class="o">-</span><span class="n">shadow</span><span class="o">:</span> <span class="m">0px</span> <span class="m">0px</span> <span class="m">3px</span> <span class="m">3px</span> <span class="m">#000</span><span class="p">;</span>
+        <span class="k">color</span><span class="o">:</span> <span class="m">#ffffff</span><span class="p">;</span>
+        <span class="k">font-family</span><span class="o">:</span> <span class="n">Helvetica</span><span class="o">,</span> <span class="n">Arial</span><span class="p">;</span>
+        <span class="k">width</span><span class="o">:</span> <span class="m">100%</span><span class="p">;</span>
+        <span class="k">margin</span><span class="o">:</span> <span class="m">0px</span><span class="p">;</span>
+        <span class="k">padding</span><span class="o">:</span> <span class="m">0px</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nc">.tutorial-toolbar</span> <span class="nt">li</span> <span class="p">{</span>
+        <span class="k">display</span><span class="o">:</span> <span class="k">inline</span><span class="p">;</span>
+        <span class="k">padding</span><span class="o">:</span> <span class="m">0px</span> <span class="m">24px</span> <span class="m">0px</span> <span class="m">0px</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="err">}</span>
+</pre></div>
+
+
+<p>This looks like fairly normal CSS, right? <em>Except</em> what's that <code>.bespin</code> doing
+surrounding those other rules? When LESS expands this out to standard CSS,
+the result would be something like this:</p>
+<div class="codehilite"><pre><span class="nc">.bespin</span> <span class="nc">.tutorial-toolbar</span> <span class="p">{</span>
+<span class="p">}</span>
+
+<span class="nc">.bespin</span> <span class="nc">.tutorial-toolbar</span> <span class="nt">li</span> <span class="p">{</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>So, the surrounding <code>.bespin</code> is a nice little shorthand, and it prevents CSS
+from leaking out onto the page. When you consider the use of Bespin Embedded
+on other sites, it's a good idea to ensure that all of our styles are scoped
+for use only within Bespin.</p>
+<p>With these styles in place, let's reload the page. Much nicer, eh?</p>
+<h2>Wrapping Up</h2>
+<p>On the one hand, this tutorial didn't give us a <em>functioning</em> toolbar. It's all
+static text. On the other hand, look at everything we <em>did</em> cover:</p>
+<ul>
+<li>multi-file plugin structure</li>
+<li>creating a component that Bespin can display</li>
+<li>the awesomeness that is CSS3's Flexible Box Model</li>
+<li>configuring our component for display in Bespin</li>
+<li>defining and using our own extension points</li>
+</ul>
+</div>
+<!-- / MAIN COLUMN -->
+
+<!-- SIDEBAR -->
+<div id="sidebar">
+
+
+
+
+
+
+
+
+
+
+</div>
+<!-- / SIDEBAR -->
+
+<!-- / MAIN CONTAINER -->
+</div>
+
+<!-- FOOTER -->
+<div id="footer">
+	<!-- COLUMN ONE -->
+	<div>
+	<h2 class="compact">Useful Links</h2>
+	<ul class="compact">
+		<li><a href="http://mozillalabs.com/bespin/">Bespin project home page</a></li>
+		<li><a href="https://wiki.mozilla.org/Labs/Bespin">Wiki</a></li>
+	</ul>
+	</div>
+	<!-- / COLUMN ONE -->
+
+	<!-- COLUMN TWO -->
+	<div>
+	<h2 class="compact">Developer Resources</h2>
+	<ul class="compact">
+	  <li><a href="http://hg.mozilla.org/labs/bespinclient/">Main Code Repository</a></li>
+	  <li><a href="http://hg.mozilla.org/labs/bespinserver/">Python server repository</a></li>
+		<li><a href="http://groups.google.com/group/bespin-core/">bespin-core mailing list for developers</a></li>
+		<li><a href="http://groups.google.com/group/bespin-commits/">bespin-commits mailing list for repository commit messages</a></li>
+		<li><a href="https://bugzilla.mozilla.org/buglist.cgi?product=bespin">Bug List</a></li>
+	</ul>
+	</div>
+	<!-- / COLUMN TWO -->
+
+	<!-- COLUMN THREE -->
+	<div>
+	<h2 class="compact">Get Help</h2>
+	<ul class="compact">
+		<li>The <a href="http://groups.google.com/group/bespin/">Bespin mailing list</a></li>
+		<li>Via IRC: <a href="irc://irc.mozilla.org/bespin">#bespin on irc.mozilla.org</a></li>
+	</ul>
+
+	<h2 class="compact">Documentation Template</h2>
+	<ul class="compact">
+		<li>Adapted from a design by <a href="http://www.mgrabovsky.is-game.com/">Matěj Grabovský</a></li>
+	</ul>
+	</div>
+	<!-- / COLUMN THREE -->
+</div>
+<!-- / FOOTER -->
+
+</body>
+</html>

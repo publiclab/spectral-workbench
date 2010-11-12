@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8">
+
+	<title>Bespin Developer's Guide</title>
+
+	<link rel="stylesheet" type="text/css" href="../css/reset.css">
+	<link rel="stylesheet" type="text/css" href="../css/stylesheet.css" media="screen,projection">
+	<link rel="stylesheet" type="text/css" href="../css/colorful.css">
+</head>
+<body>
+
+<!-- MAIN CONTAINER -->
+<div id="main-container">
+
+<!-- MENU -->
+<ul id="menu">
+	<li><a href="../index.html" title="Home">Home</a></li>
+	<li><a href="../userguide/index.html" title="User Guide">Using Bespin</a></li>
+	<li class="current"><a href="../pluginguide/index.html" title="Plugin Guide">Creating Plugins</a></li>
+	<li><a href="../embedding/index.html" title="Embedding Bespin in your app">Embedding</a></li>
+	<li><a href="../devguide/index.html" title="Developer's Guide">Developing Bespin</a></li>
+</ul>
+<!-- / MENU -->
+
+<h1 id="web-title">Bespin Developer's Guide</h1>
+<h2 id="web-subtitle">Template Engine</h2>
+
+<!-- INDEX PAGE -->
+
+<!-- MAIN COLUMN -->
+<div id="maincol">
+<h1>Using The Bespin Template Engine</h1>
+<p>The template engine is designed to be all the things that everyone always claims
+like easy to use etc, but specifically:
+<em> Lightweight (if we need more than 300 lines of code, then someone else can
+  probably do it better)
+</em> DOM based - that is to say we process the DOM, not strings. This allows us to
+  register event handlers and provide better access to constructed elements.</p>
+<h2>Creating a Template</h2>
+<p>Create a file called <code>templates/whatever.htmlt</code> in your plugin. The
+important parts are that the file is in a templates directory at in the root of
+you plugin, and called <code>*.htmlt</code>.</p>
+<p>The file is an HTML fragment. It is not restricted to a single root, however
+since the fragment is NOT automatically added to the document, this will be the
+common way to do things.</p>
+<p>An example template could look like this:</p>
+<div class="codehilite"><pre>$ cat bespin/plugins/foo/templates/bar.htmlt
+
+<span class="nt">&lt;div</span> <span class="na">save=</span><span class="s">&quot;</span><span class="cp">${</span><span class="n">parent</span><span class="o">.</span><span class="n">element</span><span class="cp">}</span><span class="s">&quot;</span> <span class="na">id=</span><span class="s">&quot;hello&quot;</span><span class="nt">&gt;</span><span class="cp">${</span><span class="n">contents</span><span class="cp">}</span><span class="nt">&lt;/div&gt;</span>
+</pre></div>
+
+
+<p>This would then be used as follows:</p>
+<div class="codehilite"><pre><span class="n">var</span> <span class="n">templates</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s">&#39;foo:templates&#39;</span><span class="p">);</span>
+<span class="n">templates</span><span class="o">.</span><span class="n">bar</span><span class="p">({</span>
+    <span class="n">parent:</span> <span class="n">this</span><span class="p">,</span>
+    <span class="n">contents:</span> <span class="s">&quot;world&quot;</span>
+<span class="p">});</span>
+
+<span class="n">console</span><span class="o">.</span><span class="nb">log</span><span class="p">(</span><span class="n">this</span><span class="o">.</span><span class="n">element</span><span class="o">.</span><span class="n">id</span><span class="p">);</span>         <span class="sr">//</span> <span class="n">hello</span>
+<span class="n">console</span><span class="o">.</span><span class="nb">log</span><span class="p">(</span><span class="n">this</span><span class="o">.</span><span class="n">element</span><span class="o">.</span><span class="n">innerHTML</span><span class="p">);</span>  <span class="sr">//</span> <span class="n">world</span>
+</pre></div>
+
+
+<h2>${...} in Attributes and Content</h2>
+<p>Any ${} element will be processed as a portion of Javascript, in the context of
+the first object passed to the templating function (In the example above the
+context would be <code>{ parent: this, contents: "world" }</code>)</p>
+<p>The <code>save</code>/<code>if</code>/<code>foreach</code> attributes have special meanings. See below for more
+details.</p>
+<p><code>${...}</code> can show up in elements and in HTML content. A <code>${...}</code> block contains
+arbitrary Javascript. Generally however it is recommended to stick to a dot path
+from an attribute passed to the template.</p>
+<p>It expected that <code>${...}</code> blocks will return strings when used in an attribute.
+When used in HTML content, <code>${...}</code> blocks can return either strings (which will
+be added to the DOM inside a TextNode (i.e. with HTML escaped) or they can
+return DOM elements, in which case the DOM element will be added to the tree.</p>
+<p>The following is not recommended (try to keep logic separate from content)
+however it should work:
+    <div>${document.createTextNode('BANG!')}</div></p>
+<h2>save="${...}" Attributes</h2>
+<p>The save attribute is special. It takes the current node at sets it into the
+pointed to structure. In this case ${} is not arbitrary Javascript but a dot
+path to an element to set.</p>
+<h2>on***="${...}" Attributes</h2>
+<p>Events are registered using onevent handlers that look similar to the way events
+are normally set in HTML, however there are some things to be aware of.</p>
+<p>Example:</p>
+<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">onclick=</span><span class="s">&quot;</span><span class="cp">${</span><span class="n">parent</span><span class="o">.</span><span class="n">mouse</span><span class="cp">}</span><span class="s">&gt;Hello&lt;/div&gt;</span>
+
+<span class="s">var templates = require(&#39;foo:templates&#39;);</span>
+<span class="s">this.name = &#39;Fred&#39;;</span>
+<span class="s">this.mouse = function(ev) {</span>
+<span class="s">    console.log(this.name, ev);</span>
+<span class="s">};</span>
+<span class="s">templates.bar({ parent: this });</span>
+</pre></div>
+
+
+<p>Here we are registering an onClick handler for the new div, which, when clicked
+simply echos <code>this</code> and the event object to the console.</p>
+<p>This form is particularly handy when the handler to be registered is part of the
+<code>parent</code> object without needing to be especially created as above, and for this
+reason we automatically bind <code>this</code> to the object that contains the function
+(i.e. what you might like Javascript to do automatically)</p>
+<p>For event listener registration there are 2 things to look out for:
+<em> Although it looks like we are using DOM level 0 event registration (i.e.
+  element.onfoo = somefunc) we are actually using DOM level 2, by stripping
+  off the 'on' prefix and then using addEventListener('foo', ...). Watch out
+  for case sensitivity, and if you successfully use an event like DOMFocusIn
+  then consider updating these docs or the code.
+</em> Sometimes we might need to use the capture phase of an event (for example
+  when processing mouse or focus events). The way to do that is as follows:
+  <code>onfocus="${object.handler [useCapture:true]}"</code>. Currently the only
+  supported option is useCapture, and it must be specified EXACTLY as the
+  example. In the future we might add other options, or make the syntax
+  simpler.</p>
+<p>It is very likely that the useCapture syntax will change in the future, probably
+to something that does not invade the ${...} space possibly something more like
+<code>onfocus="${object.handler}" captureonfocus="true"</code></p>
+<h2>_***="${...}" Attributes</h2>
+<p>The Bespin Template engine uses the web browsers parser to interpret .htmlt
+file before we process the templates. This has a number of advantages in
+simplicity and the ability to work with the resulting DOM, however one drawback
+is that the browser may try to process certain elements before they are ready.
+For example:</p>
+<img src="${path}/thing.png"/>
+
+<p>This will the processed, and (assuming 'path' is correctly set) the right image
+will be displayed, however you may notice your browser giving a 404 message from
+${path}/thing.png as it has attempted to retrieve the image before the template
+process had a chance to substitute the correct path.</p>
+<p>The solution is to prefix the attribute name with an underscore ('_'). The
+template engine will remove the underscore automatically. For example:</p>
+<img _src="${path}/thing.png"/>
+
+<p>Should you wish to have an attribute in the resulting document prefixed with an
+underscore, simply begin your attribute name with 2 underscores. (Is this a
+common scenario? If you know of another scenario where attribute names are
+prefixed with _, please inform the Bespin-Core mailing list using
+[bespin-core at googlegroups dot com].</p>
+<h2>if="${some_boolean}" Attributes</h2>
+<p>If an element contains an 'if' attribute, then its value will be evaluated and
+if the result is 'falsey', then the entire element will be removed from the
+tree. This allows simple if statements.</p>
+<p>Example:</p>
+<div class="codehilite"><pre><span class="nt">&lt;div&gt;</span>
+<span class="nt">&lt;p</span> <span class="na">if=</span><span class="s">&quot;</span><span class="cp">${</span><span class="n">name</span> <span class="o">!==</span> <span class="n">null</span><span class="cp">}</span><span class="s">&gt;Hello, </span><span class="cp">${</span><span class="n">name</span><span class="cp">}</span><span class="s">&lt;/p&gt;</span>
+<span class="s">&lt;/div&gt;</span>
+
+<span class="s">templates.example({ name: &#39;Fred&#39; }); // &lt;div&gt;&lt;p&gt;Hello, Fred&lt;/p&gt;&lt;/div&gt;</span>
+<span class="s">templates.example({ });              // &lt;div&gt;&lt;/div&gt;</span>
+</pre></div>
+
+
+<p>In the second example, the entire 'p' element has been removed by processing
+the if attribute.</p>
+<h2>foreach="${some_array} Attributes</h2>
+<p>If an element contains a foreach attribute, then that element will be repeated
+in the final document once for each member of the array returned by the
+attribute value. The 'param' variable will be available, and set to the
+corresponding array member during the evaluation.</p>
+<p>Example:</p>
+<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">foreach=</span><span class="s">&quot;</span><span class="cp">${</span><span class="p">[</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span> <span class="p">]</span><span class="cp">}</span><span class="s">&quot;</span><span class="nt">&gt;</span><span class="cp">${</span><span class="n">param</span><span class="cp">}</span><span class="nt">&lt;/div&gt;</span>
+templates.example({ }); // <span class="nt">&lt;div&gt;</span>1<span class="nt">&lt;/div&gt;&lt;div&gt;</span>2<span class="nt">&lt;/div&gt;&lt;div&gt;</span>3<span class="nt">&lt;/div&gt;</span>
+</pre></div>
+
+
+<p>A future version of the template engine will likely allow you to alter the
+name of the variable to which array members are set, from the default 'param'.
+This will allow greater flexibility in processing nested loops.
+A natural syntax could be:
+    <div foreach="number in ${[ 1, 2, 3 ]}">${number}</div></p>
+<h2>Future and Questions</h2>
+<ul>
+<li>Should we have a way to recognize attributes that are special to the template
+  engine? What if a future HTML standard introduces an element with
+  if/save/foreach attributes?</li>
+<li>2-way templating. For form fill applications, it can be useful to allow
+  changes to input elements to be automatically reflected in the original
+  structure, or even for changes in the original structure to be reflected in
+  the HTML. It could be managed using #{} references rather then ${}. The
+  difficulty is in recognizing changes to DOM elements on all browsers.
+  This last example is probably too complex for our purposes however.</li>
+</ul>
+</div>
+<!-- / MAIN COLUMN -->
+
+<!-- SIDEBAR -->
+<div id="sidebar">
+
+
+
+
+<h2 class="compact">Contents</h2>
+<ul class="compact">
+<li><a href="index.html">Introduction</a></li>
+<li><a href="distributing.html">Distributing Plugins</a></li>
+<li><a href="editorapi.html">Editor API</a></li>
+<li><a href="testing.html">Automated Testing</a></li>
+<li><a href="template.html">Templates</a></li>
+<li><a href="theme.html">Themes</a></li>
+<li><a href="syntax.html">Syntax Highlighting</a></li>
+<li><a href="keymapping.html">Keymapping</a></li>
+</ul>
+
+
+
+
+
+
+
+</div>
+<!-- / SIDEBAR -->
+
+<!-- / MAIN CONTAINER -->
+</div>
+
+<!-- FOOTER -->
+<div id="footer">
+	<!-- COLUMN ONE -->
+	<div>
+	<h2 class="compact">Useful Links</h2>
+	<ul class="compact">
+		<li><a href="http://mozillalabs.com/bespin/">Bespin project home page</a></li>
+		<li><a href="https://wiki.mozilla.org/Labs/Bespin">Wiki</a></li>
+	</ul>
+	</div>
+	<!-- / COLUMN ONE -->
+
+	<!-- COLUMN TWO -->
+	<div>
+	<h2 class="compact">Developer Resources</h2>
+	<ul class="compact">
+	  <li><a href="http://hg.mozilla.org/labs/bespinclient/">Main Code Repository</a></li>
+	  <li><a href="http://hg.mozilla.org/labs/bespinserver/">Python server repository</a></li>
+		<li><a href="http://groups.google.com/group/bespin-core/">bespin-core mailing list for developers</a></li>
+		<li><a href="http://groups.google.com/group/bespin-commits/">bespin-commits mailing list for repository commit messages</a></li>
+		<li><a href="https://bugzilla.mozilla.org/buglist.cgi?product=bespin">Bug List</a></li>
+	</ul>
+	</div>
+	<!-- / COLUMN TWO -->
+
+	<!-- COLUMN THREE -->
+	<div>
+	<h2 class="compact">Get Help</h2>
+	<ul class="compact">
+		<li>The <a href="http://groups.google.com/group/bespin/">Bespin mailing list</a></li>
+		<li>Via IRC: <a href="irc://irc.mozilla.org/bespin">#bespin on irc.mozilla.org</a></li>
+	</ul>
+
+	<h2 class="compact">Documentation Template</h2>
+	<ul class="compact">
+		<li>Adapted from a design by <a href="http://www.mgrabovsky.is-game.com/">Matěj Grabovský</a></li>
+	</ul>
+	</div>
+	<!-- / COLUMN THREE -->
+</div>
+<!-- / FOOTER -->
+
+</body>
+</html>

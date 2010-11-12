@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8">
+
+	<title>Bespin Plugin Guide</title>
+
+	<link rel="stylesheet" type="text/css" href="../css/reset.css">
+	<link rel="stylesheet" type="text/css" href="../css/stylesheet.css" media="screen,projection">
+	<link rel="stylesheet" type="text/css" href="../css/colorful.css">
+</head>
+<body>
+
+<!-- MAIN CONTAINER -->
+<div id="main-container">
+
+<!-- MENU -->
+<ul id="menu">
+	<li><a href="../index.html" title="Home">Home</a></li>
+	<li><a href="../userguide/index.html" title="User Guide">Using Bespin</a></li>
+	<li class="current"><a href="../pluginguide/index.html" title="Plugin Guide">Creating Plugins</a></li>
+	<li><a href="../embedding/index.html" title="Embedding Bespin in your app">Embedding</a></li>
+	<li><a href="../devguide/index.html" title="Developer's Guide">Developing Bespin</a></li>
+</ul>
+<!-- / MENU -->
+
+<h1 id="web-title">Bespin Plugin Guide</h1>
+<h2 id="web-subtitle">Introduction</h2>
+
+<!-- INDEX PAGE -->
+
+<!-- MAIN COLUMN -->
+<div id="maincol">
+<p>Bespin is built around a small core with most additional functionality placed in plugins. The driving goals behind plugins are:</p>
+<ul>
+<li>Allow lazy loading of functionality</li>
+<li>Be very easy to use</li>
+<li>Make it possible to update the editor without page reloads</li>
+</ul>
+<p>The ability to load functionality lazily is very important, because we expect
+that Bespin will have a large number of features, only some of which any given
+person is likely to use at one time. The simplest example of this is syntax
+highlighters: maybe you write JavaScript most of the time, but someone else is
+developing Ruby code. If you only use JavaScript, that's the only syntax
+highlighter that will get loaded into your browser. And there are many more
+examples possible.</p>
+<h2>The Basics</h2>
+<p>A plugin consists of <em>metadata</em> and <em>everything else</em>. When you log into
+Bespin, the metadata for all of your plugins is loaded. Everything else
+(JavaScript, CSS, images, etc.) is loaded as needed. At its simplest, a plugin
+is a single .js file that contains a special section for the metadata. Here's a
+trivial example:</p>
+<div class="codehilite"><pre><span class="s2">&quot;define metadata&quot;</span><span class="p">;</span>
+<span class="p">({});</span>
+<span class="s2">&quot;end&quot;</span><span class="p">;</span>
+
+<span class="nx">exports</span><span class="p">.</span><span class="nx">someFunction</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="p">};</span>
+</pre></div>
+
+
+<p>Clearly, this example doesn't do anything useful. The first step in making a
+plugin do something is to define the appropriate metadata.</p>
+<p>Bespin plugins feature <em>extensions</em> that plug into <em>extension points</em>. As an
+example of this, the simple syntax highlighter defines an extension point
+called "syntax". The JavaScript highlighter is one extension
+that plugs into that extension point. The metadata for the JavaScript
+highlighter looks like this:</p>
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="s2">&quot;description&quot;</span><span class="o">:</span> <span class="s2">&quot;JavaScript syntax highlighter&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;dependencies&quot;</span><span class="o">:</span> <span class="p">{</span> <span class="s2">&quot;standard_syntax&quot;</span><span class="o">:</span> <span class="s2">&quot;0.0.0&quot;</span> <span class="p">},</span>
+    <span class="s2">&quot;environments&quot;</span><span class="o">:</span> <span class="p">{</span> <span class="s2">&quot;worker&quot;</span><span class="o">:</span> <span class="kc">true</span> <span class="p">},</span>
+    <span class="s2">&quot;provides&quot;</span><span class="o">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;ep&quot;</span><span class="o">:</span> <span class="s2">&quot;syntax&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;js&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;pointer&quot;</span><span class="o">:</span> <span class="s2">&quot;#JSSyntax&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;fileexts&quot;</span><span class="o">:</span> <span class="p">[</span> <span class="s2">&quot;js&quot;</span><span class="p">,</span> <span class="s2">&quot;json&quot;</span> <span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>The metadata is an object specified in JSON format. It is an extended version
+of the <a href="http://wiki.commonjs.org/wiki/Packages/1.0">CommonJS Packages specification</a></p>
+<p><code>provides</code> is a list of extensions that are provided by this plugin. Each one 
+of the extensions is given as an object with one attribute that is always 
+there: "ep". <code>ep</code> is the extension point that the extension is for. In the 
+example above, you can see that the plugin is providing an extension for 
+the "syntax" extension point. The other metadata for the extension is 
+specific to the extension point.</p>
+<p><code>pointer</code> is a common piece of metadata. Since this is pure JSON, and we want
+to lazily load the code anyhow, a pointer is a string that tells Bespin where
+to find the object that the extended code is going to need to perform the
+necessary work (in this case, the JavaScript syntax highlighting). A pointer is
+given in this format: <code>plugin:path/to/module/in/plugin#memberInModule</code>. The
+example above is about as simple as it gets. It's pointing to an object called
+<code>JSSyntax</code> in the "package module" of the plugin (see more about the package
+module below). The <code>name</code> and <code>extensions</code> metadata are specific to the
+<code>syntax</code> extension point.</p>
+<p>The <code>depends</code> list in the metadata is a list of the names of plugins upon which
+this plugin depends. Bespin will ensure that those plugins are loaded before
+this one. In the example above, the JavaScript highlighter plugin depends on
+the SyntaxManager, which is itself a plugin.</p>
+<h2>Plugin File Structure</h2>
+<p>A plugin can be a single .js file with it's metadata bordered by directives
+that are contained in strings. Here's an example:</p>
+<div class="codehilite"><pre><span class="s2">&quot;define metadata&quot;</span><span class="p">;</span>
+<span class="p">({});</span>
+<span class="s2">&quot;end&quot;</span><span class="p">;</span>
+</pre></div>
+
+
+<p>You must start the metadata with <code>"define metadata";</code> and end it with <code>"end";</code>.
+The metadata itself is contained in an object. JavaScript does not allow you to
+put a bare object in a program, so you can either enclose the object in
+parentheses (as above) or set it to a variable. Bespin can handle either of
+those formats.</p>
+<p>Often, a single file is not going to be enough. When you move beyond a single
+file, a plugin is defined as a directory with a <code>package.json</code> file in it. In a
+single file plugin, the "package module" is the plugin .js file. In a plugin
+directory, the "package module" is a file called "index.js".</p>
+<h2>Dependencies</h2>
+<p>Often, your plugin will require that other things are loaded in order for
+it to work. If your plugin will be accessing code from another plugin
+via <code>require</code>, you can add dependencies to your plugin metadata.
+For example, if there's a plugin called "textutil" and you're going
+to be doing something like <code>var properCase = require('textutil').properCase</code>,
+then you'll want to include a block like this in your metadata:</p>
+<div class="codehilite"><pre><span class="nx">dependencies</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;textutil&quot;</span><span class="o">:</span> <span class="s2">&quot;1.0.0&quot;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>where the "1.0.0" is the version of the textutil plugin that you need.</p>
+<p>Additionally, there are certain objects that are used across a Bespin
+instance. If you need the command line to be available, for example,
+you can specify that in your metadata:</p>
+<div class="codehilite"><pre><span class="nx">objects</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;commandLine&quot;</span><span class="p">]</span>
+</pre></div>
+
+
+<p>With that in your metadata, you can be assured that this:</p>
+<div class="codehilite"><pre><span class="kd">var</span> <span class="nx">env</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;environment&#39;</span><span class="p">).</span><span class="nx">env</span><span class="p">;</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">env</span><span class="p">.</span><span class="nx">commandLine</span><span class="p">);</span>
+</pre></div>
+
+
+<p>will actually be able to get ahold of the command line.</p>
+<h2>Plugin Reloading</h2>
+<p>A key feature of the Bespin user experience is the ability to edit plugins
+from within Bespin and have the changes take effect immediately. Many types
+of Bespin plugins, such as syntax highlighters, don't have any UI which makes
+them easy to reload. If you write a plugin that has UI or any other resources
+that need to be cleaned up, you can point Bespin at a function to run <em>before</em>
+the plugin is to be reloaded. Here's an example:</p>
+<div class="codehilite"><pre><span class="s2">&quot;define metadata&quot;</span><span class="p">;</span>
+<span class="p">({</span>
+    <span class="s2">&quot;reloadPointer&quot;</span><span class="o">:</span> <span class="s2">&quot;#cleanup&quot;</span>
+<span class="p">});</span>
+<span class="s2">&quot;end&quot;</span><span class="p">;</span>
+
+<span class="nx">exports</span><span class="p">.</span><span class="nx">cleanup</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// remove the UI from the DOM, parent view, etc.</span>
+<span class="p">};</span>
+</pre></div>
+
+
+<h2>Stylesheets</h2>
+<p>If your plugin provides a user interface, you will want to use a stylesheet to
+determine how the user interface will look. Bespin uses <a href="http://lesscss.org">LESS</a>
+files with themeVariables to allow user interface components to be changed
+globally based on themes. For example, if you make a dialog box that dialog
+could have its background and foreground colors adjusted by the theme.</p>
+<p>If you have stylesheets that need to be loaded, you will tell Bespin's
+theme_manager about them through the <code>themestyles</code> extension point. Here's
+an example:</p>
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="s2">&quot;ep&quot;</span><span class="o">:</span> <span class="s2">&quot;themestyles&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;url&quot;</span><span class="o">:</span> <span class="p">[</span>
+        <span class="s2">&quot;article.less&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;cli.less&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;menu.less&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;requestOutput.less&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;global.less&quot;</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>The URLs are all relative to the resources directory (see the next section).</p>
+<p>Themes are covered <a href="theme.html">elsewhere in the Plugin Guide</a>.</p>
+<h2>Images and Other Files</h2>
+<p>You can include images in your plugins. Create an images directory under 
+resources and put your images in there. In your CSS file, you can use relative
+links to refer to the images. For example, if you have a directory structure 
+like this:</p>
+<div class="codehilite"><pre><span class="n">resources</span><span class="o">/</span>
+    <span class="n">mystyles</span><span class="o">.</span><span class="n">less</span>
+    <span class="n">images</span><span class="o">/</span>
+        <span class="n">bg</span><span class="o">.</span><span class="n">png</span>
+    <span class="n">data</span><span class="o">/</span>
+        <span class="n">us_states</span><span class="o">.</span><span class="n">json</span>
+</pre></div>
+
+
+<p>you can refer to bg.png from mystyles.css like so:</p>
+<div class="codehilite"><pre><span class="n">background</span><span class="o">-</span><span class="n">image:</span> <span class="n">url</span><span class="p">(</span><span class="n">images</span><span class="o">/</span><span class="n">bg</span><span class="o">.</span><span class="n">png</span><span class="p">)</span>
+</pre></div>
+
+
+<p>By arranging your stylesheets and images this way, your plugin will work 
+properly in both a live Bespin site context <em>and</em> an Embedded Bespin context.
+The dryice build tool automatically combines stylesheets from the included
+plugins and following this directory structure is important for ensuring
+that the images still work once the plugin is embedded.</p>
+<p>If you need access to a file via JavaScript, you can get to it using the
+<code>getResourceURL</code> method on the plugin catalog object. If you need to look
+up the us_states.json file from the example above, you can get its URL
+like this:</p>
+<div class="codehilite"><pre><span class="n">var</span> <span class="n">catalog</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s">&quot;bespin:plugins&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">catalog</span><span class="p">;</span>
+
+<span class="n">var</span> <span class="n">statesURL</span> <span class="o">=</span> <span class="n">catalog</span><span class="o">.</span><span class="n">getResourceURL</span><span class="p">(</span><span class="s">&quot;MyPluginName&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;data/us_states.json&quot;</span><span class="p">;</span>
+</pre></div>
+
+
+<p><code>getResourceURL</code> returns the URL to access the resources directory of the
+plugin named. Usually, you'll only want to access the resources of your own
+plugin.</p>
+<h2>How To Learn More</h2>
+<p>We will be expanding on the plugin development docs over time. In the meantime,
+it's worth noting that all of Bespin's major functionality is implemented as
+plugins. In a checkout of the <a href="http://hg.mozilla.org/labs/bespinclient">bespinclient repository</a>, take a look at the
+plugins/supported directory for the bulk of Bespin's code.</p>
+</div>
+<!-- / MAIN COLUMN -->
+
+<!-- SIDEBAR -->
+<div id="sidebar">
+
+
+
+
+<h2 class="compact">Contents</h2>
+<ul class="compact">
+<li><a href="index.html">Introduction</a></li>
+<li><a href="distributing.html">Distributing Plugins</a></li>
+<li><a href="editorapi.html">Editor API</a></li>
+<li><a href="testing.html">Automated Testing</a></li>
+<li><a href="template.html">Templates</a></li>
+<li><a href="theme.html">Themes</a></li>
+<li><a href="syntax.html">Syntax Highlighting</a></li>
+<li><a href="keymapping.html">Keymapping</a></li>
+</ul>
+
+
+
+
+
+
+
+</div>
+<!-- / SIDEBAR -->
+
+<!-- / MAIN CONTAINER -->
+</div>
+
+<!-- FOOTER -->
+<div id="footer">
+	<!-- COLUMN ONE -->
+	<div>
+	<h2 class="compact">Useful Links</h2>
+	<ul class="compact">
+		<li><a href="http://mozillalabs.com/bespin/">Bespin project home page</a></li>
+		<li><a href="https://wiki.mozilla.org/Labs/Bespin">Wiki</a></li>
+	</ul>
+	</div>
+	<!-- / COLUMN ONE -->
+
+	<!-- COLUMN TWO -->
+	<div>
+	<h2 class="compact">Developer Resources</h2>
+	<ul class="compact">
+	  <li><a href="http://hg.mozilla.org/labs/bespinclient/">Main Code Repository</a></li>
+	  <li><a href="http://hg.mozilla.org/labs/bespinserver/">Python server repository</a></li>
+		<li><a href="http://groups.google.com/group/bespin-core/">bespin-core mailing list for developers</a></li>
+		<li><a href="http://groups.google.com/group/bespin-commits/">bespin-commits mailing list for repository commit messages</a></li>
+		<li><a href="https://bugzilla.mozilla.org/buglist.cgi?product=bespin">Bug List</a></li>
+	</ul>
+	</div>
+	<!-- / COLUMN TWO -->
+
+	<!-- COLUMN THREE -->
+	<div>
+	<h2 class="compact">Get Help</h2>
+	<ul class="compact">
+		<li>The <a href="http://groups.google.com/group/bespin/">Bespin mailing list</a></li>
+		<li>Via IRC: <a href="irc://irc.mozilla.org/bespin">#bespin on irc.mozilla.org</a></li>
+	</ul>
+
+	<h2 class="compact">Documentation Template</h2>
+	<ul class="compact">
+		<li>Adapted from a design by <a href="http://www.mgrabovsky.is-game.com/">Matěj Grabovský</a></li>
+	</ul>
+	</div>
+	<!-- / COLUMN THREE -->
+</div>
+<!-- / FOOTER -->
+
+</body>
+</html>
