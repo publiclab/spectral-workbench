@@ -1,0 +1,23 @@
+<meta name="viewport" content="width=320; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/>
+<style>
+body {
+	width:300px;
+}
+div {
+	padding:20px;
+}
+</style>
+<script>
+document.ontouchstart = function(e) { 
+	e.preventDefault();
+	document.getElementById
+	('start').innerHTML = e.touches[0].pageX + ',' + e.touches[0].pageY; }
+document.ontouchmove = function(e) { 
+	e.preventDefault();
+	document.getElementById
+	('move').innerHTML = e.touches[0].pageX + ',' + e.touches[0].pageY; }
+</script>
+
+<div style='background:red;' id='start'>start</div>
+<div style='background:green;' id='move'>move</div>
+

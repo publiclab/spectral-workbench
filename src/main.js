@@ -18,6 +18,10 @@ Fred = {
 		$C = Fred.active_layer.canvas
 		//Event handling setup:
 		Fred.observe('mousemove',Fred.on_mousemove)
+		Fred.observe('touchmove',Fred.on_touchmove)
+		// not sure if these are necessary to preventDefault(), they exist as methods below though.
+		//Fred.observe('touchstart',Fred.on_touchstart)
+		//Fred.observe('touchend',Fred.on_touchend)
 		//Fred.observe('mouseup',Fred.on_mouseup)
 		//Set up the main Fred DOM element:
 		Fred.element.style.position = 'absolute'
@@ -43,6 +47,18 @@ Fred = {
 		Fred.pointer_x = Event.pointerX(event)
 		Fred.pointer_y = Event.pointerY(event)
 		Fred.draw()
+	},
+	on_touchstart: function(event) {
+		event.preventDefault()
+	},
+	on_touchmove: function(event) {
+		event.preventDefault()
+		Fred.pointer_x = event.touches[0].pageX
+		Fred.pointer_y = event.touches[0].pageY
+		Fred.draw()
+	},
+	on_touchend: function(event) {
+		event.preventDefault()
 	},
 	select_tool: function(tool) {
 		if (Fred.active_tool) Fred.active_tool.deselect()

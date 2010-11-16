@@ -16,6 +16,7 @@ Fred = {
 		Fred.active_layer = Fred.layers.first()
 		$C = Fred.active_layer.canvas
 		Fred.observe('mousemove',Fred.on_mousemove)
+		Fred.observe('touchmove',Fred.on_touchmove)
 		Fred.element.style.position = 'absolute'
 		Fred.element.style.top = 0
 		Fred.element.style.left = 0
@@ -38,6 +39,18 @@ Fred = {
 		Fred.pointer_x = Event.pointerX(event)
 		Fred.pointer_y = Event.pointerY(event)
 		Fred.draw()
+	},
+	on_touchstart: function(event) {
+		event.preventDefault()
+	},
+	on_touchmove: function(event) {
+		event.preventDefault()
+		Fred.pointer_x = event.touches[0].pageX
+		Fred.pointer_y = event.touches[0].pageY
+		Fred.draw()
+	},
+	on_touchend: function(event) {
+		event.preventDefault()
 	},
 	select_tool: function(tool) {
 		if (Fred.active_tool) Fred.active_tool.deselect()
@@ -140,7 +153,6 @@ Fred.Polygon = Class.create({
 		this.apply_style()
 		beginPath()
 		var over_point = false
-		moveTo(this.points.first().x,this.points.first().y)
 		this.points.each(function(point){
 			lineTo(point.x,point.y)
 			save()
@@ -206,10 +218,16 @@ Fred.tools.pen = new Fred.Tool('draw polygons',{
 	on_mouseup: function() {
 	},
 	on_touchstart: function(e) {
-		this.on_mousedown(e)
+		e.preventDefault();
+		var x = e.touches[0].pageX
+		var y = e.touches[0].pageY
+		this.on_mousedown(e,x,y)
 	},
 	on_touchend: function(e) {
-		this.on_mouseup(e)
+		e.preventDefault();
+		var x = e.touches[0].pageX
+		var y = e.touches[0].pageY
+		this.on_mouseup(e,x,y)
 	},
 	draw: function() {
 		if (this.polygon) this.polygon.draw()

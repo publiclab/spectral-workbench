@@ -38,10 +38,16 @@ Fred.tools.pen = new Fred.Tool('draw polygons',{
 	on_mouseup: function() {
 	},
 	on_touchstart: function(e) {
-		this.on_mousedown(e)
+		e.preventDefault();
+		var x = e.touches[0].pageX
+		var y = e.touches[0].pageY
+		this.on_mousedown(e,x,y)
 	},
 	on_touchend: function(e) {
-		this.on_mouseup(e)
+		e.preventDefault();
+		var x = e.touches[0].pageX
+		var y = e.touches[0].pageY
+		this.on_mouseup(e,x,y)
 	},
 	draw: function() {
 		//console.log(Fred.timestamp)
