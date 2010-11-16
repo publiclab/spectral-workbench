@@ -12,5 +12,16 @@
 
 	<div id="fred"></div>
 
+	<form action="javascript:void(0);" method="get" style='position:absolute;display:block;bottom:10px;left:10px;' id='console' onSubmit='shell()'>
+	<input id='console_text' name='console_text' type='text' />
+	<input type='submit' value='go' />
+	</form>
+
+	<script>
+		function shell() {
+			console.log(eval($("console_text").value))
+		}
+	</script>
+
 </body>
 </html>

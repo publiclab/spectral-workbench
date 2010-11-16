@@ -45,6 +45,7 @@ Fred = {
 	on_touchstart: function(event) {
 		console.log('touch!!')
 		event.preventDefault()
+		Fred.draw()
 	},
 	on_touchmove: function(event) {
 		event.preventDefault()
@@ -88,6 +89,8 @@ Fred = {
 		Fred.date = new Date
 		this.layers.each(function(layer){layer.draw()})
 		Fred.fire('fred:postdraw')
+		fillStyle('red')
+		rect(10,10,20,20)
 	}
 }
 
