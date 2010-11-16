@@ -9,6 +9,7 @@ Fred = {
 	timestamp: 0,
 	date: new Date,
 	times: [],
+	drag: false,
 	init: function(args) {
 		Fred.element = $('fred')
 		Fred.select_tool('pen')
@@ -19,10 +20,10 @@ Fred = {
 		//Event handling setup:
 		Fred.observe('mousemove',Fred.on_mousemove)
 		Fred.observe('touchmove',Fred.on_touchmove)
+		//Fred.observe('mouseup',Fred.on_mouseup)
 		// not sure if these are necessary to preventDefault(), they exist as methods below though.
 		Fred.observe('touchstart',Fred.on_touchstart)
 		Fred.observe('touchend',Fred.on_touchend)
-		//Fred.observe('mouseup',Fred.on_mouseup)
 		//Set up the main Fred DOM element:
 		Fred.element.style.position = 'absolute'
 		Fred.element.style.top = 0
@@ -32,6 +33,8 @@ Fred = {
 		setInterval(Fred.draw.bind(this),30)
 	},
 	resize: function(width,height) {
+		// document.viewport.getWidth() yields undefined in Android browser
+		// try running without resizing just in Android -- disable rotate anyways. 
 		if (width[width.length-1] == '%') Fred.width = parseInt(document.viewport.getWidth()*100/width.substr(0,width.length-1))
 		else Fred.width = width
 		if (height[height.length-1] == '%') Fred.height = parseInt(document.viewport.getHeight()*100/height.substr(0,height.length-1))
@@ -43,6 +46,12 @@ Fred = {
 			layer.element.height = Fred.height
 		})
 	},
+	on_mouseup: function(event) {
+		Fred.drag = false
+	},
+	on_mousedown: function(event) {
+		Fred.drag = true
+	},
 	on_mousemove: function(event) {
 		Fred.pointer_x = Event.pointerX(event)
 		Fred.pointer_y = Event.pointerY(event)
@@ -51,16 +60,16 @@ Fred = {
 	on_touchstart: function(event) {
 		console.log('touch!!')
 		event.preventDefault()
-		Fred.draw()
+		Fred.drag = true
 	},
 	on_touchmove: function(event) {
 		event.preventDefault()
 		Fred.pointer_x = event.touches[0].pageX
 		Fred.pointer_y = event.touches[0].pageY
-		Fred.draw()
 	},
 	on_touchend: function(event) {
 		event.preventDefault()
+		Fred.drag = false
 	},
 	select_tool: function(tool) {
 		if (Fred.active_tool) Fred.active_tool.deselect()
@@ -74,11 +83,11 @@ Fred = {
 				'on_touchstart',
 				'on_touchmove',
 				'on_touchend',
-				'on_touchmove',
 				'on_gesturestart',
 				'on_gestureend']
 		// tool.methods.each(function(method) {
-		//
+			// Fred.observe(method,tool['on_'+method].bindAsEventListener(tool))
+			// Fred.stop_observing(method,tool['on'+method])
 		//})
 	},
         /**

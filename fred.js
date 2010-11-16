@@ -8,6 +8,7 @@ Fred = {
 	timestamp: 0,
 	date: new Date,
 	times: [],
+	drag: false,
 	init: function(args) {
 		Fred.element = $('fred')
 		Fred.select_tool('pen')
@@ -37,6 +38,12 @@ Fred = {
 			layer.element.height = Fred.height
 		})
 	},
+	on_mouseup: function(event) {
+		Fred.drag = false
+	},
+	on_mousedown: function(event) {
+		Fred.drag = true
+	},
 	on_mousemove: function(event) {
 		Fred.pointer_x = Event.pointerX(event)
 		Fred.pointer_y = Event.pointerY(event)
@@ -45,16 +52,16 @@ Fred = {
 	on_touchstart: function(event) {
 		console.log('touch!!')
 		event.preventDefault()
-		Fred.draw()
+		Fred.drag = true
 	},
 	on_touchmove: function(event) {
 		event.preventDefault()
 		Fred.pointer_x = event.touches[0].pageX
 		Fred.pointer_y = event.touches[0].pageY
-		Fred.draw()
 	},
 	on_touchend: function(event) {
 		event.preventDefault()
+		Fred.drag = false
 	},
 	select_tool: function(tool) {
 		if (Fred.active_tool) Fred.active_tool.deselect()
@@ -67,7 +74,6 @@ Fred = {
 				'on_touchstart',
 				'on_touchmove',
 				'on_touchend',
-				'on_touchmove',
 				'on_gesturestart',
 				'on_gestureend']
 	},
@@ -214,6 +220,7 @@ Fred.tools.pen = new Fred.Tool('draw polygons',{
 	deselect: function() {
 		Fred.stop_observing('dblclick',this.on_dblclick)
 		Fred.stop_observing('mousedown',this.on_mousedown)
+		Fred.stop_observing('mousemove',this.on_mousemove)
 		Fred.stop_observing('mouseup',this.on_mouseup)
 		Fred.stop_observing('touchstart',this.on_touchstart)
 		Fred.stop_observing('touchend',this.on_touchend)
@@ -222,6 +229,7 @@ Fred.tools.pen = new Fred.Tool('draw polygons',{
 	select: function() {
 		Fred.observe('dblclick',this.on_dblclick.bindAsEventListener(this))
 		Fred.observe('mousedown',this.on_mousedown.bindAsEventListener(this))
+		Fred.observe('mousemove',this.on_mousemove.bindAsEventListener(this))
 		Fred.observe('mouseup',this.on_mouseup.bindAsEventListener(this))
 		Fred.observe('touchstart',this.on_touchstart.bindAsEventListener(this))
 		Fred.observe('touchend',this.on_touchend.bindAsEventListener(this))
@@ -229,10 +237,13 @@ Fred.tools.pen = new Fred.Tool('draw polygons',{
 	},
 	on_mousedown: function() {
 		if (this.polygon) {
-			var clicked_pt = this.polygon.in_point()
-			if (clicked_pt != false && clicked_pt != this.polygon.points[0]) {
+			this.clicked_point = this.polygon.in_point()
+			if (this.clicked_point != false && this.clicked_point != this.polygon.points[0]) {
+				if (false) {
 
-
+				} else {
+					this.dragging_point = true
+				}
 			} else {
 				var on_final = (this.polygon.points.length > 0 && ((Math.abs(this.polygon.points[0].x - Fred.pointer_x) < Fred.click_radius) && (Math.abs(this.polygon.points[0].y - Fred.pointer_y) < Fred.click_radius)))
 				if (on_final && this.polygon.points.length > 1) {
@@ -249,7 +260,14 @@ Fred.tools.pen = new Fred.Tool('draw polygons',{
 			this.complete_polygon()
 		}
 	},
+	on_mousemove: function() {
+		if (this.dragging_point) {
+			this.clicked_point.x = Fred.pointer_x
+			this.clicked_point.y = Fred.pointer_y
+		}
+	},
 	on_mouseup: function() {
+		this.dragging_point = false
 	},
 	on_touchstart: function(e) {
 		this.on_mousedown(e)
