@@ -16,6 +16,7 @@ Fred = {
 		Fred.active_layer = Fred.layers.first()
 		$C = Fred.active_layer.canvas
 		Fred.observe('mousemove',Fred.on_mousemove)
+		Fred.observe('touchmove',Fred.on_touchmove)
 		Fred.element.style.position = 'absolute'
 		Fred.element.style.top = 0
 		Fred.element.style.left = 0
@@ -38,6 +39,18 @@ Fred = {
 		Fred.pointer_x = Event.pointerX(event)
 		Fred.pointer_y = Event.pointerY(event)
 		Fred.draw()
+	},
+	on_touchstart: function(event) {
+		event.preventDefault()
+	},
+	on_touchmove: function(event) {
+		event.preventDefault()
+		Fred.pointer_x = event.touches[0].pageX
+		Fred.pointer_y = event.touches[0].pageY
+		Fred.draw()
+	},
+	on_touchend: function(event) {
+		event.preventDefault()
 	},
 	select_tool: function(tool) {
 		if (Fred.active_tool) Fred.active_tool.deselect()
@@ -136,34 +149,44 @@ Fred.Polygon = Class.create({
 	apply_style: function() {
 		lineWidth(2)
 	},
+	in_point: function() {
+		if (this.points) {
+			var in_point = false
+			this.points.each(function(point) {
+				if (Fred.Geometry.distance(Fred.pointer_x,Fred.pointer_y,point.x,point.y) < this.point_size) in_point = point
+			},this)
+			return in_point
+		} else  {
+			return false
+		}
+	},
 	draw: function() {
 		if (this.points && this.points.length > 0) {
-		this.apply_style()
-		beginPath()
-		var over_point = false
-		moveTo(this.points[0].x,this.points[0].y)
-		this.points.each(function(point){
-			lineTo(point.x,point.y)
-			save()
-				opacity(0.2)
-				if (Fred.Geometry.distance(Fred.pointer_x,Fred.pointer_y,point.x,point.y) < this.point_size) {
-					opacity(0.4)
-					over_point = true
-					fillStyle('#22a')
-					rect(point.x-this.point_size/2,point.y-this.point_size/2,this.point_size,this.point_size)
-				} else if (this.selected) {
-					strokeStyle('#22a')
-					strokeRect(point.x-this.point_size/2,point.y-this.point_size/2,this.point_size,this.point_size)
-				}
-			restore()
-		},this)
-		if (this.closed) {
-			lineTo(this.points[0].x,this.points[0].y)
-			fillStyle('#ccf')
-			fill()
-		}
-		if (this.style.stroke) stroke(this.style.stroke)
-		if (this.style.fill) fill(this.style.fill)
+			this.apply_style()
+			var over_point = false
+			beginPath()
+			moveTo(this.points[0].x,this.points[0].y)
+			this.points.each(function(point){
+				lineTo(point.x,point.y)
+				save()
+					opacity(0.2)
+					if (Fred.Geometry.distance(Fred.pointer_x,Fred.pointer_y,point.x,point.y) < this.point_size) {
+						opacity(0.4)
+						over_point = true
+						fillStyle('#22a')
+						rect(point.x-this.point_size/2,point.y-this.point_size/2,this.point_size,this.point_size)
+					} else if (this.selected) {
+						strokeStyle('#22a')
+						strokeRect(point.x-this.point_size/2,point.y-this.point_size/2,this.point_size,this.point_size)
+					}
+				restore()
+			},this)
+			if (this.closed) {
+				lineTo(this.points[0].x,this.points[0].y)
+				fillStyle('#ccf')
+				fill()
+			}
+			if (this.style.stroke) stroke(this.style.stroke)
 		}
 	}
 })
@@ -198,11 +221,17 @@ Fred.tools.pen = new Fred.Tool('draw polygons',{
 	},
 	on_mousedown: function() {
 		if (this.polygon) {
-			var on_final = (this.polygon.points.length > 0 && ((Math.abs(this.polygon.points[0].x - Fred.pointer_x) < Fred.click_radius) && (Math.abs(this.polygon.points[0].y - Fred.pointer_y) < Fred.click_radius)))
-			if (on_final && this.polygon.points.length > 1) {
-				this.polygon.closed = true
-				this.complete_polygon()
-			} else if (!on_final) this.polygon.points.push(new Fred.Point(Fred.pointer_x,Fred.pointer_y))
+			var clicked_pt = this.polygon.in_point()
+			if (clicked_pt != false && clicked_pt != this.polygon.points[0]) {
+
+
+			} else {
+				var on_final = (this.polygon.points.length > 0 && ((Math.abs(this.polygon.points[0].x - Fred.pointer_x) < Fred.click_radius) && (Math.abs(this.polygon.points[0].y - Fred.pointer_y) < Fred.click_radius)))
+				if (on_final && this.polygon.points.length > 1) {
+					this.polygon.closed = true
+					this.complete_polygon()
+				} else if (!on_final) this.polygon.points.push(new Fred.Point(Fred.pointer_x,Fred.pointer_y))
+			}
 		} else {
 			this.polygon = new Fred.Polygon
 		}
@@ -215,10 +244,16 @@ Fred.tools.pen = new Fred.Tool('draw polygons',{
 	on_mouseup: function() {
 	},
 	on_touchstart: function(e) {
-		this.on_mousedown(e)
+		e.preventDefault();
+		var x = e.touches[0].pageX
+		var y = e.touches[0].pageY
+		this.on_mousedown(e,x,y)
 	},
 	on_touchend: function(e) {
-		this.on_mouseup(e)
+		e.preventDefault();
+		var x = e.touches[0].pageX
+		var y = e.touches[0].pageY
+		this.on_mouseup(e,x,y)
 	},
 	draw: function() {
 		if (this.polygon) this.polygon.draw()

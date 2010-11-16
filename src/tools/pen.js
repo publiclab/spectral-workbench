@@ -22,7 +22,11 @@ Fred.tools.pen = new Fred.Tool('draw polygons',{
 		// are we in the middle of making a polygon?
 		if (this.polygon) {
 			// are we editing a point?
-			if (this.polygon.in_point()) {
+			var clicked_pt = this.polygon.in_point()
+			// unless it's the LAST point, allow tool to drag it instead:
+			if (clicked_pt != false && clicked_pt != this.polygon.points[0]) {
+				// allow point dragging
+
 
 			} else {
 				// close polygon if you click on first point
@@ -44,13 +48,18 @@ Fred.tools.pen = new Fred.Tool('draw polygons',{
 	on_mouseup: function() {
 	},
 	on_touchstart: function(e) {
-		this.on_mousedown(e)
+		e.preventDefault();
+		var x = e.touches[0].pageX
+		var y = e.touches[0].pageY
+		this.on_mousedown(e,x,y)
 	},
 	on_touchend: function(e) {
-		this.on_mouseup(e)
+		e.preventDefault();
+		var x = e.touches[0].pageX
+		var y = e.touches[0].pageY
+		this.on_mouseup(e,x,y)
 	},
 	draw: function() {
-		//console.log(Fred.timestamp)
 		if (this.polygon) this.polygon.draw()
 	},
 	complete_polygon: function() {
