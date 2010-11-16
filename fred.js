@@ -149,7 +149,7 @@ Fred.Polygon = Class.create({
 	},
 	name: 'untitled polygon',
 	style: {
-		fill: false,
+		fill: '#ccf',
 		stroke: '#002'
 	},
 	apply_style: function() {
@@ -174,25 +174,27 @@ Fred.Polygon = Class.create({
 			moveTo(this.points[0].x,this.points[0].y)
 			this.points.each(function(point){
 				lineTo(point.x,point.y)
-				save()
-					opacity(0.2)
-					if (Fred.Geometry.distance(Fred.pointer_x,Fred.pointer_y,point.x,point.y) < this.point_size) {
-						opacity(0.4)
-						over_point = true
-						fillStyle('#22a')
-						rect(point.x-this.point_size/2,point.y-this.point_size/2,this.point_size,this.point_size)
-					} else if (this.selected) {
-						strokeStyle('#22a')
-						strokeRect(point.x-this.point_size/2,point.y-this.point_size/2,this.point_size,this.point_size)
-					}
-				restore()
 			},this)
 			if (this.closed) {
 				lineTo(this.points[0].x,this.points[0].y)
-				fillStyle('#ccf')
+				fillStyle(this.style.fill)
 				fill()
 			}
 			if (this.style.stroke) stroke(this.style.stroke)
+			this.points.each(function(point){
+				save()
+				opacity(0.2)
+				if (Fred.Geometry.distance(Fred.pointer_x,Fred.pointer_y,point.x,point.y) < this.point_size) {
+					opacity(0.4)
+					over_point = true
+					fillStyle('#22a')
+					rect(point.x-this.point_size/2,point.y-this.point_size/2,this.point_size,this.point_size)
+				} else if (this.selected) {
+					strokeStyle('#22a')
+					strokeRect(point.x-this.point_size/2,point.y-this.point_size/2,this.point_size,this.point_size)
+				}
+				restore()
+			},this)
 		}
 	}
 })
