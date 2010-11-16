@@ -20,8 +20,8 @@ Fred = {
 		Fred.observe('mousemove',Fred.on_mousemove)
 		Fred.observe('touchmove',Fred.on_touchmove)
 		// not sure if these are necessary to preventDefault(), they exist as methods below though.
-		//Fred.observe('touchstart',Fred.on_touchstart)
-		//Fred.observe('touchend',Fred.on_touchend)
+		Fred.observe('touchstart',Fred.on_touchstart)
+		Fred.observe('touchend',Fred.on_touchend)
 		//Fred.observe('mouseup',Fred.on_mouseup)
 		//Set up the main Fred DOM element:
 		Fred.element.style.position = 'absolute'
@@ -49,6 +49,7 @@ Fred = {
 		Fred.draw()
 	},
 	on_touchstart: function(event) {
+		console.log('touch!!')
 		event.preventDefault()
 	},
 	on_touchmove: function(event) {

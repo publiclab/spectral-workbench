@@ -31,23 +31,23 @@ Fred.tools.pen = new Fred.Tool('draw polygons',{
 		}
 	},
 	on_dblclick: function() {
-		if (this.polygon.points.length > 1) {
+		if (this.polygon && this.polygon.points.length > 1) {
 			this.complete_polygon()
 		}
 	},
 	on_mouseup: function() {
 	},
 	on_touchstart: function(e) {
-		e.preventDefault();
-		var x = e.touches[0].pageX
-		var y = e.touches[0].pageY
-		this.on_mousedown(e,x,y)
+		//e.preventDefault();
+		//var x = e.touches[0].pageX
+		//var y = e.touches[0].pageY
+		this.on_mousedown(e)
 	},
 	on_touchend: function(e) {
-		e.preventDefault();
-		var x = e.touches[0].pageX
-		var y = e.touches[0].pageY
-		this.on_mouseup(e,x,y)
+		//e.preventDefault();
+		//var x = e.touches[0].pageX
+		//var y = e.touches[0].pageY
+		this.on_mouseup(e)
 	},
 	draw: function() {
 		//console.log(Fred.timestamp)
