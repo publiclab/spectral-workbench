@@ -9,6 +9,16 @@ There is usually a reasonably recent demo available at http://fred.unterbahn.com
 
 ===========================================
 
+To-do:
+
+- text in polygons
+- styling in CSS-like syntax (like Cartagen)
+- Group class which can self-contain and matrix transform
+- full iPhone/Android multitouch, with editing UI
+- this list is getting more ambitious as it goes so I'll finish now
+
+===========================================
+
 To contribute, please fork the project in Github: https://github.com/jywarren/fred, Then send pull requests! 
 
 You'll have to edit the files in <fred root>/src/, then run 'rake build' from the Fred root directory and it'll compile everything in the /src/ directory into /fred.js, stripping out comments as it goes. This helps maintain ordering of the source loading, and also helps with minification.

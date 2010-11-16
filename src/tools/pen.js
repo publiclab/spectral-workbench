@@ -19,13 +19,19 @@ Fred.tools.pen = new Fred.Tool('draw polygons',{
 		Fred.observe('fred:postdraw',this.draw.bindAsEventListener(this))
 	},
 	on_mousedown: function() {
+		// are we in the middle of making a polygon?
 		if (this.polygon) {
-			// close polygon if you click on first point
-			var on_final = (this.polygon.points.length > 0 && ((Math.abs(this.polygon.points[0].x - Fred.pointer_x) < Fred.click_radius) && (Math.abs(this.polygon.points[0].y - Fred.pointer_y) < Fred.click_radius)))
-			if (on_final && this.polygon.points.length > 1) {
-				this.polygon.closed = true
-				this.complete_polygon()
-			} else if (!on_final) this.polygon.points.push(new Fred.Point(Fred.pointer_x,Fred.pointer_y))
+			// are we editing a point?
+			if (this.polygon.in_point()) {
+
+			} else {
+				// close polygon if you click on first point
+				var on_final = (this.polygon.points.length > 0 && ((Math.abs(this.polygon.points[0].x - Fred.pointer_x) < Fred.click_radius) && (Math.abs(this.polygon.points[0].y - Fred.pointer_y) < Fred.click_radius)))
+				if (on_final && this.polygon.points.length > 1) {
+					this.polygon.closed = true
+					this.complete_polygon()
+				} else if (!on_final) this.polygon.points.push(new Fred.Point(Fred.pointer_x,Fred.pointer_y))
+			}
 		} else {
 			this.polygon = new Fred.Polygon
 		}
