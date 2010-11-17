@@ -31,6 +31,8 @@ Fred = {
 		Fred.resize(Fred.width,Fred.height)
 		//main loop:
 		setInterval(Fred.draw.bind(this),30)
+		//initialize other modules which are waiting for Fred to be ready
+		Fred.keys.initialize()
 	},
 	resize: function(width,height) {
 		// document.viewport.getWidth() yields undefined in Android browser
@@ -46,29 +48,29 @@ Fred = {
 			layer.element.height = Fred.height
 		})
 	},
-	on_mouseup: function(event) {
+	on_mouseup: function(e) {
 		Fred.drag = false
 	},
-	on_mousedown: function(event) {
+	on_mousedown: function(e) {
 		Fred.drag = true
 	},
-	on_mousemove: function(event) {
-		Fred.pointer_x = Event.pointerX(event)
-		Fred.pointer_y = Event.pointerY(event)
+	on_mousemove: function(e) {
+		Fred.pointer_x = Event.pointerX(e)
+		Fred.pointer_y = Event.pointerY(e)
 		Fred.draw()
 	},
-	on_touchstart: function(event) {
+	on_touchstart: function(e) {
 		console.log('touch!!')
-		event.preventDefault()
+		e.preventDefault()
 		Fred.drag = true
 	},
-	on_touchmove: function(event) {
-		event.preventDefault()
-		Fred.pointer_x = event.touches[0].pageX
-		Fred.pointer_y = event.touches[0].pageY
+	on_touchmove: function(e) {
+		e.preventDefault()
+		Fred.pointer_x = e.touches[0].pageX
+		Fred.pointer_y = e.touches[0].pageY
 	},
-	on_touchend: function(event) {
-		event.preventDefault()
+	on_touchend: function(e) {
+		e.preventDefault()
 		Fred.drag = false
 	},
 	select_tool: function(tool) {
@@ -80,16 +82,16 @@ Fred = {
 		events = [	'on_mousedown',
 				'on_mousemove',
 				'on_mouseup',
-				'dblclick',
+				'on_dblclick',
 				'on_touchstart',
 				'on_touchmove',
 				'on_touchend',
 				'on_gesturestart',
 				'on_gestureend']
-		// tool.methods.each(function(method) {
+		$H(tool).keys().each(function(method) {
 			// Fred.observe(method,tool['on_'+method].bindAsEventListener(tool))
 			// Fred.stop_observing(method,tool['on'+method])
-		//})
+		})
 	},
 	/**
 	 * Moves the object (all its points as object.points, including beziers)

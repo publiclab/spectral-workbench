@@ -11,11 +11,11 @@ Fred.Point = Class.create({
 	// If you run it twice, it'll maintain 2 bezier points. 
 	// If you run it thrice, it'll drop the first point to make space for a new one.
 	add_bezier: function(x,y) {
-		this.bezier.push([x,y])
+		this.bezier.push({x:0,y:0})
 		if (this.bezier.length > 2) this.bezier.splice(0,1)
 	},
 	is_bezier: function() {
-		if (this.bezier.length > 0) return true
+		if (this.bezier[0] || this.bezier[1]) return true
 		else return false
 	}
 })

@@ -10,8 +10,8 @@ Fred.Polygon = Class.create({
 	},
 	name: 'untitled polygon',
 	style: {
-		fill: '#ccf',
-		stroke: '#002'
+		fill: '#ccc',
+		stroke: '#222'
 	},
 	apply_style: function() {
 		lineWidth(2)
@@ -42,8 +42,18 @@ Fred.Polygon = Class.create({
 			var over_point = false
 			beginPath()
 			moveTo(this.points[0].x,this.points[0].y)
-			this.points.each(function(point){
-				lineTo(point.x,point.y)
+			// bezier madness. There's probably a better way but i'm jetlagged
+			this.points.each(function(point,index){
+				var last_point = this.points[index-1]
+				var next_point = this.points[index+1]
+				if (index = 0 && !this.closed) last_point = false
+				if (point.is_bezier() && last_point.is_bezier()) {
+					bezierCurveTo(last_point.x+last_point.bezier[0].x,last_point.y+last_point.bezier[0].y,point.x+point.bezier[1].x,point.y+point.bezier[1].y,point.x,point.y)	
+				} else if (!point.is_bezier() && (last_point && last_point.is_bezier())) {
+					bezierCurveTo(last_point.x+last_point.bezier[0].x,last_point.y+last_point.bezier[0].y,point.x,point.y,point.x,point.y)	
+				} else if (point.is_bezier()) {
+					bezierCurveTo(point.x,point.y,point.x+point.bezier[1].x,point.y+point.bezier[1].y,point.x,point.y)	
+				} else lineTo(point.x,point.y)
 			},this)
 			if (this.closed) {
 				lineTo(this.points[0].x,this.points[0].y)
@@ -59,13 +69,32 @@ Fred.Polygon = Class.create({
 				if (Fred.Geometry.distance(Fred.pointer_x,Fred.pointer_y,point.x,point.y) < this.point_size) {
 					opacity(0.4)
 					over_point = true
-					fillStyle('#22a')
+					fillStyle('#a22')
 					rect(point.x-this.point_size/2,point.y-this.point_size/2,this.point_size,this.point_size)
 				} else if (this.selected) {
-					strokeStyle('#22a')
+					strokeStyle('#a22')
 					strokeRect(point.x-this.point_size/2,point.y-this.point_size/2,this.point_size,this.point_size)
 				}
 				restore()
+			},this)
+			this.points.each(function(point){
+				if (point.is_bezier()) {
+					point.bezier.each(function(bezier){
+						save()
+						lineWidth(1)
+						opacity(0.3)
+						strokeStyle('#a00')
+						moveTo(point.x,point.y)
+						lineTo(point.x+bezier.x,point.y+bezier.y)
+							save()
+							fillStyle('#a00')
+							var width = 6
+							rect(point.x+bezier.x-width/2,point.y+bezier.y-width/2,width,width)
+							restore()
+						stroke()
+						restore()
+					},this)
+				}
 			},this)
 		}
 	}

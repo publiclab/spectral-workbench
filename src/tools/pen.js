@@ -4,7 +4,7 @@ Fred.tools.pen = new Fred.Tool('draw polygons',{
 	dragging_point: false,
 	creating_bezier: false,
 	keys: $H({
-		'esc': function() { this.complete_polygon() }
+		'esc': function() { Fred.tools.pen.cancel() }
 	}),
 	deselect: function() {
 		// OK, let's stop messing around - these handlers should be auto-detected.
@@ -25,9 +25,9 @@ Fred.tools.pen = new Fred.Tool('draw polygons',{
 		Fred.observe('touchend',this.on_touchend.bindAsEventListener(this))
 		Fred.observe('fred:postdraw',this.draw.bindAsEventListener(this))
 
-		Fred.keys.load(this.keys)
+		Fred.keys.load(this.keys,this)
 	},
-	on_mousedown: function() {
+	on_mousedown: function(e) {
 		// are we clicking an existing polygon? Should that happen here or in another tool?
 		// ...
 		// are we in the middle of making a polygon?
@@ -36,11 +36,12 @@ Fred.tools.pen = new Fred.Tool('draw polygons',{
 			// clicked_pt could be lost if the mouse leaves the point. 
 			// better save it in the tool
 			this.clicked_point = this.polygon.in_point()
-			// unless it's the LAST point, allow tool to drag it instead:
+			// unless it's the FIRST point, allow tool to drag it instead:
 			if (this.clicked_point != false && this.clicked_point != this.polygon.points[0]) {
 				// if option key is down, start a bezier!
-				if (false) {
+				if (Fred.keys.modifiers.get('control') && this.clicked_point != this.polygon.points.last()){
 					this.creating_bezier = true
+					this.clicked_point.add_bezier({x:0,y:0})
 				} else {
 					// allow point dragging
 					this.dragging_point = true
@@ -68,10 +69,20 @@ Fred.tools.pen = new Fred.Tool('draw polygons',{
 			// move the control point to follow the mouse
 			this.clicked_point.x = Fred.pointer_x
 			this.clicked_point.y = Fred.pointer_y
+		// the modifier check shouldn't be necessary
+		} else if (this.creating_bezier && Fred.keys.modifiers.get('control')) {
+			// if alt key, draw beziers
+			// if you're not dragging the bz control points themselves,
+			// you prob. want to start over
+			this.clicked_point.bezier.first().x = -Fred.pointer_x + this.clicked_point.x
+			this.clicked_point.bezier.first().y = -Fred.pointer_y + this.clicked_point.y
+			this.clicked_point.bezier.last().x = Fred.pointer_x - this.clicked_point.x
+			this.clicked_point.bezier.last().y = Fred.pointer_y - this.clicked_point.y
 		}
 	},
 	on_mouseup: function() {
 		this.dragging_point = false
+		this.creating_bezier = false
 	},
 	on_touchstart: function(e) {
 		//e.preventDefault();
@@ -87,6 +98,12 @@ Fred.tools.pen = new Fred.Tool('draw polygons',{
 	},
 	draw: function() {
 		if (this.polygon) this.polygon.draw()
+	},
+	/*
+	 * Cancels polygon creation, starts fresh with a new polygon
+	 */
+	cancel: function() {
+		this.polygon = false
 	},
 	complete_polygon: function() {
 		// move the polygon to the active Fred layer 
