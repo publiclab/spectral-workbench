@@ -78,6 +78,21 @@ Fred = {
 				'on_gesturestart',
 				'on_gestureend']
 	},
+	move: function(object,x,y,absolute) {
+		if (object.move) {
+			object.move(x,y,absolute)
+		} else if (object instanceof Fred.Polygon || object instanceof Fred.Group) {
+			object.points.each(function(point){
+				if (absolute) {
+					point.x = x
+					point.y = y
+				} else {
+					point.x += x
+					point.y += y
+				}
+			},this)
+		}
+	},
 	observe: function(a,b,c) {
 		Fred.element.observe(a,b,c)
 	},
@@ -153,6 +168,8 @@ Fred.Polygon = Class.create({
 		if (points) this.points = points
 		else this.points = []
 		this.selected = true
+		this.x = 0
+		this.y = 0
 	},
 	name: 'untitled polygon',
 	style: {
@@ -161,6 +178,11 @@ Fred.Polygon = Class.create({
 	},
 	apply_style: function() {
 		lineWidth(2)
+	},
+	refresh: function() {
+		centroid = Fred.Geometry.poly_centroid(this.points)
+		this.x = centroid[0]
+		this.y = centroid[1]
 	},
 	in_point: function() {
 		if (this.points) {
@@ -188,6 +210,7 @@ Fred.Polygon = Class.create({
 				fill()
 			}
 			if (this.style.stroke) stroke(this.style.stroke)
+
 			this.points.each(function(point){
 				save()
 				opacity(0.2)
@@ -240,19 +263,41 @@ Fred.tools.select = new Fred.Tool('select & manipulate objects',{
 
 	},
 	on_mousedown: function() {
-
+		this.selected_object = false
+		Fred.active_layer.objects.each(function(object){
+			var selectables = [Fred.Polygon,Fred.Group]
+			if (object instanceof Fred.Polygon || object instanceof Fred.Group) {
+				if (Fred.Geometry.is_point_in_poly(object.points,Fred.pointer_x,Fred.pointer_y)) {
+					this.selected_object = object
+					this.selected_object_x = object.x
+					this.selected_object_y = object.y
+					this.click_x = Fred.pointer_x
+					this.click_y = Fred.pointer_y
+				}
+			}
+		},this)
 	},
 	on_mousemove: function() {
-
+		if (this.selected_object && Fred.drag) {
+			var x = this.selected_object_x + Fred.pointer_x - this.click_x
+			var y = this.selected_object_y + Fred.pointer_y - this.click_y
+			Fred.move(this.selected_object,x,y,true)
+		}
 	},
 	on_mouseup: function() {
-
+		if (this.selected_object && Fred.drag) {
+			this.selected_object.refresh()
+			this.selected_object = false
+		}
 	},
-	on_touchstart: function() {
-
+	on_touchstart: function(event) {
+		this.on_mousedown(event)
 	},
-	on_touchend: function() {
-
+	on_touchmove: function(event) {
+		this.on_mousemove(event)
+	},
+	on_touchend: function(event) {
+		this.on_mouseup(event)
 	},
 	draw: function() {
 
@@ -262,6 +307,9 @@ Fred.tools.pen = new Fred.Tool('draw polygons',{
 	polygon: false,
 	dragging_point: false,
 	creating_bezier: false,
+	keys: $H({
+		'esc': function() { this.complete_polygon() }
+	}),
 	deselect: function() {
 		Fred.stop_observing('dblclick',this.on_dblclick)
 		Fred.stop_observing('mousedown',this.on_mousedown)
@@ -280,6 +328,7 @@ Fred.tools.pen = new Fred.Tool('draw polygons',{
 		Fred.observe('touchend',this.on_touchend.bindAsEventListener(this))
 		Fred.observe('fred:postdraw',this.draw.bindAsEventListener(this))
 
+		Fred.keys.load(this.keys)
 	},
 	on_mousedown: function() {
 		if (this.polygon) {
@@ -326,6 +375,7 @@ Fred.tools.pen = new Fred.Tool('draw polygons',{
 	},
 	complete_polygon: function() {
 		Fred.active_layer.objects.push(this.polygon)
+		this.polygon.refresh()
 		this.polygon = false
 		Fred.stop_observing('fred:postdraw',this.draw)
 	}
@@ -335,7 +385,49 @@ Fred.tools.pen = new Fred.Tool('draw polygons',{
 Fred.Geometry = {
 	distance: function(x1,y1,x2,y2) {
 		return Math.sqrt(Math.pow(Math.abs(x1-x2),2) + Math.pow(Math.abs(y1-y2),2))
-	}
+	},
+	is_point_in_poly: function(poly, x, y){
+	    for(var c = false, i = -1, l = poly.length, j = l - 1; ++i < l; j = i)
+	        ((poly[i].y <= y && y < poly[j].y) || (poly[j].y <= y && y < poly[i].y))
+	        && (x < (poly[j].x - poly[i].x) * (y - poly[i].y) / (poly[j].y - poly[i].y) + poly[i].x)
+	        && (c = !c);
+	    return c;
+	},
+	poly_centroid: function(polygon) {
+		var n = polygon.length
+		var cx = 0, cy = 0
+		var a = Fred.Geometry.poly_area(polygon,true)
+		var centroid = []
+		var i,j
+		var factor = 0
+
+		for (i=0;i<n;i++) {
+			j = (i + 1) % n
+			factor = (polygon[i].x * polygon[j].y - polygon[j].x * polygon[i].y)
+			cx += (polygon[i].x + polygon[j].x) * factor
+			cy += (polygon[i].y + polygon[j].y) * factor
+		}
+
+		a *= 6
+		factor = 1/a
+		cx *= factor
+		cy *= factor
+		centroid[0] = cx
+		centroid[1] = cy
+		return centroid
+	},
+        poly_area: function(points, signed) {
+                var area = 0
+                points.each(function(point,index) {
+                        if (index < point.length-1) next = points[index+1]
+                        else next = points[0]
+                        if (index > 0) last = points[index-1]
+                        else last = points[points.length-1]
+                        area += last.x*point.y-point.x*last.y+point.x*next.y-next.x*point.y
+                })
+                if (signed) return area/2
+                else return Math.abs(area/2)
+        }
 }
 
 Fred.keys = {

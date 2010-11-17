@@ -5,6 +5,8 @@ Fred.Polygon = Class.create({
 		if (points) this.points = points
 		else this.points = []
 		this.selected = true
+		this.x = 0
+		this.y = 0
 	},
 	name: 'untitled polygon',
 	style: {
@@ -13,6 +15,12 @@ Fred.Polygon = Class.create({
 	},
 	apply_style: function() {
 		lineWidth(2)
+	},
+	// run after editing -- refreshes things like area, centroid, x and y
+	refresh: function() {
+		centroid = Fred.Geometry.poly_centroid(this.points)
+		this.x = centroid[0]
+		this.y = centroid[1]
 	},
 	// Checks if the mouse is inside a control point
 	// and returns the control point or false
@@ -43,6 +51,8 @@ Fred.Polygon = Class.create({
 				fill()
 			}
 			if (this.style.stroke) stroke(this.style.stroke)
+			// draw text here
+
 			this.points.each(function(point){
 				save()
 				opacity(0.2)

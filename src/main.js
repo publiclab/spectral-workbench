@@ -91,6 +91,28 @@ Fred = {
 			// Fred.stop_observing(method,tool['on'+method])
 		//})
 	},
+	/**
+	 * Moves the object (all its points as object.points, including beziers)
+	 * but yields to the objects object.move(x,y,absolute) method if that exists
+	 * and moves either to an absolute position or one relative to the object's
+	 * current position.
+	 */
+	move: function(object,x,y,absolute) {
+		if (object.move) {
+			object.move(x,y,absolute)
+		} else if (object instanceof Fred.Polygon || object instanceof Fred.Group) {
+			// we know how to deal with these
+			object.points.each(function(point){
+				if (absolute) {
+					point.x = x
+					point.y = y
+				} else {
+					point.x += x
+					point.y += y
+				}
+			},this)
+		}
+	},
         /**
 	 * Binds all events to the 'fred' DOM element. Use instead of native Prototype observe.
 	 */
@@ -128,6 +150,7 @@ Fred = {
 
 //= require <primitives/point>
 //= require <primitives/polygon>
+//= require <primitives/group>
 
 //= require <tools/tool>
 //= require <tools/select>

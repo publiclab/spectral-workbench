@@ -3,6 +3,9 @@ Fred.tools.pen = new Fred.Tool('draw polygons',{
 	polygon: false,
 	dragging_point: false,
 	creating_bezier: false,
+	keys: $H({
+		'esc': function() { this.complete_polygon() }
+	}),
 	deselect: function() {
 		// OK, let's stop messing around - these handlers should be auto-detected.
 		Fred.stop_observing('dblclick',this.on_dblclick)
@@ -21,7 +24,8 @@ Fred.tools.pen = new Fred.Tool('draw polygons',{
 		Fred.observe('touchstart',this.on_touchstart.bindAsEventListener(this))
 		Fred.observe('touchend',this.on_touchend.bindAsEventListener(this))
 		Fred.observe('fred:postdraw',this.draw.bindAsEventListener(this))
-		
+
+		Fred.keys.load(this.keys)
 	},
 	on_mousedown: function() {
 		// are we clicking an existing polygon? Should that happen here or in another tool?
@@ -88,6 +92,7 @@ Fred.tools.pen = new Fred.Tool('draw polygons',{
 		// move the polygon to the active Fred layer 
 		Fred.active_layer.objects.push(this.polygon)
 		// stop storing the polygon in the pen tool
+		this.polygon.refresh()
 		this.polygon = false
 		Fred.stop_observing('fred:postdraw',this.draw)
 	}

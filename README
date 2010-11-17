@@ -11,9 +11,18 @@ There is usually a reasonably recent demo available at http://fred.unterbahn.com
 
 To-do:
 
-- text in polygons
+- text in polygons, text tool to edit text, 
+	- doubleclick in select tool to switch to text tool
 - styling in CSS-like syntax (like Cartagen)
 - Group class which can self-contain and matrix transform
+- attach scope of tool to keybinding description
+- fix android viewport width/height
+	- try removeing Fred.resize() entirely
+- auto-detection and connection of on_foo events
+- alias events like on_touchstart > on_mousedown
+- color, linewidth, fill style panel, swipe open?
+- tool selection for mobile devices
+
 - full iPhone/Android multitouch, with editing UI
 - this list is getting more ambitious as it goes so I'll finish now
 
