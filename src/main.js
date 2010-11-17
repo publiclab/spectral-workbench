@@ -72,6 +72,7 @@ Fred = {
 		Fred.drag = false
 	},
 	select_tool: function(tool) {
+		console.log(tool)
 		if (Fred.active_tool) Fred.active_tool.deselect()
 		Fred.active_tool = Fred.tools[tool]
 		Fred.active_tool.select()
@@ -129,8 +130,10 @@ Fred = {
 //= require <primitives/polygon>
 
 //= require <tools/tool>
+//= require <tools/select>
 //= require <tools/pen>
 
 //= require <geometry>
+//= require <keys>
 
 

@@ -64,6 +64,7 @@ Fred = {
 		Fred.drag = false
 	},
 	select_tool: function(tool) {
+		console.log(tool)
 		if (Fred.active_tool) Fred.active_tool.deselect()
 		Fred.active_tool = Fred.tools[tool]
 		Fred.active_tool.select()
@@ -215,8 +216,7 @@ Fred.Tool = Class.create({
 	}
 })
 
-Fred.tools.pen = new Fred.Tool('draw polygons',{
-	polygon: false,
+Fred.tools.select = new Fred.Tool('select & manipulate objects',{
 	deselect: function() {
 		Fred.stop_observing('dblclick',this.on_dblclick)
 		Fred.stop_observing('mousedown',this.on_mousedown)
@@ -234,13 +234,59 @@ Fred.tools.pen = new Fred.Tool('draw polygons',{
 		Fred.observe('touchstart',this.on_touchstart.bindAsEventListener(this))
 		Fred.observe('touchend',this.on_touchend.bindAsEventListener(this))
 		Fred.observe('fred:postdraw',this.draw.bindAsEventListener(this))
+
+	},
+	on_dblclick: function() {
+
+	},
+	on_mousedown: function() {
+
+	},
+	on_mousemove: function() {
+
+	},
+	on_mouseup: function() {
+
+	},
+	on_touchstart: function() {
+
+	},
+	on_touchend: function() {
+
+	},
+	draw: function() {
+
+	}
+})
+Fred.tools.pen = new Fred.Tool('draw polygons',{
+	polygon: false,
+	dragging_point: false,
+	creating_bezier: false,
+	deselect: function() {
+		Fred.stop_observing('dblclick',this.on_dblclick)
+		Fred.stop_observing('mousedown',this.on_mousedown)
+		Fred.stop_observing('mousemove',this.on_mousemove)
+		Fred.stop_observing('mouseup',this.on_mouseup)
+		Fred.stop_observing('touchstart',this.on_touchstart)
+		Fred.stop_observing('touchend',this.on_touchend)
+		Fred.stop_observing('fred:postdraw',this.draw)
+	},
+	select: function() {
+		Fred.observe('dblclick',this.on_dblclick.bindAsEventListener(this))
+		Fred.observe('mousedown',this.on_mousedown.bindAsEventListener(this))
+		Fred.observe('mousemove',this.on_mousemove.bindAsEventListener(this))
+		Fred.observe('mouseup',this.on_mouseup.bindAsEventListener(this))
+		Fred.observe('touchstart',this.on_touchstart.bindAsEventListener(this))
+		Fred.observe('touchend',this.on_touchend.bindAsEventListener(this))
+		Fred.observe('fred:postdraw',this.draw.bindAsEventListener(this))
+
 	},
 	on_mousedown: function() {
 		if (this.polygon) {
 			this.clicked_point = this.polygon.in_point()
 			if (this.clicked_point != false && this.clicked_point != this.polygon.points[0]) {
 				if (false) {
-
+					this.creating_bezier = true
 				} else {
 					this.dragging_point = true
 				}
@@ -291,5 +337,42 @@ Fred.Geometry = {
 		return Math.sqrt(Math.pow(Math.abs(x1-x2),2) + Math.pow(Math.abs(y1-y2),2))
 	}
 }
+
+Fred.keys = {
+	add: function(a,b,c) {
+		shortcut.add(a,b,c)
+	},
+	remove: function(a) {
+		shortcut.remove(a)
+	},
+	load: function(set) {
+		Fred.keys.clear()
+		Fred.keys.current = set
+		Fred.keys.current.keys().each(function(key){
+			Fred.keys.add(key,Fred.keys.current.get(key))
+		},this)
+	},
+	load_master: function() {
+		Fred.keys.master.keys().each(function(key){
+			Fred.keys.add(key,Fred.keys.master.get(key))
+		},this)
+	},
+	clear: function() {
+		Fred.keys.current.keys().each(function(key){
+			Fred.keys.remove(key)
+		},this)
+	},
+	defaults: {
+	},
+	master: $H({
+		's': function(){ Fred.select_tool('select') },
+		'p': function(){ Fred.select_tool('pen') },
+	}),
+	current: $H({
+
+	})
+}
+
+Fred.keys.load_master()
 
 

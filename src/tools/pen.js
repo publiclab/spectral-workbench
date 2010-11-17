@@ -21,6 +21,7 @@ Fred.tools.pen = new Fred.Tool('draw polygons',{
 		Fred.observe('touchstart',this.on_touchstart.bindAsEventListener(this))
 		Fred.observe('touchend',this.on_touchend.bindAsEventListener(this))
 		Fred.observe('fred:postdraw',this.draw.bindAsEventListener(this))
+		
 	},
 	on_mousedown: function() {
 		// are we clicking an existing polygon? Should that happen here or in another tool?
