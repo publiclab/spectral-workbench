@@ -68,7 +68,6 @@ Fred.tools.pen = new Fred.Tool('draw polygons',{
 			this.clicked_point.bezier.next.x = Fred.pointer_x - this.clicked_point.x
 			this.clicked_point.bezier.next.y = Fred.pointer_y - this.clicked_point.y
 		} else if (this.editing_bezier) {
-			console.log(this.clicked_bezier.parent_point)
 			this.clicked_bezier.x = Fred.pointer_x - this.clicked_bezier_parent.x
 			this.clicked_bezier.y = Fred.pointer_y - this.clicked_bezier_parent.y
 		}
