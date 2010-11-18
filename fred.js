@@ -205,6 +205,16 @@ Fred.Polygon = Class.create({
 			return false
 		}
 	},
+	in_bezier: function() {
+		if (this.points) {
+			var in_bezier = false
+			this.points.each(function(point){
+				if (Fred.Geometry.distance(Fred.pointer_x,Fred.pointer_y,point.x+point.bezier.prev.x,point.y+point.bezier.prev.y) < this.point_size) in_bezier = [point.bezier.prev,point]
+				else if (Fred.Geometry.distance(Fred.pointer_x,Fred.pointer_y,point.x+point.bezier.next.x,point.y+point.bezier.next.y) < this.point_size) in_bezier = [point.bezier.next,point]
+			},this)
+			return in_bezier
+		} else return false
+	},
 	draw: function() {
 		if (this.points && this.points.length > 0) {
 			this.apply_style()
@@ -365,13 +375,19 @@ Fred.tools.pen = new Fred.Tool('draw polygons',{
 			this.polygon.selected = true
 		}
 		this.clicked_point = this.polygon.in_point()
+		var bezier = this.polygon.in_bezier()
+		this.clicked_bezier = bezier[0]
+		this.clicked_bezier_parent = bezier[1]
 		if (this.clicked_point != false && this.clicked_point != this.polygon.points[0]) {
 			if (Fred.keys.modifiers.get('control') && this.clicked_point != this.polygon.points.last()){
 				this.creating_bezier = true
-				this.clicked_point.bezier = { prev: { x:0, y:0 }, next: { x:0, y:0 } }
+				this.clicked_point.bezier.prev = {x:0,y:0}
+				this.clicked_point.bezier.next = {x:0,y:0}
 			} else {
 				this.dragging_point = true
 			}
+		} else if (this.clicked_bezier) {
+			this.editing_bezier = true
 		} else {
 			var on_final = (this.polygon.points.length > 1 && ((Math.abs(this.polygon.points[0].x - Fred.pointer_x) < Fred.click_radius) && (Math.abs(this.polygon.points[0].y - Fred.pointer_y) < Fred.click_radius)))
 			if (on_final && this.polygon.points.length > 1) {
@@ -390,16 +406,20 @@ Fred.tools.pen = new Fred.Tool('draw polygons',{
 			this.clicked_point.x = Fred.pointer_x
 			this.clicked_point.y = Fred.pointer_y
 		} else if (this.creating_bezier && Fred.keys.modifiers.get('control')) {
-			console.log('editbez')
 			this.clicked_point.bezier.prev.x = -Fred.pointer_x + this.clicked_point.x
 			this.clicked_point.bezier.prev.y = -Fred.pointer_y + this.clicked_point.y
 			this.clicked_point.bezier.next.x = Fred.pointer_x - this.clicked_point.x
 			this.clicked_point.bezier.next.y = Fred.pointer_y - this.clicked_point.y
+		} else if (this.editing_bezier) {
+			console.log(this.clicked_bezier.parent_point)
+			this.clicked_bezier.x = Fred.pointer_x - this.clicked_bezier_parent.x
+			this.clicked_bezier.y = Fred.pointer_y - this.clicked_bezier_parent.y
 		}
 	},
 	on_mouseup: function() {
 		this.dragging_point = false
 		this.creating_bezier = false
+		this.editing_bezier = false
 	},
 	on_touchstart: function(e) {
 		this.on_mousedown(e)

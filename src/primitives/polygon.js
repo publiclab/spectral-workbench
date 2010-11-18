@@ -39,6 +39,18 @@ Fred.Polygon = Class.create({
 			return false
 		}
 	},
+	// Checks if the mouse is inside a bezier control point
+	// and returns the bezier control point or false
+	in_bezier: function() {
+		if (this.points) {
+			var in_bezier = false
+			this.points.each(function(point){
+				if (Fred.Geometry.distance(Fred.pointer_x,Fred.pointer_y,point.x+point.bezier.prev.x,point.y+point.bezier.prev.y) < this.point_size) in_bezier = [point.bezier.prev,point]
+				else if (Fred.Geometry.distance(Fred.pointer_x,Fred.pointer_y,point.x+point.bezier.next.x,point.y+point.bezier.next.y) < this.point_size) in_bezier = [point.bezier.next,point]
+			},this)
+			return in_bezier
+		} else return false
+	},
 	draw: function() {
 		// when first creating the poly, there are no points:
 		if (this.points && this.points.length > 0) {
