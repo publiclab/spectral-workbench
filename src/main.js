@@ -1,6 +1,7 @@
 // Central Fred source file; all other files are linked to from here.
 Fred = {
 	click_radius: 6,
+	speed: 30,
 	height: '100%',
 	width: '100%',
 	layers: [],
@@ -10,6 +11,15 @@ Fred = {
 	date: new Date,
 	times: [],
 	drag: false,
+	listeners: [	'mousedown',
+			'mousemove',
+			'mouseup',
+			'dblclick',
+			'touchstart',
+			'touchmove',
+			'touchend',
+			'gesturestart',
+			'gestureend'],
 	init: function(args) {
 		Fred.element = $('fred')
 		Fred.select_tool('pen')
@@ -30,7 +40,7 @@ Fred = {
 		Fred.element.style.left = 0
 		Fred.resize(Fred.width,Fred.height)
 		//main loop:
-		setInterval(Fred.draw.bind(this),30)
+		setInterval(Fred.draw.bind(this),Fred.speed)
 		//initialize other modules which are waiting for Fred to be ready
 		Fred.keys.initialize()
 	},
@@ -74,23 +84,25 @@ Fred = {
 		Fred.drag = false
 	},
 	select_tool: function(tool) {
-		console.log(tool)
+		console.log('selecting '+tool)
 		if (Fred.active_tool) Fred.active_tool.deselect()
+		// Deactivate old listeners
+		$H(Fred.active_tool).keys().each(function(method) {
+			Fred.listeners.each(function(event) {
+				if (method == ('on_'+event)) {
+					Fred.stop_observing(event,tool[method])
+				}
+			},this)
+		},this)
 		Fred.active_tool = Fred.tools[tool]
 		Fred.active_tool.select()
-		// Scan tool for on_foo handlers, connect them to available events:
-		events = [	'on_mousedown',
-				'on_mousemove',
-				'on_mouseup',
-				'on_dblclick',
-				'on_touchstart',
-				'on_touchmove',
-				'on_touchend',
-				'on_gesturestart',
-				'on_gestureend']
-		$H(tool).keys().each(function(method) {
-			// Fred.observe(method,tool['on_'+method].bindAsEventListener(tool))
-			// Fred.stop_observing(method,tool['on'+method])
+		// Scan tool for on_foo listeners, connect them to available events:
+		$H(Fred.tools[tool]).keys().each(function(method) {
+			Fred.listeners.each(function(event) {
+				if (method == ('on_'+event)) {
+					Fred.observe(event,Fred.active_tool[method].bindAsEventListener(Fred.active_tool))
+				}
+			},this)
 		})
 	},
 	/**
@@ -143,6 +155,7 @@ Fred = {
 		Fred.date = new Date
 		this.layers.each(function(layer){layer.draw()})
 		Fred.fire('fred:postdraw')
+		// debug image
 		fillStyle('red')
 		rect(10,10,20,20)
 	}

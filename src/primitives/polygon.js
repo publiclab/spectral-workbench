@@ -4,17 +4,21 @@ Fred.Polygon = Class.create({
 		this.point_size = 12
 		if (points) this.points = points
 		else this.points = []
-		this.selected = true
+		this.selected = false
+		this.closed = false
 		this.x = 0
 		this.y = 0
 	},
 	name: 'untitled polygon',
 	style: {
 		fill: '#ccc',
-		stroke: '#222'
+		stroke: '#222',
+		lineWidth: 2
 	},
 	apply_style: function() {
-		lineWidth(2)
+		lineWidth(this.style.lineWidth)
+		strokeStyle(this.style.stroke)
+		fillStyle(this.style.fill)
 	},
 	// run after editing -- refreshes things like area, centroid, x and y
 	refresh: function() {
@@ -47,20 +51,23 @@ Fred.Polygon = Class.create({
 				var last_point = this.points[index-1]
 				var next_point = this.points[index+1]
 				if (index = 0 && !this.closed) last_point = false
-				if (point.is_bezier() && last_point.is_bezier()) {
-					bezierCurveTo(last_point.x+last_point.bezier[0].x,last_point.y+last_point.bezier[0].y,point.x+point.bezier[1].x,point.y+point.bezier[1].y,point.x,point.y)	
-				} else if (!point.is_bezier() && (last_point && last_point.is_bezier())) {
-					bezierCurveTo(last_point.x+last_point.bezier[0].x,last_point.y+last_point.bezier[0].y,point.x,point.y,point.x,point.y)	
-				} else if (point.is_bezier()) {
-					bezierCurveTo(point.x,point.y,point.x+point.bezier[1].x,point.y+point.bezier[1].y,point.x,point.y)	
-				} else lineTo(point.x,point.y)
+				// beziers are .next or .prev, depending which line segment they correspond to.
+				if (point.bezier.prev != false && (last_point && last_point.bezier.next != false)) {
+					bezierCurveTo(last_point.x+last_point.bezier.next.x,last_point.y+last_point.bezier.next.y,point.x+point.bezier.prev.x,point.y+point.bezier.prev.y,point.x,point.y)	
+				} else if (!point.bezier.prev && (last_point && last_point.bezier.next != false)) {
+					bezierCurveTo(last_point.x+last_point.bezier.next.x,last_point.y+last_point.bezier.next.y,point.x,point.y,point.x,point.y)	
+				} else if (point.bezier.prev) {
+					bezierCurveTo(point.x,point.y,point.x+point.bezier.prev.x,point.y+point.bezier.prev.y,point.x,point.y)	
+				} else {
+					lineTo(point.x,point.y)
+				}
 			},this)
 			if (this.closed) {
 				lineTo(this.points[0].x,this.points[0].y)
 				fillStyle(this.style.fill)
 				fill()
 			}
-			if (this.style.stroke) stroke(this.style.stroke)
+			stroke()
 			// draw text here
 
 			this.points.each(function(point){
@@ -77,25 +84,27 @@ Fred.Polygon = Class.create({
 				}
 				restore()
 			},this)
-			this.points.each(function(point){
-				if (point.is_bezier()) {
-					point.bezier.each(function(bezier){
-						save()
-						lineWidth(1)
-						opacity(0.3)
-						strokeStyle('#a00')
-						moveTo(point.x,point.y)
-						lineTo(point.x+bezier.x,point.y+bezier.y)
+			if (this.selected) {
+				this.points.each(function(point){
+					$H(point.bezier).values().each(function(bezier){
+						if (bezier) {
 							save()
-							fillStyle('#a00')
-							var width = 6
-							rect(point.x+bezier.x-width/2,point.y+bezier.y-width/2,width,width)
+							lineWidth(1)
+							opacity(0.3)
+							strokeStyle('#a00')
+							moveTo(point.x,point.y)
+							lineTo(point.x+bezier.x,point.y+bezier.y)
+								save()
+								fillStyle('#a00')
+								var width = 6
+								rect(point.x+bezier.x-width/2,point.y+bezier.y-width/2,width,width)
+								restore()
+							stroke()
 							restore()
-						stroke()
-						restore()
+						}
 					},this)
-				}
-			},this)
+				},this)
+			}
 		}
 	}
 })

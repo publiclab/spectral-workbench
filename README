@@ -23,8 +23,7 @@ To-do:
 - color, linewidth, fill style panel, swipe open?
 - tool selection for mobile devices
 - stop_observing is not working, tools don't deselect properly
-- bezier curves with control key, some alternative for multitouch
-	- line 73 of pen.js shouldn't be necessary - modifier key not turning off
+- line 73 of pen.js shouldn't be necessary - modifier key not turning off
 - shift key locks line drawing to 45 degree angles
 
 - full iPhone/Android multitouch, with editing UI

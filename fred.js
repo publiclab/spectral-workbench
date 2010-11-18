@@ -1,5 +1,6 @@
 Fred = {
 	click_radius: 6,
+	speed: 30,
 	height: '100%',
 	width: '100%',
 	layers: [],
@@ -9,6 +10,15 @@ Fred = {
 	date: new Date,
 	times: [],
 	drag: false,
+	listeners: [	'mousedown',
+			'mousemove',
+			'mouseup',
+			'dblclick',
+			'touchstart',
+			'touchmove',
+			'touchend',
+			'gesturestart',
+			'gestureend'],
 	init: function(args) {
 		Fred.element = $('fred')
 		Fred.select_tool('pen')
@@ -24,7 +34,7 @@ Fred = {
 		Fred.element.style.top = 0
 		Fred.element.style.left = 0
 		Fred.resize(Fred.width,Fred.height)
-		setInterval(Fred.draw.bind(this),30)
+		setInterval(Fred.draw.bind(this),Fred.speed)
 		Fred.keys.initialize()
 	},
 	resize: function(width,height) {
@@ -65,20 +75,23 @@ Fred = {
 		Fred.drag = false
 	},
 	select_tool: function(tool) {
-		console.log(tool)
+		console.log('selecting '+tool)
 		if (Fred.active_tool) Fred.active_tool.deselect()
+		$H(Fred.active_tool).keys().each(function(method) {
+			Fred.listeners.each(function(event) {
+				if (method == ('on_'+event)) {
+					Fred.stop_observing(event,tool[method])
+				}
+			},this)
+		},this)
 		Fred.active_tool = Fred.tools[tool]
 		Fred.active_tool.select()
-		events = [	'on_mousedown',
-				'on_mousemove',
-				'on_mouseup',
-				'on_dblclick',
-				'on_touchstart',
-				'on_touchmove',
-				'on_touchend',
-				'on_gesturestart',
-				'on_gestureend']
-		$H(tool).keys().each(function(method) {
+		$H(Fred.tools[tool]).keys().each(function(method) {
+			Fred.listeners.each(function(event) {
+				if (method == ('on_'+event)) {
+					Fred.observe(event,Fred.active_tool[method].bindAsEventListener(Fred.active_tool))
+				}
+			},this)
 		})
 	},
 	move: function(object,x,y,absolute) {
@@ -152,35 +165,29 @@ Fred.Point = Class.create({
 	initialize: function(x,y) {
 		this.x = x
 		this.y = y
-		this.bezier = new Array
-		this.bezier[0] = false // first bezier point, optional
-		this.bezier[1] = false // second bezier point, optional
+		this.bezier = { prev: false, next: false }
 	},
-	add_bezier: function(x,y) {
-		this.bezier.push({x:0,y:0})
-		if (this.bezier.length > 2) this.bezier.splice(0,1)
-	},
-	is_bezier: function() {
-		if (this.bezier[0] || this.bezier[1]) return true
-		else return false
-	}
 })
 Fred.Polygon = Class.create({
 	initialize: function(points) {
 		this.point_size = 12
 		if (points) this.points = points
 		else this.points = []
-		this.selected = true
+		this.selected = false
+		this.closed = false
 		this.x = 0
 		this.y = 0
 	},
 	name: 'untitled polygon',
 	style: {
 		fill: '#ccc',
-		stroke: '#222'
+		stroke: '#222',
+		lineWidth: 2
 	},
 	apply_style: function() {
-		lineWidth(2)
+		lineWidth(this.style.lineWidth)
+		strokeStyle(this.style.stroke)
+		fillStyle(this.style.fill)
 	},
 	refresh: function() {
 		centroid = Fred.Geometry.poly_centroid(this.points)
@@ -208,20 +215,22 @@ Fred.Polygon = Class.create({
 				var last_point = this.points[index-1]
 				var next_point = this.points[index+1]
 				if (index = 0 && !this.closed) last_point = false
-				if (point.is_bezier() && last_point.is_bezier()) {
-					bezierCurveTo(last_point.x+last_point.bezier[0].x,last_point.y+last_point.bezier[0].y,point.x+point.bezier[1].x,point.y+point.bezier[1].y,point.x,point.y)
-				} else if (!point.is_bezier() && (last_point && last_point.is_bezier())) {
-					bezierCurveTo(last_point.x+last_point.bezier[0].x,last_point.y+last_point.bezier[0].y,point.x,point.y,point.x,point.y)
-				} else if (point.is_bezier()) {
-					bezierCurveTo(point.x,point.y,point.x+point.bezier[1].x,point.y+point.bezier[1].y,point.x,point.y)
-				} else lineTo(point.x,point.y)
+				if (point.bezier.prev != false && (last_point && last_point.bezier.next != false)) {
+					bezierCurveTo(last_point.x+last_point.bezier.next.x,last_point.y+last_point.bezier.next.y,point.x+point.bezier.prev.x,point.y+point.bezier.prev.y,point.x,point.y)
+				} else if (!point.bezier.prev && (last_point && last_point.bezier.next != false)) {
+					bezierCurveTo(last_point.x+last_point.bezier.next.x,last_point.y+last_point.bezier.next.y,point.x,point.y,point.x,point.y)
+				} else if (point.bezier.prev) {
+					bezierCurveTo(point.x,point.y,point.x+point.bezier.prev.x,point.y+point.bezier.prev.y,point.x,point.y)
+				} else {
+					lineTo(point.x,point.y)
+				}
 			},this)
 			if (this.closed) {
 				lineTo(this.points[0].x,this.points[0].y)
 				fillStyle(this.style.fill)
 				fill()
 			}
-			if (this.style.stroke) stroke(this.style.stroke)
+			stroke()
 
 			this.points.each(function(point){
 				save()
@@ -237,25 +246,27 @@ Fred.Polygon = Class.create({
 				}
 				restore()
 			},this)
-			this.points.each(function(point){
-				if (point.is_bezier()) {
-					point.bezier.each(function(bezier){
-						save()
-						lineWidth(1)
-						opacity(0.3)
-						strokeStyle('#a00')
-						moveTo(point.x,point.y)
-						lineTo(point.x+bezier.x,point.y+bezier.y)
+			if (this.selected) {
+				this.points.each(function(point){
+					$H(point.bezier).values().each(function(bezier){
+						if (bezier) {
 							save()
-							fillStyle('#a00')
-							var width = 6
-							rect(point.x+bezier.x-width/2,point.y+bezier.y-width/2,width,width)
+							lineWidth(1)
+							opacity(0.3)
+							strokeStyle('#a00')
+							moveTo(point.x,point.y)
+							lineTo(point.x+bezier.x,point.y+bezier.y)
+								save()
+								fillStyle('#a00')
+								var width = 6
+								rect(point.x+bezier.x-width/2,point.y+bezier.y-width/2,width,width)
+								restore()
+							stroke()
 							restore()
-						stroke()
-						restore()
+						}
 					},this)
-				}
-			},this)
+				},this)
+			}
 		}
 	}
 })
@@ -342,44 +353,31 @@ Fred.tools.pen = new Fred.Tool('draw polygons',{
 		'esc': function() { Fred.tools.pen.cancel() }
 	}),
 	deselect: function() {
-		Fred.stop_observing('dblclick',this.on_dblclick)
-		Fred.stop_observing('mousedown',this.on_mousedown)
-		Fred.stop_observing('mousemove',this.on_mousemove)
-		Fred.stop_observing('mouseup',this.on_mouseup)
-		Fred.stop_observing('touchstart',this.on_touchstart)
-		Fred.stop_observing('touchend',this.on_touchend)
 		Fred.stop_observing('fred:postdraw',this.draw)
 	},
 	select: function() {
-		Fred.observe('dblclick',this.on_dblclick.bindAsEventListener(this))
-		Fred.observe('mousedown',this.on_mousedown.bindAsEventListener(this))
-		Fred.observe('mousemove',this.on_mousemove.bindAsEventListener(this))
-		Fred.observe('mouseup',this.on_mouseup.bindAsEventListener(this))
-		Fred.observe('touchstart',this.on_touchstart.bindAsEventListener(this))
-		Fred.observe('touchend',this.on_touchend.bindAsEventListener(this))
 		Fred.observe('fred:postdraw',this.draw.bindAsEventListener(this))
-
 		Fred.keys.load(this.keys,this)
 	},
 	on_mousedown: function(e) {
-		if (this.polygon) {
-			this.clicked_point = this.polygon.in_point()
-			if (this.clicked_point != false && this.clicked_point != this.polygon.points[0]) {
-				if (Fred.keys.modifiers.get('control') && this.clicked_point != this.polygon.points.last()){
-					this.creating_bezier = true
-					this.clicked_point.add_bezier({x:0,y:0})
-				} else {
-					this.dragging_point = true
-				}
+		if (!this.polygon) {
+			this.polygon = new Fred.Polygon
+			this.polygon.selected = true
+		}
+		this.clicked_point = this.polygon.in_point()
+		if (this.clicked_point != false && this.clicked_point != this.polygon.points[0]) {
+			if (Fred.keys.modifiers.get('control') && this.clicked_point != this.polygon.points.last()){
+				this.creating_bezier = true
+				this.clicked_point.bezier = { prev: { x:0, y:0 }, next: { x:0, y:0 } }
 			} else {
-				var on_final = (this.polygon.points.length > 0 && ((Math.abs(this.polygon.points[0].x - Fred.pointer_x) < Fred.click_radius) && (Math.abs(this.polygon.points[0].y - Fred.pointer_y) < Fred.click_radius)))
-				if (on_final && this.polygon.points.length > 1) {
-					this.polygon.closed = true
-					this.complete_polygon()
-				} else if (!on_final) this.polygon.points.push(new Fred.Point(Fred.pointer_x,Fred.pointer_y))
+				this.dragging_point = true
 			}
 		} else {
-			this.polygon = new Fred.Polygon
+			var on_final = (this.polygon.points.length > 1 && ((Math.abs(this.polygon.points[0].x - Fred.pointer_x) < Fred.click_radius) && (Math.abs(this.polygon.points[0].y - Fred.pointer_y) < Fred.click_radius)))
+			if (on_final && this.polygon.points.length > 1) {
+				this.polygon.closed = true
+				this.complete_polygon()
+			} else if (!on_final) this.polygon.points.push(new Fred.Point(Fred.pointer_x,Fred.pointer_y))
 		}
 	},
 	on_dblclick: function() {
@@ -392,10 +390,11 @@ Fred.tools.pen = new Fred.Tool('draw polygons',{
 			this.clicked_point.x = Fred.pointer_x
 			this.clicked_point.y = Fred.pointer_y
 		} else if (this.creating_bezier && Fred.keys.modifiers.get('control')) {
-			this.clicked_point.bezier.first().x = -Fred.pointer_x + this.clicked_point.x
-			this.clicked_point.bezier.first().y = -Fred.pointer_y + this.clicked_point.y
-			this.clicked_point.bezier.last().x = Fred.pointer_x - this.clicked_point.x
-			this.clicked_point.bezier.last().y = Fred.pointer_y - this.clicked_point.y
+			console.log('editbez')
+			this.clicked_point.bezier.prev.x = -Fred.pointer_x + this.clicked_point.x
+			this.clicked_point.bezier.prev.y = -Fred.pointer_y + this.clicked_point.y
+			this.clicked_point.bezier.next.x = Fred.pointer_x - this.clicked_point.x
+			this.clicked_point.bezier.next.y = Fred.pointer_y - this.clicked_point.y
 		}
 	},
 	on_mouseup: function() {
@@ -420,6 +419,7 @@ Fred.tools.pen = new Fred.Tool('draw polygons',{
 	complete_polygon: function() {
 		Fred.active_layer.objects.push(this.polygon)
 		this.polygon.refresh()
+		this.polygon.selected = false
 		this.polygon = false
 		Fred.stop_observing('fred:postdraw',this.draw)
 	}
