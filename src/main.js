@@ -10,7 +10,10 @@ Fred = {
 	timestamp: 0,
 	date: new Date,
 	times: [],
+	// Whether the user is dragging.
 	drag: false,
+	// Events which will be auto-connected when new tools are added,
+	// if there are corresponding on_<foo> methods defined.
 	listeners: [	'mousedown',
 			'mousemove',
 			'mouseup',
@@ -20,6 +23,7 @@ Fred = {
 			'touchend',
 			'gesturestart',
 			'gestureend'],
+			// 'every_<time>', // listener to trigger periodical execution
 	init: function(args) {
 		Fred.element = $('fred')
 		Fred.select_tool('pen')
@@ -27,26 +31,27 @@ Fred = {
 		new Fred.Layer('background')
 		Fred.active_layer = Fred.layers.first()
 		$C = Fred.active_layer.canvas
-		//Event handling setup:
+		// Event handling setup:
 		Fred.observe('mousemove',Fred.on_mousemove)
 		Fred.observe('touchmove',Fred.on_touchmove)
-		//Fred.observe('mouseup',Fred.on_mouseup)
-		// not sure if these are necessary to preventDefault(), they exist as methods below though.
+		// Fred.observe('mouseup',Fred.on_mouseup)
 		Fred.observe('touchstart',Fred.on_touchstart)
 		Fred.observe('touchend',Fred.on_touchend)
-		//Set up the main Fred DOM element:
+		// Set up the main Fred DOM element:
 		Fred.element.style.position = 'absolute'
 		Fred.element.style.top = 0
 		Fred.element.style.left = 0
 		Fred.resize(Fred.width,Fred.height)
-		//main loop:
+		// Initiate main loop:
 		setInterval(Fred.draw.bind(this),Fred.speed)
-		//initialize other modules which are waiting for Fred to be ready
+		// Access main program grid:
+		var whtrbtobj
+		// Initialize other modules which are waiting for Fred to be ready
 		Fred.keys.initialize()
 	},
 	resize: function(width,height) {
 		// document.viewport.getWidth() yields undefined in Android browser
-		// try running without resizing just in Android -- disable rotate anyways. 
+		// try running without resizing just in Android -- disable rotate anyway 
 		if (width[width.length-1] == '%') Fred.width = parseInt(document.viewport.getWidth()*100/width.substr(0,width.length-1))
 		else Fred.width = width
 		if (height[height.length-1] == '%') Fred.height = parseInt(document.viewport.getHeight()*100/height.substr(0,height.length-1))
@@ -65,6 +70,7 @@ Fred = {
 		Fred.drag = true
 	},
 	on_mousemove: function(e) {
+		console.log('move')
 		Fred.pointer_x = Event.pointerX(e)
 		Fred.pointer_y = Event.pointerY(e)
 		Fred.draw()
@@ -90,9 +96,10 @@ Fred = {
 		$H(Fred.active_tool).keys().each(function(method) {
 			Fred.listeners.each(function(event) {
 				if (method == ('on_'+event)) {
-					Fred.stop_observing(event,tool[method])
+					Fred.stop_observing(event,Fred.active_tool[method].bindAsEventListener(Fred.active_tool))
 				}
 			},this)
+			if (method == 'draw') Fred.stop_observing('fred:postdraw',Fred.active_tool.draw)
 		},this)
 		Fred.active_tool = Fred.tools[tool]
 		Fred.active_tool.select()
@@ -103,6 +110,7 @@ Fred = {
 					Fred.observe(event,Fred.active_tool[method].bindAsEventListener(Fred.active_tool))
 				}
 			},this)
+			if (method == 'draw') Fred.observe('fred:postdraw',Fred.active_tool.draw.bindAsEventListener(Fred.active_tool))
 		})
 	},
 	/**

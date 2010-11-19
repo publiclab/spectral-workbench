@@ -4,8 +4,5 @@ Fred.Tool = Class.create({
 		this.description = description
 		Object.extend(this,args)
 	},
-	on_select: function() {
-
-	}
 })
 

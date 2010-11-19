@@ -6,12 +6,14 @@ Fred.tools.pen = new Fred.Tool('draw polygons',{
 	keys: $H({
 		'esc': function() { Fred.tools.pen.cancel() }
 	}),
-	deselect: function() {
-		Fred.stop_observing('fred:postdraw',this.draw)
-	},
 	select: function() {
-		Fred.observe('fred:postdraw',this.draw.bindAsEventListener(this))
+		// Here go things which must happen when the tool is activated
 		Fred.keys.load(this.keys,this)
+	},
+	deselect: function() {
+		// Here go things which must happen when the tool is deactivated
+		// For example, cancel the current polygon. 
+		this.cancel()
 	},
 	on_mousedown: function(e) {
 		if (!this.polygon) {
@@ -23,9 +25,10 @@ Fred.tools.pen = new Fred.Tool('draw polygons',{
 		var bezier = this.polygon.in_bezier()
 		this.clicked_bezier = bezier[0]
 		this.clicked_bezier_parent = bezier[1] 
+			console.log('new point')
 		// unless it's the FIRST point, allow tool to drag it instead:
 		if (this.clicked_point != false && this.clicked_point != this.polygon.points[0]) {
-			// if option key is down, start a bezier!
+			// if control key is down, start a bezier!
 			if (Fred.keys.modifiers.get('control') && this.clicked_point != this.polygon.points.last()){
 				this.creating_bezier = true
 				this.clicked_point.bezier.prev = {x:0,y:0}
@@ -44,7 +47,18 @@ Fred.tools.pen = new Fred.Tool('draw polygons',{
 			if (on_final && this.polygon.points.length > 1) {
 				this.polygon.closed = true
 				this.complete_polygon()
-			} else if (!on_final) this.polygon.points.push(new Fred.Point(Fred.pointer_x,Fred.pointer_y))
+			} else if (!on_final) {
+				this.polygon.points.push(new Fred.Point(Fred.pointer_x,Fred.pointer_y))
+				if (Fred.keys.modifiers.get('control')) {
+					this.creating_bezier = true
+					this.clicked_point = this.polygon.points.last()
+					this.clicked_point.bezier.prev = {x:0,y:0}
+					this.clicked_point.bezier.next = {x:0,y:0}
+				} else {
+					this.clicked_point = this.polygon.points.last()
+					this.dragging_point = true
+				}
+			}
 		}
 	},
 	on_dblclick: function() {
@@ -73,6 +87,7 @@ Fred.tools.pen = new Fred.Tool('draw polygons',{
 		}
 	},
 	on_mouseup: function() {
+		this.clicked_point = false
 		this.dragging_point = false
 		this.creating_bezier = false
 		this.editing_bezier = false

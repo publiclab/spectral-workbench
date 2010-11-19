@@ -20,6 +20,37 @@ Fred.Polygon = Class.create({
 		strokeStyle(this.style.stroke)
 		fillStyle(this.style.fill)
 	},
+	/*
+	 * Is the offered point inside the polygon? Accounts for bezier polygons.
+	 * Yields yes if its not a closed poly but you click within Fred.click_radius of the line.
+	 */
+	is_point_inside: function(x,y) {
+		if (this.is_bezier()) {
+			if (this.closed) {
+				
+			} else {
+
+			}
+		} else if (this.closed()) {
+			// it's a normal polygon, no curves, no nonsense
+			return Fred.Geometry.is_point_in_poly(this.points,x,y)
+		} else {
+		}
+	},
+	is_bezier: function() {
+		var is_bezier = false
+		this.points.each(function(point) {
+			if (point.bezier.prev != false) {
+				is_bezier = true
+				break
+			}
+			if (point.bezier.next != false) {
+				is_bezier = true
+				break
+			}
+		},this)
+		return is_bezier
+	},
 	// run after editing -- refreshes things like area, centroid, x and y
 	refresh: function() {
 		centroid = Fred.Geometry.poly_centroid(this.points)
@@ -108,8 +139,7 @@ Fred.Polygon = Class.create({
 							lineTo(point.x+bezier.x,point.y+bezier.y)
 								save()
 								fillStyle('#a00')
-								var width = 6
-								rect(point.x+bezier.x-width/2,point.y+bezier.y-width/2,width,width)
+								rect(point.x+bezier.x-Fred.click_radius/2,point.y+bezier.y-Fred.click_radius/2,Fred.click_radius*2,Fred.click_radius*2)
 								restore()
 							stroke()
 							restore()

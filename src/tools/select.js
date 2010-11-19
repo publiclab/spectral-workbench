@@ -1,23 +1,10 @@
-// Default editing tool -- selection, etc.
+// Default editing tool -- selection, translation, rotation, etc.
 Fred.tools.select = new Fred.Tool('select & manipulate objects',{
-	deselect: function() {
-		Fred.stop_observing('dblclick',this.on_dblclick)
-		Fred.stop_observing('mousedown',this.on_mousedown)
-		Fred.stop_observing('mousemove',this.on_mousemove)
-		Fred.stop_observing('mouseup',this.on_mouseup)
-		Fred.stop_observing('touchstart',this.on_touchstart)
-		Fred.stop_observing('touchend',this.on_touchend)
-		Fred.stop_observing('fred:postdraw',this.draw)
-	},
 	select: function() {
-		Fred.observe('dblclick',this.on_dblclick.bindAsEventListener(this))
-		Fred.observe('mousedown',this.on_mousedown.bindAsEventListener(this))
-		Fred.observe('mousemove',this.on_mousemove.bindAsEventListener(this))
-		Fred.observe('mouseup',this.on_mouseup.bindAsEventListener(this))
-		Fred.observe('touchstart',this.on_touchstart.bindAsEventListener(this))
-		Fred.observe('touchend',this.on_touchend.bindAsEventListener(this))
-		Fred.observe('fred:postdraw',this.draw.bindAsEventListener(this))
-		
+		// here go things which must happen when the tool is deactivated
+	},
+	deselect: function() {
+		// here go things which must happen when the tool is activated
 	},
 	on_dblclick: function() {
 
@@ -25,6 +12,7 @@ Fred.tools.select = new Fred.Tool('select & manipulate objects',{
 	on_mousedown: function() {
 		this.selected_object = false
 		// inefficient - we should crap out of this once we find a match
+		// whats that, break?
 		Fred.active_layer.objects.each(function(object){
 			// iterate through point_in_poly-able classnames
 			var selectables = [Fred.Polygon,Fred.Group]
