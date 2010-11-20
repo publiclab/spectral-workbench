@@ -1,0 +1,19 @@
+body {
+	background:#333;
+}
+
+.button {
+	position:absolute;
+	display:block;
+	bottom:10px;
+	left:10px;
+	background:white;
+	padding:8px;
+	font-family:georgia;
+	color:#222;
+}
+
+a.button:hover {
+	background:#acf;
+}
+
