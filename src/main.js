@@ -9,6 +9,7 @@ Fred = {
 	frame: 0,
 	timestamp: 0,
 	date: new Date,
+	style: {},
 	times: [],
 	// Whether the user is dragging.
 	drag: false,
@@ -49,6 +50,21 @@ Fred = {
 		// Initialize other modules which are waiting for Fred to be ready
 		Fred.keys.initialize()
 	},
+	draw: function() {
+		Fred.fire('fred:predraw')
+		//calculate fps:
+		Fred.timestamp = Fred.date.getTime()
+		Fred.times.unshift(Fred.timestamp)
+		if (Fred.times.length > 100) Fred.times.pop()
+		Fred.fps = parseInt(Fred.times.length/(Fred.timestamp - Fred.times.last())*1000)
+		Fred.date = new Date
+		this.layers.each(function(layer){layer.draw()})
+		Fred.fire('fred:postdraw')
+		// debug image
+		fillStyle('#a00')
+		rect(10,10,40,40)
+		drawText('georgia',15,'white',12,30,'fred')
+	},
 	resize: function(width,height) {
 		// document.viewport.getWidth() yields undefined in Android browser
 		// try running without resizing just in Android -- disable rotate anyway 
@@ -63,6 +79,14 @@ Fred = {
 			layer.element.height = Fred.height
 		})
 	},
+	text_style: {
+		fontFamily: 'georgia',
+		fontSize: 15,
+		fontColor: '#222',
+	},
+	text: function(text,x,y) {
+		drawText(Fred.text_style.fontFamily,Fred.text_style.fontSize,Fred.text_style.fontColor,x,y,text)
+	},
 	on_mouseup: function(e) {
 		Fred.drag = false
 	},
@@ -70,7 +94,6 @@ Fred = {
 		Fred.drag = true
 	},
 	on_mousemove: function(e) {
-		console.log('move')
 		Fred.pointer_x = Event.pointerX(e)
 		Fred.pointer_y = Event.pointerY(e)
 		Fred.draw()
@@ -153,20 +176,6 @@ Fred = {
 	stop_observing: function(a,b,c) {
 		Fred.element.stopObserving(a,b,c)
 	},
-	draw: function() {
-		Fred.fire('fred:predraw')
-		//calculate fps:
-		Fred.timestamp = Fred.date.getTime()
-		Fred.times.unshift(Fred.timestamp)
-		if (Fred.times.length > 100) Fred.times.pop()
-		Fred.fps = parseInt(Fred.times.length/(Fred.timestamp - Fred.times.last())*1000)
-		Fred.date = new Date
-		this.layers.each(function(layer){layer.draw()})
-		Fred.fire('fred:postdraw')
-		// debug image
-		fillStyle('red')
-		rect(10,10,20,20)
-	}
 }
 
 //= require <layer>
@@ -174,10 +183,12 @@ Fred = {
 //= require <primitives/point>
 //= require <primitives/polygon>
 //= require <primitives/group>
+//= require <primitives/image>
 
 //= require <tools/tool>
 //= require <tools/select>
 //= require <tools/pen>
+//= require <tools/upload>
 
 //= require <geometry>
 //= require <keys>

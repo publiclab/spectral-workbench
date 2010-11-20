@@ -1,4 +1,7 @@
-#fred { width:100%;height:100%; }
+#fred { 
+	width:100%;
+	height:100%;
+}
 
 #fred canvas {
 	display:block;

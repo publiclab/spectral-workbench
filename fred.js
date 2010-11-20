@@ -8,6 +8,7 @@ Fred = {
 	frame: 0,
 	timestamp: 0,
 	date: new Date,
+	style: {},
 	times: [],
 	drag: false,
 	listeners: [	'mousedown',
@@ -38,6 +39,19 @@ Fred = {
 		var whtrbtobj
 		Fred.keys.initialize()
 	},
+	draw: function() {
+		Fred.fire('fred:predraw')
+		Fred.timestamp = Fred.date.getTime()
+		Fred.times.unshift(Fred.timestamp)
+		if (Fred.times.length > 100) Fred.times.pop()
+		Fred.fps = parseInt(Fred.times.length/(Fred.timestamp - Fred.times.last())*1000)
+		Fred.date = new Date
+		this.layers.each(function(layer){layer.draw()})
+		Fred.fire('fred:postdraw')
+		fillStyle('#a00')
+		rect(10,10,40,40)
+		drawText('georgia',15,'white',12,30,'fred')
+	},
 	resize: function(width,height) {
 		if (width[width.length-1] == '%') Fred.width = parseInt(document.viewport.getWidth()*100/width.substr(0,width.length-1))
 		else Fred.width = width
@@ -50,6 +64,14 @@ Fred = {
 			layer.element.height = Fred.height
 		})
 	},
+	text_style: {
+		fontFamily: 'georgia',
+		fontSize: 15,
+		fontColor: '#222',
+	},
+	text: function(text,x,y) {
+		drawText(Fred.text_style.fontFamily,Fred.text_style.fontSize,Fred.text_style.fontColor,x,y,text)
+	},
 	on_mouseup: function(e) {
 		Fred.drag = false
 	},
@@ -57,7 +79,6 @@ Fred = {
 		Fred.drag = true
 	},
 	on_mousemove: function(e) {
-		console.log('move')
 		Fred.pointer_x = Event.pointerX(e)
 		Fred.pointer_y = Event.pointerY(e)
 		Fred.draw()
@@ -122,18 +143,6 @@ Fred = {
 	stop_observing: function(a,b,c) {
 		Fred.element.stopObserving(a,b,c)
 	},
-	draw: function() {
-		Fred.fire('fred:predraw')
-		Fred.timestamp = Fred.date.getTime()
-		Fred.times.unshift(Fred.timestamp)
-		if (Fred.times.length > 100) Fred.times.pop()
-		Fred.fps = parseInt(Fred.times.length/(Fred.timestamp - Fred.times.last())*1000)
-		Fred.date = new Date
-		this.layers.each(function(layer){layer.draw()})
-		Fred.fire('fred:postdraw')
-		fillStyle('red')
-		rect(10,10,20,20)
-	}
 }
 
 Fred.Layer = Class.create({
@@ -349,6 +358,60 @@ Fred.Group = Class.create({
 
 	},
 })
+Fred.Image = Class.create({
+	initialize: function(x,y,src,scale) {
+		this.x = x
+		this.y = y
+		this.src = src
+		this.scale = 0.25
+		this.r = 0 // rotation
+		if (src && typeof src == 'string') {
+			this.src = src
+			this.image = new Image
+			this.image.src = src
+		}
+	},
+	draw: function() {
+		if (this.image.width) {
+			this.width = this.image.width
+			this.height = this.image.height
+		}
+		save()
+			translate(this.x,this.y)
+			rotate(this.r)
+			scale(this.scale,this.scale)
+			drawImage(this.image,this.image.width/-2,this.image.height/-2)
+		restore()
+		save()
+				this.corners = [[this.x-this.width/2,this.y-this.height/2],[this.x-this.width/2,this.x+this.width/2],[this.x+this.width/2,this.y+this.height/2],[this.x-this.width/2,this.y-this.height/2]]
+				this.corners.each(function(corner) {
+					strokeStyle('white')
+					opacity(0.2)
+					if (true) circle(corner[0],corner[1],Fred.click_radius)
+					opacity(0.9)
+					strokeCircle(corner[0],corner[1],Fred.click_radius)
+				},this)
+		restore()
+	},
+	set_to_natural_size: function() {
+		if (this.image.width) {
+			this.points[1].x = this.points[0].x
+			this.points[1].y = this.points[0].y
+			this.points[2].x = this.points[0].x
+			this.points[2].y = this.points[0].y
+			this.points[3].x = this.points[0].x
+			this.points[3].y = this.points[0].y
+
+			this.points[1].x += this.image.width/(Map.zoom*2)
+			this.points[2].x += this.image.width/(Map.zoom*2)
+			this.points[2].y += this.image.height/(Map.zoom*2)
+			this.points[3].y += this.image.height/(Map.zoom*2)
+			this.reset_centroid()
+			this.area = Geometry.poly_area(this.points)
+			this.waiting_for_natural_size = false
+		}
+	},
+})
 
 Fred.Tool = Class.create({
 	initialize: function(description,args){
@@ -507,6 +570,20 @@ Fred.tools.pen = new Fred.Tool('draw polygons',{
 	}
 })
 
+Fred.tools.upload = new Fred.Tool('select & manipulate objects',{
+	select: function() {
+	},
+	deselect: function() {
+	},
+	image: function(uri) {
+		this.image_obj = new Fred.Image(Fred.width/2,Fred.height/2,uri)
+		Fred.active_layer.objects.push(this.image_obj)
+	},
+	prompt: function() {
+		uri = prompt("Enter a URI for an image.",'test.jpg')
+		this.image(uri)
+	}
+})
 
 Fred.Geometry = {
 	distance: function(x1,y1,x2,y2) {
