@@ -1,71 +1,10 @@
-require 'date'
+# Add your own tasks in files placed in lib/tasks ending in .rake,
+# for example lib/tasks/capistrano.rake, and they will automatically be available to Rake.
 
-desc "builds fred.js"
-task :build do
-	build
-end
+require(File.join(File.dirname(__FILE__), 'config', 'boot'))
 
-		
-desc "automatically builds fred.js when something in src/ changes"
-task :autobuild do
-  build
-	require 'lib/filesystemwatcher'
-	watcher = FileSystemWatcher.new
-	watcher.addDirectory 'src', '**/*.js'
-	watcher.sleepTime = 2
-	watcher.start do |status,file|
-	    if ([FileSystemWatcher::CREATED,
-	    	FileSystemWatcher::MODIFIED,
-	    	FileSystemWatcher::DELETED].include? status)
-	        begin
-	          build
-          rescue
-            puts "//// !!! Build failed !!! ////"
-            puts $!
-          end
-	    end
-	end
-	
-	watcher.join()
-end
+require 'rake'
+require 'rake/testtask'
+require 'rake/rdoctask'
 
-desc "builds the API docs"
-task :docs do
-	Dir.chdir 'lib/jsdoc'
-	puts `java -jar jsrun.jar app/main.js -v -t=templates/mad/ -d=../../../api/ -a -r=2 ../../src/`
-end
-
-desc "builds the API docs, debug run"
-task :docs_debug do
-	Dir.chdir 'lib/jsdoc'
-	puts `java -jar jsdebug.jar app/main.js -v -t=templates/mad/ -d=../../../api/ -a -r=2 ../../src/`
-end
-
-desc "Finds while file a source line is in"
-task :which, :line do |t, args|
-	lines = Marshal.load IO.read('.line_data.dat')
-	puts lines[args.line.to_i]
-end
-
-
-def build
-	puts 'building... '+DateTime.now.to_s
-	$:.push 'lib/sprockets'
-	require 'sprockets'
-	
-	secretary = Sprockets::Secretary.new(
-	  :load_path    => ['src'],
-	  :source_files => ['src/main.js']
-	)
-	
-	lines = Marshal.dump secretary.preprocessor.lines
-	File.open '.line_data.dat', 'w' do |f|
-		f.print lines
-	end
-	
-	concatenation = secretary.concatenation
-	
-	concatenation.save_to("fred.js")
-	
-	puts "Build finished"
-end 
+require 'tasks/rails'
