@@ -5,16 +5,36 @@
 	<script src="lib/shortcut.js" type="text/javascript"></script>
 	<script src="fred.js" type="text/javascript"></script>
 	<link rel="stylesheet" href="fred.css" type="text/css" media="screen" title="no title" charset="utf-8">
+	<link rel="stylesheet" href="spectro.css" type="text/css" media="screen" title="no title" charset="utf-8">
 	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 	<meta name="apple-mobile-web-app-capable" content="yes" />
 	<meta name="viewport" content="width=device-width; height=device-height; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/>
 </head>
-<body onload="Fred.init(); //learn how to customize the Fred environment at http://github.com/jywarren/fred">
+<body onload="Fred.init();setup(); //learn how to customize the Fred environment at http://github.com/jywarren/fred">
 
 	<div id="fred"></div>
 
-	<a href="javascript:void(0)" style='position:absolute;display:block;bottom:10px;left:10px;' onClick='Fred.tools.upload.prompt()'>Upload image</a>
+	<a href="javascript:void(0)" class='button' onClick='Fred.tools.upload.prompt()'>Upload image [+]</a>
 
+	<script>
+
+	function setup() {
+		Fred.observe('fred:postdraw',draw)
+		Fred.select_tool('select')
+		Fred.text_style.fontColor = 'white'
+	}
+	function draw() {
+		save()
+			fillStyle('white')
+			opacity(0.3)
+			rect(0,0,Fred.width,Fred.height/2)
+		restore()
+		save()
+			Fred.text('Line up the spectrum with the horizontal line to see its graph.',Fred.width-560,30)
+		restore()
+	}
+
+	</script>
 
 </body>
 </html>
