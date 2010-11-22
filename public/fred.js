@@ -71,9 +71,6 @@ Fred = {
 		var whtrbtobj
 		Fred.keys.initialize()
 		if (setup) setup()
-		if (draw) this.observe('draw',draw)
-
-
 	},
 	draw: function() {
 		Fred.fire('fred:predraw')
@@ -87,6 +84,7 @@ Fred = {
 		fillStyle('#a00')
 		rect(10,10,40,40)
 		drawText('georgia',15,'white',12,30,'fred')
+		if (draw) draw()
 	},
 	select_layer: function(layer) {
 		Fred.active_layer = layer
@@ -430,12 +428,15 @@ Fred.Group = Class.create({
 	},
 })
 Fred.Image = Class.create({
-	initialize: function(x,y,src,scale) {
-		this.x = x
-		this.y = y
+	/*
+	 * Create a new image with Fred.Image.new(img_url). Additional parameters are optional.
+	 */
+	initialize: function(src,x,y,r,scale) {
+		this.x = x || Fred.width/2
+		this.y = y || Fred.height/2
+		this.r = r || 0 // rotation
+		this.scale = scale || 0.25
 		this.src = src
-		this.scale = 0.25
-		this.r = 0 // rotation
 		if (src && typeof src == 'string') {
 			this.src = src
 			this.image = new Image
@@ -690,7 +691,7 @@ Fred.tools.import = new Fred.Tool('select & manipulate objects',{
 	image: function(uri,x,y) {
 		x = x || Fred.width/2
 		y = y || Fred.height/2
-		this.image_obj = new Fred.Image(x,y,uri)
+		this.image_obj = new Fred.Image(uri,x,y)
 		Fred.add(this.image_obj)
 	},
 	prompt: function() {

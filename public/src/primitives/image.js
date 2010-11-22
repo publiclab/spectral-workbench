@@ -1,11 +1,14 @@
 // Very basic images. Not distortable, just drag & rotate.
 Fred.Image = Class.create({
-	initialize: function(x,y,src,scale) {
-		this.x = x
-		this.y = y
+	/*
+	 * Create a new image with Fred.Image.new(img_url). Additional parameters are optional.
+	 */
+	initialize: function(src,x,y,r,scale) {
+		this.x = x || Fred.width/2
+		this.y = y || Fred.height/2
+		this.r = r || 0 // rotation
+		this.scale = scale || 0.25
 		this.src = src
-		this.scale = 0.25
-		this.r = 0 // rotation
 		if (src && typeof src == 'string') {
 			this.src = src
 			this.image = new Image

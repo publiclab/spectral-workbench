@@ -11,6 +11,7 @@ body {
 }
 
 .button {
+	font-size:1.4em;
 	margin-right:8px;
 	padding:8px;
 	background:rgba(255,255,255,0.8);
@@ -19,6 +20,11 @@ body {
 }
 
 a.button:hover {
-	background:#acf;
+	background:#44a;
+}
+
+a.tool {
+	text-decoration:none;
+	font-weight:bold;
 }
 

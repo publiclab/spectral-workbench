@@ -12,12 +12,14 @@ class SpectrumsController < ApplicationController
 
   # GET /spectrums/1
   # GET /spectrums/1.xml
+  # GET /spectrums/1.json
   def show
     @spectrum = Spectrum.find(params[:id])
 
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @spectrum }
+      format.json  { render :json => @spectrum }
     end
   end
 

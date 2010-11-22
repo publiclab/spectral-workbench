@@ -10,61 +10,101 @@
 	<meta name="apple-mobile-web-app-capable" content="yes" />
 	<meta name="viewport" content="width=device-width; height=device-height; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/>
 </head>
-<body onload="Fred.init({speed:5});setup(); //learn how to customize the Fred environment at http://github.com/jywarren/fred">
+<body onload="Fred.init({speed:5}); //learn how to customize the Fred environment at http://github.com/jywarren/fred">
 
 	<div id="fred"></div>
 
-	<div style="width:20%;line-height:1.3em;background:rgba(255,255,255,0.4);position:absolute;top:8px;right:8px;padding:8px;font-family:helvetica,arial,sans-serif;font-size:22px;">
+	<div style="width:20%;line-height:1.3em;background:rgba(255,255,255,0.5);font-style:italic;position:absolute;top:8px;right:8px;padding:8px;font-family:helvetica,arial,sans-serif;font-size:22px;color:white;">
 		Line the spectrum up with the edge to see its intensity graphed.
 	</div>
 
 	<div id="buttons">
 		<a href="/" class='button'>&laquo; Back</a>
-		<a href="javascript:void(0)" class='button' onClick='save_data()'>Save spectrum</a>
-		<a href="javascript:void(0)" class='button' onClick='Fred.active_layer.objects.last().scale *= 0.9'>[-]</a>
-		<a href="javascript:void(0)" class='button' onClick='Fred.active_layer.objects.last().scale *= 1.1'>[+]</a>
+		<a href="javascript:void(0)" class='button' onClick='save_data_flag = true;'>Save spectrum</a>
+		<a href="javascript:void(0)" class='button' onClick='compare()'>Compare</a>
+		<a href="javascript:void(0)" class='button tool' onClick='Fred.active_layer.objects.last().scale *= 0.9'>-</a>
+		<a href="javascript:void(0)" class='button tool' onClick='Fred.active_layer.objects.last().scale *= 1.1'>+</a>
+		<a href="javascript:void(0)" class='button tool' onClick='Fred.active_layer.objects.last().r -= 0.1'>left</a>
+		<a href="javascript:void(0)" class='button tool' onClick='Fred.active_layer.objects.last().r += 0.1'>right</a>
 	</div>
 
 	<script>
 
 	data = ''
+	data2 = []
+	save_data_flag = false // trigger so next time data is calculated, it posts back to the server
 	
 	function setup() {
-		Fred.observe('fred:postdraw',draw)
 		Fred.select_tool('select')
-		Fred.text_style.fontColor = 'white'
 
-		Fred.tools.import.image('<%= @spectrum.photo.url %>')
+		Fred.add(new Fred.Image('<%= @spectrum.photo.url %>'))
 
 		Fred.keys.add('up',function() {Fred.active_layer.objects.last().y -= 5})
 		Fred.keys.add('down',function() {Fred.active_layer.objects.last().y += 5})
 		Fred.keys.add('left',function() {Fred.active_layer.objects.last().x -= 5})
 		Fred.keys.add('right',function() {Fred.active_layer.objects.last().x += 5})
-		Fred.keys.add('3',function() {Fred.active_layer.objects.last().scale *= 1.1})
-		Fred.keys.add('4',function() {Fred.active_layer.objects.last().scale *= 0.9})
-		Fred.keys.add('1',function() {Fred.active_layer.objects.last().r -= 0.1})
-		Fred.keys.add('2',function() {Fred.active_layer.objects.last().r += 0.1})
+		Fred.keys.add('shift+up',function() {Fred.active_layer.objects.last().scale *= 1.1})
+		Fred.keys.add('shift+down',function() {Fred.active_layer.objects.last().scale *= 0.9})
+		Fred.keys.add('shift+left',function() {Fred.active_layer.objects.last().r -= 0.1})
+		Fred.keys.add('shift+right',function() {Fred.active_layer.objects.last().r += 0.1})
 	}
 
 	function load_image() {
 		// Read line of pixels:
-		try {
-			slice = Fred.active_layer.canvas.getImageData(0,parseInt(Fred.height/2)+1,Fred.width,1)
-		} catch(e) {
-			netscape.security.PrivilegeManager.enablePrivilege("UniversalBrowserRead")
-			slice = Fred.active_layer.canvas.getImageData(0,parseInt(Fred.height/2)+1,Fred.width,1)
-		}
+		return Fred.active_layer.canvas.getImageData(0,parseInt(Fred.height/2)+1,Fred.width,1)
+	}
+
+	// Load another spectrum's data for comparison
+	function compare() {
+		var s2 = prompt("Enter another spectrum's title or ID")
+		new Ajax.Request('/spectrums/'+s2+'.json',{
+				method: 'get',
+				onSuccess: function(response) {
+					var response_object = JSON.parse(response.responseText)
+					data_pre = response_object.spectrum.data.split('/')
+					data2 = []
+					data_pre.each(function(pixel){
+						data2.push(pixel.split(','))
+					},this)
+				}
+			})
+	}
+
+	function save_data(data) {
+		new Ajax.Request('/spectrums/<%= @spectrum.id %>',{
+			method: 'put',
+			parameters: {
+				'spectrum[data]': data, 
+			}
+		})
+	}
+
+	function graph(data,color) {
+		color = color || 'white'
+		save()
+		beginPath()
+		moveTo(0,parseInt(Fred.height/2)+1)
+		lineTo(0,parseInt(Fred.height/2)+1)
+		data.each(function(value,index) {
+			lineTo(index,parseInt(Fred.height/2)+1-value[3])
+		},this)
+		lineTo(Fred.width,parseInt(Fred.height/2)+1)
+		strokeStyle(color)
+		lineWidth(1)
+		stroke()
+		opacity(0.2)
+		fill()
 	}
 
 	function draw() {
 		save()
 			fillStyle('white')
-			opacity(0.3)
+			opacity(0.5)
 			rect(0,0,Fred.width,parseInt(Fred.height/2))
 			rect(Fred.pointer_x,0,1,Fred.height)
 			rect(0,parseInt(Fred.height/2),Fred.width,1)
 		restore()
-		// Fenerate spectrum:
+		// Generate spectrum:	
 
 		// The CanvasPixelArray object can be accessed to look at the raw pixel data; 
 		// each pixel is represented by four one-byte values (red, green, blue, and alpha,
@@ -79,38 +119,34 @@
 		// to read the blue component's value from the pixel at 
 		// column 200, row 50 in the image, you would do the following:
 		// blue = imageData.data[((50*(imageData.width*4)) + (200*4)) + 2];
-		var row = 0
+		var row = 0 // here, our image data is only a 1px tall slice
 		var column = Fred.pointer_x
-		var columns = []
-		var tmpdata = ''
-		load_image()
-		save()
-		beginPath()
-		moveTo(0,parseInt(Fred.height/2)+1)
+		var data_array = []
+		var data = ''
+		var img = load_image()
+		
 		for (i=0;i<Fred.width;i++) {
-			var red = slice.data[((row*(slice.width*4)) + (i*4)) + 0];
-			var green = slice.data[((row*(slice.width*4)) + (i*4)) + 1];
-			var blue = slice.data[((row*(slice.width*4)) + (i*4)) + 2];
+			var red = img.data[((row*(img.width*4)) + (i*4)) + 0];
+			var green = img.data[((row*(img.width*4)) + (i*4)) + 1];
+			var blue = img.data[((row*(img.width*4)) + (i*4)) + 2];
 			var amplitude = (red+blue+green)/3
-			columns.push([red,green,blue,amplitude])
-			data += red+','+green+','+blue+','+amplitude+'/'
-			lineTo(i,parseInt(Fred.height/2)+1-amplitude)
+			data += red+','+green+','+blue+','+amplitude
+			if (i != Fred.width-1) data += '/'
+			data_array.push([red,green,blue,amplitude])
 		}
-		strokeStyle('white')
-		lineWidth(1)
-		stroke()
-		data = tmpdata
+		
 		//console.log(amplitude+' '+red+','+green+','+blue+': '+(parseInt(Fred.pointer_x)))	
-		restore()
-	}
 
-	function save_data() {
-		new Ajax.Request('/spectrums/update/<%= @spectrum.id %>',{
-			method: 'get',
-			parameters: {
-				data: data
-			}
-		})
+		graph(data_array)
+
+		if (save_data_flag) {
+			save_data(data)
+			save_data_flag = false
+		}
+
+		if (data2.length > 0) graph(data2,'red')
+
+		restore()
 	}
 
 	</script>

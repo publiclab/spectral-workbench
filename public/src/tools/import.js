@@ -10,7 +10,7 @@ Fred.tools.import = new Fred.Tool('select & manipulate objects',{
 	image: function(uri,x,y) {
 		x = x || Fred.width/2
 		y = y || Fred.height/2
-		this.image_obj = new Fred.Image(x,y,uri)
+		this.image_obj = new Fred.Image(uri,x,y)
 		Fred.add(this.image_obj)
 	},
 	prompt: function() {
