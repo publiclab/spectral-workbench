@@ -40,6 +40,8 @@ Fred = {
 	frame: 0,
 	timestamp: 0,
 	date: new Date,
+	pointer_x: 0,
+	pointer_y: 0,
 	style: {},
 	times: [],
 	drag: false,

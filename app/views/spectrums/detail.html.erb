@@ -10,7 +10,7 @@
 
 <p>
   <b>Data:</b>
-  <%=h @spectrum.data %>
+  <textarea cols=20><%=h @spectrum.data %></textarea>
 </p>
 
 <p>
@@ -25,7 +25,7 @@
 
 <p>
   <% if @spectrum.photo.exists? then %>
-    <p><%= image_tag @spectrum.photo.url(:large) %></p>
+    <p><a href="/spectrums/<%= @spectrum.id %>"><%= image_tag @spectrum.photo.url(:large) %></a></p>
   <% end %>
 </p>
 

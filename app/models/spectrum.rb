@@ -3,7 +3,6 @@ class Spectrum < ActiveRecord::Base
 	validates_presence_of :title, :on => :create, :message => "can't be blank"
 	validates_presence_of :author, :on => :create, :message => "can't be blank"
 	validates_presence_of :photo, :on => :create, :message => "can't be blank"
-	# validates_presence_of :data, :on => :create, :message => "can't be blank"
 
 	validates_format_of     :title,
                             	:with => /[a-zA-Z0-9_-]/,  

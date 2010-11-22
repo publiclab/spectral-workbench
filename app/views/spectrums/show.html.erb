@@ -19,14 +19,22 @@
 
 	<div id="fred"></div>
 
-	<div style="width:20%;line-height:1.3em;background:rgba(255,255,255,0.5);font-style:italic;position:absolute;top:8px;right:8px;padding:8px;font-family:helvetica,arial,sans-serif;font-size:22px;color:white;">
+	<style>
+	</style>
+
+	<div class="note" style="width:20%;top:8px;right:8px;font-size:22px;">
 		Line the spectrum up with the edge to see its intensity graphed.
 	</div>
+
+	<div class="note" style="top:42%;right:8px;font-size:12px;">red this end</div>
+	
+	<div class="note" style="top:42%;left:8px;font-size:12px;">blue this end</div>
 
 	<div id="buttons">
 		<a href="/" class='button'>&laquo; Back</a>
 		<a href="javascript:void(0)" class='button' onClick='save_data_flag = true;'>Save spectrum</a>
 		<a href="javascript:void(0)" class='button' onClick='compare()'>Compare</a>
+		<a href="/spectrums/detail/<%= @spectrum.id %>" class='button'>Detail</a>
 		<a href="javascript:void(0)" class='button tool' onClick='Fred.active_layer.objects.last().scale *= 0.9'>-</a>
 		<a href="javascript:void(0)" class='button tool' onClick='Fred.active_layer.objects.last().scale *= 1.1'>+</a>
 		<a href="javascript:void(0)" class='button tool' onClick='Fred.active_layer.objects.last().r -= 0.1'>left</a>
@@ -38,11 +46,22 @@
 	data = ''
 	data2 = []
 	save_data_flag = false // trigger so next time data is calculated, it posts back to the server
+	photo = false
+	photo_position = '<%= @spectrum.photo_position %>'
 	
 	function setup() {
 		Fred.select_tool('select')
 
-		Fred.add(new Fred.Image('<%= @spectrum.photo.url %>'))
+		photo = new Fred.Image('<%= @spectrum.photo.url %>')
+		Fred.add(photo)
+		if (photo_position != 'false') {
+			var p = photo_position
+			var p = p.split(',')
+			photo.x = p[0]
+			photo.y = p[1]
+			photo.scale = p[2]
+			photo.r = p[3]
+		}
 
 		Fred.keys.add('up',function() {Fred.active_layer.objects.last().y -= 5})
 		Fred.keys.add('down',function() {Fred.active_layer.objects.last().y += 5})
@@ -76,22 +95,29 @@
 	}
 
 	function save_data(data) {
+		var p = photo 
 		new Ajax.Request('/spectrums/<%= @spectrum.id %>',{
 			method: 'put',
 			parameters: {
 				'spectrum[data]': data, 
+				'spectrum[photo_position]': (p.x+','+p.y+','+p.scale+','+p.r), 
 			}
 		})
 	}
 
 	function graph(data,color) {
 		color = color || 'white'
+		var reddest = 0, greenest = 0, bluest = 0
 		save()
 		beginPath()
 		moveTo(0,parseInt(Fred.height/2)+1)
 		lineTo(0,parseInt(Fred.height/2)+1)
 		data.each(function(value,index) {
+			var red = value[0], green = value[1], blue = value[2], amplitude = value[3]
 			lineTo(index,parseInt(Fred.height/2)+1-value[3])
+			if (data[reddest][0] < (red-(blue+green)/2)) reddest = index
+			if (data[greenest][1] < (green-(blue+red)/2)) greenest = index
+			if (data[bluest][2] < (blue-(green+red)/2)) bluest = index
 		},this)
 		lineTo(Fred.width,parseInt(Fred.height/2)+1)
 		strokeStyle(color)
@@ -100,6 +126,41 @@
 		stroke()
 		opacity(0.2)
 		fill()
+		label_wavelength(reddest,parseInt(Fred.height/2)+1,data[reddest][0],color)
+		label_wavelength(greenest,parseInt(Fred.height/2)+1,data[greenest][1],color)
+		label_wavelength(bluest,parseInt(Fred.height/2)+1,data[bluest][2],color)
+		// mouse pointer
+		label_wavelength(Fred.pointer_x,parseInt(Fred.height/2)+1,data[Fred.pointer_x][3])
+	}
+
+	function label_wavelength(x,y,text,color) {
+		Fred.text_style.fontColor = color
+		Fred.text_style.fontFamily = 'helvetica'
+		var size = 12
+		save()
+		opacity(0.6)
+		Fred.text(parseInt(text),x-6,y+35)
+		triangle(x,y,10,0,color)
+		restore()
+	}
+
+	// draws a triangle (used to mark certain wavelengths
+	function triangle(x,y,size,dir,color) {
+		size = size || 10
+		dir = dir || 0
+		color = color || 'white'
+		save()
+		fillStyle(color)
+		lineWidth(1)
+		rotate(dir)
+		beginPath()
+			moveTo(x,y)
+			lineTo(x+size/2,y+10)
+			lineTo(x-size/2,y+10)
+			lineTo(x,y)
+		fill()
+		rotate(-dir)
+		restore()
 	}
 
 	function draw() {
