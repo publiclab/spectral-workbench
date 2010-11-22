@@ -1,3 +1,5 @@
+//= require <timer>
+
 // Central Fred source file; all other files are linked to from here.
 Fred = {
 	click_radius: 6,
@@ -26,12 +28,12 @@ Fred = {
 			'gestureend'],
 			// 'every_<time>', // listener to trigger periodical execution
 	init: function(args) {
+		Object.extend(Fred,args)
 		Fred.element = $('fred')
 		Fred.select_tool('pen')
 		new Fred.Layer('main',{active:true})
 		new Fred.Layer('background')
-		Fred.active_layer = Fred.layers.first()
-		$C = Fred.active_layer.canvas
+		Fred.select_layer(Fred.layers.first())
 		// Event handling setup:
 		Fred.observe('mousemove',Fred.on_mousemove)
 		Fred.observe('touchmove',Fred.on_touchmove)
@@ -44,11 +46,16 @@ Fred = {
 		Fred.element.style.left = 0
 		Fred.resize(Fred.width,Fred.height)
 		// Initiate main loop:
-		setInterval(Fred.draw.bind(this),Fred.speed)
+		TimerManager.setup(Fred.draw,this,Fred.speed)
 		// Access main program grid:
 		var whtrbtobj
 		// Initialize other modules which are waiting for Fred to be ready
 		Fred.keys.initialize()
+		if (setup) setup()
+		if (draw) this.observe('draw',draw)
+
+		// test teh above
+
 	},
 	draw: function() {
 		Fred.fire('fred:predraw')
@@ -64,6 +71,38 @@ Fred = {
 		fillStyle('#a00')
 		rect(10,10,40,40)
 		drawText('georgia',15,'white',12,30,'fred')
+	},
+	select_layer: function(layer) {
+		Fred.active_layer = layer
+		$C = Fred.active_layer.canvas
+		Fred.objects = Fred.active_layer.objects
+	},
+	add: function(obj) {
+		this.objects.push(obj)
+		$H(obj).keys().each(function(method) {
+			Fred.listeners.each(function(event) {
+				if (method == ('on_'+event)) {
+					Fred.observe(event,obj[method].bindAsEventListener(obj))
+				}
+			},this)
+			if (method == 'draw') Fred.stop_observing('fred:postdraw',obj.draw)
+		},this)
+	},
+	remove: function(obj) {
+		Fred.objects.each(function(obj2,index){
+			if (obj2 == obj) {
+				Fred.objects.splice(index,1)
+			}
+		},this)
+		$H(obj).keys().each(function(method) {
+			Fred.listeners.each(function(event) {
+				if (method == ('on_'+event)) {
+					Fred.stop_observing(event,obj[method].bindAsEventListener(obj))
+				}
+			},this)
+			if (method == 'draw') Fred.stop_observing('fred:postdraw',obj.draw)
+		},this)
+		return obj
 	},
 	resize: function(width,height) {
 		// document.viewport.getWidth() yields undefined in Android browser
@@ -162,19 +201,22 @@ Fred = {
 	 * Binds all events to the 'fred' DOM element. Use instead of native Prototype observe.
 	 */
 	observe: function(a,b,c) {
-		Fred.element.observe(a,b,c)
+		if (a == 'keypress' || a == 'keyup') document.observe(a,b,c)
+		else Fred.element.observe(a,b,c)
 	},
 	/**	
 	 * Fires events. Use instead of native Prototype observe.
 	 */
 	fire: function(a,b,c) {
-		Fred.element.fire(a,b,c)
+		if (a == 'keypress' || a == 'keyup') document.fire(a,b,c)
+		else Fred.element.fire(a,b,c)
 	},
 	/**
 	 * Unbinds all events from the main canvas. 
 	 */
 	stop_observing: function(a,b,c) {
-		Fred.element.stopObserving(a,b,c)
+		if (a == 'keypress' || a == 'keyup') document.stopObserving(a,b,c)
+		else Fred.element.stopObserving(a,b,c)
 	},
 }
 
@@ -188,7 +230,7 @@ Fred = {
 //= require <tools/tool>
 //= require <tools/select>
 //= require <tools/pen>
-//= require <tools/upload>
+//= require <tools/import>
 
 //= require <geometry>
 //= require <keys>

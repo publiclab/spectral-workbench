@@ -22,20 +22,61 @@ Fred.Image = Class.create({
 			translate(this.x,this.y)
 			rotate(this.r)
 			scale(this.scale,this.scale)
-			drawImage(this.image,this.image.width/-2,this.image.height/-2)
+			drawImage(this.image,this.width/-2,this.height/-2)
+			scale(1/this.scale,1/this.scale)
+			rotate(-this.r)
+			translate(-this.x,-this.y)
 		restore()
 		save()
-		// Draw corner control points
-				this.corners = [[this.x-this.width/2,this.y-this.height/2],[this.x-this.width/2,this.x+this.width/2],[this.x+this.width/2,this.y+this.height/2],[this.x-this.width/2,this.y-this.height/2]]
-				this.corners.each(function(corner) {
-					strokeStyle('white')
-					opacity(0.2)
-					// if the mouse is in the circle
-					if (true) circle(corner[0],corner[1],Fred.click_radius)
-					opacity(0.9)
-					strokeCircle(corner[0],corner[1],Fred.click_radius)
-				},this)
+			translate(this.x,this.y)
+			rotate(this.r)
+			// Draw corner control points
+			var w = this.width*this.scale
+			var h = this.height*this.scale
+			this.corners = [[-w/2,-h/2],
+					[w/2,-h/2],
+					[w/2,h/2],	
+					[-w/2,h/2]]
+			this.corners.each(function(corner) {
+				strokeStyle('white')
+				lineWidth(2)
+				opacity(0.2)
+				// if the mouse is in the circle
+				if (true) circle(corner[0],corner[1],Fred.click_radius)
+				opacity(0.9)
+				strokeCircle(corner[0],corner[1],Fred.click_radius)
+			},this)
+			translate(-this.x,-this.y)
+			rotate(-this.r)
 		restore()
+	},
+	on_mousedown: function(){
+		var poly = [	{x:this.x-this.width/2,y:this.y-this.height-2},
+				{x:this.x+this.width/2,y:this.y-this.height-2},
+				{x:this.x+this.width/2,y:this.y+this.height-2},
+				{x:this.x-this.width/2,y:this.y+this.height-2}]
+		if (Fred.Geometry.is_point_in_poly(poly,Fred.pointer_x,Fred.pointer_y)) {
+			this.dragging = true
+			this.drag_start = {pointer_x:Fred.pointer_x, pointer_y:Fred.pointer_y, x:this.x, y:this.y}
+		}
+	},
+	on_touchstart: function() {
+		on_mousedown()
+	},
+	on_touchmove: function() {
+		on_mousemove()
+	},
+	on_touchend: function() {
+		on_mouseup()
+	},
+	on_mouseup: function() {
+		this.dragging = false
+	},
+	on_mousemove: function() {
+		if (this.dragging) {
+			this.x = this.drag_start.x + (Fred.pointer_x-this.drag_start.pointer_x)
+			this.y = this.drag_start.y + (Fred.pointer_y-this.drag_start.pointer_y)
+		}
 	},
 	set_to_natural_size: function() {
 		if (this.image.width) {

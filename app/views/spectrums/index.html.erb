@@ -1,0 +1,29 @@
+<h1>Listing spectrums</h1>
+
+<table>
+  <tr>
+    <th>Title</th>
+    <th>Author</th>
+    <th>Data</th>
+    <th>Notes</th>
+    <th>Version</th>
+  </tr>
+
+<% @spectrums.each do |spectrum| %>
+  <tr>
+    <td><%=h spectrum.title %></td>
+    <td><%=h spectrum.author %></td>
+    <td><%=h spectrum.data %></td>
+    <td><%=h spectrum.notes %></td>
+    <td><%=h spectrum.version %></td>
+    <td><%= link_to 'Show', spectrum %></td>
+    <td><a href="/spectrums/detail/<%= spectrum.id %>">Detail</a></td>
+    <td><%= link_to 'Edit', edit_spectrum_path(spectrum) %></td>
+    <td><%= link_to 'Destroy', spectrum, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New spectrum', new_spectrum_path %>

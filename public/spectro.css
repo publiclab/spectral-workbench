@@ -2,14 +2,19 @@ body {
 	background:#333;
 }
 
-.button {
+#buttons {
 	position:absolute;
 	display:block;
 	bottom:10px;
 	left:10px;
-	background:white;
 	padding:8px;
-	font-family:georgia;
+}
+
+.button {
+	margin-right:8px;
+	padding:8px;
+	background:rgba(255,255,255,0.8);
+	font-family:helvetica,arial,sans-serif;
 	color:#222;
 }
 

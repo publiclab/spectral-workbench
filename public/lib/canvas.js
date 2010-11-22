@@ -112,6 +112,7 @@ function circle(x, y, r){
  * @param {Number} r Radius of the circle
  */
 function strokeCircle(x, y, r){
+	beginPath()
 	arc(x, y, r, 0, 2*Math.PI, true)
 	stroke()
 }

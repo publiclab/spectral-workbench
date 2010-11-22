@@ -1,3 +1,35 @@
+var TimerManager = {
+	last_date: new Date,
+	times: [],
+	spacing: 0.8,
+	interval: 10,
+	setup: function(f,c,s,i) {
+		this.f = f || function(){}
+		this.context = c || this
+		this.interval = i || this.interval
+		setTimeout(this.bound_run,i || this.interval)
+	},
+	bound_run: function() {
+		TimerManager.run.apply(TimerManager)
+	},
+	run: function() {
+		var start_date = new Date
+		this.f.apply(this.context)
+		var execution_time = new Date - start_date
+		this.times.unshift(parseInt(execution_time))
+		if (this.times.length > 100) this.times.pop()
+		setTimeout(this.bound_run,Math.max(50,parseInt(this.spacing*this.sample())))
+	},
+	sequence: [1,2,3,5,8,13],//,21,34,55],
+	sample: function() {
+		var sample = 0
+		for (var i = 0;i < this.sequence.length;i++) {
+			sample += this.times[this.sequence[i]] || 0
+		}
+		return sample/9
+	},
+}
+
 Fred = {
 	click_radius: 6,
 	speed: 30,
@@ -21,12 +53,12 @@ Fred = {
 			'gesturestart',
 			'gestureend'],
 	init: function(args) {
+		Object.extend(Fred,args)
 		Fred.element = $('fred')
 		Fred.select_tool('pen')
 		new Fred.Layer('main',{active:true})
 		new Fred.Layer('background')
-		Fred.active_layer = Fred.layers.first()
-		$C = Fred.active_layer.canvas
+		Fred.select_layer(Fred.layers.first())
 		Fred.observe('mousemove',Fred.on_mousemove)
 		Fred.observe('touchmove',Fred.on_touchmove)
 		Fred.observe('touchstart',Fred.on_touchstart)
@@ -35,9 +67,13 @@ Fred = {
 		Fred.element.style.top = 0
 		Fred.element.style.left = 0
 		Fred.resize(Fred.width,Fred.height)
-		setInterval(Fred.draw.bind(this),Fred.speed)
+		TimerManager.setup(Fred.draw,this,Fred.speed)
 		var whtrbtobj
 		Fred.keys.initialize()
+		if (setup) setup()
+		if (draw) this.observe('draw',draw)
+
+
 	},
 	draw: function() {
 		Fred.fire('fred:predraw')
@@ -51,6 +87,38 @@ Fred = {
 		fillStyle('#a00')
 		rect(10,10,40,40)
 		drawText('georgia',15,'white',12,30,'fred')
+	},
+	select_layer: function(layer) {
+		Fred.active_layer = layer
+		$C = Fred.active_layer.canvas
+		Fred.objects = Fred.active_layer.objects
+	},
+	add: function(obj) {
+		this.objects.push(obj)
+		$H(obj).keys().each(function(method) {
+			Fred.listeners.each(function(event) {
+				if (method == ('on_'+event)) {
+					Fred.observe(event,obj[method].bindAsEventListener(obj))
+				}
+			},this)
+			if (method == 'draw') Fred.stop_observing('fred:postdraw',obj.draw)
+		},this)
+	},
+	remove: function(obj) {
+		Fred.objects.each(function(obj2,index){
+			if (obj2 == obj) {
+				Fred.objects.splice(index,1)
+			}
+		},this)
+		$H(obj).keys().each(function(method) {
+			Fred.listeners.each(function(event) {
+				if (method == ('on_'+event)) {
+					Fred.stop_observing(event,obj[method].bindAsEventListener(obj))
+				}
+			},this)
+			if (method == 'draw') Fred.stop_observing('fred:postdraw',obj.draw)
+		},this)
+		return obj
 	},
 	resize: function(width,height) {
 		if (width[width.length-1] == '%') Fred.width = parseInt(document.viewport.getWidth()*100/width.substr(0,width.length-1))
@@ -135,13 +203,16 @@ Fred = {
 		}
 	},
 	observe: function(a,b,c) {
-		Fred.element.observe(a,b,c)
+		if (a == 'keypress' || a == 'keyup') document.observe(a,b,c)
+		else Fred.element.observe(a,b,c)
 	},
 	fire: function(a,b,c) {
-		Fred.element.fire(a,b,c)
+		if (a == 'keypress' || a == 'keyup') document.fire(a,b,c)
+		else Fred.element.fire(a,b,c)
 	},
 	stop_observing: function(a,b,c) {
-		Fred.element.stopObserving(a,b,c)
+		if (a == 'keypress' || a == 'keyup') document.stopObserving(a,b,c)
+		else Fred.element.stopObserving(a,b,c)
 	},
 }
 
@@ -380,18 +451,59 @@ Fred.Image = Class.create({
 			translate(this.x,this.y)
 			rotate(this.r)
 			scale(this.scale,this.scale)
-			drawImage(this.image,this.image.width/-2,this.image.height/-2)
+			drawImage(this.image,this.width/-2,this.height/-2)
+			scale(1/this.scale,1/this.scale)
+			rotate(-this.r)
+			translate(-this.x,-this.y)
 		restore()
 		save()
-				this.corners = [[this.x-this.width/2,this.y-this.height/2],[this.x-this.width/2,this.x+this.width/2],[this.x+this.width/2,this.y+this.height/2],[this.x-this.width/2,this.y-this.height/2]]
-				this.corners.each(function(corner) {
-					strokeStyle('white')
-					opacity(0.2)
-					if (true) circle(corner[0],corner[1],Fred.click_radius)
-					opacity(0.9)
-					strokeCircle(corner[0],corner[1],Fred.click_radius)
-				},this)
+			translate(this.x,this.y)
+			rotate(this.r)
+			var w = this.width*this.scale
+			var h = this.height*this.scale
+			this.corners = [[-w/2,-h/2],
+					[w/2,-h/2],
+					[w/2,h/2],
+					[-w/2,h/2]]
+			this.corners.each(function(corner) {
+				strokeStyle('white')
+				lineWidth(2)
+				opacity(0.2)
+				if (true) circle(corner[0],corner[1],Fred.click_radius)
+				opacity(0.9)
+				strokeCircle(corner[0],corner[1],Fred.click_radius)
+			},this)
+			translate(-this.x,-this.y)
+			rotate(-this.r)
 		restore()
+	},
+	on_mousedown: function(){
+		var poly = [	{x:this.x-this.width/2,y:this.y-this.height-2},
+				{x:this.x+this.width/2,y:this.y-this.height-2},
+				{x:this.x+this.width/2,y:this.y+this.height-2},
+				{x:this.x-this.width/2,y:this.y+this.height-2}]
+		if (Fred.Geometry.is_point_in_poly(poly,Fred.pointer_x,Fred.pointer_y)) {
+			this.dragging = true
+			this.drag_start = {pointer_x:Fred.pointer_x, pointer_y:Fred.pointer_y, x:this.x, y:this.y}
+		}
+	},
+	on_touchstart: function() {
+		on_mousedown()
+	},
+	on_touchmove: function() {
+		on_mousemove()
+	},
+	on_touchend: function() {
+		on_mouseup()
+	},
+	on_mouseup: function() {
+		this.dragging = false
+	},
+	on_mousemove: function() {
+		if (this.dragging) {
+			this.x = this.drag_start.x + (Fred.pointer_x-this.drag_start.pointer_x)
+			this.y = this.drag_start.y + (Fred.pointer_y-this.drag_start.pointer_y)
+		}
 	},
 	set_to_natural_size: function() {
 		if (this.image.width) {
@@ -562,7 +674,7 @@ Fred.tools.pen = new Fred.Tool('draw polygons',{
 		this.polygon = false
 	},
 	complete_polygon: function() {
-		Fred.active_layer.objects.push(this.polygon)
+		Fred.add(this.polygon)
 		this.polygon.refresh()
 		this.polygon.selected = false
 		this.polygon = false
@@ -570,14 +682,16 @@ Fred.tools.pen = new Fred.Tool('draw polygons',{
 	}
 })
 
-Fred.tools.upload = new Fred.Tool('select & manipulate objects',{
+Fred.tools.import = new Fred.Tool('select & manipulate objects',{
 	select: function() {
 	},
 	deselect: function() {
 	},
-	image: function(uri) {
-		this.image_obj = new Fred.Image(Fred.width/2,Fred.height/2,uri)
-		Fred.active_layer.objects.push(this.image_obj)
+	image: function(uri,x,y) {
+		x = x || Fred.width/2
+		y = y || Fred.height/2
+		this.image_obj = new Fred.Image(x,y,uri)
+		Fred.add(this.image_obj)
 	},
 	prompt: function() {
 		uri = prompt("Enter a URI for an image.",'test.jpg')

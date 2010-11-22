@@ -115,7 +115,7 @@ Fred.tools.pen = new Fred.Tool('draw polygons',{
 	},
 	complete_polygon: function() {
 		// move the polygon to the active Fred layer 
-		Fred.active_layer.objects.push(this.polygon)
+		Fred.add(this.polygon)
 		// stop storing the polygon in the pen tool
 		this.polygon.refresh()
 		this.polygon.selected = false
