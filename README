@@ -1,8 +1,21 @@
-Spectrofred is a web application built on Ruby on Rails and using the Fred graphics library for JavaScript. It allows you to upload images you've taken of spectra (using a prism or diffraction grating) and generate graphs for analysis a la reflectance spectroscopy.
+                     _              __              _ 
+                    | |            / _|            | |
+ ___ _ __   ___  ___| |_ _ __ ___ | |_ _ __ ___  __| |
+/ __| '_ \ / _ \/ __| __| '__/ _ \|  _| '__/ _ \/ _` |
+\__ | |_) |  __| (__| |_| | | (_) | | | | |  __| (_| |
+|___| .__/ \___|\___|\__|_|  \___/|_| |_|  \___|\__,_|
+    | |                                               
+    |_|                                               
+
+Spectrofred is a web application built on Ruby on Rails and using the Fred graphics library for JavaScript. It allows you to upload images you've taken of spectra (using a prism or diffraction grating) and generate graphs for analysis a la reflectance spectroscopy. By Jeffrey Warren (http://unterbahn.com)
+
+=============================================================
 
 You can see it in action at: http://spectrofred.unterbahn.com
 
 There will be a better URL soon; this is a project of the Environmental Justice research cluster at RISD's Digital+Media department, run by Sara Wylie and Jeff Warren
+
+=============================================================
 
 Read more about our experiments and work here: http://dm.risd.edu/courseblogs/ejrc/
 
