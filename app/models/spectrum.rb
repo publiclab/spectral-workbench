@@ -5,7 +5,7 @@ class Spectrum < ActiveRecord::Base
 	validates_presence_of :photo, :on => :create, :message => "can't be blank"
 	# validates_presence_of :data, :on => :create, :message => "can't be blank"
 
-	validates_format_of     :name,
+	validates_format_of     :title,
                             	:with => /[a-zA-Z0-9_-]/,  
                             	:message => " must not include spaces and must be alphanumeric, as it'll be used in the URL of your spectrum, like: http://site.org/spectra/your-spectrum-name. You may use dashes and underscores.",
                             	:on => :create
