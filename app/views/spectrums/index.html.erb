@@ -13,7 +13,9 @@
   <tr>
     <td><%=h spectrum.title %></td>
     <td><%=h spectrum.author %></td>
-    <td><%=h spectrum.data %></td>
+    <% if spectrum.photo.exists? then %>
+	<td><%= image_tag spectrum.photo.url(:thumb) %></td>
+    <% end %>
     <td><%=h spectrum.notes %></td>
     <td><%=h spectrum.version %></td>
     <td><%= link_to 'Show', spectrum %></td>

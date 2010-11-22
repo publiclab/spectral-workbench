@@ -683,7 +683,7 @@ Fred.tools.pen = new Fred.Tool('draw polygons',{
 	}
 })
 
-Fred.tools.import = new Fred.Tool('select & manipulate objects',{
+Fred.tools.place = new Fred.Tool('select & manipulate objects',{
 	select: function() {
 	},
 	deselect: function() {

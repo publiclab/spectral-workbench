@@ -227,7 +227,7 @@ Fred = {
 //= require <tools/tool>
 //= require <tools/select>
 //= require <tools/pen>
-//= require <tools/import>
+//= require <tools/place>
 
 //= require <geometry>
 //= require <keys>
