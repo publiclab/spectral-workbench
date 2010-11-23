@@ -81,6 +81,7 @@ Fred.Image = Class.create({
 			this.y = this.drag_start.y + (Fred.pointer_y-this.drag_start.pointer_y)
 		}
 	},
+	// this is not needed now, but for calculating stuff later, maybe
 	set_to_natural_size: function() {
 		if (this.image.width) {
 			// the image loaded completely, and we can use its dimensions

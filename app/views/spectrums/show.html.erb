@@ -15,7 +15,7 @@
 	<meta name="apple-mobile-web-app-capable" content="yes" />
 	<meta name="viewport" content="width=device-width; height=device-height; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/>
 </head>
-<body onload="Fred.init({speed:5}); //learn how to customize the Fred environment at http://github.com/jywarren/fred">
+<body onload="Fred.init({speed:10}); //learn how to customize the Fred environment at http://github.com/jywarren/fred">
 
 	<div id="fred"></div>
 
@@ -48,6 +48,7 @@
 	save_data_flag = false // trigger so next time data is calculated, it posts back to the server
 	photo = false
 	photo_position = '<%= @spectrum.photo_position %>'
+	amplification = 1
 	
 	function setup() {
 		Fred.select_tool('select')
@@ -57,10 +58,11 @@
 		if (photo_position != 'false') {
 			var p = photo_position
 			var p = p.split(',')
-			photo.x = p[0]
-			photo.y = p[1]
-			photo.scale = p[2]
-			photo.r = p[3]
+			photo.x = parseInt(p[0]) || Fred.width/2
+			photo.y = parseInt(p[1]) || Fred.height/2
+			photo.scale = parseFloat(p[2]) || 1
+			photo.r = parseFloat(p[3]) || 0
+			amplification = parseFloat(p[4]) || 1
 		}
 
 		Fred.keys.add('up',function() {Fred.active_layer.objects.last().y -= 5})
@@ -71,6 +73,8 @@
 		Fred.keys.add('shift+down',function() {Fred.active_layer.objects.last().scale *= 0.9})
 		Fred.keys.add('shift+left',function() {Fred.active_layer.objects.last().r -= 0.1})
 		Fred.keys.add('shift+right',function() {Fred.active_layer.objects.last().r += 0.1})
+		Fred.keys.add('shift+>',function() {amplification *= 0.9})
+		Fred.keys.add('shift+<',function() {amplification *= 1.1})
 	}
 
 	function load_image() {
@@ -100,7 +104,7 @@
 			method: 'put',
 			parameters: {
 				'spectrum[data]': data, 
-				'spectrum[photo_position]': (p.x+','+p.y+','+p.scale+','+p.r), 
+				'spectrum[photo_position]': (p.x+','+p.y+','+p.scale+','+p.r+','+amplification), 
 			}
 		})
 	}
@@ -109,12 +113,14 @@
 		color = color || 'white'
 		var reddest = 0, greenest = 0, bluest = 0
 		save()
+		opacity(1)
+		lineWidth(1)
 		beginPath()
 		moveTo(0,parseInt(Fred.height/2)+1)
 		lineTo(0,parseInt(Fred.height/2)+1)
 		data.each(function(value,index) {
 			var red = value[0], green = value[1], blue = value[2], amplitude = value[3]
-			lineTo(index,parseInt(Fred.height/2)+1-value[3])
+			lineTo(index,parseInt(Fred.height/2)+1-(value[3])*amplification)
 			if (data[reddest][0] < (red-(blue+green)/2)) reddest = index
 			if (data[greenest][1] < (green-(blue+red)/2)) greenest = index
 			if (data[bluest][2] < (blue-(green+red)/2)) bluest = index
@@ -126,11 +132,12 @@
 		stroke()
 		opacity(0.2)
 		fill()
+		restore()
 		label_wavelength(reddest,parseInt(Fred.height/2)+1,data[reddest][0],color)
 		label_wavelength(greenest,parseInt(Fred.height/2)+1,data[greenest][1],color)
 		label_wavelength(bluest,parseInt(Fred.height/2)+1,data[bluest][2],color)
 		// mouse pointer
-		label_wavelength(Fred.pointer_x,parseInt(Fred.height/2)+1,data[Fred.pointer_x][3])
+		label_wavelength(Fred.pointer_x,parseInt(Fred.height/2)+41,data[Fred.pointer_x][3],'yellow')
 	}
 
 	function label_wavelength(x,y,text,color) {
@@ -139,6 +146,8 @@
 		var size = 12
 		save()
 		opacity(0.6)
+		fillStyle('#222')
+		rect(x-10,y+16,40,22)
 		Fred.text(parseInt(text),x-6,y+35)
 		triangle(x,y,10,0,color)
 		restore()
@@ -165,11 +174,12 @@
 
 	function draw() {
 		save()
-			fillStyle('white')
+			fillStyle('#aaa')
 			opacity(0.5)
 			rect(0,0,Fred.width,parseInt(Fred.height/2))
 			rect(Fred.pointer_x,0,1,Fred.height)
 			rect(0,parseInt(Fred.height/2),Fred.width,1)
+			Fred.text("amplified: "+amplification.toFixed(2)+'x',16,Fred.height-70)
 		restore()
 		// Generate spectrum:	
 
