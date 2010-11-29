@@ -109,8 +109,9 @@
 		})
 	}
 
-	function graph(data,color) {
+	function graph(data,color,amplification) {
 		color = color || 'white'
+		amplification = amplification || 1
 		var reddest = 0, greenest = 0, bluest = 0
 		save()
 		opacity(1)
@@ -119,11 +120,11 @@
 		moveTo(0,parseInt(Fred.height/2)+1)
 		lineTo(0,parseInt(Fred.height/2)+1)
 		data.each(function(value,index) {
-			var red = value[0], green = value[1], blue = value[2], amplitude = value[3]
+			var red = value[0], green = value[1], blue = value[2], intensity = value[3]
 			lineTo(index,parseInt(Fred.height/2)+1-(value[3])*amplification)
-			if (data[reddest][0] < (red-(blue+green)/2)) reddest = index
-			if (data[greenest][1] < (green-(blue+red)/2)) greenest = index
-			if (data[bluest][2] < (blue-(green+red)/2)) bluest = index
+			if (data[reddest][0] < (red-((blue+green)/2))) reddest = index
+			if (data[greenest][1] < (green-((blue+red)/2))) greenest = index
+			if (data[bluest][2] < (blue-((green+red)/2))) bluest = index
 		},this)
 		lineTo(Fred.width,parseInt(Fred.height/2)+1)
 		strokeStyle(color)
@@ -136,8 +137,9 @@
 		label_wavelength(reddest,parseInt(Fred.height/2)+1,data[reddest][0],color)
 		label_wavelength(greenest,parseInt(Fred.height/2)+1,data[greenest][1],color)
 		label_wavelength(bluest,parseInt(Fred.height/2)+1,data[bluest][2],color)
-		// mouse pointer
-		label_wavelength(Fred.pointer_x,parseInt(Fred.height/2)+41,data[Fred.pointer_x][3],'yellow')
+		// mouse pointer should show R,G,B
+		var values = data[Fred.pointer_x][0]+','+data[Fred.pointer_x][1]+','+data[Fred.pointer_x][2]
+		label_wavelength(Fred.pointer_x,parseInt(Fred.height/2)+41,values,'yellow')
 	}
 
 	function label_wavelength(x,y,text,color) {
@@ -206,15 +208,15 @@
 			var red = img.data[((row*(img.width*4)) + (i*4)) + 0];
 			var green = img.data[((row*(img.width*4)) + (i*4)) + 1];
 			var blue = img.data[((row*(img.width*4)) + (i*4)) + 2];
-			var amplitude = (red+blue+green)/3
-			data += red+','+green+','+blue+','+amplitude
+			var intensity = (red+blue+green)/3
+			data += red+','+green+','+blue+','+intensity
 			if (i != Fred.width-1) data += '/'
-			data_array.push([red,green,blue,amplitude])
+			data_array.push([red,green,blue,intensity])
 		}
 		
-		//console.log(amplitude+' '+red+','+green+','+blue+': '+(parseInt(Fred.pointer_x)))	
+		//console.log(intensity+' '+red+','+green+','+blue+': '+(parseInt(Fred.pointer_x)))	
 
-		graph(data_array)
+		graph(data_array,'white',amplification)
 
 		if (save_data_flag) {
 			save_data(data)
