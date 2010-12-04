@@ -104,6 +104,8 @@ Fred = {
 		return obj
 	},
 	resize: function(width,height) {
+		width = width || Fred.width
+		height = height || Fred.height
 		// document.viewport.getWidth() yields undefined in Android browser
 		// try running without resizing just in Android -- disable rotate anyway 
 		if (width[width.length-1] == '%') Fred.width = parseInt(document.viewport.getWidth()*100/width.substr(0,width.length-1))
@@ -157,7 +159,6 @@ Fred = {
 		$H(Fred.active_tool).keys().each(function(method) {
 			Fred.listeners.each(function(event) {
 				if (method == ('on_'+event)) {
-					console.log(event+'#'+Fred.active_tool[method])
 					Fred.stop_observing(event,Fred.active_tool.listeners.get(method))
 				}
 			},this)

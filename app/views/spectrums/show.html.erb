@@ -49,6 +49,9 @@
 	photo = false
 	photo_position = '<%= @spectrum.photo_position %>'
 	amplification = 1
+	momentum = 1
+	acceleration = 1.01
+	sample_height = 10	
 	
 	function setup() {
 		Fred.select_tool('select')
@@ -65,21 +68,23 @@
 			amplification = parseFloat(p[4]) || 1
 		}
 
-		Fred.keys.add('up',function() {Fred.active_layer.objects.last().y -= 5})
-		Fred.keys.add('down',function() {Fred.active_layer.objects.last().y += 5})
-		Fred.keys.add('left',function() {Fred.active_layer.objects.last().x -= 5})
-		Fred.keys.add('right',function() {Fred.active_layer.objects.last().x += 5})
-		Fred.keys.add('shift+up',function() {Fred.active_layer.objects.last().scale *= 1.1})
-		Fred.keys.add('shift+down',function() {Fred.active_layer.objects.last().scale *= 0.9})
-		Fred.keys.add('shift+left',function() {Fred.active_layer.objects.last().r -= 0.1})
-		Fred.keys.add('shift+right',function() {Fred.active_layer.objects.last().r += 0.1})
-		Fred.keys.add('shift+>',function() {amplification *= 0.9})
-		Fred.keys.add('shift+<',function() {amplification *= 1.1})
+		Fred.observe('keyup',function(){ momentum = 1;console.log('flush momentum') })
+
+		Fred.keys.add('up',function() {Fred.objects.last().y -= 1*momentum;momentum*=acceleration})
+		Fred.keys.add('down',function() {Fred.objects.last().y += 1*momentum;momentum*=acceleration})
+		Fred.keys.add('left',function() {Fred.objects.last().x -= 1*momentum;momentum*=acceleration})
+		Fred.keys.add('right',function() {Fred.objects.last().x += 1*momentum;momentum*=acceleration})
+		Fred.keys.add('shift+up',function() {Fred.objects.last().scale *= 1.001*momentum;momentum*=acceleration})
+		Fred.keys.add('shift+down',function() {Fred.objects.last().scale *= 0.999*(2-momentum);momentum*=acceleration})
+		Fred.keys.add('shift+left',function() {Fred.objects.last().r -= 0.01*momentum;momentum*=acceleration})
+		Fred.keys.add('shift+right',function() {Fred.objects.last().r += 0.01*momentum;momentum*=acceleration})
+		Fred.keys.add('shift+>',function() {amplification *= 0.9*momentum;momentum*=acceleration})
+		Fred.keys.add('shift+<',function() {amplification *= 1.1*momentum;momentum*=acceleration})
 	}
 
 	function load_image() {
 		// Read line of pixels:
-		return Fred.active_layer.canvas.getImageData(0,parseInt(Fred.height/2)+1,Fred.width,1)
+		return Fred.active_layer.canvas.getImageData(0,parseInt(Fred.height/2)+1,Fred.width,sample_height)
 	}
 
 	// Load another spectrum's data for comparison
@@ -182,6 +187,12 @@
 			rect(Fred.pointer_x,0,1,Fred.height)
 			rect(0,parseInt(Fred.height/2),Fred.width,1)
 			Fred.text("amplified: "+amplification.toFixed(2)+'x',16,Fred.height-70)
+			var grid_spacing = 50
+			opacity(0.2)
+			fillStyle('#fff')
+			for (i=0;i<parseInt(Fred.width/50);i++) {
+				rect(grid_spacing*i,0,1,Fred.height)
+			}
 		restore()
 		// Generate spectrum:	
 
@@ -198,19 +209,29 @@
 		// to read the blue component's value from the pixel at 
 		// column 200, row 50 in the image, you would do the following:
 		// blue = imageData.data[((50*(imageData.width*4)) + (200*4)) + 2];
-		var row = 0 // here, our image data is only a 1px tall slice
-		var column = Fred.pointer_x
 		var data_array = []
 		var data = ''
 		var img = load_image()
-		
-		for (i=0;i<Fred.width;i++) {
-			var red = img.data[((row*(img.width*4)) + (i*4)) + 0];
-			var green = img.data[((row*(img.width*4)) + (i*4)) + 1];
-			var blue = img.data[((row*(img.width*4)) + (i*4)) + 2];
+	
+		for (col=0;col<Fred.width;col++) {
+			var red = 0
+			for (row=0;row<sample_height;row++) {
+				 red += img.data[((row*(img.width*4)) + (col*4)) + 0]
+			}
+			red /= sample_height
+			var green = 0
+			for (row=0;row<sample_height;row++) {
+				 green += img.data[((row*(img.width*4)) + (col*4)) + 1]
+			}
+			green /= sample_height
+			var blue = 0
+			for (row=0;row<sample_height;row++) {
+				 blue += img.data[((row*(img.width*4)) + (col*4)) + 2]
+			}
+			blue /= sample_height
 			var intensity = (red+blue+green)/3
 			data += red+','+green+','+blue+','+intensity
-			if (i != Fred.width-1) data += '/'
+			if (col != Fred.width-1) data += '/'
 			data_array.push([red,green,blue,intensity])
 		}
 		
