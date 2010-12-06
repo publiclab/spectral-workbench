@@ -42,11 +42,11 @@ Fred.Polygon = Class.create({
 		this.points.each(function(point) {
 			if (point.bezier.prev != false) {
 				is_bezier = true
-				break
+				//break
 			}
 			if (point.bezier.next != false) {
 				is_bezier = true
-				break
+				//break
 			}
 		},this)
 		return is_bezier
