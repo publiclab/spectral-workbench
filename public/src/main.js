@@ -223,6 +223,14 @@ Fred = {
 	},
 }
 
+// For debugging purposes
+// If the console doesn't exist (Safari, IE, etc), just create empty methods
+if (!window.console) console = {};
+console.log = console.log || function(){};
+console.warn = console.warn || function(){};
+console.error = console.error || function(){};
+console.info = console.info || function(){};
+
 //= require <layer>
 
 //= require <primitives/point>
