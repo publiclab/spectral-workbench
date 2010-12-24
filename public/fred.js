@@ -441,7 +441,10 @@ Fred.Group = Class.create({
 })
 Fred.Image = Class.create({
 	/*
-	 * Create a new image with Fred.Image.new(img_url). Additional parameters are optional.
+	 * Create a new image with Fred.Image.new(img_url).
+	 * Additional parameters are optional.
+	 * If src is a video element, the object may draw from
+	 * current frame of the video.
 	 */
 	initialize: function(src,x,y,r,scale) {
 		this.x = x || Fred.width/2
@@ -453,10 +456,15 @@ Fred.Image = Class.create({
 			this.src = src
 			this.image = new Image
 			this.image.src = src
+		} else if (src && typeof src == 'object') { // it's a video!
+			this.image = src
 		}
 	},
 	draw: function() {
-		if (this.image.width) {
+		if (this.image.videoHeight) {
+			this.width = this.image.videoWidth
+			this.height = this.image.videoHeight
+		} else if (this.image.width) {
 			this.width = this.image.width
 			this.height = this.image.height
 		}
