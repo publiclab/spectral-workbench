@@ -17,7 +17,7 @@ class SpectrumsController < ApplicationController
     @spectrum = Spectrum.find(params[:id])
 
     respond_to do |format|
-      format.html { render 'spectrums/show', :layout => false }# show.html.erb
+      format.html { render 'spectrums/show', :layout => false } # show.html.erb
       format.xml  { render :xml => @spectrum }
       format.json  { render :json => @spectrum }
     end
