@@ -19,6 +19,11 @@
     <%= f.label 'Photo' %><br />
     <%= f.file_field :photo %>
   </p>
+
+  <p>
+    <%= recaptcha_tags %>
+  </p>
+
   <p>
     <%= f.submit 'Create' %>
   </p>

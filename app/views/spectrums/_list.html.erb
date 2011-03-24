@@ -1,4 +1,4 @@
-<table>
+<table id="list">
   <tr>
     <th>Image</th>
     <th>Title</th>
@@ -15,10 +15,10 @@
     <td><%=h spectrum.title %></td>
     <td><%=h spectrum.author %></td>
     <td><%=h spectrum.notes %></td>
-    <td><%= link_to 'Show', spectrum %></td>
-    <td><a href="/spectrums/detail/<%= spectrum.id %>">Detail</a></td>
-    <td><%= link_to 'Edit', edit_spectrum_path(spectrum) %></td>
-    <td><%= link_to 'Destroy', spectrum, :confirm => 'Are you sure?', :method => :delete %></td>
+    <td><%= link_to 'Show', spectrum %> 
+    <a href="/spectrums/detail/<%= spectrum.id %>">Detail</a> 
+    <%= link_to 'Edit', edit_spectrum_path(spectrum) %> 
+    <%= link_to 'Destroy', spectrum, :confirm => 'Are you sure?', :method => :delete %></td>
   </tr>
 <% end %>
 </table>

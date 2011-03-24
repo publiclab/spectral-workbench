@@ -88,4 +88,6 @@ a:hover.button {
 	background:#333;
 	color:#ccc;
 }
-
+#list {
+	width:500px;
+}
