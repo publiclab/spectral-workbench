@@ -1,0 +1,24 @@
+<table>
+  <tr>
+    <th>Image</th>
+    <th>Title</th>
+    <th>Author</th>
+    <th>Notes</th>
+    <th>Actions</th>
+  </tr>
+
+<% @spectrums.each do |spectrum| %>
+  <tr>
+    <% if spectrum.photo.exists? then %>
+	<td><a href="/spectrums/show/<%= spectrum.id %>"><%= image_tag spectrum.photo.url(:thumb) %></a></td>
+    <% end %>
+    <td><%=h spectrum.title %></td>
+    <td><%=h spectrum.author %></td>
+    <td><%=h spectrum.notes %></td>
+    <td><%= link_to 'Show', spectrum %></td>
+    <td><a href="/spectrums/detail/<%= spectrum.id %>">Detail</a></td>
+    <td><%= link_to 'Edit', edit_spectrum_path(spectrum) %></td>
+    <td><%= link_to 'Destroy', spectrum, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>

@@ -2,7 +2,7 @@ class SpectrumsController < ApplicationController
   # GET /spectrums
   # GET /spectrums.xml
   def index
-    @spectrums = Spectrum.all
+    @spectrums = Spectrum.all.reverse
 
     respond_to do |format|
       format.html # index.html.erb
@@ -17,12 +17,19 @@ class SpectrumsController < ApplicationController
     @spectrum = Spectrum.find(params[:id])
 
     respond_to do |format|
-      format.html { render 'spectrums/show', :layout => false }# show.html.erb
+      format.html { render 'spectrums/show', :layout => false } # show.html.erb
       format.xml  { render :xml => @spectrum }
       format.json  { render :json => @spectrum }
     end
   end
 
+  # non REST
+  def search
+    params[:id] ||= params[:q]
+    @spectrums = Spectrum.find(:all, :conditions => ['name LIKE ? OR location LIKE ? OR description LIKE ?',"%"+params[:id]+"%", "%"+params[:id]+"%", "%"+params[:id]+"%"],:limit => 100)
+  end
+
+  # non REST
   def detail
     @spectrum = Spectrum.find(params[:id])
 

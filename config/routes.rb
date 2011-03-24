@@ -1,4 +1,6 @@
 ActionController::Routing::Routes.draw do |map|
+  map.resources :videos
+
   map.resources :spectrums
 
   # The priority is based upon order of creation: first created -> highest priority.

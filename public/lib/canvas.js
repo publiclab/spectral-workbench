@@ -51,7 +51,7 @@ function fillPattern(image, repeat) {
  * @param {Number} y coordinate at which to display image
  */
 function drawImage(image, x,y) {
-	if (image && image.width) $C.drawImage(image, x, y) 
+	if (image && (image.width || image.videoWidth)) $C.drawImage(image, x, y) 
 }
 
 /**

@@ -1,0 +1,264 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+	<title>Videos: <%= controller.action_name %></title>
+	<script src="/lib/prototype-1.6.1.js" type="text/javascript"></script>
+	<script src="/lib/canvas.js" type="text/javascript"></script>
+	<script src="/lib/shortcut.js" type="text/javascript"></script>
+	<script src="/fred.js" type="text/javascript"></script>
+	<link rel="stylesheet" href="/fred.css" type="text/css" media="screen" title="no title" charset="utf-8">
+	<link rel="stylesheet" href="/spectro.css" type="text/css" media="screen" title="no title" charset="utf-8">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="viewport" content="width=device-width; height=device-height; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/>
+</head>
+<body onload="Fred.init({speed:10}); //learn how to customize the Fred environment at http://github.com/jywarren/fred">
+
+	<div id="fred"></div>
+
+	
+	<div class="note" style="width:20%;top:8px;right:8px;font-size:22px;">
+		Line the video up with the edge to see its intensity graphed, then press Play to see it over time.
+	</div>
+
+	<div class="note" style="top:42%;right:8px;font-size:12px;">red this end</div>
+	
+	<div class="note" style="top:42%;left:8px;font-size:12px;">blue this end</div>
+
+	<div id="buttons">
+		<a href="/" class='button'>&laquo; Back</a>
+		<a href="javascript:void(0)" class='button' onClick='save_data_flag = true;'>Save spectrum</a>
+		<a href="javascript:void(0)" class='button' onClick='video.currentTime = video_start;video.play()'>Play</a>
+		<a href="javascript:void(0)" class='button' onClick='video_start = video.currentTime'>Mark start</a>
+		<a href="/spectrums/detail/<%= @video.id %>" class='button'>Detail</a>
+		<a href="javascript:void(0)" class='button tool' onClick='Fred.active_layer.objects.last().scale *= 0.9'>-</a>
+		<a href="javascript:void(0)" class='button tool' onClick='Fred.active_layer.objects.last().scale *= 1.1'>+</a>
+		<a href="javascript:void(0)" class='button tool' onClick='Fred.active_layer.objects.last().r -= 0.1'>left</a>
+		<a href="javascript:void(0)" class='button tool' onClick='Fred.active_layer.objects.last().r += 0.1'>right</a>
+	</div>
+	
+	<!--<video controls="true" id="video" src="<%= @video.video.url %>" />-->
+	<!--<video style="display:none;" id="video" src="<%= @video.video.url %>" />-->
+	<video style="display:none;" id="video" src="/system/videos/5/original/GEDC2347.MOV" />
+
+	<script>
+
+	data = ''
+	data2 = []
+	save_data_flag = false // trigger so next time data is calculated, it posts back to the server
+	video = $('video')
+	video_start = 0
+	photo = false
+	photo_position = '<%= @video.video_position %>'
+	amplification = 1
+	momentum = 1
+	acceleration = 1.01
+	sample_height = 10	
+	
+	function setup() {
+		Fred.select_tool('select')
+
+		photo = new Fred.Image(video)
+		Fred.add(photo)
+		if (photo_position != 'false') {
+			var p = photo_position
+			var p = p.split(',')
+			photo.x = parseInt(p[0]) || Fred.width/2
+			photo.y = parseInt(p[1]) || Fred.height/2
+			photo.scale = parseFloat(p[2]) || 1
+			photo.r = parseFloat(p[3]) || 0
+			amplification = parseFloat(p[4]) || 1
+		}
+
+		Fred.observe('keyup',function(){ momentum = 1;console.log('flush momentum') })
+
+		Fred.keys.add('up',function() {Fred.objects.last().y -= 1*momentum;momentum*=acceleration})
+		Fred.keys.add('down',function() {Fred.objects.last().y += 1*momentum;momentum*=acceleration})
+		Fred.keys.add('left',function() {Fred.objects.last().x -= 1*momentum;momentum*=acceleration})
+		Fred.keys.add('right',function() {Fred.objects.last().x += 1*momentum;momentum*=acceleration})
+		Fred.keys.add('shift+up',function() {Fred.objects.last().scale *= 1.001*momentum;momentum*=acceleration})
+		Fred.keys.add('shift+down',function() {Fred.objects.last().scale *= 0.999*(2-momentum);momentum*=acceleration})
+		Fred.keys.add('shift+left',function() {Fred.objects.last().r -= 0.01*momentum;momentum*=acceleration})
+		Fred.keys.add('shift+right',function() {Fred.objects.last().r += 0.01*momentum;momentum*=acceleration})
+		Fred.keys.add('shift+>',function() {amplification *= 0.9*momentum;momentum*=acceleration})
+		Fred.keys.add('shift+<',function() {amplification *= 1.1*momentum;momentum*=acceleration})
+	}
+
+	function load_image() {
+		// Read line of pixels:
+		return Fred.active_layer.canvas.getImageData(0,parseInt(Fred.height/2)+1,Fred.width,sample_height)
+	}
+
+	// Load another spectrum's data for comparison
+	function compare() {
+		var s2 = prompt("Enter another spectrum's title or ID")
+		new Ajax.Request('/spectrums/'+s2+'.json',{
+				method: 'get',
+				onSuccess: function(response) {
+					var response_object = JSON.parse(response.responseText)
+					data_pre = response_object.spectrum.data.split('/')
+					data2 = []
+					data_pre.each(function(pixel){
+						data2.push(pixel.split(','))
+					},this)
+				}
+			})
+	}
+
+	function save_data(data) {
+		var p = photo 
+		new Ajax.Request('/spectrums/<%= @video.id %>',{
+			method: 'put',
+			parameters: {
+				'spectrum[data]': data, 
+				'spectrum[photo_position]': (p.x+','+p.y+','+p.scale+','+p.r+','+amplification), 
+			}
+		})
+	}
+
+	function graph(data,color,amplification) {
+		color = color || 'white'
+		amplification = amplification || 1
+		var reddest = 0, greenest = 0, bluest = 0
+		save()
+		opacity(1)
+		lineWidth(1)
+		beginPath()
+		moveTo(0,parseInt(Fred.height/2)+1)
+		lineTo(0,parseInt(Fred.height/2)+1)
+		data.each(function(value,index) {
+			var red = value[0], green = value[1], blue = value[2], intensity = value[3]
+			lineTo(index,parseInt(Fred.height/2)+1-(value[3])*amplification)
+			if (data[reddest][0] < (red-((blue+green)/2))) reddest = index
+			if (data[greenest][1] < (green-((blue+red)/2))) greenest = index
+			if (data[bluest][2] < (blue-((green+red)/2))) bluest = index
+		},this)
+		lineTo(Fred.width,parseInt(Fred.height/2)+1)
+		strokeStyle(color)
+		fillStyle(color)
+		lineWidth(1)
+		stroke()
+		opacity(0.2)
+		fill()
+		restore()
+		label_wavelength(reddest,parseInt(Fred.height/2)+1,data[reddest][0],color)
+		label_wavelength(greenest,parseInt(Fred.height/2)+1,data[greenest][1],color)
+		label_wavelength(bluest,parseInt(Fred.height/2)+1,data[bluest][2],color)
+		// mouse pointer should show R,G,B
+		var values = data[Fred.pointer_x][0]+','+data[Fred.pointer_x][1]+','+data[Fred.pointer_x][2]
+		label_wavelength(Fred.pointer_x,parseInt(Fred.height/2)+41,values,'yellow')
+	}
+
+	function label_wavelength(x,y,text,color) {
+		Fred.text_style.fontColor = color
+		Fred.text_style.fontFamily = 'helvetica'
+		var size = 12
+		save()
+		opacity(0.6)
+		fillStyle('#222')
+		rect(x-10,y+16,40,22)
+		Fred.text(parseInt(text),x-6,y+35)
+		triangle(x,y,10,0,color)
+		restore()
+	}
+	// draws a triangle (used to mark certain wavelengths
+	function triangle(x,y,size,dir,color) {
+		size = size || 10
+		dir = dir || 0
+		color = color || 'white'
+		save()
+		fillStyle(color)
+		lineWidth(1)
+		rotate(dir)
+		beginPath()
+			moveTo(x,y)
+			lineTo(x+size/2,y+10)
+			lineTo(x-size/2,y+10)
+			lineTo(x,y)
+		fill()
+		rotate(-dir)
+		restore()
+	}
+
+	function draw() {
+
+		// play video like this:
+		//video.currentTime = 6
+		//video.defaultPlaybackRate
+
+		save()
+			fillStyle('#aaa')
+			opacity(0.5)
+			rect(0,0,Fred.width,parseInt(Fred.height/2))
+			rect(Fred.pointer_x,0,1,Fred.height)
+			rect(0,parseInt(Fred.height/2),Fred.width,1)
+			Fred.text("amplified: "+amplification.toFixed(2)+'x',16,Fred.height-70)
+			var grid_spacing = 50
+			opacity(0.2)
+			fillStyle('#fff')
+			for (i=0;i<parseInt(Fred.width/50);i++) {
+				rect(grid_spacing*i,0,1,Fred.height)
+			}
+		restore()
+		// Generate spectrum:	
+
+		// The CanvasPixelArray object can be accessed to look at the raw pixel data; 
+		// each pixel is represented by four one-byte values (red, green, blue, and alpha,
+		// in that order; that is, "RGBA" format). Each color component is represented by 
+		// an integer between 0 and 255. Each component is assigned a consecutive index 
+		// within the array, with the top left pixel's red component being at index 0 within 
+		// the array. Pixels then proceed from left to right, then downward, throughout the array.
+
+		//The CanvasPixelArray contains height x width x 4 bytes of data, with index values 
+		// ranging from 0 to (height x width x 4)-1.
+
+		// to read the blue component's value from the pixel at 
+		// column 200, row 50 in the image, you would do the following:
+		// blue = imageData.data[((50*(imageData.width*4)) + (200*4)) + 2];
+		var data_array = []
+		var data = ''
+		var img = load_image()
+	
+		for (col=0;col<Fred.width;col++) {
+			var red = 0
+			for (row=0;row<sample_height;row++) {
+				 red += img.data[((row*(img.width*4)) + (col*4)) + 0]
+			}
+			red /= sample_height
+			var green = 0
+			for (row=0;row<sample_height;row++) {
+				 green += img.data[((row*(img.width*4)) + (col*4)) + 1]
+			}
+			green /= sample_height
+			var blue = 0
+			for (row=0;row<sample_height;row++) {
+				 blue += img.data[((row*(img.width*4)) + (col*4)) + 2]
+			}
+			blue /= sample_height
+			var intensity = (red+blue+green)/3
+			data += red+','+green+','+blue+','+intensity
+			if (col != Fred.width-1) data += '/'
+			data_array.push([red,green,blue,intensity])
+		}
+		
+		//console.log(intensity+' '+red+','+green+','+blue+': '+(parseInt(Fred.pointer_x)))	
+
+		graph(data_array,'white',amplification)
+
+		if (save_data_flag) {
+			save_data(data)
+			save_data_flag = false
+		}
+
+		if (data2.length > 0) graph(data2,'red')
+
+		restore()
+	}
+
+	</script>
+
+</body>
+</html>

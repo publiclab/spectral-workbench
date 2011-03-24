@@ -1,0 +1,56 @@
+<h1>Editing video</h1>
+
+<% form_for(@video) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.label :title %><br />
+    <%= f.text_field :title %>
+  </p>
+  <p>
+    <%= f.label :author %><br />
+    <%= f.text_field :author %>
+  </p>
+  <p>
+    <%= f.label :set %><br />
+    <%= f.text_field :set %>
+  </p>
+  <p>
+    <%= f.label :data %><br />
+    <%= f.text_area :data %>
+  </p>
+  <p>
+    <%= f.label :notes %><br />
+    <%= f.text_area :notes %>
+  </p>
+  <p>
+    <%= f.label :version %><br />
+    <%= f.text_field :version %>
+  </p>
+  <p>
+    <%= f.label :parent_id %><br />
+    <%= f.text_field :parent_id %>
+  </p>
+  <p>
+    <%= f.label :video_file_name %><br />
+    <%= f.text_field :video_file_name %>
+  </p>
+  <p>
+    <%= f.label :video_content_type %><br />
+    <%= f.text_field :video_content_type %>
+  </p>
+  <p>
+    <%= f.label :video_file_size %><br />
+    <%= f.text_field :video_file_size %>
+  </p>
+  <p>
+    <%= f.label :video_position %><br />
+    <%= f.text_field :video_position %>
+  </p>
+  <p>
+    <%= f.submit 'Update' %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @video %> |
+<%= link_to 'Back', videos_path %>
