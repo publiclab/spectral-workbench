@@ -22,6 +22,9 @@
 	<style>
 	</style>
 
+	<div class="note" style="width:20%;top:10px;left:60px;font-size:22px;">
+		<%= @spectrum.title %>
+	</div>
 	<div class="note" style="width:20%;top:8px;right:8px;font-size:22px;">
 		Line the spectrum up with the edge to see its intensity graphed.
 	</div>
@@ -68,7 +71,7 @@
 			amplification = parseFloat(p[4]) || 1
 		}
 
-		Fred.observe('keyup',function(){ momentum = 1;console.log('flush momentum') })
+		Fred.observe('keyup',function(){ momentum = 1; })
 
 		Fred.keys.add('up',function() {Fred.objects.last().y -= 1*momentum;momentum*=acceleration})
 		Fred.keys.add('down',function() {Fred.objects.last().y += 1*momentum;momentum*=acceleration})
@@ -109,15 +112,27 @@
 			method: 'put',
 			parameters: {
 				'spectrum[data]': data, 
+				'spectrum[slice_data_url]': slice_data_url(), 
 				'spectrum[photo_position]': (p.x+','+p.y+','+p.scale+','+p.r+','+amplification), 
 			}
 		})
 	}
 
+	/*
+	 * Returns a 1px tall slice of the spectrum as a data URL
+	 */
+	function slice_data_url() {
+		var height = Fred.height
+		$C.canvas.height = 1
+		var dataurl = $C.canvas.toDataURL()
+		$C.canvas.height = height
+		return dataurl
+	}
+
 	function graph(data,color,amplification) {
 		color = color || 'white'
 		amplification = amplification || 1
-		var reddest = 0, greenest = 0, bluest = 0
+		var ultraviolet_blue = 0, blue_green = 0, green_red= 0, red_infrared = 0
 		save()
 		opacity(1)
 		lineWidth(1)
@@ -127,9 +142,14 @@
 		data.each(function(value,index) {
 			var red = value[0], green = value[1], blue = value[2], intensity = value[3]
 			lineTo(index,parseInt(Fred.height/2)+1-(value[3])*amplification)
-			if (data[reddest][0] < (red-((blue+green)/2))) reddest = index
-			if (data[greenest][1] < (green-((blue+red)/2))) greenest = index
-			if (data[bluest][2] < (blue-((green+red)/2))) bluest = index
+			// this is quite primitive - we need a way to identify a slope with parameters
+				// like "over 20 pixels, an average slope of x, with smoothness y, or at least
+				// continuously positive slope. Then we can say:
+				// ### has_slope(red,start,end,slope,smoothness)
+			// crude blue_green boundary:
+			if (blue+green > 100 && green > blue && blue_green == 0) blue_green = index
+			// crude green_red boundary:
+			if (green+red > 100 && red > green && green_red == 0) green_red = index
 		},this)
 		lineTo(Fred.width,parseInt(Fred.height/2)+1)
 		strokeStyle(color)
@@ -139,9 +159,8 @@
 		opacity(0.2)
 		fill()
 		restore()
-		label_wavelength(reddest,parseInt(Fred.height/2)+1,data[reddest][0],color)
-		label_wavelength(greenest,parseInt(Fred.height/2)+1,data[greenest][1],color)
-		label_wavelength(bluest,parseInt(Fred.height/2)+1,data[bluest][2],color)
+		label_wavelength(blue_green,Fred.height/2,"blue-green",color)
+		label_wavelength(green_red,Fred.height/2,"green-red",color)
 		// mouse pointer should show R,G,B
 		var values = data[Fred.pointer_x][0]+','+data[Fred.pointer_x][1]+','+data[Fred.pointer_x][2]
 		label_wavelength(Fred.pointer_x,parseInt(Fred.height/2)+41,values,'yellow')
@@ -154,8 +173,8 @@
 		save()
 		opacity(0.6)
 		fillStyle('#222')
-		rect(x-10,y+16,40,22)
-		Fred.text(parseInt(text),x-6,y+35)
+		rect(x-10,y+16,measureText(Fred.text_style.fontFamily,Fred.text_style.fontSize,text)+6,26)
+		Fred.text(text,x-6,y+35)
 		triangle(x,y,10,0,color)
 		restore()
 	}
@@ -235,8 +254,6 @@
 			data_array.push([red,green,blue,intensity])
 		}
 		
-		//console.log(intensity+' '+red+','+green+','+blue+': '+(parseInt(Fred.pointer_x)))	
-
 		graph(data_array,'white',amplification)
 
 		if (save_data_flag) {

@@ -16,8 +16,12 @@
     <%= f.text_area :notes %>
   </p>
   <p>
-    <%= f.label 'Photo' %><br />
+    <%= f.label 'Photo of spectrum' %><br />
     <%= f.file_field :photo %>
+  </p>
+  <p>
+    <%= f.label 'Photo of baseline spectrum without sample (if applicable)' %><br />
+    <%= f.file_field :baseline %>
   </p>
   <p>
     <%= f.submit 'Create' %>

@@ -15,4 +15,8 @@ class Spectrum < ActiveRecord::Base
 	    :thumb=> "100x100#",
 	    :large =>   "400x400>" }
 
+	has_attached_file :baseline,
+	  :styles => {
+	    :thumb=> "100x100#",
+	    :large =>   "400x400>" }
 end

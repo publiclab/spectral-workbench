@@ -24,8 +24,14 @@ class SpectrumsController < ApplicationController
   end
 
   # non REST
+  def author
+    @spectrums = Spectrum.find_all_by_author(params[:id])
+    render "spectrums/search"
+  end
+
+  # non REST
   def search
-    params[:id] ||= params[:q]
+    params[:id] = params[:q]
     @spectrums = Spectrum.find(:all, :conditions => ['name LIKE ? OR location LIKE ? OR description LIKE ?',"%"+params[:id]+"%", "%"+params[:id]+"%", "%"+params[:id]+"%"],:limit => 100)
   end
 

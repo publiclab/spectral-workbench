@@ -13,11 +13,24 @@ Spectrofred is a web application built on Ruby on Rails and using the Fred graph
 
 You can see it in action at: http://spectrofred.unterbahn.com
 
-There will be a better URL soon; this is a project of the Environmental Justice research cluster at RISD's Digital+Media department, run by Sara Wylie and Jeff Warren
+This project started in the Environmental Justice research cluster at RISD's Digital+Media department, run by Sara Wylie and Jeff Warren. It is now part of the Public Laboratory for Open Technology and Science's civic science toolkit.
 
 =============================================================
 
-Read more about our experiments and work here: http://dm.risd.edu/courseblogs/ejrc/
+Read more about our experiments and work here: http://publiclaboratory.org
 
 To learn more about the Fred environment in which this was built, see http://github.com/jywarren/fred
 
+TO DO:
+
+* need a way to completely stabilize the camera to the spectrometer so people can just upload pairs which are already lined up
+* maybe offer a "sample" spectrum with marked absorbtion lines, color transitions, which you line up your spectrum with?
+* boundary or wavelength identification should be automatic, but is quite primitive - we need a way to identify a slope with parameters like "over 20 pixels, an average slope of x, with smoothness y, or at least continuously positive slope. Then we can say: "has_slope(red,start,end,slope,smoothness)"
+* more advanced version of the above where we an auto-identify dips and peaks, and/or patterns of them - like the HO bands in infrared, to calibrate the image.
+* need thumbnails of the actual spectrum, not the whole image
+* need to start storing wavelength/intensity pairs which belong_to spectrums
+* need comments and a better page layout - comments ought to be able to reference wavelengths with a @445 notation, maybe by doubleclicking on a wavelength?
+
+Architectural:
+
+* clean up functions in /app/views/spectrums/show.html.erb and move them into a spectral-workbench.js file and a Spork namespace

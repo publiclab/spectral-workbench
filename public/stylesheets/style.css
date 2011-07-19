@@ -89,3 +89,18 @@ a:hover.button {
 	color:#ccc;
 }
 
+#list .slice {
+	height:100px;
+	width:100px;
+	background:#ccc;
+}
+#list .spectrum {
+	font-size:10px;
+	float:left;
+	width:160px;
+	height:200px;
+	border:1px dotted #555;
+	padding:6px;
+	margin-right:10px;
+	margin-top:10px;
+}

@@ -335,7 +335,7 @@ function restore() {
  * @type String
  */
 function toDataUrl() {
-	return $C.toDataURL()
+	return $C.canvas.toDataURL()
 }
 
 /**
@@ -354,6 +354,32 @@ function toPrintDataUrl(width,height) {
 	Glop.width = _width
 	Glop.height = _height
 	return url
+}
+
+/**
+ * Returns a dataURL string of any rect from the offered canvas
+ */
+function excerptCanvas(x1,y1,x2,y2,source) {
+	source = source || $C
+	var width = x2-x1, height = y2-y1
+	$$('body')[0].insert("<canvas style='' id='excerptCanvas'></canvas>")
+	var element = $('excerptCanvas')
+	element.width = width
+	element.height = height
+	var excerptCanvasContext = element.getContext('2d')
+	// dumb but effective: just copy every pixel in
+	var outputdata = excerptCanvasContext.getImageData(0,0,width,height)
+	var sourcedata = source.getImageData(x1,y1,width,height)
+	// reading array wrong
+	for (i=0;i<sourcedata.length;i++) {
+		var value = sourcedata[i]
+		var red = value[0], green = value[1], blue = value[2], alpha = value[3]
+		outputdata.data[0] = red
+		outputdata.data[1] = green
+		outputdata.data[2] = blue
+		outputdata.data[3] = alpha
+	}
+	return excerptCanvasContext.canvas.toDataURL()
 }
 
 function cursor(cursor) {
