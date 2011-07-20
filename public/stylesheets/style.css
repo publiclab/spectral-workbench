@@ -88,7 +88,6 @@ a:hover.button {
 	background:#333;
 	color:#ccc;
 }
-
 #list .slice {
 	height:100px;
 	width:100px;
@@ -103,4 +102,6 @@ a:hover.button {
 	padding:6px;
 	margin-right:10px;
 	margin-top:10px;
+#list {
+	width:500px;
 }

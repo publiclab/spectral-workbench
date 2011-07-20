@@ -19,6 +19,11 @@
     <%= f.label 'Photo of spectrum' %><br />
     <%= f.file_field :photo %>
   </p>
+
+  <p>
+    <%= recaptcha_tags %>
+  </p>
+
   <p>
     <%= f.label 'Photo of baseline spectrum without sample (if applicable)' %><br />
     <%= f.file_field :baseline %>

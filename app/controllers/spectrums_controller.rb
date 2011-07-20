@@ -50,7 +50,7 @@ class SpectrumsController < ApplicationController
     @spectrum = Spectrum.new
 
     respond_to do |format|
-      format.html # new.html.erb
+      format.html # new.html.erb 
       format.xml  { render :xml => @spectrum }
     end
   end
@@ -66,7 +66,7 @@ class SpectrumsController < ApplicationController
     @spectrum = Spectrum.new(params[:spectrum])
 
     respond_to do |format|
-      if @spectrum.save
+      if verify_recaptcha(:model => @spectrum, :message => "ReCAPTCHA thinks you're not a human!") && @spectrum.save
         flash[:notice] = 'Spectrum was successfully created.'
         format.html { redirect_to(@spectrum) }
         format.xml  { render :xml => @spectrum, :status => :created, :location => @spectrum }
@@ -83,7 +83,7 @@ class SpectrumsController < ApplicationController
     @spectrum = Spectrum.find(params[:id])
 
     respond_to do |format|
-      if @spectrum.update_attributes(params[:spectrum])
+      if verify_recaptcha(:model => @spectrum, :message => "ReCAPTCHA thinks you're not a human!") && @spectrum.update_attributes(params[:spectrum])
         flash[:notice] = 'Spectrum was successfully updated.'
         format.html { redirect_to(@spectrum) }
         format.xml  { head :ok }
