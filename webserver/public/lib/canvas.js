@@ -370,15 +370,24 @@ function excerptCanvas(x1,y1,x2,y2,source) {
 	// dumb but effective: just copy every pixel in
 	var outputdata = excerptCanvasContext.getImageData(0,0,width,height)
 	var sourcedata = source.getImageData(x1,y1,width,height)
-	// reading array wrong
-	for (i=0;i<sourcedata.length;i++) {
-		var value = sourcedata[i]
-		var red = value[0], green = value[1], blue = value[2], alpha = value[3]
-		outputdata.data[0] = red
-		outputdata.data[1] = green
-		outputdata.data[2] = blue
-		outputdata.data[3] = alpha
+	var l = sourcedata.data.length/4
+	for (var i = 0; i < l; i++) {
+		var red = sourcedata.data[i * 4 + 0];
+		var green = sourcedata.data[i * 4 + 1];
+		var blue = sourcedata.data[i * 4 + 2];
+		var alpha = sourcedata.data[i * 4 + 3];
+		outputdata[i * 4 + 0] = red
+		outputdata[i * 4 + 1] = green
+		outputdata[i * 4 + 2] = blue
+		outputdata[i * 4 + 3] = alpha
 	}
+	excerptCanvasContext.putImageData(outputdata,0,0)
+
+//	for (i=0;i<sourcedata.length;i++) {
+//		var value = sourcedata[i]
+//		var red = value[0], green = value[1], blue = value[2], alpha = value[3]
+//		excerptCanvasContext.putImageData([red,green,blue,alpha],x1,y1)
+//	}
 	return excerptCanvasContext.canvas.toDataURL()
 }
 
