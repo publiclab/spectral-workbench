@@ -7,7 +7,11 @@ publiclaboratory.org
 PLOTS Spectral Workbench is a set of open-source tools to perform low-cost spectral analysis and to share those results online. The suite is provided in several folders, each corresponding to a separate tool:
 
 /spectrometry_kit - A Processing.org-based desktop environment for collecting spectral readings from a connected USB webcam-based spectrometer.
+	- Read about how to build and use your own spectrometer with this software here: http://publiclaboratory.org/tool/spectrometer
+	- See examples of output here: http://publiclaboratory.org/notes/warren/9-3-2011/several-new-spectra-food-samples
+
 /webserver - A Ruby on Rails web application for publishing, archiving, discussing, and analyzing spectra online.
+	- Currently under heavy development
 
 ==========================
 LICENSE
