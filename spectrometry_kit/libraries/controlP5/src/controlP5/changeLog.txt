@@ -1,0 +1,203 @@
+2010-09-30  Andreas Schlegel  <andi@sojamo.de>
+
+      * version 0.5.4	
+      
+      * src/controlP5/RadioButton.java: 
+      adding setNoneSelectedAllowed(true/false) default is true. 
+      http://forum.processing.org/topic/controlp5-radiobutton-strange-behaviour
+      
+      * src/controlP5/DropdownList.java:
+      renaming PulldownMenu to DropdownList.
+      
+      * src/controlP5/Range.java
+      setMin() and setMax() bug fixed.
+      
+      * src/controlP5/ControlBroadcaster.java:
+      adding addListner(), removeListener(), getListener()
+      any object that implements ControlListener can register with the ControlBroadcaster to
+      receive ControlEvents broadcasted.
+      
+      * src/controlP5/BitFontRenderer.java:
+      fixed ArrayIndexOutOfBoundsException
+      only characters between ASCII 32 and 127 are supported.
+      
+      * src/controlP5/ControlP5.java:
+      disabled clear() call (called from within dispose()) when in applet mode. 
+      Reason: all controllers will be cleared due to dispose call 
+      when switching tabs. Fix required.   
+      
+2010-08-18  Andreas Schlegel  <andi@sojamo.de>
+
+      * version 0.5.3
+      
+      * src/controlP5/ListBox.java:
+      adding clear(). clears a ListBox in order to re-filling list.
+      
+      * src/controlP5/ListBox.java:
+      changing behavior of a ListBox-Button. 
+      a ListBox-button is clicked, it will call the Button's onLeave() 
+      and setIsInside(false) function to solve problem addressed here:
+      http://forum.processing.org/topic/controlp5-listbox-loses-mouseclicks
+       
+      * src/controlP5/ListBox.java: 
+      adding actAsPulldownMenu() to enable/disable pulldown 
+      functionality for a ListBox.
+      
+      * src/controlP5/PulldownMenu.java:
+      new Controller, extends ListBox, acts as a pulldown-menu.
+      
+      
+2010-08-03  Andreas Schlegel
+      * version 0.5.2
+      * Slider2D: a new Controller, 2D slider control.
+      * Button, Bang, Toggle, : setImage() defines an image for DEFAULT,OVER,ACTIVE,HIGHLIGHT mode.
+      * Button, Bang, Toggle, : setImages() defines an image for DEFAULT,OVER,ACTIVE,HIGHLIGHT mode.
+      * Button: adding setSwitch() in order to use a button as a switch (makes toggle obsolete)
+      * Button: adding booleanValue() returns true or false, useful in case a button is set to be a switch.
+      * Button: adding setOn() setOff(), useful when button is a switch.
+      * Toggle: changing default look to ControlP5.SWITCH, an on/off look for toggles. use toggle.setMode(ControlP5.DEFAULT) to reset to the old default look.
+      * ControllerDisplay: adding interface ControllerDisplay to enable custom displays for a controller.
+      * Controller: setImage, allows to replace the default look of a controller with an image (PImage).  
+      * Controller: setDisplay allows custom displays for controller. the custom display is called from within a controller's draw function. A custom Display implements interface ControllerDisplay
+      * Controller: adding lock(), unlock(), isLock(), setMoveable(), isMoveable(), isUserInteraction(), setUserInteraction()
+      * Controller: adding plugTo(), unplugFrom() (if this causes any problems or error message, please report)
+      * ControlP5: adding java.util.logging.Logger for logging error, debug, info messages - wrapped in ControlP5.error(), ControlP5.warning(), ControlP5.info(), ControlP5.debug() 
+      * ControlP5: added registerDispose()
+      * ControlP5: adding setMoveable() and isMoveable() to disable/enable controllers to be moved around.
+      * ControlP5: adding disableShortcuts(), enableShortcuts() instead of disableKeys() and enableKeys()
+      * ControlP5: deprecating lock(), unlock(), disableKeys(), enableKeys()
+      * ControlWindow: adding begin() and end(). this allows to move controllers automatically to the main window or a separate controlWindow.
+      * Toggle: adding setValue(boolean)
+      * Matrix: mouseReleasedOutside error fixed.    
+      * ControlWindow: window is now properly removed when closed, thanks henri.
+      * TextLabel: adding setControlFont()
+      * Knob: all new.
+          	
+2010-04-04  Andreas Schlegel
+      * version 0.5.1
+      * ControlP5: lock() and unlock() are working again.
+      * ControlEvent: added function id() to make access to the id of  controller, group, tab, etc. easier
+      * ControlEvent: added function type() for easier distinguishing between the type of Controller the event was triggered from, returns ControlEvent.UNDEFINED, ControlEvent.CONTROLLER, ControlEvent.TAB, ControlEvent.GROUP 
+      * ListBoxItem: adding ListBoxItem to make changes to each item of a listBox especially the color settings of a listBoxItem.
+      * CColor: now with getter and setter functions, supports changing the value of the alpha channel.
+      * ControlWindow: adding begin() and end(). this allows to move controllers automatically to the main window or a separate controlWindow.
+      * ControllerGroup: adding enableCollapse(), disableCollapse(), isCollapse() to enable/disable the collapsing and opening of a controllerGroup e.g. listBox.
+           	
+2010-03-26  Andreas Schlegel
+      * version 0.5.0
+      * making transition to 1.5+, no more java 1.4 support.
+      * compiling against processing 1.1
+      * ControlP5: added disableKeys() and enableKeys(), suggested in the discourse. disables and enables keyEvents such as hide/show with ALT-h.
+      * Toggle: when inactive, the color refers to colorBackground instead of colorForeground now.
+      * ControlFont: smooth related functions have been disabled and deprecated due to processing 1.1 changes.
+      * Slider: use alignValueLabel() to position the value label of a slider on TOP, CENTER, or BOTTOM
+      * example ControlP5quick: new, ControlP5quick shows how to quickly add Controllers with auto-arrangement.
+                
+2010-02-16  Andreas Schlegel
+      * version 0.4.7
+      * Slider: adding TickMarks and replacing steps with snapToTickMarks().
+      * ControlWindow: adding setUndecorated(), isUndecorated(), toggleUndecorated()
+      * ControllerSprite: sprites are now clone-able and state management has been improved, thanks to c.a. church. http://processing.org/discourse/yabb2/YaBB.pl?num=1265905257
+      * Controller: adding getSprite() 
+      * BitFontRenderer: adding warning for character that are not supported by the BitFontRenderer.
+       	  
+2010-02-06  Andreas Schlegel
+      * version 0.4.6 
+      * ControlWindow: imageMode was not set back to CENTER/CORNER correctly, now fixed.
+ 
+0.4.5
+      * ControllerGroup: adding moveTo(String). will move ControllerGroups such as e.g. Textarea to another tab.
+
+0.4.4
+      * ControlWindow: imageMode CENTER/CORNER issue fixed.
+
+0.4.3
+      * Controller.isInside is private now. use setIsInside(true/false) and getIsInside() to access this boolean field.
+      * trying to solve the problem of overlapping described here:
+      http://processing.org/discourse/yabb2/YaBB.pl?num=1259885420/0#0
+      yet not successful, but loops managing the mouseEvents have been reversed from i++ to i--
+      * CheckBox,RadioButton: adding activateAll, activate, deactivate, getState to CheckBox and RadioButton to be able to control individual items by code.
+      * CheckBox: adding toggle() to CheckBox to be able to toggle individual items of a checkBox.
+      * CheckBox,RadioButton: adding  setItemHeight(), setItemWidth() to radioButton and checkBox
+      * Toggle: adding toggle()
+ 
+0.4.2
+-
+
+0.4.1
+      * Controller: added changeValue() to change the float value of a controller without broadcasting its change as a event. 
+      * Numberbox: added setMultiplier() and multiplier() to customize the value sensitivity.
+      * Toggle: setLabelVisible() is now working.
+      * ControlWindow: adding setTitle, showCoordinates, hideCoordinates to ControlWindow. only applies to controlWindows of type PAppletWindow (external window).
+      * adding Matrix.set
+      * Controller: Controller.isInside() is public now
+      * added ControlFont. does not support textarea and textfield yet.
+
+(note: take a look at subversion changelog generator http://ch.tudelft.nl/~arthur/svn2cl/)
+
+0.3.15
+      * Texfield: textfield scrolls to the left if text is larger than display area.
+      * Knob: knob setValue issue solved.
+
+      * BitFontRenderer: removed getWidth(String theText, int theFontIndex) 
+      is now getWidth(String theText, Label theLabel);
+      removed getWidth(String theText, int theFontIndex, int theLength))
+      is now getWidth(String theText, Label theLabel, int theLength));
+
+
+0.3.14
+      * ScrollList: adding void hideScrollbar()
+      adding void showScrollbar()
+      adding void showScrollbar()
+      adding void scroll(float)
+      adding boolean isScrollbarVisible()
+
+      * Textarea: adding void hideScrollbar()
+      adding void showScrollbar()
+      adding void showScrollbar()
+      adding void scroll(float)
+      adding boolean isScrollbarVisible()
+
+      * Textfield: textinput now works from a controlWindow
+
+      * Label: adding adjust() to fix the cutting off of Labels when changing fonts.
+      use e.g. mySlider.captionLabel().setFont(ControlP5.grixel).adjust();
+
+0.3.13
+      * Textfield: adding setAutoClear(true/false) prevents the textfield to be cleared after pressing RETURN.
+      adding clear(), clears the current textline
+      adding keepFocus(true/false)
+      adding getTextList()
+      adding setAutoClear(true/false)
+      adding isAutoClear()
+      adding submit()
+
+0.3.12
+      * Radio: if deactiveAll is set before the first button is added, the first button will not trigger an event.
+      * ControlGroup: added method getBackgroundHeight() to get the height of a group's background that has been set before.
+      * Textfield: fixed bug with clearing the variable myTextline too early.
+
+0.3.11
+      * Textfield: added method setText to Textfield
+      * Range: made corrections to Range, _myUnit was not set properly. now fixed. Range remains experimental.
+
+0.3.10
+      * fixed little issues with setColor, again.
+      * removed decimal point when setDecimalPrecision(0)
+
+0.3.9
+      * Range: defautValue for min shows correct value now.
+      * Radio: added deactivateAll()
+      * TextLabel: added setWidth, setHeight
+      * setColor -Label(), -Active(), -Value(), -Foreground(), -Background(): issues resolved and tested for slider, range, button, knob, sliderlist, multilist, toggle, radio
+      * Controller: added method setDecimalPrecision(int theNum) to set the decimal precision for floats when displayed as valueLabel. the precision does not apply to the returned float value.
+      Controller.captionLabel().set("txt") is fixed.
+      * ControlP5: controlP5.setAutoDraw(true/false) issue is fixed.
+      * ControlWindow: controlWindow.post() has been deleted.
+      * Knob: issue with minimum value has been resolved.
+
+how to move a textlabel that has been created with "new" to another tab than the default:
+Tab myTab = controlP5.addTab("new");
+Textlabel myTextlabel = new Textlabel(this,"a single textlabel.",20,100,400,200,0xffff0000,ControlP5.synt24);
+myTab.addDrawable(myTextlabel);
+

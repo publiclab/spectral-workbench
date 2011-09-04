@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<controlP5 colorLabel="ffffffff" colorValue="ffffffff" colorForeground="ff00698c" date="Sun Jun 08 13:34:00 SGT 2008" colorBackground="ff003652" colorActive="ff0699c4" lock="false" filepath="controlP5.xml" urlpath="">
+<window height="400" name="main" background="00000000" width="400" class="Temporary_4015_4544">
+<tab open="1.0" label="global" name="global" moveable="0.0" visible="1.0" id="-1"/>
+<tab open="1.0" label="default" name="default" moveable="0.0" visible="1.0" id="-1">
+<controller name="numberbox" id="1" width="100" visible="1.0" type="numberbox" y="160.0" label="numberbox" x="100.0" value="123.0" height="14" moveable="1.0"/>
+<controller name="numberbox2" id="2" width="100" visible="1.0" type="numberbox" y="200.0" label="numberbox2" x="100.0" value="150.0" height="14" moveable="1.0"/>
+<controller name="slider1" id="3" width="100" visible="1.0" min="100.0" type="slider" max="200.0" y="250.0" label="slider1" x="100.0" value="100.0" height="14" moveable="1.0"/>
+<controller name="text1" id="4" width="100" visible="1.0" type="textfield" y="290.0" label="TEXT1" x="100.0" value="" height="20" moveable="1.0"/>
+</tab>
+</window>
+</controlP5>
+

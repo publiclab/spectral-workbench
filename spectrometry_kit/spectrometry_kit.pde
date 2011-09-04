@@ -1,12 +1,26 @@
 /*
 
- Spectrofone - a spectrometer-based musical instrument or guitar pedal
- by Jeffrey Warren of the Public Laboratory for Open Technology and Science
- publiclaboratory.org
+Spectrometry_kit - a Processing.org-based interface for spectral analysis with a USB webcam-based spectrometer. Also a spectrometer-based musical instrument or guitar pedal
+
+by the Public Laboratory for Open Technology and Science
+publiclaboratory.org
  
- (c) Copyright 2011 Jeffrey Warren
- 
- This code is released under the MIT License
+(c) Copyright 2011 Public Laboratory
+
+This file is part of PLOTS Spectral Workbench.
+
+PLOTS Spectral Workbench is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+PLOTS Spectral Workbench is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with PLOTS Spectral Workbench.  If not, see <http://www.gnu.org/licenses/>.
  
  */
 
@@ -223,7 +237,7 @@ void keyPressed() {
     //save JSON:
 
     //save PNG:
-    save(year()+"-"+month()+"-"+day()+"-"+hour()+""+minute()+"-"+typedText+".png");
+    save("spectra/"+year()+"-"+month()+"-"+day()+"-"+hour()+""+minute()+"-"+typedText+".png");
     //save to web:
     //http://libraries.seltar.org/postToWeb/
     typedText = "";
