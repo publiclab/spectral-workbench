@@ -41,10 +41,22 @@ class Video
       //cameras = GSCapture.list();
       //println("Available cameras:");
       //for (int i = 0; i < cameras.length; i++) println(cameras[i]);
-      // type "ls /dev/video*" in the terminal to discover video devices
+      // Alternate solution: type "ls /dev/video*" in the terminal to discover video devices
+      String video_device = "0";
+      try {  
+        Runtime r = Runtime.getRuntime();
+        Process p = r.exec("ls /dev/video*");
+        p.waitFor();
+        BufferedReader b = new BufferedReader(new InputStreamReader(p.getInputStream()));
+        String line = "";
+        while ((line = b.readLine()) != null) {
+          video_device = line.substring(line.length()-1);
+        }
+      } catch(IOException e1) {}
+      catch(InterruptedException e2) {}
       //gscapture = new GSCapture(parent, width, height, cameras[cameras.length-1]); //linux
-      gscapture = new GSCapture(parent, width, height, 10, "/dev/video0"); //linux
-      // attempt to auto-configure resolution
+      gscapture = new GSCapture(parent, width, height, 10, "/dev/video"+video_device); //linux
+      // attempt to auto-configure resolution -- do you really need to restart the object?
       //gscapture.play(); //linux only
       //int[][] resolutions = gscapture.resolutions();
       //width = resolutions[resolutions.length-1][0];

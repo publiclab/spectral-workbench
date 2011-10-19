@@ -110,7 +110,19 @@ class Video
     } catch(IOException e1) { println(e1); }
 
     if (isLinux) {
-      gscapture = new GSCapture(parent, width, height, 10, "/dev/video0"); //linux
+      String video_device = "0";
+      try {
+        Runtime r = Runtime.getRuntime();
+        Process p = r.exec("ls /dev/video*");
+        p.waitFor();
+        BufferedReader b = new BufferedReader(new InputStreamReader(p.getInputStream()));
+        String line = "";
+        while ((line = b.readLine()) != null) {
+          video_device = line.substring(line.length()-1);
+        }
+      } catch(IOException e1) {}
+      catch(InterruptedException e2) {}
+      gscapture = new GSCapture(parent, width, height, 10, "/dev/video"+video_device); //linux
       gscapture.play(); //linux only
       println("Linux");
     } else {
