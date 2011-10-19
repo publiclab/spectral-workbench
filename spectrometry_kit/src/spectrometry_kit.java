@@ -57,7 +57,7 @@ public void setup() {
   //size(screen.width, screen.height, P2D);
   video = new Video(this,width,height);
   samplerow = int (height*(0.50));
-  font = loadFont("Ubuntu-18.vlw");  
+  font = loadFont("Georgia-Italic-18.vlw");  
 
   spectrumbuf = new int[width];
   lastspectrum = new int[width];
@@ -74,7 +74,7 @@ public void setup() {
 public void captureEvent(Capture c) { //mac or windows
   c.read();
 }
-public void GSCaptureEvent(GSCapture c) { //linux
+public void captureEvent(GSCapture c) { //linux
   c.read();
 }
 
@@ -82,26 +82,33 @@ void draw() {
   loadPixels(); //load screen pixel buffer into pixels[]
   background(64);
 
-  stroke(255);
+  fill(255);
+  noStroke();
   line(0,height-255,width,height-255); //100% mark for spectra
 
   textFont(font,18);
   text("PLOTS Spectral Workbench", 15, 160); //display current title
   text(typedText, 15, 190); //display current title
-  fill(255);
   //text("red=baseline, white=current, yellow=absorption",15,height-255+45);
 
   // re-zero intensity sum
   absorptionSum = 0;
 
   // preview video to align spectrum
-  for (int y = 0; y < int (height); y+=res) {
-    for (int x = 0; x < int (width); x+=res) {
+  if (colortype == "rgb") {
+    //video.image(0,height*3/4,width/4,height/4)
+    for (int y = 0; y < int (height); y+=4) {
+      for (int x = 0; x < int (width); x+=4) {
         pixels[(height*3/4*width)+(y*width/4)+(x/4)] = video.gscapture.pixels[y*width+x];
+      }
     }
+    // draw the region of sampling with a rectangle:
+    noFill();
+    stroke(255,255,0);
+    rect(0,height*3/4+samplerow/4,width/4,video.sampleHeight/4);
   }
-  // draw the region of sampling with a rectangle:
-  // rect();
+  stroke(255);
+  fill(255);
 
   int index = int (video.width*samplerow); //the horizontal strip to sample
   for (int x = 0; x < int (width); x+=res) {

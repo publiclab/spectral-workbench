@@ -1,7 +1,7 @@
 class Video
 {
-  private Capture capture; //mac or windows
-  private GSCapture gscapture; //linux
+  public Capture capture; //mac or windows
+  public GSCapture gscapture; //linux
   int width, height;
   int sampleWidth, sampleHeight;
   int[] rgb;
@@ -33,7 +33,7 @@ class Video
     try {  
       Runtime r = Runtime.getRuntime();
       Process p = r.exec("uvcdynctrl -s \"Exposure, Auto\" 1 && uvcdynctrl -s \"White Balance Temperature, Auto\" 0");
-    } catch(IOException e1) {}
+    } catch(IOException e1) { println(e1); }
     //catch(InterruptedException e2) {}
 
     if (isLinux) {
@@ -45,15 +45,24 @@ class Video
       //gscapture = new GSCapture(parent, width, height, cameras[cameras.length-1]); //linux
       gscapture = new GSCapture(parent, width, height, "/dev/video0"); //linux
       gscapture.play(); //linux only
+      println("Linux");
     } else {
       capture = new Capture(parent, width, height, 20); //mac or windows via QuickTime/Java
       capture.settings(); // mac or windows only, allows selection of video input
+      println("Not Linux");
     }
   }
   int[] pixels()
   {
-    //println(gscapture.pixels.length);
-    return gscapture.pixels;
+    if (isLinux) return gscapture.pixels;
+    else return capture.pixels;
+  }
+  public void image(int x,int y,int imgWidth,int imgHeight)
+  {
+    if (isLinux) {
+      gscapture.read();
+      //papplet.image(gscapture,x,y,imgWidth,imgHeight);
+    } //else papplet.image(capture,x,y,imgWidth,imgHeight);
   }
   /*
    * Retrieve red, green, blue color intensities 

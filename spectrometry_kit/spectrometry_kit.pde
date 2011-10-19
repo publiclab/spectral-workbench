@@ -75,8 +75,8 @@ void keyPressed() {
 }
 class Video
 {
-  private Capture capture; //mac or windows
-  private GSCapture gscapture; //linux
+  public Capture capture; //mac or windows
+  public GSCapture gscapture; //linux
   int width, height;
   int sampleWidth, sampleHeight;
   int[] rgb;
@@ -104,19 +104,28 @@ class Video
     try {
       Runtime r = Runtime.getRuntime();
       Process p = r.exec("uvcdynctrl -s \"Exposure, Auto\" 1 && uvcdynctrl -s \"White Balance Temperature, Auto\" 0");
-    } catch(IOException e1) {}
+    } catch(IOException e1) { println(e1); }
 
     if (isLinux) {
       gscapture = new GSCapture(parent, width, height, "/dev/video0"); //linux
       gscapture.play(); //linux only
+      println("Linux");
     } else {
       capture = new Capture(parent, width, height, 20); //mac or windows via QuickTime/Java
       capture.settings(); // mac or windows only, allows selection of video input
+      println("Not Linux");
     }
   }
   int[] pixels()
   {
-    return gscapture.pixels;
+    if (isLinux) return gscapture.pixels;
+    else return capture.pixels;
+  }
+  public void image(int x,int y,int imgWidth,int imgHeight)
+  {
+    if (isLinux) {
+      gscapture.read();
+    } //else papplet.image(capture,x,y,imgWidth,imgHeight);
   }
   /*
    * Retrieve red, green, blue color intensities
@@ -234,7 +243,7 @@ public void setup() {
   size(640, 480, P2D);
   video = new Video(this,width,height);
   samplerow = int (height*(0.50));
-  font = loadFont("Ubuntu-18.vlw");
+  font = loadFont("Georgia-Italic-18.vlw");
 
   spectrumbuf = new int[width];
   lastspectrum = new int[width];
@@ -251,7 +260,7 @@ public void setup() {
 public void captureEvent(Capture c) { //mac or windows
   c.read();
 }
-public void GSCaptureEvent(GSCapture c) { //linux
+public void captureEvent(GSCapture c) { //linux
   c.read();
 }
 
@@ -259,21 +268,28 @@ void draw() {
   loadPixels(); //load screen pixel buffer into pixels[]
   background(64);
 
-  stroke(255);
+  fill(255);
+  noStroke();
   line(0,height-255,width,height-255); //100% mark for spectra
 
   textFont(font,18);
   text("PLOTS Spectral Workbench", 15, 160); //display current title
   text(typedText, 15, 190); //display current title
-  fill(255);
 
   absorptionSum = 0;
 
-  for (int y = 0; y < int (height); y+=res) {
-    for (int x = 0; x < int (width); x+=res) {
+  if (colortype == "rgb") {
+    for (int y = 0; y < int (height); y+=4) {
+      for (int x = 0; x < int (width); x+=4) {
         pixels[(height*3/4*width)+(y*width/4)+(x/4)] = video.gscapture.pixels[y*width+x];
+      }
     }
+    noFill();
+    stroke(255,255,0);
+    rect(0,height*3/4+samplerow/4,width/4,video.sampleHeight/4);
   }
+  stroke(255);
+  fill(255);
 
   int index = int (video.width*samplerow); //the horizontal strip to sample
   for (int x = 0; x < int (width); x+=res) {
