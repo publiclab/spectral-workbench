@@ -110,7 +110,7 @@ class Video
     } catch(IOException e1) { println(e1); }
 
     if (isLinux) {
-      String video_device = "0";
+      String video_device = "1";
       try {
         Runtime r = Runtime.getRuntime();
         Process p = r.exec("ls /dev/video*");
@@ -118,10 +118,13 @@ class Video
         BufferedReader b = new BufferedReader(new InputStreamReader(p.getInputStream()));
         String line = "";
         while ((line = b.readLine()) != null) {
+          println(line);
           video_device = line.substring(line.length()-1);
+          println("Auto-detected video device.");
         }
-      } catch(IOException e1) {}
-      catch(InterruptedException e2) {}
+      } catch(IOException e1) {println(e1);}
+      catch(InterruptedException e2) {println(e2);}
+      println("Video device: /dev/video"+video_device);
       gscapture = new GSCapture(parent, width, height, 10, "/dev/video"+video_device); //linux
       gscapture.play(); //linux only
       println("Linux");
@@ -189,7 +192,6 @@ class Filter implements AudioSignal, AudioListener
   {
     bsize = 512;
     minim = new Minim(parent);
-    minim.debugOn();
     in = minim.getLineIn(Minim.MONO, bsize);
     out = minim.getLineOut(Minim.MONO, bsize);
     leftChannel = new float[bsize];
@@ -262,14 +264,14 @@ int absorptionSum;
 
 public void setup() {
   size(screen.width, screen.height, P2D);
-  video = new Video(this,640,480);
+  video = new Video(this,1280,720);
   samplerow = int (height*(0.50));
   font = loadFont("Georgia-Italic-18.vlw");
 
   spectrumbuf = new int[history][video.width][3];
-  lastspectrum = new int[width];
-  absorption = new int[width];
-  contrastEnhancedAbsorption = new int[width];
+  lastspectrum = new int[video.width];
+  absorption = new int[video.width];
+  contrastEnhancedAbsorption = new int[video.width];
   for (int x = 0;x < video.width;x++) { // is this necessary? initializing the spectrum buffer with zeroes? come on!
     absorption[x] = 0;
     contrastEnhancedAbsorption[x] = 0;
@@ -310,7 +312,9 @@ void draw() {
   if (colortype == "rgb") {
     for (int y = 0; y < int (video.height); y+=4) {
       for (int x = 0; x < int (video.width); x+=4) {
-        pixels[(height*3/4*width)+(y*width/4)+(x/4)] = video.gscapture.pixels[y*video.width+x];
+        if (x < width && y < height) {
+          pixels[(height*3/4*width)+(y*width/4)+((x/4))] = video.gscapture.pixels[y*video.width+x];
+        }
       }
     }
     noFill();

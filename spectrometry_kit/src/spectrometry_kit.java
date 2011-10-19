@@ -55,15 +55,15 @@ public void setup() {
   //size(1280, 720, P2D);
   // Or run full screen, more fun! Use with Sketch -> Present
   size(screen.width, screen.height, P2D);
-  video = new Video(this,640,480);
-  //video = new Video(this,1280,720);
+  //video = new Video(this,640,480);
+  video = new Video(this,1280,720);
   samplerow = int (height*(0.50));
   font = loadFont("Georgia-Italic-18.vlw");  
 
   spectrumbuf = new int[history][video.width][3];
-  lastspectrum = new int[width];
-  absorption = new int[width];
-  contrastEnhancedAbsorption = new int[width];
+  lastspectrum = new int[video.width];
+  absorption = new int[video.width];
+  contrastEnhancedAbsorption = new int[video.width];
   for (int x = 0;x < video.width;x++) { // is this necessary? initializing the spectrum buffer with zeroes? come on!
     absorption[x] = 0;
     contrastEnhancedAbsorption[x] = 0;
@@ -111,7 +111,9 @@ void draw() {
     //video.image(0,height*3/4,width/4,height/4)
     for (int y = 0; y < int (video.height); y+=4) {
       for (int x = 0; x < int (video.width); x+=4) {
-        pixels[(height*3/4*width)+(y*width/4)+(x/4)] = video.gscapture.pixels[y*video.width+x];
+        if (x < width && y < height) {
+          pixels[(height*3/4*width)+(y*width/4)+((x/4))] = video.gscapture.pixels[y*video.width+x];
+        }
       }
     }
     // draw the region of sampling with a rectangle:

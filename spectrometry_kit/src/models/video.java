@@ -42,7 +42,7 @@ class Video
       //println("Available cameras:");
       //for (int i = 0; i < cameras.length; i++) println(cameras[i]);
       // Alternate solution: type "ls /dev/video*" in the terminal to discover video devices
-      String video_device = "0";
+      String video_device = "1";
       try {  
         Runtime r = Runtime.getRuntime();
         Process p = r.exec("ls /dev/video*");
@@ -50,10 +50,13 @@ class Video
         BufferedReader b = new BufferedReader(new InputStreamReader(p.getInputStream()));
         String line = "";
         while ((line = b.readLine()) != null) {
+          println(line);
           video_device = line.substring(line.length()-1);
+          println("Auto-detected video device.");
         }
-      } catch(IOException e1) {}
-      catch(InterruptedException e2) {}
+      } catch(IOException e1) {println(e1);}
+      catch(InterruptedException e2) {println(e2);}
+      println("Video device: /dev/video"+video_device);
       //gscapture = new GSCapture(parent, width, height, cameras[cameras.length-1]); //linux
       gscapture = new GSCapture(parent, width, height, 10, "/dev/video"+video_device); //linux
       // attempt to auto-configure resolution -- do you really need to restart the object?

@@ -11,7 +11,7 @@ class Filter implements AudioSignal, AudioListener
   {
     bsize = 512;
     minim = new Minim(parent);
-    minim.debugOn();
+    //minim.debugOn();
     in = minim.getLineIn(Minim.MONO, bsize);
     out = minim.getLineOut(Minim.MONO, bsize);
     leftChannel = new float[bsize];
