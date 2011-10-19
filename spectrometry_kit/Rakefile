@@ -1,0 +1,51 @@
+require 'date'
+
+desc "builds spectrometry_kit.pde"
+task :build do
+	build
+end
+
+desc "automatically builds spectrometry_kit.pde when something in src/ changes"
+task :autobuild do
+  build
+	require 'lib/filesystemwatcher'
+	watcher = FileSystemWatcher.new
+	watcher.addDirectory 'src', '**/*.java'
+	watcher.sleepTime = 2
+	watcher.start do |status,file|
+	    if ([FileSystemWatcher::CREATED,
+	    	FileSystemWatcher::MODIFIED,
+	    	FileSystemWatcher::DELETED].include? status)
+	        begin
+	          build
+          rescue
+            puts "//// !!! Build failed !!! ////"
+            puts $!
+          end
+	    end
+	end
+	
+	watcher.join()
+end
+
+def build
+	puts 'building... '+DateTime.now.to_s
+	$:.push 'lib/sprockets'
+	require 'sprockets'
+	
+	secretary = Sprockets::Secretary.new(
+	  :load_path    => ['src'],
+	  :source_files => ['src/spectrometry_kit.java']
+	)
+	
+	lines = Marshal.dump secretary.preprocessor.lines
+	#File.open '.line_data.dat', 'w' do |f|
+	#	f.print lines
+	#end
+	
+	concatenation = secretary.concatenation
+	
+	concatenation.save_to("spectrometry_kit.pde")
+	
+	puts "Build finished"
+end 
