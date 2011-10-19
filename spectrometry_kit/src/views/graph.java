@@ -1,10 +1,9 @@
-////////////////////////////////////
-// DRAW SPECTRUM INTENSITY GRAPH
-////////////////////////////////////
+/*
+ * Draws spectrum intensity graph,
+ * runs for each column of video data, every frame
+ */
 
-// runs for each column of video data, every frame
-
-if (colortype == "combined") {
+if (colortype == "combined" || colortype == "heat") {
   // current live spectrum:
   stroke(255);
   int val = (rgb[0]+rgb[1]+rgb[2])/3;

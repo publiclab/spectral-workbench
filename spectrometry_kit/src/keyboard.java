@@ -14,8 +14,8 @@ void keyPressed() {
     }
   } 
   else if (key == ' ') {
-    for (int x = 0;x < spectrumbuf.length;x++) {
-      lastspectrum[x] = spectrumbuf[x];
+    for (int x = 0;x < spectrumbuf[0].length;x++) {
+      lastspectrum[x] = (spectrumbuf[0][x][0]+spectrumbuf[0][x][1]+spectrumbuf[0][x][2])/3;
     }
   }
   else if (key == 's') {
@@ -32,6 +32,9 @@ void keyPressed() {
       colortype = "rgb";
     } 
     else if (colortype == "rgb") {
+      colortype = "heat";
+    }
+    else if (colortype == "heat") {
       colortype = "combined";
     }
   } 

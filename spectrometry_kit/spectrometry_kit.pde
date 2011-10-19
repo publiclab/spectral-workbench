@@ -20,7 +20,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with PLOTS Spectral Workbench.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 
 import processing.video.*; //mac or windows
 import codeanticode.gsvideo.*; //linux
@@ -43,8 +43,8 @@ void keyPressed() {
     }
   }
   else if (key == ' ') {
-    for (int x = 0;x < spectrumbuf.length;x++) {
-      lastspectrum[x] = spectrumbuf[x];
+    for (int x = 0;x < spectrumbuf[0].length;x++) {
+      lastspectrum[x] = (spectrumbuf[0][x][0]+spectrumbuf[0][x][1]+spectrumbuf[0][x][2])/3;
     }
   }
   else if (key == 's') {
@@ -57,6 +57,9 @@ void keyPressed() {
       colortype = "rgb";
     }
     else if (colortype == "rgb") {
+      colortype = "heat";
+    }
+    else if (colortype == "heat") {
       colortype = "combined";
     }
   }
@@ -107,7 +110,7 @@ class Video
     } catch(IOException e1) { println(e1); }
 
     if (isLinux) {
-      gscapture = new GSCapture(parent, width, height, "/dev/video0"); //linux
+      gscapture = new GSCapture(parent, width, height, 10, "/dev/video0"); //linux
       gscapture.play(); //linux only
       println("Linux");
     } else {
@@ -116,10 +119,14 @@ class Video
       println("Not Linux");
     }
   }
-  int[] pixels()
+  public int[] pixels()
   {
     if (isLinux) return gscapture.pixels;
     else return capture.pixels;
+  }
+  public float scale()
+  {
+    return (width*1.000)/screen.width;
   }
   public void image(int x,int y,int imgWidth,int imgHeight)
   {
@@ -235,22 +242,23 @@ int lastval = 0;
 int lastred = 0;
 int lastgreen = 0;
 int lastblue = 0;
-int[] spectrumbuf, lastspectrum, absorption, contrastEnhancedAbsorption;
+int[][][] spectrumbuf;
+int history = 150;
+int[] lastspectrum, absorption, contrastEnhancedAbsorption;
 int averageAbsorption = 0;
 int absorptionSum;
 
 public void setup() {
-  size(640, 480, P2D);
-  video = new Video(this,width,height);
+  size(screen.width, screen.height, P2D);
+  video = new Video(this,640,480);
   samplerow = int (height*(0.50));
   font = loadFont("Georgia-Italic-18.vlw");
 
-  spectrumbuf = new int[width];
+  spectrumbuf = new int[history][video.width][3];
   lastspectrum = new int[width];
   absorption = new int[width];
   contrastEnhancedAbsorption = new int[width];
-  for (int x = 0;x < width;x++) { // is this necessary? initializing the spectrum buffer with zeroes? come on!
-    spectrumbuf[x] = 0;
+  for (int x = 0;x < video.width;x++) { // is this necessary? initializing the spectrum buffer with zeroes? come on!
     absorption[x] = 0;
     contrastEnhancedAbsorption[x] = 0;
   }
@@ -265,6 +273,15 @@ public void captureEvent(GSCapture c) { //linux
 }
 
 void draw() {
+
+  for (int i = history-1;i > 0;i--) {
+    for (int x = 0;x < video.width;x++) {
+      spectrumbuf[i][x] = spectrumbuf[i-1][x];
+    }
+  }
+  for (int x = 0;x < video.width;x++) { // is this necessary? initializing the spectrum buffer with zeroes? come on!
+  }
+
   loadPixels(); //load screen pixel buffer into pixels[]
   background(64);
 
@@ -273,37 +290,47 @@ void draw() {
   line(0,height-255,width,height-255); //100% mark for spectra
 
   textFont(font,18);
-  text("PLOTS Spectral Workbench", 15, 160); //display current title
-  text(typedText, 15, 190); //display current title
+  text("PLOTS Spectral Workbench", 15, 25+history); //display current title
+  text(typedText, 15, 55+history); //display current title
 
   absorptionSum = 0;
 
   if (colortype == "rgb") {
-    for (int y = 0; y < int (height); y+=4) {
-      for (int x = 0; x < int (width); x+=4) {
-        pixels[(height*3/4*width)+(y*width/4)+(x/4)] = video.gscapture.pixels[y*width+x];
+    for (int y = 0; y < int (video.height); y+=4) {
+      for (int x = 0; x < int (video.width); x+=4) {
+        pixels[(height*3/4*width)+(y*width/4)+(x/4)] = video.gscapture.pixels[y*video.width+x];
       }
     }
     noFill();
     stroke(255,255,0);
-    rect(0,height*3/4+samplerow/4,width/4,video.sampleHeight/4);
+    rect(0,height*3/4+samplerow/4,video.width/4,video.sampleHeight/4);
   }
   stroke(255);
   fill(255);
 
+
   int index = int (video.width*samplerow); //the horizontal strip to sample
-  for (int x = 0; x < int (width); x+=res) {
+  for (int x = 0; x < int (video.width); x+=res) {
 
     int[] rgb = video.get_rgb(x);
 
-    spectrumbuf[x] = (rgb[0]+rgb[1]+rgb[2])/3;
-    for (int y = 0; y < int (height/4); y+=res) {
-      pixels[(y*width)+x] = color(rgb[0],rgb[1],rgb[2]);
-    }
+    spectrumbuf[0][x] = rgb;
+    if (x < video.width) {
+      for (int y = 0; y < history; y++) {
+        if (colortype == "heat") {
+		colorMode(HSB,255);
+		pixels[(history*width)-(y*width)+x] = color(255-(spectrumbuf[y][x][0]+spectrumbuf[y][x][1]+spectrumbuf[y][x][2])/3,255,255);
+		colorMode(RGB,255);
+        } else {
+		pixels[(history*width)-(y*width)+x] = color(spectrumbuf[y][x][0],spectrumbuf[y][x][1],spectrumbuf[y][x][2]);
+	}
+      }
+/*
+ * Draws spectrum intensity graph,
+ * runs for each column of video data, every frame
+ */
 
-
-
-if (colortype == "combined") {
+if (colortype == "combined" || colortype == "heat") {
   stroke(255);
   int val = (rgb[0]+rgb[1]+rgb[2])/3;
   line(x,height-lastval,x+1,height-val);
@@ -341,12 +368,13 @@ if (colortype == "combined") {
   line(x,height-lastblue,x+1,height-rgb[2]);
   lastblue = rgb[2];
 }
+    }
     index++;
   }
 
   averageAbsorption = absorptionSum/width;
   stroke(128);
-  line(0,averageAbsorption,width,averageAbsorption);
+  line(0,averageAbsorption/3,width,averageAbsorption/3);
 
   updatePixels();
 }

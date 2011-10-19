@@ -43,7 +43,14 @@ class Video
       //for (int i = 0; i < cameras.length; i++) println(cameras[i]);
       // type "ls /dev/video*" in the terminal to discover video devices
       //gscapture = new GSCapture(parent, width, height, cameras[cameras.length-1]); //linux
-      gscapture = new GSCapture(parent, width, height, "/dev/video0"); //linux
+      gscapture = new GSCapture(parent, width, height, 10, "/dev/video0"); //linux
+      // attempt to auto-configure resolution
+      //gscapture.play(); //linux only
+      //int[][] resolutions = gscapture.resolutions();
+      //width = resolutions[resolutions.length-1][0];
+      //height = resolutions[resolutions.length-1][1];
+      //gscapture.delete();
+      //gscapture = new GSCapture(parent, width, height, "/dev/video0"); //linux
       gscapture.play(); //linux only
       println("Linux");
     } else {
@@ -52,10 +59,14 @@ class Video
       println("Not Linux");
     }
   }
-  int[] pixels()
+  public int[] pixels()
   {
     if (isLinux) return gscapture.pixels;
     else return capture.pixels;
+  }
+  public float scale()
+  {
+    return (width*1.000)/screen.width;
   }
   public void image(int x,int y,int imgWidth,int imgHeight)
   {
