@@ -28,6 +28,8 @@ import ddf.minim.analysis.*;
 import ddf.minim.*;
 
 //= require <keyboard>
+//= require <models/system>
+System system;
 //= require <models/video>
 Video video;
 //= require <models/filter>
@@ -51,12 +53,13 @@ int averageAbsorption = 0;
 int absorptionSum;
 
 public void setup() {
+  system = new System();
   //size(640, 480, P2D);
   //size(1280, 720, P2D);
   // Or run full screen, more fun! Use with Sketch -> Present
-  size(screen.width, screen.height, P2D);
-  //video = new Video(this,640,480);
-  video = new Video(this,1280,720);
+  size(screen.width, screen.height-20, P2D);
+  video = new Video(this,640,480,1);
+  //video = new Video(this,1280,720,0);
   samplerow = int (height*(0.50));
   font = loadFont("Georgia-Italic-18.vlw");  
 
@@ -113,6 +116,7 @@ void draw() {
       for (int x = 0; x < int (video.width); x+=4) {
         if (x < width && y < height) {
           pixels[(height*3/4*width)+(y*width/4)+((x/4))] = video.gscapture.pixels[y*video.width+x];
+          //pixels[(height*3/4*width)+(y*width/4)+((x/4))] = video.gscapture.pixels[int (y/video.scale()*video.width+x/video.scale())];
         }
       }
     }
@@ -134,7 +138,9 @@ void draw() {
 
     // draw direct output of averaged camera sampling, for "history" frames of history
     spectrumbuf[0][x] = rgb;
-    if (x < video.width) {
+    ///////////////////////////////////
+    // scale video.width to width!!
+    if (x < width) {
       for (int y = 0; y < history; y++) {
         if (colortype == "heat") {
 		colorMode(HSB,255);

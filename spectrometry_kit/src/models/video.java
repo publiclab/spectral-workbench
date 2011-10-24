@@ -1,16 +1,16 @@
-class Video
-{
+class Video {
   public Capture capture; //mac or windows
   public GSCapture gscapture; //linux
+  public int device;
   int width, height;
   int sampleWidth, sampleHeight;
   int[] rgb;
   boolean isLinux;
   public String[] cameras;
-  public Video(PApplet parent, int receivedWidth, int receivedHeight)
-  {
+  public Video(PApplet parent, int receivedWidth, int receivedHeight, int receivedDevice) {
     width = receivedWidth;
     height = receivedHeight;
+    device = receivedDevice;
     sampleHeight = 80;
     //OS detection
     try {  
@@ -32,7 +32,7 @@ class Video
     // not tested for 2nd camera, just default
     try {  
       Runtime r = Runtime.getRuntime();
-      Process p = r.exec("uvcdynctrl -s \"Exposure, Auto\" 1 && uvcdynctrl -s \"White Balance Temperature, Auto\" 0");
+      Process p = r.exec("uvcdynctrl -d video"+device+" -s \"Exposure, Auto\" 1 && uvcdynctrl -s \"White Balance Temperature, Auto\" 0 && uvcdynctrl -d video"+device+" -s Contrast 128");
     } catch(IOException e1) { println(e1); }
     //catch(InterruptedException e2) {}
 
@@ -42,23 +42,13 @@ class Video
       //println("Available cameras:");
       //for (int i = 0; i < cameras.length; i++) println(cameras[i]);
       // Alternate solution: type "ls /dev/video*" in the terminal to discover video devices
-      String video_device = "1";
-      try {  
-        Runtime r = Runtime.getRuntime();
-        Process p = r.exec("ls /dev/video*");
-        p.waitFor();
-        BufferedReader b = new BufferedReader(new InputStreamReader(p.getInputStream()));
-        String line = "";
-        while ((line = b.readLine()) != null) {
-          println(line);
-          video_device = line.substring(line.length()-1);
-          println("Auto-detected video device.");
-        }
-      } catch(IOException e1) {println(e1);}
-      catch(InterruptedException e2) {println(e2);}
-      println("Video device: /dev/video"+video_device);
+          String devices = system.run("ls /dev/video*");
+		// Problem... this is not bash!! can't do wildcards with ls... what do
+      device = int (devices.substring(devices.length()-1));
+      println("Auto-detected video device.");
+      println("Video device: /dev/video"+device);
       //gscapture = new GSCapture(parent, width, height, cameras[cameras.length-1]); //linux
-      gscapture = new GSCapture(parent, width, height, 10, "/dev/video"+video_device); //linux
+      gscapture = new GSCapture(parent, width, height, 10, "/dev/video"+device); //linux
       // attempt to auto-configure resolution -- do you really need to restart the object?
       //gscapture.play(); //linux only
       //int[][] resolutions = gscapture.resolutions();
@@ -79,6 +69,7 @@ class Video
     if (isLinux) return gscapture.pixels;
     else return capture.pixels;
   }
+  // video.width:screen.width
   public float scale()
   {
     return (width*1.000)/screen.width;

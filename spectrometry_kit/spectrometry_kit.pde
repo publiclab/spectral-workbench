@@ -76,19 +76,61 @@ void keyPressed() {
     typedText += key;
   }
 }
-class Video
+/*
+ * A class to interact with the system, mainly through
+ * System.run() calls to access a shell prompt.
+ */
+class System
 {
+  boolean isLinux;
+  public String[] command;
+  public System() {
+    if (run("uname").equals("Linux")) {
+      isLinux = true;
+    } else {
+      isLinux = false;
+    }
+  }
+  /*
+   * Runs <command> in a shell and returns a single line response.
+   */
+  public String run(String command) {
+    print("Shell command: '");
+    print(command);
+    println("'");
+    String response = "Failed try {}";
+    try {
+      Runtime r = Runtime.getRuntime();
+      Process p = r.exec(command);
+      p.waitFor();
+      BufferedReader b = new BufferedReader(new InputStreamReader(p.getInputStream()));
+      response = b.readLine();
+      print("Response: '");
+      print(response);
+      println("'");
+      String line;
+      while ((line = b.readLine()) != null) {
+        println(line);
+      }
+    } catch(IOException e1) { println(e1); }
+    catch(InterruptedException e2) { println(e2); }
+    return(response);
+  }
+}
+System system;
+class Video {
   public Capture capture; //mac or windows
   public GSCapture gscapture; //linux
+  public int device;
   int width, height;
   int sampleWidth, sampleHeight;
   int[] rgb;
   boolean isLinux;
   public String[] cameras;
-  public Video(PApplet parent, int receivedWidth, int receivedHeight)
-  {
+  public Video(PApplet parent, int receivedWidth, int receivedHeight, int receivedDevice) {
     width = receivedWidth;
     height = receivedHeight;
+    device = receivedDevice;
     sampleHeight = 80;
     try {
       Runtime r = Runtime.getRuntime();
@@ -106,26 +148,15 @@ class Video
 
     try {
       Runtime r = Runtime.getRuntime();
-      Process p = r.exec("uvcdynctrl -s \"Exposure, Auto\" 1 && uvcdynctrl -s \"White Balance Temperature, Auto\" 0");
+      Process p = r.exec("uvcdynctrl -d video"+device+" -s \"Exposure, Auto\" 1 && uvcdynctrl -s \"White Balance Temperature, Auto\" 0 && uvcdynctrl -d video"+device+" -s Contrast 128");
     } catch(IOException e1) { println(e1); }
 
     if (isLinux) {
-      String video_device = "1";
-      try {
-        Runtime r = Runtime.getRuntime();
-        Process p = r.exec("ls /dev/video*");
-        p.waitFor();
-        BufferedReader b = new BufferedReader(new InputStreamReader(p.getInputStream()));
-        String line = "";
-        while ((line = b.readLine()) != null) {
-          println(line);
-          video_device = line.substring(line.length()-1);
-          println("Auto-detected video device.");
-        }
-      } catch(IOException e1) {println(e1);}
-      catch(InterruptedException e2) {println(e2);}
-      println("Video device: /dev/video"+video_device);
-      gscapture = new GSCapture(parent, width, height, 10, "/dev/video"+video_device); //linux
+          String devices = system.run("ls /dev/video*");
+      device = int (devices.substring(devices.length()-1));
+      println("Auto-detected video device.");
+      println("Video device: /dev/video"+device);
+      gscapture = new GSCapture(parent, width, height, 10, "/dev/video"+device); //linux
       gscapture.play(); //linux only
       println("Linux");
     } else {
@@ -192,6 +223,7 @@ class Filter implements AudioSignal, AudioListener
   {
     bsize = 512;
     minim = new Minim(parent);
+    minim.debugOff();
     in = minim.getLineIn(Minim.MONO, bsize);
     out = minim.getLineOut(Minim.MONO, bsize);
     leftChannel = new float[bsize];
@@ -263,8 +295,9 @@ int averageAbsorption = 0;
 int absorptionSum;
 
 public void setup() {
-  size(screen.width, screen.height, P2D);
-  video = new Video(this,1280,720);
+  system = new System();
+  size(screen.width, screen.height-20, P2D);
+  video = new Video(this,640,480,1);
   samplerow = int (height*(0.50));
   font = loadFont("Georgia-Italic-18.vlw");
 
@@ -331,7 +364,7 @@ void draw() {
     int[] rgb = video.get_rgb(x);
 
     spectrumbuf[0][x] = rgb;
-    if (x < video.width) {
+    if (x < width) {
       for (int y = 0; y < history; y++) {
         if (colortype == "heat") {
 		colorMode(HSB,255);
