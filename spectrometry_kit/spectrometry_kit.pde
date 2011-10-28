@@ -195,7 +195,11 @@ class Video {
       int sampleind = int ((video.width*samplerow)+(video.width*yoff)+x);
 
       if (sampleind >= 0 && sampleind <= (video.height*video.width)) {
-        int pixelColor = gscapture.pixels[sampleind];
+        if (isLinux) {
+          int pixelColor = gscapture.pixels[sampleind];
+        } else {
+          int pixelColor = capture.pixels[sampleind];
+        }
         rgb[0] = rgb[0]+((pixelColor >> 16) & 0xff);
         rgb[1] = rgb[1]+((pixelColor >> 8) & 0xff);
         rgb[2] = rgb[2]+(pixelColor & 0xff);
