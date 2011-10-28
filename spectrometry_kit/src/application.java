@@ -1,6 +1,8 @@
 /*
 Spectrometry_kit - a Processing.org-based interface for spectral analysis with a USB webcam-based spectrometer. Also a spectrometer-based musical instrument or guitar pedal
 
+>> You must install the "GSVideo" and "controlP5" libraries in a folder called "libraries" in your sketchbook.
+
 by the Public Laboratory for Open Technology and Science
 publiclaboratory.org
  
