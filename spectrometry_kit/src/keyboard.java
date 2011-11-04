@@ -19,7 +19,25 @@ void keyPressed() {
     }
   }
   else if (key == 's') {
-    //save JSON:
+    //save CSV and JSON:
+    PrintWriter csv;
+    PrintWriter json;
+    csv = createWriter("spectra/"+year()+"-"+month()+"-"+day()+"-"+hour()+""+minute()+"-"+typedText+".csv");
+    json = createWriter("spectra/"+year()+"-"+month()+"-"+day()+"-"+hour()+""+minute()+"-"+typedText+".json");
+
+    json.println("{name:'"+year()+"-"+month()+"-"+day()+"-"+hour()+""+minute()+"-"+typedText+"',lines:");
+
+    // iterate by pixel:
+    for (int x=0;x<spectrumbuf[0].length;x++) {
+      // for now, just the average of r,g,b:
+      csv.println("unknown_wavelength,"+(spectrumbuf[0][x][0]+spectrumbuf[0][x][1]+spectrumbuf[0][x][2])/3+","+spectrumbuf[0][x][0]+","+spectrumbuf[0][x][1]+","+spectrumbuf[0][x][2]);
+      json.print("{wavelength:null,average:"+(spectrumbuf[0][x][0]+spectrumbuf[0][x][1]+spectrumbuf[0][x][2])/3+",r:"+spectrumbuf[0][x][0]+",g:"+spectrumbuf[0][x][1]+",b:"+spectrumbuf[0][x][2]+"}");
+      if (x < spectrumbuf[0].length-1) { json.println(","); }
+    }
+
+    csv.close();
+    json.print("}");
+    json.close();
 
     //save PNG:
     save("spectra/"+year()+"-"+month()+"-"+day()+"-"+hour()+""+minute()+"-"+typedText+".png");

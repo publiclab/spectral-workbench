@@ -96,10 +96,11 @@ class Video {
       int sampleind = int ((video.width*samplerow)+(video.width*yoff)+x);
 
       if (sampleind >= 0 && sampleind <= (video.height*video.width)) {
+        int pixelColor;
         if (isLinux) {
-          int pixelColor = gscapture.pixels[sampleind];
+          pixelColor = gscapture.pixels[sampleind];
         } else {
-          int pixelColor = capture.pixels[sampleind];
+          pixelColor = capture.pixels[sampleind];
         }
         // Faster method of calculating r, g, b than red(), green(), blue() 
         rgb[0] = rgb[0]+((pixelColor >> 16) & 0xff);

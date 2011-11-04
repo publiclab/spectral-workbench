@@ -50,6 +50,22 @@ void keyPressed() {
     }
   }
   else if (key == 's') {
+    PrintWriter csv;
+    PrintWriter json;
+    csv = createWriter("spectra/"+year()+"-"+month()+"-"+day()+"-"+hour()+""+minute()+"-"+typedText+".csv");
+    json = createWriter("spectra/"+year()+"-"+month()+"-"+day()+"-"+hour()+""+minute()+"-"+typedText+".json");
+
+    json.println("{name:'"+year()+"-"+month()+"-"+day()+"-"+hour()+""+minute()+"-"+typedText+"',lines:");
+
+    for (int x=0;x<spectrumbuf[0].length;x++) {
+      csv.println("unknown_wavelength,"+(spectrumbuf[0][x][0]+spectrumbuf[0][x][1]+spectrumbuf[0][x][2])/3+","+spectrumbuf[0][x][0]+","+spectrumbuf[0][x][1]+","+spectrumbuf[0][x][2]);
+      json.print("{wavelength:null,average:"+(spectrumbuf[0][x][0]+spectrumbuf[0][x][1]+spectrumbuf[0][x][2])/3+",r:"+spectrumbuf[0][x][0]+",g:"+spectrumbuf[0][x][1]+",b:"+spectrumbuf[0][x][2]+"}");
+      if (x < spectrumbuf[0].length-1) { json.println(","); }
+    }
+
+    csv.close();
+    json.print("}");
+    json.close();
 
     save("spectra/"+year()+"-"+month()+"-"+day()+"-"+hour()+""+minute()+"-"+typedText+".png");
     typedText = "";
@@ -197,10 +213,11 @@ class Video {
       int sampleind = int ((video.width*samplerow)+(video.width*yoff)+x);
 
       if (sampleind >= 0 && sampleind <= (video.height*video.width)) {
+        int pixelColor;
         if (isLinux) {
-          int pixelColor = gscapture.pixels[sampleind];
+          pixelColor = gscapture.pixels[sampleind];
         } else {
-          int pixelColor = capture.pixels[sampleind];
+          pixelColor = capture.pixels[sampleind];
         }
         rgb[0] = rgb[0]+((pixelColor >> 16) & 0xff);
         rgb[1] = rgb[1]+((pixelColor >> 8) & 0xff);
