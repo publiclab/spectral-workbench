@@ -32,7 +32,7 @@ import ddf.minim.*;
 class SpectrumPresentation {
     int[][][] mBuffer;
 
-    public Spectrum(int[][][] pBuffer) {
+    public SpectrumPresentation(int[][][] pBuffer) {
         mBuffer = pBuffer;
     }
 
@@ -58,11 +58,11 @@ class SpectrumPresentation {
         builder.append(year());
         builder.append("-"+month());
         builder.append("-"+day());
-        builder.append("-"+hour();
-        builder.append("-"+minute();
+        builder.append("-"+hour());
+        builder.append("-"+minute());
 
         if (pUserText != null) { builder.append("-"+typedText); }
-        if (pExtension != null) { builder.append(".csv"); }
+        if (pExtension != null) { builder.append("."+pExtension); }
 
         return builder.toString();
     }
@@ -71,7 +71,7 @@ class SpectrumPresentation {
         StringBuilder builder = new StringBuilder();
         builder.append("{name:'"+pName+"',lines:");
 
-        int length = mBuffer[0].length
+        int length = mBuffer[0].length;
         for (int x = 0; x < length; x++) {
             int[] pixel = mBuffer[0][x];
 
@@ -82,6 +82,7 @@ class SpectrumPresentation {
 
             if (x < length-1) { builder.append(","); }
         }
+        builder.append("}");
 
         return builder.toString();
     }
@@ -89,7 +90,7 @@ class SpectrumPresentation {
     public String toCsv() {
         StringBuilder builder = new StringBuilder();
 
-        int length = mBuffer[0].length
+        int length = mBuffer[0].length;
         for (int x = 0; x < length; x++) {
             int[] pixel = mBuffer[0][x];
 
@@ -131,9 +132,7 @@ void keyPressed() {
     csv.close();
 
     PrintWriter json = createWriter(spectraFolder + presenter.generateFileName(typedText, "json"));
-    json.println("{name:'"+presenter.generateFileName(typedText, null)+"',lines:");
-    json.print(presenter.toJson());
-    json.print("}");
+    json.print(presenter.toJson(presenter.generateFileName(typedText, null)));
     json.close();
 
     save(spectraFolder + presenter.generateFileName(typedText, "png"));

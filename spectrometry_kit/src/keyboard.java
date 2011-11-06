@@ -28,9 +28,7 @@ void keyPressed() {
     csv.close();
 
     PrintWriter json = createWriter(spectraFolder + presenter.generateFileName(typedText, "json"));
-    json.println("{name:'"+presenter.generateFileName(typedText, null)+"',lines:");
-    json.print(presenter.toJson());
-    json.print("}");
+    json.print(presenter.toJson(presenter.generateFileName(typedText, null)));
     json.close();
 
     //save PNG:

@@ -6,7 +6,7 @@
 class SpectrumPresentation {
     int[][][] mBuffer;
 
-    public Spectrum(int[][][] pBuffer) {
+    public SpectrumPresentation(int[][][] pBuffer) {
         mBuffer = pBuffer;
     }
 
@@ -39,11 +39,11 @@ class SpectrumPresentation {
         builder.append(year());
         builder.append("-"+month());
         builder.append("-"+day());
-        builder.append("-"+hour();
-        builder.append("-"+minute();
+        builder.append("-"+hour());
+        builder.append("-"+minute());
 
         if (pUserText != null) { builder.append("-"+typedText); }
-        if (pExtension != null) { builder.append(".csv"); }
+        if (pExtension != null) { builder.append("."+pExtension); }
 
         return builder.toString();
     }
@@ -53,7 +53,7 @@ class SpectrumPresentation {
         builder.append("{name:'"+pName+"',lines:");
 
         // iterate by pixel:
-        int length = mBuffer[0].length
+        int length = mBuffer[0].length;
         for (int x = 0; x < length; x++) {
             int[] pixel = mBuffer[0][x];
 
@@ -64,6 +64,7 @@ class SpectrumPresentation {
 
             if (x < length-1) { builder.append(","); }
         }
+        builder.append("}");
 
         return builder.toString();
     }
@@ -72,7 +73,7 @@ class SpectrumPresentation {
         StringBuilder builder = new StringBuilder();
 
         // iterate by pixel:
-        int length = mBuffer[0].length
+        int length = mBuffer[0].length;
         for (int x = 0; x < length; x++) {
             int[] pixel = mBuffer[0][x];
 
