@@ -29,6 +29,7 @@ import codeanticode.gsvideo.*; //linux
 import ddf.minim.analysis.*;
 import ddf.minim.*;
 
+//= require <models/spectrum>
 //= require <keyboard>
 //= require <models/system>
 System system;
