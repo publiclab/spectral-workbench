@@ -39,7 +39,8 @@ Video video;
 Filter filter;
 
 String colortype = "combined";
-String typedText = "type to label spectrum";
+final static String defaultTypedText = "type to label spectrum";
+String typedText = defaultTypedText;
 PFont font;
 int audiocount = 0;
 int res = 1;

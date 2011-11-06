@@ -61,8 +61,13 @@ class SpectrumPresentation {
         builder.append("-"+hour());
         builder.append("-"+minute());
 
-        if (pUserText != null) { builder.append("-"+typedText); }
-        if (pExtension != null) { builder.append("."+pExtension); }
+        if (pUserText != null && !pUserText.equals(defaultTypedText)) {
+            builder.append("-"+pUserText);
+        }
+
+        if (pExtension != null) {
+            builder.append("."+pExtension);
+        }
 
         return builder.toString();
     }
@@ -156,7 +161,7 @@ void keyPressed() {
     typedText = "";
   }
   else {
-    if (typedText == "type to label spectrum") {
+    if (typedText.equals(defaultTypedText)) {
       typedText = "";
     }
     typedText += key;
@@ -370,7 +375,8 @@ class Filter implements AudioSignal, AudioListener
 Filter filter;
 
 String colortype = "combined";
-String typedText = "type to label spectrum";
+final static String defaultTypedText = "type to label spectrum";
+String typedText = defaultTypedText;
 PFont font;
 int audiocount = 0;
 int res = 1;

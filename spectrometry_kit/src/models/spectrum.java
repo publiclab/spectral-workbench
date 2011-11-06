@@ -42,8 +42,13 @@ class SpectrumPresentation {
         builder.append("-"+hour());
         builder.append("-"+minute());
 
-        if (pUserText != null) { builder.append("-"+typedText); }
-        if (pExtension != null) { builder.append("."+pExtension); }
+        if (pUserText != null && !pUserText.equals(defaultTypedText)) { 
+            builder.append("-"+pUserText);
+        }
+
+        if (pExtension != null) {
+            builder.append("."+pExtension);
+        }
 
         return builder.toString();
     }

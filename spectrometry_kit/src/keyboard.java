@@ -55,7 +55,7 @@ void keyPressed() {
     typedText = "";
   } 
   else {
-    if (typedText == "type to label spectrum") { 
+    if (typedText.equals(defaultTypedText)) { 
       typedText = "";
     }
     typedText += key;
