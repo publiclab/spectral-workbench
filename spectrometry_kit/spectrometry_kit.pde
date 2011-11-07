@@ -524,3 +524,38 @@ if (colortype == "combined" || colortype == "heat") {
 
   updatePixels();
 }
+
+public String postData(URL pUrl, byte[] pData) {
+    try {
+        URLConnection c = pUrl.openConnection();
+        c.setDoOutput(true);
+        c.setDoInput(true);
+        c.setUseCaches(false);
+
+        final String boundary = "AXi93A";
+        c.setRequestProperty("Content-Type", "multipart/form-data; boundary="+boundary);
+
+        DataOutputStream dstream = new DataOutputStream(c.getOutputStream());
+
+        dstream.writeBytes(boundary+"\r\n");
+
+        dstream.writeBytes("Content-Disposition: form-data; name=\"data\"; filename=\"whatever\" \r\nContent-Type: text/json\r\nContent-Transfer-Encoding: binary\r\n\r\n");
+        dstream.write(pData ,0, pData.length);
+
+        dstream.writeBytes("\r\n--"+boundary+"--\r\n\r\n");
+        dstream.flush();
+        dstream.close();
+
+        BufferedReader in = new BufferedReader(new InputStreamReader(c.getInputStream()));
+        StringBuilder sb = new StringBuilder(in.readLine());
+        String s = in.readLine();
+        while (s != null) {
+            s = in.readLine();
+            sb.append(s);
+        }
+        return sb.toString();
+    } catch (Exception e) {
+        e.printStackTrace();
+        return null;
+    }
+}
