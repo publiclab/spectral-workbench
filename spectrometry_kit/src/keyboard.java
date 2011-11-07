@@ -20,27 +20,19 @@ void keyPressed() {
   }
   else if (key == 's') {
     //save CSV and JSON:
-    PrintWriter csv;
-    PrintWriter json;
-    csv = createWriter("spectra/"+year()+"-"+month()+"-"+day()+"-"+hour()+""+minute()+"-"+typedText+".csv");
-    json = createWriter("spectra/"+year()+"-"+month()+"-"+day()+"-"+hour()+""+minute()+"-"+typedText+".json");
+    String spectraFolder = "spectra/";
+    SpectrumPresentation presenter = new SpectrumPresentation(spectrumbuf);
 
-    json.println("{name:'"+year()+"-"+month()+"-"+day()+"-"+hour()+""+minute()+"-"+typedText+"',lines:");
-
-    // iterate by pixel:
-    for (int x=0;x<spectrumbuf[0].length;x++) {
-      // for now, just the average of r,g,b:
-      csv.println("unknown_wavelength,"+(spectrumbuf[0][x][0]+spectrumbuf[0][x][1]+spectrumbuf[0][x][2])/3+","+spectrumbuf[0][x][0]+","+spectrumbuf[0][x][1]+","+spectrumbuf[0][x][2]);
-      json.print("{wavelength:null,average:"+(spectrumbuf[0][x][0]+spectrumbuf[0][x][1]+spectrumbuf[0][x][2])/3+",r:"+spectrumbuf[0][x][0]+",g:"+spectrumbuf[0][x][1]+",b:"+spectrumbuf[0][x][2]+"}");
-      if (x < spectrumbuf[0].length-1) { json.println(","); }
-    }
-
+    PrintWriter csv = createWriter(spectraFolder + presenter.generateFileName(typedText, "csv"));
+    csv.print(presenter.toCsv());
     csv.close();
-    json.print("}");
+
+    PrintWriter json = createWriter(spectraFolder + presenter.generateFileName(typedText, "json"));
+    json.print(presenter.toJson(presenter.generateFileName(typedText, null)));
     json.close();
 
     //save PNG:
-    save("spectra/"+year()+"-"+month()+"-"+day()+"-"+hour()+""+minute()+"-"+typedText+".png");
+    save(spectraFolder + presenter.generateFileName(typedText, "png"));
     //save to web:
     //http://libraries.seltar.org/postToWeb/
     typedText = "";
@@ -63,7 +55,7 @@ void keyPressed() {
     typedText = "";
   } 
   else {
-    if (typedText == "type to label spectrum") { 
+    if (typedText.equals(defaultTypedText)) { 
       typedText = "";
     }
     typedText += key;

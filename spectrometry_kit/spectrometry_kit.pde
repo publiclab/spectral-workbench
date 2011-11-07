@@ -29,6 +29,85 @@ import codeanticode.gsvideo.*; //linux
 import ddf.minim.analysis.*;
 import ddf.minim.*;
 
+class SpectrumPresentation {
+    int[][][] mBuffer;
+
+    public SpectrumPresentation(int[][][] pBuffer) {
+        mBuffer = pBuffer;
+    }
+
+    int getRed(int[] pPixel) {
+        return pPixel[0];
+    }
+
+    int getGreen(int[] pPixel) {
+        return pPixel[1];
+    }
+
+    int getBlue(int[] pPixel) {
+        return pPixel[2];
+    }
+
+    double wavelengthAverage(int[] pPixel) {
+        return (getRed(pPixel) + getGreen(pPixel) + getBlue(pPixel))/3;
+    }
+
+    public String generateFileName(String pUserText, String pExtension) {
+        StringBuilder builder = new StringBuilder();
+
+        builder.append(year());
+        builder.append("-"+month());
+        builder.append("-"+day());
+        builder.append("-"+hour());
+        builder.append("-"+minute());
+
+        if (pUserText != null && !pUserText.equals(defaultTypedText)) {
+            builder.append("-"+pUserText);
+        }
+
+        if (pExtension != null) {
+            builder.append("."+pExtension);
+        }
+
+        return builder.toString();
+    }
+
+    public String toJson(String pName) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("{name:'"+pName+"',lines:");
+
+        int length = mBuffer[0].length;
+        for (int x = 0; x < length; x++) {
+            int[] pixel = mBuffer[0][x];
+
+            builder.append("{wavelength:null,average:"+wavelengthAverage(pixel));
+            builder.append(",r:"+getRed(pixel));
+            builder.append(",g:"+getGreen(pixel));
+            builder.append(",b:"+getBlue(pixel)+"}");
+
+            if (x < length-1) { builder.append(","); }
+        }
+        builder.append("}");
+
+        return builder.toString();
+    }
+
+    public String toCsv() {
+        StringBuilder builder = new StringBuilder();
+
+        int length = mBuffer[0].length;
+        for (int x = 0; x < length; x++) {
+            int[] pixel = mBuffer[0][x];
+
+            builder.append("unknown_wavelength,"+wavelengthAverage(pixel));
+            builder.append(","+getRed(pixel));
+            builder.append(","+getGreen(pixel));
+            builder.append(","+getBlue(pixel));
+        }
+
+        return builder.toString();
+    }
+}
 void keyPressed() {
   if (key == CODED) {
     if (keyCode == DOWN) {
@@ -50,24 +129,18 @@ void keyPressed() {
     }
   }
   else if (key == 's') {
-    PrintWriter csv;
-    PrintWriter json;
-    csv = createWriter("spectra/"+year()+"-"+month()+"-"+day()+"-"+hour()+""+minute()+"-"+typedText+".csv");
-    json = createWriter("spectra/"+year()+"-"+month()+"-"+day()+"-"+hour()+""+minute()+"-"+typedText+".json");
+    String spectraFolder = "spectra/";
+    SpectrumPresentation presenter = new SpectrumPresentation(spectrumbuf);
 
-    json.println("{name:'"+year()+"-"+month()+"-"+day()+"-"+hour()+""+minute()+"-"+typedText+"',lines:");
-
-    for (int x=0;x<spectrumbuf[0].length;x++) {
-      csv.println("unknown_wavelength,"+(spectrumbuf[0][x][0]+spectrumbuf[0][x][1]+spectrumbuf[0][x][2])/3+","+spectrumbuf[0][x][0]+","+spectrumbuf[0][x][1]+","+spectrumbuf[0][x][2]);
-      json.print("{wavelength:null,average:"+(spectrumbuf[0][x][0]+spectrumbuf[0][x][1]+spectrumbuf[0][x][2])/3+",r:"+spectrumbuf[0][x][0]+",g:"+spectrumbuf[0][x][1]+",b:"+spectrumbuf[0][x][2]+"}");
-      if (x < spectrumbuf[0].length-1) { json.println(","); }
-    }
-
+    PrintWriter csv = createWriter(spectraFolder + presenter.generateFileName(typedText, "csv"));
+    csv.print(presenter.toCsv());
     csv.close();
-    json.print("}");
+
+    PrintWriter json = createWriter(spectraFolder + presenter.generateFileName(typedText, "json"));
+    json.print(presenter.toJson(presenter.generateFileName(typedText, null)));
     json.close();
 
-    save("spectra/"+year()+"-"+month()+"-"+day()+"-"+hour()+""+minute()+"-"+typedText+".png");
+    save(spectraFolder + presenter.generateFileName(typedText, "png"));
     typedText = "";
   }
   else if (keyCode == TAB) {
@@ -88,7 +161,7 @@ void keyPressed() {
     typedText = "";
   }
   else {
-    if (typedText == "type to label spectrum") {
+    if (typedText.equals(defaultTypedText)) {
       typedText = "";
     }
     typedText += key;
@@ -302,7 +375,8 @@ class Filter implements AudioSignal, AudioListener
 Filter filter;
 
 String colortype = "combined";
-String typedText = "type to label spectrum";
+final static String defaultTypedText = "type to label spectrum";
+String typedText = defaultTypedText;
 PFont font;
 int audiocount = 0;
 int res = 1;
@@ -449,4 +523,39 @@ if (colortype == "combined" || colortype == "heat") {
   line(0,averageAbsorption/3,width,averageAbsorption/3);
 
   updatePixels();
+}
+
+public String postData(URL pUrl, byte[] pData) {
+    try {
+        URLConnection c = pUrl.openConnection();
+        c.setDoOutput(true);
+        c.setDoInput(true);
+        c.setUseCaches(false);
+
+        final String boundary = "AXi93A";
+        c.setRequestProperty("Content-Type", "multipart/form-data; boundary="+boundary);
+
+        DataOutputStream dstream = new DataOutputStream(c.getOutputStream());
+
+        dstream.writeBytes(boundary+"\r\n");
+
+        dstream.writeBytes("Content-Disposition: form-data; name=\"data\"; filename=\"whatever\" \r\nContent-Type: text/json\r\nContent-Transfer-Encoding: binary\r\n\r\n");
+        dstream.write(pData ,0, pData.length);
+
+        dstream.writeBytes("\r\n--"+boundary+"--\r\n\r\n");
+        dstream.flush();
+        dstream.close();
+
+        BufferedReader in = new BufferedReader(new InputStreamReader(c.getInputStream()));
+        StringBuilder sb = new StringBuilder(in.readLine());
+        String s = in.readLine();
+        while (s != null) {
+            s = in.readLine();
+            sb.append(s);
+        }
+        return sb.toString();
+    } catch (Exception e) {
+        e.printStackTrace();
+        return null;
+    }
 }
