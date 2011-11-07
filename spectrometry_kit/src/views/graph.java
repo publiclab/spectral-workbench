@@ -19,7 +19,7 @@ if (colortype == "combined" || colortype == "heat") {
   line(x,height-lastspectrum[lastind],x+1,height-lastspectrum[x]);
 
   // percent absorption compared to reference reading
-  stroke(color(255,255,0));
+  stroke(color(155,155,0));
   // calculate absorption for this x position, store it in the absorption buffer:
   absorption[x] = int (255*(1-(val/(lastspectrum[x]+1.00))));
   int last = x-1;

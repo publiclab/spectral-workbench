@@ -34,12 +34,13 @@ void keyPressed() {
       if (samplerow >= video.height) {
         samplerow = video.height;
       }
-    }
-    else if (keyCode == UP) {
+    } else if (keyCode == UP) {
       samplerow -= 1;
       if (samplerow <= 0) {
         samplerow = 0;
       }
+    } else if (keyCode == CONTROL) {
+      println("control key");
     }
   }
   else if (key == ' ') {
@@ -116,6 +117,9 @@ class System
     catch(InterruptedException e2) { println(e2); }
     return(response);
   }
+  public String bash(String command) {
+    return(run("/bin/bash -c \""+command+"\""));
+  }
 }
 System system;
 class Video {
@@ -152,9 +156,6 @@ class Video {
     } catch(IOException e1) { println(e1); }
 
     if (isLinux) {
-          String devices = system.run("ls /dev/video*");
-      device = int (devices.substring(devices.length()-1));
-      println("Auto-detected video device.");
       println("Video device: /dev/video"+device);
       gscapture = new GSCapture(parent, width, height, 10, "/dev/video"+device); //linux
       gscapture.play(); //linux only
@@ -278,6 +279,7 @@ class Filter implements AudioSignal, AudioListener
 
 Filter filter;
 
+String controller = "setup"; // this determines what controller is used, i.e. what mode the app is in
 String colortype = "combined";
 String typedText = "type to label spectrum";
 PFont font;
@@ -297,7 +299,7 @@ int absorptionSum;
 public void setup() {
   system = new System();
   size(screen.width, screen.height-20, P2D);
-  video = new Video(this,640,480,1);
+  video = new Video(this,1280,720,0);
   samplerow = int (height*(0.50));
   font = loadFont("Georgia-Italic-18.vlw");
 
@@ -392,7 +394,7 @@ if (colortype == "combined" || colortype == "heat") {
   }
   line(x,height-lastspectrum[lastind],x+1,height-lastspectrum[x]);
 
-  stroke(color(255,255,0));
+  stroke(color(155,155,0));
   absorption[x] = int (255*(1-(val/(lastspectrum[x]+1.00))));
   int last = x-1;
   if (last < 0) { last = 0; }

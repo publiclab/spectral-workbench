@@ -39,4 +39,7 @@ class System
     catch(InterruptedException e2) { println(e2); }
     return(response);
   }
+  public String bash(String command) {
+    return(run("/bin/bash -c \""+command+"\""));
+  }
 }

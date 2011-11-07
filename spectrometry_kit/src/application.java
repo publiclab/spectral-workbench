@@ -35,6 +35,7 @@ Video video;
 //= require <models/filter>
 Filter filter;
 
+String controller = "setup"; // this determines what controller is used, i.e. what mode the app is in
 String colortype = "combined";
 String typedText = "type to label spectrum";
 PFont font;
@@ -58,8 +59,8 @@ public void setup() {
   //size(1280, 720, P2D);
   // Or run full screen, more fun! Use with Sketch -> Present
   size(screen.width, screen.height-20, P2D);
-  video = new Video(this,640,480,1);
-  //video = new Video(this,1280,720,0);
+  //video = new Video(this,640,480,0);
+  video = new Video(this,1280,720,0);
   samplerow = int (height*(0.50));
   font = loadFont("Georgia-Italic-18.vlw");  
 

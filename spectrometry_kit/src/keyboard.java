@@ -5,12 +5,13 @@ void keyPressed() {
       if (samplerow >= video.height) {
         samplerow = video.height;
       }
-    } 
-    else if (keyCode == UP) {
+    } else if (keyCode == UP) {
       samplerow -= 1;
       if (samplerow <= 0) {
         samplerow = 0;
       }
+    } else if (keyCode == CONTROL) {
+      println("control key");
     }
   } 
   else if (key == ' ') {

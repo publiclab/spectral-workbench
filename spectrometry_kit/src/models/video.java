@@ -42,10 +42,11 @@ class Video {
       //println("Available cameras:");
       //for (int i = 0; i < cameras.length; i++) println(cameras[i]);
       // Alternate solution: type "ls /dev/video*" in the terminal to discover video devices
-          String devices = system.run("ls /dev/video*");
-		// Problem... this is not bash!! can't do wildcards with ls... what do
-      device = int (devices.substring(devices.length()-1));
-      println("Auto-detected video device.");
+      //    String devices = system.bash("ls /dev/video*");
+      //if (devices != "null") {
+      //  device = int (devices.substring(devices.length()-1));
+      //  println("Auto-detected video device.");
+      //}
       println("Video device: /dev/video"+device);
       //gscapture = new GSCapture(parent, width, height, cameras[cameras.length-1]); //linux
       gscapture = new GSCapture(parent, width, height, 10, "/dev/video"+device); //linux
