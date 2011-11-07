@@ -1,6 +1,8 @@
 /*
 Spectrometry_kit - a Processing.org-based interface for spectral analysis with a USB webcam-based spectrometer. Also a spectrometer-based musical instrument or guitar pedal
 
+>> You must install the "GSVideo" and "controlP5" libraries in a folder called "libraries" in your sketchbook.
+
 by the Public Laboratory for Open Technology and Science
 publiclaboratory.org
  
@@ -27,6 +29,7 @@ import codeanticode.gsvideo.*; //linux
 import ddf.minim.analysis.*;
 import ddf.minim.*;
 
+//= require <models/spectrum>
 //= require <keyboard>
 //= require <models/system>
 System system;
@@ -37,7 +40,8 @@ Filter filter;
 
 String controller = "setup"; // this determines what controller is used, i.e. what mode the app is in
 String colortype = "combined";
-String typedText = "type to label spectrum";
+final static String defaultTypedText = "type to label spectrum";
+String typedText = defaultTypedText;
 PFont font;
 int audiocount = 0;
 int res = 1;
@@ -162,4 +166,50 @@ void draw() {
   line(0,averageAbsorption/3,width,averageAbsorption/3);
 
   updatePixels();
+}
+
+/**
+ * POST pData to pUrl
+ * @return the response
+ */
+public String postData(URL pUrl, byte[] pData) {
+    // http://wiki.processing.org/w/Saving_files_to_a_web_server
+    try {
+        URLConnection c = pUrl.openConnection();
+        c.setDoOutput(true);
+        c.setDoInput(true);
+        c.setUseCaches(false);
+    
+        // set request headers
+        final String boundary = "AXi93A";
+        c.setRequestProperty("Content-Type", "multipart/form-data; boundary="+boundary);
+ 
+        // open a stream which can write to the url
+        DataOutputStream dstream = new DataOutputStream(c.getOutputStream());
+ 
+        // write content to the server, begin with the tag that says a content element is comming
+        dstream.writeBytes(boundary+"\r\n");
+ 
+        // discribe the content
+        dstream.writeBytes("Content-Disposition: form-data; name=\"data\"; filename=\"whatever\" \r\nContent-Type: text/json\r\nContent-Transfer-Encoding: binary\r\n\r\n");
+        dstream.write(pData ,0, pData.length);
+ 
+        // close the multipart form request
+        dstream.writeBytes("\r\n--"+boundary+"--\r\n\r\n");
+        dstream.flush();
+        dstream.close();
+ 
+        // read the output from the URL
+        BufferedReader in = new BufferedReader(new InputStreamReader(c.getInputStream()));
+        StringBuilder sb = new StringBuilder(in.readLine());
+        String s = in.readLine();
+        while (s != null) {
+            s = in.readLine();
+            sb.append(s);
+        }
+        return sb.toString();
+    } catch (Exception e) {
+        e.printStackTrace();
+        return null;
+    }
 }

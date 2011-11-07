@@ -20,10 +20,20 @@ void keyPressed() {
     }
   }
   else if (key == 's') {
-    //save JSON:
+    //save CSV and JSON:
+    String spectraFolder = "spectra/";
+    SpectrumPresentation presenter = new SpectrumPresentation(spectrumbuf);
+
+    PrintWriter csv = createWriter(spectraFolder + presenter.generateFileName(typedText, "csv"));
+    csv.print(presenter.toCsv());
+    csv.close();
+
+    PrintWriter json = createWriter(spectraFolder + presenter.generateFileName(typedText, "json"));
+    json.print(presenter.toJson(presenter.generateFileName(typedText, null)));
+    json.close();
 
     //save PNG:
-    save("spectra/"+year()+"-"+month()+"-"+day()+"-"+hour()+""+minute()+"-"+typedText+".png");
+    save(spectraFolder + presenter.generateFileName(typedText, "png"));
     //save to web:
     //http://libraries.seltar.org/postToWeb/
     typedText = "";
@@ -46,7 +56,7 @@ void keyPressed() {
     typedText = "";
   } 
   else {
-    if (typedText == "type to label spectrum") { 
+    if (typedText.equals(defaultTypedText)) { 
       typedText = "";
     }
     typedText += key;
