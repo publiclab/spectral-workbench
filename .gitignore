@@ -7,7 +7,7 @@ webserver/tmp/**/*
 todo
 webserver/db/schema.rb
 webserver/config/database.yml
+webserver/config/config.yml
 webserver/config/amazon_s3.yml
 webserver/public/system*
 webserver/config/initializers/recaptcha.rb
-
