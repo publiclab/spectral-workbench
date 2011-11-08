@@ -15,6 +15,7 @@ class SpectrumsController < ApplicationController
   # GET /spectrums/1.json
   def show
     @spectrum = Spectrum.find(params[:id])
+    @comment = Comment.new
 
     respond_to do |format|
       format.html { render 'spectrums/show' } # show.html.erb

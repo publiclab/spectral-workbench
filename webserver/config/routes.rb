@@ -1,7 +1,8 @@
 ActionController::Routing::Routes.draw do |map|
-  map.resources :videos
 
+  map.resources :videos
   map.resources :spectrums
+  map.resources :comments, :belongs_to => :spectrums
 
   # The priority is based upon order of creation: first created -> highest priority.
 

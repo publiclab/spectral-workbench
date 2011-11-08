@@ -8,7 +8,41 @@
 
 <h2>Comments</h2>
 
+<% @spectrum.comments.each do |comment| %>
+<div class="comment">
+	<b><%= time_ago_in_words(comment.created_at) %> ago, <%= comment.author %> wrote:</b>
+	<p><%= comment.body %></p>
+</div>
+<% end %>
 
+<h2>Post a comment</h2>
+
+<% form_for(@comment) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.label :body %><br />
+    <%= f.text_area :body %>
+  </p>
+
+  <p>
+    <%= f.label :author %><br />
+    <%= f.text_field :author %>
+  </p>
+  <p>
+    <%= f.label :email %><br />
+    <%= f.text_field :email %>
+  </p>
+  <p>
+    <%= recaptcha_tags :display => {:theme => "white"} %>
+  </p>
+
+  <input type='hidden' name='id' value='<%= @spectrum.id %>' />
+
+  <p>
+    <%= f.submit 'Create' %>
+  </p>
+<% end %>
 
 <h3>License</h3>
 

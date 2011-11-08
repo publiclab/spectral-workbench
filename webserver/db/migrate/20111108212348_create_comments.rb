@@ -7,6 +7,7 @@ class CreateComments < ActiveRecord::Migration
       t.float :wavelength
       t.integer :x
       t.integer :y
+      t.integer :spectrum_id
 
       t.timestamps
     end
