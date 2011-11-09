@@ -3,6 +3,7 @@ class SpectrumsController < ApplicationController
   # GET /spectrums.xml
   def index
     @spectrums = Spectrum.all.reverse
+    @comments = Comment.all :limit => 12, :order => "id DESC"
 
     respond_to do |format|
       format.html # index.html.erb
