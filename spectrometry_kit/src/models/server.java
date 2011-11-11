@@ -18,10 +18,16 @@ class Server {
     //save PNG:
     save(spectraFolder + presenter.generateFileName(typedText, "png"));
     //save to web:
-    println(serverUrl+"/spectrums/create?title="+typedText);
-    URL u = new URL("http://localhost:3000/spectrums/create?title="+typedText);
-    //URL u = new URL(serverUrl+"/spectrums/create?title="+typedText);
-    this.postData(u,presenter.toJson(presenter.generateFileName(typedText, null)).getBytes());
+    try {
+      println(serverUrl+"/spectrums/create?title="+typedText);
+      URL u = new URL("http://localhost:3000/spectrums/create?title="+typedText);
+      //URL u = new URL(serverUrl+"/spectrums/create?title="+typedText);
+      this.postData(u,presenter.toJson(presenter.generateFileName(typedText, null)).getBytes());
+    } catch (MalformedURLException e) {
+      println("ERROR " +e.getMessage());
+    } catch (IOException e) {
+      println("ERROR " +e.getMessage());
+    }
     //clear label buffer
     typedText = "";
   }
