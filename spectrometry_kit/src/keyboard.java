@@ -35,6 +35,7 @@ void keyPressed() {
     }
   }
   else if (key == 's' && keys.commandKey) {
+    println("saving to server...");
     server.upload();
   } 
   else if (keyCode == TAB) {

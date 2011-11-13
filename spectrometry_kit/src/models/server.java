@@ -16,6 +16,14 @@ class Server {
     json.close();
 
     //save PNG:
+    PGraphics pg;
+
+    pg = createGraphics(80, 80, P3D, spectraFolder + "alt-" + presenter.generateFileName(typedText, "png"));
+    pg.beginDraw();
+    //pg.background(102);
+    //pg.stroke(255);
+    //pg.line(40, 40, mouseX, mouseY);
+    pg.endDraw();
     save(spectraFolder + presenter.generateFileName(typedText, "png"));
     //save to web:
     try {

@@ -67,8 +67,8 @@ public void setup() {
   //size(1280, 720, P2D);
   // Or run full screen, more fun! Use with Sketch -> Present
   size(screen.width, screen.height-20, P2D);
-  //video = new Video(this,640,480,0);
-  video = new Video(this,1280,720,0);
+  video = new Video(this,640,480,0);
+  //video = new Video(this,1280,720,1);
   samplerow = int (height*(0.50));
   font = loadFont("Georgia-Italic-18.vlw");  
 

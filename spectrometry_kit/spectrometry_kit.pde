@@ -145,6 +145,7 @@ void keyPressed() {
     }
   }
   else if (key == 's' && keys.commandKey) {
+    println("saving to server...");
     server.upload();
   }
   else if (keyCode == TAB) {
@@ -390,6 +391,11 @@ class Server {
     json.print(presenter.toJson(presenter.generateFileName(typedText, null)));
     json.close();
 
+    PGraphics pg;
+
+    pg = createGraphics(80, 80, P3D, spectraFolder + "alt-" + presenter.generateFileName(typedText, "png"));
+    pg.beginDraw();
+    pg.endDraw();
     save(spectraFolder + presenter.generateFileName(typedText, "png"));
     try {
       println(serverUrl+"/spectrums/create?title="+typedText);
@@ -461,7 +467,7 @@ int absorptionSum;
 public void setup() {
   system = new System();
   size(screen.width, screen.height-20, P2D);
-  video = new Video(this,1280,720,0);
+  video = new Video(this,640,480,0);
   samplerow = int (height*(0.50));
   font = loadFont("Georgia-Italic-18.vlw");
 

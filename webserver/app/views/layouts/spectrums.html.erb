@@ -4,16 +4,23 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
   <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
-  <title>Spectrums: <%= controller.action_name %></title>
+  <title>Plots Spectral Workbench: <%= controller.action_name %></title>
   <%= stylesheet_link_tag 'style.css' %>
 </head>
 <body>
 
-<div id="page">
-
 <div id="header">
-	<a href="/">Home</a>
+	<div class="links">
+		<a href="/">Home</a> | 
+		<a href="http://publiclaboratory.org/wiki/spectral-workbench">About</a> | 
+		<a href="http://publiclaboratory.org/wiki/spectral-workbench-usage">Learn how</a> | 
+		<a href="http://publiclaboratory.org/wiki/spectral-workbench-download">Download</a> | 
+		<a href="http://publiclaboratory.org/wiki/video-spectrometer-construction">Build a spectrometer</a>
+	</div>
+	<h1><a href="/"><img src="/images/logo.png" /></a><a class="title" href="/">PLOTS Spectral Workbench</a></h1>
 </div>
+
+<div id="page">
 
 <p style="color: green"><%= flash[:notice] %></p>
 

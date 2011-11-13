@@ -4,6 +4,10 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :spectrums
   map.resources :comments, :belongs_to => :spectrums
 
+  map.connect 'spectra/:id', :controller => "spectrums", :action => "show"
+  map.connect 'spectra/:action/:id', :controller => "spectrums"
+  map.connect 'spectra/:action/:id.:format', :controller => "spectrums"
+
   # The priority is based upon order of creation: first created -> highest priority.
 
   # Sample of regular route:
