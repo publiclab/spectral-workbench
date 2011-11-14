@@ -1,0 +1,27 @@
+<div id="list">
+<% @spectrums.each do |spectrum| %>
+
+<div class="spectrum">
+    <% if spectrum.photo.exists? then %>
+	<% if spectrum.slice_data_url.nil? %>
+	<a href="/spectra/show/<%= spectrum.id %>"><%= image_tag spectrum.photo.url(:thumb) %></a>
+	<% else %>
+	<a href="/spectra/show/<%= spectrum.id %>"><div src="<%= spectrum.photo.url(:thumb) %>" class="image" style="background:url('<%= spectrum.slice_data_url %>') repeat-y left;"></div></a>
+	<% end %>
+    <% else %>
+	<a href="/spectra/show/<%= spectrum.id %>"><div src="<%= spectrum.photo.url(:thumb) %>" class="image" style="background:#ccc;"></div></a>
+    <% end %>
+    <div class="text">
+      <h2><%=h truncate(spectrum.title,33) %></h2>
+      <p><a href="/author/<%=h spectrum.author %>"><%=h spectrum.author %></a> | <%= %> ago</p>
+      <p class="notes"><%=h spectrum.notes %></p>
+      <p>
+	<a href="/spectra/<%= spectrum.id %>">View</a> | 
+	<%= link_to 'Edit', edit_spectrum_path(spectrum) %> |
+	<a href="/spectra/<%= spectrum.id %>#comments"><%= spectrum.comments.length %> comments</a> 
+      </p>
+  </div>
+</div>
+<% end %>
+</div>
+<br style="clear:both;" />

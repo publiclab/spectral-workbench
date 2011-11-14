@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <title>Plots Spectral Workbench: <%= controller.action_name %></title>
+  <%= stylesheet_link_tag 'style.css' %>
+</head>
+<body>
+
+<div id="header">
+	<div class="links">
+		<a href="/">Home</a> | 
+		<a href="http://publiclaboratory.org/wiki/spectral-workbench">About</a> | 
+		<a href="http://publiclaboratory.org/wiki/spectral-workbench-usage">Learn how</a> | 
+		<a href="http://publiclaboratory.org/wiki/spectral-workbench-download">Download</a> | 
+		<a href="http://publiclaboratory.org/wiki/video-spectrometer-construction">Build a spectrometer</a>
+	</div>
+	<h1><a href="/"><img src="/images/logo.png" /></a><a class="title" href="/">PLOTS Spectral Workbench</a></h1>
+</div>
+
+<div id="page">
+
+<p style="color: green"><%= flash[:notice] %></p>
+
+<%= yield %>
+
+<hr />
+
+<div id="footer">
+
+<p>PLOTS Spectral Workbench is open source and under development -- it's not complete! If you are interested in collaborating and/or contributing to its development, please join the <a href="http://publiclaboratory.org/join">PLOTS website</a> and get in touch via the mailing list (you'll be automatically subscribed). Or just <a href="http://github.com/jywarren/spectral-workbench">fork it on GitHub</a>.</p>
+
+</div>
+
+</div>
+
+</body>
+</html>

@@ -1,23 +1,41 @@
-                     _              __              _ 
-                    | |            / _|            | |
- ___ _ __   ___  ___| |_ _ __ ___ | |_ _ __ ___  __| |
-/ __| '_ \ / _ \/ __| __| '__/ _ \|  _| '__/ _ \/ _` |
-\__ | |_) |  __| (__| |_| | | (_) | | | | |  __| (_| |
-|___| .__/ \___|\___|\__|_|  \___/|_| |_|  \___|\__,_|
-    | |                                               
-    |_|                                               
+==========================
+PLOTS Spectral Workbench
+Copyright 2011 Public Laboratory
+publiclaboratory.org
+==========================
 
-Spectrofred is a web application built on Ruby on Rails and using the Fred graphics library for JavaScript. It allows you to upload images you've taken of spectra (using a prism or diffraction grating) and generate graphs for analysis a la reflectance spectroscopy. By Jeffrey Warren (http://unterbahn.com)
+PLOTS Spectral Workbench is a set of open-source tools to perform low-cost spectral analysis and to share those results online. The suite is provided in several folders, each corresponding to a separate tool:
 
-=============================================================
+/spectrometry_kit - A Processing.org-based desktop environment for collecting spectral readings from a connected USB webcam-based spectrometer.
+	- Read about how to build and use your own spectrometer with this software here: http://publiclaboratory.org/tool/spectrometer
+	- See examples of output here: http://publiclaboratory.org/notes/warren/9-3-2011/several-new-spectra-food-samples
 
-You can see it in action at: http://spectrofred.unterbahn.com
+/webserver - A Ruby on Rails web application for publishing, archiving, discussing, and analyzing spectra online.
+	- Currently under heavy development
 
-There will be a better URL soon; this is a project of the Environmental Justice research cluster at RISD's Digital+Media department, run by Sara Wylie and Jeff Warren
+==========================
+LICENSE
+==========================
 
-=============================================================
+PLOTS Spectral Workbench is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-Read more about our experiments and work here: http://dm.risd.edu/courseblogs/ejrc/
+PLOTS Spectral Workbench is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-To learn more about the Fred environment in which this was built, see http://github.com/jywarren/fred
+You should have received a copy of the GNU General Public License
+along with PLOTS Spectral Workbench.  If not, see <http://www.gnu.org/licenses/>.
+
+==========================
+BUGS AND SUPPORT
+==========================
+
+To report bugs and request features, please use the GitHub issue tracker provided at http://github.com/jywarren/spectral_workbench/issues 
+
+For additional support, join the Public Laboratory website and mailing list at http://publiclaboratory.org or for urgent requests, email team@publiclaboratory.org
+
 

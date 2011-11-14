@@ -1,0 +1,181 @@
+html {
+}
+
+body {
+	margin: 0 auto;
+	background:white;
+	width:994px;
+	font-size:10pt;
+	font-family:lucida grande,lucida sans console,sans-serif;
+}
+
+#page {
+}
+
+hr {
+	padding:10px 0;
+	border:none;
+	border-bottom:10px solid #ccc;
+	height:10px;
+}
+
+a {
+	color:#34a;
+}
+
+h1,h2,h3,h4 {
+	font-weight:normal;
+}
+
+h1 a {
+	text-decoration:none;
+	color:#222;
+}
+h1 {
+	font-size:3em;
+	font-family: georgia;
+	margin:0;
+}
+
+h2 {
+	font-family: georgia;
+	font-style: italic;
+}
+
+a h2 {
+	font-family:lucida grande,lucida sans console,sans-serif;
+	color:#333;
+	padding:6px;
+	margin-bottom:0;
+}
+
+#header {
+	padding:8px;
+	background:#eee;
+	border-bottom:5px solid #ddd;
+}
+#header h1 a {
+	display:block;
+	padding:8px;
+}
+#header h1 {
+	font-size:2.6em;
+	margin-top:10px;
+}
+#header h1 .title {
+}
+#header img {
+	margin-top:6px;
+	padding-right:10px;
+	float:left;
+	
+}
+#header .links {
+	float:right;
+}
+
+.sidebar {
+	float:right;
+	width:300px;
+	padding:20px;
+	padding-top:0;
+}
+
+.sidebar h2 {
+	text-decoration:none;
+	font-size:1.8em;
+	margin:4px 0;
+	color:#444;
+	font-style:normal;
+}
+.sidebar h3 {
+	font-size:1.5em;
+	margin:4px 0;
+	color:#444;
+	font-style:normal;
+}
+.sidebar p {
+	font-size:10pt;
+}
+.sidebar a {
+	font-style:italic;
+}
+
+.sidebar .box {
+	background: #e8e8e8;
+	padding:7px;
+	margin-bottom:10px;
+	border-bottom:10px solid #aaa;
+}
+.sidebar .search input {
+	font-size:1.3em;
+}
+
+.button {
+	font-size:18px;
+	text-decoration:none;
+	color:white;
+	padding:12px;
+        background:#4C6ACB;
+        -moz-border-radius-topleft:5px;
+        -webkit-border-top-left-radius:5px;
+        -moz-border-radius-bottomleft:5px;
+        -webkit-border-bottom-left-radius:5px;
+        -moz-border-radius-topright:5px;
+        -webkit-border-top-right-radius:5px;
+        -moz-border-radius-bottomright:5px;
+        -webkit-border-bottom-right-radius:5px;
+
+}
+a:hover.button {
+	background:#35b;
+	color:#ccc;
+}
+
+#list {
+	width:640px;
+}
+#list .notes {
+	height:65px;
+}
+#list .spectrum {
+	font-size:0.9em;
+	float:left;
+	width:300px;
+	height:240px;
+	background: #e8e8e8;
+	margin-right:10px;
+	margin-bottom:10px;
+	border-bottom:4px solid #aaa;
+}
+#list .spectrum .image {
+	height:100px;
+	width:300px;
+}
+#list .text {
+	padding:6px;
+}
+#list p, #list h2 {
+	margin:3px 0;
+}
+
+.errorExplanation {
+	padding:6px;
+	background:#fcc;
+	color:#933;
+	border-bottom:5px solid #f88;
+}
+.errorExplanation h2 {
+	margin:5px 0;
+}
+
+#new_comment {
+	background: #e8e8e8;
+	padding:6px;
+	border-bottom:4px solid #aaa;
+	width:500px;
+}
+#new_comment h2 {
+	margin:6px 0;
+}
+

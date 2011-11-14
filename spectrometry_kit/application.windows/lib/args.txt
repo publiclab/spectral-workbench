@@ -1,0 +1,3 @@
+
+spectrometry_kit
+spectrometry_kit.jar,core.jar,video.jar,jna.jar,GSVideo.jar,gstreamer-java.jar,minim.jar,tritonus_share.jar,mp3spi1.9.4.jar,tritonus_aos.jar,minim-spi.jar,jl1.0.jar,jsminim.jar

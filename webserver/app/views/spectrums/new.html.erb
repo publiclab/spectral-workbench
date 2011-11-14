@@ -1,0 +1,45 @@
+<h1>New spectrum</h1>
+
+<p>Manually upload a spectrum. The best way to collect a spectrum for upload is to use a <a href="http://publiclaboratory.org/wiki/video-spectrometer">PLOTS video spectrometer</a> and the downloadable <a href="http://publiclaboratory.org/wiki/spectral-workbench">Spectral Workbench client application</a> (Mac/Linux/maybe-Windows).</p>
+
+<p>By uploading your data, you agree to release it under the <a href="http://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Zero license</a></p>
+
+<% form_for(@spectrum,:html => { :multipart => true }) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.label :title %><br />
+    <%= f.text_field :title %>
+  </p>
+  <p>
+    <%= f.label :author %><br />
+    <%= f.text_field :author %>
+  </p>
+  <p>
+    <%= f.label :notes %><br />
+    <%= f.text_area :notes %>
+  </p>
+  <p>
+    <%= f.label :data %><br />
+    <%= f.text_area :data %>
+  </p>
+  <p>
+    <%= f.label 'Photo of spectrum' %><br />
+    <%= f.file_field :photo %>
+  </p>
+
+  <p>
+    <%= f.label 'Photo of baseline spectrum without sample (if applicable)' %><br />
+    <%= f.file_field :baseline %>
+  </p>
+
+  <p>
+    <%= recaptcha_tags :display => {:theme => "white"} %>
+  </p>
+
+  <p>
+    <%= f.submit 'Create' %>
+  </p>
+<% end %>
+
+<%= link_to 'Back', spectrums_path %>

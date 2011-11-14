@@ -1,0 +1,17 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  author: MyString
+  email: MyString
+  body: MyText
+  wavelength: 1.5
+  x: 1
+  y: 1
+
+two:
+  author: MyString
+  email: MyString
+  body: MyText
+  wavelength: 1.5
+  x: 1
+  y: 1
