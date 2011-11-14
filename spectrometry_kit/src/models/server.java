@@ -7,6 +7,8 @@ class Server {
     String spectraFolder = "spectra/";
     SpectrumPresentation presenter = new SpectrumPresentation(spectrum.buffer);
 
+    println("got this far");
+
     PrintWriter csv = createWriter(spectraFolder + presenter.generateFileName(typedText, "csv"));
     csv.print(presenter.toCsv());
     csv.close();
@@ -37,7 +39,7 @@ class Server {
       println("ERROR " +e.getMessage());
     }
     //clear label buffer
-    typedText = "";
+    typedText = "saved: type to label next spectrum";
   }
   /**
    * POST pData to pUrl

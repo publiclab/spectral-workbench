@@ -3,7 +3,7 @@
  * runs for each column of video data, every frame
  */
 
-if (colortype == "combined" || colortype == "heat") {
+if (controller == "analyze" || controller == "heatmap") {
   // current live spectrum:
   stroke(255);
   int val = (rgb[0]+rgb[1]+rgb[2])/3;
@@ -36,7 +36,7 @@ if (colortype == "combined" || colortype == "heat") {
   if (last < 0) { last = 0; }
   //line(x,height-spectrum.enhancedabsorptionbuffer[last],x+1,height-spectrum.enhancedabsorptionbuffer[x]);
 
-} else if (colortype == "rgb") { // RGB sensor calibration mode
+} else if (controller == "calibrate") { // RGB sensor calibration mode
 
   // red channel:
   stroke(color(255,0,0));

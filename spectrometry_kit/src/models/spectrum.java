@@ -11,10 +11,11 @@ class Spectrum {
     public int samplerow;
     public int history;
     public int resolution = 1;
-    // for rgb mode:
+    // for calibrate mode:
     public int lastred = 0;
     public int lastgreen = 0;
     public int lastblue = 0;
+    public int currentSpectrumDisplayHeight = 10;
     public Spectrum(int pHistory,int pSamplerow) {
       samplerow = pSamplerow;
       history = pHistory;
@@ -30,7 +31,7 @@ class Spectrum {
     /**
      * Runs every draw cycle
      */
-    public void draw() {
+    public void draw(int ypos) {
       // bump spectrum history by 1 place
       for (int i = history-1;i > 0;i--) {
         for (int x = 0;x < video.width;x++) {
@@ -51,13 +52,24 @@ class Spectrum {
         // scale video.width to width!!
         if (x < width) {
           for (int y = 0; y < history; y++) {
-            if (colortype == "heat") {
+            if (controller == "heatmap") {
 		colorMode(HSB,255);
-		pixels[(history*width)-(y*width)+x] = color(255-(buffer[y][x][0]+buffer[y][x][1]+buffer[y][x][2])/3,255,255);
+		pixels[((currentSpectrumDisplayHeight+ypos)*width)+(y*width)+x] = color(255-(buffer[y][x][0]+buffer[y][x][1]+buffer[y][x][2])/3,255,255);
 		colorMode(RGB,255);
             } else {
-		pixels[(history*width)-(y*width)+x] = color(buffer[y][x][0],buffer[y][x][1],buffer[y][x][2]);
+		pixels[((currentSpectrumDisplayHeight+ypos)*width)+(y*width)+x] = color(buffer[y][x][0],buffer[y][x][1],buffer[y][x][2]);
  	    }
+          }
+          // display current spectrum for currentSpectrumDisplayHeight rows:
+          for (int y = 0; y < currentSpectrumDisplayHeight-1; y++) {
+            if (controller == "heatmap") {
+		colorMode(HSB,255);
+		pixels[(ypos*width)+(y*width)+x] = color(255-(buffer[0][x][0]+buffer[0][x][1]+buffer[0][x][2])/3,255,255);
+		colorMode(RGB,255);
+            } else {
+		pixels[(ypos*width)+(y*width)+x] = color(buffer[0][x][0],buffer[0][x][1],buffer[0][x][2]);
+ 	    }
+          
           }
           //= require <views/graph>
         }

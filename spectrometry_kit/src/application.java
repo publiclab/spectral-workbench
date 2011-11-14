@@ -31,7 +31,10 @@ import ddf.minim.*;
 
 //= require <models/spectrum>
 Spectrum spectrum;
-//= require <keyboard>
+//= require <input/keyboard>
+Keyboard keyboard;
+//= require <input/mouse>
+Mouse mouse;
 //= require <models/system>
 System system;
 //= require <models/video>
@@ -43,8 +46,7 @@ Server server;
 
 //String serverUrl = "http://localhost:3000"; // the remote server to upload to
 String serverUrl = "http://spectrometer.publiclaboratory.org"; // the remote server to upload to
-String controller = "setup"; // this determines what controller is used, i.e. what mode the app is in
-String colortype = "combined";
+String controller = "analyze"; // this determines what controller is used, i.e. what mode the app is in
 final static String defaultTypedText = "type to label spectrum";
 String typedText = defaultTypedText;
 PFont font;
@@ -53,18 +55,32 @@ int lastval = 0;
 int averageAbsorption = 0;
 int absorptionSum;
 PImage logo;
+int headerHeight = 60; // this should eventually be stored in some kind of view/controller config file...? header.height?
+
+public void switchMode() {
+    if (controller == "analyze") {
+      controller = "calibrate";
+    } 
+    else if (controller == "calibrate") {
+      controller = "heatmap";
+    }
+    else if (controller == "heatmap") {
+      controller = "analyze";
+    }
+}
 
 public void setup() {
   system = new System();
-  keys = new Keys();
+  keyboard = new Keyboard();
+  mouse = new Mouse();
   //size(640, 480, P2D);
   //size(1280, 720, P2D);
   // Or run full screen, more fun! Use with Sketch -> Present
   size(screen.width, screen.height-20, P2D);
   //video = new Video(this,640,480,0);
   video = new Video(this,1280,720,0);
-  spectrum = new Spectrum(150,int (height*(0.250))); //history (length),samplerow (row # to begin sampling)
-  font = loadFont("Georgia-Italic-18.vlw");  
+  spectrum = new Spectrum(int (height-headerHeight)/2,int (height*(0.250))); //history (length),samplerow (row # to begin sampling)
+  font = loadFont("Georgia-Italic-24.vlw");  
   filter = new Filter(this);
   //logo = loadImage("logo.png");
 }
@@ -85,15 +101,27 @@ void draw() {
   line(0,height-255,width,height-255); //100% mark for spectra
 
   //image(logo,0,0);
-  textFont(font,18);
-  text("PLOTS Spectral Workbench", 55, 25+spectrum.history); //display current title
-  text(typedText, 15, 55+spectrum.history); //display current title
-  //text("red=baseline, white=current, yellow=absorption",15,height-255+45);
+  textFont(font,24);
+  text("PLOTS Spectral Workbench: "+typedText, 55, 40); //display current title
+
+  int padding = 10;
+  noFill();
+  stroke(255);
+  rect(width-100,0,100,headerHeight);
+  fill(255);
+  noStroke();
+  text("Save",width-100+padding,40);
+  noFill();
+  stroke(255);
+  rect(width-300,0,200,headerHeight);
+  fill(255);
+  noStroke();
+  text(controller+" mode",width-300+padding,40);
 
   // re-zero intensity sum
   absorptionSum = 0;
 
-  if (colortype == "rgb") { spectrum.preview(); }
+  if (controller == "calibrate") { spectrum.preview(); }
 
   stroke(255);
   fill(255);
@@ -102,7 +130,7 @@ void draw() {
   stroke(128);
   line(0,averageAbsorption/3,width,averageAbsorption/3);
 
-  spectrum.draw();
+  spectrum.draw(headerHeight); //y position of top of spectrum
 
   updatePixels();
 }

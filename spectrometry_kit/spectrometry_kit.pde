@@ -40,6 +40,7 @@ class Spectrum {
     public int lastred = 0;
     public int lastgreen = 0;
     public int lastblue = 0;
+    public int currentSpectrumDisplayHeight = 10;
     public Spectrum(int pHistory,int pSamplerow) {
       samplerow = pSamplerow;
       history = pHistory;
@@ -52,7 +53,7 @@ class Spectrum {
         enhancedabsorptionbuffer[x] = 0;
       }
     }
-    public void draw() {
+    public void draw(int ypos) {
       for (int i = history-1;i > 0;i--) {
         for (int x = 0;x < video.width;x++) {
           buffer[i][x] = buffer[i-1][x];
@@ -67,20 +68,30 @@ class Spectrum {
         buffer[0][x] = rgb;
         if (x < width) {
           for (int y = 0; y < history; y++) {
-            if (colortype == "heat") {
+            if (controller == "heatmap") {
 		colorMode(HSB,255);
-		pixels[(history*width)-(y*width)+x] = color(255-(buffer[y][x][0]+buffer[y][x][1]+buffer[y][x][2])/3,255,255);
+		pixels[((currentSpectrumDisplayHeight+ypos)*width)+(y*width)+x] = color(255-(buffer[y][x][0]+buffer[y][x][1]+buffer[y][x][2])/3,255,255);
 		colorMode(RGB,255);
             } else {
-		pixels[(history*width)-(y*width)+x] = color(buffer[y][x][0],buffer[y][x][1],buffer[y][x][2]);
+		pixels[((currentSpectrumDisplayHeight+ypos)*width)+(y*width)+x] = color(buffer[y][x][0],buffer[y][x][1],buffer[y][x][2]);
  	    }
+          }
+          for (int y = 0; y < currentSpectrumDisplayHeight-1; y++) {
+            if (controller == "heatmap") {
+		colorMode(HSB,255);
+		pixels[(ypos*width)+(y*width)+x] = color(255-(buffer[0][x][0]+buffer[0][x][1]+buffer[0][x][2])/3,255,255);
+		colorMode(RGB,255);
+            } else {
+		pixels[(ypos*width)+(y*width)+x] = color(buffer[0][x][0],buffer[0][x][1],buffer[0][x][2]);
+ 	    }
+
           }
 /*
  * Draws spectrum intensity graph,
  * runs for each column of video data, every frame
  */
 
-if (colortype == "combined" || colortype == "heat") {
+if (controller == "analyze" || controller == "heatmap") {
   stroke(255);
   int val = (rgb[0]+rgb[1]+rgb[2])/3;
   line(x,height-lastval,x+1,height-val);
@@ -106,7 +117,7 @@ if (colortype == "combined" || colortype == "heat") {
   last = x-1;
   if (last < 0) { last = 0; }
 
-} else if (colortype == "rgb") { // RGB sensor calibration mode
+} else if (controller == "calibrate") { // RGB sensor calibration mode
 
   stroke(color(255,0,0));
   line(x,height-spectrum.lastred,x+1,height-rgb[0]);
@@ -225,15 +236,14 @@ class SpectrumPresentation {
     }
 }
 Spectrum spectrum;
-class Keys {
+class Keyboard {
   public boolean controlKey = false;
 }
-Keys keys;
 
 void keyReleased() {
   if (key == CODED) {
     if (keyCode == CONTROL) {
-      keys.controlKey = false;
+      keyboard.controlKey = false;
     }
   }
 }
@@ -251,26 +261,18 @@ void keyPressed() {
         spectrum.samplerow = 0;
       }
     } else if (keyCode == CONTROL) {
-      keys.controlKey = true;
+      keyboard.controlKey = true;
     }
   }
-  else if (key == ' ' && keys.controlKey) {
+  else if (key == ' ' && keyboard.controlKey) {
     spectrum.storeReference();
   }
-  else if (key == 's' && keys.controlKey) {
+  else if (key == 's' && keyboard.controlKey) {
     println("saving to server...");
     server.upload();
   }
   else if (keyCode == TAB) {
-    if (colortype == "combined") {
-      colortype = "rgb";
-    }
-    else if (colortype == "rgb") {
-      colortype = "heat";
-    }
-    else if (colortype == "heat") {
-      colortype = "combined";
-    }
+    switchMode();
   }
   else if (keyCode == BACKSPACE) {
     typedText = typedText.substring(0,max(0,typedText.length()-1));
@@ -285,6 +287,26 @@ void keyPressed() {
     typedText += key;
   }
 }
+Keyboard keyboard;
+class Mouse {
+  public Mouse() {
+
+  }
+}
+
+void mousePressed() {
+  if (mouseY < headerHeight) {
+    if (mouseX > width-100) {
+      println("Saving to server (button)");
+      server.upload();
+    }
+    if (mouseX > width-300 && mouseX < width-100) {
+      println("Switching mode (button)");
+      switchMode();
+    }
+  }
+}
+Mouse mouse;
 /*
  * A class to interact with the system, mainly through
  * System.run() calls to access a shell prompt.
@@ -492,6 +514,8 @@ class Server {
     String spectraFolder = "spectra/";
     SpectrumPresentation presenter = new SpectrumPresentation(spectrum.buffer);
 
+    println("got this far");
+
     PrintWriter csv = createWriter(spectraFolder + presenter.generateFileName(typedText, "csv"));
     csv.print(presenter.toCsv());
     csv.close();
@@ -515,7 +539,7 @@ class Server {
     } catch (IOException e) {
       println("ERROR " +e.getMessage());
     }
-    typedText = "";
+    typedText = "saved: type to label next spectrum";
   }
   public String postData(URL pUrl, byte[] pData) {
     try {
@@ -555,8 +579,7 @@ class Server {
 Server server;
 
 String serverUrl = "http://spectrometer.publiclaboratory.org"; // the remote server to upload to
-String controller = "setup"; // this determines what controller is used, i.e. what mode the app is in
-String colortype = "combined";
+String controller = "analyze"; // this determines what controller is used, i.e. what mode the app is in
 final static String defaultTypedText = "type to label spectrum";
 String typedText = defaultTypedText;
 PFont font;
@@ -565,14 +588,28 @@ int lastval = 0;
 int averageAbsorption = 0;
 int absorptionSum;
 PImage logo;
+int headerHeight = 60; // this should eventually be stored in some kind of view/controller config file...? header.height?
+
+public void switchMode() {
+    if (controller == "analyze") {
+      controller = "calibrate";
+    }
+    else if (controller == "calibrate") {
+      controller = "heatmap";
+    }
+    else if (controller == "heatmap") {
+      controller = "analyze";
+    }
+}
 
 public void setup() {
   system = new System();
-  keys = new Keys();
+  keyboard = new Keyboard();
+  mouse = new Mouse();
   size(screen.width, screen.height-20, P2D);
   video = new Video(this,1280,720,0);
-  spectrum = new Spectrum(150,int (height*(0.250))); //history (length),samplerow (row # to begin sampling)
-  font = loadFont("Georgia-Italic-18.vlw");
+  spectrum = new Spectrum(int (height-headerHeight)/2,int (height*(0.250))); //history (length),samplerow (row # to begin sampling)
+  font = loadFont("Georgia-Italic-24.vlw");
   filter = new Filter(this);
 }
 
@@ -591,13 +628,26 @@ void draw() {
   noStroke();
   line(0,height-255,width,height-255); //100% mark for spectra
 
-  textFont(font,18);
-  text("PLOTS Spectral Workbench", 55, 25+spectrum.history); //display current title
-  text(typedText, 15, 55+spectrum.history); //display current title
+  textFont(font,24);
+  text("PLOTS Spectral Workbench: "+typedText, 55, 40); //display current title
+
+  int padding = 10;
+  noFill();
+  stroke(255);
+  rect(width-100,0,100,headerHeight);
+  fill(255);
+  noStroke();
+  text("Save",width-100+padding,40);
+  noFill();
+  stroke(255);
+  rect(width-300,0,200,headerHeight);
+  fill(255);
+  noStroke();
+  text(controller+" mode",width-300+padding,40);
 
   absorptionSum = 0;
 
-  if (colortype == "rgb") { spectrum.preview(); }
+  if (controller == "calibrate") { spectrum.preview(); }
 
   stroke(255);
   fill(255);
@@ -605,7 +655,7 @@ void draw() {
   stroke(128);
   line(0,averageAbsorption/3,width,averageAbsorption/3);
 
-  spectrum.draw();
+  spectrum.draw(headerHeight); //y position of top of spectrum
 
   updatePixels();
 }
