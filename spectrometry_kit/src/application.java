@@ -65,7 +65,7 @@ public void setup() {
   size(screen.width, screen.height-20, P2D);
   //video = new Video(this,640,480,0);
   video = new Video(this,1280,720,0);
-  samplerow = int (height*(0.50));
+  samplerow = int (height*(0.250));
   font = loadFont("Georgia-Italic-18.vlw");  
 
   spectrumbuf = new int[history][video.width][3];
@@ -120,8 +120,12 @@ void draw() {
     for (int y = 0; y < int (video.height); y+=4) {
       for (int x = 0; x < int (video.width); x+=4) {
         if (x < width && y < height) {
-          pixels[(height*3/4*width)+(y*width/4)+((x/4))] = video.gscapture.pixels[y*video.width+x];
+          if (video.isLinux) {
+            pixels[(height*3/4*width)+(y*width/4)+((x/4))] = video.gscapture.pixels[y*video.width+x];
           //pixels[(height*3/4*width)+(y*width/4)+((x/4))] = video.gscapture.pixels[int (y/video.scale()*video.width+x/video.scale())];
+          } else {
+            pixels[(height*3/4*width)+(y*width/4)+((x/4))] = video.capture.pixels[y*video.width+x];
+          }
         }
       }
     }
