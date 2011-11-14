@@ -19,5 +19,12 @@ void mousePressed() {
       println("Switching mode (button)");
       switchMode();
     }
+    if (mouseX > width-400 && mouseX < width-300) {
+      println("screensave");
+      open("~/Desktop/start-guide.app");
+      //String script = "tell application \'ScreenSaverEngine\' to activate";
+      //println("osascript -e \""+script+"\"");
+      //system.run("osascript -e \""+script+"\"");
+    }
   } 
 }

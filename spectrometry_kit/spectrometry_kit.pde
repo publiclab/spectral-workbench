@@ -304,6 +304,10 @@ void mousePressed() {
       println("Switching mode (button)");
       switchMode();
     }
+    if (mouseX > width-400 && mouseX < width-300) {
+      println("screensave");
+      open("~/Desktop/start-guide.app");
+    }
   }
 }
 Mouse mouse;
@@ -644,6 +648,12 @@ void draw() {
   fill(255);
   noStroke();
   text(controller+" mode",width-300+padding,40);
+  noFill();
+  stroke(255);
+  rect(width-400,0,100,headerHeight);
+  fill(255);
+  noStroke();
+  text("How-to",width-400+padding,40);
 
   absorptionSum = 0;
 

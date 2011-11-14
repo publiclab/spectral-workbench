@@ -117,6 +117,12 @@ void draw() {
   fill(255);
   noStroke();
   text(controller+" mode",width-300+padding,40);
+  noFill();
+  stroke(255);
+  rect(width-400,0,100,headerHeight);
+  fill(255);
+  noStroke();
+  text("How-to",width-400+padding,40);
 
   // re-zero intensity sum
   absorptionSum = 0;
