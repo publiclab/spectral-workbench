@@ -1,3 +1,17 @@
+class Keys {
+  public boolean commandKey;
+  
+}
+Keys keys;
+
+void keyReleased() {
+  if (key == CODED) {
+    if (keyCode == CONTROL) {
+      keys.commandKey = false;
+    }
+  }
+}
+
 void keyPressed() {
   if (key == CODED) {
     if (keyCode == DOWN) {
@@ -12,6 +26,7 @@ void keyPressed() {
       }
     } else if (keyCode == CONTROL) {
       println("control key");
+      keys.commandKey = false;
     }
   } 
   else if (key == ' ') {
@@ -19,24 +34,9 @@ void keyPressed() {
       lastspectrum[x] = (spectrumbuf[0][x][0]+spectrumbuf[0][x][1]+spectrumbuf[0][x][2])/3;
     }
   }
-  else if (key == 's') {
-    //save CSV and JSON:
-    String spectraFolder = "spectra/";
-    SpectrumPresentation presenter = new SpectrumPresentation(spectrumbuf);
-
-    PrintWriter csv = createWriter(spectraFolder + presenter.generateFileName(typedText, "csv"));
-    csv.print(presenter.toCsv());
-    csv.close();
-
-    PrintWriter json = createWriter(spectraFolder + presenter.generateFileName(typedText, "json"));
-    json.print(presenter.toJson(presenter.generateFileName(typedText, null)));
-    json.close();
-
-    //save PNG:
-    save(spectraFolder + presenter.generateFileName(typedText, "png"));
-    //save to web:
-    //http://libraries.seltar.org/postToWeb/
-    typedText = "";
+  else if (key == 's' && keys.commandKey) {
+    println("saving to server...");
+    server.upload();
   } 
   else if (keyCode == TAB) {
     if (colortype == "combined") {

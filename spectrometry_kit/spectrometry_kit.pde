@@ -108,6 +108,20 @@ class SpectrumPresentation {
         return builder.toString();
     }
 }
+class Keys {
+  public boolean commandKey;
+
+}
+Keys keys;
+
+void keyReleased() {
+  if (key == CODED) {
+    if (keyCode == CONTROL) {
+      keys.commandKey = false;
+    }
+  }
+}
+
 void keyPressed() {
   if (key == CODED) {
     if (keyCode == DOWN) {
@@ -122,6 +136,7 @@ void keyPressed() {
       }
     } else if (keyCode == CONTROL) {
       println("control key");
+      keys.commandKey = false;
     }
   }
   else if (key == ' ') {
@@ -129,20 +144,9 @@ void keyPressed() {
       lastspectrum[x] = (spectrumbuf[0][x][0]+spectrumbuf[0][x][1]+spectrumbuf[0][x][2])/3;
     }
   }
-  else if (key == 's') {
-    String spectraFolder = "spectra/";
-    SpectrumPresentation presenter = new SpectrumPresentation(spectrumbuf);
-
-    PrintWriter csv = createWriter(spectraFolder + presenter.generateFileName(typedText, "csv"));
-    csv.print(presenter.toCsv());
-    csv.close();
-
-    PrintWriter json = createWriter(spectraFolder + presenter.generateFileName(typedText, "json"));
-    json.print(presenter.toJson(presenter.generateFileName(typedText, null)));
-    json.close();
-
-    save(spectraFolder + presenter.generateFileName(typedText, "png"));
-    typedText = "";
+  else if (key == 's' && keys.commandKey) {
+    println("saving to server...");
+    server.upload();
   }
   else if (keyCode == TAB) {
     if (colortype == "combined") {
@@ -374,7 +378,74 @@ class Filter implements AudioSignal, AudioListener
 }
 
 Filter filter;
+class Server {
+  public void upload() {
+    String spectraFolder = "spectra/";
+    SpectrumPresentation presenter = new SpectrumPresentation(spectrumbuf);
 
+    PrintWriter csv = createWriter(spectraFolder + presenter.generateFileName(typedText, "csv"));
+    csv.print(presenter.toCsv());
+    csv.close();
+
+    PrintWriter json = createWriter(spectraFolder + presenter.generateFileName(typedText, "json"));
+    json.print(presenter.toJson(presenter.generateFileName(typedText, null)));
+    json.close();
+
+    PGraphics pg;
+
+    pg = createGraphics(80, 80, P3D, spectraFolder + "alt-" + presenter.generateFileName(typedText, "png"));
+    pg.beginDraw();
+    pg.endDraw();
+    save(spectraFolder + presenter.generateFileName(typedText, "png"));
+    try {
+      println(serverUrl+"/spectrums/create?title="+typedText);
+      URL u = new URL("http://localhost:3000/spectrums/create?title="+typedText);
+      this.postData(u,presenter.toJson(presenter.generateFileName(typedText, null)).getBytes());
+    } catch (MalformedURLException e) {
+      println("ERROR " +e.getMessage());
+    } catch (IOException e) {
+      println("ERROR " +e.getMessage());
+    }
+    typedText = "";
+  }
+  public String postData(URL pUrl, byte[] pData) {
+    try {
+        URLConnection c = pUrl.openConnection();
+        c.setDoOutput(true);
+        c.setDoInput(true);
+        c.setUseCaches(false);
+
+        final String boundary = "AXi93A";
+        c.setRequestProperty("Content-Type", "multipart/form-data; boundary="+boundary);
+
+        DataOutputStream dstream = new DataOutputStream(c.getOutputStream());
+
+        dstream.writeBytes(boundary+"\r\n");
+
+        dstream.writeBytes("Content-Disposition: form-data; name=\"data\"; filename=\"whatever\" \r\nContent-Type: text/json\r\nContent-Transfer-Encoding: binary\r\n\r\n");
+        dstream.write(pData ,0, pData.length);
+
+        dstream.writeBytes("\r\n--"+boundary+"--\r\n\r\n");
+        dstream.flush();
+        dstream.close();
+
+        BufferedReader in = new BufferedReader(new InputStreamReader(c.getInputStream()));
+        StringBuilder sb = new StringBuilder(in.readLine());
+        String s = in.readLine();
+        while (s != null) {
+            s = in.readLine();
+            sb.append(s);
+        }
+        return sb.toString();
+    } catch (Exception e) {
+        e.printStackTrace();
+        return null;
+    }
+  }
+}
+Server server;
+
+String serverUrl = "http://spectrometer.publiclaboratory.org"; // the remote server to upload to
 String controller = "setup"; // this determines what controller is used, i.e. what mode the app is in
 String colortype = "combined";
 final static String defaultTypedText = "type to label spectrum";
@@ -531,37 +602,3 @@ if (colortype == "combined" || colortype == "heat") {
   updatePixels();
 }
 
-public String postData(URL pUrl, byte[] pData) {
-    try {
-        URLConnection c = pUrl.openConnection();
-        c.setDoOutput(true);
-        c.setDoInput(true);
-        c.setUseCaches(false);
-
-        final String boundary = "AXi93A";
-        c.setRequestProperty("Content-Type", "multipart/form-data; boundary="+boundary);
-
-        DataOutputStream dstream = new DataOutputStream(c.getOutputStream());
-
-        dstream.writeBytes(boundary+"\r\n");
-
-        dstream.writeBytes("Content-Disposition: form-data; name=\"data\"; filename=\"whatever\" \r\nContent-Type: text/json\r\nContent-Transfer-Encoding: binary\r\n\r\n");
-        dstream.write(pData ,0, pData.length);
-
-        dstream.writeBytes("\r\n--"+boundary+"--\r\n\r\n");
-        dstream.flush();
-        dstream.close();
-
-        BufferedReader in = new BufferedReader(new InputStreamReader(c.getInputStream()));
-        StringBuilder sb = new StringBuilder(in.readLine());
-        String s = in.readLine();
-        while (s != null) {
-            s = in.readLine();
-            sb.append(s);
-        }
-        return sb.toString();
-    } catch (Exception e) {
-        e.printStackTrace();
-        return null;
-    }
-}

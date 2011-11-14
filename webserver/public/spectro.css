@@ -2,16 +2,6 @@ body {
 	background:#333;
 }
 
-.note {
-	line-height:1.3em;
-	background:rgba(255,255,255,0.5);
-	font-style:italic;
-	position:absolute;
-	padding:8px;
-	font-family:helvetica,arial,sans-serif;
-	color:#222;
-}
-
 #buttons {
 	position:absolute;
 	display:block;
@@ -31,10 +21,5 @@ body {
 
 a.button:hover {
 	background:#44a;
-}
-
-a.tool {
-	text-decoration:none;
-	font-weight:bold;
 }
 

@@ -1,11 +1,32 @@
-<img src="<%= @spectrum.photo.url %>" />
+<p>
+<img src="<%= @spectrum.photo.url(:large) %>" />
+</p>
 
 <h1><%= @spectrum.title %></h1>
 
 <h3>Notes</h3>
 <p class="description"><%= @spectrum.notes %></p>
 
+<h3>License</h3>
 
+<p xmlns:dct="http://purl.org/dc/terms/" xmlns:vcard="http://www.w3.org/2001/vcard-rdf/3.0#">
+  <a rel="license" href="http://creativecommons.org/publicdomain/zero/1.0/"><img src="http://i.creativecommons.org/p/zero/1.0/88x31.png" style="border-style: none;" alt="CC0" /></a>
+  <br />
+  To the extent possible under law,
+  <%# if @spectrum.author.url %><a rel="dct:publisher" href="http://publiclaboratory.org"><%# end %>
+    <span property="dct:title"><%= @spectrum.author %></span>
+  <%# if @spectrum.author.url %></a><%# end %>
+  has waived all copyright and related or neighboring rights to
+  "<span property="dct:title"><%= @spectrum.title %></span>".
+This work is published from:
+<span property="vcard:Country" datatype="dct:ISO3166"
+      content="US" about="http://publiclaboratory.org">
+  United States</span>.
+</p>
+
+<hr />
+
+<a name="comments"></a>
 <h2>Comments</h2>
 
 <% @spectrum.comments.each do |comment| %>
@@ -15,14 +36,14 @@
 </div>
 <% end %>
 
-<h2>Post a comment</h2>
-
 <% form_for(@comment) do |f| %>
+
+  <h2>Post a comment</h2>
   <%= f.error_messages %>
 
   <p>
     <%= f.label :body %><br />
-    <%= f.text_area :body %>
+    <%= f.text_area :body, :rows => 6 %>
   </p>
 
   <p>
@@ -43,25 +64,6 @@
     <%= f.submit 'Create' %>
   </p>
 <% end %>
-
-<h3>License</h3>
-
-<p xmlns:dct="http://purl.org/dc/terms/" xmlns:vcard="http://www.w3.org/2001/vcard-rdf/3.0#">
-  <a rel="license" href="http://creativecommons.org/publicdomain/zero/1.0/">
-    <img src="http://i.creativecommons.org/p/zero/1.0/88x31.png" style="border-style: none;" alt="CC0" />
-  </a>
-  <br />
-  To the extent possible under law,
-  <%# if @spectrum.author.url %><a rel="dct:publisher" href="http://publiclaboratory.org"><%# end %>
-    <span property="dct:title"><%= @spectrum.author %></span>
-  <%# if @spectrum.author.url %></a><%# end %>
-  has waived all copyright and related or neighboring rights to
-  "<span property="dct:title"><%= @spectrum.title %></span>".
-This work is published from:
-<span property="vcard:Country" datatype="dct:ISO3166"
-      content="US" about="http://publiclaboratory.org">
-  United States</span>.
-</p>
 
 <h2>Related spectra</h2>
 
