@@ -82,7 +82,7 @@ class Video {
       //papplet.image(gscapture,x,y,imgWidth,imgHeight);
     } //else papplet.image(capture,x,y,imgWidth,imgHeight);
   }
-  /*
+  /**
    * Retrieve red, green, blue color intensities 
    * from video input for given pixel
    */
@@ -94,7 +94,7 @@ class Video {
     rgb[2] = 0;
 
     for (int yoff = int (sampleHeight/-2); yoff < int (sampleHeight/2); yoff+=1) {
-      int sampleind = int ((video.width*samplerow)+(video.width*yoff)+x);
+      int sampleind = int ((video.width*spectrum.samplerow)+(video.width*yoff)+x);
 
       if (sampleind >= 0 && sampleind <= (video.height*video.width)) {
         int pixelColor;

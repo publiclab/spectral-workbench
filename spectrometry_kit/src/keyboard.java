@@ -1,13 +1,12 @@
 class Keys {
-  public boolean commandKey;
-  
+  public boolean controlKey = false;
 }
 Keys keys;
 
 void keyReleased() {
   if (key == CODED) {
     if (keyCode == CONTROL) {
-      keys.commandKey = false;
+      keys.controlKey = false;
     }
   }
 }
@@ -15,26 +14,23 @@ void keyReleased() {
 void keyPressed() {
   if (key == CODED) {
     if (keyCode == DOWN) {
-      samplerow += 1;
-      if (samplerow >= video.height) {
-        samplerow = video.height;
+      spectrum.samplerow += 1;
+      if (spectrum.samplerow >= video.height) {
+        spectrum.samplerow = video.height;
       }
     } else if (keyCode == UP) {
-      samplerow -= 1;
-      if (samplerow <= 0) {
-        samplerow = 0;
+      spectrum.samplerow -= 1;
+      if (spectrum.samplerow <= 0) {
+        spectrum.samplerow = 0;
       }
     } else if (keyCode == CONTROL) {
-      println("control key");
-      keys.commandKey = false;
+      keys.controlKey = true;
     }
   } 
-  else if (key == ' ') {
-    for (int x = 0;x < spectrumbuf[0].length;x++) {
-      lastspectrum[x] = (spectrumbuf[0][x][0]+spectrumbuf[0][x][1]+spectrumbuf[0][x][2])/3;
-    }
+  else if (key == ' ' && keys.controlKey) {
+    spectrum.storeReference();
   }
-  else if (key == 's' && keys.commandKey) {
+  else if (key == 's' && keys.controlKey) {
     println("saving to server...");
     server.upload();
   } 

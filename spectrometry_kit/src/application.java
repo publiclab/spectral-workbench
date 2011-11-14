@@ -30,6 +30,7 @@ import ddf.minim.analysis.*;
 import ddf.minim.*;
 
 //= require <models/spectrum>
+Spectrum spectrum;
 //= require <keyboard>
 //= require <models/system>
 System system;
@@ -48,39 +49,24 @@ final static String defaultTypedText = "type to label spectrum";
 String typedText = defaultTypedText;
 PFont font;
 int audiocount = 0;
-int res = 1;
-int samplerow;
 int lastval = 0;
-// for rgb mode:
-int lastred = 0;
-int lastgreen = 0;
-int lastblue = 0;
-int[][][] spectrumbuf;
-int history = 150;
-int[] lastspectrum, absorption, contrastEnhancedAbsorption;
 int averageAbsorption = 0;
 int absorptionSum;
+PImage logo;
 
 public void setup() {
   system = new System();
+  keys = new Keys();
   //size(640, 480, P2D);
   //size(1280, 720, P2D);
   // Or run full screen, more fun! Use with Sketch -> Present
   size(screen.width, screen.height-20, P2D);
   //video = new Video(this,640,480,0);
   video = new Video(this,1280,720,0);
-  samplerow = int (height*(0.250));
+  spectrum = new Spectrum(150,int (height*(0.250))); //history (length),samplerow (row # to begin sampling)
   font = loadFont("Georgia-Italic-18.vlw");  
-
-  spectrumbuf = new int[history][video.width][3];
-  lastspectrum = new int[video.width];
-  absorption = new int[video.width];
-  contrastEnhancedAbsorption = new int[video.width];
-  for (int x = 0;x < video.width;x++) { // is this necessary? initializing the spectrum buffer with zeroes? come on!
-    absorption[x] = 0;
-    contrastEnhancedAbsorption[x] = 0;
-  }
   filter = new Filter(this);
+  //logo = loadImage("logo.png");
 }
 
 public void captureEvent(Capture c) { //mac or windows
@@ -91,18 +77,6 @@ public void captureEvent(GSCapture c) { //linux
 }
 
 void draw() {
-
-  // bump spectrum history by 1 place
-  for (int i = history-1;i > 0;i--) {
-    for (int x = 0;x < video.width;x++) {
-      spectrumbuf[i][x] = spectrumbuf[i-1][x];
-    }
-  }
-  // add new spectrum to spectrumbufferbuffer
-  for (int x = 0;x < video.width;x++) { // is this necessary? initializing the spectrum buffer with zeroes? come on!
-    //spectrumbuf[0][x] = 0;
-  }
-
   loadPixels(); //load screen pixel buffer into pixels[]
   background(64);
 
@@ -110,68 +84,25 @@ void draw() {
   noStroke();
   line(0,height-255,width,height-255); //100% mark for spectra
 
+  //image(logo,0,0);
   textFont(font,18);
-  text("PLOTS Spectral Workbench", 15, 25+history); //display current title
-  text(typedText, 15, 55+history); //display current title
+  text("PLOTS Spectral Workbench", 55, 25+spectrum.history); //display current title
+  text(typedText, 15, 55+spectrum.history); //display current title
   //text("red=baseline, white=current, yellow=absorption",15,height-255+45);
 
   // re-zero intensity sum
   absorptionSum = 0;
 
-  // preview video to align spectrum
-  if (colortype == "rgb") {
-    //video.image(0,height*3/4,width/4,height/4)
-    for (int y = 0; y < int (video.height); y+=4) {
-      for (int x = 0; x < int (video.width); x+=4) {
-        if (x < width && y < height) {
-          if (video.isLinux) {
-            pixels[(height*3/4*width)+(y*width/4)+((x/4))] = video.gscapture.pixels[y*video.width+x];
-          //pixels[(height*3/4*width)+(y*width/4)+((x/4))] = video.gscapture.pixels[int (y/video.scale()*video.width+x/video.scale())];
-          } else {
-            pixels[(height*3/4*width)+(y*width/4)+((x/4))] = video.capture.pixels[y*video.width+x];
-          }
-        }
-      }
-    }
-    // draw the region of sampling with a rectangle:
-    noFill();
-    stroke(255,255,0);
-    rect(0,height*3/4+samplerow/4,video.width/4,video.sampleHeight/4);
-  }
+  if (colortype == "rgb") { spectrum.preview(); }
+
   stroke(255);
   fill(255);
-
-  ///////////////////////
-  // read from video into a new row in the spectrumbuffer
-
-  int index = int (video.width*samplerow); //the horizontal strip to sample
-  for (int x = 0; x < int (video.width); x+=res) {
-
-    int[] rgb = video.get_rgb(x);
-
-    // draw direct output of averaged camera sampling, for "history" frames of history
-    spectrumbuf[0][x] = rgb;
-    ///////////////////////////////////
-    // scale video.width to width!!
-    if (x < width) {
-      for (int y = 0; y < history; y++) {
-        if (colortype == "heat") {
-		colorMode(HSB,255);
-		pixels[(history*width)-(y*width)+x] = color(255-(spectrumbuf[y][x][0]+spectrumbuf[y][x][1]+spectrumbuf[y][x][2])/3,255,255);
-		colorMode(RGB,255);
-        } else {
-		pixels[(history*width)-(y*width)+x] = color(spectrumbuf[y][x][0],spectrumbuf[y][x][1],spectrumbuf[y][x][2]);
-	}
-      }
-      //= require <views/graph>
-    }
-    index++;
-  }
-
   // indicate average with a line
   averageAbsorption = absorptionSum/width;
   stroke(128);
   line(0,averageAbsorption/3,width,averageAbsorption/3);
+
+  spectrum.draw();
 
   updatePixels();
 }

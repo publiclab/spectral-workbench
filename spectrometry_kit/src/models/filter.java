@@ -49,7 +49,7 @@ class Filter implements AudioSignal, AudioListener
     fft.forward(samp);
     loadPixels();
 
-    int index = int (video.width*samplerow); //the middle horizontal strip
+    int index = int (video.width*spectrum.samplerow); //the middle horizontal strip
 
     for (int x = 0; x < fft.specSize(); x+=1) {
 
@@ -63,10 +63,10 @@ class Filter implements AudioSignal, AudioListener
       // this version uses the raw incoming light to generate audio:
       //fft.setBand(x,map((r+b+g)/3.00,0,255,0,1));
       // this version uses the *absorption*, i.e. the difference between the last spectrum and the current one
-      if (absorption[x] < 0) {
+      if (spectrum.absorptionbuffer[x] < 0) {
         fft.setBand(x,map(0,0,255,0,1));
       } else {
-        fft.setBand(x,map(contrastEnhancedAbsorption[x]/3.00,0,255,0.4,0.7));
+        fft.setBand(x,map(spectrum.enhancedabsorptionbuffer[x]/3.00,0,255,0.4,0.7));
       }
 //    fft.setBand(x,fft.getBand(x) * map((r+b+g)/3.00,0,255,0.3,0.7));
       index++;

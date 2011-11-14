@@ -5,7 +5,7 @@ class Server {
   public void upload() {
     //save CSV and JSON:
     String spectraFolder = "spectra/";
-    SpectrumPresentation presenter = new SpectrumPresentation(spectrumbuf);
+    SpectrumPresentation presenter = new SpectrumPresentation(spectrum.buffer);
 
     PrintWriter csv = createWriter(spectraFolder + presenter.generateFileName(typedText, "csv"));
     csv.print(presenter.toCsv());

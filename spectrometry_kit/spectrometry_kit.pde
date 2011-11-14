@@ -29,6 +29,122 @@ import codeanticode.gsvideo.*; //linux
 import ddf.minim.analysis.*;
 import ddf.minim.*;
 
+class Spectrum {
+    public int[][][] buffer;
+    public int[] storedbuffer;
+    public int[] absorptionbuffer;
+    public int[] enhancedabsorptionbuffer;
+    public int samplerow;
+    public int history;
+    public int resolution = 1;
+    public int lastred = 0;
+    public int lastgreen = 0;
+    public int lastblue = 0;
+    public Spectrum(int pHistory,int pSamplerow) {
+      samplerow = pSamplerow;
+      history = pHistory;
+      buffer = new int[history][video.width][3];
+      storedbuffer = new int[video.width];
+      absorptionbuffer = new int[video.width];
+      enhancedabsorptionbuffer = new int[video.width];
+      for (int x = 0;x < video.width;x++) { // is this necessary? initializing the spectrum buffer with zeroes? come on!
+        absorptionbuffer[x] = 0;
+        enhancedabsorptionbuffer[x] = 0;
+      }
+    }
+    public void draw() {
+      for (int i = history-1;i > 0;i--) {
+        for (int x = 0;x < video.width;x++) {
+          buffer[i][x] = buffer[i-1][x];
+        }
+      }
+
+      int index = int (video.width*samplerow); //the horizontal strip to sample
+      for (int x = 0; x < int (video.width); x+=resolution) {
+
+        int[] rgb = video.get_rgb(x);
+
+        buffer[0][x] = rgb;
+        if (x < width) {
+          for (int y = 0; y < history; y++) {
+            if (colortype == "heat") {
+		colorMode(HSB,255);
+		pixels[(history*width)-(y*width)+x] = color(255-(buffer[y][x][0]+buffer[y][x][1]+buffer[y][x][2])/3,255,255);
+		colorMode(RGB,255);
+            } else {
+		pixels[(history*width)-(y*width)+x] = color(buffer[y][x][0],buffer[y][x][1],buffer[y][x][2]);
+ 	    }
+          }
+/*
+ * Draws spectrum intensity graph,
+ * runs for each column of video data, every frame
+ */
+
+if (colortype == "combined" || colortype == "heat") {
+  stroke(255);
+  int val = (rgb[0]+rgb[1]+rgb[2])/3;
+  line(x,height-lastval,x+1,height-val);
+  lastval = (rgb[0]+rgb[1]+rgb[2])/3;
+
+  stroke(color(255,0,0));
+  int lastind = x-1;
+  if (lastind < 0) {
+     lastind = 0;
+  }
+  line(x,height-spectrum.storedbuffer[lastind],x+1,height-spectrum.storedbuffer[x]);
+
+  stroke(color(155,155,0));
+  spectrum.absorptionbuffer[x] = int (255*(1-(val/(spectrum.storedbuffer[x]+1.00))));
+  int last = x-1;
+  if (last < 0) { last = 0; }
+  line(x,height-spectrum.absorptionbuffer[last],x+1,height-spectrum.absorptionbuffer[x]);
+
+  absorptionSum += spectrum.absorptionbuffer[x];
+  spectrum.enhancedabsorptionbuffer[x] = (spectrum.absorptionbuffer[x] - averageAbsorption) * 4;
+  spectrum.enhancedabsorptionbuffer[x] += averageAbsorption;
+  stroke(color(0,255,0)); // green line
+  last = x-1;
+  if (last < 0) { last = 0; }
+
+} else if (colortype == "rgb") { // RGB sensor calibration mode
+
+  stroke(color(255,0,0));
+  line(x,height-spectrum.lastred,x+1,height-rgb[0]);
+  spectrum.lastred = rgb[0];
+  stroke(color(0,255,0));
+  line(x,height-spectrum.lastgreen,x+1,height-rgb[1]);
+  spectrum.lastgreen = rgb[1];
+  stroke(color(0,0,255));
+  line(x,height-spectrum.lastblue,x+1,height-rgb[2]);
+  spectrum.lastblue = rgb[2];
+}
+        }
+        index++;
+      }
+    }
+    public void preview() {
+      for (int y = 0; y < int (video.height); y+=4) {
+        for (int x = 0; x < int (video.width); x+=4) {
+          if (x < width && y < height) {
+            if (video.isLinux) {
+              pixels[(height*3/4*width)+(y*width/4)+((x/4))] = video.gscapture.pixels[y*video.width+x];
+            } else {
+              pixels[(height*3/4*width)+(y*width/4)+((x/4))] = video.capture.pixels[y*video.width+x];
+            }
+          }
+        }
+      }
+      noFill();
+      stroke(255,255,0);
+      rect(0,height*3/4+samplerow/4-video.sampleHeight/4,video.width/4,video.sampleHeight/4);
+    }
+    public void storeReference() {
+      for (int x = 0;x < buffer[0].length;x++) {
+        storedbuffer[x] = (buffer[0][x][0]+buffer[0][x][1]+buffer[0][x][2])/3;
+      }
+    }
+}
+
 class SpectrumPresentation {
     int[][][] mBuffer;
 
@@ -108,16 +224,16 @@ class SpectrumPresentation {
         return builder.toString();
     }
 }
+Spectrum spectrum;
 class Keys {
-  public boolean commandKey;
-
+  public boolean controlKey = false;
 }
 Keys keys;
 
 void keyReleased() {
   if (key == CODED) {
     if (keyCode == CONTROL) {
-      keys.commandKey = false;
+      keys.controlKey = false;
     }
   }
 }
@@ -125,26 +241,23 @@ void keyReleased() {
 void keyPressed() {
   if (key == CODED) {
     if (keyCode == DOWN) {
-      samplerow += 1;
-      if (samplerow >= video.height) {
-        samplerow = video.height;
+      spectrum.samplerow += 1;
+      if (spectrum.samplerow >= video.height) {
+        spectrum.samplerow = video.height;
       }
     } else if (keyCode == UP) {
-      samplerow -= 1;
-      if (samplerow <= 0) {
-        samplerow = 0;
+      spectrum.samplerow -= 1;
+      if (spectrum.samplerow <= 0) {
+        spectrum.samplerow = 0;
       }
     } else if (keyCode == CONTROL) {
-      println("control key");
-      keys.commandKey = false;
+      keys.controlKey = true;
     }
   }
-  else if (key == ' ') {
-    for (int x = 0;x < spectrumbuf[0].length;x++) {
-      lastspectrum[x] = (spectrumbuf[0][x][0]+spectrumbuf[0][x][1]+spectrumbuf[0][x][2])/3;
-    }
+  else if (key == ' ' && keys.controlKey) {
+    spectrum.storeReference();
   }
-  else if (key == 's' && keys.commandKey) {
+  else if (key == 's' && keys.controlKey) {
     println("saving to server...");
     server.upload();
   }
@@ -276,10 +389,6 @@ class Video {
       gscapture.read();
     } //else papplet.image(capture,x,y,imgWidth,imgHeight);
   }
-  /*
-   * Retrieve red, green, blue color intensities
-   * from video input for given pixel
-   */
   public int[] get_rgb(int x)
   {
     rgb = new int[3];
@@ -288,7 +397,7 @@ class Video {
     rgb[2] = 0;
 
     for (int yoff = int (sampleHeight/-2); yoff < int (sampleHeight/2); yoff+=1) {
-      int sampleind = int ((video.width*samplerow)+(video.width*yoff)+x);
+      int sampleind = int ((video.width*spectrum.samplerow)+(video.width*yoff)+x);
 
       if (sampleind >= 0 && sampleind <= (video.height*video.width)) {
         int pixelColor;
@@ -350,7 +459,7 @@ class Filter implements AudioSignal, AudioListener
     fft.forward(samp);
     loadPixels();
 
-    int index = int (video.width*samplerow); //the middle horizontal strip
+    int index = int (video.width*spectrum.samplerow); //the middle horizontal strip
 
     for (int x = 0; x < fft.specSize(); x+=1) {
 
@@ -360,10 +469,10 @@ class Filter implements AudioSignal, AudioListener
       int g = (pixelColor >> 8) & 0xff;
       int b = pixelColor & 0xff;
 
-      if (absorption[x] < 0) {
+      if (spectrum.absorptionbuffer[x] < 0) {
         fft.setBand(x,map(0,0,255,0,1));
       } else {
-        fft.setBand(x,map(contrastEnhancedAbsorption[x]/3.00,0,255,0.4,0.7));
+        fft.setBand(x,map(spectrum.enhancedabsorptionbuffer[x]/3.00,0,255,0.4,0.7));
       }
       index++;
     }
@@ -381,7 +490,7 @@ Filter filter;
 class Server {
   public void upload() {
     String spectraFolder = "spectra/";
-    SpectrumPresentation presenter = new SpectrumPresentation(spectrumbuf);
+    SpectrumPresentation presenter = new SpectrumPresentation(spectrum.buffer);
 
     PrintWriter csv = createWriter(spectraFolder + presenter.generateFileName(typedText, "csv"));
     csv.print(presenter.toCsv());
@@ -452,33 +561,18 @@ final static String defaultTypedText = "type to label spectrum";
 String typedText = defaultTypedText;
 PFont font;
 int audiocount = 0;
-int res = 1;
-int samplerow;
 int lastval = 0;
-int lastred = 0;
-int lastgreen = 0;
-int lastblue = 0;
-int[][][] spectrumbuf;
-int history = 150;
-int[] lastspectrum, absorption, contrastEnhancedAbsorption;
 int averageAbsorption = 0;
 int absorptionSum;
+PImage logo;
 
 public void setup() {
   system = new System();
+  keys = new Keys();
   size(screen.width, screen.height-20, P2D);
   video = new Video(this,1280,720,0);
-  samplerow = int (height*(0.250));
+  spectrum = new Spectrum(150,int (height*(0.250))); //history (length),samplerow (row # to begin sampling)
   font = loadFont("Georgia-Italic-18.vlw");
-
-  spectrumbuf = new int[history][video.width][3];
-  lastspectrum = new int[video.width];
-  absorption = new int[video.width];
-  contrastEnhancedAbsorption = new int[video.width];
-  for (int x = 0;x < video.width;x++) { // is this necessary? initializing the spectrum buffer with zeroes? come on!
-    absorption[x] = 0;
-    contrastEnhancedAbsorption[x] = 0;
-  }
   filter = new Filter(this);
 }
 
@@ -490,15 +584,6 @@ public void captureEvent(GSCapture c) { //linux
 }
 
 void draw() {
-
-  for (int i = history-1;i > 0;i--) {
-    for (int x = 0;x < video.width;x++) {
-      spectrumbuf[i][x] = spectrumbuf[i-1][x];
-    }
-  }
-  for (int x = 0;x < video.width;x++) { // is this necessary? initializing the spectrum buffer with zeroes? come on!
-  }
-
   loadPixels(); //load screen pixel buffer into pixels[]
   background(64);
 
@@ -507,97 +592,20 @@ void draw() {
   line(0,height-255,width,height-255); //100% mark for spectra
 
   textFont(font,18);
-  text("PLOTS Spectral Workbench", 15, 25+history); //display current title
-  text(typedText, 15, 55+history); //display current title
+  text("PLOTS Spectral Workbench", 55, 25+spectrum.history); //display current title
+  text(typedText, 15, 55+spectrum.history); //display current title
 
   absorptionSum = 0;
 
-  if (colortype == "rgb") {
-    for (int y = 0; y < int (video.height); y+=4) {
-      for (int x = 0; x < int (video.width); x+=4) {
-        if (x < width && y < height) {
-          if (video.isLinux) {
-            pixels[(height*3/4*width)+(y*width/4)+((x/4))] = video.gscapture.pixels[y*video.width+x];
-          } else {
-            pixels[(height*3/4*width)+(y*width/4)+((x/4))] = video.capture.pixels[y*video.width+x];
-          }
-        }
-      }
-    }
-    noFill();
-    stroke(255,255,0);
-    rect(0,height*3/4+samplerow/4,video.width/4,video.sampleHeight/4);
-  }
+  if (colortype == "rgb") { spectrum.preview(); }
+
   stroke(255);
   fill(255);
-
-
-  int index = int (video.width*samplerow); //the horizontal strip to sample
-  for (int x = 0; x < int (video.width); x+=res) {
-
-    int[] rgb = video.get_rgb(x);
-
-    spectrumbuf[0][x] = rgb;
-    if (x < width) {
-      for (int y = 0; y < history; y++) {
-        if (colortype == "heat") {
-		colorMode(HSB,255);
-		pixels[(history*width)-(y*width)+x] = color(255-(spectrumbuf[y][x][0]+spectrumbuf[y][x][1]+spectrumbuf[y][x][2])/3,255,255);
-		colorMode(RGB,255);
-        } else {
-		pixels[(history*width)-(y*width)+x] = color(spectrumbuf[y][x][0],spectrumbuf[y][x][1],spectrumbuf[y][x][2]);
-	}
-      }
-/*
- * Draws spectrum intensity graph,
- * runs for each column of video data, every frame
- */
-
-if (colortype == "combined" || colortype == "heat") {
-  stroke(255);
-  int val = (rgb[0]+rgb[1]+rgb[2])/3;
-  line(x,height-lastval,x+1,height-val);
-  lastval = (rgb[0]+rgb[1]+rgb[2])/3;
-
-  stroke(color(255,0,0));
-  int lastind = x-1;
-  if (lastind < 0) {
-     lastind = 0;
-  }
-  line(x,height-lastspectrum[lastind],x+1,height-lastspectrum[x]);
-
-  stroke(color(155,155,0));
-  absorption[x] = int (255*(1-(val/(lastspectrum[x]+1.00))));
-  int last = x-1;
-  if (last < 0) { last = 0; }
-  line(x,height-absorption[last],x+1,height-absorption[x]);
-
-  absorptionSum += absorption[x];
-  contrastEnhancedAbsorption[x] = (absorption[x] - averageAbsorption) * 4;
-  contrastEnhancedAbsorption[x] += averageAbsorption;
-  stroke(color(0,255,0)); // green line
-  last = x-1;
-  if (last < 0) { last = 0; }
-
-} else if (colortype == "rgb") { // RGB sensor calibration mode
-
-  stroke(color(255,0,0));
-  line(x,height-lastred,x+1,height-rgb[0]);
-  lastred = rgb[0];
-  stroke(color(0,255,0));
-  line(x,height-lastgreen,x+1,height-rgb[1]);
-  lastgreen = rgb[1];
-  stroke(color(0,0,255));
-  line(x,height-lastblue,x+1,height-rgb[2]);
-  lastblue = rgb[2];
-}
-    }
-    index++;
-  }
-
   averageAbsorption = absorptionSum/width;
   stroke(128);
   line(0,averageAbsorption/3,width,averageAbsorption/3);
+
+  spectrum.draw();
 
   updatePixels();
 }
