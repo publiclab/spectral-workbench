@@ -1,4 +1,4 @@
 #!/bin/sh
 
 APPDIR=$(dirname "$0")
-java  -Djava.library.path="$APPDIR" -cp "$APPDIR/lib/spectrometry_kit.jar:$APPDIR/lib/core.jar:$APPDIR/lib/video.jar:$APPDIR/lib/jna.jar:$APPDIR/lib/GSVideo.jar:$APPDIR/lib/gstreamer-java.jar:$APPDIR/lib/minim.jar:$APPDIR/lib/tritonus_share.jar:$APPDIR/lib/mp3spi1.9.4.jar:$APPDIR/lib/tritonus_aos.jar:$APPDIR/lib/minim-spi.jar:$APPDIR/lib/jl1.0.jar:$APPDIR/lib/jsminim.jar" spectrometry_kit
+java  -Djava.library.path="$APPDIR" -cp "$APPDIR/lib/spectrometry_kit.jar:$APPDIR/lib/core.jar:$APPDIR/lib/video.jar:$APPDIR/lib/gstreamer-java.jar:$APPDIR/lib/GSVideo.jar:$APPDIR/lib/jna.jar:$APPDIR/lib/jl1.0.jar:$APPDIR/lib/jsminim.jar:$APPDIR/lib/minim-spi.jar:$APPDIR/lib/minim.jar:$APPDIR/lib/mp3spi1.9.4.jar:$APPDIR/lib/tritonus_aos.jar:$APPDIR/lib/tritonus_share.jar:$APPDIR/lib/jl1.0.jar:$APPDIR/lib/jsminim.jar:$APPDIR/lib/minim-spi.jar:$APPDIR/lib/minim.jar:$APPDIR/lib/mp3spi1.9.4.jar:$APPDIR/lib/tritonus_aos.jar:$APPDIR/lib/tritonus_share.jar" spectrometry_kit
