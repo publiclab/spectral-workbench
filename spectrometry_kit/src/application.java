@@ -31,9 +31,9 @@ import ddf.minim.*;
 
 //= require <models/spectrum>
 Spectrum spectrum;
-//= require <input/keyboard>
+//= require <interface/keyboard>
 Keyboard keyboard;
-//= require <input/mouse>
+//= require <interface/mouse>
 Mouse mouse;
 //= require <models/system>
 System system;
@@ -82,7 +82,7 @@ public void setup() {
   spectrum = new Spectrum(int (height-headerHeight)/2,int (height*(0.250))); //history (length),samplerow (row # to begin sampling)
   font = loadFont("Georgia-Italic-24.vlw");  
   filter = new Filter(this);
-  //logo = loadImage("logo.png");
+  logo = loadImage("logo-small.png");
 }
 
 public void captureEvent(Capture c) { //mac or windows
@@ -100,7 +100,7 @@ void draw() {
   noStroke();
   line(0,height-255,width,height-255); //100% mark for spectra
 
-  //image(logo,0,0);
+  image(logo,14,14);
   textFont(font,24);
   text("PLOTS Spectral Workbench: "+typedText, 55, 40); //display current title
 
