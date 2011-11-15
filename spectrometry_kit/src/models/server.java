@@ -3,11 +3,11 @@ class Server {
    * Save the current spectrum to the server
    */
   public void upload() {
+    println("got this far");
+
     //save CSV and JSON:
     String spectraFolder = "spectra/";
     SpectrumPresentation presenter = new SpectrumPresentation(spectrum.buffer);
-
-    println("got this far");
 
     PrintWriter csv = createWriter(spectraFolder + presenter.generateFileName(typedText, "csv"));
     csv.print(presenter.toCsv());

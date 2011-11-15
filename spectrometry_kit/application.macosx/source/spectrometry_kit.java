@@ -1,3 +1,24 @@
+import processing.core.*; 
+import processing.xml.*; 
+
+import processing.video.*; 
+import codeanticode.gsvideo.*; 
+import ddf.minim.analysis.*; 
+import ddf.minim.*; 
+
+import java.applet.*; 
+import java.awt.*; 
+import java.awt.image.*; 
+import java.awt.event.*; 
+import java.io.*; 
+import java.net.*; 
+import java.text.*; 
+import java.util.*; 
+import java.util.zip.*; 
+import java.util.regex.*; 
+
+public class spectrometry_kit extends PApplet {
+
 /*
 Spectrometry_kit - a Processing.org-based interface for spectral analysis with a USB webcam-based spectrometer. Also a spectrometer-based musical instrument or guitar pedal
 
@@ -24,10 +45,10 @@ You should have received a copy of the GNU General Public License
 along with PLOTS Spectral Workbench.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import processing.video.*; //mac or windows
-import codeanticode.gsvideo.*; //linux
-import ddf.minim.analysis.*;
-import ddf.minim.*;
+ //mac or windows
+ //linux
+
+
 
 class Spectrum {
     public int[][][] buffer;
@@ -60,8 +81,8 @@ class Spectrum {
         }
       }
 
-      int index = int (video.width*samplerow); //the horizontal strip to sample
-      for (int x = 0; x < int (video.width); x+=resolution) {
+      int index = PApplet.parseInt (video.width*samplerow); //the horizontal strip to sample
+      for (int x = 0; x < PApplet.parseInt (video.width); x+=resolution) {
 
         int[] rgb = video.get_rgb(x);
 
@@ -105,7 +126,7 @@ if (controller == "analyze" || controller == "heatmap") {
   line(x,height-spectrum.storedbuffer[lastind],x+1,height-spectrum.storedbuffer[x]);
 
   stroke(color(155,155,0));
-  spectrum.absorptionbuffer[x] = int (255*(1-(val/(spectrum.storedbuffer[x]+1.00))));
+  spectrum.absorptionbuffer[x] = PApplet.parseInt (255*(1-(val/(spectrum.storedbuffer[x]+1.00f))));
   int last = x-1;
   if (last < 0) { last = 0; }
   line(x,height-spectrum.absorptionbuffer[last],x+1,height-spectrum.absorptionbuffer[x]);
@@ -134,8 +155,8 @@ if (controller == "analyze" || controller == "heatmap") {
       }
     }
     public void preview() {
-      for (int y = 0; y < int (video.height); y+=4) {
-        for (int x = 0; x < int (video.width); x+=4) {
+      for (int y = 0; y < PApplet.parseInt (video.height); y+=4) {
+        for (int x = 0; x < PApplet.parseInt (video.width); x+=4) {
           if (x < width && y < height) {
             if (video.isLinux) {
               pixels[(height*3/4*width)+(y*width/4)+((x/4))] = video.gscapture.pixels[y*video.width+x];
@@ -163,19 +184,19 @@ class SpectrumPresentation {
         mBuffer = pBuffer;
     }
 
-    int getRed(int[] pPixel) {
+    public int getRed(int[] pPixel) {
         return pPixel[0];
     }
 
-    int getGreen(int[] pPixel) {
+    public int getGreen(int[] pPixel) {
         return pPixel[1];
     }
 
-    int getBlue(int[] pPixel) {
+    public int getBlue(int[] pPixel) {
         return pPixel[2];
     }
 
-    double wavelengthAverage(int[] pPixel) {
+    public double wavelengthAverage(int[] pPixel) {
         return (getRed(pPixel) + getGreen(pPixel) + getBlue(pPixel))/3;
     }
 
@@ -240,7 +261,7 @@ class Keyboard {
   public boolean controlKey = false;
 }
 
-void keyReleased() {
+public void keyReleased() {
   if (key == CODED) {
     if (keyCode == CONTROL) {
       keyboard.controlKey = false;
@@ -248,7 +269,7 @@ void keyReleased() {
   }
 }
 
-void keyPressed() {
+public void keyPressed() {
   if (key == CODED) {
     if (keyCode == DOWN) {
       spectrum.samplerow += 1;
@@ -294,7 +315,7 @@ class Mouse {
   }
 }
 
-void mousePressed() {
+public void mousePressed() {
   if (mouseY < headerHeight) {
     if (mouseX > width-100) {
       println("Saving to server (button)");
@@ -406,7 +427,7 @@ class Video {
   }
   public float scale()
   {
-    return (width*1.000)/screen.width;
+    return (width*1.000f)/screen.width;
   }
   public void image(int x,int y,int imgWidth,int imgHeight)
   {
@@ -421,8 +442,8 @@ class Video {
     rgb[1] = 0;
     rgb[2] = 0;
 
-    for (int yoff = int (sampleHeight/-2); yoff < int (sampleHeight/2); yoff+=1) {
-      int sampleind = int ((video.width*spectrum.samplerow)+(video.width*yoff)+x);
+    for (int yoff = PApplet.parseInt (sampleHeight/-2); yoff < PApplet.parseInt (sampleHeight/2); yoff+=1) {
+      int sampleind = PApplet.parseInt ((video.width*spectrum.samplerow)+(video.width*yoff)+x);
 
       if (sampleind >= 0 && sampleind <= (video.height*video.width)) {
         int pixelColor;
@@ -437,9 +458,9 @@ class Video {
       }
     }
 
-    rgb[0] = int (rgb[0]/(sampleHeight*1.00));
-    rgb[1] = int (rgb[1]/(sampleHeight*1.00));
-    rgb[2] = int (rgb[2]/(sampleHeight*1.00));
+    rgb[0] = PApplet.parseInt (rgb[0]/(sampleHeight*1.00f));
+    rgb[1] = PApplet.parseInt (rgb[1]/(sampleHeight*1.00f));
+    rgb[2] = PApplet.parseInt (rgb[2]/(sampleHeight*1.00f));
 
     return rgb;
   }
@@ -468,27 +489,27 @@ class Filter implements AudioSignal, AudioListener
     in.addListener(this);
     out.addSignal(this);
   }
-  synchronized void samples(float[] samp)
+  public synchronized void samples(float[] samp)
   {
     arraycopy(samp,leftChannel);
   }
-  synchronized void samples(float[] sampL, float[] sampR)
+  public synchronized void samples(float[] sampL, float[] sampR)
   {
     arraycopy(sampL,leftChannel);
     arraycopy(sampR,rightChannel);
   }
-  void generate(float[] samp)
+  public void generate(float[] samp)
   {
     arraycopy(leftChannel,samp);
     if (true) {
     fft.forward(samp);
     loadPixels();
 
-    int index = int (video.width*spectrum.samplerow); //the middle horizontal strip
+    int index = PApplet.parseInt (video.width*spectrum.samplerow); //the middle horizontal strip
 
     for (int x = 0; x < fft.specSize(); x+=1) {
 
-      int vindex = int (map(x,0,fft.specSize(),0,video.width));
+      int vindex = PApplet.parseInt (map(x,0,fft.specSize(),0,video.width));
       int pixelColor = pixels[vindex];
       int r = (pixelColor >> 16) & 0xff;
       int g = (pixelColor >> 8) & 0xff;
@@ -497,14 +518,14 @@ class Filter implements AudioSignal, AudioListener
       if (spectrum.absorptionbuffer[x] < 0) {
         fft.setBand(x,map(0,0,255,0,1));
       } else {
-        fft.setBand(x,map(spectrum.enhancedabsorptionbuffer[x]/3.00,0,255,0.4,0.7));
+        fft.setBand(x,map(spectrum.enhancedabsorptionbuffer[x]/3.00f,0,255,0.4f,0.7f));
       }
       index++;
     }
     fft.inverse(samp);
     }
   }
-  void generate(float[] left, float[] right)
+  public void generate(float[] left, float[] right)
   {
     generate(left);
     generate(right);
@@ -611,7 +632,7 @@ public void setup() {
   mouse = new Mouse();
   size(screen.width, screen.height-20, P2D);
   video = new Video(this,1280,720,0);
-  spectrum = new Spectrum(int (height-headerHeight)/2,int (height*(0.250))); //history (length),samplerow (row # to begin sampling)
+  spectrum = new Spectrum(PApplet.parseInt (height-headerHeight)/2,PApplet.parseInt (height*(0.250f))); //history (length),samplerow (row # to begin sampling)
   font = loadFont("Georgia-Italic-24.vlw");
   filter = new Filter(this);
   logo = loadImage("logo-small.png");
@@ -624,7 +645,7 @@ public void captureEvent(GSCapture c) { //linux
   c.read();
 }
 
-void draw() {
+public void draw() {
   loadPixels(); //load screen pixel buffer into pixels[]
   background(64);
 
@@ -669,3 +690,8 @@ void draw() {
   updatePixels();
 }
 
+
+  static public void main(String args[]) {
+    PApplet.main(new String[] { "--present", "--bgcolor=#666666", "--stop-color=#cccccc", "spectrometry_kit" });
+  }
+}
