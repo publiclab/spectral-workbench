@@ -107,10 +107,10 @@ void draw() {
   int padding = 10;
   noFill();
   stroke(255);
-  rect(width-100,0,100,headerHeight);
+  //rect(width-100,0,100,headerHeight);
   fill(255);
   noStroke();
-  text("Save",width-100+padding,40);
+  //text("Save",width-100+padding,40);
   noFill();
   stroke(255);
   rect(width-300,0,200,headerHeight);

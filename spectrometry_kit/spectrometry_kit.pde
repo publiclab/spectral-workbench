@@ -305,8 +305,7 @@ void mousePressed() {
       switchMode();
     }
     if (mouseX > width-400 && mouseX < width-300) {
-      println("screensave");
-      open("~/Desktop/start-guide.app");
+      open("~/Desktop/Safari.app");
     }
   }
 }
@@ -638,10 +637,8 @@ void draw() {
   int padding = 10;
   noFill();
   stroke(255);
-  rect(width-100,0,100,headerHeight);
   fill(255);
   noStroke();
-  text("Save",width-100+padding,40);
   noFill();
   stroke(255);
   rect(width-300,0,200,headerHeight);
