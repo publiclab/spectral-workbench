@@ -73,6 +73,9 @@ public void switchMode() {
 }
 
 public void setup() {
+  font = loadFont("Georgia-Italic-24.vlw");  
+  textFont(font,24);
+
   system = new System();
   keyboard = new Keyboard();
   //hmmm... controller definitions:
@@ -89,8 +92,6 @@ public void setup() {
   //video = new Video(this,640,480,0);
   video = new Video(this,1280,720,0);
   spectrum = new Spectrum(int (height-headerHeight)/2,int (height*(0.18))); //history (length),samplerow (row # to begin sampling)
-  font = loadFont("Georgia-Italic-24.vlw");  
-  textFont(font,24);
   filter = new Filter(this);
 }
 

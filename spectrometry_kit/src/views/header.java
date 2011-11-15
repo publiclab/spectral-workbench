@@ -6,19 +6,26 @@ class Header {
   public PImage logo;
   public int rightOffset = 0; // where to put new buttons (shifts as buttons are added)
   public Button[] buttons;
+  public Button saveButton;
+  public Button heatmapButton;
   public Button setupButton;
+  public Button baselineButton;
 
   public Header() {
-    // we could define all our buttons here... 
-    // and they could call functions in the controller?
-
-    //setupButton = new Button("Setup",width-500,0);
     logo = loadImage("logo-small.png");
+
+    saveButton = addButton("Save");
+    heatmapButton = addButton("Heatmap");
+    setupButton = addButton("Setup");
+    baselineButton = addButton("Baseline");
   }
 
-  public void addButton(Button pButton) {
+  public Button addButton(String buttonName) {
     // buttons.push(); // add pButton to buttons array
-    rightOffset += pButton.width;
+    Button button = new Button(buttonName,width-rightOffset,0);
+    rightOffset += button.width;
+    button.x -= button.width; 
+    return button;
   }
 
   public void mousePressed() {
@@ -36,6 +43,9 @@ class Header {
     if (mouseX > width-350 && mouseX < width-200) {
       switchMode();
       controller = "heatmap";
+    }
+    if (baselineButton.mouseOver()) {
+      spectrum.storeReference();
     }
     //if (mouseX > width-400 && mouseX < width-300) {
       //open("~/Desktop/Safari.app");
@@ -57,25 +67,10 @@ class Header {
     textFont(font,24);
     text("PLOTS Spectral Workbench: "+typedText, 55, 40); //display current title
 
-    int padding = 10;
-    noFill();
-    stroke(255);
-    //rect(width-100,0,100,headerHeight);
-    fill(255);
-    noStroke();
-    //text("Save",width-100+padding,40);
-    noFill();
-    stroke(255);
-    rect(width-200,0,100,headerHeight-1);
-    fill(255);
-    noStroke();
-    text("Setup",width-200+padding,40);
-    noFill();
-    stroke(255);
-    rect(width-350,0,150,headerHeight-1);
-    fill(255);
-    noStroke();
-    text("Heatmap",width-350+padding,40);
+    saveButton.draw();
+    heatmapButton.draw();
+    setupButton.draw();
+    baselineButton.draw();
   }
 }
 

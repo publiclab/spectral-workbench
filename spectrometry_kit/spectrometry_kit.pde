@@ -567,7 +567,7 @@ class Server {
     save(spectraFolder + presenter.generateFileName(typedText, "png"));
     try {
       println(serverUrl+"/spectrums/create?title="+typedText);
-      URL u = new URL("http://localhost:3000/spectrums/create?title="+typedText);
+      URL u = new URL(serverUrl+"/spectrums/create?title="+typedText);
       this.postData(u,presenter.toJson(presenter.generateFileName(typedText, null)).getBytes());
     } catch (MalformedURLException e) {
       println("ERROR " +e.getMessage());
@@ -635,15 +635,25 @@ class Header {
   public PImage logo;
   public int rightOffset = 0; // where to put new buttons (shifts as buttons are added)
   public Button[] buttons;
+  public Button saveButton;
+  public Button heatmapButton;
   public Button setupButton;
+  public Button baselineButton;
 
   public Header() {
-
     logo = loadImage("logo-small.png");
+
+    saveButton = addButton("Save");
+    heatmapButton = addButton("Heatmap");
+    setupButton = addButton("Setup");
+    baselineButton = addButton("Baseline");
   }
 
-  public void addButton(Button pButton) {
-    rightOffset += pButton.width;
+  public Button addButton(String buttonName) {
+    Button button = new Button(buttonName,width-rightOffset,0);
+    rightOffset += button.width;
+    button.x -= button.width;
+    return button;
   }
 
   public void mousePressed() {
@@ -658,6 +668,9 @@ class Header {
       switchMode();
       controller = "heatmap";
     }
+    if (baselineButton.mouseOver()) {
+      spectrum.storeReference();
+    }
   }
 
   public void draw() {
@@ -668,23 +681,10 @@ class Header {
     textFont(font,24);
     text("PLOTS Spectral Workbench: "+typedText, 55, 40); //display current title
 
-    int padding = 10;
-    noFill();
-    stroke(255);
-    fill(255);
-    noStroke();
-    noFill();
-    stroke(255);
-    rect(width-200,0,100,headerHeight-1);
-    fill(255);
-    noStroke();
-    text("Setup",width-200+padding,40);
-    noFill();
-    stroke(255);
-    rect(width-350,0,150,headerHeight-1);
-    fill(255);
-    noStroke();
-    text("Heatmap",width-350+padding,40);
+    saveButton.draw();
+    heatmapButton.draw();
+    setupButton.draw();
+    baselineButton.draw();
   }
 }
 
@@ -714,6 +714,9 @@ public void switchMode() {
 }
 
 public void setup() {
+  font = loadFont("Georgia-Italic-24.vlw");
+  textFont(font,24);
+
   system = new System();
   keyboard = new Keyboard();
   analyze = new Analyze();
@@ -724,8 +727,6 @@ public void setup() {
 
   video = new Video(this,1280,720,0);
   spectrum = new Spectrum(int (height-headerHeight)/2,int (height*(0.18))); //history (length),samplerow (row # to begin sampling)
-  font = loadFont("Georgia-Italic-24.vlw");
-  textFont(font,24);
   filter = new Filter(this);
 }
 

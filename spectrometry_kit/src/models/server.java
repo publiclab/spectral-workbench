@@ -30,7 +30,7 @@ class Server {
     //save to web:
     try {
       println(serverUrl+"/spectrums/create?title="+typedText);
-      URL u = new URL("http://localhost:3000/spectrums/create?title="+typedText);
+      URL u = new URL(serverUrl+"/spectrums/create?title="+typedText);
       //URL u = new URL(serverUrl+"/spectrums/create?title="+typedText);
       this.postData(u,presenter.toJson(presenter.generateFileName(typedText, null)).getBytes());
     } catch (MalformedURLException e) {
