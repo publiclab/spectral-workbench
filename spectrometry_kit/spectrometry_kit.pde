@@ -294,6 +294,10 @@ class Mouse {
   }
 }
 
+void mouseMoved() {
+  setupButton.hover();
+}
+
 void mousePressed() {
   if (mouseY < headerHeight) {
     if (mouseX > width-100) {
@@ -310,6 +314,43 @@ void mousePressed() {
   }
 }
 Mouse mouse;
+class Button {
+
+  public String text;
+  public int x = 0;
+  public int y = 0;
+  public int padding = 10;
+  public int width = 100;
+  public int height = headerHeight;
+  public int fontSize = 24;
+  public boolean hovering = false;
+
+  public Button(String pText,int pX, int pY) {
+    text = pText;
+    x = pX;
+    y = pY;
+    width = int (textWidth(text));
+  }
+
+  void draw() {
+    if (hovering) fill(24);
+    else noFill();
+    stroke(255);
+    rect(x,y,width+padding*2,height);
+    fill(255);
+    noStroke();
+    text(text,x+padding,y+height-((height-fontSize)/2));
+  }
+
+  void hover() {
+    if (mouseX > x && mouseX < x+width && mouseY > y && mouseY < y+height) {
+      hovering = true;
+    } else {
+      hovering = false;
+    }
+  }
+
+}
 /*
  * A class to interact with the system, mainly through
  * System.run() calls to access a shell prompt.
@@ -605,6 +646,8 @@ public void switchMode() {
     }
 }
 
+Button setupButton;
+
 public void setup() {
   system = new System();
   keyboard = new Keyboard();
@@ -613,8 +656,12 @@ public void setup() {
   video = new Video(this,1280,720,0);
   spectrum = new Spectrum(int (height-headerHeight)/2,int (height*(0.250))); //history (length),samplerow (row # to begin sampling)
   font = loadFont("Georgia-Italic-24.vlw");
+  textFont(font,24);
   filter = new Filter(this);
   logo = loadImage("logo-small.png");
+
+  setupButton = new Button("Setup",width-500,0);
+
 }
 
 public void captureEvent(Capture c) { //mac or windows
@@ -626,7 +673,7 @@ public void captureEvent(GSCapture c) { //linux
 
 void draw() {
   loadPixels(); //load screen pixel buffer into pixels[]
-  background(64);
+  background(34);
 
   fill(255);
   noStroke();
@@ -635,6 +682,8 @@ void draw() {
   image(logo,14,14);
   textFont(font,24);
   text("PLOTS Spectral Workbench: "+typedText, 55, 40); //display current title
+
+  setupButton.draw();
 
   int padding = 10;
   noFill();
@@ -658,13 +707,13 @@ void draw() {
 
   if (controller == "calibrate") { spectrum.preview(); }
 
+  spectrum.draw(headerHeight); //y position of top of spectrum
+
   stroke(255);
   fill(255);
   averageAbsorption = absorptionSum/width;
   stroke(128);
   line(0,averageAbsorption/3,width,averageAbsorption/3);
-
-  spectrum.draw(headerHeight); //y position of top of spectrum
 
   updatePixels();
 }

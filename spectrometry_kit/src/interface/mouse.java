@@ -4,6 +4,11 @@ class Mouse {
   }  
 }
 
+void mouseMoved() {
+  // we need like an "each do" statement for button storage
+  setupButton.hover();
+}
+
 void mousePressed() {
   // Handoff interaction to regions: 
   // Header:

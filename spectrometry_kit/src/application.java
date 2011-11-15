@@ -35,6 +35,7 @@ Spectrum spectrum;
 Keyboard keyboard;
 //= require <interface/mouse>
 Mouse mouse;
+//= require <interface/button>
 //= require <models/system>
 System system;
 //= require <models/video>
@@ -69,6 +70,8 @@ public void switchMode() {
     }
 }
 
+Button setupButton;
+
 public void setup() {
   system = new System();
   keyboard = new Keyboard();
@@ -81,8 +84,12 @@ public void setup() {
   video = new Video(this,1280,720,0);
   spectrum = new Spectrum(int (height-headerHeight)/2,int (height*(0.250))); //history (length),samplerow (row # to begin sampling)
   font = loadFont("Georgia-Italic-24.vlw");  
+  textFont(font,24);
   filter = new Filter(this);
   logo = loadImage("logo-small.png");
+
+  setupButton = new Button("Setup",width-500,0);
+
 }
 
 public void captureEvent(Capture c) { //mac or windows
@@ -94,7 +101,7 @@ public void captureEvent(GSCapture c) { //linux
 
 void draw() {
   loadPixels(); //load screen pixel buffer into pixels[]
-  background(64);
+  background(34);
 
   fill(255);
   noStroke();
@@ -103,6 +110,8 @@ void draw() {
   image(logo,14,14);
   textFont(font,24);
   text("PLOTS Spectral Workbench: "+typedText, 55, 40); //display current title
+
+  setupButton.draw();
 
   int padding = 10;
   noFill();
@@ -129,14 +138,14 @@ void draw() {
 
   if (controller == "calibrate") { spectrum.preview(); }
 
+  spectrum.draw(headerHeight); //y position of top of spectrum
+
   stroke(255);
   fill(255);
   // indicate average with a line
   averageAbsorption = absorptionSum/width;
   stroke(128);
   line(0,averageAbsorption/3,width,averageAbsorption/3);
-
-  spectrum.draw(headerHeight); //y position of top of spectrum
 
   updatePixels();
 }
