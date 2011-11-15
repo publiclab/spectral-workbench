@@ -39,6 +39,7 @@ class Server {
     }
     //clear label buffer
     typedText = "saved: type to label next spectrum";
+    link(serverUrl+"/spectrums/label/1");
   }
   /**
    * POST pData to pUrl

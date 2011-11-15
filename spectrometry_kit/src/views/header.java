@@ -11,10 +11,10 @@ class Header {
   public Button heatmapButton;
   public Button setupButton;
   public Button baselineButton;
+  public int margin = 4;
 
   public Header() {
     logo = loadImage("logo-small.png");
-
     saveButton = addButton("Save");
     heatmapButton = addButton("Heatmap");
     setupButton = addButton("Setup");
@@ -25,8 +25,8 @@ class Header {
 
   public Button addButton(String buttonName) {
     // buttons.push(); // add pButton to buttons array
-    Button button = new Button(buttonName,width-rightOffset,0);
-    rightOffset += button.width;
+    Button button = new Button(buttonName,width-rightOffset-margin,margin,headerHeight-8);
+    rightOffset += button.width+margin;
     button.x -= button.width; 
     return button;
   }

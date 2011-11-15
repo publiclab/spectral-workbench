@@ -60,6 +60,8 @@ class Spectrum {
         }
       }
 
+      absorptionSum = 0;
+
       int index = int (video.width*samplerow); //the horizontal strip to sample
       for (int x = 0; x < int (video.width); x+=resolution) {
 
@@ -135,6 +137,15 @@ if (controller == "analyze" || controller == "heatmap") {
 }
         }
         index++;
+
+        stroke(255);
+        fill(255);
+        averageAbsorption = absorptionSum/width;
+        stroke(128);
+        int avY = height-averageAbsorption/3;
+        line(0,avY,width,avY);
+        noStroke();
+        text(averageAbsorption,10,avY);
       }
     }
     public void preview() {
@@ -319,6 +330,14 @@ class Button {
   public boolean hovering = false;
   public color fillColor = #222222;
 
+  public Button(String pText,int pX, int pY, int pHeight) {
+    text = pText;
+    x = pX;
+    y = pY;
+    height = pHeight;
+    width = int (textWidth(text)+padding*2);
+  }
+
   public Button(String pText,int pX, int pY) {
     text = pText;
     x = pX;
@@ -331,15 +350,17 @@ class Button {
   }
 
   void draw() {
+    strokeCap(PROJECT);
     fill(fillColor);
-    stroke(12);
-    rect(x,y,width,height-1);
+    stroke(20);
+    rect(x,y+1,width-1,height-2);
     if (hovering) fill(0,0,0,50);
-    rect(x,y,width,height-2);
+    rect(x,y+1,width-1,height-2);
     fill(255);
     noStroke();
     text(text,x+padding,y+height-((height-fontSize)/2));
     hover();
+    strokeWeight(1);
   }
 
   void hover() {
@@ -583,6 +604,7 @@ class Server {
       println("ERROR " +e.getMessage());
     }
     typedText = "saved: type to label next spectrum";
+    link(serverUrl+"/spectrums/label/1");
   }
   public String postData(URL pUrl, byte[] pData) {
     try {
@@ -648,10 +670,10 @@ class Header {
   public Button heatmapButton;
   public Button setupButton;
   public Button baselineButton;
+  public int margin = 4;
 
   public Header() {
     logo = loadImage("logo-small.png");
-
     saveButton = addButton("Save");
     heatmapButton = addButton("Heatmap");
     setupButton = addButton("Setup");
@@ -661,8 +683,8 @@ class Header {
   }
 
   public Button addButton(String buttonName) {
-    Button button = new Button(buttonName,width-rightOffset,0);
-    rightOffset += button.width;
+    Button button = new Button(buttonName,width-rightOffset-margin,margin,headerHeight-8);
+    rightOffset += button.width+margin;
     button.x -= button.width;
     return button;
   }
@@ -752,6 +774,7 @@ public void captureEvent(GSCapture c) { //linux
 
 void draw() {
   loadPixels(); //load screen pixel buffer into pixels[]
+
   background(34);
 
   stroke(0);
@@ -759,17 +782,9 @@ void draw() {
 
   header.draw();
 
-  absorptionSum = 0;
-
   if (controller == "setup") { spectrum.preview(); }
 
   spectrum.draw(headerHeight); //y position of top of spectrum
-
-  stroke(255);
-  fill(255);
-  averageAbsorption = absorptionSum/width;
-  stroke(128);
-  line(0,height-averageAbsorption/3,width,height-averageAbsorption/3);
 
   updatePixels();
 }

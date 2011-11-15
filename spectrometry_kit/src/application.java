@@ -104,6 +104,7 @@ public void captureEvent(GSCapture c) { //linux
 
 void draw() {
   loadPixels(); //load screen pixel buffer into pixels[]
+
   background(34);
 
   stroke(0);
@@ -111,19 +112,9 @@ void draw() {
 
   header.draw();
 
-  // re-zero intensity sum
-  absorptionSum = 0;
-
   if (controller == "setup") { spectrum.preview(); }
 
   spectrum.draw(headerHeight); //y position of top of spectrum
-
-  stroke(255);
-  fill(255);
-  // indicate average with a line
-  averageAbsorption = absorptionSum/width;
-  stroke(128);
-  line(0,height-averageAbsorption/3,width,height-averageAbsorption/3);
 
   updatePixels();
 }
