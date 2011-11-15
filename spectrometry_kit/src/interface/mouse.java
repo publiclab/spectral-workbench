@@ -14,8 +14,10 @@ void mousePressed() {
     analyze.mousePressed();
   } else if (controller == "setup") {
     //setup.mousePressed();
+    analyze.mousePressed(); // for now, same.
   } else if (controller == "heatmap") {
     //heatmap.mousePressed();
+    analyze.mousePressed(); // for now, same.
   }
 
 }

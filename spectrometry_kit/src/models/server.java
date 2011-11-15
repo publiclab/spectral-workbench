@@ -3,7 +3,6 @@ class Server {
    * Save the current spectrum to the server
    */
   public void upload() {
-    println("got this far");
 
     //save CSV and JSON:
     String spectraFolder = "spectra/";

@@ -108,7 +108,11 @@ if (controller == "analyze" || controller == "heatmap") {
   spectrum.absorptionbuffer[x] = int (255*(1-(val/(spectrum.storedbuffer[x]+1.00))));
   int last = x-1;
   if (last < 0) { last = 0; }
-  line(x,height-spectrum.absorptionbuffer[last],x+1,height-spectrum.absorptionbuffer[x]);
+  int y1 = height-spectrum.absorptionbuffer[last];
+  int y2 = height-spectrum.absorptionbuffer[x];
+  if (y1 == 255) { y1 = 0; }
+  if (y2 == 255) { y2 = 0; }
+  line(x,y1,x+1,y2);
 
   absorptionSum += spectrum.absorptionbuffer[x];
   spectrum.enhancedabsorptionbuffer[x] = (spectrum.absorptionbuffer[x] - averageAbsorption) * 4;
@@ -281,7 +285,7 @@ void keyPressed() {
     typedText = "";
   }
   else {
-    if (typedText.equals(defaultTypedText)) {
+    if (typedText.equals(defaultTypedText) || typedText.equals("saved: type to label next spectrum")) {
       typedText = "";
     }
     typedText += key;
@@ -297,7 +301,9 @@ void mousePressed() {
   if (controller == "analyze") {
     analyze.mousePressed();
   } else if (controller == "setup") {
+    analyze.mousePressed(); // for now, same.
   } else if (controller == "heatmap") {
+    analyze.mousePressed(); // for now, same.
   }
 
 }
@@ -311,6 +317,7 @@ class Button {
   public int height = headerHeight;
   public int fontSize = 24;
   public boolean hovering = false;
+  public color fillColor = #222222;
 
   public Button(String pText,int pX, int pY) {
     text = pText;
@@ -324,13 +331,15 @@ class Button {
   }
 
   void draw() {
-    if (hovering) fill(24);
-    else noFill();
-    stroke(255);
-    rect(x,y,width,height);
+    fill(fillColor);
+    stroke(12);
+    rect(x,y,width,height-1);
+    if (hovering) fill(0,0,0,50);
+    rect(x,y,width,height-2);
     fill(255);
     noStroke();
     text(text,x+padding,y+height-((height-fontSize)/2));
+    hover();
   }
 
   void hover() {
@@ -546,7 +555,6 @@ class Filter implements AudioSignal, AudioListener
 Filter filter;
 class Server {
   public void upload() {
-    println("got this far");
 
     String spectraFolder = "spectra/";
     SpectrumPresentation presenter = new SpectrumPresentation(spectrum.buffer);
@@ -636,6 +644,7 @@ class Header {
   public int rightOffset = 0; // where to put new buttons (shifts as buttons are added)
   public Button[] buttons;
   public Button saveButton;
+  public Button analyzeButton;
   public Button heatmapButton;
   public Button setupButton;
   public Button baselineButton;
@@ -646,7 +655,9 @@ class Header {
     saveButton = addButton("Save");
     heatmapButton = addButton("Heatmap");
     setupButton = addButton("Setup");
+    analyzeButton = addButton("Analyze");
     baselineButton = addButton("Baseline");
+    baselineButton.fillColor = #444444;
   }
 
   public Button addButton(String buttonName) {
@@ -657,15 +668,16 @@ class Header {
   }
 
   public void mousePressed() {
-    if (mouseX > width-100) {
-      println("Saving to server (button)");
+    if (saveButton.mouseOver()) {
       server.upload();
     }
-    if (mouseX > width-200 && mouseX < width-100) {
+    if (analyzeButton.mouseOver()) {
+      controller = "analyze";
+    }
+    if (setupButton.mouseOver()) {
       controller = "setup";
     }
-    if (mouseX > width-350 && mouseX < width-200) {
-      switchMode();
+    if (heatmapButton.mouseOver()) {
       controller = "heatmap";
     }
     if (baselineButton.mouseOver()) {
@@ -682,6 +694,7 @@ class Header {
     text("PLOTS Spectral Workbench: "+typedText, 55, 40); //display current title
 
     saveButton.draw();
+    analyzeButton.draw();
     heatmapButton.draw();
     setupButton.draw();
     baselineButton.draw();

@@ -8,6 +8,7 @@ class Button {
   public int height = headerHeight;
   public int fontSize = 24;
   public boolean hovering = false;
+  public color fillColor = #222222;
 
   // can a class instance be passed a block to store/execute?? Surely...
   public Button(String pText,int pX, int pY) {
@@ -22,13 +23,15 @@ class Button {
   }
 
   void draw() {
-    if (hovering) fill(24);
-    else noFill();
-    stroke(255);
-    rect(x,y,width,height);
+    fill(fillColor);
+    stroke(12);
+    rect(x,y,width,height-1);
+    if (hovering) fill(0,0,0,50);
+    rect(x,y,width,height-2);
     fill(255);
     noStroke();
     text(text,x+padding,y+height-((height-fontSize)/2));
+    hover();
   }
 
   void hover() {

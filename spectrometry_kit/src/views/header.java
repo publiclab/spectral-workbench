@@ -7,6 +7,7 @@ class Header {
   public int rightOffset = 0; // where to put new buttons (shifts as buttons are added)
   public Button[] buttons;
   public Button saveButton;
+  public Button analyzeButton;
   public Button heatmapButton;
   public Button setupButton;
   public Button baselineButton;
@@ -17,7 +18,9 @@ class Header {
     saveButton = addButton("Save");
     heatmapButton = addButton("Heatmap");
     setupButton = addButton("Setup");
+    analyzeButton = addButton("Analyze");
     baselineButton = addButton("Baseline");
+    baselineButton.fillColor = #444444;
   }
 
   public Button addButton(String buttonName) {
@@ -31,17 +34,19 @@ class Header {
   public void mousePressed() {
     // break this up into some sort of Button model with registration of x,y,w,h
     // Save:
-    if (mouseX > width-100) {
-      println("Saving to server (button)");
+    if (saveButton.mouseOver()) {
       server.upload();
     }
     // Setup mode:
-    if (mouseX > width-200 && mouseX < width-100) {
+    if (analyzeButton.mouseOver()) {
+      controller = "analyze";
+    }
+    // Setup mode:
+    if (setupButton.mouseOver()) {
       controller = "setup";
     }
     // Heatmap mode:
-    if (mouseX > width-350 && mouseX < width-200) {
-      switchMode();
+    if (heatmapButton.mouseOver()) {
       controller = "heatmap";
     }
     if (baselineButton.mouseOver()) {
@@ -68,6 +73,7 @@ class Header {
     text("PLOTS Spectral Workbench: "+typedText, 55, 40); //display current title
 
     saveButton.draw();
+    analyzeButton.draw();
     heatmapButton.draw();
     setupButton.draw();
     baselineButton.draw();
