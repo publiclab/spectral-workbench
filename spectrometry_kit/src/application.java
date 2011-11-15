@@ -100,6 +100,9 @@ public void captureEvent(GSCapture c) { //linux
 }
 
 void draw() {
+  // we need like an "each do" statement for button storage
+  setupButton.hover();
+
   loadPixels(); //load screen pixel buffer into pixels[]
   background(34);
 

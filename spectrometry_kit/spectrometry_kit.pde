@@ -295,7 +295,6 @@ class Mouse {
 }
 
 void mouseMoved() {
-  setupButton.hover();
 }
 
 void mousePressed() {
@@ -329,14 +328,14 @@ class Button {
     text = pText;
     x = pX;
     y = pY;
-    width = int (textWidth(text));
+    width = int (textWidth(text)+padding*2);
   }
 
   void draw() {
     if (hovering) fill(24);
     else noFill();
     stroke(255);
-    rect(x,y,width+padding*2,height);
+    rect(x,y,width,height);
     fill(255);
     noStroke();
     text(text,x+padding,y+height-((height-fontSize)/2));
@@ -672,6 +671,8 @@ public void captureEvent(GSCapture c) { //linux
 }
 
 void draw() {
+  setupButton.hover();
+
   loadPixels(); //load screen pixel buffer into pixels[]
   background(34);
 
