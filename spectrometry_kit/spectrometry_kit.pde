@@ -769,7 +769,7 @@ void draw() {
   fill(255);
   averageAbsorption = absorptionSum/width;
   stroke(128);
-  line(0,averageAbsorption/3,width,averageAbsorption/3);
+  line(0,height-averageAbsorption/3,width,height-averageAbsorption/3);
 
   updatePixels();
 }
