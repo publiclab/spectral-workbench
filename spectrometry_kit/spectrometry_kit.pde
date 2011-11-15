@@ -117,7 +117,7 @@ if (controller == "analyze" || controller == "heatmap") {
   last = x-1;
   if (last < 0) { last = 0; }
 
-} else if (controller == "calibrate") { // RGB sensor calibration mode
+} else if (controller == "setup") { // RGB sensor calibration mode
 
   stroke(color(255,0,0));
   line(x,height-spectrum.lastred,x+1,height-rgb[0]);
@@ -288,31 +288,19 @@ void keyPressed() {
   }
 }
 Keyboard keyboard;
-class Mouse {
-  public Mouse() {
-
-  }
-}
 
 void mouseMoved() {
 }
 
 void mousePressed() {
-  if (mouseY < headerHeight) {
-    if (mouseX > width-100) {
-      println("Saving to server (button)");
-      server.upload();
-    }
-    if (mouseX > width-300 && mouseX < width-100) {
-      println("Switching mode (button)");
-      switchMode();
-    }
-    if (mouseX > width-400 && mouseX < width-300) {
-      open("~/Desktop/Safari.app");
-    }
+
+  if (controller == "analyze") {
+    analyze.mousePressed();
+  } else if (controller == "setup") {
+  } else if (controller == "heatmap") {
   }
+
 }
-Mouse mouse;
 class Button {
 
   public String text;
@@ -331,6 +319,10 @@ class Button {
     width = int (textWidth(text)+padding*2);
   }
 
+  boolean mouseOver() {
+    return (mouseX > x && mouseX < x+width && mouseY > y && mouseY < y+height);
+  }
+
   void draw() {
     if (hovering) fill(24);
     else noFill();
@@ -342,7 +334,7 @@ class Button {
   }
 
   void hover() {
-    if (mouseX > x && mouseX < x+width && mouseY > y && mouseY < y+height) {
+    if (mouseOver()) {
       hovering = true;
     } else {
       hovering = false;
@@ -554,10 +546,10 @@ class Filter implements AudioSignal, AudioListener
 Filter filter;
 class Server {
   public void upload() {
+    println("got this far");
+
     String spectraFolder = "spectra/";
     SpectrumPresentation presenter = new SpectrumPresentation(spectrum.buffer);
-
-    println("got this far");
 
     PrintWriter csv = createWriter(spectraFolder + presenter.generateFileName(typedText, "csv"));
     csv.print(presenter.toCsv());
@@ -620,24 +612,100 @@ class Server {
   }
 }
 Server server;
+class Analyze {
+
+  public Analyze() {
+
+  }
+
+  public void mousePressed() {
+    if (mouseY < headerHeight) { // Header
+      header.mousePressed();
+    } else if (mouseY < int (headerHeight+(height-headerHeight)/2)) { // Waterfall
+
+    } else { // Graph
+
+    }
+  }
+
+}
+Analyze analyze;
+class Header {
+
+  public PImage logo;
+  public int rightOffset = 0; // where to put new buttons (shifts as buttons are added)
+  public Button[] buttons;
+  public Button setupButton;
+
+  public Header() {
+
+    logo = loadImage("logo-small.png");
+  }
+
+  public void addButton(Button pButton) {
+    rightOffset += pButton.width;
+  }
+
+  public void mousePressed() {
+    if (mouseX > width-100) {
+      println("Saving to server (button)");
+      server.upload();
+    }
+    if (mouseX > width-200 && mouseX < width-100) {
+      controller = "setup";
+    }
+    if (mouseX > width-350 && mouseX < width-200) {
+      switchMode();
+      controller = "heatmap";
+    }
+  }
+
+  public void draw() {
+
+    fill(255);
+    noStroke();
+    image(logo,14,14);
+    textFont(font,24);
+    text("PLOTS Spectral Workbench: "+typedText, 55, 40); //display current title
+
+    int padding = 10;
+    noFill();
+    stroke(255);
+    fill(255);
+    noStroke();
+    noFill();
+    stroke(255);
+    rect(width-200,0,100,headerHeight-1);
+    fill(255);
+    noStroke();
+    text("Setup",width-200+padding,40);
+    noFill();
+    stroke(255);
+    rect(width-350,0,150,headerHeight-1);
+    fill(255);
+    noStroke();
+    text("Heatmap",width-350+padding,40);
+  }
+}
+
+
+Header header;
 
 String serverUrl = "http://spectrometer.publiclaboratory.org"; // the remote server to upload to
 String controller = "analyze"; // this determines what controller is used, i.e. what mode the app is in
 final static String defaultTypedText = "type to label spectrum";
 String typedText = defaultTypedText;
 PFont font;
-int audiocount = 0;
 int lastval = 0;
 int averageAbsorption = 0;
 int absorptionSum;
-PImage logo;
 int headerHeight = 60; // this should eventually be stored in some kind of view/controller config file...? header.height?
 
 public void switchMode() {
     if (controller == "analyze") {
-      controller = "calibrate";
+      controller = "setup";
     }
-    else if (controller == "calibrate") {
+    else if (controller == "setup") {
       controller = "heatmap";
     }
     else if (controller == "heatmap") {
@@ -645,25 +713,23 @@ public void switchMode() {
     }
 }
 
-Button setupButton;
-
 public void setup() {
   system = new System();
   keyboard = new Keyboard();
-  mouse = new Mouse();
+  analyze = new Analyze();
+  header = new Header();
+  server = new Server();
+
   size(screen.width, screen.height-20, P2D);
+
   video = new Video(this,1280,720,0);
-  spectrum = new Spectrum(int (height-headerHeight)/2,int (height*(0.250))); //history (length),samplerow (row # to begin sampling)
+  spectrum = new Spectrum(int (height-headerHeight)/2,int (height*(0.18))); //history (length),samplerow (row # to begin sampling)
   font = loadFont("Georgia-Italic-24.vlw");
   textFont(font,24);
   filter = new Filter(this);
-  logo = loadImage("logo-small.png");
-
-  setupButton = new Button("Setup",width-500,0);
-
 }
 
-public void captureEvent(Capture c) { //mac or windows
+public void captureEvent(Capture c) { //mac or windows via Quicktime Java bridge
   c.read();
 }
 public void captureEvent(GSCapture c) { //linux
@@ -671,42 +737,17 @@ public void captureEvent(GSCapture c) { //linux
 }
 
 void draw() {
-  setupButton.hover();
-
   loadPixels(); //load screen pixel buffer into pixels[]
   background(34);
 
-  fill(255);
-  noStroke();
+  stroke(0);
   line(0,height-255,width,height-255); //100% mark for spectra
 
-  image(logo,14,14);
-  textFont(font,24);
-  text("PLOTS Spectral Workbench: "+typedText, 55, 40); //display current title
-
-  setupButton.draw();
-
-  int padding = 10;
-  noFill();
-  stroke(255);
-  fill(255);
-  noStroke();
-  noFill();
-  stroke(255);
-  rect(width-300,0,200,headerHeight);
-  fill(255);
-  noStroke();
-  text(controller+" mode",width-300+padding,40);
-  noFill();
-  stroke(255);
-  rect(width-400,0,100,headerHeight);
-  fill(255);
-  noStroke();
-  text("How-to",width-400+padding,40);
+  header.draw();
 
   absorptionSum = 0;
 
-  if (controller == "calibrate") { spectrum.preview(); }
+  if (controller == "setup") { spectrum.preview(); }
 
   spectrum.draw(headerHeight); //y position of top of spectrum
 

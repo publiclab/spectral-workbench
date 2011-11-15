@@ -36,7 +36,7 @@ if (controller == "analyze" || controller == "heatmap") {
   if (last < 0) { last = 0; }
   //line(x,height-spectrum.enhancedabsorptionbuffer[last],x+1,height-spectrum.enhancedabsorptionbuffer[x]);
 
-} else if (controller == "calibrate") { // RGB sensor calibration mode
+} else if (controller == "setup") { // RGB sensor calibration mode
 
   // red channel:
   stroke(color(255,0,0));

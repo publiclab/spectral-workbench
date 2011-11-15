@@ -11,7 +11,7 @@ class Spectrum {
     public int samplerow;
     public int history;
     public int resolution = 1;
-    // for calibrate mode:
+    // for setup mode:
     public int lastred = 0;
     public int lastgreen = 0;
     public int lastblue = 0;

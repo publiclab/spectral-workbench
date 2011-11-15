@@ -9,11 +9,16 @@ class Button {
   public int fontSize = 24;
   public boolean hovering = false;
 
+  // can a class instance be passed a block to store/execute?? Surely...
   public Button(String pText,int pX, int pY) {
     text = pText;
     x = pX;
     y = pY;
     width = int (textWidth(text)+padding*2);
+  }
+
+  boolean mouseOver() {
+    return (mouseX > x && mouseX < x+width && mouseY > y && mouseY < y+height);
   }
 
   void draw() {
@@ -27,7 +32,7 @@ class Button {
   }
 
   void hover() {
-    if (mouseX > x && mouseX < x+width && mouseY > y && mouseY < y+height) {
+    if (mouseOver()) { 
       hovering = true;
     } else {
       hovering = false;

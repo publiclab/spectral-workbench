@@ -7,6 +7,7 @@ class Filter implements AudioSignal, AudioListener
   private AudioInput in;
   private AudioOutput out;
   public int bsize;
+  //public int audiocount = 0;
   public Filter(PApplet parent)
   {
     bsize = 512;

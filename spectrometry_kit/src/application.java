@@ -34,7 +34,7 @@ Spectrum spectrum;
 //= require <interface/keyboard>
 Keyboard keyboard;
 //= require <interface/mouse>
-Mouse mouse;
+//Mouse mouse;
 //= require <interface/button>
 //= require <models/system>
 System system;
@@ -44,6 +44,10 @@ Video video;
 Filter filter;
 //= require <models/server>
 Server server;
+//= require <controllers/analyze>
+Analyze analyze;
+//= require <views/header>
+Header header;
 
 //String serverUrl = "http://localhost:3000"; // the remote server to upload to
 String serverUrl = "http://spectrometer.publiclaboratory.org"; // the remote server to upload to
@@ -51,18 +55,16 @@ String controller = "analyze"; // this determines what controller is used, i.e. 
 final static String defaultTypedText = "type to label spectrum";
 String typedText = defaultTypedText;
 PFont font;
-int audiocount = 0;
 int lastval = 0;
 int averageAbsorption = 0;
 int absorptionSum;
-PImage logo;
 int headerHeight = 60; // this should eventually be stored in some kind of view/controller config file...? header.height?
 
 public void switchMode() {
     if (controller == "analyze") {
-      controller = "calibrate";
+      controller = "setup";
     } 
-    else if (controller == "calibrate") {
+    else if (controller == "setup") {
       controller = "heatmap";
     }
     else if (controller == "heatmap") {
@@ -70,29 +72,29 @@ public void switchMode() {
     }
 }
 
-Button setupButton;
-
 public void setup() {
   system = new System();
   keyboard = new Keyboard();
-  mouse = new Mouse();
+  //hmmm... controller definitions:
+  //application = new Controller(); // this could contain subcontrollers?
+  analyze = new Analyze();
+  header = new Header();
+  server = new Server();
+
   //size(640, 480, P2D);
   //size(1280, 720, P2D);
   // Or run full screen, more fun! Use with Sketch -> Present
   size(screen.width, screen.height-20, P2D);
+
   //video = new Video(this,640,480,0);
   video = new Video(this,1280,720,0);
-  spectrum = new Spectrum(int (height-headerHeight)/2,int (height*(0.250))); //history (length),samplerow (row # to begin sampling)
+  spectrum = new Spectrum(int (height-headerHeight)/2,int (height*(0.18))); //history (length),samplerow (row # to begin sampling)
   font = loadFont("Georgia-Italic-24.vlw");  
   textFont(font,24);
   filter = new Filter(this);
-  logo = loadImage("logo-small.png");
-
-  setupButton = new Button("Setup",width-500,0);
-
 }
 
-public void captureEvent(Capture c) { //mac or windows
+public void captureEvent(Capture c) { //mac or windows via Quicktime Java bridge
   c.read();
 }
 public void captureEvent(GSCapture c) { //linux
@@ -100,46 +102,18 @@ public void captureEvent(GSCapture c) { //linux
 }
 
 void draw() {
-  // we need like an "each do" statement for button storage
-  setupButton.hover();
-
   loadPixels(); //load screen pixel buffer into pixels[]
   background(34);
 
-  fill(255);
-  noStroke();
+  stroke(0);
   line(0,height-255,width,height-255); //100% mark for spectra
 
-  image(logo,14,14);
-  textFont(font,24);
-  text("PLOTS Spectral Workbench: "+typedText, 55, 40); //display current title
-
-  setupButton.draw();
-
-  int padding = 10;
-  noFill();
-  stroke(255);
-  //rect(width-100,0,100,headerHeight);
-  fill(255);
-  noStroke();
-  //text("Save",width-100+padding,40);
-  noFill();
-  stroke(255);
-  rect(width-300,0,200,headerHeight);
-  fill(255);
-  noStroke();
-  text(controller+" mode",width-300+padding,40);
-  noFill();
-  stroke(255);
-  rect(width-400,0,100,headerHeight);
-  fill(255);
-  noStroke();
-  text("How-to",width-400+padding,40);
+  header.draw();
 
   // re-zero intensity sum
   absorptionSum = 0;
 
-  if (controller == "calibrate") { spectrum.preview(); }
+  if (controller == "setup") { spectrum.preview(); }
 
   spectrum.draw(headerHeight); //y position of top of spectrum
 
