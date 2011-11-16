@@ -29,6 +29,7 @@ import codeanticode.gsvideo.*; //linux
 import ddf.minim.analysis.*;
 import ddf.minim.*;
 
+//= require <lib/bufferImage.java>
 //= require <models/spectrum>
 Spectrum spectrum;
 //= require <interface/keyboard>

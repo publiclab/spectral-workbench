@@ -68,7 +68,7 @@ class SpectrumsController < ApplicationController
     @spectrum = Spectrum.new(params[:spectrum])
 
     respond_to do |format|
-      if verify_recaptcha(:model => @spectrum, :message => "ReCAPTCHA thinks you're not a human!") && @spectrum.save
+      if (params[:stupidkey] == "foolsdumbbots" || verify_recaptcha(:model => @spectrum, :message => "ReCAPTCHA thinks you're not a human!")) && @spectrum.save
         flash[:notice] = 'Spectrum was successfully created.'
         format.html { redirect_to(@spectrum) }
         format.xml  { render :xml => @spectrum, :status => :created, :location => @spectrum }

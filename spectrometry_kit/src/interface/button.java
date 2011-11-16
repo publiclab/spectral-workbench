@@ -6,7 +6,7 @@ class Button {
   public int padding = 10;
   public int width = 100;
   public int height = headerHeight;
-  public int fontSize = 24;
+  public int fontSize = 18;//24;
   public boolean hovering = false;
   public boolean down = false;
   public color fillColor = #222222;

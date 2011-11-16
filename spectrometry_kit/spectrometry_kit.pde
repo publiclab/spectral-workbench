@@ -29,6 +29,31 @@ import codeanticode.gsvideo.*; //linux
 import ddf.minim.analysis.*;
 import ddf.minim.*;
 
+
+import com.sun.image.codec.jpeg.*;
+
+byte[] bufferImage(PImage srcimg) {
+  ByteArrayOutputStream out = new ByteArrayOutputStream();
+  BufferedImage img = new BufferedImage(srcimg.width, srcimg.height, 2);
+  img = (BufferedImage) createImage(srcimg.width,srcimg.height);
+  for (int i = 0; i < srcimg.width; i++)
+    for (int j = 0; j < srcimg.height; j++)
+      img.setRGB(i, j, srcimg.pixels[j * srcimg.width + i]);
+  try {
+    JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);
+    JPEGEncodeParam encpar = encoder.getDefaultJPEGEncodeParam(img);
+    encpar.setQuality(1, false);
+    encoder.setJPEGEncodeParam(encpar);
+    encoder.encode(img);
+  }
+  catch (FileNotFoundException e) {
+    println(e);
+  }
+  catch (IOException ioe) {
+    println(ioe);
+  }
+  return out.toByteArray();
+}
 class Spectrum {
     public int[][][] buffer;
     public int[] storedbuffer;
@@ -329,7 +354,7 @@ class Button {
   public int padding = 10;
   public int width = 100;
   public int height = headerHeight;
-  public int fontSize = 24;
+  public int fontSize = 18;//24;
   public boolean hovering = false;
   public boolean down = false;
   public color fillColor = #222222;
@@ -496,7 +521,7 @@ class Video {
     rgb[1] = 0;
     rgb[2] = 0;
 
-    for (int yoff = int (sampleHeight/-2); yoff < int (sampleHeight/2); yoff+=1) {
+    for (int yoff = spectrum.samplerow; yoff < spectrum.samplerow+sampleHeight; yoff+=1) {
       int sampleind = int ((video.width*spectrum.samplerow)+(video.width*yoff)+x);
 
       if (sampleind >= 0 && sampleind <= (video.height*video.width)) {
@@ -601,25 +626,33 @@ class Server {
     json.print(presenter.toJson(presenter.generateFileName(typedText, null)));
     json.close();
 
-    PGraphics pg;
+    save(spectraFolder + presenter.generateFileName(typedText, "png")); // this just saves the main pixel buffer
 
-    pg = createGraphics(80, 80, P3D, spectraFolder + "alt-" + presenter.generateFileName(typedText, "png"));
+    PGraphics pg;
+    pg = createGraphics(video.width, 100, P2D);
     pg.beginDraw();
+    for (int y=0;y<100;y++) {
+      for (int x=0;x<video.width;x++) {
+        pg.set(x,y,pixels[spectrum.samplerow*video.width+y*video.width+x]);
+      }
+    }
     pg.endDraw();
-    save(spectraFolder + presenter.generateFileName(typedText, "png"));
+    pg.save(spectraFolder + presenter.generateFileName(typedText + "-alt", "png"));
+
     try {
-      println(serverUrl+"/spectrums/create?title="+typedText);
-      URL u = new URL(serverUrl+"/spectrums/create?title="+typedText);
-      this.postData(u,presenter.toJson(presenter.generateFileName(typedText, null)).getBytes());
+      String response;
+      println(serverUrl+"/spectrums/create?title="+typedText+"&author=anonymous");
+      URL u = new URL(serverUrl+"/spectrums/create?title="+typedText+"&author=anonymous&stupidkey=foolsdumbbots");
+      response = postData(u,bufferImage(get(0, headerHeight, width, 100)),presenter.generateFileName(typedText,"jpg"));
+      typedText = "saved: type to label next spectrum";
+      link(serverUrl+"/spectra/edit/"+response);
     } catch (MalformedURLException e) {
       println("ERROR " +e.getMessage());
     } catch (IOException e) {
       println("ERROR " +e.getMessage());
     }
-    typedText = "saved: type to label next spectrum";
-    link(serverUrl+"/spectrums/label/1");
   }
-  public String postData(URL pUrl, byte[] pData) {
+  public String postData(URL pUrl, byte[] pData, String filename) {
     try {
         URLConnection c = pUrl.openConnection();
         c.setDoOutput(true);
@@ -631,9 +664,9 @@ class Server {
 
         DataOutputStream dstream = new DataOutputStream(c.getOutputStream());
 
-        dstream.writeBytes(boundary+"\r\n");
+        dstream.writeBytes("--"+boundary+"\r\n");
 
-        dstream.writeBytes("Content-Disposition: form-data; name=\"data\"; filename=\"whatever\" \r\nContent-Type: text/json\r\nContent-Transfer-Encoding: binary\r\n\r\n");
+        dstream.writeBytes("Content-Disposition: form-data; name=\"photo\"; filename=\""+filename+"\" \r\nContent-Type: image/jpeg\r\nContent-Transfer-Encoding: binary\r\n\r\n");
         dstream.write(pData ,0, pData.length);
 
         dstream.writeBytes("\r\n--"+boundary+"--\r\n\r\n");
@@ -677,7 +710,8 @@ class Header {
 
   public PImage logo;
   public int rightOffset = 0; // where to put new buttons (shifts as buttons are added)
-  public Button[] buttons;
+  public Button[] buttons; // we should store all buttons in here instead of explicitly defining, as below:
+  public Button learnButton;
   public Button saveButton;
   public Button analyzeButton;
   public Button heatmapButton;
@@ -687,6 +721,7 @@ class Header {
 
   public Header() {
     logo = loadImage("logo-small.png");
+    learnButton = addButton("Learn");
     saveButton = addButton("Save");
     heatmapButton = addButton("Heatmap");
     setupButton = addButton("Setup");
@@ -728,6 +763,9 @@ class Header {
     if (baselineButton.mouseOver()) {
       spectrum.storeReference();
     }
+    if (learnButton.mouseOver()) {
+      link("http://publiclaboratory.org/wiki/spectral-workbench");
+    }
   }
 
   public void draw() {
@@ -739,6 +777,7 @@ class Header {
     text("PLOTS Spectral Workbench: "+typedText, 55, 40); //display current title
 
     saveButton.draw();
+    learnButton.draw();
     analyzeButton.draw();
     heatmapButton.draw();
     setupButton.draw();

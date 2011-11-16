@@ -5,7 +5,8 @@ class Header {
 
   public PImage logo;
   public int rightOffset = 0; // where to put new buttons (shifts as buttons are added)
-  public Button[] buttons;
+  public Button[] buttons; // we should store all buttons in here instead of explicitly defining, as below:
+  public Button learnButton;
   public Button saveButton;
   public Button analyzeButton;
   public Button heatmapButton;
@@ -15,6 +16,7 @@ class Header {
 
   public Header() {
     logo = loadImage("logo-small.png");
+    learnButton = addButton("Learn");
     saveButton = addButton("Save");
     heatmapButton = addButton("Heatmap");
     setupButton = addButton("Setup");
@@ -33,26 +35,23 @@ class Header {
   }
 
   public void mousePressed() {
-    // break this up into some sort of Button model with registration of x,y,w,h
+    // eventually define these in the button definitions...
     // Save:
     if (saveButton.mouseOver()) {
       server.upload();
     }
-    // Setup mode:
     if (analyzeButton.mouseOver()) {
       controller = "analyze";
       heatmapButton.up();
       setupButton.up();
       analyzeButton.down();
     }
-    // Setup mode:
     if (setupButton.mouseOver()) {
       controller = "setup";
       heatmapButton.up();
       setupButton.down();
       analyzeButton.up();
     }
-    // Heatmap mode:
     if (heatmapButton.mouseOver()) {
       controller = "heatmap";
       heatmapButton.down();
@@ -62,12 +61,9 @@ class Header {
     if (baselineButton.mouseOver()) {
       spectrum.storeReference();
     }
-    //if (mouseX > width-400 && mouseX < width-300) {
-      //open("~/Desktop/Safari.app");
-      //String script = "tell application \'ScreenSaverEngine\' to activate";
-      //println("osascript -e \""+script+"\"");
-      //system.run("osascript -e \""+script+"\"");
-    //}
+    if (learnButton.mouseOver()) {
+      link("http://publiclaboratory.org/wiki/spectral-workbench");
+    }
   }
 
   public void draw() {
@@ -83,6 +79,7 @@ class Header {
     text("PLOTS Spectral Workbench: "+typedText, 55, 40); //display current title
 
     saveButton.draw();
+    learnButton.draw();
     analyzeButton.draw();
     heatmapButton.draw();
     setupButton.draw();
