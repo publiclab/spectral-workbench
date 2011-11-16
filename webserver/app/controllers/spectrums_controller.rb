@@ -65,13 +65,19 @@ class SpectrumsController < ApplicationController
   # POST /spectrums
   # POST /spectrums.xml
   def create
-    @spectrum = Spectrum.new(params[:spectrum])
+    @spectrum = Spectrum.new({:title => params[:spectrum][:title],
+				:author => params[:spectrum][:author],
+				:photo => params[:photo]})
 
     respond_to do |format|
-      if verify_recaptcha(:model => @spectrum, :message => "ReCAPTCHA thinks you're not a human!") && @spectrum.save
-        flash[:notice] = 'Spectrum was successfully created.'
-        format.html { redirect_to(@spectrum) }
-        format.xml  { render :xml => @spectrum, :status => :created, :location => @spectrum }
+      if (params[:client] == "0.5" || verify_recaptcha(:model => @spectrum, :message => "ReCAPTCHA thinks you're not a human!")) && @spectrum.save
+        if (params[:client]) # java client
+          format.html { render :text => @spectrum.id }
+        else
+          flash[:notice] = 'Spectrum was successfully created.'
+          format.html { redirect_to(@spectrum) }
+          format.xml  { render :xml => @spectrum, :status => :created, :location => @spectrum }
+        end
       else
         format.html { render :action => "new" }
         format.xml  { render :xml => @spectrum.errors, :status => :unprocessable_entity }

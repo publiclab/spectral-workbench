@@ -15,11 +15,11 @@ class Spectrum < ActiveRecord::Base
 	# Paperclip
 	has_attached_file :photo,
 	  :styles => {
-	    :thumb=> "300x100#",
-	    :large =>   "400x400>" }
+	    :thumb=> "300x100!",
+	    :large =>   "800x200!" }
 
 	has_attached_file :baseline,
 	  :styles => {
-	    :thumb=> "300x100#",
-	    :large =>   "400x400>" }
+	    :thumb=> "300x100!",
+	    :large =>   "800x200!" }
 end

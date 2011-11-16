@@ -3,9 +3,10 @@ class Server {
    * Save the current spectrum to the server
    */
   public void upload() {
+
     //save CSV and JSON:
     String spectraFolder = "spectra/";
-    SpectrumPresentation presenter = new SpectrumPresentation(spectrumbuf);
+    SpectrumPresentation presenter = new SpectrumPresentation(spectrum.buffer);
 
     PrintWriter csv = createWriter(spectraFolder + presenter.generateFileName(typedText, "csv"));
     csv.print(presenter.toCsv());
@@ -16,34 +17,50 @@ class Server {
     json.close();
 
     //save PNG:
-    PGraphics pg;
+    save(spectraFolder + presenter.generateFileName(typedText, "png")); // this just saves the main pixel buffer
 
-    pg = createGraphics(80, 80, P3D, spectraFolder + "alt-" + presenter.generateFileName(typedText, "png"));
+    //save just a subregion as PNG:
+    PGraphics pg;
+    //store 100 lines of history?
+    pg = createGraphics(video.width, 100, P2D);
     pg.beginDraw();
-    //pg.background(102);
-    //pg.stroke(255);
-    //pg.line(40, 40, mouseX, mouseY);
+    for (int y=0;y<100;y++) {
+      for (int x=0;x<video.width;x++) {
+        //pg.pixels[y][x][0] = pixels[samplerow+y][x][0]; 
+        //pg.pixels[y][x][1] = pixels[samplerow+y][x][1]; 
+        //pg.pixels[y][x][2] = pixels[samplerow+y][x][2]; 
+        //pg.setRGB(x,y,pixels[samplerow*y+x]);
+        pg.set(x,y,pixels[spectrum.samplerow*video.width+y*video.width+x]);
+      }
+    }
     pg.endDraw();
-    save(spectraFolder + presenter.generateFileName(typedText, "png"));
+    pg.save(spectraFolder + presenter.generateFileName(typedText + "-alt", "png"));
+    // somehow this might need: http://wiki.processing.org/index.php/Save_as_JPEG
+
     //save to web:
     try {
-      println(serverUrl+"/spectrums/create?title="+typedText);
-      URL u = new URL("http://localhost:3000/spectrums/create?title="+typedText);
-      //URL u = new URL(serverUrl+"/spectrums/create?title="+typedText);
-      this.postData(u,presenter.toJson(presenter.generateFileName(typedText, null)).getBytes());
+      String response;
+      println(serverUrl+"/spectrums/create?spectrum[title]="+typedText+"&spectrum[author]=anonymous");
+      URL u = new URL(serverUrl+"/spectrums/create?spectrum[title]="+typedText+"&spectrum[author]=anonymous&client=0.5");
+      //this.postData(u,presenter.toJson(presenter.generateFileName(typedText, null)).getBytes());
+      loadPixels();
+      response = postData(u,bufferImage(get(0, headerHeight, video.width, 100)),presenter.generateFileName(typedText,"jpg"));
+      //clear label buffer
+      typedText = "saved: type to label next spectrum";
+      println(serverUrl+"/spectra/edit/"+response);
+      link(serverUrl+"/spectra/edit/"+response);
     } catch (MalformedURLException e) {
       println("ERROR " +e.getMessage());
     } catch (IOException e) {
       println("ERROR " +e.getMessage());
     }
-    //clear label buffer
-    typedText = "";
   }
   /**
    * POST pData to pUrl
    * @return the response
+   * Customized for sending jpegs with name="spectrum[photo]"
    */
-  public String postData(URL pUrl, byte[] pData) {
+  public String postData(URL pUrl, byte[] pData, String filename) {
     // http://wiki.processing.org/w/Saving_files_to_a_web_server
     try {
         URLConnection c = pUrl.openConnection();
@@ -59,10 +76,11 @@ class Server {
         DataOutputStream dstream = new DataOutputStream(c.getOutputStream());
  
         // write content to the server, begin with the tag that says a content element is comming
-        dstream.writeBytes(boundary+"\r\n");
+        dstream.writeBytes("--"+boundary+"\r\n");
  
-        // discribe the content
-        dstream.writeBytes("Content-Disposition: form-data; name=\"data\"; filename=\"whatever\" \r\nContent-Type: text/json\r\nContent-Transfer-Encoding: binary\r\n\r\n");
+        // describe the content
+        // dstream.writeBytes("Content-Disposition: form-data; name=\"data\"; filename=\"whatever\" \r\nContent-Type: text/json\r\nContent-Transfer-Encoding: binary\r\n\r\n");
+        dstream.writeBytes("Content-Disposition: form-data; name=\"photo\"; filename=\""+filename+"\" \r\nContent-Type: image/jpeg\r\nContent-Transfer-Encoding: binary\r\n\r\n");
         dstream.write(pData ,0, pData.length);
  
         // close the multipart form request

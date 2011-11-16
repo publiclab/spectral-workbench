@@ -38,4 +38,17 @@ To report bugs and request features, please use the GitHub issue tracker provide
 
 For additional support, join the Public Laboratory website and mailing list at http://publiclaboratory.org or for urgent requests, email team@publiclaboratory.org
 
+==========================
+DEVELOPERS
+==========================
+
+Development is occurring at https://github.com/jywarren/spectral-workbench/; please fork and submit pull requests.
+
+To edit the Processing code, you need Rake (http://rake.rubyforge.org/, http://rubyforge.org/projects/rake) and Processing (tested on 1.5.x).
+
+* Enter spectrometry_kit/src/ and type "rake build"
+* To continuousl build, type "rake autobuild"
+* Your changes in src/ will be compiled into spectrometry_kit/spectrometry_kit.pde as you save.
+* It's helpful to check the "external editor" box in Processing's preferences.
+* Run the code from within Processing
 
