@@ -65,6 +65,7 @@ class SpectrumsController < ApplicationController
   # POST /spectrums
   # POST /spectrums.xml
   def create
+    params[:spectrum][:photo] == params[:photo]
     @spectrum = Spectrum.new(params[:spectrum])
 
     respond_to do |format|

@@ -1,5 +1,9 @@
 <h1>Editing spectrum</h1>
 
+<p>
+<img src="<%= @spectrum.photo.url(:large) %>" />
+</p>
+
 <% form_for(@spectrum,:html => { :multipart => true }) do |f| %>
   <%= f.error_messages %>
 
@@ -16,7 +20,7 @@
     <%= f.text_area :notes %>
   </p>
   <p>
-    <%= recaptcha_tags %>
+    <%= recaptcha_tags :display => {:theme => "white"} %>
   </p>
   <p>
     <%= f.submit 'Update' %>

@@ -641,10 +641,11 @@ class Server {
 
     try {
       String response;
-      println(serverUrl+"/spectrums/create?title="+typedText+"&author=anonymous");
-      URL u = new URL(serverUrl+"/spectrums/create?title="+typedText+"&author=anonymous&stupidkey=foolsdumbbots");
+      println(serverUrl+"/spectrums/create?spectrum[title]="+typedText+"&spectrum[author]=anonymous");
+      URL u = new URL(serverUrl+"/spectrums/create?spectrum[title]="+typedText+"&spectrum[author]=anonymous&client=0.5");
       response = postData(u,bufferImage(get(0, headerHeight, width, 100)),presenter.generateFileName(typedText,"jpg"));
       typedText = "saved: type to label next spectrum";
+      println(serverUrl+"/spectra/edit/"+response);
       link(serverUrl+"/spectra/edit/"+response);
     } catch (MalformedURLException e) {
       println("ERROR " +e.getMessage());
