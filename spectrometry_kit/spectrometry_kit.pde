@@ -108,16 +108,16 @@ class SpectrumPresentation {
         return builder.toString();
     }
 }
-class Keys {
+class Keyboard {
   public boolean commandKey;
 
 }
-Keys keys;
+Keyboard keyboard;
 
 void keyReleased() {
   if (key == CODED) {
     if (keyCode == CONTROL) {
-      keys.commandKey = false;
+      keyboard.commandKey = false;
     }
   }
 }
@@ -136,7 +136,24 @@ void keyPressed() {
       }
     } else if (keyCode == CONTROL) {
       println("control key");
-      keys.commandKey = false;
+      keyboard.commandKey = false;
+    }
+    else if (keyCode == TAB) {
+      if (colortype == "combined") {
+        colortype = "rgb";
+      }
+      else if (colortype == "rgb") {
+        colortype = "heat";
+      }
+      else if (colortype == "heat") {
+        colortype = "combined";
+      }
+    }
+    else if (keyCode == BACKSPACE) {
+      typedText = typedText.substring(0,max(0,typedText.length()-1));
+    }
+    else if (keyCode == ESC) {
+      typedText = "";
     }
   }
   else if (key == ' ') {
@@ -144,26 +161,9 @@ void keyPressed() {
       lastspectrum[x] = (spectrumbuf[0][x][0]+spectrumbuf[0][x][1]+spectrumbuf[0][x][2])/3;
     }
   }
-  else if (key == 's' && keys.commandKey) {
+  else if (key == 's' && keyboard.commandKey) {
     println("saving to server...");
     server.upload();
-  }
-  else if (keyCode == TAB) {
-    if (colortype == "combined") {
-      colortype = "rgb";
-    }
-    else if (colortype == "rgb") {
-      colortype = "heat";
-    }
-    else if (colortype == "heat") {
-      colortype = "combined";
-    }
-  }
-  else if (keyCode == BACKSPACE) {
-    typedText = typedText.substring(0,max(0,typedText.length()-1));
-  }
-  else if (keyCode == ESC) {
-    typedText = "";
   }
   else {
     if (typedText.equals(defaultTypedText)) {
