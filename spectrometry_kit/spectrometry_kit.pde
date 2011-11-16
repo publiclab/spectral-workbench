@@ -29,6 +29,31 @@ import codeanticode.gsvideo.*; //linux
 import ddf.minim.analysis.*;
 import ddf.minim.*;
 
+
+import com.sun.image.codec.jpeg.*;
+
+byte[] bufferImage(PImage srcimg) {
+  ByteArrayOutputStream out = new ByteArrayOutputStream();
+  BufferedImage img = new BufferedImage(srcimg.width, srcimg.height, 2);
+  img = (BufferedImage) createImage(srcimg.width,srcimg.height);
+  for (int i = 0; i < srcimg.width; i++)
+    for (int j = 0; j < srcimg.height; j++)
+      img.setRGB(i, j, srcimg.pixels[j * srcimg.width + i]);
+  try {
+    JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);
+    JPEGEncodeParam encpar = encoder.getDefaultJPEGEncodeParam(img);
+    encpar.setQuality(1, false);
+    encoder.setJPEGEncodeParam(encpar);
+    encoder.encode(img);
+  }
+  catch (FileNotFoundException e) {
+    println(e);
+  }
+  catch (IOException ioe) {
+    println(ioe);
+  }
+  return out.toByteArray();
+}
 class Spectrum {
     public int[][][] buffer;
     public int[] storedbuffer;
@@ -41,6 +66,10 @@ class Spectrum {
     public int lastgreen = 0;
     public int lastblue = 0;
     public int currentSpectrumDisplayHeight = 10;
+    public int averageAbsorption = 0;
+    public int absorptionSum;
+    public int lastval = 0;
+
     public Spectrum(int pHistory,int pSamplerow) {
       samplerow = pSamplerow;
       history = pHistory;
@@ -59,6 +88,8 @@ class Spectrum {
           buffer[i][x] = buffer[i-1][x];
         }
       }
+
+      absorptionSum = 0;
 
       int index = int (video.width*samplerow); //the horizontal strip to sample
       for (int x = 0; x < int (video.width); x+=resolution) {
@@ -108,7 +139,11 @@ if (controller == "analyze" || controller == "heatmap") {
   spectrum.absorptionbuffer[x] = int (255*(1-(val/(spectrum.storedbuffer[x]+1.00))));
   int last = x-1;
   if (last < 0) { last = 0; }
-  line(x,height-spectrum.absorptionbuffer[last],x+1,height-spectrum.absorptionbuffer[x]);
+  int y1 = height-spectrum.absorptionbuffer[last];
+  int y2 = height-spectrum.absorptionbuffer[x];
+  if (y1 == 255) { y1 = 0; }
+  if (y2 == 255) { y2 = 0; }
+  line(x,y1,x+1,y2);
 
   absorptionSum += spectrum.absorptionbuffer[x];
   spectrum.enhancedabsorptionbuffer[x] = (spectrum.absorptionbuffer[x] - averageAbsorption) * 4;
@@ -132,6 +167,14 @@ if (controller == "analyze" || controller == "heatmap") {
         }
         index++;
       }
+      stroke(255);
+      fill(255);
+      averageAbsorption = absorptionSum/width;
+      stroke(128);
+      int avY = height-averageAbsorption/3;
+      line(0,avY,width,avY);
+      noStroke();
+      text(averageAbsorption,10,avY);
     }
     public void preview() {
       for (int y = 0; y < int (video.height); y+=4) {
@@ -281,7 +324,7 @@ void keyPressed() {
     typedText = "";
   }
   else {
-    if (typedText.equals(defaultTypedText)) {
+    if (typedText.equals(defaultTypedText) || typedText.equals("saved: type to label next spectrum")) {
       typedText = "";
     }
     typedText += key;
@@ -297,7 +340,9 @@ void mousePressed() {
   if (controller == "analyze") {
     analyze.mousePressed();
   } else if (controller == "setup") {
+    analyze.mousePressed(); // for now, same.
   } else if (controller == "heatmap") {
+    analyze.mousePressed(); // for now, same.
   }
 
 }
@@ -309,8 +354,18 @@ class Button {
   public int padding = 10;
   public int width = 100;
   public int height = headerHeight;
-  public int fontSize = 24;
+  public int fontSize = 18;//24;
   public boolean hovering = false;
+  public boolean down = false;
+  public color fillColor = #222222;
+
+  public Button(String pText,int pX, int pY, int pHeight) {
+    text = pText;
+    x = pX;
+    y = pY;
+    height = pHeight;
+    width = int (textWidth(text)+padding*2);
+  }
 
   public Button(String pText,int pX, int pY) {
     text = pText;
@@ -323,14 +378,27 @@ class Button {
     return (mouseX > x && mouseX < x+width && mouseY > y && mouseY < y+height);
   }
 
+  void up() {
+    down = false;
+  }
+  void down() {
+    down = true;
+  }
+
   void draw() {
-    if (hovering) fill(24);
-    else noFill();
-    stroke(255);
-    rect(x,y,width,height);
+    strokeCap(PROJECT);
+    fill(fillColor);
+    stroke(20);
+    rect(x,y+1,width-1,height-2);
+    if (hovering) fill(0,0,0,50);
+    rect(x,y+1,width-1,height-2);
+    if (down) fill(0,0,0,50);
+    rect(x,y+1,width-1,height-2);
     fill(255);
     noStroke();
     text(text,x+padding,y+height-((height-fontSize)/2));
+    hover();
+    strokeWeight(1);
   }
 
   void hover() {
@@ -453,7 +521,7 @@ class Video {
     rgb[1] = 0;
     rgb[2] = 0;
 
-    for (int yoff = int (sampleHeight/-2); yoff < int (sampleHeight/2); yoff+=1) {
+    for (int yoff = spectrum.samplerow; yoff < spectrum.samplerow+sampleHeight; yoff+=1) {
       int sampleind = int ((video.width*spectrum.samplerow)+(video.width*yoff)+x);
 
       if (sampleind >= 0 && sampleind <= (video.height*video.width)) {
@@ -546,7 +614,6 @@ class Filter implements AudioSignal, AudioListener
 Filter filter;
 class Server {
   public void upload() {
-    println("got this far");
 
     String spectraFolder = "spectra/";
     SpectrumPresentation presenter = new SpectrumPresentation(spectrum.buffer);
@@ -559,24 +626,33 @@ class Server {
     json.print(presenter.toJson(presenter.generateFileName(typedText, null)));
     json.close();
 
-    PGraphics pg;
+    save(spectraFolder + presenter.generateFileName(typedText, "png")); // this just saves the main pixel buffer
 
-    pg = createGraphics(80, 80, P3D, spectraFolder + "alt-" + presenter.generateFileName(typedText, "png"));
+    PGraphics pg;
+    pg = createGraphics(video.width, 100, P2D);
     pg.beginDraw();
+    for (int y=0;y<100;y++) {
+      for (int x=0;x<video.width;x++) {
+        pg.set(x,y,pixels[spectrum.samplerow*video.width+y*video.width+x]);
+      }
+    }
     pg.endDraw();
-    save(spectraFolder + presenter.generateFileName(typedText, "png"));
+    pg.save(spectraFolder + presenter.generateFileName(typedText + "-alt", "png"));
+
     try {
-      println(serverUrl+"/spectrums/create?title="+typedText);
-      URL u = new URL("http://localhost:3000/spectrums/create?title="+typedText);
-      this.postData(u,presenter.toJson(presenter.generateFileName(typedText, null)).getBytes());
+      String response;
+      println(serverUrl+"/spectrums/create?title="+typedText+"&author=anonymous");
+      URL u = new URL(serverUrl+"/spectrums/create?title="+typedText+"&author=anonymous&stupidkey=foolsdumbbots");
+      response = postData(u,bufferImage(get(0, headerHeight, width, 100)),presenter.generateFileName(typedText,"jpg"));
+      typedText = "saved: type to label next spectrum";
+      link(serverUrl+"/spectra/edit/"+response);
     } catch (MalformedURLException e) {
       println("ERROR " +e.getMessage());
     } catch (IOException e) {
       println("ERROR " +e.getMessage());
     }
-    typedText = "saved: type to label next spectrum";
   }
-  public String postData(URL pUrl, byte[] pData) {
+  public String postData(URL pUrl, byte[] pData, String filename) {
     try {
         URLConnection c = pUrl.openConnection();
         c.setDoOutput(true);
@@ -588,9 +664,9 @@ class Server {
 
         DataOutputStream dstream = new DataOutputStream(c.getOutputStream());
 
-        dstream.writeBytes(boundary+"\r\n");
+        dstream.writeBytes("--"+boundary+"\r\n");
 
-        dstream.writeBytes("Content-Disposition: form-data; name=\"data\"; filename=\"whatever\" \r\nContent-Type: text/json\r\nContent-Transfer-Encoding: binary\r\n\r\n");
+        dstream.writeBytes("Content-Disposition: form-data; name=\"photo\"; filename=\""+filename+"\" \r\nContent-Type: image/jpeg\r\nContent-Transfer-Encoding: binary\r\n\r\n");
         dstream.write(pData ,0, pData.length);
 
         dstream.writeBytes("\r\n--"+boundary+"--\r\n\r\n");
@@ -634,29 +710,61 @@ class Header {
 
   public PImage logo;
   public int rightOffset = 0; // where to put new buttons (shifts as buttons are added)
-  public Button[] buttons;
+  public Button[] buttons; // we should store all buttons in here instead of explicitly defining, as below:
+  public Button learnButton;
+  public Button saveButton;
+  public Button analyzeButton;
+  public Button heatmapButton;
   public Button setupButton;
+  public Button baselineButton;
+  public int margin = 4;
 
   public Header() {
-
     logo = loadImage("logo-small.png");
+    learnButton = addButton("Learn");
+    saveButton = addButton("Save");
+    heatmapButton = addButton("Heatmap");
+    setupButton = addButton("Setup");
+    analyzeButton = addButton("Analyze");
+    analyzeButton.down();
+    baselineButton = addButton("Baseline");
+    baselineButton.fillColor = #444444;
   }
 
-  public void addButton(Button pButton) {
-    rightOffset += pButton.width;
+  public Button addButton(String buttonName) {
+    Button button = new Button(buttonName,width-rightOffset-margin,margin,headerHeight-8);
+    rightOffset += button.width+margin;
+    button.x -= button.width;
+    return button;
   }
 
   public void mousePressed() {
-    if (mouseX > width-100) {
-      println("Saving to server (button)");
+    if (saveButton.mouseOver()) {
       server.upload();
     }
-    if (mouseX > width-200 && mouseX < width-100) {
-      controller = "setup";
+    if (analyzeButton.mouseOver()) {
+      controller = "analyze";
+      heatmapButton.up();
+      setupButton.up();
+      analyzeButton.down();
     }
-    if (mouseX > width-350 && mouseX < width-200) {
-      switchMode();
+    if (setupButton.mouseOver()) {
+      controller = "setup";
+      heatmapButton.up();
+      setupButton.down();
+      analyzeButton.up();
+    }
+    if (heatmapButton.mouseOver()) {
       controller = "heatmap";
+      heatmapButton.down();
+      setupButton.up();
+      analyzeButton.up();
+    }
+    if (baselineButton.mouseOver()) {
+      spectrum.storeReference();
+    }
+    if (learnButton.mouseOver()) {
+      link("http://publiclaboratory.org/wiki/spectral-workbench");
     }
   }
 
@@ -668,23 +776,12 @@ class Header {
     textFont(font,24);
     text("PLOTS Spectral Workbench: "+typedText, 55, 40); //display current title
 
-    int padding = 10;
-    noFill();
-    stroke(255);
-    fill(255);
-    noStroke();
-    noFill();
-    stroke(255);
-    rect(width-200,0,100,headerHeight-1);
-    fill(255);
-    noStroke();
-    text("Setup",width-200+padding,40);
-    noFill();
-    stroke(255);
-    rect(width-350,0,150,headerHeight-1);
-    fill(255);
-    noStroke();
-    text("Heatmap",width-350+padding,40);
+    saveButton.draw();
+    learnButton.draw();
+    analyzeButton.draw();
+    heatmapButton.draw();
+    setupButton.draw();
+    baselineButton.draw();
   }
 }
 
@@ -696,10 +793,24 @@ String controller = "analyze"; // this determines what controller is used, i.e. 
 final static String defaultTypedText = "type to label spectrum";
 String typedText = defaultTypedText;
 PFont font;
-int lastval = 0;
-int averageAbsorption = 0;
-int absorptionSum;
 int headerHeight = 60; // this should eventually be stored in some kind of view/controller config file...? header.height?
+
+public void setup() {
+  font = loadFont("Georgia-Italic-24.vlw");
+  textFont(font,24);
+
+  system = new System();
+  keyboard = new Keyboard();
+  analyze = new Analyze();
+  header = new Header();
+  server = new Server();
+
+  size(screen.width, screen.height-20, P2D);
+
+  video = new Video(this,1280,720,0);
+  spectrum = new Spectrum(int (height-headerHeight)/2,int (height*(0.18))); //history (length),samplerow (row # to begin sampling)
+  filter = new Filter(this);
+}
 
 public void switchMode() {
     if (controller == "analyze") {
@@ -712,23 +823,6 @@ public void switchMode() {
       controller = "analyze";
     }
 }
-
-public void setup() {
-  system = new System();
-  keyboard = new Keyboard();
-  analyze = new Analyze();
-  header = new Header();
-  server = new Server();
-
-  size(screen.width, screen.height-20, P2D);
-
-  video = new Video(this,1280,720,0);
-  spectrum = new Spectrum(int (height-headerHeight)/2,int (height*(0.18))); //history (length),samplerow (row # to begin sampling)
-  font = loadFont("Georgia-Italic-24.vlw");
-  textFont(font,24);
-  filter = new Filter(this);
-}
-
 public void captureEvent(Capture c) { //mac or windows via Quicktime Java bridge
   c.read();
 }
@@ -738,24 +832,14 @@ public void captureEvent(GSCapture c) { //linux
 
 void draw() {
   loadPixels(); //load screen pixel buffer into pixels[]
-  background(34);
 
+  background(34);
   stroke(0);
   line(0,height-255,width,height-255); //100% mark for spectra
 
   header.draw();
-
-  absorptionSum = 0;
-
   if (controller == "setup") { spectrum.preview(); }
-
   spectrum.draw(headerHeight); //y position of top of spectrum
-
-  stroke(255);
-  fill(255);
-  averageAbsorption = absorptionSum/width;
-  stroke(128);
-  line(0,averageAbsorption/3,width,averageAbsorption/3);
 
   updatePixels();
 }

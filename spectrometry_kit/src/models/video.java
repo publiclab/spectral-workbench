@@ -93,7 +93,7 @@ class Video {
     rgb[1] = 0;
     rgb[2] = 0;
 
-    for (int yoff = int (sampleHeight/-2); yoff < int (sampleHeight/2); yoff+=1) {
+    for (int yoff = spectrum.samplerow; yoff < spectrum.samplerow+sampleHeight; yoff+=1) {
       int sampleind = int ((video.width*spectrum.samplerow)+(video.width*yoff)+x);
 
       if (sampleind >= 0 && sampleind <= (video.height*video.width)) {

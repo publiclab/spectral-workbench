@@ -29,6 +29,7 @@ import codeanticode.gsvideo.*; //linux
 import ddf.minim.analysis.*;
 import ddf.minim.*;
 
+//= require <lib/bufferImage.java>
 //= require <models/spectrum>
 Spectrum spectrum;
 //= require <interface/keyboard>
@@ -55,24 +56,12 @@ String controller = "analyze"; // this determines what controller is used, i.e. 
 final static String defaultTypedText = "type to label spectrum";
 String typedText = defaultTypedText;
 PFont font;
-int lastval = 0;
-int averageAbsorption = 0;
-int absorptionSum;
 int headerHeight = 60; // this should eventually be stored in some kind of view/controller config file...? header.height?
 
-public void switchMode() {
-    if (controller == "analyze") {
-      controller = "setup";
-    } 
-    else if (controller == "setup") {
-      controller = "heatmap";
-    }
-    else if (controller == "heatmap") {
-      controller = "analyze";
-    }
-}
-
 public void setup() {
+  font = loadFont("Georgia-Italic-24.vlw");  
+  textFont(font,24);
+
   system = new System();
   keyboard = new Keyboard();
   //hmmm... controller definitions:
@@ -89,11 +78,20 @@ public void setup() {
   //video = new Video(this,640,480,0);
   video = new Video(this,1280,720,0);
   spectrum = new Spectrum(int (height-headerHeight)/2,int (height*(0.18))); //history (length),samplerow (row # to begin sampling)
-  font = loadFont("Georgia-Italic-24.vlw");  
-  textFont(font,24);
   filter = new Filter(this);
 }
 
+public void switchMode() {
+    if (controller == "analyze") {
+      controller = "setup";
+    } 
+    else if (controller == "setup") {
+      controller = "heatmap";
+    }
+    else if (controller == "heatmap") {
+      controller = "analyze";
+    }
+}
 public void captureEvent(Capture c) { //mac or windows via Quicktime Java bridge
   c.read();
 }
@@ -103,26 +101,14 @@ public void captureEvent(GSCapture c) { //linux
 
 void draw() {
   loadPixels(); //load screen pixel buffer into pixels[]
-  background(34);
 
+  background(34);
   stroke(0);
   line(0,height-255,width,height-255); //100% mark for spectra
 
   header.draw();
-
-  // re-zero intensity sum
-  absorptionSum = 0;
-
   if (controller == "setup") { spectrum.preview(); }
-
   spectrum.draw(headerHeight); //y position of top of spectrum
-
-  stroke(255);
-  fill(255);
-  // indicate average with a line
-  averageAbsorption = absorptionSum/width;
-  stroke(128);
-  line(0,averageAbsorption/3,width,averageAbsorption/3);
 
   updatePixels();
 }

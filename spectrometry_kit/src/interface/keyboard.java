@@ -43,7 +43,7 @@ void keyPressed() {
     typedText = "";
   } 
   else {
-    if (typedText.equals(defaultTypedText)) { 
+    if (typedText.equals(defaultTypedText) || typedText.equals("saved: type to label next spectrum")) { 
       typedText = "";
     }
     typedText += key;

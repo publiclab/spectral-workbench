@@ -24,7 +24,11 @@ if (controller == "analyze" || controller == "heatmap") {
   spectrum.absorptionbuffer[x] = int (255*(1-(val/(spectrum.storedbuffer[x]+1.00))));
   int last = x-1;
   if (last < 0) { last = 0; }
-  line(x,height-spectrum.absorptionbuffer[last],x+1,height-spectrum.absorptionbuffer[x]);
+  int y1 = height-spectrum.absorptionbuffer[last];
+  int y2 = height-spectrum.absorptionbuffer[x];
+  if (y1 == 255) { y1 = 0; }
+  if (y2 == 255) { y2 = 0; }
+  line(x,y1,x+1,y2);
 
   // contrast-enhanced absorption:
   absorptionSum += spectrum.absorptionbuffer[x];

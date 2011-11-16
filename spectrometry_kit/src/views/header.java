@@ -5,44 +5,65 @@ class Header {
 
   public PImage logo;
   public int rightOffset = 0; // where to put new buttons (shifts as buttons are added)
-  public Button[] buttons;
+  public Button[] buttons; // we should store all buttons in here instead of explicitly defining, as below:
+  public Button learnButton;
+  public Button saveButton;
+  public Button analyzeButton;
+  public Button heatmapButton;
   public Button setupButton;
+  public Button baselineButton;
+  public int margin = 4;
 
   public Header() {
-    // we could define all our buttons here... 
-    // and they could call functions in the controller?
-
-    //setupButton = new Button("Setup",width-500,0);
     logo = loadImage("logo-small.png");
+    learnButton = addButton("Learn");
+    saveButton = addButton("Save");
+    heatmapButton = addButton("Heatmap");
+    setupButton = addButton("Setup");
+    analyzeButton = addButton("Analyze");
+    analyzeButton.down();
+    baselineButton = addButton("Baseline");
+    baselineButton.fillColor = #444444;
   }
 
-  public void addButton(Button pButton) {
+  public Button addButton(String buttonName) {
     // buttons.push(); // add pButton to buttons array
-    rightOffset += pButton.width;
+    Button button = new Button(buttonName,width-rightOffset-margin,margin,headerHeight-8);
+    rightOffset += button.width+margin;
+    button.x -= button.width; 
+    return button;
   }
 
   public void mousePressed() {
-    // break this up into some sort of Button model with registration of x,y,w,h
+    // eventually define these in the button definitions...
     // Save:
-    if (mouseX > width-100) {
-      println("Saving to server (button)");
+    if (saveButton.mouseOver()) {
       server.upload();
     }
-    // Setup mode:
-    if (mouseX > width-200 && mouseX < width-100) {
+    if (analyzeButton.mouseOver()) {
+      controller = "analyze";
+      heatmapButton.up();
+      setupButton.up();
+      analyzeButton.down();
+    }
+    if (setupButton.mouseOver()) {
       controller = "setup";
+      heatmapButton.up();
+      setupButton.down();
+      analyzeButton.up();
     }
-    // Heatmap mode:
-    if (mouseX > width-350 && mouseX < width-200) {
-      switchMode();
+    if (heatmapButton.mouseOver()) {
       controller = "heatmap";
+      heatmapButton.down();
+      setupButton.up();
+      analyzeButton.up();
     }
-    //if (mouseX > width-400 && mouseX < width-300) {
-      //open("~/Desktop/Safari.app");
-      //String script = "tell application \'ScreenSaverEngine\' to activate";
-      //println("osascript -e \""+script+"\"");
-      //system.run("osascript -e \""+script+"\"");
-    //}
+    if (baselineButton.mouseOver()) {
+      spectrum.storeReference();
+    }
+    if (learnButton.mouseOver()) {
+      link("http://publiclaboratory.org/wiki/spectral-workbench");
+    }
   }
 
   public void draw() {
@@ -57,25 +78,12 @@ class Header {
     textFont(font,24);
     text("PLOTS Spectral Workbench: "+typedText, 55, 40); //display current title
 
-    int padding = 10;
-    noFill();
-    stroke(255);
-    //rect(width-100,0,100,headerHeight);
-    fill(255);
-    noStroke();
-    //text("Save",width-100+padding,40);
-    noFill();
-    stroke(255);
-    rect(width-200,0,100,headerHeight-1);
-    fill(255);
-    noStroke();
-    text("Setup",width-200+padding,40);
-    noFill();
-    stroke(255);
-    rect(width-350,0,150,headerHeight-1);
-    fill(255);
-    noStroke();
-    text("Heatmap",width-350+padding,40);
+    saveButton.draw();
+    learnButton.draw();
+    analyzeButton.draw();
+    heatmapButton.draw();
+    setupButton.draw();
+    baselineButton.draw();
   }
 }
 

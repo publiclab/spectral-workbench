@@ -16,6 +16,10 @@ class Spectrum {
     public int lastgreen = 0;
     public int lastblue = 0;
     public int currentSpectrumDisplayHeight = 10;
+    public int averageAbsorption = 0;
+    public int absorptionSum;
+    public int lastval = 0;
+
     public Spectrum(int pHistory,int pSamplerow) {
       samplerow = pSamplerow;
       history = pHistory;
@@ -38,6 +42,9 @@ class Spectrum {
           buffer[i][x] = buffer[i-1][x];
         }
       }
+
+      // re-zero intensity sum
+      absorptionSum = 0;
 
       // iterate through each pixel
       int index = int (video.width*samplerow); //the horizontal strip to sample
@@ -71,10 +78,22 @@ class Spectrum {
  	    }
           
           }
+          ////////////////
+          // Render graph:
+          ////////////////
           //= require <views/graph>
         }
         index++;
       }
+      // indicate average absorption with a line (should mark a percent too):
+      stroke(255);
+      fill(255);
+      averageAbsorption = absorptionSum/width;
+      stroke(128);
+      int avY = height-averageAbsorption/3;
+      line(0,avY,width,avY);
+      noStroke();
+      text(averageAbsorption,10,avY);
     }
     /**
      * Preview video to align spectrum - shows thumbnail in bottom left corner
