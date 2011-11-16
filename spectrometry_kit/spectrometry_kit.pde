@@ -643,7 +643,8 @@ class Server {
       String response;
       println(serverUrl+"/spectrums/create?spectrum[title]="+typedText+"&spectrum[author]=anonymous");
       URL u = new URL(serverUrl+"/spectrums/create?spectrum[title]="+typedText+"&spectrum[author]=anonymous&client=0.5");
-      response = postData(u,bufferImage(get(0, headerHeight, width, 100)),presenter.generateFileName(typedText,"jpg"));
+      loadPixels();
+      response = postData(u,bufferImage(get(0, headerHeight, video.width, 100)),presenter.generateFileName(typedText,"jpg"));
       typedText = "saved: type to label next spectrum";
       println(serverUrl+"/spectra/edit/"+response);
       link(serverUrl+"/spectra/edit/"+response);
