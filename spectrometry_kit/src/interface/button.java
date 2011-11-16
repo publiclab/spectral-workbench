@@ -8,6 +8,7 @@ class Button {
   public int height = headerHeight;
   public int fontSize = 24;
   public boolean hovering = false;
+  public boolean down = false;
   public color fillColor = #222222;
 
   public Button(String pText,int pX, int pY, int pHeight) {
@@ -30,13 +31,24 @@ class Button {
     return (mouseX > x && mouseX < x+width && mouseY > y && mouseY < y+height);
   }
 
+  void up() {
+    down = false;
+  }
+  void down() {
+    down = true;
+  }
+
   void draw() {
     strokeCap(PROJECT);
     fill(fillColor);
     stroke(20);
     //strokeWeight(1);
     rect(x,y+1,width-1,height-2);
+    //hover
     if (hovering) fill(0,0,0,50);
+    rect(x,y+1,width-1,height-2);
+    //down
+    if (down) fill(0,0,0,50);
     rect(x,y+1,width-1,height-2);
     fill(255);
     noStroke();

@@ -41,6 +41,10 @@ class Spectrum {
     public int lastgreen = 0;
     public int lastblue = 0;
     public int currentSpectrumDisplayHeight = 10;
+    public int averageAbsorption = 0;
+    public int absorptionSum;
+    public int lastval = 0;
+
     public Spectrum(int pHistory,int pSamplerow) {
       samplerow = pSamplerow;
       history = pHistory;
@@ -137,16 +141,15 @@ if (controller == "analyze" || controller == "heatmap") {
 }
         }
         index++;
-
-        stroke(255);
-        fill(255);
-        averageAbsorption = absorptionSum/width;
-        stroke(128);
-        int avY = height-averageAbsorption/3;
-        line(0,avY,width,avY);
-        noStroke();
-        text(averageAbsorption,10,avY);
       }
+      stroke(255);
+      fill(255);
+      averageAbsorption = absorptionSum/width;
+      stroke(128);
+      int avY = height-averageAbsorption/3;
+      line(0,avY,width,avY);
+      noStroke();
+      text(averageAbsorption,10,avY);
     }
     public void preview() {
       for (int y = 0; y < int (video.height); y+=4) {
@@ -328,6 +331,7 @@ class Button {
   public int height = headerHeight;
   public int fontSize = 24;
   public boolean hovering = false;
+  public boolean down = false;
   public color fillColor = #222222;
 
   public Button(String pText,int pX, int pY, int pHeight) {
@@ -349,12 +353,21 @@ class Button {
     return (mouseX > x && mouseX < x+width && mouseY > y && mouseY < y+height);
   }
 
+  void up() {
+    down = false;
+  }
+  void down() {
+    down = true;
+  }
+
   void draw() {
     strokeCap(PROJECT);
     fill(fillColor);
     stroke(20);
     rect(x,y+1,width-1,height-2);
     if (hovering) fill(0,0,0,50);
+    rect(x,y+1,width-1,height-2);
+    if (down) fill(0,0,0,50);
     rect(x,y+1,width-1,height-2);
     fill(255);
     noStroke();
@@ -678,6 +691,7 @@ class Header {
     heatmapButton = addButton("Heatmap");
     setupButton = addButton("Setup");
     analyzeButton = addButton("Analyze");
+    analyzeButton.down();
     baselineButton = addButton("Baseline");
     baselineButton.fillColor = #444444;
   }
@@ -695,12 +709,21 @@ class Header {
     }
     if (analyzeButton.mouseOver()) {
       controller = "analyze";
+      heatmapButton.up();
+      setupButton.up();
+      analyzeButton.down();
     }
     if (setupButton.mouseOver()) {
       controller = "setup";
+      heatmapButton.up();
+      setupButton.down();
+      analyzeButton.up();
     }
     if (heatmapButton.mouseOver()) {
       controller = "heatmap";
+      heatmapButton.down();
+      setupButton.up();
+      analyzeButton.up();
     }
     if (baselineButton.mouseOver()) {
       spectrum.storeReference();
@@ -731,22 +754,7 @@ String controller = "analyze"; // this determines what controller is used, i.e. 
 final static String defaultTypedText = "type to label spectrum";
 String typedText = defaultTypedText;
 PFont font;
-int lastval = 0;
-int averageAbsorption = 0;
-int absorptionSum;
 int headerHeight = 60; // this should eventually be stored in some kind of view/controller config file...? header.height?
-
-public void switchMode() {
-    if (controller == "analyze") {
-      controller = "setup";
-    }
-    else if (controller == "setup") {
-      controller = "heatmap";
-    }
-    else if (controller == "heatmap") {
-      controller = "analyze";
-    }
-}
 
 public void setup() {
   font = loadFont("Georgia-Italic-24.vlw");
@@ -765,6 +773,17 @@ public void setup() {
   filter = new Filter(this);
 }
 
+public void switchMode() {
+    if (controller == "analyze") {
+      controller = "setup";
+    }
+    else if (controller == "setup") {
+      controller = "heatmap";
+    }
+    else if (controller == "heatmap") {
+      controller = "analyze";
+    }
+}
 public void captureEvent(Capture c) { //mac or windows via Quicktime Java bridge
   c.read();
 }
@@ -776,14 +795,11 @@ void draw() {
   loadPixels(); //load screen pixel buffer into pixels[]
 
   background(34);
-
   stroke(0);
   line(0,height-255,width,height-255); //100% mark for spectra
 
   header.draw();
-
   if (controller == "setup") { spectrum.preview(); }
-
   spectrum.draw(headerHeight); //y position of top of spectrum
 
   updatePixels();

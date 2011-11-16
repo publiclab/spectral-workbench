@@ -55,22 +55,7 @@ String controller = "analyze"; // this determines what controller is used, i.e. 
 final static String defaultTypedText = "type to label spectrum";
 String typedText = defaultTypedText;
 PFont font;
-int lastval = 0;
-int averageAbsorption = 0;
-int absorptionSum;
 int headerHeight = 60; // this should eventually be stored in some kind of view/controller config file...? header.height?
-
-public void switchMode() {
-    if (controller == "analyze") {
-      controller = "setup";
-    } 
-    else if (controller == "setup") {
-      controller = "heatmap";
-    }
-    else if (controller == "heatmap") {
-      controller = "analyze";
-    }
-}
 
 public void setup() {
   font = loadFont("Georgia-Italic-24.vlw");  
@@ -95,6 +80,17 @@ public void setup() {
   filter = new Filter(this);
 }
 
+public void switchMode() {
+    if (controller == "analyze") {
+      controller = "setup";
+    } 
+    else if (controller == "setup") {
+      controller = "heatmap";
+    }
+    else if (controller == "heatmap") {
+      controller = "analyze";
+    }
+}
 public void captureEvent(Capture c) { //mac or windows via Quicktime Java bridge
   c.read();
 }
@@ -106,14 +102,11 @@ void draw() {
   loadPixels(); //load screen pixel buffer into pixels[]
 
   background(34);
-
   stroke(0);
   line(0,height-255,width,height-255); //100% mark for spectra
 
   header.draw();
-
   if (controller == "setup") { spectrum.preview(); }
-
   spectrum.draw(headerHeight); //y position of top of spectrum
 
   updatePixels();

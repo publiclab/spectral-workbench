@@ -19,6 +19,7 @@ class Header {
     heatmapButton = addButton("Heatmap");
     setupButton = addButton("Setup");
     analyzeButton = addButton("Analyze");
+    analyzeButton.down();
     baselineButton = addButton("Baseline");
     baselineButton.fillColor = #444444;
   }
@@ -40,14 +41,23 @@ class Header {
     // Setup mode:
     if (analyzeButton.mouseOver()) {
       controller = "analyze";
+      heatmapButton.up();
+      setupButton.up();
+      analyzeButton.down();
     }
     // Setup mode:
     if (setupButton.mouseOver()) {
       controller = "setup";
+      heatmapButton.up();
+      setupButton.down();
+      analyzeButton.up();
     }
     // Heatmap mode:
     if (heatmapButton.mouseOver()) {
       controller = "heatmap";
+      heatmapButton.down();
+      setupButton.up();
+      analyzeButton.up();
     }
     if (baselineButton.mouseOver()) {
       spectrum.storeReference();
