@@ -34,11 +34,14 @@ import com.sun.image.codec.jpeg.*;
 
 byte[] bufferImage(PImage srcimg) {
   ByteArrayOutputStream out = new ByteArrayOutputStream();
-  BufferedImage img = new BufferedImage(srcimg.width, srcimg.height, 2);
+  BufferedImage img = new BufferedImage(srcimg.width, srcimg.height, BufferedImage.TYPE_INT_RGB);
   img = (BufferedImage) createImage(srcimg.width,srcimg.height);
-  for (int i = 0; i < srcimg.width; i++)
-    for (int j = 0; j < srcimg.height; j++)
-      img.setRGB(i, j, srcimg.pixels[j * srcimg.width + i]);
+
+  for (int y = 0; y < srcimg.height; y++) {
+    for (int x = 0; x < srcimg.width; x++) {
+      img.setRGB(x, y, srcimg.pixels[y * srcimg.width + x]);
+    }
+  }
   try {
     JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);
     JPEGEncodeParam encpar = encoder.getDefaultJPEGEncodeParam(img);
@@ -643,7 +646,7 @@ class Server {
       String response;
       println(serverUrl+"/spectrums/create?spectrum[title]="+typedText+"&spectrum[author]=anonymous");
       URL u = new URL(serverUrl+"/spectrums/create?spectrum[title]="+typedText+"&spectrum[author]=anonymous&client=0.5");
-      response = postData(u,bufferImage(get(0, headerHeight, width, 100)),presenter.generateFileName(typedText,"jpg"));
+      response = postData(u,bufferImage(pg.get()),presenter.generateFileName(typedText,"jpg"));
       typedText = "saved: type to label next spectrum";
       println(serverUrl+"/spectra/edit/"+response);
       link(serverUrl+"/spectra/edit/"+response);

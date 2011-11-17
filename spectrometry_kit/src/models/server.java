@@ -43,7 +43,7 @@ class Server {
       println(serverUrl+"/spectrums/create?spectrum[title]="+typedText+"&spectrum[author]=anonymous");
       URL u = new URL(serverUrl+"/spectrums/create?spectrum[title]="+typedText+"&spectrum[author]=anonymous&client=0.5");
       //this.postData(u,presenter.toJson(presenter.generateFileName(typedText, null)).getBytes());
-      response = postData(u,bufferImage(get(0, headerHeight, width, 100)),presenter.generateFileName(typedText,"jpg"));
+      response = postData(u,bufferImage(pg.get()),presenter.generateFileName(typedText,"jpg"));
       //clear label buffer
       typedText = "saved: type to label next spectrum";
       println(serverUrl+"/spectra/edit/"+response);
