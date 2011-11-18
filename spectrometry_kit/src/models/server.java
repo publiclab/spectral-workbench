@@ -58,6 +58,7 @@ class Server {
    * POST pData to pUrl
    * @return the response
    * Customized for sending jpegs with name="spectrum[photo]"
+   * ... possibly lead if we switch to ImageIO: http://pastebin.com/f6783c437
    */
   public String postData(URL pUrl, byte[] pData, String filename) {
     // http://wiki.processing.org/w/Saving_files_to_a_web_server

@@ -22,8 +22,13 @@ byte[] bufferImage(PImage srcimg) {
   //int[] rgb = new int[3];
   for (int y = 0; y < srcimg.height; y++) {
     for (int x = 0; x < srcimg.width; x++) {
-      //srcimg.getRGB(0, 0, srcimg.width, srcimg.height, img, 0, srcimg.width);
-      img.setRGB(x, y, srcimg.pixels[y * srcimg.width + x]);
+      int rgb = srcimg.pixels[y * srcimg.width + x];
+      int[] rgbarray = new int[3];
+      rgbarray[0] = int (red(rgb));
+      rgbarray[1] = int (green(rgb));
+      rgbarray[2] = int (blue(rgb));
+      img.setRGB(x,y,1,1, rgbarray, 0, srcimg.width);
+      //img.setRGB(x, y, srcimg.pixels[y * srcimg.width + x]);
     }
   }
       //int pixelColor = srcimg.pixels[y*srcimg.width+x];
