@@ -10,7 +10,7 @@ class Spectrum < ActiveRecord::Base
                             	:on => :create
 	validates_length_of :title, :maximum=>30
 
-	has_many :comments
+	has_many :comments, :dependent => :destroy
 	
 	# Paperclip
 	has_attached_file :photo,
