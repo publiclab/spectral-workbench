@@ -65,9 +65,13 @@ class SpectrumsController < ApplicationController
   # POST /spectrums
   # POST /spectrums.xml
   def create
-    @spectrum = Spectrum.new({:title => params[:spectrum][:title],
+    if params[:photo]
+      @spectrum = Spectrum.new({:title => params[:spectrum][:title],
 				:author => params[:spectrum][:author],
 				:photo => params[:photo]})
+    else
+      @spectrum = Spectrum.new(params[:spectrum])
+    end
 
     respond_to do |format|
       if (params[:client] == "0.5" || verify_recaptcha(:model => @spectrum, :message => "ReCAPTCHA thinks you're not a human!")) && @spectrum.save
