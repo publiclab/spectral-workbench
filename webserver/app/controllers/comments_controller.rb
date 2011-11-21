@@ -8,7 +8,7 @@ class CommentsController < ApplicationController
 	:author => params[:comment][:author],
 	:email => params[:comment][:email]})
     @comment.save
-    redirect_to "spectrums/"+params[:id]
+    redirect_to "/spectra/"+params[:id]
   end
 
 end

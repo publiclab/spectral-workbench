@@ -43,8 +43,7 @@ class Server {
       println(serverUrl+"/spectrums/create?spectrum[title]="+typedText+"&spectrum[author]=anonymous");
       URL u = new URL(serverUrl+"/spectrums/create?spectrum[title]="+typedText+"&spectrum[author]=anonymous&client=0.5");
       //this.postData(u,presenter.toJson(presenter.generateFileName(typedText, null)).getBytes());
-      loadPixels();
-      response = postData(u,bufferImage(get(0, headerHeight, video.width, 100)),presenter.generateFileName(typedText,"jpg"));
+      response = postData(u,bufferImage(pg.get()),presenter.generateFileName(typedText,"jpg"));
       //clear label buffer
       typedText = "saved: type to label next spectrum";
       println(serverUrl+"/spectra/edit/"+response);
@@ -59,6 +58,7 @@ class Server {
    * POST pData to pUrl
    * @return the response
    * Customized for sending jpegs with name="spectrum[photo]"
+   * ... possibly lead if we switch to ImageIO: http://pastebin.com/f6783c437
    */
   public String postData(URL pUrl, byte[] pData, String filename) {
     // http://wiki.processing.org/w/Saving_files_to_a_web_server
