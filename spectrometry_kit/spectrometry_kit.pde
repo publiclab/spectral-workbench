@@ -37,8 +37,10 @@ byte[] bufferImage(PImage srcimg) {
   BufferedImage img = new BufferedImage(srcimg.width, srcimg.height, 2);
   img = (BufferedImage) createImage(srcimg.width,srcimg.height);
   for (int i = 0; i < srcimg.width; i++)
-    for (int j = 0; j < srcimg.height; j++)
+    for (int j = 0; j < srcimg.height; j++) {
       img.setRGB(i, j, srcimg.pixels[j * srcimg.width + i]);
+      println(srcimg.pixels[j*srcimg.width+1]);
+    }
   try {
     JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);
     JPEGEncodeParam encpar = encoder.getDefaultJPEGEncodeParam(img);
