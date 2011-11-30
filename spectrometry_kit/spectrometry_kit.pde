@@ -30,29 +30,23 @@ import ddf.minim.analysis.*;
 import ddf.minim.*;
 
 
-import com.sun.image.codec.jpeg.*;
+import javax.imageio.*;
 
 byte[] bufferImage(PImage srcimg) {
   ByteArrayOutputStream out = new ByteArrayOutputStream();
-  BufferedImage img = new BufferedImage(srcimg.width, srcimg.height, BufferedImage.TYPE_INT_RGB);
+  BufferedImage img = new BufferedImage(srcimg.width, srcimg.height, BufferedImage.TYPE_INT_ARGB);
   img = (BufferedImage) createImage(srcimg.width,srcimg.height);
+  img.setRGB(0, 0, srcimg.width, srcimg.height, srcimg.pixels, 0, srcimg.width);
 
-  for (int y = 0; y < srcimg.height; y++) {
-    for (int x = 0; x < srcimg.width; x++) {
-      img.setRGB(x, y, srcimg.pixels[y * srcimg.width + x]);
-    }
-  }
+
   try {
-    JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);
-    JPEGEncodeParam encpar = encoder.getDefaultJPEGEncodeParam(img);
-    encpar.setQuality(1, false);
-    encoder.setJPEGEncodeParam(encpar);
-    encoder.encode(img);
-  }
-  catch (FileNotFoundException e) {
+
+
+     ImageIO.write(img, "PNG", out);
+
+  } catch (FileNotFoundException e) {
     println(e);
-  }
-  catch (IOException ioe) {
+  } catch (IOException ioe) {
     println(ioe);
   }
   return out.toByteArray();
@@ -646,7 +640,8 @@ class Server {
       String response;
       println(serverUrl+"/spectrums/create?spectrum[title]="+typedText+"&spectrum[author]=anonymous");
       URL u = new URL(serverUrl+"/spectrums/create?spectrum[title]="+typedText+"&spectrum[author]=anonymous&client=0.5");
-      response = postData(u,bufferImage(pg.get()),presenter.generateFileName(typedText,"jpg"));
+
+      response = postData(u,bufferImage(pg.get()),presenter.generateFileName(typedText,"png"));
       typedText = "saved: type to label next spectrum";
       println(serverUrl+"/spectra/edit/"+response);
       link(serverUrl+"/spectra/edit/"+response);
@@ -670,7 +665,7 @@ class Server {
 
         dstream.writeBytes("--"+boundary+"\r\n");
 
-        dstream.writeBytes("Content-Disposition: form-data; name=\"photo\"; filename=\""+filename+"\" \r\nContent-Type: image/jpeg\r\nContent-Transfer-Encoding: binary\r\n\r\n");
+        dstream.writeBytes("Content-Disposition: form-data; name=\"photo\"; filename=\""+filename+"\" \r\nContent-Type: image/png\r\nContent-Transfer-Encoding: binary\r\n\r\n");
         dstream.write(pData ,0, pData.length);
 
         dstream.writeBytes("\r\n--"+boundary+"--\r\n\r\n");
