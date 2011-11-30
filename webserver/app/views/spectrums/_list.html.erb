@@ -12,9 +12,9 @@
 	<a href="/spectra/show/<%= spectrum.id %>"><div src="<%= spectrum.photo.url(:thumb) %>" class="image" style="background:#ccc;"></div></a>
     <% end %>
     <div class="text">
-      <h2><%=h truncate(spectrum.title,33) %></h2>
+      <h2><a href="/spectra/show/<%= spectrum.id %>"><%=h truncate(spectrum.title,24) %></a></h2>
       <p><a href="/author/<%=h spectrum.author %>"><%=h spectrum.author %></a> | <%= time_ago_in_words(spectrum.created_at) %> ago</p>
-      <p class="notes"><%=h spectrum.notes %></p>
+      <p class="notes"><%=h truncate(spectrum.notes,200) %></p>
       <p>
 	<a href="/spectra/<%= spectrum.id %>">View</a> | 
 	<%= link_to 'Edit', edit_spectrum_path(spectrum) %> |
