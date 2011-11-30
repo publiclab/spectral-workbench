@@ -6,11 +6,13 @@ class Video {
   int sampleWidth, sampleHeight;
   int[] rgb;
   boolean isLinux;
+  PApplet parent;
   public String[] cameras;
-  public Video(PApplet parent, int receivedWidth, int receivedHeight, int receivedDevice) {
+  public Video(PApplet PParent, int receivedWidth, int receivedHeight, int receivedDevice) {
     width = receivedWidth;
     height = receivedHeight;
     device = receivedDevice;
+    parent = PParent;
     sampleHeight = 80;
     //OS detection
     try {  
@@ -74,6 +76,13 @@ class Video {
   public float scale()
   {
     return (width*1.000)/screen.width;
+  }
+  // Linux only, for now:
+  public void changeDevice(int Pdevice) {
+    if (isLinux) {
+      device = Pdevice;
+      gscapture = new GSCapture(parent, width, height, 10, "/dev/video"+device);
+    }
   }
   public void image(int x,int y,int imgWidth,int imgHeight)
   {
