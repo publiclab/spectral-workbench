@@ -361,6 +361,7 @@ class Button {
     x = pX;
     y = pY;
     height = pHeight;
+    textFont(font,fontSize);
     width = int (textWidth(text)+padding*2);
   }
 
@@ -383,6 +384,7 @@ class Button {
   }
 
   void draw() {
+    textFont(font,fontSize);
     strokeCap(PROJECT);
     fill(fillColor);
     stroke(20);
@@ -460,11 +462,13 @@ class Video {
   int sampleWidth, sampleHeight;
   int[] rgb;
   boolean isLinux;
+  PApplet parent;
   public String[] cameras;
-  public Video(PApplet parent, int receivedWidth, int receivedHeight, int receivedDevice) {
+  public Video(PApplet PParent, int receivedWidth, int receivedHeight, int receivedDevice) {
     width = receivedWidth;
     height = receivedHeight;
     device = receivedDevice;
+    parent = PParent;
     sampleHeight = 80;
     try {
       Runtime r = Runtime.getRuntime();
@@ -504,6 +508,12 @@ class Video {
   public float scale()
   {
     return (width*1.000)/screen.width;
+  }
+  public void changeDevice(int Pdevice) {
+    if (isLinux) {
+      device = Pdevice;
+      gscapture = new GSCapture(parent, width, height, 10, "/dev/video"+device);
+    }
   }
   public void image(int x,int y,int imgWidth,int imgHeight)
   {
@@ -611,7 +621,6 @@ class Filter implements AudioSignal, AudioListener
 Filter filter;
 class Server {
   public void upload() {
-
     String spectraFolder = "spectra/";
     SpectrumPresentation presenter = new SpectrumPresentation(spectrum.buffer);
 
@@ -636,10 +645,11 @@ class Server {
     pg.endDraw();
     pg.save(spectraFolder + presenter.generateFileName(typedText + "-alt", "png"));
 
+    String webTitle = presenter.generateFileName("untitled",null);
     try {
       String response;
-      println(serverUrl+"/spectrums/create?spectrum[title]="+typedText+"&spectrum[author]=anonymous");
-      URL u = new URL(serverUrl+"/spectrums/create?spectrum[title]="+typedText+"&spectrum[author]=anonymous&client=0.5");
+      println(serverUrl+"/spectrums/create?spectrum[title]="+webTitle+"&spectrum[author]=anonymous");
+      URL u = new URL(serverUrl+"/spectrums/create?spectrum[title]="+webTitle+"&spectrum[author]=anonymous&client=0.5");
 
       response = postData(u,bufferImage(pg.get()),presenter.generateFileName(typedText,"png"));
       typedText = "saved: type to label next spectrum";
@@ -716,6 +726,7 @@ class Header {
   public Button heatmapButton;
   public Button setupButton;
   public Button baselineButton;
+  public Button videoButton;
   public int margin = 4;
 
   public Header() {
@@ -728,6 +739,8 @@ class Header {
     analyzeButton.down();
     baselineButton = addButton("Baseline");
     baselineButton.fillColor = #444444;
+    videoButton = addButton("Video input");
+    videoButton.fillColor = #444444;
   }
 
   public Button addButton(String buttonName) {
@@ -762,6 +775,9 @@ class Header {
     if (baselineButton.mouseOver()) {
       spectrum.storeReference();
     }
+    if (videoButton.mouseOver()) {
+      video.changeDevice(video.device+1);
+    }
     if (learnButton.mouseOver()) {
       link("http://publiclaboratory.org/wiki/spectral-workbench");
     }
@@ -781,6 +797,7 @@ class Header {
     heatmapButton.draw();
     setupButton.draw();
     baselineButton.draw();
+    videoButton.draw();
   }
 }
 

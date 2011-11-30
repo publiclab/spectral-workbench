@@ -3,11 +3,10 @@ class Server {
    * Save the current spectrum to the server
    */
   public void upload() {
-
     //save CSV and JSON:
     String spectraFolder = "spectra/";
     SpectrumPresentation presenter = new SpectrumPresentation(spectrum.buffer);
-
+    
     PrintWriter csv = createWriter(spectraFolder + presenter.generateFileName(typedText, "csv"));
     csv.print(presenter.toCsv());
     csv.close();
@@ -33,10 +32,11 @@ class Server {
     pg.save(spectraFolder + presenter.generateFileName(typedText + "-alt", "png"));
 
     //save to web:
+    String webTitle = presenter.generateFileName("untitled",null);
     try {
       String response;
-      println(serverUrl+"/spectrums/create?spectrum[title]="+typedText+"&spectrum[author]=anonymous");
-      URL u = new URL(serverUrl+"/spectrums/create?spectrum[title]="+typedText+"&spectrum[author]=anonymous&client=0.5");
+      println(serverUrl+"/spectrums/create?spectrum[title]="+webTitle+"&spectrum[author]=anonymous");
+      URL u = new URL(serverUrl+"/spectrums/create?spectrum[title]="+webTitle+"&spectrum[author]=anonymous&client=0.5");
       //this.postData(u,presenter.toJson(presenter.generateFileName(typedText, null)).getBytes());
 
       response = postData(u,bufferImage(pg.get()),presenter.generateFileName(typedText,"png"));

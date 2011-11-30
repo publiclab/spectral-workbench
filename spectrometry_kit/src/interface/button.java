@@ -16,6 +16,7 @@ class Button {
     x = pX;
     y = pY;
     height = pHeight;
+    textFont(font,fontSize);
     width = int (textWidth(text)+padding*2);
   }
 
@@ -39,6 +40,7 @@ class Button {
   }
 
   void draw() {
+    textFont(font,fontSize);
     strokeCap(PROJECT);
     fill(fillColor);
     stroke(20);
