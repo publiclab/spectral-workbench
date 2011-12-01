@@ -3,6 +3,7 @@
 */
  
 import javax.imageio.*;
+import java.awt.image.BufferedImage;
 
 byte[] bufferImage(PImage srcimg) {
   ByteArrayOutputStream out = new ByteArrayOutputStream();
