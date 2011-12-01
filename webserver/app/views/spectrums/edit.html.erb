@@ -28,6 +28,8 @@
   </p>
   <p>
     <%= f.submit 'Update' %>
+    <% if admin %><%= button_to "Delete", { :action => "destroy", :id => @spectrum.id },
+          :confirm => "Are you sure?", :method => :delete %><% end %>
   </p>
 <% end %>
 

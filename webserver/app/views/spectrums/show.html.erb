@@ -21,7 +21,7 @@
 <h1><%= @spectrum.title %></h1>
 
 <h3>Notes</h3>
-<p class="description"><%= @spectrum.notes %></p>
+<p class="description"><%= markdown(@spectrum.notes) %></p>
 
 <h3>License</h3>
 
