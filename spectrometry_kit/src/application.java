@@ -51,7 +51,7 @@ Analyze analyze;
 Header header;
 
 //String serverUrl = "http://localhost:3000"; // the remote server to upload to
-String serverUrl = "http://spectrometer.publiclaboratory.org"; // the remote server to upload to
+String serverUrl = "http://spectralworkbench.org"; // the remote server to upload to
 String controller = "setup"; // this determines what controller is used, i.e. what mode the app is in
 final static String defaultTypedText = "type to label spectrum";
 String typedText = defaultTypedText;
