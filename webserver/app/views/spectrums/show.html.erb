@@ -1,5 +1,21 @@
 <p>
 <img src="<%= @spectrum.photo.url(:large) %>" />
+<% unless @spectrum.data.nil? %>
+<div id="graph" style="width:800px;height:200px;"></div>
+<script type="text/javascript"> 
+    spectrum = <%= @spectrum.data %>
+    data = []
+    spectrum.lines.each(function(line) {
+      data << [line.wavelength,line.average]
+    })
+    $.plot($("#graph"), [
+        {
+            data: data,
+            lines: { show: true }
+        },
+    ]);
+</script>
+<% end %>
 </p>
 
 <h1><%= @spectrum.title %></h1>
