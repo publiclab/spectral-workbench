@@ -31,6 +31,7 @@ import ddf.minim.*;
 
 
 import javax.imageio.*;
+import java.awt.image.BufferedImage;
 
 byte[] bufferImage(PImage srcimg) {
   ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -639,7 +640,7 @@ class Server {
     pg.beginDraw();
     for (int y=0;y<100;y++) {
       for (int x=0;x<video.width;x++) {
-        pg.set(x,y,pixels[spectrum.samplerow*video.width+y*video.width+x]);
+        pg.set(x,y,pixels[headerHeight*width+y*width+x]);
       }
     }
     pg.endDraw();
@@ -804,8 +805,8 @@ class Header {
 
 Header header;
 
-String serverUrl = "http://spectrometer.publiclaboratory.org"; // the remote server to upload to
-String controller = "analyze"; // this determines what controller is used, i.e. what mode the app is in
+String serverUrl = "http://spectralworkbench.org"; // the remote server to upload to
+String controller = "setup"; // this determines what controller is used, i.e. what mode the app is in
 final static String defaultTypedText = "type to label spectrum";
 String typedText = defaultTypedText;
 PFont font;

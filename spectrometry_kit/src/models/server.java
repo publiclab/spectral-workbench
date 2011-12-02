@@ -25,7 +25,7 @@ class Server {
     pg.beginDraw();
     for (int y=0;y<100;y++) {
       for (int x=0;x<video.width;x++) {
-        pg.set(x,y,pixels[spectrum.samplerow*video.width+y*video.width+x]);
+        pg.set(x,y,pixels[headerHeight*width+y*width+x]);
       }
     }
     pg.endDraw();
