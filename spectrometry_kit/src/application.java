@@ -47,6 +47,8 @@ Filter filter;
 Server server;
 //= require <controllers/analyze>
 Analyze analyze;
+//= require <controllers/setup>
+Setup setup;
 //= require <views/header>
 Header header;
 
@@ -67,6 +69,7 @@ public void setup() {
   //hmmm... controller definitions:
   //application = new Controller(); // this could contain subcontrollers?
   analyze = new Analyze();
+  setup = new Setup();
   header = new Header();
   server = new Server();
 
@@ -107,8 +110,11 @@ void draw() {
   line(0,height-255,width,height-255); //100% mark for spectra
 
   header.draw();
-  if (controller == "setup") { spectrum.preview(); }
   spectrum.draw(headerHeight); //y position of top of spectrum
+  if ((controller == "setup" && setup.selectingSampleRow) || setup.delayCounter > 0) { 
+	setup.delayCounter -= 1;
+	spectrum.preview(); 
+  }
 
   updatePixels();
 }

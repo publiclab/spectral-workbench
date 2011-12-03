@@ -89,7 +89,7 @@ class Video {
     if (isLinux) {
       gscapture.read();
       //papplet.image(gscapture,x,y,imgWidth,imgHeight);
-    } //else papplet.image(capture,x,y,imgWidth,imgHeight);
+    } else parent.image(capture,x,y,imgWidth,imgHeight);
   }
   /**
    * Retrieve red, green, blue color intensities 

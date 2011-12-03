@@ -99,23 +99,21 @@ class Spectrum {
      * Preview video to align spectrum - shows thumbnail in bottom left corner
      */
     public void preview() {
-      //video.image(0,height*3/4,width/4,height/4)
-      for (int y = 0; y < int (video.height); y+=4) {
-        for (int x = 0; x < int (video.width); x+=4) {
-          if (x < width && y < height) {
-            if (video.isLinux) {
-              pixels[(height*3/4*width)+(y*width/4)+((x/4))] = video.gscapture.pixels[y*video.width+x];
-            //pixels[(height*3/4*width)+(y*width/4)+((x/4))] = video.gscapture.pixels[int (y/video.scale()*video.width+x/video.scale())];
-            } else {
-              pixels[(height*3/4*width)+(y*width/4)+((x/4))] = video.capture.pixels[y*video.width+x];
-            }
-          }
-        }
-      }
+      int xoff = width/2-video.width/8, yoff = height/2-video.height/8;
+      fill(150);
+      rect(xoff-10,yoff-40,video.width/4+20,video.height/4+60); 
+      fill(20);
+      textFont(font,18);
+      text("Drag to adjust the sampling height",xoff,yoff-10);
+      video.image(xoff,yoff,video.width/4,video.height/4);
       // draw the region of sampling with a rectangle:
       noFill();
       stroke(255,255,0);
-      rect(0,height*3/4+samplerow/4,video.width/4,video.sampleHeight/4);
+      rect(xoff,yoff+samplerow/4,video.width/4,video.sampleHeight/4);
+      fill(255,255,0,0.3);
+      noStroke();
+      rect(xoff,yoff,video.width/4,samplerow/4);
+      rect(xoff,yoff+samplerow/4+video.sampleHeight/4,video.width/4,video.sampleHeight/4+samplerow/4);
     }
     /**
      * Saves the current spectrum in a separate buffer for comparison.

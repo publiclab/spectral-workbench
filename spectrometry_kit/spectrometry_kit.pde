@@ -175,20 +175,20 @@ if (controller == "analyze" || controller == "heatmap") {
       text(averageAbsorption,10,avY);
     }
     public void preview() {
-      for (int y = 0; y < int (video.height); y+=4) {
-        for (int x = 0; x < int (video.width); x+=4) {
-          if (x < width && y < height) {
-            if (video.isLinux) {
-              pixels[(height*3/4*width)+(y*width/4)+((x/4))] = video.gscapture.pixels[y*video.width+x];
-            } else {
-              pixels[(height*3/4*width)+(y*width/4)+((x/4))] = video.capture.pixels[y*video.width+x];
-            }
-          }
-        }
-      }
+      int xoff = width/2-video.width/8, yoff = height/2-video.height/8;
+      fill(150);
+      rect(xoff-10,yoff-40,video.width/4+20,video.height/4+60);
+      fill(20);
+      textFont(font,18);
+      text("Drag to adjust the sampling height",xoff,yoff-10);
+      video.image(xoff,yoff,video.width/4,video.height/4);
       noFill();
       stroke(255,255,0);
-      rect(0,height*3/4+samplerow/4,video.width/4,video.sampleHeight/4);
+      rect(xoff,yoff+samplerow/4,video.width/4,video.sampleHeight/4);
+      fill(255,255,0,0.3);
+      noStroke();
+      rect(xoff,yoff,video.width/4,samplerow/4);
+      rect(xoff,yoff+samplerow/4+video.sampleHeight/4,video.width/4,video.sampleHeight/4+samplerow/4);
     }
     public void storeReference() {
       for (int x = 0;x < buffer[0].length;x++) {
@@ -334,15 +334,21 @@ void mouseMoved() {
 }
 
 void mousePressed() {
-
   if (controller == "analyze") {
     analyze.mousePressed();
   } else if (controller == "setup") {
-    analyze.mousePressed(); // for now, same.
+    setup.mousePressed();
   } else if (controller == "heatmap") {
     analyze.mousePressed(); // for now, same.
   }
+}
 
+void mouseReleased() {
+  if (controller == "analyze") {
+  } else if (controller == "setup") {
+    setup.mouseReleased();
+  } else if (controller == "heatmap") {
+  }
 }
 class Button {
 
@@ -520,7 +526,7 @@ class Video {
   {
     if (isLinux) {
       gscapture.read();
-    } //else papplet.image(capture,x,y,imgWidth,imgHeight);
+    } else parent.image(capture,x,y,imgWidth,imgHeight);
   }
   public int[] get_rgb(int x)
   {
@@ -716,6 +722,49 @@ class Analyze {
 
 }
 Analyze analyze;
+class Setup {
+
+  boolean selectingSampleRow = true;
+  boolean sampleRowMousePressed = false;
+  int delayCounter = 10;
+
+  public Setup() {
+
+  }
+
+  public void mousePressed() {
+    if (mouseY < headerHeight) { // Header
+      header.mousePressed();
+    } else if (selectingSampleRow && (mouseX > width/2-video.width/8 && mouseX < width/2+video.width/8) && (mouseY > height/2-video.height/8 && mouseY < height/2+video.height/8)) { // Modal video select
+
+      sampleRowMousePressed = true;
+      spectrum.samplerow = 4*(mouseY-height/2+video.height/8);
+      if (spectrum.samplerow+video.sampleHeight > video.height || spectrum.samplerow+video.sampleHeight <= 0) {
+        video.sampleHeight = video.height-spectrum.samplerow-1;
+      }
+    } else if (mouseY < int (headerHeight+(height-headerHeight)/2)) { // Waterfall
+
+    } else { // Graph
+
+    }
+  }
+
+  public void mouseReleased() {
+    if (sampleRowMousePressed) {
+      sampleRowMousePressed = false;
+      selectingSampleRow = false;
+      delayCounter = 10;
+      video.sampleHeight = (4*(mouseY-height/2+video.height/8))-spectrum.samplerow;
+      if (spectrum.samplerow+video.sampleHeight > video.height || spectrum.samplerow+video.sampleHeight <= 0) {
+        video.sampleHeight = video.height-spectrum.samplerow-1;
+      }
+      controller = "analyze";
+    }
+  }
+
+}
+
+Setup setup;
 class Header {
 
   public PImage logo;
@@ -728,6 +777,7 @@ class Header {
   public Button setupButton;
   public Button baselineButton;
   public Button videoButton;
+  public Button videoRowButton;
   public int margin = 4;
 
   public Header() {
@@ -738,10 +788,13 @@ class Header {
     setupButton = addButton("Setup");
     analyzeButton = addButton("Analyze");
     analyzeButton.down();
+
     baselineButton = addButton("Baseline");
     baselineButton.fillColor = #444444;
     videoButton = addButton("Video input");
     videoButton.fillColor = #444444;
+    videoRowButton = addButton("Sample row");
+    videoRowButton.fillColor = #444444;
   }
 
   public Button addButton(String buttonName) {
@@ -776,8 +829,11 @@ class Header {
     if (baselineButton.mouseOver()) {
       spectrum.storeReference();
     }
-    if (videoButton.mouseOver() && isLinux) {
+    if (videoButton.mouseOver() && video.isLinux) {
       video.changeDevice(video.device+1);
+    }
+    if (controller == "setup" && videoRowButton.mouseOver()) {
+      setup.selectingSampleRow = true;
     }
     if (learnButton.mouseOver()) {
       link("http://publiclaboratory.org/wiki/spectral-workbench");
@@ -797,8 +853,9 @@ class Header {
     analyzeButton.draw();
     heatmapButton.draw();
     setupButton.draw();
-    baselineButton.draw();
-    if (isLinux) videoButton.draw();
+    if (controller == "analyze") baselineButton.draw();
+    if (video.isLinux && controller == "setup") videoButton.draw();
+    if (controller == "setup") videoRowButton.draw();
   }
 }
 
@@ -819,6 +876,7 @@ public void setup() {
   system = new System();
   keyboard = new Keyboard();
   analyze = new Analyze();
+  setup = new Setup();
   header = new Header();
   server = new Server();
 
@@ -855,8 +913,11 @@ void draw() {
   line(0,height-255,width,height-255); //100% mark for spectra
 
   header.draw();
-  if (controller == "setup") { spectrum.preview(); }
   spectrum.draw(headerHeight); //y position of top of spectrum
+  if ((controller == "setup" && setup.selectingSampleRow) || setup.delayCounter > 0) {
+	setup.delayCounter -= 1;
+	spectrum.preview();
+  }
 
   updatePixels();
 }

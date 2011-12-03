@@ -13,6 +13,7 @@ class Header {
   public Button setupButton;
   public Button baselineButton;
   public Button videoButton;
+  public Button videoRowButton;
   public int margin = 4;
 
   public Header() {
@@ -23,10 +24,13 @@ class Header {
     setupButton = addButton("Setup");
     analyzeButton = addButton("Analyze");
     analyzeButton.down();
+
     baselineButton = addButton("Baseline");
     baselineButton.fillColor = #444444;
     videoButton = addButton("Video input");
     videoButton.fillColor = #444444;
+    videoRowButton = addButton("Sample row");
+    videoRowButton.fillColor = #444444;
   }
 
   public Button addButton(String buttonName) {
@@ -64,8 +68,11 @@ class Header {
     if (baselineButton.mouseOver()) {
       spectrum.storeReference();
     }
-    if (videoButton.mouseOver() && isLinux) {
+    if (videoButton.mouseOver() && video.isLinux) {
       video.changeDevice(video.device+1);
+    }
+    if (controller == "setup" && videoRowButton.mouseOver()) {
+      setup.selectingSampleRow = true;
     }
     if (learnButton.mouseOver()) {
       link("http://publiclaboratory.org/wiki/spectral-workbench");
@@ -89,8 +96,9 @@ class Header {
     analyzeButton.draw();
     heatmapButton.draw();
     setupButton.draw();
-    baselineButton.draw();
-    if (isLinux) videoButton.draw();
+    if (controller == "analyze") baselineButton.draw();
+    if (video.isLinux && controller == "setup") videoButton.draw();
+    if (controller == "setup") videoRowButton.draw();
   }
 }
 
