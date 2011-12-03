@@ -14,8 +14,8 @@ void keyPressed() {
   if (key == CODED) {
     if (keyCode == DOWN) {
       spectrum.samplerow += 1;
-      if (spectrum.samplerow >= video.height) {
-        spectrum.samplerow = video.height;
+      if (spectrum.samplerow >= video.height-video.sampleHeight) {
+        spectrum.samplerow = video.height-video.sampleHeight-1;
       }
     } else if (keyCode == UP) {
       spectrum.samplerow -= 1;

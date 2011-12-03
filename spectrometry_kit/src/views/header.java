@@ -64,7 +64,7 @@ class Header {
     if (baselineButton.mouseOver()) {
       spectrum.storeReference();
     }
-    if (videoButton.mouseOver()) {
+    if (videoButton.mouseOver() && isLinux) {
       video.changeDevice(video.device+1);
     }
     if (learnButton.mouseOver()) {
@@ -90,7 +90,7 @@ class Header {
     heatmapButton.draw();
     setupButton.draw();
     baselineButton.draw();
-    videoButton.draw();
+    if (isLinux) videoButton.draw();
   }
 }
 

@@ -103,7 +103,7 @@ class Video {
     rgb[2] = 0;
 
     for (int yoff = spectrum.samplerow; yoff < spectrum.samplerow+sampleHeight; yoff+=1) {
-      int sampleind = int ((video.width*spectrum.samplerow)+(video.width*yoff)+x);
+      int sampleind = int ((video.width*yoff)+x);
 
       if (sampleind >= 0 && sampleind <= (video.height*video.width)) {
         int pixelColor;

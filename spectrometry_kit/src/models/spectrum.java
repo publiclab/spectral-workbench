@@ -115,7 +115,7 @@ class Spectrum {
       // draw the region of sampling with a rectangle:
       noFill();
       stroke(255,255,0);
-      rect(0,height*3/4+samplerow/4-video.sampleHeight/4,video.width/4,video.sampleHeight/4);
+      rect(0,height*3/4+samplerow/4,video.width/4,video.sampleHeight/4);
     }
     /**
      * Saves the current spectrum in a separate buffer for comparison.

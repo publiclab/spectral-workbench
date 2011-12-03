@@ -188,7 +188,7 @@ if (controller == "analyze" || controller == "heatmap") {
       }
       noFill();
       stroke(255,255,0);
-      rect(0,height*3/4+samplerow/4-video.sampleHeight/4,video.width/4,video.sampleHeight/4);
+      rect(0,height*3/4+samplerow/4,video.width/4,video.sampleHeight/4);
     }
     public void storeReference() {
       for (int x = 0;x < buffer[0].length;x++) {
@@ -293,8 +293,8 @@ void keyPressed() {
   if (key == CODED) {
     if (keyCode == DOWN) {
       spectrum.samplerow += 1;
-      if (spectrum.samplerow >= video.height) {
-        spectrum.samplerow = video.height;
+      if (spectrum.samplerow >= video.height-video.sampleHeight) {
+        spectrum.samplerow = video.height-video.sampleHeight-1;
       }
     } else if (keyCode == UP) {
       spectrum.samplerow -= 1;
@@ -530,7 +530,7 @@ class Video {
     rgb[2] = 0;
 
     for (int yoff = spectrum.samplerow; yoff < spectrum.samplerow+sampleHeight; yoff+=1) {
-      int sampleind = int ((video.width*spectrum.samplerow)+(video.width*yoff)+x);
+      int sampleind = int ((video.width*yoff)+x);
 
       if (sampleind >= 0 && sampleind <= (video.height*video.width)) {
         int pixelColor;
@@ -776,7 +776,7 @@ class Header {
     if (baselineButton.mouseOver()) {
       spectrum.storeReference();
     }
-    if (videoButton.mouseOver()) {
+    if (videoButton.mouseOver() && isLinux) {
       video.changeDevice(video.device+1);
     }
     if (learnButton.mouseOver()) {
@@ -798,7 +798,7 @@ class Header {
     heatmapButton.draw();
     setupButton.draw();
     baselineButton.draw();
-    videoButton.draw();
+    if (isLinux) videoButton.draw();
   }
 }
 
