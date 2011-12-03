@@ -2,18 +2,34 @@
 <img src="<%= @spectrum.photo.url(:large) %>" />
 <% unless @spectrum.data.nil? %>
 <div id="graph" style="width:800px;height:200px;"></div>
-<script type="text/javascript"> 
-    spectrum = <%= @spectrum.data %>
+<script type="text/javascript">
+    spectrum = <%= @spectrum.data.chomp(",") %>
     data = []
-    spectrum.lines.each(function(line) {
-      data << [line.wavelength,line.average]
+    scaled = true
+    $.each(spectrum.lines,function(index,line) {
+      if (line.wavelength == null) {
+	line.wavelength = index
+	scaled = false
+      }
+      data.push([line.wavelength,line.average])
     })
-    $.plot($("#graph"), [
-        {
-            data: data,
-            lines: { show: true }
-        },
-    ]);
+    $.plot($("#graph"), [{data:data}],
+	{
+	    series: {
+              lines: { 
+		show: true, 
+		lineWidth: 1,
+	      },
+	    },
+	    yaxis: { show: false },
+	    xaxis: { show: scaled },
+	    shadowSize: 0,
+	    grid: {
+              backgroundColor: "#eee"
+            },
+	    colors: [ "#333333", "#777777" ]
+        }
+   );
 </script>
 <% end %>
 </p>
