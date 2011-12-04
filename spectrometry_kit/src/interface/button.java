@@ -32,6 +32,10 @@ class Button {
     return (mouseX > x && mouseX < x+width && mouseY > y && mouseY < y+height);
   }
 
+  public void mousePressed() {
+
+  }
+
   void up() {
     down = false;
   }
