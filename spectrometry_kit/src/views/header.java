@@ -151,14 +151,19 @@ class Header {
   public void switchController(String Pcontroller) {
     controller = Pcontroller;
     
-    // for (int i = 0;i < buttons.size();i++) {
-    //   if (buttons.get(i).forController != "all" && buttons.get(i).forController != Pcontroller) {
-    //     rightOffset -= buttons.get(i).width;
-    //   } else {
-    //     buttons.get(i).x = width-rightOffset-margin;
-    //     rightOffset += buttons.get(i).width;
-    //   }
-    // }
+    //for (int i = 0;i < buttons.size();i++) {
+    //  Button b = (Button) buttons.get(i);
+    //  if (b.forController != "all" && b.forController != Pcontroller) {
+    //    rightOffset -= b.width;
+    //  }
+    //}
+    //for (int i = 0;i < buttons.size();i++) {
+    //  Button b = (Button) buttons.get(i);
+    //  if (b.forController != Pcontroller) {
+    //    b.x = width-rightOffset-margin;
+    //    rightOffset += b.width;
+    //  }
+    //}
   }
 
   public void draw() {

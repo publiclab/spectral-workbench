@@ -10,6 +10,7 @@ class Button {
   public boolean hovering = false;
   public boolean down = false;
   public color fillColor = #222222;
+  String forController;
 
   public Button(String pText,int pX, int pY, int pHeight) {
     text = pText;
@@ -32,9 +33,7 @@ class Button {
     return (mouseX > x && mouseX < x+width && mouseY > y && mouseY < y+height);
   }
 
-  public void mousePressed() {
-
-  }
+  public void mousePressed() {}
 
   void up() {
     down = false;
