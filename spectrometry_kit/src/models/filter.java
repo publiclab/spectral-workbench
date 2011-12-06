@@ -25,9 +25,9 @@ class Filter implements AudioSignal, AudioListener
     fft = new FFT(out.bufferSize(), out.sampleRate());
     fft.window(FFT.HAMMING);
     // passes the mic input to the spectrum filter class
-    in.addListener(this);
+    //in.addListener(this);
     // passes the result of the spectrum filter class to the audio output
-    out.addSignal(this);
+    //out.addSignal(this);
   }
   // This part is implementing AudioListener interface, see Minim reference
   synchronized void samples(float[] samp)

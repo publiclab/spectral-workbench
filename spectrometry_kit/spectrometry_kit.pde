@@ -331,6 +331,11 @@ void keyPressed() {
 Keyboard keyboard;
 
 void mouseMoved() {
+  if (controller == "analyze") {
+  } else if (controller == "setup") {
+    setup.mouseMoved();
+  } else if (controller == "heatmap") {
+  }
 }
 
 void mousePressed() {
@@ -355,6 +360,7 @@ class Button {
   public String text;
   public int x = 0;
   public int y = 0;
+  public boolean dragging = false; // not often used except in "sliders"
   public int padding = 10;
   public int width = 100;
   public int height = headerHeight;
@@ -582,8 +588,6 @@ class Filter implements AudioSignal, AudioListener
     rightChannel= new float[bsize];
     fft = new FFT(out.bufferSize(), out.sampleRate());
     fft.window(FFT.HAMMING);
-    in.addListener(this);
-    out.addSignal(this);
   }
   synchronized void samples(float[] samp)
   {
@@ -718,6 +722,8 @@ class Analyze {
       header.mousePressed();
     } else if (mouseY < int (headerHeight+(height-headerHeight)/2)) { // Waterfall
 
+    } else if (mouseY < int (20+headerHeight+(height-headerHeight)/2)) { // Calibrator
+
     } else { // Graph
 
     }
@@ -735,6 +741,10 @@ class Setup {
 
   }
 
+  public void mouseMoved() {
+    calibrator.mouseMoved();
+  }
+
   public void mousePressed() {
     if (mouseY < headerHeight) { // Header
       header.mousePressed();
@@ -747,6 +757,8 @@ class Setup {
       }
     } else if (mouseY < int (headerHeight+(height-headerHeight)/2)) { // Waterfall
 
+    } else if (mouseY < int (20+headerHeight+(height-headerHeight)/2)) { // Calibrator
+      calibrator.mousePressed();
     } else { // Graph
 
     }
@@ -761,8 +773,11 @@ class Setup {
       if (spectrum.samplerow+video.sampleHeight > video.height || spectrum.samplerow+video.sampleHeight <= 0) {
         video.sampleHeight = video.height-spectrum.samplerow-1;
       }
+      settings.set("video.samplerow",spectrum.samplerow);
+      settings.set("video.sampleheight",video.sampleHeight);
       controller = "analyze";
     }
+    calibrator.mouseReleased();
   }
 
 }
@@ -936,6 +951,119 @@ class Header {
 
 
 Header header;
+class Calibrator {
+
+  Button firstMarker,secondMarker;
+  public ArrayList sliders;
+  public int y,height;
+
+  public Calibrator(PApplet parent) {
+    y = headerHeight+(parent.height-headerHeight)/2;
+    height = 10;
+    sliders = new ArrayList();
+    firstMarker = new Button("Mercury 1",0,y,height);
+    sliders.add(firstMarker);
+println(y);
+    secondMarker = new Button("Mercury 2",width-100,y,height);
+    sliders.add(secondMarker);
+  }
+
+  void draw() {
+    textFont(font,10);
+
+    if (controller == "analyze") { // show wavelength graduations
+      if (settings.firstMarkerWavelength != 0) { // if no calibration exists, this will be 0
+
+
+
+      } else {
+        text("No calibration yet",4,height+4);
+      }
+    } else { // show sliders
+
+      for (int i = 0;i < sliders.size();i++) {
+        Button b = (Button) sliders.get(i);
+        b.draw();
+      }
+
+    }
+  }
+
+  void mousePressed() {
+    if (firstMarker.mouseOver()) {
+      firstMarker.dragging = true;
+    } else if (secondMarker.mouseOver()) {
+      secondMarker.dragging = true;
+    }
+  }
+
+  void mouseMoved() {
+    if (firstMarker.dragging) {
+      firstMarker.x = mouseX;
+    } else if (secondMarker.dragging) {
+      secondMarker.x = mouseX;
+    }
+  }
+
+  void mouseReleased() {
+    firstMarker.dragging = false;
+    secondMarker.dragging = false;
+  }
+
+}
+Calibrator calibrator;
+class Settings {
+  P5Properties props;
+  int firstMarkerWavelength,firstMarkerPixel;
+  int secondMarkerWavelength,secondMarkerPixel;
+  PApplet parent;
+   public Settings(PApplet pParent) {
+    println("Reading settings.txt");
+    parent = pParent;
+    try {
+      props=new P5Properties();
+      props.load(openStream("settings.txt"));
+      spectrum.samplerow = props.getIntProperty("video.samplerow",80);
+      video.sampleHeight = props.getIntProperty("video.sampleheight",int (height*(0.18)));
+      video.device = props.getIntProperty("video.device",0);
+      firstMarkerWavelength = props.getIntProperty("calibration.firstMarkerWavelength",0);
+      firstMarkerPixel = props.getIntProperty("calibration.firstMarkerPixel",0);
+      secondMarkerWavelength = props.getIntProperty("calibration.secondMarkerWavelength",0);
+      secondMarkerPixel = props.getIntProperty("calibration.secondMarkerPixel",0);
+    } catch(IOException e) {
+      println("couldn't read config file...");
+    }
+  }
+
+  void set(String key,int val) {
+    println("Writing settings.txt");
+    String stringVal = ""+val; // how else to turn int into String? I'm on a plane and can't look it up.
+    props.setProperty(key,stringVal);
+    try {
+      props.store(new FileOutputStream(parent.dataPath("settings.txt")), null);
+      println("done");
+    } catch (IOException e) {
+      println(e);
+    }
+  }
+
+}
+class P5Properties extends Properties {
+
+  boolean getBooleanProperty(String id, boolean defState) {
+    return boolean(getProperty(id,""+defState));
+  }
+
+  int getIntProperty(String id, int defVal) {
+    return int(getProperty(id,""+defVal));
+  }
+
+  float getFloatProperty(String id, float defVal) {
+    return float(getProperty(id,""+defVal));
+  }
+}
+
+Settings settings;
 
 String serverUrl = "http://spectralworkbench.org"; // the remote server to upload to
 String controller = "setup"; // this determines what controller is used, i.e. what mode the app is in
@@ -953,6 +1081,7 @@ public void setup() {
   analyze = new Analyze();
   setup = new Setup();
   header = new Header();
+  calibrator = new Calibrator(this);
   server = new Server();
 
   size(screen.width, screen.height-20, P2D);
@@ -960,6 +1089,7 @@ public void setup() {
   video = new Video(this,1280,720,0);
   spectrum = new Spectrum(int (height-headerHeight)/2,int (height*(0.18))); //history (length),samplerow (row # to begin sampling)
   filter = new Filter(this);
+  settings = new Settings(this); // once more settings are stored in this object instead of video or spectrum, this can move up
 }
 
 public void switchMode() {
@@ -988,6 +1118,7 @@ void draw() {
   line(0,height-255,width,height-255); //100% mark for spectra
 
   header.draw();
+  calibrator.draw();
   spectrum.draw(headerHeight); //y position of top of spectrum
   if ((controller == "setup" && setup.selectingSampleRow) || setup.delayCounter > 0) {
 	setup.delayCounter -= 1;

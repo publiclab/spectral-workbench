@@ -1,0 +1,6 @@
+#Tue Dec 06 11:53:02 EST 2011
+video.height=720
+video.samplerow=260
+video.width=1280
+video.sampleheight=240
+video.device=0

@@ -51,7 +51,12 @@ Analyze analyze;
 Setup setup;
 //= require <views/header>
 Header header;
+//= require <views/calibrator>
+Calibrator calibrator;
+//= require <models/settings>
+Settings settings;
 
+// Move these into Settings:
 //String serverUrl = "http://localhost:3000"; // the remote server to upload to
 String serverUrl = "http://spectralworkbench.org"; // the remote server to upload to
 String controller = "setup"; // this determines what controller is used, i.e. what mode the app is in
@@ -71,17 +76,16 @@ public void setup() {
   analyze = new Analyze();
   setup = new Setup();
   header = new Header();
+  calibrator = new Calibrator(this);
   server = new Server();
 
-  //size(640, 480, P2D);
-  //size(1280, 720, P2D);
-  // Or run full screen, more fun! Use with Sketch -> Present
   size(screen.width, screen.height-20, P2D);
 
   //video = new Video(this,640,480,0);
   video = new Video(this,1280,720,0);
   spectrum = new Spectrum(int (height-headerHeight)/2,int (height*(0.18))); //history (length),samplerow (row # to begin sampling)
   filter = new Filter(this);
+  settings = new Settings(this); // once more settings are stored in this object instead of video or spectrum, this can move up
 }
 
 public void switchMode() {
@@ -109,7 +113,9 @@ void draw() {
   stroke(0);
   line(0,height-255,width,height-255); //100% mark for spectra
 
+  // register these at some point:
   header.draw();
+  calibrator.draw();
   spectrum.draw(headerHeight); //y position of top of spectrum
   if ((controller == "setup" && setup.selectingSampleRow) || setup.delayCounter > 0) { 
 	setup.delayCounter -= 1;

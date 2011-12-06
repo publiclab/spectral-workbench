@@ -5,6 +5,14 @@
 //}
 
 void mouseMoved() {
+  // switch to calling controller.activeController
+  if (controller == "analyze") {
+    //analyze.mouseMoved();
+  } else if (controller == "setup") {
+    setup.mouseMoved();
+  } else if (controller == "heatmap") {
+    //heatmap.mouseMoved();
+  }
 }
 
 void mousePressed() {

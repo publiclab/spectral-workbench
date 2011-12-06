@@ -3,6 +3,7 @@ class Button {
   public String text;
   public int x = 0;
   public int y = 0;
+  public boolean dragging = false; // not often used except in "sliders"
   public int padding = 10;
   public int width = 100;
   public int height = headerHeight;

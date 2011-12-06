@@ -331,6 +331,11 @@ void keyPressed() {
 Keyboard keyboard;
 
 void mouseMoved() {
+  if (controller == "analyze") {
+  } else if (controller == "setup") {
+    setup.mouseMoved();
+  } else if (controller == "heatmap") {
+  }
 }
 
 void mousePressed() {
@@ -355,6 +360,7 @@ class Button {
   public String text;
   public int x = 0;
   public int y = 0;
+  public boolean dragging = false; // not often used except in "sliders"
   public int padding = 10;
   public int width = 100;
   public int height = headerHeight;
@@ -362,6 +368,7 @@ class Button {
   public boolean hovering = false;
   public boolean down = false;
   public color fillColor = #222222;
+  String forController;
 
   public Button(String pText,int pX, int pY, int pHeight) {
     text = pText;
@@ -382,6 +389,8 @@ class Button {
   boolean mouseOver() {
     return (mouseX > x && mouseX < x+width && mouseY > y && mouseY < y+height);
   }
+
+  public void mousePressed() {}
 
   void up() {
     down = false;
@@ -579,8 +588,6 @@ class Filter implements AudioSignal, AudioListener
     rightChannel= new float[bsize];
     fft = new FFT(out.bufferSize(), out.sampleRate());
     fft.window(FFT.HAMMING);
-    in.addListener(this);
-    out.addSignal(this);
   }
   synchronized void samples(float[] samp)
   {
@@ -715,6 +722,8 @@ class Analyze {
       header.mousePressed();
     } else if (mouseY < int (headerHeight+(height-headerHeight)/2)) { // Waterfall
 
+    } else if (mouseY < int (20+headerHeight+(height-headerHeight)/2)) { // Calibrator
+
     } else { // Graph
 
     }
@@ -732,6 +741,10 @@ class Setup {
 
   }
 
+  public void mouseMoved() {
+    calibrator.mouseMoved();
+  }
+
   public void mousePressed() {
     if (mouseY < headerHeight) { // Header
       header.mousePressed();
@@ -744,6 +757,8 @@ class Setup {
       }
     } else if (mouseY < int (headerHeight+(height-headerHeight)/2)) { // Waterfall
 
+    } else if (mouseY < int (20+headerHeight+(height-headerHeight)/2)) { // Calibrator
+      calibrator.mousePressed();
     } else { // Graph
 
     }
@@ -758,109 +773,297 @@ class Setup {
       if (spectrum.samplerow+video.sampleHeight > video.height || spectrum.samplerow+video.sampleHeight <= 0) {
         video.sampleHeight = video.height-spectrum.samplerow-1;
       }
+      settings.set("video.samplerow",spectrum.samplerow);
+      settings.set("video.sampleheight",video.sampleHeight);
       controller = "analyze";
     }
+    calibrator.mouseReleased();
   }
 
 }
 
 Setup setup;
-class Header {
+class VideoRowButton extends Button {
+  VideoRowButton(String PbuttonName,int Px,int Py,int Pheight) { super(PbuttonName,Px,Py,Pheight); }
+  String forController = "setup"; // or "all"
+  void draw() {
+    if (controller == "setup") {
+	super.draw();
+    }
+  }
+  void mousePressed() {
+    if (controller == "setup" && super.mouseOver()) {
+      setup.selectingSampleRow = true;
+    }
+  }
+}
 
+class SaveButton extends Button {
+  SaveButton(String PbuttonName,int Px,int Py,int Pheight) { super(PbuttonName,Px,Py,Pheight); }
+  String forController = "all";
+  void mousePressed() {
+    if (super.mouseOver()) server.upload();
+  }
+}
+
+class AnalyzeButton extends Button {
+  AnalyzeButton(String PbuttonName,int Px,int Py,int Pheight) { super(PbuttonName,Px,Py,Pheight); }
+  String forController = "all";
+  void mousePressed() {
+    if (super.mouseOver()) {
+      header.switchController("analyze");
+      header.heatmapButton.up();
+      header.setupButton.up();
+      header.analyzeButton.down();
+    }
+  }
+}
+
+class HeatmapButton extends Button {
+  HeatmapButton(String PbuttonName,int Px,int Py,int Pheight) { super(PbuttonName,Px,Py,Pheight); }
+  String forController = "all";
+  void mousePressed() {
+    if (super.mouseOver()) {
+      header.switchController("heatmap");
+      header.heatmapButton.down();
+      header.setupButton.up();
+      header.analyzeButton.up();
+    }
+  }
+}
+
+class SetupButton extends Button {
+  SetupButton(String PbuttonName,int Px,int Py,int Pheight) { super(PbuttonName,Px,Py,Pheight); }
+  String forController = "all";
+  void mousePressed() {
+    if (super.mouseOver()) {
+      header.switchController("setup");
+      header.heatmapButton.up();
+      header.setupButton.down();
+      header.analyzeButton.up();
+    }
+  }
+}
+
+class BaselineButton extends Button {
+  BaselineButton(String PbuttonName,int Px,int Py,int Pheight) { super(PbuttonName,Px,Py,Pheight); }
+  String forController = "analyze";
+  void mousePressed() {
+    if (super.mouseOver()) spectrum.storeReference();
+  }
+  void draw() {
+    if (controller == "analyze") super.draw();
+  }
+}
+
+class WebcamButton extends Button {
+  WebcamButton(String PbuttonName,int Px,int Py,int Pheight) { super(PbuttonName,Px,Py,Pheight); }
+  String forController = "setup";
+  void draw() {
+    if (video.isLinux) { super.draw(); }
+  }
+  void mousePressed() {
+    if (super.mouseOver() && video.isLinux) {
+      video.changeDevice(video.device+1);
+    }
+  }
+}
+
+class LearnButton extends Button {
+  LearnButton(String PbuttonName,int Px,int Py,int Pheight) { super(PbuttonName,Px,Py,Pheight); }
+  String forController = "all";
+  void mousePressed() {
+    if (super.mouseOver()) link("http://publiclaboratory.org/wiki/spectral-workbench");
+  }
+}
+
+class Header {
   public PImage logo;
   public int rightOffset = 0; // where to put new buttons (shifts as buttons are added)
-  public Button[] buttons; // we should store all buttons in here instead of explicitly defining, as below:
+  public ArrayList buttons;
   public Button learnButton;
   public Button saveButton;
   public Button analyzeButton;
   public Button heatmapButton;
   public Button setupButton;
+
   public Button baselineButton;
-  public Button videoButton;
+  public Button webcamButton;
   public Button videoRowButton;
   public int margin = 4;
 
   public Header() {
     logo = loadImage("logo-small.png");
-    learnButton = addButton("Learn");
-    saveButton = addButton("Save");
-    heatmapButton = addButton("Heatmap");
-    setupButton = addButton("Setup");
-    analyzeButton = addButton("Analyze");
-    analyzeButton.down();
+    buttons = new ArrayList();
+    learnButton = addButton(new LearnButton("Learn",width-rightOffset-margin,margin,headerHeight-8));
+    saveButton = addButton(new SaveButton("Save",width-rightOffset-margin,margin,headerHeight-8));
 
-    baselineButton = addButton("Baseline");
+    analyzeButton = addButton(new AnalyzeButton("Analyze",width-rightOffset-margin,margin,headerHeight-8));
+    analyzeButton.down();
+    heatmapButton = addButton(new HeatmapButton("Heatmap",width-rightOffset-margin,margin,headerHeight-8));
+    setupButton = addButton(new SetupButton("Setup",width-rightOffset-margin,margin,headerHeight-8));
+
+    baselineButton = addButton(new BaselineButton("Baseline",width-rightOffset-margin,margin,headerHeight-8));
     baselineButton.fillColor = #444444;
-    videoButton = addButton("Video input");
-    videoButton.fillColor = #444444;
-    videoRowButton = addButton("Sample row");
+    webcamButton = addButton(new WebcamButton("Switch webcam",width-rightOffset-margin,margin,headerHeight-8));
+    webcamButton.fillColor = #444444;
+    videoRowButton = addButton(new VideoRowButton("Adjust sample row",width-rightOffset-margin,margin,headerHeight-8));
     videoRowButton.fillColor = #444444;
   }
 
+  public Button addButton(Button pButton) {
+    buttons.add(pButton);
+    rightOffset += pButton.width+margin;
+    pButton.x -= pButton.width;
+    return pButton;
+  }
   public Button addButton(String buttonName) {
     Button button = new Button(buttonName,width-rightOffset-margin,margin,headerHeight-8);
-    rightOffset += button.width+margin;
-    button.x -= button.width;
+    addButton(button);
     return button;
   }
 
   public void mousePressed() {
-    if (saveButton.mouseOver()) {
-      server.upload();
-    }
-    if (analyzeButton.mouseOver()) {
-      controller = "analyze";
-      heatmapButton.up();
-      setupButton.up();
-      analyzeButton.down();
-    }
-    if (setupButton.mouseOver()) {
-      controller = "setup";
-      heatmapButton.up();
-      setupButton.down();
-      analyzeButton.up();
-    }
-    if (heatmapButton.mouseOver()) {
-      controller = "heatmap";
-      heatmapButton.down();
-      setupButton.up();
-      analyzeButton.up();
-    }
-    if (baselineButton.mouseOver()) {
-      spectrum.storeReference();
-    }
-    if (videoButton.mouseOver() && video.isLinux) {
-      video.changeDevice(video.device+1);
-    }
-    if (controller == "setup" && videoRowButton.mouseOver()) {
-      setup.selectingSampleRow = true;
-    }
-    if (learnButton.mouseOver()) {
-      link("http://publiclaboratory.org/wiki/spectral-workbench");
+    for (int i = 0;i < buttons.size();i++) {
+      Button b = (Button) buttons.get(i);
+      b.mousePressed();
     }
   }
 
-  public void draw() {
+  public void switchController(String Pcontroller) {
+    controller = Pcontroller;
 
+  }
+
+  public void draw() {
     fill(255);
     noStroke();
     image(logo,14,14);
     textFont(font,24);
     text("PLOTS Spectral Workbench: "+typedText, 55, 40); //display current title
 
-    saveButton.draw();
-    learnButton.draw();
-    analyzeButton.draw();
-    heatmapButton.draw();
-    setupButton.draw();
-    if (controller == "analyze") baselineButton.draw();
-    if (video.isLinux && controller == "setup") videoButton.draw();
-    if (controller == "setup") videoRowButton.draw();
+    for (int i = 0;i < buttons.size();i++) {
+      Button b = (Button) buttons.get(i);
+      b.draw();
+    }
   }
 }
 
 
 Header header;
+class Calibrator {
+
+  Button firstMarker,secondMarker;
+  public ArrayList sliders;
+  public int y,height;
+
+  public Calibrator(PApplet parent) {
+    y = headerHeight+(parent.height-headerHeight)/2;
+    height = 10;
+    sliders = new ArrayList();
+    firstMarker = new Button("Mercury 1",0,y,height);
+    sliders.add(firstMarker);
+println(y);
+    secondMarker = new Button("Mercury 2",width-100,y,height);
+    sliders.add(secondMarker);
+  }
+
+  void draw() {
+    textFont(font,10);
+
+    if (controller == "analyze") { // show wavelength graduations
+      if (settings.firstMarkerWavelength != 0) { // if no calibration exists, this will be 0
+
+
+
+      } else {
+        text("No calibration yet",4,height+4);
+      }
+    } else { // show sliders
+
+      for (int i = 0;i < sliders.size();i++) {
+        Button b = (Button) sliders.get(i);
+        b.draw();
+      }
+
+    }
+  }
+
+  void mousePressed() {
+    if (firstMarker.mouseOver()) {
+      firstMarker.dragging = true;
+    } else if (secondMarker.mouseOver()) {
+      secondMarker.dragging = true;
+    }
+  }
+
+  void mouseMoved() {
+    if (firstMarker.dragging) {
+      firstMarker.x = mouseX;
+    } else if (secondMarker.dragging) {
+      secondMarker.x = mouseX;
+    }
+  }
+
+  void mouseReleased() {
+    firstMarker.dragging = false;
+    secondMarker.dragging = false;
+  }
+
+}
+Calibrator calibrator;
+class Settings {
+  P5Properties props;
+  int firstMarkerWavelength,firstMarkerPixel;
+  int secondMarkerWavelength,secondMarkerPixel;
+  PApplet parent;
+   public Settings(PApplet pParent) {
+    println("Reading settings.txt");
+    parent = pParent;
+    try {
+      props=new P5Properties();
+      props.load(openStream("settings.txt"));
+      spectrum.samplerow = props.getIntProperty("video.samplerow",80);
+      video.sampleHeight = props.getIntProperty("video.sampleheight",int (height*(0.18)));
+      video.device = props.getIntProperty("video.device",0);
+      firstMarkerWavelength = props.getIntProperty("calibration.firstMarkerWavelength",0);
+      firstMarkerPixel = props.getIntProperty("calibration.firstMarkerPixel",0);
+      secondMarkerWavelength = props.getIntProperty("calibration.secondMarkerWavelength",0);
+      secondMarkerPixel = props.getIntProperty("calibration.secondMarkerPixel",0);
+    } catch(IOException e) {
+      println("couldn't read config file...");
+    }
+  }
+
+  void set(String key,int val) {
+    println("Writing settings.txt");
+    String stringVal = ""+val; // how else to turn int into String? I'm on a plane and can't look it up.
+    props.setProperty(key,stringVal);
+    try {
+      props.store(new FileOutputStream(parent.dataPath("settings.txt")), null);
+      println("done");
+    } catch (IOException e) {
+      println(e);
+    }
+  }
+
+}
+class P5Properties extends Properties {
+
+  boolean getBooleanProperty(String id, boolean defState) {
+    return boolean(getProperty(id,""+defState));
+  }
+
+  int getIntProperty(String id, int defVal) {
+    return int(getProperty(id,""+defVal));
+  }
+
+  float getFloatProperty(String id, float defVal) {
+    return float(getProperty(id,""+defVal));
+  }
+}
+
+Settings settings;
 
 String serverUrl = "http://spectralworkbench.org"; // the remote server to upload to
 String controller = "setup"; // this determines what controller is used, i.e. what mode the app is in
@@ -878,6 +1081,7 @@ public void setup() {
   analyze = new Analyze();
   setup = new Setup();
   header = new Header();
+  calibrator = new Calibrator(this);
   server = new Server();
 
   size(screen.width, screen.height-20, P2D);
@@ -885,6 +1089,7 @@ public void setup() {
   video = new Video(this,1280,720,0);
   spectrum = new Spectrum(int (height-headerHeight)/2,int (height*(0.18))); //history (length),samplerow (row # to begin sampling)
   filter = new Filter(this);
+  settings = new Settings(this); // once more settings are stored in this object instead of video or spectrum, this can move up
 }
 
 public void switchMode() {
@@ -913,6 +1118,7 @@ void draw() {
   line(0,height-255,width,height-255); //100% mark for spectra
 
   header.draw();
+  calibrator.draw();
   spectrum.draw(headerHeight); //y position of top of spectrum
   if ((controller == "setup" && setup.selectingSampleRow) || setup.delayCounter > 0) {
 	setup.delayCounter -= 1;
