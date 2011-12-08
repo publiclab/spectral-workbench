@@ -9,14 +9,15 @@ class Setup {
   }
 
   public void mouseMoved() {
-    calibrator.mouseMoved();      
+  }
+  public void mouseDragged() {
+    calibrator.mouseDragged();      
   }
 
   public void mousePressed() {
     if (mouseY < headerHeight) { // Header
       header.mousePressed();
     } else if (selectingSampleRow && (mouseX > width/2-video.width/8 && mouseX < width/2+video.width/8) && (mouseY > height/2-video.height/8 && mouseY < height/2+video.height/8)) { // Modal video select
-
       sampleRowMousePressed = true;
       spectrum.samplerow = 4*(mouseY-height/2+video.height/8);
       if (spectrum.samplerow+video.sampleHeight > video.height || spectrum.samplerow+video.sampleHeight <= 0) {
@@ -24,7 +25,7 @@ class Setup {
       }
     } else if (mouseY < int (headerHeight+(height-headerHeight)/2)) { // Waterfall
 
-    } else if (mouseY < int (20+headerHeight+(height-headerHeight)/2)) { // Calibrator
+    } else if (mouseY < int (30+headerHeight+(height-headerHeight)/2)) { // Calibrator
       calibrator.mousePressed();      
     } else { // Graph
 

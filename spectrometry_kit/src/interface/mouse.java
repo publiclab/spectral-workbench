@@ -4,12 +4,12 @@
 //  }  
 //}
 
-void mouseMoved() {
+void mouseDragged() {
   // switch to calling controller.activeController
   if (controller == "analyze") {
     //analyze.mouseMoved();
   } else if (controller == "setup") {
-    setup.mouseMoved();
+    setup.mouseDragged();
   } else if (controller == "heatmap") {
     //heatmap.mouseMoved();
   }

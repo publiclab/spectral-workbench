@@ -353,10 +353,10 @@ public void keyPressed() {
 }
 Keyboard keyboard;
 
-public void mouseMoved() {
+public void mouseDragged() {
   if (controller == "analyze") {
   } else if (controller == "setup") {
-    setup.mouseMoved();
+    setup.mouseDragged();
   } else if (controller == "heatmap") {
   }
 }
@@ -765,14 +765,15 @@ class Setup {
   }
 
   public void mouseMoved() {
-    calibrator.mouseMoved();
+  }
+  public void mouseDragged() {
+    calibrator.mouseDragged();
   }
 
   public void mousePressed() {
     if (mouseY < headerHeight) { // Header
       header.mousePressed();
     } else if (selectingSampleRow && (mouseX > width/2-video.width/8 && mouseX < width/2+video.width/8) && (mouseY > height/2-video.height/8 && mouseY < height/2+video.height/8)) { // Modal video select
-
       sampleRowMousePressed = true;
       spectrum.samplerow = 4*(mouseY-height/2+video.height/8);
       if (spectrum.samplerow+video.sampleHeight > video.height || spectrum.samplerow+video.sampleHeight <= 0) {
@@ -780,7 +781,7 @@ class Setup {
       }
     } else if (mouseY < PApplet.parseInt (headerHeight+(height-headerHeight)/2)) { // Waterfall
 
-    } else if (mouseY < PApplet.parseInt (20+headerHeight+(height-headerHeight)/2)) { // Calibrator
+    } else if (mouseY < PApplet.parseInt (30+headerHeight+(height-headerHeight)/2)) { // Calibrator
       calibrator.mousePressed();
     } else { // Graph
 
@@ -979,15 +980,16 @@ class Calibrator {
   Button firstMarker,secondMarker;
   public ArrayList sliders;
   public int y,height;
+  PApplet parent;
 
-  public Calibrator(PApplet parent) {
+  public Calibrator(PApplet Pparent) {
+    parent = Pparent;
     y = headerHeight+(parent.height-headerHeight)/2;
-    height = 10;
+    height = 30;
     sliders = new ArrayList();
-    firstMarker = new Button("Mercury 1",0,y,height);
+    firstMarker = new Button("Mercury 2, 435.833",settings.firstMarkerPixel,y,height);
     sliders.add(firstMarker);
-println(y);
-    secondMarker = new Button("Mercury 2",width-100,y,height);
+    secondMarker = new Button("Mercury 3, 546.074",settings.secondMarkerPixel,y,height);
     sliders.add(secondMarker);
   }
 
@@ -997,7 +999,17 @@ println(y);
     if (controller == "analyze") { // show wavelength graduations
       if (settings.firstMarkerWavelength != 0) { // if no calibration exists, this will be 0
 
+        float nmPerPixel = (settings.secondMarkerWavelength-settings.firstMarkerWavelength)/(settings.secondMarkerPixel-settings.firstMarkerPixel);
+        int pxFor400Nm = settings.firstMarkerPixel - (int) (35.833f/nmPerPixel);
 
+        for (int i=-4;i<8;i++) {
+          int gradX = pxFor400Nm+(int)((float)i*(100.00f/nmPerPixel));
+          stroke(40);
+          line(gradX,y,gradX,y+1000); // all the way past the bottom of the screen
+          noStroke();
+          fill(200);
+          text(""+(int)(400+(i*100))+"nm",gradX+4,y+20);
+        }
 
       } else {
         text("No calibration yet",4,height+4);
@@ -1007,6 +1019,16 @@ println(y);
       for (int i = 0;i < sliders.size();i++) {
         Button b = (Button) sliders.get(i);
         b.draw();
+      }
+
+      if (firstMarker.dragging) { // && firstMarker.mouseOver()) {
+        firstMarker.x = mouseX;
+        stroke(255);
+        line(firstMarker.x,0,firstMarker.x,parent.height);
+      } else if (secondMarker.dragging) { // && secondMarker.mouseOver()) {
+        secondMarker.x = mouseX;
+        stroke(255);
+        line(secondMarker.x,0,secondMarker.x,parent.height);
       }
 
     }
@@ -1020,25 +1042,30 @@ println(y);
     }
   }
 
-  public void mouseMoved() {
-    if (firstMarker.dragging) {
-      firstMarker.x = mouseX;
-    } else if (secondMarker.dragging) {
-      secondMarker.x = mouseX;
-    }
+  public void mouseDragged() {
   }
 
   public void mouseReleased() {
     firstMarker.dragging = false;
+    settings.firstMarkerPixel = firstMarker.x;
+    settings.firstMarkerWavelength = 435.833f;
+      settings.set("calibration.firstMarkerWavelength",settings.firstMarkerWavelength);
+      settings.set("calibration.firstMarkerPixel",settings.firstMarkerPixel);
     secondMarker.dragging = false;
+    settings.secondMarkerPixel = secondMarker.x;
+    settings.secondMarkerWavelength = 546.074f;
+      settings.set("calibration.secondMarkerWavelength",settings.secondMarkerWavelength);
+      settings.set("calibration.secondMarkerPixel",settings.secondMarkerPixel);
   }
 
 }
 Calibrator calibrator;
 class Settings {
   P5Properties props;
-  int firstMarkerWavelength,firstMarkerPixel;
-  int secondMarkerWavelength,secondMarkerPixel;
+  float firstMarkerWavelength;
+  int firstMarkerPixel;
+  float secondMarkerWavelength;
+  int secondMarkerPixel;
   PApplet parent;
    public Settings(PApplet pParent) {
     println("Reading settings.txt");
@@ -1049,9 +1076,9 @@ class Settings {
       spectrum.samplerow = props.getIntProperty("video.samplerow",80);
       video.sampleHeight = props.getIntProperty("video.sampleheight",PApplet.parseInt (height*(0.18f)));
       video.device = props.getIntProperty("video.device",0);
-      firstMarkerWavelength = props.getIntProperty("calibration.firstMarkerWavelength",0);
+      firstMarkerWavelength = props.getFloatProperty("calibration.firstMarkerWavelength",0);
       firstMarkerPixel = props.getIntProperty("calibration.firstMarkerPixel",0);
-      secondMarkerWavelength = props.getIntProperty("calibration.secondMarkerWavelength",0);
+      secondMarkerWavelength = props.getFloatProperty("calibration.secondMarkerWavelength",0);
       secondMarkerPixel = props.getIntProperty("calibration.secondMarkerPixel",0);
     } catch(IOException e) {
       println("couldn't read config file...");
@@ -1059,6 +1086,17 @@ class Settings {
   }
 
   public void set(String key,int val) {
+    println("Writing settings.txt");
+    String stringVal = ""+val; // how else to turn int into String? I'm on a plane and can't look it up.
+    props.setProperty(key,stringVal);
+    try {
+      props.store(new FileOutputStream(parent.dataPath("settings.txt")), null);
+      println("done");
+    } catch (IOException e) {
+      println(e);
+    }
+  }
+  public void set(String key,float val) {
     println("Writing settings.txt");
     String stringVal = ""+val; // how else to turn int into String? I'm on a plane and can't look it up.
     props.setProperty(key,stringVal);
@@ -1104,7 +1142,6 @@ public void setup() {
   analyze = new Analyze();
   setup = new Setup();
   header = new Header();
-  calibrator = new Calibrator(this);
   server = new Server();
 
   size(screen.width, screen.height-20, P2D);
@@ -1113,6 +1150,7 @@ public void setup() {
   spectrum = new Spectrum(PApplet.parseInt (height-headerHeight)/2,PApplet.parseInt (height*(0.18f))); //history (length),samplerow (row # to begin sampling)
   filter = new Filter(this);
   settings = new Settings(this); // once more settings are stored in this object instead of video or spectrum, this can move up
+  calibrator = new Calibrator(this);
 }
 
 public void switchMode() {
@@ -1143,12 +1181,12 @@ public void draw() {
   header.draw();
   calibrator.draw();
   spectrum.draw(headerHeight); //y position of top of spectrum
+  updatePixels();
   if ((controller == "setup" && setup.selectingSampleRow) || setup.delayCounter > 0) {
 	setup.delayCounter -= 1;
 	spectrum.preview();
   }
 
-  updatePixels();
 }
 
 

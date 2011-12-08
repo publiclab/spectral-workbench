@@ -76,7 +76,6 @@ public void setup() {
   analyze = new Analyze();
   setup = new Setup();
   header = new Header();
-  calibrator = new Calibrator(this);
   server = new Server();
 
   size(screen.width, screen.height-20, P2D);
@@ -86,6 +85,7 @@ public void setup() {
   spectrum = new Spectrum(int (height-headerHeight)/2,int (height*(0.18))); //history (length),samplerow (row # to begin sampling)
   filter = new Filter(this);
   settings = new Settings(this); // once more settings are stored in this object instead of video or spectrum, this can move up
+  calibrator = new Calibrator(this);
 }
 
 public void switchMode() {
@@ -117,11 +117,11 @@ void draw() {
   header.draw();
   calibrator.draw();
   spectrum.draw(headerHeight); //y position of top of spectrum
+  updatePixels();
   if ((controller == "setup" && setup.selectingSampleRow) || setup.delayCounter > 0) { 
 	setup.delayCounter -= 1;
 	spectrum.preview(); 
   }
 
-  updatePixels();
 }
 
