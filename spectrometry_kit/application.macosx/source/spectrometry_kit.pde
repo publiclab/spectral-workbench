@@ -255,7 +255,7 @@ class SpectrumPresentation {
         for (int x = 0; x < length; x++) {
             int[] pixel = mBuffer[0][x];
 
-            builder.append("{wavelength:null,average:"+wavelengthAverage(pixel));
+            builder.append("{wavelength:"+spectrum.wavelengthFromPixel(x)+",average:"+wavelengthAverage(pixel));
             builder.append(",r:"+getRed(pixel));
             builder.append(",g:"+getGreen(pixel));
             builder.append(",b:"+getBlue(pixel)+"}");
@@ -274,7 +274,7 @@ class SpectrumPresentation {
         for (int x = 0; x < length; x++) {
             int[] pixel = mBuffer[0][x];
 
-            builder.append("unknown_wavelength,"+wavelengthAverage(pixel));
+            builder.append(spectrum.wavelengthFromPixel(x)+","+wavelengthAverage(pixel));
             builder.append(","+getRed(pixel));
             builder.append(","+getGreen(pixel));
             builder.append(","+getBlue(pixel));

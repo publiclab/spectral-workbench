@@ -1,6 +1,6 @@
-#Wed Dec 07 22:30:31 EST 2011
-video.sampleheight=244
-video.samplerow=68
+#Wed Dec 07 22:38:49 EST 2011
+video.sampleheight=540
+video.samplerow=16
 calibration.firstMarkerWavelength=435.833
 video.width=1280
 video.height=720
