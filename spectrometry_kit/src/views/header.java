@@ -171,7 +171,7 @@ class Header {
     noStroke();
     image(logo,14,14);
     textFont(font,24);
-    text("PLOTS Spectral Workbench: "+typedText, 55, 40); //display current title
+    text("PLOTS Spectral Workbench", 55, 40); //display current title
     
     for (int i = 0;i < buttons.size();i++) {
       Button b = (Button) buttons.get(i);

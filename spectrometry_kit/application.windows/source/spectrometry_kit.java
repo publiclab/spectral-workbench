@@ -218,6 +218,13 @@ if (controller == "analyze" || controller == "heatmap") {
         storedbuffer[x] = (buffer[0][x][0]+buffer[0][x][1]+buffer[0][x][2])/3;
       }
     }
+
+    public float wavelengthFromPixel(int x) {
+        float nmPerPixel = (settings.secondMarkerWavelength-settings.firstMarkerWavelength)/(settings.secondMarkerPixel-settings.firstMarkerPixel);
+        float nmForZero = settings.firstMarkerWavelength-((float)settings.firstMarkerPixel*nmPerPixel);
+        return nmForZero+((float)x*nmPerPixel);
+    }
+
 }
 
 class SpectrumPresentation {
@@ -964,7 +971,7 @@ class Header {
     noStroke();
     image(logo,14,14);
     textFont(font,24);
-    text("PLOTS Spectral Workbench: "+typedText, 55, 40); //display current title
+    text("PLOTS Spectral Workbench", 55, 40); //display current title
 
     for (int i = 0;i < buttons.size();i++) {
       Button b = (Button) buttons.get(i);
@@ -996,25 +1003,28 @@ class Calibrator {
   public void draw() {
     textFont(font,10);
 
-    if (controller == "analyze") { // show wavelength graduations
-      if (settings.firstMarkerWavelength != 0) { // if no calibration exists, this will be 0
+    text((int)(spectrum.wavelengthFromPixel(mouseX))+"nm",mouseX+4,y+50);
+    stroke(40);
+    line(mouseX,y,mouseX,y+1000); // all the way past the bottom of the screen
 
-        float nmPerPixel = (settings.secondMarkerWavelength-settings.firstMarkerWavelength)/(settings.secondMarkerPixel-settings.firstMarkerPixel);
-        int pxFor400Nm = settings.firstMarkerPixel - (int) (35.833f/nmPerPixel);
+    if (settings.firstMarkerWavelength != 0) { // if no calibration exists, this will be 0
 
-        for (int i=-4;i<8;i++) {
-          int gradX = pxFor400Nm+(int)((float)i*(100.00f/nmPerPixel));
-          stroke(40);
-          line(gradX,y,gradX,y+1000); // all the way past the bottom of the screen
-          noStroke();
-          fill(200);
-          text(""+(int)(400+(i*100))+"nm",gradX+4,y+20);
-        }
+      float nmPerPixel = (settings.secondMarkerWavelength-settings.firstMarkerWavelength)/(settings.secondMarkerPixel-settings.firstMarkerPixel);
+      int pxFor400Nm = settings.firstMarkerPixel - (int) (35.833f/nmPerPixel);
 
-      } else {
-        text("No calibration yet",4,height+4);
+      for (int i=-4;i<8;i++) {
+        int gradX = pxFor400Nm+(int)((float)i*(100.00f/nmPerPixel));
+        stroke(40);
+        line(gradX,y,gradX,y+1000); // all the way past the bottom of the screen
+        noStroke();
+        fill(200);
+        text((int)(400+(i*100))+"nm",gradX+4,y+20);
       }
-    } else { // show sliders
+
+    } else {
+      text("No calibration yet",4,height+4);
+    }
+    if (controller == "setup") { // show wavelength graduations
 
       for (int i = 0;i < sliders.size();i++) {
         Button b = (Button) sliders.get(i);
@@ -1186,7 +1196,6 @@ public void draw() {
 	setup.delayCounter -= 1;
 	spectrum.preview();
   }
-
 }
 
 

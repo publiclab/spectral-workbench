@@ -22,27 +22,31 @@ class Calibrator {
   void draw() {
     textFont(font,10);
 
-    if (controller == "analyze") { // show wavelength graduations
-      if (settings.firstMarkerWavelength != 0) { // if no calibration exists, this will be 0
-        // the device could have been changed or swapped... we can double check by color, maybe
-        // draw graduated labels
-        
-        float nmPerPixel = (settings.secondMarkerWavelength-settings.firstMarkerWavelength)/(settings.secondMarkerPixel-settings.firstMarkerPixel);
-        int pxFor400Nm = settings.firstMarkerPixel - (int) (35.833/nmPerPixel);
+    // draw mouse wavelength
+    text((int)(spectrum.wavelengthFromPixel(mouseX))+"nm",mouseX+4,y+50);
+    stroke(40);
+    line(mouseX,y,mouseX,y+1000); // all the way past the bottom of the screen
 
-        for (int i=-4;i<8;i++) {
-          int gradX = pxFor400Nm+(int)((float)i*(100.00/nmPerPixel));
-          stroke(40);
-          line(gradX,y,gradX,y+1000); // all the way past the bottom of the screen
-          noStroke();
-          fill(200);
-          text(""+(int)(400+(i*100))+"nm",gradX+4,y+20);
-        }
- 
-      } else {
-        text("No calibration yet",4,height+4);
+    if (settings.firstMarkerWavelength != 0) { // if no calibration exists, this will be 0
+      // the device could have been changed or swapped... we can double check by color, maybe
+      // draw graduated labels
+      
+      float nmPerPixel = (settings.secondMarkerWavelength-settings.firstMarkerWavelength)/(settings.secondMarkerPixel-settings.firstMarkerPixel);
+      int pxFor400Nm = settings.firstMarkerPixel - (int) (35.833/nmPerPixel);
+
+      for (int i=-4;i<8;i++) {
+        int gradX = pxFor400Nm+(int)((float)i*(100.00/nmPerPixel));
+        stroke(40);
+        line(gradX,y,gradX,y+1000); // all the way past the bottom of the screen
+        noStroke();
+        fill(200);
+        text((int)(400+(i*100))+"nm",gradX+4,y+20);
       }
-    } else { // show sliders
+ 
+    } else {
+      text("No calibration yet",4,height+4);
+    }
+    if (controller == "setup") { // show wavelength graduations
 
       for (int i = 0;i < sliders.size();i++) {
         Button b = (Button) sliders.get(i);

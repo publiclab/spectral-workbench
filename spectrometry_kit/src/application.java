@@ -122,6 +122,5 @@ void draw() {
 	setup.delayCounter -= 1;
 	spectrum.preview(); 
   }
-
 }
 

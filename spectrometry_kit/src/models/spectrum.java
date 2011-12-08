@@ -123,6 +123,13 @@ class Spectrum {
         storedbuffer[x] = (buffer[0][x][0]+buffer[0][x][1]+buffer[0][x][2])/3;
       } 
     }
+
+    public float wavelengthFromPixel(int x) {
+        float nmPerPixel = (settings.secondMarkerWavelength-settings.firstMarkerWavelength)/(settings.secondMarkerPixel-settings.firstMarkerPixel);
+        float nmForZero = settings.firstMarkerWavelength-((float)settings.firstMarkerPixel*nmPerPixel);
+        return nmForZero+((float)x*nmPerPixel);
+    }
+
 }
 
 /**
