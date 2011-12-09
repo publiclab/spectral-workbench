@@ -11,6 +11,8 @@ class Spectrum {
     public int samplerow;
     public int history;
     public int resolution = 1;
+    public int[][][] hyperBuffer;
+    public int hyperX = video.width/2;
     // for setup mode:
     public int lastred = 0;
     public int lastgreen = 0;
@@ -19,11 +21,13 @@ class Spectrum {
     public int averageAbsorption = 0;
     public int absorptionSum;
     public int lastval = 0;
+    public int hyperRes = 10;
 
     public Spectrum(int pHistory,int pSamplerow) {
       samplerow = pSamplerow;
       history = pHistory;
       buffer = new int[history][video.width][3];
+      hyperBuffer = new int[width/hyperRes][video.width][video.height];
       storedbuffer = new int[video.width];
       absorptionbuffer = new int[video.width];
       enhancedabsorptionbuffer = new int[video.width];
@@ -128,6 +132,21 @@ class Spectrum {
         float nmPerPixel = (settings.secondMarkerWavelength-settings.firstMarkerWavelength)/(settings.secondMarkerPixel-settings.firstMarkerPixel);
         float nmForZero = settings.firstMarkerWavelength-((float)settings.firstMarkerPixel*nmPerPixel);
         return nmForZero+((float)x*nmPerPixel);
+    }
+
+    // saves a giant png where each an image from each band is stacked vertically
+    // another version might save separate images for each band
+    public void saveHyperspectralCube() {
+      //PGraphics pg = createGraphics(video.height*(video.width/res), video.width, P3D);
+      PGraphics pg = createGraphics(video.width, video.height, P2D);
+      for (int b = 0;b < spectrum.hyperBuffer.length;b++) {
+        for (int x = 0;x < video.width;x++) {
+          for (int y = headerHeight;y < video.height;y++) {
+            pg.pixels[(y*width)+x] = spectrum.hyperBuffer[b][x][y];
+          }
+        } 
+        pg.save("cube"+spectrum.wavelengthFromPixel(b*spectrum.hyperRes)+".png");
+      }
     }
 
 }

@@ -17,7 +17,10 @@ class SaveButton extends Button {
   SaveButton(String PbuttonName,int Px,int Py,int Pheight) { super(PbuttonName,Px,Py,Pheight); }
   String forController = "all";
   void mousePressed() {
-    if (super.mouseOver()) server.upload();
+    if (super.mouseOver()) {
+      if (controller == "hyperspectral") spectrum.saveHyperspectralCube();
+      else server.upload();
+    }
   }
 }
 
@@ -41,6 +44,18 @@ class HeatmapButton extends Button {
     if (super.mouseOver()) {
       header.switchController("heatmap");
       header.heatmapButton.down();
+      header.setupButton.up();
+      header.analyzeButton.up();
+    }
+  }
+}
+class HyperspectralButton extends Button {
+  HyperspectralButton(String PbuttonName,int Px,int Py,int Pheight) { super(PbuttonName,Px,Py,Pheight); }
+  String forController = "all";
+  void mousePressed() {
+    if (super.mouseOver()) {
+      header.switchController("hyperspectral");
+      header.heatmapButton.up();
       header.setupButton.up();
       header.analyzeButton.up();
     }
@@ -103,6 +118,7 @@ class Header {
   public Button saveButton;
   public Button analyzeButton;
   public Button heatmapButton;
+  public Button hyperspectralButton;
   public Button setupButton;
 
   public Button baselineButton;
@@ -119,6 +135,7 @@ class Header {
     analyzeButton = addButton(new AnalyzeButton("Analyze",width-rightOffset-margin,margin,headerHeight-8));
     analyzeButton.down();
     heatmapButton = addButton(new HeatmapButton("Heatmap",width-rightOffset-margin,margin,headerHeight-8));
+    hyperspectralButton = addButton(new HyperspectralButton("Hyperspectral",width-rightOffset-margin,margin,headerHeight-8));
     setupButton = addButton(new SetupButton("Setup",width-rightOffset-margin,margin,headerHeight-8));
 
     baselineButton = addButton(new BaselineButton("Baseline",width-rightOffset-margin,margin,headerHeight-8));

@@ -60,6 +60,8 @@ class Spectrum {
     public int samplerow;
     public int history;
     public int resolution = 1;
+    public int[][][] hyperBuffer;
+    public int hyperX = video.width/2;
     public int lastred = 0;
     public int lastgreen = 0;
     public int lastblue = 0;
@@ -67,11 +69,13 @@ class Spectrum {
     public int averageAbsorption = 0;
     public int absorptionSum;
     public int lastval = 0;
+    public int hyperRes = 10;
 
     public Spectrum(int pHistory,int pSamplerow) {
       samplerow = pSamplerow;
       history = pHistory;
       buffer = new int[history][video.width][3];
+      hyperBuffer = new int[width/hyperRes][video.width][video.height];
       storedbuffer = new int[video.width];
       absorptionbuffer = new int[video.width];
       enhancedabsorptionbuffer = new int[video.width];
@@ -200,6 +204,18 @@ if (controller == "analyze" || controller == "heatmap") {
         float nmPerPixel = (settings.secondMarkerWavelength-settings.firstMarkerWavelength)/(settings.secondMarkerPixel-settings.firstMarkerPixel);
         float nmForZero = settings.firstMarkerWavelength-((float)settings.firstMarkerPixel*nmPerPixel);
         return nmForZero+((float)x*nmPerPixel);
+    }
+
+    public void saveHyperspectralCube() {
+      PGraphics pg = createGraphics(video.width, video.height, P2D);
+      for (int b = 0;b < spectrum.hyperBuffer.length;b++) {
+        for (int x = 0;x < video.width;x++) {
+          for (int y = headerHeight;y < video.height;y++) {
+            pg.pixels[(y*width)+x] = spectrum.hyperBuffer[b][x][y];
+          }
+        }
+        pg.save("cube"+spectrum.wavelengthFromPixel(b*spectrum.hyperRes)+".png");
+      }
     }
 
 }
@@ -342,6 +358,8 @@ void mouseDragged() {
   } else if (controller == "setup") {
     setup.mouseDragged();
   } else if (controller == "heatmap") {
+  } else if (controller == "hyperspectral") {
+    hyperspectral.mouseDragged();
   }
 }
 
@@ -352,6 +370,8 @@ void mousePressed() {
     setup.mousePressed();
   } else if (controller == "heatmap") {
     analyze.mousePressed(); // for now, same.
+  } else if (controller == "hyperspectral") {
+    hyperspectral.mousePressed();
   }
 }
 
@@ -360,6 +380,8 @@ void mouseReleased() {
   } else if (controller == "setup") {
     setup.mouseReleased();
   } else if (controller == "heatmap") {
+  } else if (controller == "hyperspectral") {
+    hyperspectral.mouseReleased();
   }
 }
 class Button {
@@ -791,6 +813,87 @@ class Setup {
 }
 
 Setup setup;
+class Hyperspectral {
+  Button firstMarker,secondMarker;
+  public ArrayList sliders;
+  public int y,height;
+  PApplet parent;
+
+  public Hyperspectral(PApplet pParent) {
+    parent = pParent;
+    y = headerHeight+3;
+    height = 30;
+    sliders = new ArrayList();
+    firstMarker = new Button("Wavelength",spectrum.hyperX,y,height);
+    sliders.add(firstMarker);
+    secondMarker = new Button("End",3000,y,height); //not using yet, put off to right side; will be used for a range selection
+    sliders.add(secondMarker);
+  }
+
+  void draw() {
+    for (int t = spectrum.hyperBuffer.length-1;t > 0;t--) {
+      for (int y = 0;y < video.height;y++) {
+        for (int b = 0;b < (int)(video.width/spectrum.hyperRes);b++) { // every wavelength
+          if (b < video.width) spectrum.hyperBuffer[b][t][y] = spectrum.hyperBuffer[b][t-1][y];
+        }
+      }
+    }
+    for (int y = video.height-1;y> 0;y--) {
+      for (int b = 0;b < video.width/spectrum.hyperRes;b++) {
+        spectrum.hyperBuffer[b][0][y] = video.pixels()[b*spectrum.hyperRes+(video.width*y)];
+      }
+    }
+
+    for (int x = 0;x < spectrum.hyperBuffer[spectrum.hyperX/spectrum.hyperRes].length;x++) {
+      for (int y = headerHeight;y < video.height;y++) {
+        pixels[(y*width)+x] = spectrum.hyperBuffer[spectrum.hyperX/spectrum.hyperRes][x][y];
+      }
+    }
+
+    firstMarker.draw();
+    firstMarker.text = "Wavelength ("+spectrum.wavelengthFromPixel(firstMarker.x)+")";
+
+    if (firstMarker.dragging) { // && firstMarker.mouseOver()) {
+      firstMarker.x = mouseX;
+      stroke(255);
+      line(firstMarker.x,0,firstMarker.x,height);
+    } else if (secondMarker.dragging) { // && secondMarker.mouseOver()) {
+      secondMarker.x = mouseX;
+      stroke(255);
+      line(secondMarker.x,0,secondMarker.x,height);
+    }
+
+  }
+
+  public void mousePressed() {
+    if (mouseY < headerHeight) { // Header
+      header.mousePressed();
+    } else if (mouseY < int (headerHeight+(height-headerHeight)/2)) { // Waterfall
+
+    } else if (mouseY < int (20+headerHeight+(height-headerHeight)/2)) { // Calibrator
+
+    } else { // Graph
+
+    }
+
+    if (firstMarker.mouseOver()) {
+      firstMarker.dragging = true;
+    } else if (secondMarker.mouseOver()) {
+    }
+  }
+
+  void mouseDragged() {
+  }
+
+  void mouseReleased() {
+    firstMarker.dragging = false;
+    spectrum.hyperX = firstMarker.x;
+      settings.set("hyperspectral.firstMarkerPixel",spectrum.hyperX);
+    secondMarker.dragging = false;
+  }
+
+}
+Hyperspectral hyperspectral;
 class VideoRowButton extends Button {
   VideoRowButton(String PbuttonName,int Px,int Py,int Pheight) { super(PbuttonName,Px,Py,Pheight); }
   String forController = "setup"; // or "all"
@@ -810,7 +913,10 @@ class SaveButton extends Button {
   SaveButton(String PbuttonName,int Px,int Py,int Pheight) { super(PbuttonName,Px,Py,Pheight); }
   String forController = "all";
   void mousePressed() {
-    if (super.mouseOver()) server.upload();
+    if (super.mouseOver()) {
+      if (controller == "hyperspectral") spectrum.saveHyperspectralCube();
+      else server.upload();
+    }
   }
 }
 
@@ -834,6 +940,18 @@ class HeatmapButton extends Button {
     if (super.mouseOver()) {
       header.switchController("heatmap");
       header.heatmapButton.down();
+      header.setupButton.up();
+      header.analyzeButton.up();
+    }
+  }
+}
+class HyperspectralButton extends Button {
+  HyperspectralButton(String PbuttonName,int Px,int Py,int Pheight) { super(PbuttonName,Px,Py,Pheight); }
+  String forController = "all";
+  void mousePressed() {
+    if (super.mouseOver()) {
+      header.switchController("hyperspectral");
+      header.heatmapButton.up();
       header.setupButton.up();
       header.analyzeButton.up();
     }
@@ -893,6 +1011,7 @@ class Header {
   public Button saveButton;
   public Button analyzeButton;
   public Button heatmapButton;
+  public Button hyperspectralButton;
   public Button setupButton;
 
   public Button baselineButton;
@@ -909,6 +1028,7 @@ class Header {
     analyzeButton = addButton(new AnalyzeButton("Analyze",width-rightOffset-margin,margin,headerHeight-8));
     analyzeButton.down();
     heatmapButton = addButton(new HeatmapButton("Heatmap",width-rightOffset-margin,margin,headerHeight-8));
+    hyperspectralButton = addButton(new HyperspectralButton("Hyperspectral",width-rightOffset-margin,margin,headerHeight-8));
     setupButton = addButton(new SetupButton("Setup",width-rightOffset-margin,margin,headerHeight-8));
 
     baselineButton = addButton(new BaselineButton("Baseline",width-rightOffset-margin,margin,headerHeight-8));
@@ -1135,6 +1255,7 @@ public void setup() {
 
   video = new Video(this,1280,720,0);
   spectrum = new Spectrum(int (height-headerHeight)/2,int (height*(0.18))); //history (length),samplerow (row # to begin sampling)
+  hyperspectral = new Hyperspectral(this);
   filter = new Filter(this);
   settings = new Settings(this); // once more settings are stored in this object instead of video or spectrum, this can move up
   calibrator = new Calibrator(this);
@@ -1167,7 +1288,8 @@ void draw() {
 
   header.draw();
   calibrator.draw();
-  spectrum.draw(headerHeight); //y position of top of spectrum
+  if (controller == "hyperspectral") hyperspectral.draw();
+  else spectrum.draw(headerHeight); //y position of top of spectrum
   updatePixels();
   if ((controller == "setup" && setup.selectingSampleRow) || setup.delayCounter > 0) {
 	setup.delayCounter -= 1;

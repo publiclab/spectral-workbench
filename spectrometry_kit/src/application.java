@@ -49,6 +49,8 @@ Server server;
 Analyze analyze;
 //= require <controllers/setup>
 Setup setup;
+//= require <controllers/hyperspectral>
+Hyperspectral hyperspectral;
 //= require <views/header>
 Header header;
 //= require <views/calibrator>
@@ -83,6 +85,7 @@ public void setup() {
   //video = new Video(this,640,480,0);
   video = new Video(this,1280,720,0);
   spectrum = new Spectrum(int (height-headerHeight)/2,int (height*(0.18))); //history (length),samplerow (row # to begin sampling)
+  hyperspectral = new Hyperspectral(this);
   filter = new Filter(this);
   settings = new Settings(this); // once more settings are stored in this object instead of video or spectrum, this can move up
   calibrator = new Calibrator(this);
@@ -116,7 +119,8 @@ void draw() {
   // register these at some point:
   header.draw();
   calibrator.draw();
-  spectrum.draw(headerHeight); //y position of top of spectrum
+  if (controller == "hyperspectral") hyperspectral.draw(); 
+  else spectrum.draw(headerHeight); //y position of top of spectrum
   updatePixels();
   if ((controller == "setup" && setup.selectingSampleRow) || setup.delayCounter > 0) { 
 	setup.delayCounter -= 1;

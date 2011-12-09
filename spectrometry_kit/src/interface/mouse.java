@@ -7,11 +7,13 @@
 void mouseDragged() {
   // switch to calling controller.activeController
   if (controller == "analyze") {
-    //analyze.mouseMoved();
+    //analyze.mouseDragged();
   } else if (controller == "setup") {
     setup.mouseDragged();
   } else if (controller == "heatmap") {
-    //heatmap.mouseMoved();
+    //heatmap.mouseDragged();
+  } else if (controller == "hyperspectral") {
+    hyperspectral.mouseDragged();
   }
 }
 
@@ -25,16 +27,20 @@ void mousePressed() {
   } else if (controller == "heatmap") {
     //heatmap.mousePressed();
     analyze.mousePressed(); // for now, same.
+  } else if (controller == "hyperspectral") {
+    hyperspectral.mousePressed();
   }
 }
 
 void mouseReleased() {
   // switch to calling controller.activeController
   if (controller == "analyze") {
-    //analyze.mousePressed();
+    //analyze.mouseReleased();
   } else if (controller == "setup") {
     setup.mouseReleased();
   } else if (controller == "heatmap") {
-    //heatmap.mousePressed();
+    //heatmap.mouseReleased();
+  } else if (controller == "hyperspectral") {
+    hyperspectral.mouseReleased();
   }
 }
