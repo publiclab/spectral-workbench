@@ -11,3 +11,5 @@ webserver/config/config.yml
 webserver/config/amazon_s3.yml
 webserver/public/system*
 webserver/config/initializers/recaptcha.rb
+spectrometry_kit/spectra/*
+spectrometry_kit/application.macosx/spectra/*

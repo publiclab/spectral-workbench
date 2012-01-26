@@ -47,12 +47,21 @@ Filter filter;
 Server server;
 //= require <controllers/analyze>
 Analyze analyze;
+//= require <controllers/setup>
+Setup setup;
+//= require <controllers/hyperspectral>
+Hyperspectral hyperspectral;
 //= require <views/header>
 Header header;
+//= require <views/calibrator>
+Calibrator calibrator;
+//= require <models/settings>
+Settings settings;
 
+// Move these into Settings:
 //String serverUrl = "http://localhost:3000"; // the remote server to upload to
-String serverUrl = "http://spectrometer.publiclaboratory.org"; // the remote server to upload to
-String controller = "analyze"; // this determines what controller is used, i.e. what mode the app is in
+String serverUrl = "http://spectralworkbench.org"; // the remote server to upload to
+String controller = "setup"; // this determines what controller is used, i.e. what mode the app is in
 final static String defaultTypedText = "type to label spectrum";
 String typedText = defaultTypedText;
 PFont font;
@@ -67,18 +76,22 @@ public void setup() {
   //hmmm... controller definitions:
   //application = new Controller(); // this could contain subcontrollers?
   analyze = new Analyze();
+  setup = new Setup();
   header = new Header();
   server = new Server();
 
-  //size(640, 480, P2D);
-  //size(1280, 720, P2D);
-  // Or run full screen, more fun! Use with Sketch -> Present
   size(screen.width, screen.height-20, P2D);
 
-  //video = new Video(this,640,480,0);
-  video = new Video(this,1280,720,0);
+  try {
+    video = new Video(this,1280,720,0);
+  } catch(Throwable t) {
+    video = new Video(this,640,480,0);
+  }
   spectrum = new Spectrum(int (height-headerHeight)/2,int (height*(0.18))); //history (length),samplerow (row # to begin sampling)
+  hyperspectral = new Hyperspectral(this);
   filter = new Filter(this);
+  settings = new Settings(this); // once more settings are stored in this object instead of video or spectrum, this can move up
+  calibrator = new Calibrator(this);
 }
 
 public void switchMode() {
@@ -106,10 +119,15 @@ void draw() {
   stroke(0);
   line(0,height-255,width,height-255); //100% mark for spectra
 
+  // register these at some point:
   header.draw();
-  if (controller == "setup") { spectrum.preview(); }
-  spectrum.draw(headerHeight); //y position of top of spectrum
-
+  calibrator.draw();
+  if (controller == "hyperspectral") hyperspectral.draw(); 
+  else spectrum.draw(headerHeight); //y position of top of spectrum
   updatePixels();
+  if ((controller == "setup" && setup.selectingSampleRow) || setup.delayCounter > 0) { 
+	setup.delayCounter -= 1;
+	spectrum.preview(); 
+  }
 }
 

@@ -3,6 +3,7 @@ class Button {
   public String text;
   public int x = 0;
   public int y = 0;
+  public boolean dragging = false; // not often used except in "sliders"
   public int padding = 10;
   public int width = 100;
   public int height = headerHeight;
@@ -10,12 +11,14 @@ class Button {
   public boolean hovering = false;
   public boolean down = false;
   public color fillColor = #222222;
+  String forController;
 
   public Button(String pText,int pX, int pY, int pHeight) {
     text = pText;
     x = pX;
     y = pY;
     height = pHeight;
+    textFont(font,fontSize);
     width = int (textWidth(text)+padding*2);
   }
 
@@ -31,6 +34,8 @@ class Button {
     return (mouseX > x && mouseX < x+width && mouseY > y && mouseY < y+height);
   }
 
+  public void mousePressed() {}
+
   void up() {
     down = false;
   }
@@ -39,6 +44,7 @@ class Button {
   }
 
   void draw() {
+    textFont(font,fontSize);
     strokeCap(PROJECT);
     fill(fillColor);
     stroke(20);

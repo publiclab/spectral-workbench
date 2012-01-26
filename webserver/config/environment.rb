@@ -26,6 +26,7 @@ Rails::Initializer.run do |config|
   #   config.public_key  = '6Lff6sESAAAAAK9cp9A2ajSGESoHnd3EZI4XaLQe'
   #   config.private_key = '6Lff6sESAAAAAGY676NdprFOT9HSGgllMGdFnGeT'
   # end
+  config.gem "redcarpet"
 
   # Only load the plugins named here, in the order given (default is alphabetical).
   # :all can be used as a placeholder for all plugins not explicitly named

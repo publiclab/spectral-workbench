@@ -1,0 +1,2 @@
+passenger stop -p 3000
+passenger start -a 127.0.0.1 -p 3000 -d -e production

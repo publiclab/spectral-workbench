@@ -11,6 +11,8 @@ class Spectrum {
     public int samplerow;
     public int history;
     public int resolution = 1;
+    public int[][][] hyperBuffer;
+    public int hyperX = video.width/2;
     // for setup mode:
     public int lastred = 0;
     public int lastgreen = 0;
@@ -19,11 +21,13 @@ class Spectrum {
     public int averageAbsorption = 0;
     public int absorptionSum;
     public int lastval = 0;
+    public int hyperRes = 100;
 
     public Spectrum(int pHistory,int pSamplerow) {
       samplerow = pSamplerow;
       history = pHistory;
       buffer = new int[history][video.width][3];
+      hyperBuffer = new int[width/hyperRes][video.width][video.height];
       storedbuffer = new int[video.width];
       absorptionbuffer = new int[video.width];
       enhancedabsorptionbuffer = new int[video.width];
@@ -99,23 +103,21 @@ class Spectrum {
      * Preview video to align spectrum - shows thumbnail in bottom left corner
      */
     public void preview() {
-      //video.image(0,height*3/4,width/4,height/4)
-      for (int y = 0; y < int (video.height); y+=4) {
-        for (int x = 0; x < int (video.width); x+=4) {
-          if (x < width && y < height) {
-            if (video.isLinux) {
-              pixels[(height*3/4*width)+(y*width/4)+((x/4))] = video.gscapture.pixels[y*video.width+x];
-            //pixels[(height*3/4*width)+(y*width/4)+((x/4))] = video.gscapture.pixels[int (y/video.scale()*video.width+x/video.scale())];
-            } else {
-              pixels[(height*3/4*width)+(y*width/4)+((x/4))] = video.capture.pixels[y*video.width+x];
-            }
-          }
-        }
-      }
+      int xoff = width/2-video.width/8, yoff = height/2-video.height/8;
+      fill(150);
+      rect(xoff-10,yoff-40,video.width/4+20,video.height/4+60); 
+      fill(20);
+      textFont(font,18);
+      text("Drag to adjust the sampling height",xoff,yoff-10);
+      video.image(xoff,yoff,video.width/4,video.height/4);
       // draw the region of sampling with a rectangle:
       noFill();
       stroke(255,255,0);
-      rect(0,height*3/4+samplerow/4-video.sampleHeight/4,video.width/4,video.sampleHeight/4);
+      rect(xoff,yoff+samplerow/4,video.width/4,video.sampleHeight/4);
+      fill(255,255,0,0.3);
+      noStroke();
+      rect(xoff,yoff,video.width/4,samplerow/4);
+      rect(xoff,yoff+samplerow/4+video.sampleHeight/4,video.width/4,video.sampleHeight/4+samplerow/4);
     }
     /**
      * Saves the current spectrum in a separate buffer for comparison.
@@ -125,6 +127,28 @@ class Spectrum {
         storedbuffer[x] = (buffer[0][x][0]+buffer[0][x][1]+buffer[0][x][2])/3;
       } 
     }
+
+    public float wavelengthFromPixel(int x) {
+        float nmPerPixel = (settings.secondMarkerWavelength-settings.firstMarkerWavelength)/(settings.secondMarkerPixel-settings.firstMarkerPixel);
+        float nmForZero = settings.firstMarkerWavelength-((float)settings.firstMarkerPixel*nmPerPixel);
+        return nmForZero+((float)x*nmPerPixel);
+    }
+
+    // saves a giant png where each an image from each band is stacked vertically
+    // another version might save separate images for each band
+    public void saveHyperspectralCube() {
+      //PGraphics pg = createGraphics(video.height*(video.width/res), video.width, P3D);
+      PGraphics pg = createGraphics(video.width, video.height, P2D);
+      for (int b = 0;b < spectrum.hyperBuffer.length;b++) {
+        for (int x = 0;x < video.width;x++) {
+          for (int y = headerHeight;y < video.height;y++) {
+            pg.pixels[(y*width)+x] = spectrum.hyperBuffer[b][x][y];
+          }
+        } 
+        pg.save("cube"+spectrum.wavelengthFromPixel(b*spectrum.hyperRes)+".png");
+      }
+    }
+
 }
 
 /**
@@ -191,7 +215,7 @@ class SpectrumPresentation {
         for (int x = 0; x < length; x++) {
             int[] pixel = mBuffer[0][x];
 
-            builder.append("{wavelength:null,average:"+wavelengthAverage(pixel));
+            builder.append("{wavelength:"+spectrum.wavelengthFromPixel(x)+",average:"+wavelengthAverage(pixel));
             builder.append(",r:"+getRed(pixel));
             builder.append(",g:"+getGreen(pixel));
             builder.append(",b:"+getBlue(pixel)+"}");
@@ -211,7 +235,7 @@ class SpectrumPresentation {
         for (int x = 0; x < length; x++) {
             int[] pixel = mBuffer[0][x];
 
-            builder.append("unknown_wavelength,"+wavelengthAverage(pixel));
+            builder.append(spectrum.wavelengthFromPixel(x)+","+wavelengthAverage(pixel));
             builder.append(","+getRed(pixel));
             builder.append(","+getGreen(pixel));
             builder.append(","+getBlue(pixel));

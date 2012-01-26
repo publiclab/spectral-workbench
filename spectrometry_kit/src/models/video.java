@@ -6,11 +6,13 @@ class Video {
   int sampleWidth, sampleHeight;
   int[] rgb;
   boolean isLinux;
+  PApplet parent;
   public String[] cameras;
-  public Video(PApplet parent, int receivedWidth, int receivedHeight, int receivedDevice) {
+  public Video(PApplet PParent, int receivedWidth, int receivedHeight, int receivedDevice) {
     width = receivedWidth;
     height = receivedHeight;
     device = receivedDevice;
+    parent = PParent;
     sampleHeight = 80;
     //OS detection
     try {  
@@ -75,12 +77,19 @@ class Video {
   {
     return (width*1.000)/screen.width;
   }
+  // Linux only, for now:
+  public void changeDevice(int Pdevice) {
+    if (isLinux) {
+      device = Pdevice;
+      gscapture = new GSCapture(parent, width, height, 10, "/dev/video"+device);
+    }
+  }
   public void image(int x,int y,int imgWidth,int imgHeight)
   {
     if (isLinux) {
       gscapture.read();
       //papplet.image(gscapture,x,y,imgWidth,imgHeight);
-    } //else papplet.image(capture,x,y,imgWidth,imgHeight);
+    } else parent.image(capture,x,y,imgWidth,imgHeight);
   }
   /**
    * Retrieve red, green, blue color intensities 
@@ -94,7 +103,7 @@ class Video {
     rgb[2] = 0;
 
     for (int yoff = spectrum.samplerow; yoff < spectrum.samplerow+sampleHeight; yoff+=1) {
-      int sampleind = int ((video.width*spectrum.samplerow)+(video.width*yoff)+x);
+      int sampleind = int ((video.width*yoff)+x);
 
       if (sampleind >= 0 && sampleind <= (video.height*video.width)) {
         int pixelColor;

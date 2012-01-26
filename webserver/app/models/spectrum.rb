@@ -8,7 +8,7 @@ class Spectrum < ActiveRecord::Base
                             	:with => /[a-zA-Z0-9_-]/,  
                             	:message => " must not include spaces and must be alphanumeric, as it'll be used in the URL of your spectrum, like: http://site.org/spectra/your-spectrum-name. You may use dashes and underscores.",
                             	:on => :create
-	validates_length_of :title, :maximum=>30
+	validates_length_of :title, :maximum=>60
 
 	has_many :comments, :dependent => :destroy
 	

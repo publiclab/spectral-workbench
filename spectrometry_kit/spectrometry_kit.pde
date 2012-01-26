@@ -30,34 +30,24 @@ import ddf.minim.analysis.*;
 import ddf.minim.*;
 
 
-import com.sun.image.codec.jpeg.*;
+import javax.imageio.*;
+import java.awt.image.BufferedImage;
 
 byte[] bufferImage(PImage srcimg) {
   ByteArrayOutputStream out = new ByteArrayOutputStream();
-  BufferedImage img = new BufferedImage(srcimg.width, srcimg.height, BufferedImage.TYPE_INT_RGB);
+  BufferedImage img = new BufferedImage(srcimg.width, srcimg.height, BufferedImage.TYPE_INT_ARGB);
   img = (BufferedImage) createImage(srcimg.width,srcimg.height);
+  img.setRGB(0, 0, srcimg.width, srcimg.height, srcimg.pixels, 0, srcimg.width);
 
-  for (int y = 0; y < srcimg.height; y++) {
-    for (int x = 0; x < srcimg.width; x++) {
-      int rgb = srcimg.pixels[y * srcimg.width + x];
-      int[] rgbarray = new int[3];
-      rgbarray[0] = int (red(rgb));
-      rgbarray[1] = int (green(rgb));
-      rgbarray[2] = int (blue(rgb));
-      img.setRGB(x,y,1,1, rgbarray, 0, srcimg.width);
-    }
-  }
+
   try {
-    JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);
-    JPEGEncodeParam encpar = encoder.getDefaultJPEGEncodeParam(img);
-    encpar.setQuality(1, false);
-    encoder.setJPEGEncodeParam(encpar);
-    encoder.encode(img);
-  }
-  catch (FileNotFoundException e) {
+
+
+     ImageIO.write(img, "PNG", out);
+
+  } catch (FileNotFoundException e) {
     println(e);
-  }
-  catch (IOException ioe) {
+  } catch (IOException ioe) {
     println(ioe);
   }
   return out.toByteArray();
@@ -70,6 +60,8 @@ class Spectrum {
     public int samplerow;
     public int history;
     public int resolution = 1;
+    public int[][][] hyperBuffer;
+    public int hyperX = video.width/2;
     public int lastred = 0;
     public int lastgreen = 0;
     public int lastblue = 0;
@@ -77,11 +69,13 @@ class Spectrum {
     public int averageAbsorption = 0;
     public int absorptionSum;
     public int lastval = 0;
+    public int hyperRes = 100;
 
     public Spectrum(int pHistory,int pSamplerow) {
       samplerow = pSamplerow;
       history = pHistory;
       buffer = new int[history][video.width][3];
+      hyperBuffer = new int[width/hyperRes][video.width][video.height];
       storedbuffer = new int[video.width];
       absorptionbuffer = new int[video.width];
       enhancedabsorptionbuffer = new int[video.width];
@@ -185,26 +179,45 @@ if (controller == "analyze" || controller == "heatmap") {
       text(averageAbsorption,10,avY);
     }
     public void preview() {
-      for (int y = 0; y < int (video.height); y+=4) {
-        for (int x = 0; x < int (video.width); x+=4) {
-          if (x < width && y < height) {
-            if (video.isLinux) {
-              pixels[(height*3/4*width)+(y*width/4)+((x/4))] = video.gscapture.pixels[y*video.width+x];
-            } else {
-              pixels[(height*3/4*width)+(y*width/4)+((x/4))] = video.capture.pixels[y*video.width+x];
-            }
-          }
-        }
-      }
+      int xoff = width/2-video.width/8, yoff = height/2-video.height/8;
+      fill(150);
+      rect(xoff-10,yoff-40,video.width/4+20,video.height/4+60);
+      fill(20);
+      textFont(font,18);
+      text("Drag to adjust the sampling height",xoff,yoff-10);
+      video.image(xoff,yoff,video.width/4,video.height/4);
       noFill();
       stroke(255,255,0);
-      rect(0,height*3/4+samplerow/4-video.sampleHeight/4,video.width/4,video.sampleHeight/4);
+      rect(xoff,yoff+samplerow/4,video.width/4,video.sampleHeight/4);
+      fill(255,255,0,0.3);
+      noStroke();
+      rect(xoff,yoff,video.width/4,samplerow/4);
+      rect(xoff,yoff+samplerow/4+video.sampleHeight/4,video.width/4,video.sampleHeight/4+samplerow/4);
     }
     public void storeReference() {
       for (int x = 0;x < buffer[0].length;x++) {
         storedbuffer[x] = (buffer[0][x][0]+buffer[0][x][1]+buffer[0][x][2])/3;
       }
     }
+
+    public float wavelengthFromPixel(int x) {
+        float nmPerPixel = (settings.secondMarkerWavelength-settings.firstMarkerWavelength)/(settings.secondMarkerPixel-settings.firstMarkerPixel);
+        float nmForZero = settings.firstMarkerWavelength-((float)settings.firstMarkerPixel*nmPerPixel);
+        return nmForZero+((float)x*nmPerPixel);
+    }
+
+    public void saveHyperspectralCube() {
+      PGraphics pg = createGraphics(video.width, video.height, P2D);
+      for (int b = 0;b < spectrum.hyperBuffer.length;b++) {
+        for (int x = 0;x < video.width;x++) {
+          for (int y = headerHeight;y < video.height;y++) {
+            pg.pixels[(y*width)+x] = spectrum.hyperBuffer[b][x][y];
+          }
+        }
+        pg.save("cube"+spectrum.wavelengthFromPixel(b*spectrum.hyperRes)+".png");
+      }
+    }
+
 }
 
 class SpectrumPresentation {
@@ -258,7 +271,7 @@ class SpectrumPresentation {
         for (int x = 0; x < length; x++) {
             int[] pixel = mBuffer[0][x];
 
-            builder.append("{wavelength:null,average:"+wavelengthAverage(pixel));
+            builder.append("{wavelength:"+spectrum.wavelengthFromPixel(x)+",average:"+wavelengthAverage(pixel));
             builder.append(",r:"+getRed(pixel));
             builder.append(",g:"+getGreen(pixel));
             builder.append(",b:"+getBlue(pixel)+"}");
@@ -277,7 +290,7 @@ class SpectrumPresentation {
         for (int x = 0; x < length; x++) {
             int[] pixel = mBuffer[0][x];
 
-            builder.append("unknown_wavelength,"+wavelengthAverage(pixel));
+            builder.append(spectrum.wavelengthFromPixel(x)+","+wavelengthAverage(pixel));
             builder.append(","+getRed(pixel));
             builder.append(","+getGreen(pixel));
             builder.append(","+getBlue(pixel));
@@ -303,8 +316,8 @@ void keyPressed() {
   if (key == CODED) {
     if (keyCode == DOWN) {
       spectrum.samplerow += 1;
-      if (spectrum.samplerow >= video.height) {
-        spectrum.samplerow = video.height;
+      if (spectrum.samplerow >= video.height-video.sampleHeight) {
+        spectrum.samplerow = video.height-video.sampleHeight-1;
       }
     } else if (keyCode == UP) {
       spectrum.samplerow -= 1;
@@ -340,25 +353,43 @@ void keyPressed() {
 }
 Keyboard keyboard;
 
-void mouseMoved() {
+void mouseDragged() {
+  if (controller == "analyze") {
+  } else if (controller == "setup") {
+    setup.mouseDragged();
+  } else if (controller == "heatmap") {
+  } else if (controller == "hyperspectral") {
+    hyperspectral.mouseDragged();
+  }
 }
 
 void mousePressed() {
-
   if (controller == "analyze") {
     analyze.mousePressed();
   } else if (controller == "setup") {
-    analyze.mousePressed(); // for now, same.
+    setup.mousePressed();
   } else if (controller == "heatmap") {
     analyze.mousePressed(); // for now, same.
+  } else if (controller == "hyperspectral") {
+    hyperspectral.mousePressed();
   }
+}
 
+void mouseReleased() {
+  if (controller == "analyze") {
+  } else if (controller == "setup") {
+    setup.mouseReleased();
+  } else if (controller == "heatmap") {
+  } else if (controller == "hyperspectral") {
+    hyperspectral.mouseReleased();
+  }
 }
 class Button {
 
   public String text;
   public int x = 0;
   public int y = 0;
+  public boolean dragging = false; // not often used except in "sliders"
   public int padding = 10;
   public int width = 100;
   public int height = headerHeight;
@@ -366,12 +397,14 @@ class Button {
   public boolean hovering = false;
   public boolean down = false;
   public color fillColor = #222222;
+  String forController;
 
   public Button(String pText,int pX, int pY, int pHeight) {
     text = pText;
     x = pX;
     y = pY;
     height = pHeight;
+    textFont(font,fontSize);
     width = int (textWidth(text)+padding*2);
   }
 
@@ -386,6 +419,8 @@ class Button {
     return (mouseX > x && mouseX < x+width && mouseY > y && mouseY < y+height);
   }
 
+  public void mousePressed() {}
+
   void up() {
     down = false;
   }
@@ -394,6 +429,7 @@ class Button {
   }
 
   void draw() {
+    textFont(font,fontSize);
     strokeCap(PROJECT);
     fill(fillColor);
     stroke(20);
@@ -471,11 +507,13 @@ class Video {
   int sampleWidth, sampleHeight;
   int[] rgb;
   boolean isLinux;
+  PApplet parent;
   public String[] cameras;
-  public Video(PApplet parent, int receivedWidth, int receivedHeight, int receivedDevice) {
+  public Video(PApplet PParent, int receivedWidth, int receivedHeight, int receivedDevice) {
     width = receivedWidth;
     height = receivedHeight;
     device = receivedDevice;
+    parent = PParent;
     sampleHeight = 80;
     try {
       Runtime r = Runtime.getRuntime();
@@ -516,11 +554,17 @@ class Video {
   {
     return (width*1.000)/screen.width;
   }
+  public void changeDevice(int Pdevice) {
+    if (isLinux) {
+      device = Pdevice;
+      gscapture = new GSCapture(parent, width, height, 10, "/dev/video"+device);
+    }
+  }
   public void image(int x,int y,int imgWidth,int imgHeight)
   {
     if (isLinux) {
       gscapture.read();
-    } //else papplet.image(capture,x,y,imgWidth,imgHeight);
+    } else parent.image(capture,x,y,imgWidth,imgHeight);
   }
   public int[] get_rgb(int x)
   {
@@ -530,7 +574,7 @@ class Video {
     rgb[2] = 0;
 
     for (int yoff = spectrum.samplerow; yoff < spectrum.samplerow+sampleHeight; yoff+=1) {
-      int sampleind = int ((video.width*spectrum.samplerow)+(video.width*yoff)+x);
+      int sampleind = int ((video.width*yoff)+x);
 
       if (sampleind >= 0 && sampleind <= (video.height*video.width)) {
         int pixelColor;
@@ -573,8 +617,6 @@ class Filter implements AudioSignal, AudioListener
     rightChannel= new float[bsize];
     fft = new FFT(out.bufferSize(), out.sampleRate());
     fft.window(FFT.HAMMING);
-    in.addListener(this);
-    out.addSignal(this);
   }
   synchronized void samples(float[] samp)
   {
@@ -622,7 +664,6 @@ class Filter implements AudioSignal, AudioListener
 Filter filter;
 class Server {
   public void upload() {
-
     String spectraFolder = "spectra/";
     SpectrumPresentation presenter = new SpectrumPresentation(spectrum.buffer);
 
@@ -641,17 +682,19 @@ class Server {
     pg.beginDraw();
     for (int y=0;y<100;y++) {
       for (int x=0;x<video.width;x++) {
-        pg.set(x,y,pixels[spectrum.samplerow*video.width+y*video.width+x]);
+        pg.set(x,y,pixels[headerHeight*width+y*width+x]);
       }
     }
     pg.endDraw();
     pg.save(spectraFolder + presenter.generateFileName(typedText + "-alt", "png"));
 
+    String webTitle = presenter.generateFileName("untitled",null);
     try {
       String response;
-      println(serverUrl+"/spectrums/create?spectrum[title]="+typedText+"&spectrum[author]=anonymous");
-      URL u = new URL(serverUrl+"/spectrums/create?spectrum[title]="+typedText+"&spectrum[author]=anonymous&client=0.5");
-      response = postData(u,bufferImage(pg.get()),presenter.generateFileName(typedText,"jpg"));
+      println(serverUrl+"/spectrums/create?spectrum[title]="+webTitle+"&spectrum[author]=anonymous");
+      URL u = new URL(serverUrl+"/spectrums/create?spectrum[title]="+webTitle+"&spectrum[author]=anonymous&client=0.5");
+
+      response = postData(u,bufferImage(pg.get()),presenter.generateFileName(typedText,"png"));
       typedText = "saved: type to label next spectrum";
       println(serverUrl+"/spectra/edit/"+response);
       link(serverUrl+"/spectra/edit/"+response);
@@ -675,7 +718,7 @@ class Server {
 
         dstream.writeBytes("--"+boundary+"\r\n");
 
-        dstream.writeBytes("Content-Disposition: form-data; name=\"photo\"; filename=\""+filename+"\" \r\nContent-Type: image/jpeg\r\nContent-Transfer-Encoding: binary\r\n\r\n");
+        dstream.writeBytes("Content-Disposition: form-data; name=\"photo\"; filename=\""+filename+"\" \r\nContent-Type: image/png\r\nContent-Transfer-Encoding: binary\r\n\r\n");
         dstream.write(pData ,0, pData.length);
 
         dstream.writeBytes("\r\n--"+boundary+"--\r\n\r\n");
@@ -708,6 +751,8 @@ class Analyze {
       header.mousePressed();
     } else if (mouseY < int (headerHeight+(height-headerHeight)/2)) { // Waterfall
 
+    } else if (mouseY < int (20+headerHeight+(height-headerHeight)/2)) { // Calibrator
+
     } else { // Graph
 
     }
@@ -715,90 +760,492 @@ class Analyze {
 
 }
 Analyze analyze;
-class Header {
+class Setup {
 
+  boolean selectingSampleRow = true;
+  boolean sampleRowMousePressed = false;
+  int delayCounter = 10;
+
+  public Setup() {
+
+  }
+
+  public void mouseMoved() {
+  }
+  public void mouseDragged() {
+    calibrator.mouseDragged();
+  }
+
+  public void mousePressed() {
+    if (mouseY < headerHeight) { // Header
+      header.mousePressed();
+    } else if (selectingSampleRow && (mouseX > width/2-video.width/8 && mouseX < width/2+video.width/8) && (mouseY > height/2-video.height/8 && mouseY < height/2+video.height/8)) { // Modal video select
+      sampleRowMousePressed = true;
+      spectrum.samplerow = 4*(mouseY-height/2+video.height/8);
+      if (spectrum.samplerow+video.sampleHeight > video.height || spectrum.samplerow+video.sampleHeight <= 0) {
+        video.sampleHeight = video.height-spectrum.samplerow-1;
+      }
+    } else if (mouseY < int (headerHeight+(height-headerHeight)/2)) { // Waterfall
+
+    } else if (mouseY < int (30+headerHeight+(height-headerHeight)/2)) { // Calibrator
+      calibrator.mousePressed();
+    } else { // Graph
+
+    }
+  }
+
+  public void mouseReleased() {
+    int topRow, bottomRow;
+    if (sampleRowMousePressed) {
+      sampleRowMousePressed = false;
+      selectingSampleRow = false;
+      delayCounter = 10;
+      if (spectrum.samplerow > (4*(mouseY-height/2+video.height/8))) {
+        topRow = (4*(mouseY-height/2+video.height/8));
+        bottomRow = spectrum.samplerow;
+        spectrum.samplerow = topRow;
+      } else {
+        bottomRow = (4*(mouseY-height/2+video.height/8));
+        topRow = spectrum.samplerow;
+      }
+      video.sampleHeight = bottomRow-topRow;
+      if (spectrum.samplerow+video.sampleHeight > video.height || spectrum.samplerow+video.sampleHeight <= 0) {
+        video.sampleHeight = video.height-spectrum.samplerow-1;
+      }
+      settings.set("video.samplerow",spectrum.samplerow);
+      settings.set("video.sampleheight",video.sampleHeight);
+      controller = "analyze";
+    }
+    calibrator.mouseReleased();
+  }
+
+}
+
+Setup setup;
+class Hyperspectral {
+  Button firstMarker,secondMarker;
+  public ArrayList sliders;
+  public int y,height;
+  PApplet parent;
+
+  public Hyperspectral(PApplet pParent) {
+    parent = pParent;
+    y = headerHeight+3;
+    height = 30;
+    sliders = new ArrayList();
+    firstMarker = new Button("Wavelength",spectrum.hyperX,y,height);
+    sliders.add(firstMarker);
+    secondMarker = new Button("End",3000,y,height); //not using yet, put off to right side; will be used for a range selection
+    sliders.add(secondMarker);
+  }
+
+  void draw() {
+    for (int t = spectrum.hyperBuffer.length-1;t > 0;t--) {
+      for (int y = 0;y < video.height;y++) {
+        for (int b = 0;b < (int)(video.width/spectrum.hyperRes);b++) { // every wavelength
+          if (b < video.width) spectrum.hyperBuffer[b][t][y] = spectrum.hyperBuffer[b][t-1][y];
+        }
+      }
+    }
+    for (int y = video.height-1;y> 0;y--) {
+      for (int b = 0;b < video.width/spectrum.hyperRes;b++) {
+        spectrum.hyperBuffer[b][0][y] = video.pixels()[b*spectrum.hyperRes+(video.width*y)];
+      }
+    }
+
+    for (int x = 0;x < spectrum.hyperBuffer[spectrum.hyperX/spectrum.hyperRes].length;x++) {
+      for (int y = headerHeight;y < video.height;y++) {
+        for (int w = 0;w < spectrum.hyperRes;w++) {
+          pixels[(y*width)+x] = spectrum.hyperBuffer[spectrum.hyperX/spectrum.hyperRes][x][y];
+        }
+      }
+    }
+
+    firstMarker.draw();
+    firstMarker.text = "Wavelength ("+spectrum.wavelengthFromPixel(firstMarker.x)+")";
+
+    if (firstMarker.dragging) { // && firstMarker.mouseOver()) {
+      firstMarker.x = mouseX;
+      stroke(255);
+      line(firstMarker.x,0,firstMarker.x,height);
+    } else if (secondMarker.dragging) { // && secondMarker.mouseOver()) {
+      secondMarker.x = mouseX;
+      stroke(255);
+      line(secondMarker.x,0,secondMarker.x,height);
+    }
+
+  }
+
+  public void mousePressed() {
+    if (mouseY < headerHeight) { // Header
+      header.mousePressed();
+    } else if (mouseY < int (headerHeight+(height-headerHeight)/2)) { // Waterfall
+
+    } else if (mouseY < int (20+headerHeight+(height-headerHeight)/2)) { // Calibrator
+
+    } else { // Graph
+
+    }
+
+    if (firstMarker.mouseOver()) {
+      firstMarker.dragging = true;
+    } else if (secondMarker.mouseOver()) {
+    }
+  }
+
+  void mouseDragged() {
+  }
+
+  void mouseReleased() {
+    firstMarker.dragging = false;
+    spectrum.hyperX = firstMarker.x;
+      settings.set("hyperspectral.firstMarkerPixel",spectrum.hyperX);
+    secondMarker.dragging = false;
+  }
+
+}
+Hyperspectral hyperspectral;
+class VideoRowButton extends Button {
+  VideoRowButton(String PbuttonName,int Px,int Py,int Pheight) { super(PbuttonName,Px,Py,Pheight); }
+  String forController = "setup"; // or "all"
+  void draw() {
+    if (controller == "setup") {
+	super.draw();
+    }
+  }
+  void mousePressed() {
+    if (controller == "setup" && super.mouseOver()) {
+      setup.selectingSampleRow = true;
+    }
+  }
+}
+
+class SaveButton extends Button {
+  SaveButton(String PbuttonName,int Px,int Py,int Pheight) { super(PbuttonName,Px,Py,Pheight); }
+  String forController = "all";
+  void mousePressed() {
+    if (super.mouseOver()) {
+      if (controller == "hyperspectral") spectrum.saveHyperspectralCube();
+      else server.upload();
+    }
+  }
+}
+
+class AnalyzeButton extends Button {
+  AnalyzeButton(String PbuttonName,int Px,int Py,int Pheight) { super(PbuttonName,Px,Py,Pheight); }
+  String forController = "all";
+  void mousePressed() {
+    if (super.mouseOver()) {
+      header.switchController("analyze");
+      header.heatmapButton.up();
+      header.setupButton.up();
+      header.analyzeButton.down();
+    }
+  }
+}
+
+class HeatmapButton extends Button {
+  HeatmapButton(String PbuttonName,int Px,int Py,int Pheight) { super(PbuttonName,Px,Py,Pheight); }
+  String forController = "all";
+  void mousePressed() {
+    if (super.mouseOver()) {
+      header.switchController("heatmap");
+      header.heatmapButton.down();
+      header.setupButton.up();
+      header.analyzeButton.up();
+    }
+  }
+}
+class HyperspectralButton extends Button {
+  HyperspectralButton(String PbuttonName,int Px,int Py,int Pheight) { super(PbuttonName,Px,Py,Pheight); }
+  String forController = "all";
+  void mousePressed() {
+    if (super.mouseOver()) {
+      header.switchController("hyperspectral");
+      header.heatmapButton.up();
+      header.setupButton.up();
+      header.analyzeButton.up();
+    }
+  }
+}
+
+class SetupButton extends Button {
+  SetupButton(String PbuttonName,int Px,int Py,int Pheight) { super(PbuttonName,Px,Py,Pheight); }
+  String forController = "all";
+  void mousePressed() {
+    if (super.mouseOver()) {
+      header.switchController("setup");
+      header.heatmapButton.up();
+      header.setupButton.down();
+      header.analyzeButton.up();
+    }
+  }
+}
+
+class BaselineButton extends Button {
+  BaselineButton(String PbuttonName,int Px,int Py,int Pheight) { super(PbuttonName,Px,Py,Pheight); }
+  String forController = "analyze";
+  void mousePressed() {
+    if (super.mouseOver()) spectrum.storeReference();
+  }
+  void draw() {
+    if (controller == "analyze") super.draw();
+  }
+}
+
+class WebcamButton extends Button {
+  WebcamButton(String PbuttonName,int Px,int Py,int Pheight) { super(PbuttonName,Px,Py,Pheight); }
+  String forController = "setup";
+  void draw() {
+    if (video.isLinux) { super.draw(); }
+  }
+  void mousePressed() {
+    if (super.mouseOver() && video.isLinux) {
+      video.changeDevice(video.device+1);
+    }
+  }
+}
+
+class LearnButton extends Button {
+  LearnButton(String PbuttonName,int Px,int Py,int Pheight) { super(PbuttonName,Px,Py,Pheight); }
+  String forController = "all";
+  void mousePressed() {
+    if (super.mouseOver()) link("http://publiclaboratory.org/wiki/spectral-workbench");
+  }
+}
+
+class Header {
   public PImage logo;
   public int rightOffset = 0; // where to put new buttons (shifts as buttons are added)
-  public Button[] buttons; // we should store all buttons in here instead of explicitly defining, as below:
+  public ArrayList buttons;
   public Button learnButton;
   public Button saveButton;
   public Button analyzeButton;
   public Button heatmapButton;
+  public Button hyperspectralButton;
   public Button setupButton;
+
   public Button baselineButton;
+  public Button webcamButton;
+  public Button videoRowButton;
   public int margin = 4;
 
   public Header() {
     logo = loadImage("logo-small.png");
-    learnButton = addButton("Learn");
-    saveButton = addButton("Save");
-    heatmapButton = addButton("Heatmap");
-    setupButton = addButton("Setup");
-    analyzeButton = addButton("Analyze");
+    buttons = new ArrayList();
+    learnButton = addButton(new LearnButton("Learn",width-rightOffset-margin,margin,headerHeight-8));
+    saveButton = addButton(new SaveButton("Save",width-rightOffset-margin,margin,headerHeight-8));
+
+    analyzeButton = addButton(new AnalyzeButton("Analyze",width-rightOffset-margin,margin,headerHeight-8));
     analyzeButton.down();
-    baselineButton = addButton("Baseline");
+    heatmapButton = addButton(new HeatmapButton("Heatmap",width-rightOffset-margin,margin,headerHeight-8));
+    hyperspectralButton = addButton(new HyperspectralButton("Hyperspectral",width-rightOffset-margin,margin,headerHeight-8));
+    setupButton = addButton(new SetupButton("Setup",width-rightOffset-margin,margin,headerHeight-8));
+
+    baselineButton = addButton(new BaselineButton("Baseline",width-rightOffset-margin,margin,headerHeight-8));
     baselineButton.fillColor = #444444;
+    webcamButton = addButton(new WebcamButton("Switch webcam",width-rightOffset-margin,margin,headerHeight-8));
+    webcamButton.fillColor = #444444;
+    videoRowButton = addButton(new VideoRowButton("Adjust sample row",width-rightOffset-margin,margin,headerHeight-8));
+    videoRowButton.fillColor = #444444;
   }
 
+  public Button addButton(Button pButton) {
+    buttons.add(pButton);
+    rightOffset += pButton.width+margin;
+    pButton.x -= pButton.width;
+    return pButton;
+  }
   public Button addButton(String buttonName) {
     Button button = new Button(buttonName,width-rightOffset-margin,margin,headerHeight-8);
-    rightOffset += button.width+margin;
-    button.x -= button.width;
+    addButton(button);
     return button;
   }
 
   public void mousePressed() {
-    if (saveButton.mouseOver()) {
-      server.upload();
-    }
-    if (analyzeButton.mouseOver()) {
-      controller = "analyze";
-      heatmapButton.up();
-      setupButton.up();
-      analyzeButton.down();
-    }
-    if (setupButton.mouseOver()) {
-      controller = "setup";
-      heatmapButton.up();
-      setupButton.down();
-      analyzeButton.up();
-    }
-    if (heatmapButton.mouseOver()) {
-      controller = "heatmap";
-      heatmapButton.down();
-      setupButton.up();
-      analyzeButton.up();
-    }
-    if (baselineButton.mouseOver()) {
-      spectrum.storeReference();
-    }
-    if (learnButton.mouseOver()) {
-      link("http://publiclaboratory.org/wiki/spectral-workbench");
+    for (int i = 0;i < buttons.size();i++) {
+      Button b = (Button) buttons.get(i);
+      b.mousePressed();
     }
   }
 
-  public void draw() {
+  public void switchController(String Pcontroller) {
+    controller = Pcontroller;
 
+  }
+
+  public void draw() {
     fill(255);
     noStroke();
     image(logo,14,14);
     textFont(font,24);
-    text("PLOTS Spectral Workbench: "+typedText, 55, 40); //display current title
+    text("PLOTS Spectral Workbench", 55, 40); //display current title
 
-    saveButton.draw();
-    learnButton.draw();
-    analyzeButton.draw();
-    heatmapButton.draw();
-    setupButton.draw();
-    baselineButton.draw();
+    for (int i = 0;i < buttons.size();i++) {
+      Button b = (Button) buttons.get(i);
+      b.draw();
+    }
   }
 }
 
 
 Header header;
+class Calibrator {
 
-String serverUrl = "http://spectrometer.publiclaboratory.org"; // the remote server to upload to
-String controller = "analyze"; // this determines what controller is used, i.e. what mode the app is in
+  Button firstMarker,secondMarker;
+  public ArrayList sliders;
+  public int y,height;
+  PApplet parent;
+
+  public Calibrator(PApplet Pparent) {
+    parent = Pparent;
+    y = headerHeight+(parent.height-headerHeight)/2;
+    height = 30;
+    sliders = new ArrayList();
+    firstMarker = new Button("Mercury 2, 435.833",settings.firstMarkerPixel,y,height);
+    sliders.add(firstMarker);
+    secondMarker = new Button("Mercury 3, 546.074",settings.secondMarkerPixel,y,height);
+    sliders.add(secondMarker);
+  }
+
+  void draw() {
+    textFont(font,10);
+
+    text((int)(spectrum.wavelengthFromPixel(mouseX))+"nm",mouseX+4,y+50);
+    stroke(40);
+    line(mouseX,y,mouseX,y+1000); // all the way past the bottom of the screen
+
+    if (settings.firstMarkerWavelength != 0) { // if no calibration exists, this will be 0
+
+      float nmPerPixel = (settings.secondMarkerWavelength-settings.firstMarkerWavelength)/(settings.secondMarkerPixel-settings.firstMarkerPixel);
+      int pxFor400Nm = settings.firstMarkerPixel - (int) (35.833/nmPerPixel);
+
+      for (int i=-4;i<8;i++) {
+        int gradX = pxFor400Nm+(int)((float)i*(100.00/nmPerPixel));
+        stroke(40);
+        line(gradX,y,gradX,y+1000); // all the way past the bottom of the screen
+        noStroke();
+        fill(200);
+        text((int)(400+(i*100))+"nm",gradX+4,y+20);
+      }
+
+    } else {
+      text("No calibration yet",4,height+4);
+    }
+    if (controller == "setup") { // show wavelength graduations
+
+      for (int i = 0;i < sliders.size();i++) {
+        Button b = (Button) sliders.get(i);
+        b.draw();
+      }
+
+      if (firstMarker.dragging) { // && firstMarker.mouseOver()) {
+        firstMarker.x = mouseX;
+        stroke(255);
+        line(firstMarker.x,0,firstMarker.x,parent.height);
+      } else if (secondMarker.dragging) { // && secondMarker.mouseOver()) {
+        secondMarker.x = mouseX;
+        stroke(255);
+        line(secondMarker.x,0,secondMarker.x,parent.height);
+      }
+
+    }
+  }
+
+  void mousePressed() {
+    if (firstMarker.mouseOver()) {
+      firstMarker.dragging = true;
+    } else if (secondMarker.mouseOver()) {
+      secondMarker.dragging = true;
+    }
+  }
+
+  void mouseDragged() {
+  }
+
+  void mouseReleased() {
+    firstMarker.dragging = false;
+    settings.firstMarkerPixel = firstMarker.x;
+    settings.firstMarkerWavelength = 435.833;
+      settings.set("calibration.firstMarkerWavelength",settings.firstMarkerWavelength);
+      settings.set("calibration.firstMarkerPixel",settings.firstMarkerPixel);
+    secondMarker.dragging = false;
+    settings.secondMarkerPixel = secondMarker.x;
+    settings.secondMarkerWavelength = 546.074;
+      settings.set("calibration.secondMarkerWavelength",settings.secondMarkerWavelength);
+      settings.set("calibration.secondMarkerPixel",settings.secondMarkerPixel);
+  }
+
+}
+Calibrator calibrator;
+class Settings {
+  P5Properties props;
+  float firstMarkerWavelength;
+  int firstMarkerPixel;
+  float secondMarkerWavelength;
+  int secondMarkerPixel;
+  PApplet parent;
+   public Settings(PApplet pParent) {
+    println("Reading settings.txt");
+    parent = pParent;
+    try {
+      props=new P5Properties();
+      props.load(openStream("settings.txt"));
+      spectrum.samplerow = props.getIntProperty("video.samplerow",80);
+      video.sampleHeight = props.getIntProperty("video.sampleheight",int (height*(0.18)));
+      video.device = props.getIntProperty("video.device",0);
+      firstMarkerWavelength = props.getFloatProperty("calibration.firstMarkerWavelength",0);
+      firstMarkerPixel = props.getIntProperty("calibration.firstMarkerPixel",0);
+      secondMarkerWavelength = props.getFloatProperty("calibration.secondMarkerWavelength",0);
+      secondMarkerPixel = props.getIntProperty("calibration.secondMarkerPixel",0);
+    } catch(IOException e) {
+      println("couldn't read config file...");
+    }
+  }
+
+  void set(String key,int val) {
+    println("Writing settings.txt");
+    String stringVal = ""+val; // how else to turn int into String? I'm on a plane and can't look it up.
+    props.setProperty(key,stringVal);
+    try {
+      props.store(new FileOutputStream(parent.dataPath("settings.txt")), null);
+      println("done");
+    } catch (IOException e) {
+      println(e);
+    }
+  }
+  void set(String key,float val) {
+    println("Writing settings.txt");
+    String stringVal = ""+val; // how else to turn int into String? I'm on a plane and can't look it up.
+    props.setProperty(key,stringVal);
+    try {
+      props.store(new FileOutputStream(parent.dataPath("settings.txt")), null);
+      println("done");
+    } catch (IOException e) {
+      println(e);
+    }
+  }
+
+}
+class P5Properties extends Properties {
+
+  boolean getBooleanProperty(String id, boolean defState) {
+    return boolean(getProperty(id,""+defState));
+  }
+
+  int getIntProperty(String id, int defVal) {
+    return int(getProperty(id,""+defVal));
+  }
+
+  float getFloatProperty(String id, float defVal) {
+    return float(getProperty(id,""+defVal));
+  }
+}
+
+Settings settings;
+
+String serverUrl = "http://spectralworkbench.org"; // the remote server to upload to
+String controller = "setup"; // this determines what controller is used, i.e. what mode the app is in
 final static String defaultTypedText = "type to label spectrum";
 String typedText = defaultTypedText;
 PFont font;
@@ -811,14 +1258,18 @@ public void setup() {
   system = new System();
   keyboard = new Keyboard();
   analyze = new Analyze();
+  setup = new Setup();
   header = new Header();
   server = new Server();
 
   size(screen.width, screen.height-20, P2D);
 
-  video = new Video(this,1280,720,0);
+    video = new Video(this,640,480,0);
   spectrum = new Spectrum(int (height-headerHeight)/2,int (height*(0.18))); //history (length),samplerow (row # to begin sampling)
+  hyperspectral = new Hyperspectral(this);
   filter = new Filter(this);
+  settings = new Settings(this); // once more settings are stored in this object instead of video or spectrum, this can move up
+  calibrator = new Calibrator(this);
 }
 
 public void switchMode() {
@@ -847,9 +1298,13 @@ void draw() {
   line(0,height-255,width,height-255); //100% mark for spectra
 
   header.draw();
-  if (controller == "setup") { spectrum.preview(); }
-  spectrum.draw(headerHeight); //y position of top of spectrum
-
+  calibrator.draw();
+  if (controller == "hyperspectral") hyperspectral.draw();
+  else spectrum.draw(headerHeight); //y position of top of spectrum
   updatePixels();
+  if ((controller == "setup" && setup.selectingSampleRow) || setup.delayCounter > 0) {
+	setup.delayCounter -= 1;
+	spectrum.preview();
+  }
 }
 

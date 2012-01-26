@@ -1,6 +1,8 @@
 html {
 }
 
+img { border:0; }
+
 body {
 	margin: 0 auto;
 	background:white;
@@ -137,6 +139,7 @@ a:hover.button {
 }
 #list .notes {
 	height:65px;
+	font-size:0.8em;
 }
 #list .spectrum {
 	font-size:0.9em;

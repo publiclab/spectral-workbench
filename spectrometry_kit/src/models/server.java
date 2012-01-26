@@ -3,11 +3,10 @@ class Server {
    * Save the current spectrum to the server
    */
   public void upload() {
-
     //save CSV and JSON:
     String spectraFolder = "spectra/";
     SpectrumPresentation presenter = new SpectrumPresentation(spectrum.buffer);
-
+    
     PrintWriter csv = createWriter(spectraFolder + presenter.generateFileName(typedText, "csv"));
     csv.print(presenter.toCsv());
     csv.close();
@@ -26,24 +25,21 @@ class Server {
     pg.beginDraw();
     for (int y=0;y<100;y++) {
       for (int x=0;x<video.width;x++) {
-        //pg.pixels[y][x][0] = pixels[samplerow+y][x][0]; 
-        //pg.pixels[y][x][1] = pixels[samplerow+y][x][1]; 
-        //pg.pixels[y][x][2] = pixels[samplerow+y][x][2]; 
-        //pg.setRGB(x,y,pixels[samplerow*y+x]);
-        pg.set(x,y,pixels[spectrum.samplerow*video.width+y*video.width+x]);
+        pg.set(x,y,pixels[headerHeight*width+y*width+x]);
       }
     }
     pg.endDraw();
     pg.save(spectraFolder + presenter.generateFileName(typedText + "-alt", "png"));
-    // somehow this might need: http://wiki.processing.org/index.php/Save_as_JPEG
 
     //save to web:
+    String webTitle = presenter.generateFileName("untitled",null);
     try {
       String response;
-      println(serverUrl+"/spectrums/create?spectrum[title]="+typedText+"&spectrum[author]=anonymous");
-      URL u = new URL(serverUrl+"/spectrums/create?spectrum[title]="+typedText+"&spectrum[author]=anonymous&client=0.5");
+      println(serverUrl+"/spectrums/create?spectrum[title]="+webTitle+"&spectrum[author]=anonymous");
+      URL u = new URL(serverUrl+"/spectrums/create?spectrum[title]="+webTitle+"&spectrum[author]=anonymous&client=0.5");
       //this.postData(u,presenter.toJson(presenter.generateFileName(typedText, null)).getBytes());
-      response = postData(u,bufferImage(pg.get()),presenter.generateFileName(typedText,"jpg"));
+
+      response = postData(u,bufferImage(pg.get()),presenter.generateFileName(typedText,"png"));
       //clear label buffer
       typedText = "saved: type to label next spectrum";
       println(serverUrl+"/spectra/edit/"+response);
@@ -57,7 +53,7 @@ class Server {
   /**
    * POST pData to pUrl
    * @return the response
-   * Customized for sending jpegs with name="spectrum[photo]"
+   * Customized for sending pngs with name="spectrum[photo]"
    * ... possibly lead if we switch to ImageIO: http://pastebin.com/f6783c437
    */
   public String postData(URL pUrl, byte[] pData, String filename) {
@@ -80,7 +76,7 @@ class Server {
  
         // describe the content
         // dstream.writeBytes("Content-Disposition: form-data; name=\"data\"; filename=\"whatever\" \r\nContent-Type: text/json\r\nContent-Transfer-Encoding: binary\r\n\r\n");
-        dstream.writeBytes("Content-Disposition: form-data; name=\"photo\"; filename=\""+filename+"\" \r\nContent-Type: image/jpeg\r\nContent-Transfer-Encoding: binary\r\n\r\n");
+        dstream.writeBytes("Content-Disposition: form-data; name=\"photo\"; filename=\""+filename+"\" \r\nContent-Type: image/png\r\nContent-Transfer-Encoding: binary\r\n\r\n");
         dstream.write(pData ,0, pData.length);
  
         // close the multipart form request
