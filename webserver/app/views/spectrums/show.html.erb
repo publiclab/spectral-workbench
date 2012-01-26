@@ -1,9 +1,12 @@
 <p>
 <img src="<%= @spectrum.photo.url(:large) %>" />
-<% unless @spectrum.data.nil? %>
 <div id="graph" style="width:800px;height:200px;"></div>
 <script type="text/javascript">
+  <% if @spectrum.data == "" %>
+    spectrum = <%= @spectrum.extract_data %>
+  <% else %>
     spectrum = <%= @spectrum.data.chomp(",") %>
+  <% end %>
     data = []
     scaled = true
     $.each(spectrum.lines,function(index,line) {
@@ -31,7 +34,6 @@
         }
    );
 </script>
-<% end %>
 </p>
 
 <h1><%= @spectrum.title %></h1>
