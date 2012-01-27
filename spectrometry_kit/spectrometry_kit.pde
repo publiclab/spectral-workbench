@@ -68,13 +68,12 @@ class Spectrum {
     public int averageAbsorption = 0;
     public int absorptionSum;
     public int lastval = 0;
-    public int hyperRes = 100;
 
     public Spectrum(int pHistory,int pSamplerow) {
       settings.sampleRow = pSamplerow;
       history = pHistory;
       buffer = new int[history][video.width][3];
-      hyperBuffer = new int[width/hyperRes][video.width][video.height];
+      hyperBuffer = new int[width/settings.hyperRes][width][video.height]; // [bands][history][videoheight]
       storedbuffer = new int[video.width];
       absorptionbuffer = new int[video.width];
       enhancedabsorptionbuffer = new int[video.width];
@@ -206,14 +205,14 @@ if (controller == "analyze" || controller == "heatmap") {
     }
 
     public void saveHyperspectralCube() {
-      PGraphics pg = createGraphics(video.width, video.height, P2D);
+      PGraphics pg = createGraphics(width, video.height, P2D);
       for (int b = 0;b < spectrum.hyperBuffer.length;b++) {
         for (int x = 0;x < video.width;x++) {
           for (int y = headerHeight;y < video.height;y++) {
             pg.pixels[(y*width)+x] = spectrum.hyperBuffer[b][x][y];
           }
         }
-        pg.save("cube"+spectrum.wavelengthFromPixel(b*spectrum.hyperRes)+".png");
+        pg.save("cube"+spectrum.wavelengthFromPixel(b*settings.hyperRes)+".png");
       }
     }
 
@@ -534,14 +533,12 @@ class Video {
 
     if (isLinux) {
       println("Video device: /dev/video"+settings.videoDevice);
-      gscapture = new GSCapture(parent, width, height, 10, "/dev/video"+settings.videoDevice); //linux
-      gscapture.play();
-      if (!gscapture.isPlaying()) {// !gscapture.isCapturing()) { // former for GSCapture < 1.0, latter for >= 1.0
-        println("native resolution failed, trying 640x480");
-        gscapture = new GSCapture(parent, 640, 480, 10, "/dev/video"+settings.videoDevice); //linux
-        width = 640;
-        height = 480;
-      }
+      gscapture = new GSCapture(parent, width, height, "/dev/video"+settings.videoDevice,10); //linux
+      gscapture.start();
+      int[][] resolutions = gscapture.resolutions();
+      gscapture.stop();
+      gscapture = new GSCapture(parent, resolutions[0][0], resolutions[0][1], "/dev/video"+settings.videoDevice,10); //linux
+      gscapture.start();
       println("Linux");
     } else {
       capture = new Capture(parent, width, height, 20); //mac or windows via QuickTime/Java
@@ -560,9 +557,11 @@ class Video {
   }
   public void changeDevice(int Pdevice) {
     if (isLinux) {
+      gscapture.stop();
       settings.videoDevice = Pdevice;
       settings.set("video.device",Pdevice);
-      gscapture = new GSCapture(parent, width, height, 10, "/dev/video"+settings.videoDevice);
+      gscapture = new GSCapture(parent, width, height, "/dev/video"+settings.videoDevice, 10);
+      gscapture.start();
     }
   }
   public void image(int x,int y,int imgWidth,int imgHeight)
@@ -847,21 +846,23 @@ class Hyperspectral {
   void draw() {
     for (int t = spectrum.hyperBuffer.length-1;t > 0;t--) {
       for (int y = 0;y < video.height;y++) {
-        for (int b = 0;b < (int)(video.width/spectrum.hyperRes);b++) { // every wavelength
+        for (int b = 0;b < (int)(video.width/settings.hyperRes);b++) { // every wavelength
           if (b < video.width) spectrum.hyperBuffer[b][t][y] = spectrum.hyperBuffer[b][t-1][y];
         }
       }
     }
     for (int y = video.height-1;y> 0;y--) {
-      for (int b = 0;b < video.width/spectrum.hyperRes;b++) {
-        spectrum.hyperBuffer[b][0][y] = video.pixels()[b*spectrum.hyperRes+(video.width*y)];
+      for (int b = 0;b < video.width/settings.hyperRes;b++) {
+        spectrum.hyperBuffer[b][0][y] = video.pixels()[b*settings.hyperRes+(video.width*y)];
       }
     }
 
-    for (int x = 0;x < spectrum.hyperBuffer[spectrum.hyperX/spectrum.hyperRes].length;x++) {
-      for (int y = headerHeight;y < video.height;y++) {
-        for (int w = 0;w < spectrum.hyperRes;w++) {
-          pixels[(y*width)+(x*spectrum.hyperRes)+w] = spectrum.hyperBuffer[spectrum.hyperX/spectrum.hyperRes][x][y];
+    for (int t = 0;t < spectrum.hyperBuffer[0].length;t++) {
+      for (int y = 0;y < video.height;y++) {
+        for (int w = 0;w < settings.hyperRes;w++) {
+	  if (t*settings.hyperRes < width) {
+            pixels[((headerHeight+y)*width)+(t*settings.hyperRes)+w] = spectrum.hyperBuffer[spectrum.hyperX/settings.hyperRes][t][y];
+          }
         }
       }
     }
@@ -1190,8 +1191,9 @@ class Settings {
   int firstMarkerPixel;
   float secondMarkerWavelength;
   int secondMarkerPixel;
-  int sampleHeight;
   int sampleRow;
+  int sampleHeight;
+  int hyperRes;
   int videoDevice,videoWidth,videoHeight;
   PApplet parent;
   public Settings(PApplet pParent) {
@@ -1209,6 +1211,7 @@ class Settings {
       videoHeight = props.getIntProperty("video.width",720);
       sampleRow = props.getIntProperty("video.samplerow",80);
       sampleHeight = props.getIntProperty("video.sampleheight",int (height*(0.18)));
+      hyperRes = props.getIntProperty("hyperspectral.resolution",10);
       videoDevice = props.getIntProperty("video.device",0);
       firstMarkerWavelength = props.getFloatProperty("calibration.firstMarkerWavelength",0);
       firstMarkerPixel = props.getIntProperty("calibration.firstMarkerPixel",0);

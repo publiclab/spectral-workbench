@@ -50,22 +50,20 @@ class Video {
       //  println("Auto-detected video settings.videoDevice.");
       //}
       println("Video device: /dev/video"+settings.videoDevice);
-      //gscapture = new GSCapture(parent, width, height, cameras[cameras.length-1]); //linux
-      gscapture = new GSCapture(parent, width, height, 10, "/dev/video"+settings.videoDevice); //linux
+      gscapture = new GSCapture(parent, width, height, "/dev/video"+settings.videoDevice,10); //linux
+      gscapture.start();
       // attempt to auto-configure resolution -- do you really need to restart the object?
-      //int[][] resolutions = gscapture.resolutions();
-      //width = resolutions[resolutions.length-1][0];
-      //height = resolutions[resolutions.length-1][1];
-      //gscapture.delete();
-      //gscapture = new GSCapture(parent, width, height, "/dev/video0"); //linux
-      gscapture.play();
+      int[][] resolutions = gscapture.resolutions();
+      gscapture.stop();
+      gscapture = new GSCapture(parent, resolutions[0][0], resolutions[0][1], "/dev/video"+settings.videoDevice,10); //linux
+      gscapture.start();
       // THIS SECTION DOES NOT PROPERLY DETECT THAT THE VIDEO DEVICE RESOLUTION IS NOT SUPPORTED:
-      if (!gscapture.isPlaying()) {// !gscapture.isCapturing()) { // former for GSCapture < 1.0, latter for >= 1.0 
-        println("native resolution failed, trying 640x480");
-        gscapture = new GSCapture(parent, 640, 480, 10, "/dev/video"+settings.videoDevice); //linux
-        width = 640;
-        height = 480;
-      }
+      //if (!gscapture.isCapturing()) { // former for GSCapture < 1.0, latter for >= 1.0 
+        //println("native resolution failed, trying 640x480");
+        //gscapture = new GSCapture(parent, 640, 480, "/dev/video"+settings.videoDevice, 10); //linux
+        //width = 640;
+        //height = 480;
+      //}
       println("Linux");
     } else {
       capture = new Capture(parent, width, height, 20); //mac or windows via QuickTime/Java
@@ -86,9 +84,11 @@ class Video {
   // Linux only, for now:
   public void changeDevice(int Pdevice) {
     if (isLinux) {
+      gscapture.stop();
       settings.videoDevice = Pdevice;
       settings.set("video.device",Pdevice);
-      gscapture = new GSCapture(parent, width, height, 10, "/dev/video"+settings.videoDevice);
+      gscapture = new GSCapture(parent, width, height, "/dev/video"+settings.videoDevice, 10);
+      gscapture.start();
     }
   }
   public void image(int x,int y,int imgWidth,int imgHeight)

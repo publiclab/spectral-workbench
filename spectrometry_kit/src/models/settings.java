@@ -13,8 +13,9 @@ class Settings {
   int firstMarkerPixel;
   float secondMarkerWavelength;
   int secondMarkerPixel;
-  int sampleHeight;
   int sampleRow;
+  int sampleHeight;
+  int hyperRes;
   int videoDevice,videoWidth,videoHeight;
   PApplet parent;
   public Settings(PApplet pParent) {
@@ -32,6 +33,7 @@ class Settings {
       videoHeight = props.getIntProperty("video.width",720); 
       sampleRow = props.getIntProperty("video.samplerow",80); 
       sampleHeight = props.getIntProperty("video.sampleheight",int (height*(0.18))); 
+      hyperRes = props.getIntProperty("hyperspectral.resolution",10); 
       videoDevice = props.getIntProperty("video.device",0); 
       firstMarkerWavelength = props.getFloatProperty("calibration.firstMarkerWavelength",0); 
       firstMarkerPixel = props.getIntProperty("calibration.firstMarkerPixel",0); 

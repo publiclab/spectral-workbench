@@ -20,13 +20,12 @@ class Spectrum {
     public int averageAbsorption = 0;
     public int absorptionSum;
     public int lastval = 0;
-    public int hyperRes = 100;
 
     public Spectrum(int pHistory,int pSamplerow) {
       settings.sampleRow = pSamplerow;
       history = pHistory;
       buffer = new int[history][video.width][3];
-      hyperBuffer = new int[width/hyperRes][video.width][video.height];
+      hyperBuffer = new int[width/settings.hyperRes][width][video.height]; // [bands][history][videoheight]
       storedbuffer = new int[video.width];
       absorptionbuffer = new int[video.width];
       enhancedabsorptionbuffer = new int[video.width];
@@ -137,14 +136,14 @@ class Spectrum {
     // another version might save separate images for each band
     public void saveHyperspectralCube() {
       //PGraphics pg = createGraphics(video.height*(video.width/res), video.width, P3D);
-      PGraphics pg = createGraphics(video.width, video.height, P2D);
+      PGraphics pg = createGraphics(width, video.height, P2D);
       for (int b = 0;b < spectrum.hyperBuffer.length;b++) {
         for (int x = 0;x < video.width;x++) {
           for (int y = headerHeight;y < video.height;y++) {
             pg.pixels[(y*width)+x] = spectrum.hyperBuffer[b][x][y];
           }
         } 
-        pg.save("cube"+spectrum.wavelengthFromPixel(b*spectrum.hyperRes)+".png");
+        pg.save("cube"+spectrum.wavelengthFromPixel(b*settings.hyperRes)+".png");
       }
     }
 
