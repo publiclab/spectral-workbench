@@ -13,9 +13,9 @@ class Calibrator {
     y = headerHeight+(parent.height-headerHeight)/2;
     height = 30;
     sliders = new ArrayList();
-    firstMarker = new Button("Mercury 2, 435.833",settings.firstMarkerPixel,y,height);
+    firstMarker = new Button("Mercury 2, 435.833",settings.firstMarkerPixel,y,height,"setup");
     sliders.add(firstMarker);
-    secondMarker = new Button("Mercury 3, 546.074",settings.secondMarkerPixel,y,height);
+    secondMarker = new Button("Mercury 3, 546.074",settings.secondMarkerPixel,y,height,"setup");
     sliders.add(secondMarker);
   }
 

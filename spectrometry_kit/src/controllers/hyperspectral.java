@@ -9,9 +9,9 @@ class Hyperspectral {
     y = headerHeight+3;
     height = 30;
     sliders = new ArrayList();
-    firstMarker = new Button("Wavelength",spectrum.hyperX,y,height);
+    firstMarker = new Button("Wavelength",spectrum.hyperX,y,height,"hyperspectral");
     sliders.add(firstMarker);
-    secondMarker = new Button("End",3000,y,height); //not using yet, put off to right side; will be used for a range selection
+    secondMarker = new Button("End",3000,y,height,"hyperspectral"); //not using yet, put off to right side; will be used for a range selection
     sliders.add(secondMarker);
   }
 

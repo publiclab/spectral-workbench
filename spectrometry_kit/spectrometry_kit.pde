@@ -177,7 +177,7 @@ if (controller == "analyze" || controller == "heatmap") {
       text(averageAbsorption,10,avY);
     }
     public void preview() {
-      int xoff = width/2-video.width/8, yoff = height/2-video.height/8;
+      int xoff = (int) width/2-video.width/8, yoff = (int) height/2-video.height/8;
       fill(150);
       rect(xoff-10,yoff-40,video.width/4+20,video.height/4+60);
       fill(20);
@@ -385,6 +385,7 @@ void mouseReleased() {
 class Button {
 
   public String text;
+  public boolean visible = false;
   public int x = 0;
   public int y = 0;
   public boolean dragging = false; // not often used except in "sliders"
@@ -395,13 +396,14 @@ class Button {
   public boolean hovering = false;
   public boolean down = false;
   public color fillColor = #222222;
-  String forController;
+  public String forController;
 
-  public Button(String pText,int pX, int pY, int pHeight) {
+  public Button(String pText,int pX, int pY, int pHeight, String pForController) {
     text = pText;
     x = pX;
     y = pY;
     height = pHeight;
+    forController = pForController;
     textFont(font,fontSize);
     width = int (textWidth(text)+padding*2);
   }
@@ -434,9 +436,10 @@ class Button {
     rect(x,y+1,width-1,height-2);
     if (hovering) fill(0,0,0,50);
     rect(x,y+1,width-1,height-2);
-    if (down) fill(0,0,0,50);
+    if (down) fill(0,0,0,80);
     rect(x,y+1,width-1,height-2);
     fill(255);
+    if (down) fill(170);
     noStroke();
     text(text,x+padding,y+height-((height-fontSize)/2));
     hover();
@@ -568,6 +571,7 @@ class Video {
   {
     if (isLinux) {
       gscapture.read();
+      parent.image(gscapture,x,y,imgWidth,imgHeight);
     } else parent.image(capture,x,y,imgWidth,imgHeight);
   }
   public int[] get_rgb(int x)
@@ -837,9 +841,9 @@ class Hyperspectral {
     y = headerHeight+3;
     height = 30;
     sliders = new ArrayList();
-    firstMarker = new Button("Wavelength",spectrum.hyperX,y,height);
+    firstMarker = new Button("Wavelength",spectrum.hyperX,y,height,"hyperspectral");
     sliders.add(firstMarker);
-    secondMarker = new Button("End",3000,y,height); //not using yet, put off to right side; will be used for a range selection
+    secondMarker = new Button("End",3000,y,height,"hyperspectral"); //not using yet, put off to right side; will be used for a range selection
     sliders.add(secondMarker);
   }
 
@@ -912,23 +916,25 @@ class Hyperspectral {
 }
 Hyperspectral hyperspectral;
 class VideoRowButton extends Button {
-  VideoRowButton(String PbuttonName,int Px,int Py,int Pheight) { super(PbuttonName,Px,Py,Pheight); }
-  String forController = "setup"; // or "all"
+  VideoRowButton(String PbuttonName,int Px,int Py,int Pheight) {
+	super(PbuttonName,Px,Py,Pheight,"setup");
+  }
   void draw() {
-    if (controller == "setup") {
+    if (controller == forController) {
 	super.draw();
     }
   }
   void mousePressed() {
-    if (controller == "setup" && super.mouseOver()) {
+    if (controller == forController && super.mouseOver()) {
       setup.selectingSampleRow = true;
     }
   }
 }
 
 class SaveButton extends Button {
-  SaveButton(String PbuttonName,int Px,int Py,int Pheight) { super(PbuttonName,Px,Py,Pheight); }
-  String forController = "all";
+  SaveButton(String PbuttonName,int Px,int Py,int Pheight) {
+  	super(PbuttonName,Px,Py,Pheight,"all");
+  }
   void mousePressed() {
     if (super.mouseOver()) {
       if (controller == "hyperspectral") spectrum.saveHyperspectralCube();
@@ -938,8 +944,9 @@ class SaveButton extends Button {
 }
 
 class AnalyzeButton extends Button {
-  AnalyzeButton(String PbuttonName,int Px,int Py,int Pheight) { super(PbuttonName,Px,Py,Pheight); }
-  String forController = "all";
+  AnalyzeButton(String PbuttonName,int Px,int Py,int Pheight) {
+  	super(PbuttonName,Px,Py,Pheight,"all");
+  }
   void mousePressed() {
     if (super.mouseOver()) {
       header.switchController("analyze");
@@ -951,8 +958,9 @@ class AnalyzeButton extends Button {
 }
 
 class HeatmapButton extends Button {
-  HeatmapButton(String PbuttonName,int Px,int Py,int Pheight) { super(PbuttonName,Px,Py,Pheight); }
-  String forController = "all";
+  HeatmapButton(String PbuttonName,int Px,int Py,int Pheight) {
+  	super(PbuttonName,Px,Py,Pheight,"all");
+  }
   void mousePressed() {
     if (super.mouseOver()) {
       header.switchController("heatmap");
@@ -963,8 +971,9 @@ class HeatmapButton extends Button {
   }
 }
 class HyperspectralButton extends Button {
-  HyperspectralButton(String PbuttonName,int Px,int Py,int Pheight) { super(PbuttonName,Px,Py,Pheight); }
-  String forController = "all";
+  HyperspectralButton(String PbuttonName,int Px,int Py,int Pheight) {
+  	super(PbuttonName,Px,Py,Pheight,"all");
+  }
   void mousePressed() {
     if (super.mouseOver()) {
       header.switchController("hyperspectral");
@@ -976,8 +985,9 @@ class HyperspectralButton extends Button {
 }
 
 class SetupButton extends Button {
-  SetupButton(String PbuttonName,int Px,int Py,int Pheight) { super(PbuttonName,Px,Py,Pheight); }
-  String forController = "all";
+  SetupButton(String PbuttonName,int Px,int Py,int Pheight) {
+  	super(PbuttonName,Px,Py,Pheight,"all");
+  }
   void mousePressed() {
     if (super.mouseOver()) {
       header.switchController("setup");
@@ -989,21 +999,23 @@ class SetupButton extends Button {
 }
 
 class BaselineButton extends Button {
-  BaselineButton(String PbuttonName,int Px,int Py,int Pheight) { super(PbuttonName,Px,Py,Pheight); }
-  String forController = "analyze";
+  BaselineButton(String PbuttonName,int Px,int Py,int Pheight) {
+  	super(PbuttonName,Px,Py,Pheight,"analyze");
+  }
   void mousePressed() {
     if (super.mouseOver()) spectrum.storeReference();
   }
   void draw() {
-    if (controller == "analyze") super.draw();
+    if (controller == forController) super.draw();
   }
 }
 
 class WebcamButton extends Button {
-  WebcamButton(String PbuttonName,int Px,int Py,int Pheight) { super(PbuttonName,Px,Py,Pheight); }
-  String forController = "setup";
+  WebcamButton(String PbuttonName,int Px,int Py,int Pheight) {
+  	super(PbuttonName,Px,Py,Pheight,"setup");
+  }
   void draw() {
-    if (video.isLinux) { super.draw(); }
+    if (video.isLinux && controller == forController) super.draw();
   }
   void mousePressed() {
     if (super.mouseOver() && video.isLinux) {
@@ -1013,8 +1025,9 @@ class WebcamButton extends Button {
 }
 
 class LearnButton extends Button {
-  LearnButton(String PbuttonName,int Px,int Py,int Pheight) { super(PbuttonName,Px,Py,Pheight); }
-  String forController = "all";
+  LearnButton(String PbuttonName,int Px,int Py,int Pheight) {
+  	super(PbuttonName,Px,Py,Pheight,"all");
+  }
   void mousePressed() {
     if (super.mouseOver()) link("http://publiclaboratory.org/wiki/spectral-workbench");
   }
@@ -1042,10 +1055,10 @@ class Header {
     learnButton = addButton(new LearnButton("Learn",width-rightOffset-margin,margin,headerHeight-8));
     saveButton = addButton(new SaveButton("Save",width-rightOffset-margin,margin,headerHeight-8));
 
+    hyperspectralButton = addButton(new HyperspectralButton("Hyperspectral",width-rightOffset-margin,margin,headerHeight-8));
     analyzeButton = addButton(new AnalyzeButton("Analyze",width-rightOffset-margin,margin,headerHeight-8));
     analyzeButton.down();
     heatmapButton = addButton(new HeatmapButton("Heatmap",width-rightOffset-margin,margin,headerHeight-8));
-    hyperspectralButton = addButton(new HyperspectralButton("Hyperspectral",width-rightOffset-margin,margin,headerHeight-8));
     setupButton = addButton(new SetupButton("Setup",width-rightOffset-margin,margin,headerHeight-8));
 
     baselineButton = addButton(new BaselineButton("Baseline",width-rightOffset-margin,margin,headerHeight-8));
@@ -1058,14 +1071,14 @@ class Header {
 
   public Button addButton(Button pButton) {
     buttons.add(pButton);
-    rightOffset += pButton.width+margin;
+    if (pButton.forController == "all") {
+      rightOffset += pButton.width+margin;
+      if (pButton.forController == controller) {
+        pButton.visible = true;
+      }
+    }
     pButton.x -= pButton.width;
     return pButton;
-  }
-  public Button addButton(String buttonName) {
-    Button button = new Button(buttonName,width-rightOffset-margin,margin,headerHeight-8);
-    addButton(button);
-    return button;
   }
 
   public void mousePressed() {
@@ -1078,6 +1091,23 @@ class Header {
   public void switchController(String Pcontroller) {
     controller = Pcontroller;
 
+    for (int i = 0;i < buttons.size();i++) {
+      Button b = (Button) buttons.get(i);
+      if (b.visible && b.forController != "all" && b.forController != Pcontroller) {
+	println("removing "+b.text+":"+b.forController);
+        rightOffset -= b.width;
+        b.visible = false;
+      }
+    }
+    for (int i = 0;i < buttons.size();i++) {
+      Button b = (Button) buttons.get(i);
+      if (b.forController == Pcontroller) {
+	b.visible = true;
+	println("adding "+b.text+":"+b.forController);
+        rightOffset += b.width;
+        b.x = width-rightOffset-margin;
+      }
+    }
   }
 
   public void draw() {
@@ -1108,9 +1138,9 @@ class Calibrator {
     y = headerHeight+(parent.height-headerHeight)/2;
     height = 30;
     sliders = new ArrayList();
-    firstMarker = new Button("Mercury 2, 435.833",settings.firstMarkerPixel,y,height);
+    firstMarker = new Button("Mercury 2, 435.833",settings.firstMarkerPixel,y,height,"setup");
     sliders.add(firstMarker);
-    secondMarker = new Button("Mercury 3, 546.074",settings.secondMarkerPixel,y,height);
+    secondMarker = new Button("Mercury 3, 546.074",settings.secondMarkerPixel,y,height,"setup");
     sliders.add(secondMarker);
   }
 

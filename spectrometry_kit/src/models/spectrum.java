@@ -101,7 +101,7 @@ class Spectrum {
      * Preview video to align spectrum - shows thumbnail in bottom left corner
      */
     public void preview() {
-      int xoff = width/2-video.width/8, yoff = height/2-video.height/8;
+      int xoff = (int) width/2-video.width/8, yoff = (int) height/2-video.height/8;
       fill(150);
       rect(xoff-10,yoff-40,video.width/4+20,video.height/4+60); 
       fill(20);

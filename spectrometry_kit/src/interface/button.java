@@ -1,6 +1,7 @@
 class Button {
 
   public String text;
+  public boolean visible = false;
   public int x = 0;
   public int y = 0;
   public boolean dragging = false; // not often used except in "sliders"
@@ -11,13 +12,14 @@ class Button {
   public boolean hovering = false;
   public boolean down = false;
   public color fillColor = #222222;
-  String forController;
+  public String forController;
 
-  public Button(String pText,int pX, int pY, int pHeight) {
+  public Button(String pText,int pX, int pY, int pHeight, String pForController) {
     text = pText;
     x = pX;
     y = pY;
     height = pHeight;
+    forController = pForController;
     textFont(font,fontSize);
     width = int (textWidth(text)+padding*2);
   }
@@ -54,9 +56,10 @@ class Button {
     if (hovering) fill(0,0,0,50);
     rect(x,y+1,width-1,height-2);
     //down
-    if (down) fill(0,0,0,50);
+    if (down) fill(0,0,0,80);
     rect(x,y+1,width-1,height-2);
     fill(255);
+    if (down) fill(170);
     noStroke();
     text(text,x+padding,y+height-((height-fontSize)/2));
     hover();
