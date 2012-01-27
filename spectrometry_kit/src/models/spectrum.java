@@ -8,7 +8,6 @@ class Spectrum {
     public int[] storedbuffer;
     public int[] absorptionbuffer;
     public int[] enhancedabsorptionbuffer;
-    public int samplerow;
     public int history;
     public int resolution = 1;
     public int[][][] hyperBuffer;
@@ -24,7 +23,7 @@ class Spectrum {
     public int hyperRes = 100;
 
     public Spectrum(int pHistory,int pSamplerow) {
-      samplerow = pSamplerow;
+      settings.sampleRow = pSamplerow;
       history = pHistory;
       buffer = new int[history][video.width][3];
       hyperBuffer = new int[width/hyperRes][video.width][video.height];
@@ -51,7 +50,7 @@ class Spectrum {
       absorptionSum = 0;
 
       // iterate through each pixel
-      int index = int (video.width*samplerow); //the horizontal strip to sample
+      int index = int (video.width*settings.sampleRow); //the horizontal strip to sample
       for (int x = 0; x < int (video.width); x+=resolution) {
 
         // Read from video into a new row in the spectrum.buffer
@@ -113,11 +112,11 @@ class Spectrum {
       // draw the region of sampling with a rectangle:
       noFill();
       stroke(255,255,0);
-      rect(xoff,yoff+samplerow/4,video.width/4,video.sampleHeight/4);
+      rect(xoff,yoff+settings.sampleRow/4,video.width/4,settings.sampleHeight/4);
       fill(255,255,0,0.3);
       noStroke();
-      rect(xoff,yoff,video.width/4,samplerow/4);
-      rect(xoff,yoff+samplerow/4+video.sampleHeight/4,video.width/4,video.sampleHeight/4+samplerow/4);
+      rect(xoff,yoff,video.width/4,settings.sampleRow/4);
+      rect(xoff,yoff+settings.sampleRow/4+settings.sampleHeight/4,video.width/4,settings.sampleHeight/4+settings.sampleRow/4);
     }
     /**
      * Saves the current spectrum in a separate buffer for comparison.

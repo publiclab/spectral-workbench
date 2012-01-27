@@ -13,28 +13,16 @@ void setup() {
   size(640, 480);
 
 /*
-  // List functionality still not ready on Linux
-  String[] cameras = GSCapture.list();
+  // List functionality (GSCapture.list(), etc) still not ready on Linux
   
-  if (cameras.length == 0)
-  {
-    println("There are no cameras available for capture.");
-    exit();
-  } else {
-    println("Available cameras:");
-    for (int i = 0; i < cameras.length; i++)
-      println(cameras[i]);
-    cam = new GSCapture(this, 640, 480, cameras[0]);
-  }
-
-  However, different cameras can be selected by using their device file:
+  However, a camera can be selected by using its corresponding device file:
   cam = new GSCapture(this, 640, 480, "/dev/video0");
   cam = new GSCapture(this, 640, 480, "/dev/video1");
   etc.
   */
 
   cam = new GSCapture(this, 640, 480);
-  cam.play();  
+  cam.start();  
   
   /*
   // You can get the resolutions supported by the

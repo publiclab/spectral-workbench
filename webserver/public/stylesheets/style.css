@@ -39,7 +39,7 @@ h1 {
 	margin:0;
 }
 
-h2 {
+h2,h3 {
 	font-family: georgia;
 	font-style: italic;
 }
@@ -81,6 +81,7 @@ a h2 {
 	width:300px;
 	padding:20px;
 	padding-top:0;
+	padding-right:0;
 }
 
 .sidebar h2 {
@@ -111,6 +112,11 @@ a h2 {
 }
 .sidebar .search input {
 	font-size:1.3em;
+}
+
+.sidebar.spectrumpage {
+	width:180px;
+	padding-left:10px;
 }
 
 .button {

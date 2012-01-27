@@ -21,7 +21,7 @@ void setup() {
   // Use texture tex as the destination for the camera pixels.
   tex = new GLTexture(this);
   cam.setPixelDest(tex);     
-  cam.play();
+  cam.start();
   
   /*
   // You can get the resolutions supported by the

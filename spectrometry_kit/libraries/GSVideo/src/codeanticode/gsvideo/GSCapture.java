@@ -23,6 +23,7 @@ import processing.core.*;
 
 import java.nio.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.lang.reflect.*;
 
 import org.gstreamer.*;
@@ -36,10 +37,45 @@ import org.gstreamer.interfaces.Property;
  * device such as a camera.
  */
 public class GSCapture extends PImage implements PConstants {
+  public static String capturePlugin;
+  public static String devicePropertyName;
+  public static String indexPropertyName;
+  // Default gstreamer capture plugin for each platform, and property names.
+  static {
+    if (PApplet.platform == MACOSX) {
+      if (GSVideo.bitsJVM == 32) {
+        capturePlugin = "osxvideosrc";
+        // osxvideosrc has "device-name" and "device" properties, which both take a string
+        // value. The first should be the human-readable name of the video device (i.e.:
+        // "Display iSight") but it appears as only readable. The second can be written with
+        // the sequence grabber input device in format "sgname:input#", for example:
+        // "USB Video Class Video:0"
+        devicePropertyName = "device";
+        // osxvideosrc doesn't have an index property. 
+        indexPropertyName = "";
+      } else if (GSVideo.bitsJVM == 64) {
+        capturePlugin = "qtkitvideosrc";
+        // qtkitvideosrc doesn't have a property to set the device name
+        devicePropertyName = "";         
+        indexPropertyName = "device-index";
+      }
+    } else if (PApplet.platform == WINDOWS) {
+      capturePlugin = "ksvideosrc";
+      devicePropertyName = "device-name";
+      indexPropertyName = "device-index";
+    } else if (PApplet.platform == LINUX) {
+      capturePlugin = "v4l2src";
+      // The "device" property in v4l2src expects the device location (/dev/video0, etc). 
+      // v4l2src has "device-name", which requires the human-readable name, but how to obtain
+      // in linux?.
+      devicePropertyName = "device";
+      indexPropertyName = "device-fd";
+    } else {}
+  }  
+  
   protected String source;
   
-  protected boolean playing = false;
-  protected boolean paused = false;
+  protected boolean capturing = false;
   
   protected String fps;  
   protected int bufWidth;
@@ -62,10 +98,13 @@ public class GSCapture extends PImage implements PConstants {
   
   protected BufferDataAppSink natSink = null;
   protected Buffer natBuffer = null;
+  protected IntBuffer rgbBuffer = null;
+  protected boolean copyNatBuf = true;    
   protected boolean copyBufferMode = false;
   protected String copyMask;  
   
-  protected boolean firstFrame = true;
+  protected boolean firstFrame = true;  
+  protected boolean newFrame = false;  
   
   protected ArrayList<int[]> suppResList;
   protected ArrayList<String> suppFpsList;
@@ -79,8 +118,8 @@ public class GSCapture extends PImage implements PConstants {
    */
   public GSCapture(PApplet parent, int requestWidth, int requestHeight) {
     super(requestWidth, requestHeight, RGB);
-    initPlatform(parent, requestWidth, requestHeight, new String[] {}, new int[] {},
-                 new String[] {}, new String[] {}, "");
+    initGStreamer(parent, requestWidth, requestHeight, capturePlugin, new String[] {}, new int[] {},
+                  new String[] {}, new String[] {}, "");    
   }
 
   /**
@@ -88,8 +127,8 @@ public class GSCapture extends PImage implements PConstants {
    */  
   public GSCapture(PApplet parent, int requestWidth, int requestHeight, int frameRate) {
     super(requestWidth, requestHeight, RGB);
-    initPlatform(parent, requestWidth, requestHeight, new String[] {}, new int[] {},
-                 new String[] {}, new String[] {}, frameRate + "/1");
+    initGStreamer(parent, requestWidth, requestHeight, capturePlugin, new String[] {}, new int[] {},
+                  new String[] {}, new String[] {}, frameRate + "/1");
   }
 
   /**
@@ -98,30 +137,42 @@ public class GSCapture extends PImage implements PConstants {
    */   
   public GSCapture(PApplet parent, int requestWidth, int requestHeight, String cameraName) {
     super(requestWidth, requestHeight, RGB);
-    initPlatform(parent, requestWidth, requestHeight, new String[] {}, new int[] {},
-                 new String[] { devicePropertyName() }, new String[] { cameraName }, "");
+    if (devicePropertyName.equals("")) {
+      // For plugins without device name property, the name is casted as an index
+      initGStreamer(parent, requestWidth, requestHeight, capturePlugin, 
+                    new String[] { indexPropertyName }, new int[] { PApplet.parseInt(cameraName) },
+                    new String[] { }, new String[] { }, "");          
+    } else {
+      initGStreamer(parent, requestWidth, requestHeight, capturePlugin, new String[] {}, new int[] {},
+                    new String[] { devicePropertyName }, new String[] { cameraName }, "");
+    }
   }
 
   /**
    * This constructor allows to specify the camera name and the desired framerate.
    */     
-  public GSCapture(PApplet parent, int requestWidth, int requestHeight, int frameRate, 
-                   String cameraName) {
+  public GSCapture(PApplet parent, int requestWidth, int requestHeight, String cameraName, int frameRate) {
     super(requestWidth, requestHeight, RGB);
-    initPlatform(parent, requestWidth, requestHeight, new String[] {}, new int[] {},
-                 new String[] { devicePropertyName() }, new String[] { cameraName }, 
-                 frameRate + "/1");
+    if (devicePropertyName.equals("")) {
+      // For plugins without device name property, the name is casted as an index
+      initGStreamer(parent, requestWidth, requestHeight, capturePlugin, 
+                    new String[] { indexPropertyName }, new int[] { PApplet.parseInt(cameraName) },
+                    new String[] { }, new String[] { }, frameRate + "/1");          
+    } else {
+      initGStreamer(parent, requestWidth, requestHeight, capturePlugin, new String[] {}, new int[] {},
+          new String[] { devicePropertyName }, new String[] { cameraName }, frameRate + "/1");
+    }
   }  
-  
+
   /**
    * This constructor lets to indicate which source element to use (i.e.: v4l2src, 
-   * osxvideosrc, dshowvideosrc, ksvideosrc, etc).
+   * osxvideosrc, ksvideosrc, etc).
    */   
-  public GSCapture(PApplet parent, int requestWidth, int requestHeight, int frameRate, 
-                   String sourceName, String cameraName) {
+  public GSCapture(PApplet parent, int requestWidth, int requestHeight, String sourceName, String cameraName, 
+                   int frameRate) {
     super(requestWidth, requestHeight, RGB);
     initGStreamer(parent, requestWidth, requestHeight, sourceName, new String[] {}, new int[] {}, 
-                  new String[] { devicePropertyName() }, new String[] { cameraName }, 
+                  new String[] { devicePropertyName }, new String[] { cameraName }, 
                   frameRate + "/1");
   }
 
@@ -130,8 +181,9 @@ public class GSCapture extends PImage implements PConstants {
    * The camera name could be one of these properties. The framerate must be specified
    * as a fraction string: 30/1, 15/2, etc.
    */    
-  public GSCapture(PApplet parent, int requestWidth, int requestHeight, String frameRate,
-                   String sourceName, String[] strPropNames, String[] strPropValues) {
+  public GSCapture(PApplet parent, int requestWidth, int requestHeight, String sourceName, 
+                   String[] strPropNames, String[] strPropValues, 
+                   String frameRate) {
     super(requestWidth, requestHeight, RGB);
     initGStreamer(parent, requestWidth, requestHeight, sourceName, new String[] {}, new int[] {},
                   strPropNames, strPropValues, frameRate);
@@ -142,9 +194,10 @@ public class GSCapture extends PImage implements PConstants {
    * as well as a list of integer properties. This could be useful if a camera cannot by
    * specified by name but by index. Framerate must be a fraction string: 30/1, 15/2, etc.
    */   
-  public GSCapture(PApplet parent, int requestWidth, int requestHeight, String frameRate,
-                   String sourceName, String[] strPropNames, String[] strPropValues,
-                   String[] intPropNames, int[] intPropValues) {
+  public GSCapture(PApplet parent, int requestWidth, int requestHeight, String sourceName, 
+                   String[] strPropNames, String[] strPropValues,
+                   String[] intPropNames, int[] intPropValues, 
+                   String frameRate) {
     super(requestWidth, requestHeight, RGB);
     initGStreamer(parent, requestWidth, requestHeight, sourceName, intPropNames, intPropValues,
                   strPropNames, strPropValues, frameRate);
@@ -195,6 +248,30 @@ public class GSCapture extends PImage implements PConstants {
   }    
   
   /**
+   * Finalizer of the class.
+   */  
+  protected void finalize() throws Throwable {
+    try {
+      delete();
+    } finally {
+      super.finalize();
+    }
+  }    
+  
+  /**
+   * Prints all the gstreamer elements currently used in the
+   * current pipeline instance.
+   * 
+   */    
+  public void printElements() {
+    List<Element> list = gpipeline.getElementsRecursive();
+    PApplet.println(list);
+    for (Element element : list) {
+      PApplet.println(element.toString());
+    }   
+  }    
+  
+  /**
    * Sets the object to use as destination for the frames read from the stream.
    * The color conversion mask is automatically set to the one required to
    * copy the frames to OpenGL.
@@ -208,18 +285,43 @@ public class GSCapture extends PImage implements PConstants {
     } else {
       copyMask = "red_mask=(int)0xFF, green_mask=(int)0xFF00, blue_mask=(int)0xFF0000";
     }   
+    copyNatBuf = false;    
   }  
   
   /**
    * Sets the object to use as destination for the frames read from the stream.
+   * The color conversion mask is automatically set to the one required to
+   * copy the frames to OpenGL. If copy is true, then the frames are copied into
+   * new buffer objects, this can help solve threading problems when playing
+   * back a large number of videos.
    * 
    * @param Object dest
-   * @param String mask 
+   * @param boolean copy 
    */    
-  public void setPixelDest(Object dest, String mask) {
+  public void setPixelDest(Object dest, boolean copy) {
+    copyHandler = dest;      
+    if (ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN) {
+      copyMask = "red_mask=(int)0xFF000000, green_mask=(int)0xFF0000, blue_mask=(int)0xFF00";        
+    } else {
+      copyMask = "red_mask=(int)0xFF, green_mask=(int)0xFF00, blue_mask=(int)0xFF0000";
+    }    
+    copyNatBuf = copy;  
+  }  
+  
+  /**
+   * Sets the object to use as destination for the frames read from the stream.
+   * If copy is true, then the frames are copied into new buffer objects, this 
+   * can help solve threading problems when playing back a large number of videos.
+   * 
+   * @param Object dest
+   * @param String mask
+   * @param boolean copy  
+   */    
+  public void setPixelDest(Object dest, String mask, boolean copy) {    
     copyHandler = dest;
     copyMask = mask;
-  }     
+    copyNatBuf = copy;
+  }
   
   /**
    * Uses a generic object as handler of the movie. This object should have a
@@ -248,6 +350,24 @@ public class GSCapture extends PImage implements PConstants {
   }
   
   /**
+   * Returns true if a new frame has been read to the pixels array with the read() method.
+   * 
+   * @return boolean
+   */    
+  public boolean newFrame() {
+	return newFrame;  	
+  }
+  
+  /**
+   * Sets the new frame flag to false. This is useful to avoid reading pixels array when
+   * there is no new frame data.
+   * 
+   */  
+  public synchronized void oldFrame() {
+	newFrame = false;
+  }    
+  
+  /**
    * Returns "true" when a new video frame is available to read.
    * 
    * @return boolean
@@ -257,35 +377,25 @@ public class GSCapture extends PImage implements PConstants {
   }
 
   /**
-   * Returns whether the stream is playing or not.
+   * Returns whether the device is capturing frames or not.
    * 
    * @return boolean
    */
-  public boolean isPlaying() {
-    return playing;  
+  public boolean isCapturing() {
+    return capturing;  
   }
-
-  /**
-   * Returns whether the stream is paused or not.
-   * 
-   * @return boolean
-   */
-  public boolean isPaused() {
-    return paused;  
-  }    
   
   /**
-   * Resumes the capture pipeline.
+   * Starts the capture pipeline.
    */
-  public void play() {
+  public void start() {
     boolean init = false;
     if (!pipelineReady) {
       initPipeline();
       init = true;
     }
     
-    playing = true;
-    paused = false;
+    capturing = true;
     gpipeline.play();
     
     if (init) {
@@ -298,10 +408,21 @@ public class GSCapture extends PImage implements PConstants {
   /**
    * Stops the capture pipeline.
    */
-  public void pause() {
-    playing = false;
-    paused = true;
-    gpipeline.pause();
+  public void stop() {
+    boolean init = false;
+    if (!pipelineReady) {
+      initPipeline();
+      init = true;
+    }
+    
+    capturing = false;
+    gpipeline.stop();
+    
+    if (init) {
+      // Resolution and FPS initialization needs to be done after the
+      // pipeline is set to play.
+      initResAndFps();
+    }    
   }  
   
   /**
@@ -328,7 +449,25 @@ public class GSCapture extends PImage implements PConstants {
         firstFrame = false;
       }
       
-      IntBuffer rgbBuffer = natBuffer.getByteBuffer().asIntBuffer();
+      if (copyNatBuf) {
+        // The native buffer is copied into a new rgb buffer created locally.
+        IntBuffer temp = natBuffer.getByteBuffer().asIntBuffer();
+        temp.rewind();
+        if (rgbBuffer == null) {
+          rgbBuffer = IntBuffer.allocate(bufWidth * bufHeight);
+        }
+        rgbBuffer.rewind();
+        rgbBuffer.put(temp);
+        rgbBuffer.rewind();
+        
+        natBuffer.dispose();
+        natBuffer = null;
+      } else {
+        // The rgb buffer is just the native buffer viewed as
+        // an int buffer.
+        rgbBuffer = natBuffer.getByteBuffer().asIntBuffer();  
+      }
+
       try {
         copyBufferMethod.invoke(copyHandler, new Object[] { natBuffer, rgbBuffer, bufWidth, bufHeight });
       } catch (Exception e) {
@@ -350,7 +489,8 @@ public class GSCapture extends PImage implements PConstants {
       int[] temp = pixels;
       pixels = copyPixels;
       updatePixels();
-      copyPixels = temp;         
+      copyPixels = temp;  
+      newFrame = true;
     }
     
     available = false;
@@ -394,15 +534,7 @@ public class GSCapture extends PImage implements PConstants {
    * @return String[]
    */  
   static public String[] list() {
-    if (PApplet.platform == LINUX) {
-      return list("v4l2src");
-    } else if (PApplet.platform == WINDOWS) {
-      return list("dshowvideosrc");
-    } else if (PApplet.platform == MACOSX) {
-      return list("osxvideosrc");
-    } else {
-      return null;
-    }
+    return list(capturePlugin);
   }
 
   /**
@@ -413,7 +545,7 @@ public class GSCapture extends PImage implements PConstants {
    * @return String[]
    */
   static public String[] list(String sourceName) {
-    return list(sourceName, devicePropertyName());
+    return list(sourceName, devicePropertyName);
   }
   
   static protected String[] list(String sourceName, String propertyName) {
@@ -495,28 +627,8 @@ public class GSCapture extends PImage implements PConstants {
    */
   public String getSource() {
     return source;
-  }    
-  
-  // Tries to guess the best correct source elements for each platform.
-  protected void initPlatform(PApplet parent, int requestWidth, int requestHeight,
-                              String[] intPropNames, int[] intPropValues, 
-                              String[] strPropNames, String[] strPropValues, 
-                              String frameRate) {
-    if (PApplet.platform == LINUX) {
-      initGStreamer(parent, requestWidth, requestHeight, "v4l2src", intPropNames, intPropValues,
-          strPropNames, strPropValues, frameRate);
-    } else if (PApplet.platform == WINDOWS) {
-      initGStreamer(parent, requestWidth, requestHeight, "ksvideosrc", intPropNames,
-           intPropValues, strPropNames, strPropValues, frameRate);
-      //init(requestWidth, requestHeight, "dshowvideosrc", intPropNames,
-      //    intPropValues, strPropNames, strPropValues, frameRate, addDecoder, null, "");
-    } else if (PApplet.platform == MACOSX) {
-      initGStreamer(parent, requestWidth, requestHeight, "osxvideosrc", intPropNames,
-          intPropValues, strPropNames, strPropValues, frameRate);
-    } else {
-      parent.die("Error: unrecognized platform.", null);
-    }
   }
+  
     
   // The main initialization here.
   protected void initGStreamer(PApplet parent, int requestWidth, int requestHeight, String sourceName,
@@ -685,13 +797,16 @@ public class GSCapture extends PImage implements PConstants {
   protected void getSuppResAndFpsList() {
     suppResList = new ArrayList<int[]>();
     suppFpsList = new ArrayList<String>();
-    
+   
     for (Element src : gpipeline.getSources()) {
       for (Pad pad : src.getPads()) {
+        
         Caps caps = pad.getCaps();
         int n = caps.size(); 
         for (int i = 0; i < n; i++) {           
           Structure str = caps.getStructure(i);
+          
+          if (!str.hasIntField("width") || !str.hasIntField("height")) continue;
           
           int w = ((Integer)str.getValue("width")).intValue();
           int h = ((Integer)str.getValue("height")).intValue();
@@ -748,23 +863,32 @@ public class GSCapture extends PImage implements PConstants {
               }
             }
           } else {
-            boolean sigleFrac = false;
+            boolean singleFrac = false;
             try {
               Fraction fr = str.getFraction("framerate");
               addFps(fr);
-              sigleFrac = true;
+              singleFrac = true;
             } catch (Exception e) { 
             }
             
-            if (!sigleFrac) { 
-              ValueList flist = str.getValueList("framerate");
-              // All the framerates are put together, but this is not
-              // entirely accurate since there might be some of them'
-              // that work only for certain resolutions.
-              for (int k = 0; k < flist.getSize(); k++) {
-                Fraction fr = flist.getFraction(k);
-                addFps(fr);
+            if (!singleFrac) {
+              ValueList flist = null;
+              
+              try {
+                flist = str.getValueList("framerate");
+              } catch (Exception e) { 
               }
+              
+              if (flist != null) {
+                // All the framerates are put together, but this is not
+                // entirely accurate since there might be some of them'
+                // that work only for certain resolutions.
+                for (int k = 0; k < flist.getSize(); k++) {
+                  Fraction fr = flist.getFraction(k);
+                  addFps(fr);
+                }              
+              }
+            
             }            
           }          
         }
@@ -791,34 +915,10 @@ public class GSCapture extends PImage implements PConstants {
       suppFpsList.add(frstr);
     }      
   }
-  
-  static protected String devicePropertyName() {
-    // TODO: Check the property names
-    if (PApplet.platform == LINUX) {
-      return "device"; // Is this correct?
-    } else if (PApplet.platform == WINDOWS) {
-      return "device-name";
-    } else if (PApplet.platform == MACOSX) {
-      return "device";
-    } else {
-      return "";
-    }
-  }
-  
-  static protected String indexPropertyName() {
-    // TODO: Check the property names
-    if (PApplet.platform == LINUX) {
-      return "device-index"; // Is this correct? Probably not.
-    } else if (PApplet.platform == WINDOWS) {
-      return "device-index";
-    } else if (PApplet.platform == MACOSX) {
-      return "device-index"; // Is this correct? Probably not.
-    } else {
-      return "";
-    }
-  }
-  
+    
   public synchronized void disposeBuffer(Object buf) {
-    ((Buffer)buf).dispose();
+    if (buf != null) {
+      ((Buffer)buf).dispose();
+    }
   }   
 }

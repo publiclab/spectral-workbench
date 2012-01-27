@@ -32,9 +32,15 @@ class SpectrumsController < ApplicationController
   end
 
   # non REST
+  def compare
+    @spectrums = Spectrum.find(:all, :conditions => ['title LIKE ? OR notes LIKE ?',"%"+params[:q]+"%", "%"+params[:q]+"%"],:limit => 100)
+    render :json => @spectrums
+  end
+
+  # non REST
   def search
     params[:id] = params[:q]
-    @spectrums = Spectrum.find(:all, :conditions => ['name LIKE ? OR location LIKE ? OR description LIKE ?',"%"+params[:id]+"%", "%"+params[:id]+"%", "%"+params[:id]+"%"],:limit => 100)
+    @spectrums = Spectrum.find(:all, :conditions => ['title LIKE ? OR notes LIKE ?',"%"+params[:id]+"%", "%"+params[:id]+"%"],:limit => 100)
   end
 
   # non REST

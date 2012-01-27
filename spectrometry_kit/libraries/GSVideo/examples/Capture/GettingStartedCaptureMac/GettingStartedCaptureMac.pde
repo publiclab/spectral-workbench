@@ -11,25 +11,32 @@ GSCapture cam;
 
 void setup() {
   size(640, 480);
+  
+  cam = new GSCapture(this, 640, 480);  
 
   /*
-  // List functionality hasn't been tested on Mac OSX. Uncomment this 
-  // code to try it out.
-  String[] cameras = GSCapture.list();
+  Note about camera selection in Mac:
+  List functionality (GSCapture.list(), etc.) still not working.
   
-  if (cameras.length == 0)
-  {
-    println("There are no cameras available for capture.");
-    exit();
-  } else {
-    println("Available cameras:");
-    for (int i = 0; i < cameras.length; i++)
-      println(cameras[i]);
-    cam = new GSCapture(this, 320, 240, cameras[0]);
-  }
+  But it is possible to select the camera, althouth it is a little
+  tricky right now. Under 32 bits, GSVideo uses a capture plugin (osxvideosrc)
+  that accepts a camera specification as a sequence grabber input device in 
+  format "sgname:input#". For example:
+  
+  cam = new GSCapture(this, 640, 480, "USB Video Class Video:0");  
+  
+  Under 64 bits, GSVideo uses a different capture plugin (qtkitvideoserc)
+  which only accepts a device index for the time being:
+  
+  cam = new GSCapture(this, 640, 480, "0");
+  cam = new GSCapture(this, 640, 480, "1");  
+  etc.
+  
+  Note that the index must be given as a string, to maintain consistency with
+  the API.   
   */
-  cam = new GSCapture(this, 640, 480);
-  cam.play();
+  
+  cam.start();  
   
   /*
   // You can get the resolutions supported by the

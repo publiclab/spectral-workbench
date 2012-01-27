@@ -82,15 +82,11 @@ public void setup() {
 
   size(screen.width, screen.height-20, P2D);
 
-  try {
-    video = new Video(this,1280,720,0);
-  } catch(Throwable t) {
-    video = new Video(this,640,480,0);
-  }
-  spectrum = new Spectrum(int (height-headerHeight)/2,int (height*(0.18))); //history (length),samplerow (row # to begin sampling)
+  settings = new Settings(this); // once more settings are stored in this object instead of video or spectrum, this can move up
+  video = new Video(this,settings.videoHeight,settings.videoWidth,0);
+  spectrum = new Spectrum(int (height-headerHeight)/2,settings.sampleRow); //history (length),samplerow (row # to begin sampling)
   hyperspectral = new Hyperspectral(this);
   filter = new Filter(this);
-  settings = new Settings(this); // once more settings are stored in this object instead of video or spectrum, this can move up
   calibrator = new Calibrator(this);
 }
 

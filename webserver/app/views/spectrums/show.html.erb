@@ -1,3 +1,35 @@
+<div class="sidebar spectrumpage">
+<div class="box">
+  <h3>Compare to other spectra</h3>
+  <p>
+    <input class='text' id='searchinput' type='text' name='q' value=''/>
+    <input type='submit' id='searchsubmit' value='search' />
+    <script>
+
+        $.ajaxSetup ({ cache: false }); 
+
+	var ajax_load = "<img src='images/load.gif' alt='loading...' />";
+
+	var loadUrl = "/spectrums/compare/"+<%= @spectrum.id %>+".json";
+	$("#searchsubmit").click(function(){
+		$("#result")
+		.html(ajax_load)
+		.load(loadUrl,
+			{q:$("#searchinput").val()}, 
+			function(responseText){
+			alert("Response:\n" + responseText);
+		});
+	});
+	// this doesn't work:
+	$('#searchinput').click($('#searchsubmit').click)
+
+    </script>
+  </p>
+  <p id="result">
+  </p>
+</div>
+</div>
+
 <p>
 <img src="<%= @spectrum.photo.url(:large) %>" />
 <div id="graph" style="width:800px;height:200px;"></div>

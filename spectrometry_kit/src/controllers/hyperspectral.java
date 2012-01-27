@@ -34,7 +34,7 @@ class Hyperspectral {
     for (int x = 0;x < spectrum.hyperBuffer[spectrum.hyperX/spectrum.hyperRes].length;x++) {
       for (int y = headerHeight;y < video.height;y++) {
         for (int w = 0;w < spectrum.hyperRes;w++) {
-          pixels[(y*width)+x+(x*spectrum.hyperRes)+w] = spectrum.hyperBuffer[spectrum.hyperX/spectrum.hyperRes][x][y];
+          pixels[(y*width)+(x*spectrum.hyperRes)+w] = spectrum.hyperBuffer[spectrum.hyperX/spectrum.hyperRes][x][y];
         }
       }
     } 

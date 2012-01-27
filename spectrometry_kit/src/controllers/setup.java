@@ -19,9 +19,9 @@ class Setup {
       header.mousePressed();
     } else if (selectingSampleRow && (mouseX > width/2-video.width/8 && mouseX < width/2+video.width/8) && (mouseY > height/2-video.height/8 && mouseY < height/2+video.height/8)) { // Modal video select
       sampleRowMousePressed = true;
-      spectrum.samplerow = 4*(mouseY-height/2+video.height/8);
-      if (spectrum.samplerow+video.sampleHeight > video.height || spectrum.samplerow+video.sampleHeight <= 0) {
-        video.sampleHeight = video.height-spectrum.samplerow-1;
+      settings.sampleRow = 4*(mouseY-height/2+video.height/8);
+      if (settings.sampleRow+settings.sampleHeight > video.height || settings.sampleRow+settings.sampleHeight <= 0) {
+        settings.sampleHeight = video.height-settings.sampleRow-1;
       }
     } else if (mouseY < int (headerHeight+(height-headerHeight)/2)) { // Waterfall
 
@@ -39,20 +39,20 @@ class Setup {
       selectingSampleRow = false;
       delayCounter = 10;
       // allow dragging upward or downward:
-      if (spectrum.samplerow > (4*(mouseY-height/2+video.height/8))) {
+      if (settings.sampleRow > (4*(mouseY-height/2+video.height/8))) {
         topRow = (4*(mouseY-height/2+video.height/8));
-        bottomRow = spectrum.samplerow;
-        spectrum.samplerow = topRow;
+        bottomRow = settings.sampleRow;
+        settings.sampleRow = topRow;
       } else {
         bottomRow = (4*(mouseY-height/2+video.height/8));
-        topRow = spectrum.samplerow;
+        topRow = settings.sampleRow;
       }
-      video.sampleHeight = bottomRow-topRow;
-      if (spectrum.samplerow+video.sampleHeight > video.height || spectrum.samplerow+video.sampleHeight <= 0) {
-        video.sampleHeight = video.height-spectrum.samplerow-1;
+      settings.sampleHeight = bottomRow-topRow;
+      if (settings.sampleRow+settings.sampleHeight > video.height || settings.sampleRow+settings.sampleHeight <= 0) {
+        settings.sampleHeight = video.height-settings.sampleRow-1;
       }
-      settings.set("video.samplerow",spectrum.samplerow);
-      settings.set("video.sampleheight",video.sampleHeight);
+      settings.set("video.samplerow",settings.sampleRow);
+      settings.set("video.sampleheight",settings.sampleHeight);
       controller = "analyze";
     }
     calibrator.mouseReleased();      

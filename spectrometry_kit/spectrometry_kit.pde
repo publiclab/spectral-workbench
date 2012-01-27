@@ -57,7 +57,6 @@ class Spectrum {
     public int[] storedbuffer;
     public int[] absorptionbuffer;
     public int[] enhancedabsorptionbuffer;
-    public int samplerow;
     public int history;
     public int resolution = 1;
     public int[][][] hyperBuffer;
@@ -72,7 +71,7 @@ class Spectrum {
     public int hyperRes = 100;
 
     public Spectrum(int pHistory,int pSamplerow) {
-      samplerow = pSamplerow;
+      settings.sampleRow = pSamplerow;
       history = pHistory;
       buffer = new int[history][video.width][3];
       hyperBuffer = new int[width/hyperRes][video.width][video.height];
@@ -93,7 +92,7 @@ class Spectrum {
 
       absorptionSum = 0;
 
-      int index = int (video.width*samplerow); //the horizontal strip to sample
+      int index = int (video.width*settings.sampleRow); //the horizontal strip to sample
       for (int x = 0; x < int (video.width); x+=resolution) {
 
         int[] rgb = video.get_rgb(x);
@@ -188,11 +187,11 @@ if (controller == "analyze" || controller == "heatmap") {
       video.image(xoff,yoff,video.width/4,video.height/4);
       noFill();
       stroke(255,255,0);
-      rect(xoff,yoff+samplerow/4,video.width/4,video.sampleHeight/4);
+      rect(xoff,yoff+settings.sampleRow/4,video.width/4,settings.sampleHeight/4);
       fill(255,255,0,0.3);
       noStroke();
-      rect(xoff,yoff,video.width/4,samplerow/4);
-      rect(xoff,yoff+samplerow/4+video.sampleHeight/4,video.width/4,video.sampleHeight/4+samplerow/4);
+      rect(xoff,yoff,video.width/4,settings.sampleRow/4);
+      rect(xoff,yoff+settings.sampleRow/4+settings.sampleHeight/4,video.width/4,settings.sampleHeight/4+settings.sampleRow/4);
     }
     public void storeReference() {
       for (int x = 0;x < buffer[0].length;x++) {
@@ -315,14 +314,14 @@ void keyReleased() {
 void keyPressed() {
   if (key == CODED) {
     if (keyCode == DOWN) {
-      spectrum.samplerow += 1;
-      if (spectrum.samplerow >= video.height-video.sampleHeight) {
-        spectrum.samplerow = video.height-video.sampleHeight-1;
+      settings.sampleRow += 1;
+      if (settings.sampleRow >= video.height-settings.sampleHeight) {
+        settings.sampleRow = video.height-settings.sampleHeight-1;
       }
     } else if (keyCode == UP) {
-      spectrum.samplerow -= 1;
-      if (spectrum.samplerow <= 0) {
-        spectrum.samplerow = 0;
+      settings.sampleRow -= 1;
+      if (settings.sampleRow <= 0) {
+        settings.sampleRow = 0;
       }
     } else if (keyCode == CONTROL) {
       keyboard.controlKey = true;
@@ -502,9 +501,8 @@ System system;
 class Video {
   public Capture capture; //mac or windows
   public GSCapture gscapture; //linux
-  public int device;
   int width, height;
-  int sampleWidth, sampleHeight;
+  int sampleWidth;
   int[] rgb;
   boolean isLinux;
   PApplet parent;
@@ -512,9 +510,9 @@ class Video {
   public Video(PApplet PParent, int receivedWidth, int receivedHeight, int receivedDevice) {
     width = receivedWidth;
     height = receivedHeight;
-    device = receivedDevice;
+    settings.videoDevice = receivedDevice;
+
     parent = PParent;
-    sampleHeight = 80;
     try {
       Runtime r = Runtime.getRuntime();
       Process p = r.exec("uname");
@@ -531,13 +529,19 @@ class Video {
 
     try {
       Runtime r = Runtime.getRuntime();
-      Process p = r.exec("uvcdynctrl -d video"+device+" -s \"Exposure, Auto\" 1 && uvcdynctrl -s \"White Balance Temperature, Auto\" 0 && uvcdynctrl -d video"+device+" -s Contrast 128");
+      Process p = r.exec("uvcdynctrl -d video"+settings.videoDevice+" -s \"Exposure, Auto\" 1 && uvcdynctrl -s \"White Balance Temperature, Auto\" 0 && uvcdynctrl -d video"+settings.videoDevice+" -s Contrast 128");
     } catch(IOException e1) { println(e1); }
 
     if (isLinux) {
-      println("Video device: /dev/video"+device);
-      gscapture = new GSCapture(parent, width, height, 10, "/dev/video"+device); //linux
-      gscapture.play(); //linux only
+      println("Video device: /dev/video"+settings.videoDevice);
+      gscapture = new GSCapture(parent, width, height, 10, "/dev/video"+settings.videoDevice); //linux
+      gscapture.play();
+      if (!gscapture.isPlaying()) {// !gscapture.isCapturing()) { // former for GSCapture < 1.0, latter for >= 1.0
+        println("native resolution failed, trying 640x480");
+        gscapture = new GSCapture(parent, 640, 480, 10, "/dev/video"+settings.videoDevice); //linux
+        width = 640;
+        height = 480;
+      }
       println("Linux");
     } else {
       capture = new Capture(parent, width, height, 20); //mac or windows via QuickTime/Java
@@ -556,8 +560,9 @@ class Video {
   }
   public void changeDevice(int Pdevice) {
     if (isLinux) {
-      device = Pdevice;
-      gscapture = new GSCapture(parent, width, height, 10, "/dev/video"+device);
+      settings.videoDevice = Pdevice;
+      settings.set("video.device",Pdevice);
+      gscapture = new GSCapture(parent, width, height, 10, "/dev/video"+settings.videoDevice);
     }
   }
   public void image(int x,int y,int imgWidth,int imgHeight)
@@ -573,7 +578,7 @@ class Video {
     rgb[1] = 0;
     rgb[2] = 0;
 
-    for (int yoff = spectrum.samplerow; yoff < spectrum.samplerow+sampleHeight; yoff+=1) {
+    for (int yoff = settings.sampleRow; yoff < settings.sampleRow+settings.sampleHeight; yoff+=1) {
       int sampleind = int ((video.width*yoff)+x);
 
       if (sampleind >= 0 && sampleind <= (video.height*video.width)) {
@@ -589,9 +594,9 @@ class Video {
       }
     }
 
-    rgb[0] = int (rgb[0]/(sampleHeight*1.00));
-    rgb[1] = int (rgb[1]/(sampleHeight*1.00));
-    rgb[2] = int (rgb[2]/(sampleHeight*1.00));
+    rgb[0] = int (rgb[0]/(settings.sampleHeight*1.00));
+    rgb[1] = int (rgb[1]/(settings.sampleHeight*1.00));
+    rgb[2] = int (rgb[2]/(settings.sampleHeight*1.00));
 
     return rgb;
   }
@@ -634,7 +639,7 @@ class Filter implements AudioSignal, AudioListener
     fft.forward(samp);
     loadPixels();
 
-    int index = int (video.width*spectrum.samplerow); //the middle horizontal strip
+    int index = int (video.width*settings.sampleRow); //the middle horizontal strip
 
     for (int x = 0; x < fft.specSize(); x+=1) {
 
@@ -781,9 +786,9 @@ class Setup {
       header.mousePressed();
     } else if (selectingSampleRow && (mouseX > width/2-video.width/8 && mouseX < width/2+video.width/8) && (mouseY > height/2-video.height/8 && mouseY < height/2+video.height/8)) { // Modal video select
       sampleRowMousePressed = true;
-      spectrum.samplerow = 4*(mouseY-height/2+video.height/8);
-      if (spectrum.samplerow+video.sampleHeight > video.height || spectrum.samplerow+video.sampleHeight <= 0) {
-        video.sampleHeight = video.height-spectrum.samplerow-1;
+      settings.sampleRow = 4*(mouseY-height/2+video.height/8);
+      if (settings.sampleRow+settings.sampleHeight > video.height || settings.sampleRow+settings.sampleHeight <= 0) {
+        settings.sampleHeight = video.height-settings.sampleRow-1;
       }
     } else if (mouseY < int (headerHeight+(height-headerHeight)/2)) { // Waterfall
 
@@ -800,20 +805,20 @@ class Setup {
       sampleRowMousePressed = false;
       selectingSampleRow = false;
       delayCounter = 10;
-      if (spectrum.samplerow > (4*(mouseY-height/2+video.height/8))) {
+      if (settings.sampleRow > (4*(mouseY-height/2+video.height/8))) {
         topRow = (4*(mouseY-height/2+video.height/8));
-        bottomRow = spectrum.samplerow;
-        spectrum.samplerow = topRow;
+        bottomRow = settings.sampleRow;
+        settings.sampleRow = topRow;
       } else {
         bottomRow = (4*(mouseY-height/2+video.height/8));
-        topRow = spectrum.samplerow;
+        topRow = settings.sampleRow;
       }
-      video.sampleHeight = bottomRow-topRow;
-      if (spectrum.samplerow+video.sampleHeight > video.height || spectrum.samplerow+video.sampleHeight <= 0) {
-        video.sampleHeight = video.height-spectrum.samplerow-1;
+      settings.sampleHeight = bottomRow-topRow;
+      if (settings.sampleRow+settings.sampleHeight > video.height || settings.sampleRow+settings.sampleHeight <= 0) {
+        settings.sampleHeight = video.height-settings.sampleRow-1;
       }
-      settings.set("video.samplerow",spectrum.samplerow);
-      settings.set("video.sampleheight",video.sampleHeight);
+      settings.set("video.samplerow",settings.sampleRow);
+      settings.set("video.sampleheight",settings.sampleHeight);
       controller = "analyze";
     }
     calibrator.mouseReleased();
@@ -856,7 +861,7 @@ class Hyperspectral {
     for (int x = 0;x < spectrum.hyperBuffer[spectrum.hyperX/spectrum.hyperRes].length;x++) {
       for (int y = headerHeight;y < video.height;y++) {
         for (int w = 0;w < spectrum.hyperRes;w++) {
-          pixels[(y*width)+x] = spectrum.hyperBuffer[spectrum.hyperX/spectrum.hyperRes][x][y];
+          pixels[(y*width)+(x*spectrum.hyperRes)+w] = spectrum.hyperBuffer[spectrum.hyperX/spectrum.hyperRes][x][y];
         }
       }
     }
@@ -1001,7 +1006,7 @@ class WebcamButton extends Button {
   }
   void mousePressed() {
     if (super.mouseOver() && video.isLinux) {
-      video.changeDevice(video.device+1);
+      video.changeDevice(settings.videoDevice+1);
     }
   }
 }
@@ -1180,20 +1185,31 @@ class Calibrator {
 Calibrator calibrator;
 class Settings {
   P5Properties props;
+  int uniqId;
   float firstMarkerWavelength;
   int firstMarkerPixel;
   float secondMarkerWavelength;
   int secondMarkerPixel;
+  int sampleHeight;
+  int sampleRow;
+  int videoDevice,videoWidth,videoHeight;
   PApplet parent;
-   public Settings(PApplet pParent) {
+  public Settings(PApplet pParent) {
     println("Reading settings.txt");
     parent = pParent;
     try {
       props=new P5Properties();
       props.load(openStream("settings.txt"));
-      spectrum.samplerow = props.getIntProperty("video.samplerow",80);
-      video.sampleHeight = props.getIntProperty("video.sampleheight",int (height*(0.18)));
-      video.device = props.getIntProperty("video.device",0);
+
+      uniqId = props.getIntProperty("user.uniqId",0);
+      if (uniqId == 0) set("user.uniqId",(int)(Math.random() * ((999999999) + 1)));
+      set("client.version",0.4);
+
+      videoWidth = props.getIntProperty("video.height",1280);
+      videoHeight = props.getIntProperty("video.width",720);
+      sampleRow = props.getIntProperty("video.samplerow",80);
+      sampleHeight = props.getIntProperty("video.sampleheight",int (height*(0.18)));
+      videoDevice = props.getIntProperty("video.device",0);
       firstMarkerWavelength = props.getFloatProperty("calibration.firstMarkerWavelength",0);
       firstMarkerPixel = props.getIntProperty("calibration.firstMarkerPixel",0);
       secondMarkerWavelength = props.getFloatProperty("calibration.secondMarkerWavelength",0);
@@ -1215,6 +1231,17 @@ class Settings {
     }
   }
   void set(String key,float val) {
+    println("Writing settings.txt");
+    String stringVal = ""+val; // how else to turn int into String? I'm on a plane and can't look it up.
+    props.setProperty(key,stringVal);
+    try {
+      props.store(new FileOutputStream(parent.dataPath("settings.txt")), null);
+      println("done");
+    } catch (IOException e) {
+      println(e);
+    }
+  }
+  void set(String key,long val) {
     println("Writing settings.txt");
     String stringVal = ""+val; // how else to turn int into String? I'm on a plane and can't look it up.
     props.setProperty(key,stringVal);
@@ -1264,11 +1291,11 @@ public void setup() {
 
   size(screen.width, screen.height-20, P2D);
 
-    video = new Video(this,640,480,0);
-  spectrum = new Spectrum(int (height-headerHeight)/2,int (height*(0.18))); //history (length),samplerow (row # to begin sampling)
+  settings = new Settings(this); // once more settings are stored in this object instead of video or spectrum, this can move up
+  video = new Video(this,settings.videoHeight,settings.videoWidth,0);
+  spectrum = new Spectrum(int (height-headerHeight)/2,settings.sampleRow); //history (length),samplerow (row # to begin sampling)
   hyperspectral = new Hyperspectral(this);
   filter = new Filter(this);
-  settings = new Settings(this); // once more settings are stored in this object instead of video or spectrum, this can move up
   calibrator = new Calibrator(this);
 }
 

@@ -94,7 +94,7 @@ class WebcamButton extends Button {
   }
   void mousePressed() {
     if (super.mouseOver() && video.isLinux) {
-      video.changeDevice(video.device+1);
+      video.changeDevice(settings.videoDevice+1);
     }
   }
 }

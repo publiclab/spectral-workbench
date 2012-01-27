@@ -50,7 +50,7 @@ void draw() {
   if (mov.available()) {
     mov.read();
     // putPixelsIntoTexture() copies the frame pixels to the OpenGL texture
-    // encapsulated by 
+    // encapsulated by the tex object. 
     if (tex.putPixelsIntoTexture()) {
       
       // Calculating height to keep aspect ratio.      

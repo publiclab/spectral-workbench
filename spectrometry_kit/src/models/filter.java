@@ -50,7 +50,7 @@ class Filter implements AudioSignal, AudioListener
     fft.forward(samp);
     loadPixels();
 
-    int index = int (video.width*spectrum.samplerow); //the middle horizontal strip
+    int index = int (video.width*settings.sampleRow); //the middle horizontal strip
 
     for (int x = 0; x < fft.specSize(); x+=1) {
 
