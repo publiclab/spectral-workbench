@@ -26,6 +26,12 @@ class SpectrumsController < ApplicationController
   end
 
   # non REST
+  def embed
+    @spectrum = Spectrum.find(params[:id])
+    render :layout => false 
+  end
+
+  # non REST
   def author
     @spectrums = Spectrum.find_all_by_author(params[:id])
     render "spectrums/search"
