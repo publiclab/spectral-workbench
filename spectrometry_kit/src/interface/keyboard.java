@@ -13,14 +13,14 @@ void keyReleased() {
 void keyPressed() {
   if (key == CODED) {
     if (keyCode == DOWN) {
-      spectrum.samplerow += 1;
-      if (spectrum.samplerow >= video.height-video.sampleHeight) {
-        spectrum.samplerow = video.height-video.sampleHeight-1;
+      settings.sampleRow += 1;
+      if (settings.sampleRow >= video.height-settings.sampleHeight) {
+        settings.sampleRow = video.height-settings.sampleHeight-1;
       }
     } else if (keyCode == UP) {
-      spectrum.samplerow -= 1;
-      if (spectrum.samplerow <= 0) {
-        spectrum.samplerow = 0;
+      settings.sampleRow -= 1;
+      if (settings.sampleRow <= 0) {
+        settings.sampleRow = 0;
       }
     } else if (keyCode == CONTROL) {
       keyboard.controlKey = true;

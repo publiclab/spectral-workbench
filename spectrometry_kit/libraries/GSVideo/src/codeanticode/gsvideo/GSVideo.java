@@ -34,9 +34,9 @@ import java.util.List;
  * this library.
  */
 public class GSVideo implements PConstants {
-  protected static String VERSION_STRING = "0.9";
+  protected static String VERSION_STRING = "1.0.0";
   protected static long INSTANCES_COUNT = 0;
-
+  
   protected static String gstreamerBinPath = "";
   protected static String gstreamerPluginsPath = "";
 
@@ -56,10 +56,14 @@ public class GSVideo implements PConstants {
       globalGStreamerPath = "/System/Library/Frameworks/GStreamer.framework/Versions/Current/lib";
     } else if (PApplet.platform == WINDOWS) {
       globalGStreamerPath = "";
-      //globalGStreamerPath = "C://Program Files (x86)//OSSBuild//GStreamer//v0.10.7//lib";
     } else if (PApplet.platform == LINUX) {
       globalGStreamerPath = "/usr/lib";
     } else {}
+  }
+  
+  protected static int bitsJVM;
+  static {
+    bitsJVM = PApplet.parseInt(System.getProperty("sun.arch.data.model"));
   }
   
   // Default location of the local install of gstreamer. Suggested by Charles Bourasseau. 
@@ -88,7 +92,7 @@ public class GSVideo implements PConstants {
     initImpl();
   }
     
-  protected static void initImpl() {
+  protected static void initImpl() {    
     if (PApplet.platform == LINUX) {
       // Linux only supports global gstreamer for now.
       globalGStreamer = true;         
@@ -156,8 +160,8 @@ public class GSVideo implements PConstants {
       if (localGStreamerPath.equals("")) {
         GSLibraryPath libPath = new GSLibraryPath();
         String path = libPath.get();
-        gstreamerBinPath = path + "/gstreamer/linux";
-        gstreamerPluginsPath = path + "/gstreamer/linux/" + localPluginsFolder;
+        gstreamerBinPath = path + "/gstreamer/linux" + bitsJVM;
+        gstreamerPluginsPath = gstreamerBinPath + "/" + localPluginsFolder;
       } else {
         gstreamerBinPath = localGStreamerPath;
         gstreamerPluginsPath = localGStreamerPath + "/" + localPluginsFolder;
@@ -174,8 +178,8 @@ public class GSVideo implements PConstants {
       if (localGStreamerPath.equals("")) {
         GSLibraryPath libPath = new GSLibraryPath();
         String path = libPath.get();
-        gstreamerBinPath = path + "\\gstreamer\\win";
-        gstreamerPluginsPath = path + "\\gstreamer\\win\\" + localPluginsFolder;
+        gstreamerBinPath = path + "\\gstreamer\\windows" + bitsJVM;
+        gstreamerPluginsPath = gstreamerBinPath + "\\" + localPluginsFolder;
       } else {
         gstreamerBinPath = localGStreamerPath;
         gstreamerPluginsPath = localGStreamerPath + "\\" + localPluginsFolder;
@@ -192,8 +196,8 @@ public class GSVideo implements PConstants {
       if (localGStreamerPath.equals("")) {
         GSLibraryPath libPath = new GSLibraryPath();
         String path = libPath.get();
-        gstreamerBinPath = path + "/gstreamer/macosx";
-        gstreamerPluginsPath = path + "/gstreamer/macosx/" + localPluginsFolder;
+        gstreamerBinPath = path + "/gstreamer/macosx" + bitsJVM;
+        gstreamerPluginsPath = gstreamerBinPath + "/" + localPluginsFolder;
       } else {
         gstreamerBinPath = localGStreamerPath;
         gstreamerPluginsPath = localGStreamerPath + "/" + localPluginsFolder;
@@ -201,7 +205,11 @@ public class GSVideo implements PConstants {
     }
   }
 
-  protected static boolean lookForGlobalGStreamer() {    
+  protected static boolean lookForGlobalGStreamer() {
+    GSLibraryPath libPath = new GSLibraryPath();
+    String locPath = libPath.get();
+    locPath = locPath.replace("/", System.getProperty("file.separator"));
+    
     String[] searchPaths = null;
     if (!globalGStreamerPath.equals("")) {
       searchPaths = new String[] {globalGStreamerPath};
@@ -213,9 +221,9 @@ public class GSVideo implements PConstants {
       searchPaths = lpaths.split(pathsep);
     }
     
-    for (int i = 0; i < searchPaths.length; i++) {
+    for (int i = 0; i < searchPaths.length; i++) {      
       String path = searchPaths[i];
-      if (libgstreamerPresent(path, "libgstreamer")) {
+      if ((locPath.equals("") || path.indexOf(locPath) == -1) && libgstreamerPresent(path, "libgstreamer")) {
         globalGStreamerPath = path;
         return true;
       }      
@@ -243,7 +251,7 @@ public class GSVideo implements PConstants {
   }
 
   static protected long secToNanoLong(float sec) {
-    Float f = new Float(sec * 1E9);
+    Double f = new Double(sec * 1E9);
     return f.longValue();
   }  
 }

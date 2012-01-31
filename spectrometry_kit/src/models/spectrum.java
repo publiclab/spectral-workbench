@@ -8,7 +8,6 @@ class Spectrum {
     public int[] storedbuffer;
     public int[] absorptionbuffer;
     public int[] enhancedabsorptionbuffer;
-    public int samplerow;
     public int history;
     public int resolution = 1;
     public int[][][] hyperBuffer;
@@ -21,13 +20,12 @@ class Spectrum {
     public int averageAbsorption = 0;
     public int absorptionSum;
     public int lastval = 0;
-    public int hyperRes = 100;
 
     public Spectrum(int pHistory,int pSamplerow) {
-      samplerow = pSamplerow;
+      settings.sampleRow = pSamplerow;
       history = pHistory;
       buffer = new int[history][video.width][3];
-      hyperBuffer = new int[width/hyperRes][video.width][video.height];
+      hyperBuffer = new int[width/settings.hyperRes][width][video.height]; // [bands][history][videoheight]
       storedbuffer = new int[video.width];
       absorptionbuffer = new int[video.width];
       enhancedabsorptionbuffer = new int[video.width];
@@ -51,7 +49,7 @@ class Spectrum {
       absorptionSum = 0;
 
       // iterate through each pixel
-      int index = int (video.width*samplerow); //the horizontal strip to sample
+      int index = int (video.width*settings.sampleRow); //the horizontal strip to sample
       for (int x = 0; x < int (video.width); x+=resolution) {
 
         // Read from video into a new row in the spectrum.buffer
@@ -113,11 +111,11 @@ class Spectrum {
       // draw the region of sampling with a rectangle:
       noFill();
       stroke(255,255,0);
-      rect(xoff,yoff+samplerow/4,video.width/4,video.sampleHeight/4);
+      rect(xoff,yoff+settings.sampleRow/4,video.width/4,settings.sampleHeight/4);
       fill(255,255,0,0.3);
       noStroke();
-      rect(xoff,yoff,video.width/4,samplerow/4);
-      rect(xoff,yoff+samplerow/4+video.sampleHeight/4,video.width/4,video.sampleHeight/4+samplerow/4);
+      rect(xoff,yoff,video.width/4,settings.sampleRow/4);
+      rect(xoff,yoff+settings.sampleRow/4+settings.sampleHeight/4,video.width/4,settings.sampleHeight/4+settings.sampleRow/4);
     }
     /**
      * Saves the current spectrum in a separate buffer for comparison.
@@ -138,14 +136,14 @@ class Spectrum {
     // another version might save separate images for each band
     public void saveHyperspectralCube() {
       //PGraphics pg = createGraphics(video.height*(video.width/res), video.width, P3D);
-      PGraphics pg = createGraphics(video.width, video.height, P2D);
+      PGraphics pg = createGraphics(width, video.height, P2D);
       for (int b = 0;b < spectrum.hyperBuffer.length;b++) {
         for (int x = 0;x < video.width;x++) {
           for (int y = headerHeight;y < video.height;y++) {
             pg.pixels[(y*width)+x] = spectrum.hyperBuffer[b][x][y];
           }
         } 
-        pg.save("cube"+spectrum.wavelengthFromPixel(b*spectrum.hyperRes)+".png");
+        pg.save("cube"+spectrum.wavelengthFromPixel(b*settings.hyperRes)+".png");
       }
     }
 

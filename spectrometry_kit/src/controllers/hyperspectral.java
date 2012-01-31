@@ -19,22 +19,24 @@ class Hyperspectral {
     // bump hyperBuffer by 1 place
     for (int t = spectrum.hyperBuffer.length-1;t > 0;t--) {
       for (int y = 0;y < video.height;y++) {
-        for (int b = 0;b < (int)(video.width/spectrum.hyperRes);b++) { // every wavelength
+        for (int b = 0;b < (int)(video.width/settings.hyperRes);b++) { // every wavelength
           if (b < video.width) spectrum.hyperBuffer[b][t][y] = spectrum.hyperBuffer[b][t-1][y];
         }
       }
     }
     // copy hyperX column into hyperBuffer
     for (int y = video.height-1;y> 0;y--) {
-      for (int b = 0;b < video.width/spectrum.hyperRes;b++) {
-        spectrum.hyperBuffer[b][0][y] = video.pixels()[b*spectrum.hyperRes+(video.width*y)];
+      for (int b = 0;b < video.width/settings.hyperRes;b++) {
+        spectrum.hyperBuffer[b][0][y] = video.pixels()[b*settings.hyperRes+(video.width*y)];
       }
     }
 
-    for (int x = 0;x < spectrum.hyperBuffer[spectrum.hyperX/spectrum.hyperRes].length;x++) {
-      for (int y = headerHeight;y < video.height;y++) {
-        for (int w = 0;w < spectrum.hyperRes;w++) {
-          pixels[(y*width)+x+(x*spectrum.hyperRes)+w] = spectrum.hyperBuffer[spectrum.hyperX/spectrum.hyperRes][x][y];
+    for (int t = 0;t < spectrum.hyperBuffer[0].length;t++) {
+      for (int y = 0;y < video.height;y++) {
+        for (int w = 0;w < settings.hyperRes;w++) {
+	  if (t*settings.hyperRes < width) {
+            pixels[((headerHeight+y)*width)+(t*settings.hyperRes)+w] = spectrum.hyperBuffer[spectrum.hyperX/settings.hyperRes][t][y];
+          }
         }
       }
     } 

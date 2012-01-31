@@ -50,7 +50,7 @@ class GSLibraryPath {
         // as well as exported applications.
         n1 = path.indexOf("GSVideo.jar");        
       } else if (Platform.isLinux()) {
-        // TODO: what's up?
+        return "";
       }
 
       if ((-1 < n0) && (-1 < n1)) {

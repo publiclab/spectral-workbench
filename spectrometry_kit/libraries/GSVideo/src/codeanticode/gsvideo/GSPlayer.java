@@ -23,6 +23,7 @@ import processing.core.*;
 
 import java.awt.Dimension;
 import java.io.*;
+import java.net.URI;
 import java.nio.*;
 import java.util.concurrent.TimeUnit;
 import java.lang.reflect.*;
@@ -65,6 +66,8 @@ public class GSPlayer extends PImage implements PConstants {
 
   protected BufferDataAppSink natSink = null;
   protected Buffer natBuffer = null;
+  protected IntBuffer rgbBuffer = null;
+  protected boolean copyNatBuf = false;    
   protected boolean copyBufferMode = false;
   protected String copyMask;  
   
@@ -76,7 +79,10 @@ public class GSPlayer extends PImage implements PConstants {
   protected String tempDataCaps;  
   
   protected boolean firstFrame = true;
+  protected boolean newFrame = false;
     
+  protected boolean seeking = false;  
+  
   /**
    * Creates an instance of GSPlayer loading the media file from filename, 
    * assuming that it is a video file.
@@ -155,6 +161,17 @@ public class GSPlayer extends PImage implements PConstants {
   }
   
   /**
+   * Finalizer of the class.
+   */  
+  protected void finalize() throws Throwable {
+    try {
+      delete();
+    } finally {
+      super.finalize();
+    }
+  }    
+  
+  /**
    * Sets the object to use as destination for the frames read from the stream.
    * The color conversion mask is automatically set to the one required to
    * copy the frames to OpenGL.
@@ -167,19 +184,44 @@ public class GSPlayer extends PImage implements PConstants {
       copyMask = "red_mask=(int)0xFF000000, green_mask=(int)0xFF0000, blue_mask=(int)0xFF00";        
     } else {
       copyMask = "red_mask=(int)0xFF, green_mask=(int)0xFF00, blue_mask=(int)0xFF0000";
-    }   
-  }  
+    }
+    copyNatBuf = false;
+  }
   
   /**
    * Sets the object to use as destination for the frames read from the stream.
+   * The color conversion mask is automatically set to the one required to
+   * copy the frames to OpenGL. If copy is true, then the frames are copied into
+   * new buffer objects, this can help solve threading problems when playing
+   * back a large number of videos.
    * 
    * @param Object dest
-   * @param String mask 
+   * @param boolean copy 
    */    
-  public void setPixelDest(Object dest, String mask) {
+  public void setPixelDest(Object dest, boolean copy) {
+    copyHandler = dest;      
+    if (ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN) {
+      copyMask = "red_mask=(int)0xFF000000, green_mask=(int)0xFF0000, blue_mask=(int)0xFF00";        
+    } else {
+      copyMask = "red_mask=(int)0xFF, green_mask=(int)0xFF00, blue_mask=(int)0xFF0000";
+    }    
+    copyNatBuf = copy;  
+  }
+  
+  /**
+   * Sets the object to use as destination for the frames read from the stream.
+   * If copy is true, then the frames are copied into new buffer objects, this 
+   * can help solve threading problems when playing back a large number of videos.
+   * 
+   * @param Object dest
+   * @param String mask
+   * @param boolean copy  
+   */    
+  public void setPixelDest(Object dest, String mask, boolean copy) {    
     copyHandler = dest;
     copyMask = mask;
-  }    
+    copyNatBuf = copy;
+  }      
   
   /**
    * Uses a generic object as handler of the media file. This object should have a
@@ -335,7 +377,8 @@ public class GSPlayer extends PImage implements PConstants {
    * @return int
    */
   public int frame() {
-    return (int)(time() * getSourceFrameRate());
+    double sec = gplayer.queryPosition().toSeconds() + gplayer.queryPosition().getNanoSeconds() * 1E-9;    
+    return (int)(Math.ceil(sec * getSourceFrameRate())) - 1;
   }
   
   /**
@@ -345,24 +388,20 @@ public class GSPlayer extends PImage implements PConstants {
    * @param float where
    */
   public void jump(float where) {
-    if (playing) {
-      gplayer.pause();
-    }
-    
     boolean res;
-    long start = GSVideo.secToNanoLong(where);
-    long stop = -1; // or whatever > new_pos
+    long pos = GSVideo.secToNanoLong(where);
     
     res = gplayer.seek(1.0, Format.TIME, SeekFlags.FLUSH,
-                       SeekType.SET, start, SeekType.SET, stop);
+                       SeekType.SET, pos, SeekType.NONE, -1);
     
     if (!res) {
       System.err.println("Seek operation failed.");
     }    
-
-    if (playing) {
-      gplayer.play();
-    }
+    
+    // Will wait until any async state change (seek) has completed    
+    seeking = true;
+    gplayer.getState();
+    seeking = false;
   }
 
   /**
@@ -374,7 +413,7 @@ public class GSPlayer extends PImage implements PConstants {
     float srcFramerate = getSourceFrameRate();
     
     // The duration of a single frame:
-    float frameDuration = 1 / srcFramerate;
+    float frameDuration = 1.0f / srcFramerate;
     
     // We move to the middle of the frame by adding 0.5:
     float where = (frame + 0.5f) * frameDuration; 
@@ -394,8 +433,26 @@ public class GSPlayer extends PImage implements PConstants {
    * @return boolean
    */  
   public boolean ready() {
-    return 0 < bufSize && sinkReady;
+    return 0 < bufSize && sinkReady && !seeking;
   }
+  
+  /**
+   * Returns true if a new frame has been read to the pixels array with the read() method.
+   * 
+   * @return boolean
+   */    
+  public boolean newFrame() {
+	return newFrame;  	
+  }
+  
+  /**
+   * Sets the new frame flag to false. This is useful to avoid reading pixels array when
+   * there is no new frame data.
+   * 
+   */  
+  public synchronized void oldFrame() {
+	newFrame = false;
+  }  
     
   /**
    * Return the true or false depending on whether there is a new frame ready to
@@ -436,6 +493,15 @@ public class GSPlayer extends PImage implements PConstants {
   }
   
   /**
+   * Returns true if stream is completing a seeking (jump) operation.
+   * 
+   * @return boolean
+   */    
+  public boolean isSeeking() {
+    return seeking;
+  }  
+  
+  /**
    * Begin playing the stream, with no repeat.
    */
   public void play() {
@@ -460,6 +526,10 @@ public class GSPlayer extends PImage implements PConstants {
    * Shut off the repeating loop.
    */
   public void noLoop() {
+    if (!sinkReady) {
+      initSink();
+    }
+    
     repeat = false;
   }
 
@@ -467,6 +537,10 @@ public class GSPlayer extends PImage implements PConstants {
    * Pause the stream at its current time.
    */
   public void pause() {
+    if (!sinkReady) {
+      initSink();
+    }
+    
     playing = false;
     paused = true;
     gplayer.pause(); 
@@ -476,6 +550,10 @@ public class GSPlayer extends PImage implements PConstants {
    * Stop the stream, and rewind.
    */
   public void stop() {
+    if (!sinkReady) {
+      initSink();
+    }
+    
     if (playing) {      
       goToBeginning();
       playing = false;
@@ -511,7 +589,25 @@ public class GSPlayer extends PImage implements PConstants {
           firstFrame = false;
         }
         
-        IntBuffer rgbBuffer = natBuffer.getByteBuffer().asIntBuffer();
+        if (copyNatBuf) {
+          // The native buffer is copied into a new rgb buffer created locally.
+          IntBuffer temp = natBuffer.getByteBuffer().asIntBuffer();
+          temp.rewind();
+          if (rgbBuffer == null) {
+            rgbBuffer = IntBuffer.allocate(bufWidth * bufHeight);
+          }
+          rgbBuffer.rewind();
+          rgbBuffer.put(temp);
+          rgbBuffer.rewind();
+          
+          natBuffer.dispose();
+          natBuffer = null;
+        } else {
+          // The rgb buffer is just the native buffer viewed as
+          // an int buffer.
+          rgbBuffer = natBuffer.getByteBuffer().asIntBuffer();  
+        }
+        
         try {
           copyBufferMethod.invoke(copyHandler, new Object[] { natBuffer, rgbBuffer, bufWidth, bufHeight });
         } catch (Exception e) {
@@ -535,7 +631,8 @@ public class GSPlayer extends PImage implements PConstants {
         int[] temp = pixels;
         pixels = copyPixels;
         updatePixels();
-        copyPixels = temp;        
+        copyPixels = temp;
+        newFrame = true;
       }  
     } else if (streamType == GSVideo.RAW) {
       if (copyData == null) {
@@ -550,18 +647,26 @@ public class GSPlayer extends PImage implements PConstants {
       byte[] temp = data;
       data = copyData;
       copyData = temp;
+      newFrame = true;
     }
     
     available = false;
   }
 
   /**
-   * Goes to the first frame of the stream.
+   * Jumps to the first frame of the stream.
    */
   public void goToBeginning() {
-    gplayer.seek(ClockTime.fromNanos(0));
+    jump(0.0f);
   }
 
+  /**
+   * Jumps to the last frame of the stream.
+   */
+  public void goToEnd() {
+    jump(duration());
+  }
+  
   /**
    * Change the volume. Values are from 0 to 1.
    * 
@@ -613,13 +718,20 @@ public class GSPlayer extends PImage implements PConstants {
           if (file.exists()) {
             gplayer = new PlayBin2("GSPlayer");
             gplayer.setInputFile(file);
-          } else {
-            System.err.println("File " + filename + " does not exist. Please check location.");  
           }
         } catch (Exception e) {
         }
       }
-      // Network read needs to be implemented...
+
+      // Network read...      
+      if (gplayer == null && filename.startsWith("http://")) {
+        try {
+          gplayer = new PlayBin2("GSPlayer");            
+          gplayer.setURI(URI.create(filename));
+        } catch (Exception e) {
+          e.printStackTrace();
+        }      
+      }
     } catch (SecurityException se) {
       // online, whups. catch the security exception out here rather than
       // doing it three times (or whatever) for each of the cases above.
@@ -820,7 +932,9 @@ public class GSPlayer extends PImage implements PConstants {
   }
   
   public synchronized void disposeBuffer(Object buf) {
-    ((Buffer)buf).dispose();
+    if (buf != null) {
+      ((Buffer)buf).dispose();
+    }
   }  
   
   protected void eosEvent() {

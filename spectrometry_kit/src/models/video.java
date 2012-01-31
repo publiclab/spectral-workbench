@@ -1,9 +1,8 @@
 class Video {
   public Capture capture; //mac or windows
   public GSCapture gscapture; //linux
-  public int device;
   int width, height;
-  int sampleWidth, sampleHeight;
+  int sampleWidth;
   int[] rgb;
   boolean isLinux;
   PApplet parent;
@@ -11,10 +10,11 @@ class Video {
   public Video(PApplet PParent, int receivedWidth, int receivedHeight, int receivedDevice) {
     width = receivedWidth;
     height = receivedHeight;
-    device = receivedDevice;
+    settings.videoDevice = receivedDevice;
+
     parent = PParent;
-    sampleHeight = 80;
     //OS detection
+    // SHOULD USE:  if (PApplet.platform == MACOSX) {
     try {  
       Runtime r = Runtime.getRuntime();
       Process p = r.exec("uname");
@@ -34,7 +34,7 @@ class Video {
     // not tested for 2nd camera, just default
     try {  
       Runtime r = Runtime.getRuntime();
-      Process p = r.exec("uvcdynctrl -d video"+device+" -s \"Exposure, Auto\" 1 && uvcdynctrl -s \"White Balance Temperature, Auto\" 0 && uvcdynctrl -d video"+device+" -s Contrast 128");
+      Process p = r.exec("uvcdynctrl -d video"+settings.videoDevice+" -s \"Exposure, Auto\" 1 && uvcdynctrl -s \"White Balance Temperature, Auto\" 0 && uvcdynctrl -d video"+settings.videoDevice+" -s Contrast 128");
     } catch(IOException e1) { println(e1); }
     //catch(InterruptedException e2) {}
 
@@ -43,23 +43,27 @@ class Video {
       //cameras = GSCapture.list();
       //println("Available cameras:");
       //for (int i = 0; i < cameras.length; i++) println(cameras[i]);
-      // Alternate solution: type "ls /dev/video*" in the terminal to discover video devices
-      //    String devices = system.bash("ls /dev/video*");
-      //if (devices != "null") {
-      //  device = int (devices.substring(devices.length()-1));
-      //  println("Auto-detected video device.");
+      // Alternate solution: type "ls /dev/video*" in the terminal to discover video settings.videoDevices
+      //    String settings.videoDevices = system.bash("ls /dev/video*");
+      //if (settings.videoDevices != "null") {
+      //  settings.videoDevice = int (devices.substring(devices.length()-1));
+      //  println("Auto-detected video settings.videoDevice.");
       //}
-      println("Video device: /dev/video"+device);
-      //gscapture = new GSCapture(parent, width, height, cameras[cameras.length-1]); //linux
-      gscapture = new GSCapture(parent, width, height, 10, "/dev/video"+device); //linux
+      println("Video device: /dev/video"+settings.videoDevice);
+      gscapture = new GSCapture(parent, width, height, "/dev/video"+settings.videoDevice,10); //linux
+      gscapture.start();
       // attempt to auto-configure resolution -- do you really need to restart the object?
-      //gscapture.play(); //linux only
-      //int[][] resolutions = gscapture.resolutions();
-      //width = resolutions[resolutions.length-1][0];
-      //height = resolutions[resolutions.length-1][1];
-      //gscapture.delete();
-      //gscapture = new GSCapture(parent, width, height, "/dev/video0"); //linux
-      gscapture.play(); //linux only
+      int[][] resolutions = gscapture.resolutions();
+      gscapture.stop();
+      gscapture = new GSCapture(parent, resolutions[0][0], resolutions[0][1], "/dev/video"+settings.videoDevice,10); //linux
+      gscapture.start();
+      // THIS SECTION DOES NOT PROPERLY DETECT THAT THE VIDEO DEVICE RESOLUTION IS NOT SUPPORTED:
+      //if (!gscapture.isCapturing()) { // former for GSCapture < 1.0, latter for >= 1.0 
+        //println("native resolution failed, trying 640x480");
+        //gscapture = new GSCapture(parent, 640, 480, "/dev/video"+settings.videoDevice, 10); //linux
+        //width = 640;
+        //height = 480;
+      //}
       println("Linux");
     } else {
       capture = new Capture(parent, width, height, 20); //mac or windows via QuickTime/Java
@@ -80,8 +84,11 @@ class Video {
   // Linux only, for now:
   public void changeDevice(int Pdevice) {
     if (isLinux) {
-      device = Pdevice;
-      gscapture = new GSCapture(parent, width, height, 10, "/dev/video"+device);
+      gscapture.stop();
+      settings.videoDevice = Pdevice;
+      settings.set("video.device",Pdevice);
+      gscapture = new GSCapture(parent, width, height, "/dev/video"+settings.videoDevice, 10);
+      gscapture.start();
     }
   }
   public void image(int x,int y,int imgWidth,int imgHeight)
@@ -102,7 +109,7 @@ class Video {
     rgb[1] = 0;
     rgb[2] = 0;
 
-    for (int yoff = spectrum.samplerow; yoff < spectrum.samplerow+sampleHeight; yoff+=1) {
+    for (int yoff = settings.sampleRow; yoff < settings.sampleRow+settings.sampleHeight; yoff+=1) {
       int sampleind = int ((video.width*yoff)+x);
 
       if (sampleind >= 0 && sampleind <= (video.height*video.width)) {
@@ -120,9 +127,9 @@ class Video {
     }    
 
     // sample <sampleHeight> rows of data in each of 3 colors:
-    rgb[0] = int (rgb[0]/(sampleHeight*1.00));
-    rgb[1] = int (rgb[1]/(sampleHeight*1.00));
-    rgb[2] = int (rgb[2]/(sampleHeight*1.00));
+    rgb[0] = int (rgb[0]/(settings.sampleHeight*1.00));
+    rgb[1] = int (rgb[1]/(settings.sampleHeight*1.00));
+    rgb[2] = int (rgb[2]/(settings.sampleHeight*1.00));
 
     return rgb;
   }
