@@ -133,7 +133,6 @@ a h2 {
         -webkit-border-top-right-radius:5px;
         -moz-border-radius-bottomright:5px;
         -webkit-border-bottom-right-radius:5px;
-
 }
 a:hover.button {
 	background:#35b;
@@ -166,6 +165,31 @@ a:hover.button {
 }
 #list p, #list h2 {
 	margin:3px 0;
+}
+
+#compare .spectrum {
+	font-size:11px;
+	padding:5px 0;
+}
+#compare .spectrum p {
+	margin:4px 0 6px 0;
+}
+#compare .spectrum a.smallbutton {
+	padding:4px;
+        background:#4C6ACB;
+	color:white;
+        -moz-border-radius-topleft:3px;
+        -webkit-border-top-left-radius:3px;
+        -moz-border-radius-bottomleft:3px;
+        -webkit-border-bottom-left-radius:3px;
+        -moz-border-radius-topright:3px;
+        -webkit-border-top-right-radius:3px;
+        -moz-border-radius-bottomright:3px;
+        -webkit-border-bottom-right-radius:3px;
+}
+#compare .spectrum a:hover.smallbutton {
+	background:#35b;
+	color:#ccc;
 }
 
 .errorExplanation {

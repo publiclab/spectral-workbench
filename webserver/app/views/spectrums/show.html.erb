@@ -1,32 +1,29 @@
 <div class="sidebar spectrumpage">
-<div class="box">
+<div id="compare" class="box">
   <h3>Compare to other spectra</h3>
+  <p><small>Currently, comparisons are only valid between spectra from one spectrometer. Once we add wavelength calibration tools, you'll be able to compare to other peoples' data... <a href="http://github.com/jywarren/spectral-workbench/issues/36">coming soon!</a></small></p>
   <p>
+    <form id="compareForm" action="javascript:void(0);">
     <input class='text' id='searchinput' type='text' name='q' value=''/>
     <input type='submit' id='searchsubmit' value='search' />
+    </form>
     <script>
 
         $.ajaxSetup ({ cache: false }); 
 
-	var ajax_load = "<img src='images/load.gif' alt='loading...' />";
+	var ajax_load = "<img src='/images/spinner-small.gif' alt='loading...' />";
 
-	var loadUrl = "/spectrums/compare/"+<%= @spectrum.id %>+".json";
-	$("#searchsubmit").click(function(){
-		$("#result")
-		.html(ajax_load)
-		.load(loadUrl,
-			{q:$("#searchinput").val()}, 
-			function(responseText){
-			
-		});
+	$("#compareForm").submit(function(){
+		var url = "/spectrums/compare/<%= @spectrum.id %>?q="+$("#searchinput").val();
+		$("#result").html(ajax_load).load(url);
 	});
-	// this doesn't work:
-	$('#searchinput').click($('#searchsubmit').click)
 
     </script>
   </p>
-  <p id="result">
-  </p>
+  <div id="result">
+    <b>Recent spectra:</b><br />
+    <%= render :partial => "compare" %>
+  </div>
 </div>
 </div>
 
@@ -39,32 +36,32 @@
   <% else %>
     spectrum = <%= @spectrum.data.chomp(",") %>
   <% end %>
-    data = []
+    data = [{label: "<%= @spectrum.title %>",data:[]}]
     scaled = true
     $.each(spectrum.lines,function(index,line) {
       if (line.wavelength == null) {
 	line.wavelength = index
 	scaled = false
       }
-      data.push([line.wavelength,line.average])
+      data[0].data.push([line.wavelength,line.average])
     })
-    $.plot($("#graph"), [{data:data}],
-	{
-	    series: {
-              lines: { 
-		show: true, 
-		lineWidth: 1,
-	      },
-	    },
-	    yaxis: { show: false },
-	    xaxis: { show: scaled },
-	    shadowSize: 0,
-	    grid: {
-              backgroundColor: "#eee"
-            },
-	    colors: [ "#333333", "#777777" ]
-        }
-   );
+    options = {
+      series: {
+        lines: { 
+          show: true, 
+          lineWidth: 1,
+        },
+      },
+      yaxis: { show: false },
+      xaxis: { show: scaled },
+      shadowSize: 0,
+      grid: {
+        backgroundColor: "#eee"
+      },
+      // Palette "i eat the rainbow" by svartedauden on Colourlovers: http://www.colourlovers.com/palette/1630898/i_eat_the_rainbow, CC-BY-NC
+      colors: [ "#333333", "#E02130", "#FAB243", "#429867", "#2B5166" ]//, "#482344" ]
+    }
+    $.plot($("#graph"),data,options);
 </script>
 </p>
 

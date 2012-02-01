@@ -18,6 +18,8 @@ class SpectrumsController < ApplicationController
     @spectrum = Spectrum.find(params[:id])
     @comment = Comment.new
 
+    @spectrums = Spectrum.find(:all, :limit => 4, :order => "created_at DESC", :conditions => ["id != ?",@spectrum.id])
+
     respond_to do |format|
       format.html { render 'spectrums/show' } # show.html.erb
       format.xml  { render :xml => @spectrum }
@@ -33,8 +35,9 @@ class SpectrumsController < ApplicationController
 
   # non REST
   def compare
-    @spectrums = Spectrum.find(:all, :conditions => ['title LIKE ? OR notes LIKE ?',"%"+params[:q]+"%", "%"+params[:q]+"%"],:limit => 100)
-    render :json => @spectrums
+    spectrum = Spectrum.find(params[:id])
+    @spectrums = Spectrum.find(:all, :conditions => ['id != ? AND (title LIKE ? OR notes LIKE ?)',spectrum.id,"%"+params[:q]+"%", "%"+params[:q]+"%"],:limit => 100,:order => "created_at DESC")
+    render :partial => "compare", :layout => false
   end
 
   # non REST
