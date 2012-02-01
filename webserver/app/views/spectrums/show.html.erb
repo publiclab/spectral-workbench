@@ -31,7 +31,7 @@
 <img src="<%= @spectrum.photo.url(:large) %>" />
 <div id="graph" style="width:800px;height:200px;"></div>
 <script type="text/javascript">
-  <% if @spectrum.data == "" %>
+  <% if @spectrum.data == "" || @spectrum.data.nil? %>
     spectrum = <%= @spectrum.extract_data %>
   <% else %>
     spectrum = <%= @spectrum.data.chomp(",") %>
@@ -68,7 +68,18 @@
 <h1><%= @spectrum.title %></h1>
 
 <h3>Notes</h3>
-<p class="description"><%= markdown(@spectrum.notes) %></p>
+<p class="description"><%= markdown(@spectrum.notes) if @spectrum.notes %></p>
+
+<h3>Share</h3>
+
+<p>Embed code: <input id="embedcode" type="text" value="<iframe width='500px' height='400px' border='0' src='http://spectralworkbench.org/spectra/embed/<%= @spectrum.id %>'></iframe>" /></p>
+
+<script>
+$('#embedcode').click(function() {
+	this.focus()
+	this.select()
+})
+</script>
 
 <h3>License</h3>
 

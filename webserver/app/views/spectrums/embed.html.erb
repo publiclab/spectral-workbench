@@ -1,0 +1,52 @@
+<script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.js"></script> 
+<script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.flot.js"></script> 
+
+<img width="500px" src="<%= @spectrum.photo.url(:large) %>" />
+<div id="graph" style="width:500px;height:120px;"></div>
+<script type="text/javascript">
+  <% if @spectrum.data == "" || @spectrum.data.nil? %>
+    spectrum = <%= @spectrum.extract_data %>
+  <% else %>
+    spectrum = <%= @spectrum.data.chomp(",") %>
+  <% end %>
+    data = []
+    scaled = true
+    $.each(spectrum.lines,function(index,line) {
+      if (line.wavelength == null) {
+	line.wavelength = index
+	scaled = false
+      }
+      data.push([line.wavelength,line.average])
+    })
+    $.plot($("#graph"), [{data:data}],
+	{
+	    series: {
+              lines: { 
+		show: true, 
+		lineWidth: 1,
+	      },
+	    },
+	    yaxis: { show: false },
+	    xaxis: { show: scaled },
+	    shadowSize: 0,
+	    grid: {
+              backgroundColor: "#eee"
+            },
+	    colors: [ "#333333", "#777777" ]
+        }
+   );
+</script>
+
+<b><a href="http://spectralworkbench.org/spectra/<%= @spectrum.id %>"><%= @spectrum.title %></a></b>
+<span style="text-align:right;">on <a href="http://spectralworkbench.org">SpectralWorkbench.org</a></span>
+<style>
+html {
+	font-family: lucida grande, lucida console, arial, sans-serif;
+}
+body {
+	margin:0;
+}
+b {
+	padding:3px;
+}
+</style>
