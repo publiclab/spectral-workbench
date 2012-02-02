@@ -8,90 +8,76 @@
     <input type='submit' id='searchsubmit' value='search' />
     </form>
     <script>
-
-	var spectra = [<%= @spectrum.id %>]
         $.ajaxSetup ({ cache: false }); 
 
 	var ajax_load = "<img src='/images/spinner-small.gif' alt='loading...' />";
 
 	$("#compareForm").submit(function(){
-		var url = "/spectrums/compare/<%= @spectrum.id %>?q="+$("#searchinput").val();
+		var url = "/spectrums/compare/?q="+$("#searchinput").val();
 		$("#result").html(ajax_load).load(url);
 	});
-
-	$("#createSet").click(function() {
-		window.location.href = "/sets/new?spectra_string="+spectra.join(",")
-	})
 
     </script>
   </p>
   <div id="result">
     <b>Recent spectra:</b><br />
-    <%= render :partial => "compare" %>
+    <%= render :partial => "spectrums/compare" %>
   </div>
 </div>
 </div>
 
 <p>
-<img src="<%= @spectrum.photo.url(:large) %>" />
 <div id="graph" style="width:800px;height:200px;"></div>
 
 <script type="text/javascript">
-  <% if @spectrum.data == "" || @spectrum.data.nil? %>
-    spectrum = <%= @spectrum.extract_data %>
+  data = []
+  options = {
+    series: {
+      lines: { 
+        show: true, 
+        lineWidth: 1,
+      },
+    },
+    yaxis: { show: false },
+    xaxis: { show: scaled },
+    shadowSize: 0,
+    grid: {
+      backgroundColor: "#eee"
+    },
+    // Palette "i eat the rainbow" by svartedauden on Colourlovers: http://www.colourlovers.com/palette/1630898/i_eat_the_rainbow, CC-BY-NC
+    colors: [ "#333333", "#E02130", "#FAB243", "#429867", "#2B5166" ]//, "#482344" ]
+  }
+
+  <% @set.spectra.each do |spectrum| %>
+  <% if spectrum.data == "" || spectrum.data.nil? %>
+    spectrum = <%= spectrum.extract_data %>
   <% else %>
-    spectrum = <%= @spectrum.data.chomp(",") %>
+    spectrum = <%= spectrum.data.chomp(",") %>
   <% end %>
-    data = [{label: "<%= @spectrum.title %>",data:[]}]
+    data.push({label: "<%= spectrum.title %>",data:[]})
     scaled = true
     $.each(spectrum.lines,function(index,line) {
       if (line.wavelength == null) {
 	line.wavelength = index
 	scaled = false
       }
-      data[0].data.push([line.wavelength,line.average])
+      data[data.length-1].data.push([line.wavelength,line.average])
     })
-    options = {
-      series: {
-        lines: { 
-          show: true, 
-          lineWidth: 1,
-        },
-      },
-      yaxis: { show: false },
-      xaxis: { show: scaled },
-      shadowSize: 0,
-      grid: {
-        backgroundColor: "#eee"
-      },
-      // Palette "i eat the rainbow" by svartedauden on Colourlovers: http://www.colourlovers.com/palette/1630898/i_eat_the_rainbow, CC-BY-NC
-      colors: [ "#333333", "#E02130", "#FAB243", "#429867", "#2B5166" ]//, "#482344" ]
-    }
-    $.plot($("#graph"),data,options);
-</script>
-
-<div id="toolbar">
-	<a id="createSet" style="display:none;" href="javascript:void(0);">Create a set from these spectra</a>
-</div>
-
-<script>
-
-	$('#createSet').click(function() {
-		window.location.href = "/sets/new/"+spectra.join(',')
-	})
-
+  <% end %>
+  $.plot($("#graph"),data,options);
 </script>
 
 </p>
 
-<h1><%= @spectrum.title %></h1>
+<h1><%= @set.title %></h1>
 
 <h3>Notes</h3>
-<p class="description"><%= markdown(@spectrum.notes) if @spectrum.notes %></p>
+<p class="description"><%= markdown(@set.notes) if @set.notes %></p>
 
+<!--
 <h3>Share</h3>
 
-<p>Embed code: <input id="embedcode" type="text" value="<iframe width='500px' height='400px' border='0' src='http://spectralworkbench.org/spectra/embed/<%= @spectrum.id %>'></iframe>" /></p>
+<p>Embed code: <input id="embedcode" type="text" value="<iframe width='500px' height='400px' border='0' src='http://spectralworkbench.org/spectra/embed/<%= @set.id %>'></iframe>" /></p>
 
 <script>
 $('#embedcode').click(function() {
@@ -99,6 +85,7 @@ $('#embedcode').click(function() {
 	this.select()
 })
 </script>
+-->
 
 <h3>License</h3>
 
@@ -107,10 +94,10 @@ $('#embedcode').click(function() {
   <br />
   To the extent possible under law,
   <%# if @spectrum.author.url %><a rel="dct:publisher" href="http://publiclaboratory.org"><%# end %>
-    <span property="dct:title"><%= @spectrum.author %></span>
+    <span property="dct:title"><%= @set.author %></span>
   <%# if @spectrum.author.url %></a><%# end %>
   has waived all copyright and related or neighboring rights to
-  "<span property="dct:title"><%= @spectrum.title %></span>".
+  "<span property="dct:title"><%= @set.title %></span>".
 This work is published from:
 <span property="vcard:Country" datatype="dct:ISO3166"
       content="US" about="http://publiclaboratory.org">
@@ -122,7 +109,7 @@ This work is published from:
 <a name="comments"></a>
 <h2>Comments</h2>
 
-<% @spectrum.comments.each do |comment| %>
+<% @set.comments.each do |comment| %>
 <div class="comment">
 	<b><%= time_ago_in_words(comment.created_at) %> ago, <%= comment.author %> wrote:</b>
 	<p><%= comment.body %></p>
@@ -136,7 +123,7 @@ This work is published from:
 </script>
 <% end %>
 
-<% form_for(@comment, :url => {:controller => "spectrums", :action => "comment", :id => @spectrum.id}) do |f| %>
+<% form_for(@comment, :url => {:controller => "sets", :action => "comment", :id => @set.id}) do |f| %>
 
   <h2>Post a comment</h2>
   <%= f.error_messages %>
@@ -157,8 +144,6 @@ This work is published from:
   <p>
     <%= recaptcha_tags :display => {:theme => "white"} %>
   </p>
-
-  <input type='hidden' name='id' value='<%= @spectrum.id %>' />
 
   <p>
     <%= f.submit 'Create' %>

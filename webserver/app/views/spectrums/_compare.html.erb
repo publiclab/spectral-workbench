@@ -23,6 +23,8 @@
   if (!scaled) $('#scaledFlag_<%= spectrum.id %>').html('(<a href="http://publiclaboratory.org/wiki/spectral-workbench-calibration">Uncalibrated</a>)')
 
   $("#spectrum_btn_<%= spectrum.id %>").click(function() {
+    spectra.push(<%= spectrum.id %>)
+    $("#createSet").show()
     data.push({label:"<%= spectrum.title %>", data: spectrum_<%= spectrum.id %>_data})
     $.plot($("#graph"),data,options);
     $("#spectrum_<%= spectrum.id %>").remove()

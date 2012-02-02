@@ -27,7 +27,7 @@
 
 		<% @comments.each do |comment| %>
 			<p><b><%= time_ago_in_words(comment.created_at) %> ago, <%= comment.author %> wrote:</b>
-			<%= truncate(comment.body,40,"...") %> <br /><a href="/spectra/show/<%= comment.spectrum_id %>">Read more &raquo;</a></p>
+			<%= sanitize(truncate(comment.body,40,"...")) %> <br /><a href="/spectra/show/<%= comment.spectrum_id %>">Read more &raquo;</a></p>
 		<% end %>
 
 	</div>

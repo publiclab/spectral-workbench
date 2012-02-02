@@ -134,4 +134,21 @@ class SpectrumsController < ApplicationController
       format.xml  { head :ok }
     end
   end
+
+  def comment
+    @spectrum = Spectrum.find(params[:id])
+    @spectrums = Spectrum.find(:all, :limit => 4, :order => "created_at DESC", :conditions => ["id != ?",@spectrum.id])
+    @jump_to_comment = true
+    @comment = Comment.new({
+	:spectrum_id => @spectrum.id,
+	:body => params[:comment][:body],
+	:author => params[:comment][:author],
+	:email => params[:comment][:email]})
+    if verify_recaptcha(:model => @comment, :message => "ReCAPTCHA thinks you're not a human!") && @comment.save
+      redirect_to "/spectra/"+params[:id]
+    else
+      render :action => "show", :id => params[:id]
+    end
+  end
+
 end

@@ -1,14 +1,11 @@
 class CommentsController < ApplicationController
 
-  def create
-    @spectrum = Spectrum.find(params[:id])
-    @comment = Comment.new({
-	:spectrum_id => @spectrum.id,
-	:body => params[:comment][:body],
-	:author => params[:comment][:author],
-	:email => params[:comment][:email]})
-    @comment.save
-    redirect_to "/spectra/"+params[:id]
-  end
+	def delete
+		@comment = Comment.find(params[:id])
+		if params[:password].to_i == APP_CONFIG["password"]
+			@comment.destroy
+		end
+		redirect_to "/spectra/show/"+@comment.spectrum_id.to_s
+	end
 
 end

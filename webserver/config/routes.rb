@@ -2,6 +2,7 @@ ActionController::Routing::Routes.draw do |map|
 
   map.resources :videos
   map.resources :spectrums
+  map.resources :spectra_sets
   map.resources :comments, :belongs_to => :spectrums
 
   map.connect 'spectra/:id', :controller => "spectrums", :action => "show"
