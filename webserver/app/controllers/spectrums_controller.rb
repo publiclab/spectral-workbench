@@ -80,11 +80,20 @@ class SpectrumsController < ApplicationController
 
   # POST /spectrums
   # POST /spectrums.xml
+  # ?spectrum[title]=TITLE&spectrum[author]=anonymous&client=VERSION&uniq_id=UNIQID&startWavelength=STARTW&endWavelength=ENDW;
   def create
+    client_code = params[:client]+"::"+params[:uniq_id]
+    puts client_code
+
     if params[:photo]
       @spectrum = Spectrum.new({:title => params[:spectrum][:title],
 				:author => params[:spectrum][:author],
 				:photo => params[:photo]})
+      @spectrum.client_code = client_code if params[:client] || params[:uniq_id]
+      puts params[:endWavelength]
+      puts params[:startWavelength]
+      # Calibrate
+
     else
       @spectrum = Spectrum.new(params[:spectrum])
     end
