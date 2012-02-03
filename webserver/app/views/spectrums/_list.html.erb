@@ -1,4 +1,4 @@
-<div id="list">
+<div class="list">
 <% @spectrums.each do |spectrum| %>
 
 <div class="spectrum">
@@ -12,7 +12,7 @@
 	<a href="/spectra/show/<%= spectrum.id %>"><div src="<%= spectrum.photo.url(:thumb) %>" class="image" style="background:#ccc;"></div></a>
     <% end %>
     <div class="text">
-      <h2><a href="/spectra/show/<%= spectrum.id %>"><%=h truncate(spectrum.title,:length => 24) %></a></h2>
+      <h3><a href="/spectra/show/<%= spectrum.id %>"><%=h truncate(spectrum.title,:length => 24) %></a></h3>
       <p><a href="/author/<%=h spectrum.author %>"><%=h spectrum.author %></a> | <%= time_ago_in_words(spectrum.created_at) %> ago</p>
       <p class="notes"><%=h truncate(spectrum.notes,:length => 200) %></p>
       <p>

@@ -35,13 +35,19 @@ class Server {
     String webTitle = presenter.generateFileName("untitled",null);
     try {
       String response;
-      println(serverUrl+"/spectrums/create?spectrum[title]="+webTitle+"&spectrum[author]=anonymous");
-      URL u = new URL(serverUrl+"/spectrums/create?spectrum[title]="+webTitle+"&spectrum[author]=anonymous&client=0.5");
+
+      float version = settings.props.getFloatProperty("client.version",0); 
+      int uniq_id = settings.props.getIntProperty("user.uniqId",0); 
+      float startW = spectrum.wavelengthFromPixel(0);
+      float endW = spectrum.wavelengthFromPixel(video.width);
+
+      String saveString = serverUrl+"/spectrums/create?spectrum[title]="+webTitle+"&spectrum[author]=anonymous&client="+version+"&uniq_id="+uniq_id+"&startWavelength="+startW+"&endWavelength="+endW;
+      println(saveString);
+      URL u = new URL(saveString);
       //this.postData(u,presenter.toJson(presenter.generateFileName(typedText, null)).getBytes());
 
       response = postData(u,bufferImage(pg.get()),presenter.generateFileName(typedText,"png"));
       //clear label buffer
-      typedText = "saved: type to label next spectrum";
       println(serverUrl+"/spectra/edit/"+response);
       link(serverUrl+"/spectra/edit/"+response);
     } catch (MalformedURLException e) {

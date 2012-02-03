@@ -22,8 +22,8 @@ class Filter implements AudioSignal, AudioListener
     // note that this needs to be a power of two 
     // and that it means the size of the spectrum
     // will be 512. see the online tutorial for more info.
-    fft = new FFT(out.bufferSize(), out.sampleRate());
-    fft.window(FFT.HAMMING);
+  //fft = new FFT(out.bufferSize(), out.sampleRate());
+  //fft.window(FFT.HAMMING);
     // passes the mic input to the spectrum filter class
     //in.addListener(this);
     // passes the result of the spectrum filter class to the audio output

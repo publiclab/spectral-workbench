@@ -39,7 +39,19 @@ h1 {
 	margin:0;
 }
 
+#maincolumn {
+	width:610px;
+}
+#maincolumn h2 {
+	font-size:2em;
+	padding-bottom:2px;
+	padding-top:5px;
+	border-bottom:4px solid #ccc;
+	clear:left;
+}
+
 h2,h3 {
+	color:#222;
 	font-family: georgia;
 	font-style: italic;
 }
@@ -88,13 +100,13 @@ a h2 {
 	text-decoration:none;
 	font-size:1.8em;
 	margin:4px 0;
-	color:#444;
+	color:#222;
 	font-style:normal;
 }
 .sidebar h3 {
 	font-size:1.5em;
 	margin:4px 0;
-	color:#444;
+	color:#222;
 	font-style:normal;
 }
 .sidebar p {
@@ -139,14 +151,14 @@ a:hover.button {
 	color:#ccc;
 }
 
-#list {
+.list {
 	width:640px;
 }
-#list .notes {
+.list .notes {
 	height:65px;
 	font-size:0.8em;
 }
-#list .spectrum {
+.list .spectrum, .list .set {
 	font-size:0.9em;
 	float:left;
 	width:300px;
@@ -156,15 +168,18 @@ a:hover.button {
 	margin-bottom:10px;
 	border-bottom:4px solid #aaa;
 }
-#list .spectrum .image {
+.list .spectrum .image {
 	height:100px;
 	width:300px;
 }
-#list .text {
+.list .text {
 	padding:6px;
 }
-#list p, #list h2 {
+.list p, .list h3 {
 	margin:3px 0;
+}
+.list h3 {
+	font-size:18px;
 }
 
 #compare .spectrum {
@@ -212,3 +227,6 @@ a:hover.button {
 	margin:6px 0;
 }
 
+#index #sets {
+	margin:14px 0;
+}

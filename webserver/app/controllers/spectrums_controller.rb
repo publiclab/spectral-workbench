@@ -2,7 +2,8 @@ class SpectrumsController < ApplicationController
   # GET /spectrums
   # GET /spectrums.xml
   def index
-    @spectrums = Spectrum.all.reverse
+    @spectrums = Spectrum.find(:all,:limit => 4,:order => "created_at DESC")
+    @sets = SpectraSet.find(:all,:limit => 4,:order => "created_at DESC")
     @comments = Comment.all :limit => 12, :order => "id DESC"
 
     respond_to do |format|

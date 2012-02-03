@@ -1,0 +1,51 @@
+<div id="sets" class="list">
+<% @sets.each do |set| %>
+	<div class="set">
+		<a id="graph_set_<%= set.id %>" style="width:300px;height:100px;display:block;"></a>
+		<div class="text">
+			<h3><a href="/sets/show/<%= set.id %>"><%= set.title %></a></h3>
+			<p><a href="/author/<%= set.author %>"><%= set.author %></a> | <%= set.spectra.length %> spectra</p>
+      			<p class="notes"><%=h truncate(set.notes,:length => 200) %></p>
+		</div>
+
+<script type="text/javascript">
+  data_set_<%= set.id %> = []
+  options = {
+    series: {
+      lines: { 
+        show: true, 
+        lineWidth: 1,
+      },
+    },
+    yaxis: { show: false },
+    xaxis: { show: false },
+    shadowSize: 0,
+    grid: {
+      backgroundColor: "#eee"
+    },
+    // Palette "i eat the rainbow" by svartedauden on Colourlovers: http://www.colourlovers.com/palette/1630898/i_eat_the_rainbow, CC-BY-NC
+    colors: [ "#333333", "#E02130", "#FAB243", "#429867", "#2B5166" ]//, "#482344" ]
+  }
+
+  <% set.spectra.each do |spectrum| %>
+  <% if spectrum.data == "" || spectrum.data.nil? %>
+    spectrum = <%= spectrum.extract_data %>
+  <% else %>
+    spectrum = <%= spectrum.data.chomp(",") %>
+  <% end %>
+    data_set_<%= set.id %>.push({data:[]})
+    //data_set_<%= set.id %>.push({label: "<%= spectrum.title %>",data:[]})
+    scaled = true
+    $.each(spectrum.lines,function(index,line) {
+      if (line.wavelength == null) {
+	line.wavelength = index
+	scaled = false
+      }
+      data_set_<%= set.id %>[data_set_<%= set.id %>.length-1].data.push([line.wavelength,line.average])
+    })
+  <% end %>
+  $.plot($("#graph_set_<%= set.id %>"),data_set_<%= set.id %>,options);
+</script>
+	</div>
+<% end %>
+</div>
