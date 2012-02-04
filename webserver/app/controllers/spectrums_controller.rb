@@ -2,7 +2,7 @@ class SpectrumsController < ApplicationController
   # GET /spectrums
   # GET /spectrums.xml
   def index
-    @spectrums = Spectrum.find(:all,:limit => 4,:order => "created_at DESC")
+    @spectrums = Spectrum.find(:all,:order => "created_at DESC")
     @sets = SpectraSet.find(:all,:limit => 4,:order => "created_at DESC")
     @comments = Comment.all :limit => 12, :order => "id DESC"
 
