@@ -143,7 +143,6 @@
 		$("#toolbar_notification").html("Click on the middle blue band (<a href='http://publiclaboratory.org/wiki/spectral-workbench-calibration'>Learn more</a>)")
 		// observe clicks to graph:
 		$("#graph").bind("plotclick", function (event, pos, item) {
-			console.log(pos.x)
 			second_calibration(pos.x,435.833)
 			// axis coordinates for other axes, if present, are in pos.x2, pos.x3, ...
 		});
