@@ -18,17 +18,31 @@
       line.wavelength = index
       scaled = false
     }
-    spectrum_<%= spectrum.id %>_data.push([line.wavelength,line.average])
+    spectrum_<%= spectrum.id %>_data.push([line.wavelength,line.average/2.55])
   })
   if (!scaled) $('#scaledFlag_<%= spectrum.id %>').html('(<a href="http://publiclaboratory.org/wiki/spectral-workbench-calibration">Uncalibrated</a>)')
 
   $("#spectrum_btn_<%= spectrum.id %>").click(function() {
     spectra.push(<%= spectrum.id %>)
     $("#createSet").show()
-    data.push({label:"<%= spectrum.title %>", data: spectrum_<%= spectrum.id %>_data})
+    data.push({id: <%= spectrum.id %>, label:"<%= spectrum.title %> (<a href='javascript:void(0);' onClick='remove(\"<%= spectrum.id %>\")'>remove</a>)", data: spectrum_<%= spectrum.id %>_data})
     $.plot($("#graph"),data,options);
     $("#spectrum_<%= spectrum.id %>").remove()
   })
+  function remove(id) {
+    $.each(data,function(index,s) {
+      if (s.id == id) {
+        data.splice(index,1)
+      }
+    })
+    $.each(spectra,function(index,s) {
+      if (s == id) {
+        spectra.splice(index,1)
+      }
+    })
+    $.plot($("#graph"),data,options);
+  }
+
 </script>
 </div>
 <% end %>

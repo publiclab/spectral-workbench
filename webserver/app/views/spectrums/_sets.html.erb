@@ -6,6 +6,9 @@
 			<h3><a href="/sets/show/<%= set.id %>"><%= set.title %></a></h3>
 			<p><a href="/author/<%= set.author %>"><%= set.author %></a> | <%= set.spectra.length %> spectra</p>
       			<p class="notes"><%=h truncate(set.notes,:length => 200) %></p>
+			<p>
+				<a href="/sets/show/<%= set.id %>#comments"><%= set.comments.length %> comments</a> 
+			</p>
 		</div>
 
 <script type="text/javascript">

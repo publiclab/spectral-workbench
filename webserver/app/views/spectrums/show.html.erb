@@ -32,9 +32,10 @@
 </div>
 </div>
 
+<div id="show">
 <p>
-<img src="<%= @spectrum.photo.url(:large) %>" />
-<div id="graph" style="width:800px;height:200px;"></div>
+<img id="image" src="<%= @spectrum.photo.url(:large) %>" />
+<div id="graph" style="width:827px;height:200px;"></div>
 
 <script type="text/javascript">
   <% if @spectrum.data == "" || @spectrum.data.nil? %>
@@ -49,7 +50,7 @@
 	line.wavelength = index
 	scaled = false
       }
-      data[0].data.push([line.wavelength,line.average])
+      data[0].data.push([line.wavelength,line.average/(2.55)])
     })
     options = {
       series: {
@@ -58,10 +59,11 @@
           lineWidth: 1,
         },
       },
-      yaxis: { show: false },
+      yaxis: { show: true, min: 0, max: 100 },
       xaxis: { show: scaled },
       shadowSize: 0,
       grid: {
+	borderWidth: 0,
         backgroundColor: "#eee"
       },
       // Palette "i eat the rainbow" by svartedauden on Colourlovers: http://www.colourlovers.com/palette/1630898/i_eat_the_rainbow, CC-BY-NC
@@ -71,13 +73,17 @@
 </script>
 
 <div id="toolbar">
-	<a id="createSet" style="display:none;" href="javascript:void(0);">Create a set from these spectra</a>
+	<a id="createSet" class="smallbutton" style="display:none;" href="javascript:void(0);">Save as set [+]</a>
+	<!--<a id="calibrate" class="smallbutton" href="javascript:void(0);">Calibrate</a>-->
 </div>
 
 <script>
 
 	$('#createSet').click(function() {
 		window.location.href = "/sets/new/"+spectra.join(',')
+	})
+	$('#calibrate').click(function() {
+		
 	})
 
 </script>
@@ -120,7 +126,7 @@ This work is published from:
 <hr />
 
 <a name="comments"></a>
-<h2>Comments</h2>
+<h2>Comments (<%= @spectrum.comments.length %>)</h2>
 
 <% @spectrum.comments.each do |comment| %>
 <div class="comment">
@@ -164,4 +170,4 @@ This work is published from:
     <%= f.submit 'Create' %>
   </p>
 <% end %>
-
+</div>

@@ -42,10 +42,16 @@ h1 {
 #maincolumn {
 	width:610px;
 }
-#maincolumn h2 {
-	font-size:2em;
+#show {
+	width:800px;
+}
+#maincolumn h2, #show h3 {
+	font-weight:bold;
+	font-style:normal;
+	font-family:lucida grande, lucida grande console, sans-serif;
+	font-size:11px;
 	padding-bottom:2px;
-	padding-top:5px;
+	padding-top:2px;
 	border-bottom:4px solid #ccc;
 	clear:left;
 }
@@ -189,8 +195,10 @@ a:hover.button {
 #compare .spectrum p {
 	margin:4px 0 6px 0;
 }
-#compare .spectrum a.smallbutton {
-	padding:4px;
+a.smallbutton {
+	text-decoration:none;
+	font-weight:bold;
+	padding:5px;
         background:#4C6ACB;
 	color:white;
         -moz-border-radius-topleft:3px;
@@ -229,4 +237,26 @@ a:hover.button {
 
 #index #sets {
 	margin:14px 0;
+}
+
+#show #graph {
+	margin-left:-23px;
+	margin-right:0;
+	padding-right:0;
+	border:none;
+}
+#show #toolbar {
+	height:18px;
+	padding:5px;
+	background:#ddd;
+	border-top:3px solid #ddd;
+}
+#show #toolbar a {
+	font-size:11px;
+	padding:3px;
+	background:#555;
+}
+#show #toolbar a:hover {
+	background:#333;
+	color:#aaa;
 }
