@@ -139,6 +139,10 @@ a:hover.button {
 	color:#ccc;
 }
 
+#video {
+	height:400px;
+}
+
 #list {
 	width:640px;
 }
