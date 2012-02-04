@@ -33,14 +33,23 @@ class Spectrum < ActiveRecord::Base
       pixels << '{wavelength:null,average:'+((r+g+b)/3).to_s+',r:'+r.to_s+',g:'+g.to_s+',b:'+b.to_s+'}'
     end
 
-    puts pixels
     # save it internally
     s = "{name:'"+self.title+"',lines: ["
     s += pixels.join(',')
     s += "]}"
     self.data = s
-    self.save
     s
+  end
+
+  # {wavelength:null,average:0,r:0,g:0,b:0}
+  def scale_data(start_w,end_w)
+    d = ActiveSupport::JSON.decode(self.data)
+    i = 0 
+    d['lines'].each do |line|
+      line['wavelength'] = (start_w + i*((end_w-start_w)*1.00/d['lines'].length))
+      i += 1
+    end
+    self.data = ActiveSupport::JSON.encode(d)
   end
 
 end

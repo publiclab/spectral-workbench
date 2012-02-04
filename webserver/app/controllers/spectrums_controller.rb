@@ -90,9 +90,9 @@ class SpectrumsController < ApplicationController
 				:author => params[:spectrum][:author],
 				:photo => params[:photo]})
       @spectrum.client_code = client_code if params[:client] || params[:uniq_id]
-      puts params[:endWavelength]
-      puts params[:startWavelength]
-      # Calibrate
+
+      @spectrum.extract_data
+      @spectrum.scale_data(params[:endWavelength],params[:startWavelength])
 
     else
       @spectrum = Spectrum.new(params[:spectrum])

@@ -41,7 +41,7 @@
   <% if @spectrum.data == "" || @spectrum.data.nil? %>
     spectrum = <%= @spectrum.extract_data %>
   <% else %>
-    spectrum = <%= @spectrum.data.chomp(",") %>
+    spectrum = <%= @spectrum.scale_data(400,700).chomp(",") %>
   <% end %>
     data = [{label: "<%= @spectrum.title %> = 0% ",data:[]}]
     scaled = true
