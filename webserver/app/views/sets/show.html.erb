@@ -38,11 +38,14 @@
         lineWidth: 1,
       },
     },
-    yaxis: { show: false },
+    yaxis: { show: true, min: 0, max: 100 },
     xaxis: { show: scaled },
     shadowSize: 0,
     grid: {
-      backgroundColor: "#eee"
+	clickable: true,
+	hoverable:true,
+	borderWidth: 0,
+        backgroundColor: "#eee"
     },
     // Palette "i eat the rainbow" by svartedauden on Colourlovers: http://www.colourlovers.com/palette/1630898/i_eat_the_rainbow, CC-BY-NC
     colors: [ "#333333", "#E02130", "#FAB243", "#429867", "#2B5166" ]//, "#482344" ]
@@ -61,7 +64,7 @@
 	line.wavelength = index
 	scaled = false
       }
-      data[data.length-1].data.push([line.wavelength,line.average])
+      data[data.length-1].data.push([line.wavelength,line.average/2.55])
     })
   <% end %>
   $.plot($("#graph"),data,options);

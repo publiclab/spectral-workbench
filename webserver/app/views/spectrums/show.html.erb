@@ -38,11 +38,7 @@
 <div id="graph" style="width:827px;height:200px;"></div>
 
 <script type="text/javascript">
-  <% if @spectrum.data == "" || @spectrum.data.nil? %>
-    spectrum = <%= @spectrum.extract_data %>
-  <% else %>
-    spectrum = <%= @spectrum.data.chomp(",") %>
-  <% end %>
+    spectrum = <%= @spectrum.data %>
     data = [{label: "<%= @spectrum.title %> = 0% ",data:[]}]
     scaled = true
     $.each(spectrum.lines,function(index,line) {
@@ -64,6 +60,7 @@
       xaxis: { show: scaled },
       shadowSize: 0,
       grid: {
+	clickable: true,
 	hoverable:true,
 	borderWidth: 0,
         backgroundColor: "#eee"
@@ -127,17 +124,46 @@
 </script>
 
 <div id="toolbar">
-	<a id="createSet" class="smallbutton" style="display:none;" href="javascript:void(0);">Save as set [+]</a>
-	<!--<a id="calibrate" class="smallbutton" href="javascript:void(0);">Calibrate</a>-->
-</div>
+	<p>
+	<small>Embed code: <input style="font-size:11px" id="embedcode" type="text" value="<iframe width='500px' height='400px' border='0' src='http://spectralworkbench.org/spectra/embed/<%= @spectrum.id %>'></iframe>" /></small>
+	<a id="createSet" class="smallbutton" style="display:none;" href="javascript:void(0);">Save as set +</a>
+	<a id="calibrate" class="smallbutton" href="javascript:void(0);">Calibrate</a>
 
+	<span id="toolbar_notification"></span>
+	</p>
+</div>
 <script>
 
 	$('#createSet').click(function() {
 		window.location.href = "/sets/new/"+spectra.join(',')
 	})
+
+	// we could switch to "selection" http://people.iola.dk/olau/flot/examples/selection.html
 	$('#calibrate').click(function() {
-		
+		$("#toolbar_notification").html("Click on the middle blue band (<a href='http://publiclaboratory.org/wiki/spectral-workbench-calibration'>Learn more</a>)")
+		// observe clicks to graph:
+		$("#graph").bind("plotclick", function (event, pos, item) {
+			console.log(pos.x)
+			second_calibration(pos.x,435.833)
+			// axis coordinates for other axes, if present, are in pos.x2, pos.x3, ...
+		});
+	})
+
+	function second_calibration(x1,w1) {
+		$("#toolbar_notification").html("Click on the bright green band")
+		// observe clicks to graph:
+		$("#graph").bind("plotclick", function (event, pos, item) {
+			complete_calibration(x1,w1,pos.x,546.074)
+		});
+	}
+	function complete_calibration(x1,w1,x2,w2) {
+		$("#toolbar_notification").html("Calibrating...")
+		window.location.href = "/spectra/calibrate/<%= @spectrum.id %>?x1="+x1+"&w1="+w1+"&x2="+x2+"&w2="+w2
+	}
+
+	$('#embedcode').click(function() {
+		this.focus()
+		this.select()
 	})
 
 </script>
@@ -149,17 +175,6 @@
 <h3>// NOTES</h3>
 <p class="description"><%= markdown(@spectrum.notes) if @spectrum.notes %></p>
 <% if @spectrum.notes == "" %><p class="description"><i>None</i></p><% end %>
-
-<h3>// SHARE</h3>
-
-<p style="margin-top:0px;">Embed code: <input id="embedcode" type="text" value="<iframe width='500px' height='400px' border='0' src='http://spectralworkbench.org/spectra/embed/<%= @spectrum.id %>'></iframe>" /></p>
-
-<script>
-$('#embedcode').click(function() {
-	this.focus()
-	this.select()
-})
-</script>
 
 <h3>// LICENSE</h3>
 

@@ -2,7 +2,7 @@
 <div id="spectrum_<%= spectrum.id %>" class="spectrum comparison">
 <img width="100px" src="<%= spectrum.photo.url(:thumb) %>" /><br />
 <p><b><%= spectrum.title %></b></p> 
-<a class="smallbutton" id="spectrum_btn_<%= spectrum.id %>" href="javascript:void(0);">Add [+]</a> <span id="scaledFlag_<%= spectrum.id %>"></span></p>
+<a class="smallbutton" id="spectrum_btn_<%= spectrum.id %>" href="javascript:void(0);">Add +</a> <span id="scaledFlag_<%= spectrum.id %>"></span></p>
 <script>
 
   <% if spectrum.data == "" %>
