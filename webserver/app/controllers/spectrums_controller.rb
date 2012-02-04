@@ -17,6 +17,10 @@ class SpectrumsController < ApplicationController
   # GET /spectrums/1.json
   def show
     @spectrum = Spectrum.find(params[:id])
+    if @spectrum.data == "" || @spectrum.data.nil?
+      @spectrum.data = @spectrum.extract_data 
+      @spectrum.save 
+    end
     @comment = Comment.new
 
     @spectrums = Spectrum.find(:all, :limit => 4, :order => "created_at DESC", :conditions => ["id != ?",@spectrum.id])
@@ -159,6 +163,14 @@ class SpectrumsController < ApplicationController
     else
       render :action => "show", :id => params[:id]
     end
+  end
+
+  #def calibrate(x1,wavelength1,x2,wavelength2)
+  def calibrate
+    @spectrum = Spectrum.find(params[:id])
+    @spectrum.calibrate(params[:x1],params[:w1],params[:x2],params[:w2])
+    @spectrum.save
+    redirect_to "/spectra/show/"+@spectrum.id.to_s
   end
 
 end

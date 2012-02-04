@@ -52,4 +52,16 @@ class Spectrum < ActiveRecord::Base
     self.data = ActiveSupport::JSON.encode(d)
   end
 
+  def calibrate(x1,wavelength1,x2,wavelength2)
+    d = ActiveSupport::JSON.decode(self.data)
+    i = 0 
+    stepsize = ((wavelength2.to_f-wavelength1.to_f)*1.00/(x2.to_f-x1.to_f))
+    startwavelength = wavelength1.to_f-(stepsize*x1.to_f)
+    d['lines'].each do |line|
+      line['wavelength'] = startwavelength + i*stepsize
+      i += 1
+    end
+    self.data = ActiveSupport::JSON.encode(d)
+  end
+
 end
