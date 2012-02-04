@@ -1,7 +1,6 @@
 <div class="sidebar spectrumpage">
 <div id="compare" class="box">
   <h3>// Compare to other spectra</h3>
-  <p><small>Currently, comparisons are only valid between spectra from one spectrometer. Once we add wavelength calibration tools, you'll be able to compare to other peoples' data... <a href="http://github.com/jywarren/spectral-workbench/issues/36">coming soon!</a></small></p>
   <p>
     <form id="compareForm" action="javascript:void(0);">
     <input class='text' id='searchinput' type='text' name='q' value=''/>
@@ -129,6 +128,7 @@
 	<a id="createSet" class="smallbutton" style="display:none;" href="javascript:void(0);">Save as set +</a>
 	<a id="calibrate" class="smallbutton" href="javascript:void(0);">Calibrate</a>
 	<a id="extract" class="smallbutton" href="javascript:void(0);">Re-extract from photo</a>
+	<a id="clone" class="smallbutton" href="javascript:void(0);">Clone calibration</a>
 
 	<span id="toolbar_notification"></span>
 	</p>
@@ -138,9 +138,12 @@
 	$('#createSet').click(function() {
 		window.location.href = "/sets/new/"+spectra.join(',')
 	})
-
 	$('#extract').click(function() {
 		window.location.href = "/spectrums/extract/<%= @spectrum.id %>"
+	})
+	$('#clone').click(function() {
+		// use uniq_id as a CSS class, only show those from the same device
+		$('.cloneCalibration').show()
 	})
 	// we could switch to "selection" http://people.iola.dk/olau/flot/examples/selection.html
 	$('#calibrate').click(function() {

@@ -2,14 +2,12 @@
 <div id="spectrum_<%= spectrum.id %>" class="spectrum comparison">
 <img width="100px" src="<%= spectrum.photo.url(:thumb) %>" /><br />
 <p><b><%= spectrum.title %></b></p> 
-<a class="smallbutton" id="spectrum_btn_<%= spectrum.id %>" href="javascript:void(0);">Add +</a> <span id="scaledFlag_<%= spectrum.id %>"></span></p>
+<a class="smallbutton" id="spectrum_btn_<%= spectrum.id %>" href="javascript:void(0);">Add +</a> <span id="scaledFlag_<%= spectrum.id %>"></span>
+<a class="smallbutton cloneCalibration" style="display:none;" id="clone_btn_<%= spectrum.id %>" href="/spectrums/clone/<%= @spectrum.id %>?clone_id=<%= spectrum.id %>">Clone</a> 
+</p>
 <script>
 
-  <% if spectrum.data == "" %>
-    spectrum_<%= spectrum.id %> = <%= spectrum.extract_data %>
-  <% else %>
-    spectrum_<%= spectrum.id %> = <%= spectrum.data.chomp(",") %>
-  <% end %>
+  spectrum_<%= spectrum.id %> = <%= spectrum.data %>
 
   spectrum_<%= spectrum.id %>_data = []
   scaled = true
@@ -20,7 +18,10 @@
     }
     spectrum_<%= spectrum.id %>_data.push([line.wavelength,line.average/2.55])
   })
-  if (!scaled) $('#scaledFlag_<%= spectrum.id %>').html('(<a href="http://publiclaboratory.org/wiki/spectral-workbench-calibration">Uncalibrated</a>)')
+  if (!scaled) {
+    $('#scaledFlag_<%= spectrum.id %>').html('(<a href="http://publiclaboratory.org/wiki/spectral-workbench-calibration">Uncalibrated</a>)')
+    $('#clone_btn_<%= spectrum.id %>').remove()
+  }
 
   $("#spectrum_btn_<%= spectrum.id %>").click(function() {
     spectra.push(<%= spectrum.id %>)
