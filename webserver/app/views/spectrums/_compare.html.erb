@@ -25,8 +25,9 @@
   $("#spectrum_btn_<%= spectrum.id %>").click(function() {
     spectra.push(<%= spectrum.id %>)
     $("#createSet").show()
-    data.push({id: <%= spectrum.id %>, label:"<%= spectrum.title %> (<a href='javascript:void(0);' onClick='remove(\"<%= spectrum.id %>\")'>remove</a>)", data: spectrum_<%= spectrum.id %>_data})
-    $.plot($("#graph"),data,options);
+    data.push({id: <%= spectrum.id %>, label:"<%= spectrum.title %> = 0% (<a href='javascript:void(0);' onClick='remove(\"<%= spectrum.id %>\")'>remove</a>)", data: spectrum_<%= spectrum.id %>_data})
+    plot = $.plot($("#graph"),data,options);
+    init_hovers();
     $("#spectrum_<%= spectrum.id %>").remove()
   })
   function remove(id) {
@@ -40,7 +41,8 @@
         spectra.splice(index,1)
       }
     })
-    $.plot($("#graph"),data,options);
+    plot = $.plot($("#graph"),data,options);
+    init_hovers();
   }
 
 </script>

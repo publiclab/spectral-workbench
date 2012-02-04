@@ -1,6 +1,6 @@
 <div class="sidebar spectrumpage">
 <div id="compare" class="box">
-  <h3>Compare to other spectra</h3>
+  <h3>// Compare to other spectra</h3>
   <p><small>Currently, comparisons are only valid between spectra from one spectrometer. Once we add wavelength calibration tools, you'll be able to compare to other peoples' data... <a href="http://github.com/jywarren/spectral-workbench/issues/36">coming soon!</a></small></p>
   <p>
     <form id="compareForm" action="javascript:void(0);">
@@ -43,7 +43,7 @@
   <% else %>
     spectrum = <%= @spectrum.data.chomp(",") %>
   <% end %>
-    data = [{label: "<%= @spectrum.title %>",data:[]}]
+    data = [{label: "<%= @spectrum.title %> = 0% ",data:[]}]
     scaled = true
     $.each(spectrum.lines,function(index,line) {
       if (line.wavelength == null) {
@@ -59,17 +59,71 @@
           lineWidth: 1,
         },
       },
+      crosshair: { mode: "x" },
       yaxis: { show: true, min: 0, max: 100 },
       xaxis: { show: scaled },
       shadowSize: 0,
       grid: {
+	hoverable:true,
 	borderWidth: 0,
         backgroundColor: "#eee"
       },
       // Palette "i eat the rainbow" by svartedauden on Colourlovers: http://www.colourlovers.com/palette/1630898/i_eat_the_rainbow, CC-BY-NC
       colors: [ "#333333", "#E02130", "#FAB243", "#429867", "#2B5166" ]//, "#482344" ]
     }
-    $.plot($("#graph"),data,options);
+    plot = $.plot($("#graph"),data,options);
+    init_hovers();
+
+    var legends;
+    var updateLegendTimeout = null;
+    var latestPosition = null;
+    
+    function updateLegend() {
+        updateLegendTimeout = null;
+        
+        var pos = latestPosition;
+        
+        var axes = plot.getAxes();
+        if (pos.x < axes.xaxis.min || pos.x > axes.xaxis.max ||
+            pos.y < axes.yaxis.min || pos.y > axes.yaxis.max)
+            return;
+
+        var i, j, dataset = plot.getData();
+        for (i = 0; i < dataset.length; ++i) {
+            var series = dataset[i];
+
+            // find the nearest points, x-wise
+            for (j = 0; j < series.data.length; ++j)
+                if (series.data[j][0] > pos.x)
+                    break;
+            
+            // now interpolate
+            var y, p1 = series.data[j - 1], p2 = series.data[j];
+            if (p1 == null)
+                y = p2[1];
+            else if (p2 == null)
+                y = p1[1];
+            else
+                y = p1[1] + (p2[1] - p1[1]) * (pos.x - p1[0]) / (p2[0] - p1[0]);
+
+            legends.eq(i).html(series.label.replace(/=.*%/, "= " + parseInt(y) + "%"));
+        }
+    }
+    
+    function init_hovers() {
+      $("#graph").bind("plothover",  function (event, pos, item) {
+        latestPosition = pos;
+        if (!updateLegendTimeout)
+            updateLegendTimeout = setTimeout(updateLegend, 50);
+      });
+      legends = $("#graph .legendLabel");
+      legends.each(function () {
+        // fix the widths so they don't jump around
+        $(this).css('width', $(this).width()+10);
+      });
+
+    }
+
 </script>
 
 <div id="toolbar">
@@ -92,12 +146,13 @@
 
 <h1><%= @spectrum.title %></h1>
 
-<h3>Notes</h3>
+<h3>// NOTES</h3>
 <p class="description"><%= markdown(@spectrum.notes) if @spectrum.notes %></p>
+<% if @spectrum.notes == "" %><p class="description"><i>None</i></p><% end %>
 
-<h3>Share</h3>
+<h3>// SHARE</h3>
 
-<p>Embed code: <input id="embedcode" type="text" value="<iframe width='500px' height='400px' border='0' src='http://spectralworkbench.org/spectra/embed/<%= @spectrum.id %>'></iframe>" /></p>
+<p style="margin-top:0px;">Embed code: <input id="embedcode" type="text" value="<iframe width='500px' height='400px' border='0' src='http://spectralworkbench.org/spectra/embed/<%= @spectrum.id %>'></iframe>" /></p>
 
 <script>
 $('#embedcode').click(function() {
@@ -106,15 +161,13 @@ $('#embedcode').click(function() {
 })
 </script>
 
-<h3>License</h3>
+<h3>// LICENSE</h3>
 
 <p xmlns:dct="http://purl.org/dc/terms/" xmlns:vcard="http://www.w3.org/2001/vcard-rdf/3.0#">
-  <a rel="license" href="http://creativecommons.org/publicdomain/zero/1.0/"><img src="http://i.creativecommons.org/p/zero/1.0/88x31.png" style="border-style: none;" alt="CC0" /></a>
-  <br />
+  <a style="float:left;margin-right:6px;display:block;" rel="license" href="http://creativecommons.org/publicdomain/zero/1.0/"><img src="http://i.creativecommons.org/p/zero/1.0/88x31.png" style="border-style: none;" alt="CC0" /></a>
   To the extent possible under law,
   <%# if @spectrum.author.url %><a rel="dct:publisher" href="http://publiclaboratory.org"><%# end %>
-    <span property="dct:title"><%= @spectrum.author %></span>
-  <%# if @spectrum.author.url %></a><%# end %>
+    <span property="dct:title"><%= @spectrum.author %></span><%# if @spectrum.author.url %></a><%# end %>
   has waived all copyright and related or neighboring rights to
   "<span property="dct:title"><%= @spectrum.title %></span>".
 This work is published from:

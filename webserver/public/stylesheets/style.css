@@ -45,7 +45,7 @@ h1 {
 #show {
 	width:800px;
 }
-#maincolumn h2, #show h3 {
+#maincolumn h2, #show h3, #compare h3 {
 	font-weight:bold;
 	font-style:normal;
 	font-family:lucida grande, lucida grande console, sans-serif;
@@ -54,6 +54,10 @@ h1 {
 	padding-top:2px;
 	border-bottom:4px solid #ccc;
 	clear:left;
+}
+#compare h3 {
+	border:none;
+	margin-top:0;
 }
 
 h2,h3 {
@@ -263,4 +267,8 @@ a.smallbutton {
 #show #toolbar a:hover {
 	background:#333;
 	color:#aaa;
+}
+
+#footer {
+	padding-bottom:30px;
 }
