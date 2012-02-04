@@ -128,6 +128,7 @@
 	<small>Embed code: <input style="font-size:11px" id="embedcode" type="text" value="<iframe width='500px' height='400px' border='0' src='http://spectralworkbench.org/spectra/embed/<%= @spectrum.id %>'></iframe>" /></small>
 	<a id="createSet" class="smallbutton" style="display:none;" href="javascript:void(0);">Save as set +</a>
 	<a id="calibrate" class="smallbutton" href="javascript:void(0);">Calibrate</a>
+	<a id="extract" class="smallbutton" href="javascript:void(0);">Re-extract from photo</a>
 
 	<span id="toolbar_notification"></span>
 	</p>
@@ -138,6 +139,9 @@
 		window.location.href = "/sets/new/"+spectra.join(',')
 	})
 
+	$('#extract').click(function() {
+		window.location.href = "/spectrums/extract/<%= @spectrum.id %>"
+	})
 	// we could switch to "selection" http://people.iola.dk/olau/flot/examples/selection.html
 	$('#calibrate').click(function() {
 		$("#toolbar_notification").html("Click on the middle blue band (<a href='http://publiclaboratory.org/wiki/spectral-workbench-calibration'>Learn more</a>)")
