@@ -30,7 +30,10 @@
 	    xaxis: { show: scaled },
 	    shadowSize: 0,
 	    grid: {
-              backgroundColor: "#eee"
+              backgroundColor: "#eee",
+	      clickable: true,
+	      hoverable:true,
+	      borderWidth: 0,
             },
 	    colors: [ "#333333", "#777777" ]
         }
@@ -38,15 +41,20 @@
 </script>
 
 <b><a href="http://spectralworkbench.org/spectra/<%= @spectrum.id %>"><%= @spectrum.title %></a></b>
+<span style="text-align:right;">by <a href="http://spectralworkbench.org/author/"><%= @spectrum.author %></a></span>
 <span style="text-align:right;">on <a href="http://spectralworkbench.org">SpectralWorkbench.org</a></span>
 <style>
 html {
 	font-family: lucida grande, lucida console, arial, sans-serif;
+	font-size:11px;
 }
 body {
 	margin:0;
 }
 b {
 	padding:3px;
+	font-size:13px;
+}
+#graph {
 }
 </style>
