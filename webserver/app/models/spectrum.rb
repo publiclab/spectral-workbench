@@ -50,6 +50,7 @@ class Spectrum < ActiveRecord::Base
       i += 1
     end
     self.data = ActiveSupport::JSON.encode(d)
+    self
   end
 
   def calibrate(x1,wavelength1,x2,wavelength2)
@@ -62,6 +63,21 @@ class Spectrum < ActiveRecord::Base
       i += 1
     end
     self.data = ActiveSupport::JSON.encode(d)
+    self
+  end
+
+  # clones calibration from another spectrum (preferably taken from the same device)
+  def clone(clone_id)
+    clone_source = Spectrum.find clone_id 
+    d = ActiveSupport::JSON.decode(self.data)
+    cd = ActiveSupport::JSON.decode(clone_source.data)
+    i = 0 
+    d['lines'].each do |line|
+      line['wavelength'] = cd['lines'][i]['wavelength']
+      i += 1
+    end
+    self.data = ActiveSupport::JSON.encode(d)
+    self
   end
 
 end

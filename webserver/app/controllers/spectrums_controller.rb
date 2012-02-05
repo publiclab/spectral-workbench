@@ -46,8 +46,8 @@ class SpectrumsController < ApplicationController
 
   # non REST
   def compare
-    spectrum = Spectrum.find(params[:id])
-    @spectrums = Spectrum.find(:all, :conditions => ['id != ? AND (title LIKE ? OR notes LIKE ?)',spectrum.id,"%"+params[:q]+"%", "%"+params[:q]+"%"],:limit => 100,:order => "created_at DESC")
+    @spectrum = Spectrum.find(params[:id])
+    @spectrums = Spectrum.find(:all, :conditions => ['id != ? AND (title LIKE ? OR notes LIKE ?)',@spectrum.id,"%"+params[:q]+"%", "%"+params[:q]+"%"],:limit => 100,:order => "created_at DESC")
     render :partial => "compare", :layout => false
   end
 
@@ -167,15 +167,25 @@ class SpectrumsController < ApplicationController
 
   #def calibrate(x1,wavelength1,x2,wavelength2)
   def calibrate
+    #auth_token
     @spectrum = Spectrum.find(params[:id])
-    @spectrum.calibrate(params[:x1],params[:w1],params[:x2],params[:w2])
+    @spectrum.calibrate(params[:x1],params[:w1],params[:x2],params[:w2]).save
     @spectrum.save
     redirect_to "/spectra/show/"+@spectrum.id.to_s
   end
 
   def extract
+    #auth_token
     @spectrum = Spectrum.find(params[:id])
     @spectrum.extract_data
+    @spectrum.save
+    redirect_to "/spectra/show/"+@spectrum.id.to_s
+  end
+
+  def clone
+    #auth_token
+    @spectrum = Spectrum.find(params[:id])
+    @spectrum.clone(params[:clone_id])
     @spectrum.save
     redirect_to "/spectra/show/"+@spectrum.id.to_s
   end
