@@ -83,7 +83,7 @@ class Spectrum < ActiveRecord::Base
       i += 1
     end
     self.data = ActiveSupport::JSON.encode(d)
-    self.description = self.description+" -- (Cloned calibration from <a href='/spectra/show/<%= clone_id %>'><%= clone_source.title %></a>)"
+    self.notes = self.notes+" -- (Cloned calibration from <a href='/spectra/show/"+clone_id+"'>"+clone_source.title+"</a>)"
     self
   end
 
