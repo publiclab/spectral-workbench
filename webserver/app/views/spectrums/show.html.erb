@@ -55,7 +55,7 @@
         },
       },
       crosshair: { mode: "x" },
-      yaxis: { show: true, min: 0, max: 100 },
+      yaxis: { show: true },
       xaxis: { show: scaled },
       shadowSize: 0,
       grid: {
@@ -127,8 +127,8 @@
 	<small>Embed code: <input style="font-size:11px" id="embedcode" type="text" value="<iframe width='500px' height='400px' border='0' src='http://spectralworkbench.org/spectra/embed/<%= @spectrum.id %>'></iframe>" /></small>
 	<a id="createSet" class="smallbutton" style="display:none;" href="javascript:void(0);">Save as set +</a>
 	<a id="extract" class="smallbutton" href="javascript:void(0);">Re-extract from photo</a>
-	<a id="calibrate" class="smallbutton" href="javascript:void(0);">Calibrate</a>
 	<a id="clone" class="smallbutton" href="javascript:void(0);">Clone calibration</a>
+	<a id="calibrate" class="smallbutton" href="javascript:void(0);">Calibrate</a>
 
 	<span id="toolbar_notification"></span>
 	</p>

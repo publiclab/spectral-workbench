@@ -3,7 +3,7 @@
 <img width="100px" src="<%= spectrum.photo.url(:thumb) %>" /><br />
 <p><b><%= spectrum.title %></b></p> 
 <a class="smallbutton" id="spectrum_btn_<%= spectrum.id %>" href="javascript:void(0);">Add +</a> <span id="scaledFlag_<%= spectrum.id %>"></span>
-<a class="smallbutton cloneCalibration" style="display:none;" id="clone_btn_<%= spectrum.id %>" href="/spectrums/clone/<%= @spectrum.id %>?clone_id=<%= spectrum.id %>">Clone</a> 
+<% if @spectrum %><a class="smallbutton cloneCalibration" style="display:none;" id="clone_btn_<%= spectrum.id %>" href="/spectrums/clone/<%= @spectrum.id %>?clone_id=<%= spectrum.id %>">Clone</a><% end %> 
 </p>
 <script>
 
