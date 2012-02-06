@@ -72,11 +72,18 @@ class Spectrum < ActiveRecord::Base
     d = ActiveSupport::JSON.decode(self.data)
     cd = ActiveSupport::JSON.decode(clone_source.data)
     i = 0 
+    # assume linear:
+    stepsize = (cd['lines'][10]['wavelength'].to_f-cd['lines'][0]['wavelength'].to_f)/10.00
     d['lines'].each do |line|
-      line['wavelength'] = cd['lines'][i]['wavelength']
+      if cd['lines'][i]
+        line['wavelength'] = cd['lines'][i]['wavelength'] 
+      else
+        line['wavelength'] = cd['lines'][0]['wavelength'].to_f+(i*stepsize)
+      end
       i += 1
     end
     self.data = ActiveSupport::JSON.encode(d)
+    self.notes = self.notes+" -- (Cloned calibration from <a href='/spectra/show/"+clone_id+"'>"+clone_source.title+"</a>)"
     self
   end
 
