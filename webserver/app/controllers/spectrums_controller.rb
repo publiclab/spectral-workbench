@@ -1,4 +1,8 @@
 class SpectrumsController < ApplicationController
+  protect_from_forgery :only => [:clone, :extract, :calibrate]
+  # http://api.rubyonrails.org/classes/ActionController/RequestForgeryProtection/ClassMethods.html
+  # create and update are protected by recaptcha
+
   # GET /spectrums
   # GET /spectrums.xml
   def index
@@ -165,28 +169,34 @@ class SpectrumsController < ApplicationController
     end
   end
 
+  # non REST
   #def calibrate(x1,wavelength1,x2,wavelength2)
   def calibrate
-    #auth_token
     @spectrum = Spectrum.find(params[:id])
-    @spectrum.calibrate(params[:x1],params[:w1],params[:x2],params[:w2]).save
-    @spectrum.save
+    if request.post?
+      @spectrum.calibrate(params[:x1],params[:w1],params[:x2],params[:w2]).save
+      @spectrum.save
+    end
     redirect_to "/spectra/show/"+@spectrum.id.to_s
   end
 
+  # non REST
   def extract
-    #auth_token
     @spectrum = Spectrum.find(params[:id])
-    @spectrum.extract_data
-    @spectrum.save
+    if request.post?
+      @spectrum.extract_data
+      @spectrum.save
+    end
     redirect_to "/spectra/show/"+@spectrum.id.to_s
   end
 
+  # non REST
   def clone
-    #auth_token
     @spectrum = Spectrum.find(params[:id])
-    @spectrum.clone(params[:clone_id])
-    @spectrum.save
+    if request.post?
+      @spectrum.clone(params[:clone_id])
+      @spectrum.save
+    end
     redirect_to "/spectra/show/"+@spectrum.id.to_s
   end
 

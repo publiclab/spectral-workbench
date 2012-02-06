@@ -1,4 +1,5 @@
 class SetsController < ApplicationController
+  # create and update are protected by recaptcha
 
   def show
     @set = SpectraSet.find params[:id]

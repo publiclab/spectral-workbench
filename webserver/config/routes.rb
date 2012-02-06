@@ -2,6 +2,9 @@ ActionController::Routing::Routes.draw do |map|
 
   map.resources :videos
   map.resources :spectrums
+#  map.resources :spectrums, :collection=>{
+#  :doSomething= > :get,
+#  :doSomethingAgain => :post }
   map.resources :spectra_sets
   map.resources :comments, :belongs_to => :spectrums
 

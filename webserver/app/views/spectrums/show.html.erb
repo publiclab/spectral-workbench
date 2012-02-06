@@ -18,10 +18,6 @@
 		$("#result").html(ajax_load).load(url);
 	});
 
-	$("#createSet").click(function() {
-		window.location.href = "/sets/new?spectra_string="+spectra.join(",")
-	})
-
     </script>
   </p>
   <div id="result">
@@ -136,10 +132,20 @@
 <script>
 
 	$('#createSet').click(function() {
-		window.location.href = "/sets/new/"+spectra.join(',')
+		var f = document.createElement('form');
+		f.style.display = 'none';
+		$('#graph').append(f);
+		f.method = 'POST';
+		f.action = "/sets/new/"+spectra.join(',')+"?authenticity_token=<%= form_authenticity_token %>"
+		f.submit();
 	})
 	$('#extract').click(function() {
-		window.location.href = "/spectrums/extract/<%= @spectrum.id %>"
+		var f = document.createElement('form');
+		f.style.display = 'none';
+		$('#graph').append(f);
+		f.method = 'POST';
+		f.action = "/spectrums/extract/<%= @spectrum.id %>?authenticity_token=<%= form_authenticity_token %>"
+		f.submit();
 	})
 	$('#clone').click(function() {
 		// use uniq_id as a CSS class, only show those from the same device
@@ -164,7 +170,12 @@
 	}
 	function complete_calibration(x1,w1,x2,w2) {
 		$("#toolbar_notification").html("Calibrating...")
-		window.location.href = "/spectra/calibrate/<%= @spectrum.id %>?x1="+x1+"&w1="+w1+"&x2="+x2+"&w2="+w2
+		var f = document.createElement('form');
+		f.style.display = 'none';
+		$('#graph').append(f);
+		f.method = 'POST';
+		f.action = "/spectra/calibrate/<%= @spectrum.id %>?x1="+x1+"&w1="+w1+"&x2="+x2+"&w2="+w2+"&authenticity_token=<%= form_authenticity_token %>"
+		f.submit();
 	}
 
 	$('#embedcode').click(function() {

@@ -3,9 +3,19 @@
 <img width="100px" src="<%= spectrum.photo.url(:thumb) %>" /><br />
 <p><b><%= spectrum.title %></b></p> 
 <a class="smallbutton" id="spectrum_btn_<%= spectrum.id %>" href="javascript:void(0);">Add +</a> <span id="scaledFlag_<%= spectrum.id %>"></span>
-<a class="smallbutton cloneCalibration" style="display:none;" id="clone_btn_<%= spectrum.id %>" href="/spectrums/clone/<%= @spectrum.id %>?clone_id=<%= spectrum.id %>">Clone</a> 
+<a class="smallbutton cloneCalibration" style="display:none;" id="clone_btn_<%= spectrum.id %>" href="javascript:void(0);">Clone</a>
+
 </p>
 <script>
+
+  $('#clone_btn_<%= spectrum.id %>').click(function() {
+	var f = document.createElement('form');
+	f.style.display = 'none';
+	$('#graph').append(f);
+	f.method = 'POST';
+	f.action = "/spectrums/clone/<%= @spectrum.id %>?clone_id=<%= spectrum.id %>&authenticity_token=<%= form_authenticity_token %>"
+	f.submit();
+  })
 
   spectrum_<%= spectrum.id %> = <%= spectrum.data %>
 
