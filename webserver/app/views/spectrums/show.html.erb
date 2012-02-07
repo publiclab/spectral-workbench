@@ -143,8 +143,15 @@
 		var f = document.createElement('form');
 		f.style.display = 'none';
 		$('#graph').append(f);
+// Fails here. I'm guessing also in the bigger picture that form_auth_token needs to be a POST var, not a GET var?
+// Also keep in mind you're running 2.3.11, try .12, search for " undefined method `destroy' for {:_csrf_token=">
+		f.attr("id") = "extractform"
+		var i = document.createElement('input');
+		i.attr("name") = "authenticity_token"
+		i.attr("value") = "<%= form_authenticity_token %>"
+		$('#extractform').append(i);
 		f.method = 'POST';
-		f.action = "/spectrums/extract/<%= @spectrum.id %>?authenticity_token=<%= form_authenticity_token %>"
+		f.action = "/spectrums/extract/<%= @spectrum.id %>"
 		f.submit();
 	})
 	$('#clone').click(function() {
