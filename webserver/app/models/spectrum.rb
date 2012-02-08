@@ -62,6 +62,7 @@ class Spectrum < ActiveRecord::Base
       line['wavelength'] = startwavelength + i*stepsize
       i += 1
     end
+    self.reverse if (wavelength1 < wavelength2 && x1 > x2) || (wavelength1 > wavelength2 && x1 < x2)
     self.data = ActiveSupport::JSON.encode(d)
     self
   end
@@ -85,6 +86,17 @@ class Spectrum < ActiveRecord::Base
     self.data = ActiveSupport::JSON.encode(d)
     self.notes = self.notes+" -- (Cloned calibration from <a href='/spectra/show/"+clone_id+"'>"+clone_source.title+"</a>)"
     self
+  end
+
+  # horizontally flips image to match reversed spectrum
+  # this needs to re-save all the Paperclip versions too... it only works for the original image now
+  def reverse
+    require 'rubygems'
+    require 'RMagick'
+
+    image = Magick::ImageList.new("public"+self.photo.url)
+    image.flop!
+    image.write("public"+self.photo.url)
   end
 
 end

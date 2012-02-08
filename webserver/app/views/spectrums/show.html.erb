@@ -135,20 +135,23 @@
 		var f = document.createElement('form');
 		f.style.display = 'none';
 		$('#graph').append(f);
+		f.id = "createsetform"
+		var i = document.createElement('input');
+		i.name = "authenticity_token"
+		i.value = "<%= form_authenticity_token %>"
+		$('#createsetform').append(i);
 		f.method = 'POST';
-		f.action = "/sets/new/"+spectra.join(',')+"?authenticity_token=<%= form_authenticity_token %>"
+		f.action = "/sets/new/"+spectra.join(',')
 		f.submit();
 	})
 	$('#extract').click(function() {
 		var f = document.createElement('form');
 		f.style.display = 'none';
 		$('#graph').append(f);
-// Fails here. I'm guessing also in the bigger picture that form_auth_token needs to be a POST var, not a GET var?
-// Also keep in mind you're running 2.3.11, try .12, search for " undefined method `destroy' for {:_csrf_token=">
-		f.attr("id") = "extractform"
+		f.id = "extractform"
 		var i = document.createElement('input');
-		i.attr("name") = "authenticity_token"
-		i.attr("value") = "<%= form_authenticity_token %>"
+		i.name = "authenticity_token"
+		i.value = "<%= form_authenticity_token %>"
 		$('#extractform').append(i);
 		f.method = 'POST';
 		f.action = "/spectrums/extract/<%= @spectrum.id %>"
@@ -180,8 +183,13 @@
 		var f = document.createElement('form');
 		f.style.display = 'none';
 		$('#graph').append(f);
+		f.id = "calibrateform"
+		var i = document.createElement('input');
+		i.name = "authenticity_token"
+		i.value = "<%= form_authenticity_token %>"
+		$('#calibrateform').append(i);
 		f.method = 'POST';
-		f.action = "/spectra/calibrate/<%= @spectrum.id %>?x1="+x1+"&w1="+w1+"&x2="+x2+"&w2="+w2+"&authenticity_token=<%= form_authenticity_token %>"
+		f.action = "/spectra/calibrate/<%= @spectrum.id %>?x1="+x1+"&w1="+w1+"&x2="+x2+"&w2="+w2
 		f.submit();
 	}
 

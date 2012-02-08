@@ -11,8 +11,13 @@
 	var f = document.createElement('form');
 	f.style.display = 'none';
 	$('#graph').append(f);
+		f.id = "clone<%= spectrum.id %>form"
+		var i = document.createElement('input');
+		i.name = "authenticity_token"
+		i.value = "<%= form_authenticity_token %>"
+		$('#clone<%= spectrum.id %>form').append(i);
 	f.method = 'POST';
-	f.action = "/spectrums/clone/<%= @spectrum.id %>?clone_id=<%= spectrum.id %>&authenticity_token=<%= form_authenticity_token %>"
+	f.action = "/spectrums/clone/<%= @spectrum.id %>?clone_id=<%= spectrum.id %>"
 	f.submit();
   })
 
