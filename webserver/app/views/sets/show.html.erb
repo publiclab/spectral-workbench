@@ -13,44 +13,41 @@
 <div id="graph" style="width:800px;height:200px;"></div>
 
 <script type="text/javascript">
-  data = []
-
   <% @set.spectra.each do |spectrum| %>
   <% if spectrum.data == "" || spectrum.data.nil? %>
     spectrum = <%= spectrum.extract_data %>
   <% else %>
     spectrum = <%= spectrum.data.chomp(",") %>
   <% end %>
-    data.push({label: "<%= spectrum.title %>",data:[]})
+    data = [{label: "<%= spectrum.title %> = 0% ",data:[]},{data:[],xaxis:2}]
     scaled = true
     $.each(spectrum.lines,function(index,line) {
       if (line.wavelength == null) {
 	line.wavelength = index
 	scaled = false
       }
-      data[data.length-1].data.push([line.wavelength,line.average/2.55])
+      data[data.length-2].data.push([line.wavelength,line.average/(2.55)])
+      data[data.length-1].data.push([10000000/line.wavelength,line.average/(2.55)])
     })
   <% end %>
-  options = {
-    series: {
-      lines: { 
-        show: true, 
-        lineWidth: 1,
-      },
-    },
-    yaxis: { show: true },
-    xaxis: { show: scaled },
-    shadowSize: 0,
-    grid: {
-	clickable: true,
-	hoverable:true,
-	borderWidth: 0,
-        backgroundColor: "#eee"
-    },
-    // Palette "i eat the rainbow" by svartedauden on Colourlovers: http://www.colourlovers.com/palette/1630898/i_eat_the_rainbow, CC-BY-NC
-    colors: [ "#333333", "#E02130", "#FAB243", "#429867", "#2B5166" ]//, "#482344" ]
-  }
-  $.plot($("#graph"),data,options);
+  flotoptions.xaxes[0].show = scaled
+  $.plot($("#graph"),data,flotoptions);
+</script>
+
+<div id="toolbar">
+	<p>
+	<small>Embed code: <input style="font-size:11px;" id="embedcode" type="text" value="<iframe width='500px' height='400px' border='0' src='http://spectralworkbench.org/sets/embed/<%= @set.id %>'></iframe>" /></small>
+	<a id="wavenumber" class="smallbutton" href="javascript:void(0);">Show wavenumber</a>
+	</p>
+</div>
+
+<script>
+
+	$('#wavenumber').click(function() {
+		flotoptions.xaxes[1].show = true
+		$.plot($("#graph"),data,flotoptions);
+	})
+
 </script>
 
 </p>

@@ -1,36 +1,38 @@
 <script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.js"></script> 
 <script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.flot.js"></script> 
 <script language="javascript" type="text/javascript" src="/javascripts/application.js"></script> 
+<div id="graph" style="width:500px;height:160px;"></div>
 
-<img width="500px" src="<%= @spectrum.photo.url(:large) %>" />
-<div id="graph" style="width:500px;height:140px;"></div>
 <script type="text/javascript">
-  <% if @spectrum.data == "" || @spectrum.data.nil? %>
-    spectrum = <%= @spectrum.extract_data %>
+  <% @set.spectra.each do |spectrum| %>
+  <% if spectrum.data == "" || spectrum.data.nil? %>
+    spectrum = <%= spectrum.extract_data %>
   <% else %>
-    spectrum = <%= @spectrum.data.chomp(",") %>
+    spectrum = <%= spectrum.data.chomp(",") %>
   <% end %>
-    data = [{label: "<%= @spectrum.title %> = 0% ",data:[]},{data:[],xaxis:2}]
+    data = [{label: "<%= spectrum.title %> = 0% ",data:[]},{data:[],xaxis:2}]
     scaled = true
     $.each(spectrum.lines,function(index,line) {
       if (line.wavelength == null) {
 	line.wavelength = index
 	scaled = false
       }
-      data[0].data.push([line.wavelength,line.average/(2.55)])
-      data[1].data.push([10000000/line.wavelength,line.average/(2.55)])
+      data[data.length-2].data.push([line.wavelength,line.average/(2.55)])
+      data[data.length-1].data.push([10000000/line.wavelength,line.average/(2.55)])
     })
-    flotoptions.xaxes[0].show = scaled
-    plot = $.plot($("#graph"),data,flotoptions);
+  <% end %>
+  flotoptions.xaxes[0].show = scaled
+  $.plot($("#graph"),data,flotoptions);
 </script>
 
-<b><a href="http://spectralworkbench.org/spectra/show/<%= @spectrum.id %>"><%= @spectrum.title %></a></b>
-<span style="text-align:right;">by <a href="http://spectralworkbench.org/author/"><%= @spectrum.author %></a></span>
+<b><a href="http://spectralworkbench.org/sets/show/<%= @set.id %>"><%= @set.title %></a></b>
+<span style="text-align:right;">by <a href="http://spectralworkbench.org/author/"><%= @set.author %></a></span>
 <span style="text-align:right;">on <a href="http://spectralworkbench.org">SpectralWorkbench.org</a></span>
 <style>
 html {
 	font-family: lucida grande, lucida console, arial, sans-serif;
 	font-size:11px;
+	padding-top:8px;
 }
 body {
 	margin:0;
@@ -40,6 +42,5 @@ b {
 	font-size:13px;
 }
 #graph {
-	margin-top:8px;
 }
 </style>

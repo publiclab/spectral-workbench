@@ -12,6 +12,11 @@ class SetsController < ApplicationController
     @comment = Comment.new
   end
 
+  def embed
+    @set = SpectraSet.find params[:id]
+    render :layout => false 
+  end
+
   def new
     @set = SpectraSet.new
 
