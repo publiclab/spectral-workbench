@@ -1,6 +1,12 @@
 <div class="sidebar spectrumpage">
+<div class="box">
+  <h3>// SETS WITH THIS SPECTRUM</h3>
+  <% @spectrum.sets.each do |set| %>
+  <p><a href="/sets/show/<%= set.id %>"><%= set.title %></a></p>
+  <% end %>
+</div>
 <div id="compare" class="box">
-  <h3>// Compare to other spectra</h3>
+  <h3>// COMPARE SPECTRA</h3>
   <p>
     <form id="compareForm" action="javascript:void(0);">
     <input class='text' id='searchinput' type='text' name='q' value=''/>

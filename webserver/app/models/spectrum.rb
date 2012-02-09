@@ -97,6 +97,12 @@ class Spectrum < ActiveRecord::Base
     image = Magick::ImageList.new("public"+self.photo.url)
     image.flop!
     image.write("public"+self.photo.url)
+    self.photo.reprocess!
+  end
+
+  # this is embarassing 
+  def sets
+    SpectraSet.find(:all, :conditions => ["spectra_string LIKE '%,?,%' OR spectra_string LIKE '%,?' OR spectra_string LIKE '?,%'",self.id,self.id,self.id])
   end
 
 end
