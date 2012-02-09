@@ -260,9 +260,11 @@ This work is published from:
     <%= f.label :email %><br />
     <%= f.text_field :email %>
   </p>
+  <% if !APP_CONFIG["local"] %>
   <p>
     <%= recaptcha_tags :display => {:theme => "white"} %>
   </p>
+  <% end %>
 
   <input type='hidden' name='id' value='<%= @spectrum.id %>' />
 

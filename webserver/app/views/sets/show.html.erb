@@ -1,27 +1,7 @@
 <div class="sidebar spectrumpage">
-<div id="compare" class="box">
-  <h3>// Compare to other spectra</h3>
-  <p>
-    <form id="compareForm" action="javascript:void(0);">
-    <input class='text' id='searchinput' type='text' name='q' value=''/>
-    <input type='submit' id='searchsubmit' value='search' />
-    </form>
-    <script>
-        $.ajaxSetup ({ cache: false }); 
-
-	var ajax_load = "<img src='/images/spinner-small.gif' alt='loading...' />";
-
-	$("#compareForm").submit(function(){
-		var url = "/spectrums/compare/?q="+$("#searchinput").val();
-		$("#result").html(ajax_load).load(url);
-	});
-
-    </script>
-  </p>
-  <div id="result">
-    <b>Recent spectra:</b><br />
-    <%= render :partial => "spectrums/compare" %>
-  </div>
+<div class="box">
+  <h3>// SPECTRA IN THIS SET</h3>
+    <%= render :partial => "spectra" %>
 </div>
 </div>
 

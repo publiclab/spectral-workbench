@@ -107,7 +107,7 @@ class SpectrumsController < ApplicationController
     end
 
     respond_to do |format|
-      if (params[:client] == "0.5" || verify_recaptcha(:model => @spectrum, :message => "ReCAPTCHA thinks you're not a human!")) && @spectrum.save
+      if (params[:client] == "0.5" || (APP_CONFIG["local"] || verify_recaptcha(:model => @spectrum, :message => "ReCAPTCHA thinks you're not a human!"))) && @spectrum.save
         if (params[:client]) # java client
           format.html { render :text => @spectrum.id }
         else
@@ -130,7 +130,7 @@ class SpectrumsController < ApplicationController
     @spectrum = Spectrum.find(params[:id])
 
     respond_to do |format|
-      if verify_recaptcha(:model => @spectrum, :message => "ReCAPTCHA thinks you're not a human!") && @spectrum.update_attributes(params[:spectrum])
+      if (APP_CONFIG["local"] || verify_recaptcha(:model => @spectrum, :message => "ReCAPTCHA thinks you're not a human!")) && @spectrum.update_attributes(params[:spectrum])
         flash[:notice] = 'Spectrum was successfully updated.'
         format.html { redirect_to(@spectrum) }
         format.xml  { head :ok }
@@ -162,7 +162,7 @@ class SpectrumsController < ApplicationController
 	:body => params[:comment][:body],
 	:author => params[:comment][:author],
 	:email => params[:comment][:email]})
-    if verify_recaptcha(:model => @comment, :message => "ReCAPTCHA thinks you're not a human!") && @comment.save
+    if (APP_CONFIG["local"] || verify_recaptcha(:model => @comment, :message => "ReCAPTCHA thinks you're not a human!")) && @comment.save
       redirect_to "/spectra/"+params[:id]
     else
       render :action => "show", :id => params[:id]

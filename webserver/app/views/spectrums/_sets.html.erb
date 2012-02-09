@@ -1,7 +1,7 @@
 <div id="sets" class="list">
 <% @sets.each do |set| %>
 	<div class="set">
-		<a id="graph_set_<%= set.id %>" style="width:300px;height:100px;display:block;"></a>
+		<a class="graph_set" id="graph_set_<%= set.id %>" style="width:300px;height:100px;display:block;"></a>
 		<div class="text">
 			<h3><a href="/sets/show/<%= set.id %>"><%= set.title %></a></h3>
 			<p><a href="/author/<%= set.author %>"><%= set.author %></a> | <%= set.spectra.length %> spectra</p>
@@ -24,6 +24,9 @@
     xaxis: { show: false },
     shadowSize: 0,
     grid: {
+      clickable: true,
+      hoverable:true,
+      borderWidth: 0,
       backgroundColor: "#eee"
     },
     // Palette "i eat the rainbow" by svartedauden on Colourlovers: http://www.colourlovers.com/palette/1630898/i_eat_the_rainbow, CC-BY-NC

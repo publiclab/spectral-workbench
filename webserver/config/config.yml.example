@@ -1,8 +1,14 @@
 development:
   password: "xxx"
+  redcarpet_version: 2
+  version: 0.5
+  local: false
 
 test:
 
 production:
   password: "xxx"
+  redcarpet_version: 2
+  version: 0.5
+  local: false
 

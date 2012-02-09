@@ -45,11 +45,11 @@ h1 {
 #show {
 	width:800px;
 }
-#maincolumn h2, #show h3, #compare h3 {
+#maincolumn h2, #show h3, #compare h3, .sidebar h3 {
 	font-weight:bold;
 	font-style:normal;
 	font-family:lucida grande, lucida grande console, sans-serif;
-	font-size:11px;
+	font-size:11px !important;
 	padding-bottom:2px;
 	padding-top:2px;
 	border-bottom:4px solid #ccc;
@@ -59,7 +59,9 @@ h1 {
 	border:none;
 	margin-top:0;
 }
-
+#maincolumn h2 a.right, #show h3 a.right, #compare h3 a.right {
+	float:right;
+}
 h2,h3 {
 	color:#222;
 	font-family: georgia;
@@ -140,6 +142,9 @@ a h2 {
 	width:180px;
 	padding-left:10px;
 }
+.sidebar .spectrum p {
+	margin-top:6px;
+}
 
 .button {
 	font-size:18px;
@@ -194,6 +199,9 @@ a:hover.button {
 }
 .list h3 {
 	font-size:18px;
+}
+
+.list .graph_set {
 }
 
 #compare .spectrum {
@@ -276,5 +284,6 @@ a.smallbutton {
 }
 
 #footer {
+	clear:both;
 	padding-bottom:30px;
 }

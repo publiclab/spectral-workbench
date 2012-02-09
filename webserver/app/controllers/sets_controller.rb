@@ -1,6 +1,11 @@
 class SetsController < ApplicationController
   # create and update are protected by recaptcha
 
+  def index
+    @sets = SpectraSet.find(:all, :order => "created_at DESC")
+    @comments = Comment.all :limit => 12, :order => "id DESC"
+  end
+
   def show
     @set = SpectraSet.find params[:id]
     @spectrums = Spectrum.find(:all, :limit => 4, :order => "created_at DESC")
