@@ -83,6 +83,8 @@ class Spectrum < ActiveRecord::Base
       end
       i += 1
     end
+    # figure out how to know when to reverse based on a cloned calibration... maybe we need to store reversal...
+    #self.reverse if (wavelength1 < wavelength2 && x1 > x2) || (wavelength1 > wavelength2 && x1 < x2)
     self.data = ActiveSupport::JSON.encode(d)
     self.notes = self.notes+" -- (Cloned calibration from <a href='/spectra/show/"+clone_id+"'>"+clone_source.title+"</a>)"
     self
