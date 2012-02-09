@@ -13,13 +13,14 @@
 <div id="graph" style="width:800px;height:200px;"></div>
 
 <script type="text/javascript">
+  data = []
   <% @set.spectra.each do |spectrum| %>
   <% if spectrum.data == "" || spectrum.data.nil? %>
     spectrum = <%= spectrum.extract_data %>
   <% else %>
     spectrum = <%= spectrum.data.chomp(",") %>
   <% end %>
-    data = [{label: "<%= spectrum.title %> = 0% ",data:[]}]
+    data.push({label: "<%= spectrum.title %> = 0% ",data:[]})
     scaled = true
     $.each(spectrum.lines,function(index,line) {
       if (line.wavelength == null) {
