@@ -4,6 +4,10 @@
 nanometers = function(n) {
 	return n+" nm"
 }
+wavenumbers = function(n) {
+	return parseInt(10000000/n)+" cm<sup>-1</sup>"
+}
+wavenumber_tickSize = 166.6666 
 
 flotoptions = {
 	series: {
@@ -14,8 +18,7 @@ flotoptions = {
 	},
 	crosshair: { mode: "x" },
 	yaxis: { show: true, tickFormatter: function(n) { return n+"%" } }, 
-	//xaxis: { show: false, tickFormatter: nanometers },
-	xaxes: [{ tickFormatter: nanometers }, { show:false, tickFormatter: function(n) { return n+" cm<sup>-1</sup>" } }],
+	xaxis: { show: false, tickFormatter: nanometers },
 	shadowSize: 0,
 	grid: {
 		clickable: true,

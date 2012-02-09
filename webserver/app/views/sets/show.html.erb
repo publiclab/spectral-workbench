@@ -19,24 +19,23 @@
   <% else %>
     spectrum = <%= spectrum.data.chomp(",") %>
   <% end %>
-    data = [{label: "<%= spectrum.title %> = 0% ",data:[]},{data:[],xaxis:2}]
+    data = [{label: "<%= spectrum.title %> = 0% ",data:[]}]
     scaled = true
     $.each(spectrum.lines,function(index,line) {
       if (line.wavelength == null) {
 	line.wavelength = index
 	scaled = false
       }
-      data[data.length-2].data.push([line.wavelength,line.average/(2.55)])
-      data[data.length-1].data.push([10000000/line.wavelength,line.average/(2.55)])
+      data[data.length-1].data.push([line.wavelength,line.average/(2.55)])
     })
   <% end %>
-  flotoptions.xaxes[0].show = scaled
+  flotoptions.xaxis.show = scaled
   $.plot($("#graph"),data,flotoptions);
 </script>
 
 <div id="toolbar">
 	<p>
-	<small>Embed code: <input style="font-size:11px;" id="embedcode" type="text" value="<iframe width='500px' height='400px' border='0' src='http://spectralworkbench.org/sets/embed/<%= @set.id %>'></iframe>" /></small>
+	<small>Embed code: <input style="font-size:11px;" id="embedcode" type="text" value="<iframe width='500px' height='200px' border='0' src='http://spectralworkbench.org/sets/embed/<%= @set.id %>'></iframe>" /></small>
 	<a id="wavenumber" class="smallbutton" href="javascript:void(0);">Show wavenumber</a>
 	</p>
 </div>
@@ -44,7 +43,8 @@
 <script>
 
 	$('#wavenumber').click(function() {
-		flotoptions.xaxes[1].show = true
+		flotoptions.xaxis.tickFormatter = wavenumbers
+		flotoptions.xaxis.tickSize = wavenumber_tickSize
 		$.plot($("#graph"),data,flotoptions);
 	})
 

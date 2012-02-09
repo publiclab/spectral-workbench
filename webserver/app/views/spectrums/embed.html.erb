@@ -10,7 +10,7 @@
   <% else %>
     spectrum = <%= @spectrum.data.chomp(",") %>
   <% end %>
-    data = [{label: "<%= @spectrum.title %> = 0% ",data:[]},{data:[],xaxis:2}]
+    data = [{label: "<%= @spectrum.title %> = 0% ",data:[]}]
     scaled = true
     $.each(spectrum.lines,function(index,line) {
       if (line.wavelength == null) {
@@ -18,9 +18,8 @@
 	scaled = false
       }
       data[0].data.push([line.wavelength,line.average/(2.55)])
-      data[1].data.push([10000000/line.wavelength,line.average/(2.55)])
     })
-    flotoptions.xaxes[0].show = scaled
+    flotoptions.xaxis.show = scaled
     plot = $.plot($("#graph"),data,flotoptions);
 </script>
 
