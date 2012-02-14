@@ -46,7 +46,7 @@ class Spectrum < ActiveRecord::Base
     d = ActiveSupport::JSON.decode(self.data)
     i = 0 
     d['lines'].each do |line|
-      line['wavelength'] = (start_w + i*((end_w-start_w)*1.00/d['lines'].length))
+      line['wavelength'] = (start_w.to_f + i*((end_w.to_f-start_w.to_f)*1.00/d['lines'].length))
       i += 1
     end
     self.data = ActiveSupport::JSON.encode(d)
