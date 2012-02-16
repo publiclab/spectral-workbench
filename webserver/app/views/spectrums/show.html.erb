@@ -85,6 +85,7 @@
             else
                 y = p1[1] + (p2[1] - p1[1]) * (pos.x - p1[0]) / (p2[0] - p1[0]);
 
+	    $('#wavelength').html(parseInt(pos.x))
             legends.eq(i).html(series.label.replace(/=.*%/, "= " + parseInt(y) + "%"));
         }
     }
@@ -107,8 +108,9 @@
 
 <div id="toolbar">
 	<p>
+	<b><span id="wavelength"></span> <span id="#unit_label">nm</span></b> | 
 	<small>Embed code: <input style="font-size:11px" id="embedcode" type="text" value="<iframe width='500px' height='400px' border='0' src='http://spectralworkbench.org/spectra/embed/<%= @spectrum.id %>'></iframe>" /></small>
-	<a id="wavenumber" class="smallbutton" href="javascript:void(0);">Show wavenumber</a>
+	<a id="units" class="smallbutton" href="javascript:void(0);">Toggle units</a>
 	<a id="createSet" class="smallbutton" style="display:none;" href="javascript:void(0);">Save as set +</a>
 	<a id="extract" class="smallbutton" href="javascript:void(0);">Re-extract from photo</a>
 	<a id="clone" class="smallbutton" href="javascript:void(0);">Clone calibration</a>
@@ -119,9 +121,14 @@
 </div>
 <script>
 
-	$('#wavenumber').click(function() {
-		flotoptions.xaxis.tickFormatter = wavenumbers
-		flotoptions.xaxis.tickSize = wavenumber_tickSize
+	$('#units').click(function() {
+		if (flotoptions.xaxis.tickFormatter == wavenumbers) {
+			flotoptions.xaxis.tickFormatter = nanometers
+			flotoptions.xaxis.tickSize = 100
+		} else {
+			flotoptions.xaxis.tickFormatter = wavenumbers
+			flotoptions.xaxis.tickSize = wavenumber_tickSize
+		}
 		$.plot($("#graph"),data,flotoptions);
 	})
 	$('#createSet').click(function() {
