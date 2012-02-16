@@ -3,7 +3,7 @@ class SpectrumsController < ApplicationController
   # http://api.rubyonrails.org/classes/ActionController/RequestForgeryProtection/ClassMethods.html
   # create and update are protected by recaptcha
 
-  # GET /spectrums
+	  # GET /spectrums
   # GET /spectrums.xml
   def index
     @spectrums = Spectrum.find(:all,:order => "created_at DESC")
@@ -99,16 +99,20 @@ class SpectrumsController < ApplicationController
 				:photo => params[:photo]})
       @spectrum.client_code = client_code if params[:client] || params[:uniq_id]
 
-      @spectrum.extract_data
-      @spectrum.scale_data(params[:endWavelength],params[:startWavelength])
 
     else
       @spectrum = Spectrum.new(params[:spectrum])
     end
 
     respond_to do |format|
-      if (params[:client] == "0.5" || (APP_CONFIG["local"] || verify_recaptcha(:model => @spectrum, :message => "ReCAPTCHA thinks you're not a human!"))) && @spectrum.save
+      if (params[:client] || (APP_CONFIG["local"] || verify_recaptcha(:model => @spectrum, :message => "ReCAPTCHA thinks you're not a human!"))) && @spectrum.save!
         if (params[:client]) # java client
+	  if params[:photo]
+            @spectrum = Spectrum.find @spectrum.id
+            @spectrum.extract_data
+            @spectrum.scale_data(params[:endWavelength],params[:startWavelength])
+            @spectrum.save!
+          end
           format.html { render :text => @spectrum.id }
         else
           flash[:notice] = 'Spectrum was successfully created.'
