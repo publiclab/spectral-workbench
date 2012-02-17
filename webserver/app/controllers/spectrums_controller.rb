@@ -204,4 +204,12 @@ class SpectrumsController < ApplicationController
     redirect_to "/spectra/show/"+@spectrum.id.to_s
   end
 
+  def all
+    @spectrums = Spectrum.find(:all)
+    respond_to do |format|
+      format.xml  { render :xml => @spectrums }
+      format.json  { render :json => @spectrums }
+    end
+  end
+
 end
