@@ -90,7 +90,9 @@ class SpectrumsController < ApplicationController
   # POST /spectrums.xml
   # ?spectrum[title]=TITLE&spectrum[author]=anonymous&client=VERSION&uniq_id=UNIQID&startWavelength=STARTW&endWavelength=ENDW;
   def create
-    client_code = params[:client]+"::"+params[:uniq_id]
+    client = params[:client] || "0"
+    uniq_id = params[:uniq_id] || "0"
+    client_code = client+"::"+uniq_id
     puts client_code
 
     if params[:photo]
