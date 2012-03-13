@@ -8,6 +8,8 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :spectra_sets
   map.resources :comments, :belongs_to => :spectrums
 
+  map.connect 'spectra/feed', :controller => "spectrums", :action => "rss"
+  map.connect 'spectra/feed/:author', :controller => "spectrums", :action => "rss"
   map.connect 'spectra/:id', :controller => "spectrums", :action => "show"
   map.connect 'spectra/:action/:id', :controller => "spectrums"
   map.connect 'spectra/:action/:id.:format', :controller => "spectrums"

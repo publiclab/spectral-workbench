@@ -214,4 +214,14 @@ class SpectrumsController < ApplicationController
     end
   end
 
+  def rss
+    if params[:author]
+      @spectrums = Spectrum.find_all_by_author(params[:author],:order => "created_at DESC",:limit => 20)
+    else
+      @spectrums = Spectrum.find(:all,:order => "created_at DESC",:limit => 20)
+    end
+    render :layout => false
+    response.headers["Content-Type"] = "application/xml; charset=utf-8"
+  end
+
 end

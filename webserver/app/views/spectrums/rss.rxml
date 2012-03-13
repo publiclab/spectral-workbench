@@ -1,0 +1,25 @@
+xml.instruct!
+
+xml.rss "version" => "2.0", "xmlns:dc" => "http://purl.org/dc/elements/1.1/" do
+ xml.channel do
+
+   if params[:author]
+     xml.title       "Recent spectra by "+params[:author]+" at SpectralWorkbench.org"
+   else
+     xml.title       "Recent spectra at SpectralWorkbench.org"
+   end
+   xml.link        url_for :only_path => false, :controller => 'spectrums'
+   xml.description "Recently posted open sourcespectra from SpectralWorkbench.org, a Public Laboratory open source research initiative"
+
+   @spectrums.each do |spectrum|
+     xml.item do
+       xml.title       spectrum.title
+       xml.link        url_for :only_path => false, :controller => 'spectrums', :action => 'show', :id => spectrum.id
+       xml.description "<img src='"+spectrum.photo.url(:thumb)+"' /><br />"+markdown(spectrum.notes.to_s)
+       xml.guid        url_for :only_path => false, :controller => 'spectrums', :action => 'show', :id => spectrum.id
+     end
+   end
+
+ end
+end
+

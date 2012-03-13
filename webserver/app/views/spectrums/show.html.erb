@@ -204,8 +204,10 @@
 
 <h1><%= @spectrum.title %></h1>
 
-<h3>// FORMATS</h3>
+<h3>// DETAILS</h3>
 
+<p>
+uploaded by <a href="/spectra/author/<%= @spectrum.author %>"><%= @spectrum.author %></a> (<a href="/spectra/feed/<%= @spectrum.author %>">RSS</a>)</p>
 <p>
 <a href="<%= @spectrum.id %>.json">JSON</a> | 
 <a href="<%= @spectrum.id %>.xml">XML</a>
