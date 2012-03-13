@@ -204,6 +204,13 @@
 
 <h1><%= @spectrum.title %></h1>
 
+<h3>// FORMATS</h3>
+
+<p>
+<a href="<%= @spectrum.id %>.json">JSON</a> | 
+<a href="<%= @spectrum.id %>.xml">XML</a>
+</p>
+
 <h3>// NOTES</h3>
 <p class="description"><%= markdown(@spectrum.notes) if @spectrum.notes %></p>
 <% if @spectrum.notes == "" %><p class="description"><i>None</i></p><% end %>
