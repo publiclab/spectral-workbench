@@ -14,7 +14,7 @@ xml.rss "version" => "2.0", "xmlns:dc" => "http://purl.org/dc/elements/1.1/" do
    @spectrums.each do |spectrum|
      xml.item do
        xml.title       spectrum.title
-       xml.author      spectrum.author
+       xml.author      671
        xml.pubDate     spectrum.created_at.to_s(:rfc822)
        xml.category    "spectrum"
        xml.link        url_for :only_path => false, :controller => 'spectrums', :action => 'show', :id => spectrum.id

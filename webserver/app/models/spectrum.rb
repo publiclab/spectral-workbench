@@ -4,6 +4,8 @@ class Spectrum < ActiveRecord::Base
 	validates_presence_of :author, :on => :create, :message => "can't be blank"
 	validates_presence_of :photo, :on => :create, :message => "can't be blank"
 	validates_length_of :title, :maximum=>60
+        validates_format_of :title, :with => /\A[a-zA-Z0-9\' -_]+\z/, :message => "Only letters, numbers, and spaces allowed" 
+        validates_format_of :author, :with => /\A[a-zA-Z0-9_]+\z/, :message => "Only letters and numbers allowed" 
 
 	has_many :comments, :dependent => :destroy
 	
