@@ -62,6 +62,7 @@ class SpectrumsController < ApplicationController
   def search
     params[:id] = params[:q]
     @spectrums = Spectrum.find(:all, :conditions => ['title LIKE ? OR notes LIKE ?',"%"+params[:id]+"%", "%"+params[:id]+"%"],:limit => 100)
+    @spectrums = @spectrums.paginate :page => params[:page], :per_page => 24
   end
 
   # non REST
