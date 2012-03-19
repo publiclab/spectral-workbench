@@ -47,6 +47,7 @@ class SpectrumsController < ApplicationController
   # non REST
   def author
     @spectrums = Spectrum.find_all_by_author(params[:id])
+    @spectrums = @spectrums.paginate :page => params[:page], :per_page => 24
     render "spectrums/search"
   end
 
