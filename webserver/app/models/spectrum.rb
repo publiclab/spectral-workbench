@@ -20,6 +20,10 @@ class Spectrum < ActiveRecord::Base
 	    :thumb=> "300x100!",
 	    :large =>   "800x200!" }
 
+  def before_save
+    self.title.gsub('"',"'")
+  end
+
   # extracts serialized data from the top row of the stored image
   def extract_data
     require 'rubygems'

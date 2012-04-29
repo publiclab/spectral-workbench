@@ -39,8 +39,8 @@
 <div id="graph" style="width:830px;height:200px;"></div>
 
 <script type="text/javascript">
-    spectrum = <%= @spectrum.data %>
-    data = [{label: "<%= @spectrum.title %> = 0% ",data:[]}]
+    spectrum = <%= @spectrum.data.gsub('"',"'") %>
+    data = [{label: "<%= @spectrum.title.gsub('"',"'") %> = 0% ",data:[]}]
     scaled = true
     $.each(spectrum.lines,function(index,line) {
       if (line.wavelength == null) {
