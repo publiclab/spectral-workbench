@@ -4,15 +4,17 @@
 <div id="graph" style="width:500px;height:160px;"></div>
 
 <script type="text/javascript">
+  data = []
   <% @set.spectra.each do |spectrum| %>
   <% if spectrum.data == "" || spectrum.data.nil? %>
-    spectrum = <%= spectrum.extract_data %>
+    spectrum_<%= spectrum.id %> = <%= spectrum.extract_data %>
   <% else %>
-    spectrum = <%= spectrum.data.chomp(",") %>
+    spectrum_<%= spectrum.id %> = <%= spectrum.data.chomp(",") %>
   <% end %>
-    data = [{label: "<%= spectrum.title %> = 0% ",data:[]}]
+    data.push({data:[]})
+    //data.push({label: "<%= spectrum.title %> = 0% ",data:[]})
     scaled = true
-    $.each(spectrum.lines,function(index,line) {
+    $.each(spectrum_<%= spectrum.id %>.lines,function(index,line) {
       if (line.wavelength == null) {
 	line.wavelength = index
 	scaled = false
