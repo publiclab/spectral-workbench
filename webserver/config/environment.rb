@@ -16,6 +16,8 @@ Rails::Initializer.run do |config|
 
   # Specify gems that this application depends on and have them installed with rake gems:install and rake gems:unpack
   # config.gem "bj"
+	#   config.gem "ruby-openid", :lib => "ruby-openid"
+	# Correct form could be: gem "ruby-openid", :require => 'openid'
   # config.gem "hpricot", :version => '0.6', :source => "http://code.whytheluckystiff.net"
   # config.gem "sqlite3-ruby", :lib => "sqlite3"
   # config.gem "aws-s3", :lib => "aws/s3"

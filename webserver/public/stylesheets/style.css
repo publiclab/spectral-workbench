@@ -39,6 +39,15 @@ h1 {
 	margin:0;
 }
 
+/* embeds the openid image in the text field */
+input#openid_url {
+   background: url(http://openid.net/login-bg.gif) no-repeat;
+   background-color: #fff;
+   background-position: 0 50%;
+   color: #000;
+   padding-left: 18px;
+}
+
 #maincolumn {
 	width:610px;
 }
