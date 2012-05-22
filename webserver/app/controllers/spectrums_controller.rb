@@ -214,4 +214,23 @@ class SpectrumsController < ApplicationController
     end
   end
 
+  def assign
+    if current_user.login == "warren"
+      if params[:claim] == "true"
+        # assign each spectrum the current user's id
+        @user = User.find_by_login(params[:id])
+        @spectrums = Spectrum.find_all_by_author(params[:author])
+        @spectrums.each do |spectrum|
+          spectrum.user_id = @user.id
+          spectrum.author = @user.login
+          spectrum.save
+        end
+        flash[:notice] = "Assigned "+@spectrums.length.to_s+" spectra to "+@user.login
+        redirect_to "/"
+      else
+        @spectrums = Spectrum.find_all_by_author(params[:id])
+      end
+    end
+  end
+
 end

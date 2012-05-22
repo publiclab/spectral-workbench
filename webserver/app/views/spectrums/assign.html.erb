@@ -1,0 +1,13 @@
+<div id="spectrums">
+<% @spectrums.each do |spectrum| %>
+
+	<div class="spectrum">
+		<%= render :partial => 'list' %>
+	</div>
+
+	<hr />
+	<br />	
+	<a class="button" href="/spectra/claim/<%= params[:author] %>">Assign these spectra to <%= params[:author] %></a>
+
+<% end %>
+</div>

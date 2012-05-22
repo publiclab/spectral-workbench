@@ -1,5 +1,14 @@
 <% if logged_in? %>
 
-	<%=h current_user.inspect %>
+	<b>Login:</b> 
+	<%=h current_user.login %>
+
+	<br />
+	<b>Email:</b> 
+	<%=h current_user.email %>
+
+	<br />
+	<b>Signed up:</b> 
+	<%=h time_ago_in_words(current_user.created_at) %> ago
 
 <% end %> 
