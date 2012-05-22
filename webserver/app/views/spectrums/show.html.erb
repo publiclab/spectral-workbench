@@ -35,12 +35,12 @@
 
 <div id="show">
 <p>
-<img id="image" src="<%= @spectrum.photo.url(:large) %>" />
+<img id="image" src="http://spectralworkbench.org<%= @spectrum.photo.url(:large) %>" />
 <div id="graph" style="width:830px;height:200px;"></div>
 
 <script type="text/javascript">
-    spectrum = <%= @spectrum.data %>
-    data = [{label: "<%= @spectrum.title %> = 0% ",data:[]}]
+    spectrum = <%= @spectrum.data.gsub('"',"'") %>
+    data = [{label: "<%= @spectrum.title.gsub('"',"'") %> = 0% ",data:[]}]
     scaled = true
     $.each(spectrum.lines,function(index,line) {
       if (line.wavelength == null) {
@@ -204,8 +204,10 @@
 
 <h1><%= @spectrum.title %></h1>
 
-<h3>// FORMATS</h3>
+<h3>// DETAILS</h3>
 
+<p>
+uploaded by <a href="/spectra/author/<%= @spectrum.author %>"><%= @spectrum.author %></a> (<a href="/spectra/feed/<%= @spectrum.author %>">RSS</a>)</p>
 <p>
 <a href="<%= @spectrum.id %>.json">JSON</a> | 
 <a href="<%= @spectrum.id %>.xml">XML</a>
