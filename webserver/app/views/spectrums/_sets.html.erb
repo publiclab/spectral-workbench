@@ -3,8 +3,8 @@
 	<div class="set">
 		<a class="graph_set" id="graph_set_<%= set.id %>" style="width:300px;height:100px;display:block;"></a>
 		<div class="text">
-			<h3><a href="/sets/show/<%= set.id %>"><%= set.title %></a></h3>
-			<p><a href="/author/<%= set.author %>"><%= set.author %></a> | <%= set.spectra.length %> spectra</p>
+			<h3><a href="/sets/show/<%= set.id %>"><%= truncate(set.title,30) %></a></h3>
+			<p><a href="/spectra/author/<%= set.author %>"><%= set.author %></a> | <%= set.spectra.length %> spectra</p>
       			<p class="notes"><%=h truncate(set.notes,:length => 200) %></p>
 			<p>
 				<a href="/sets/show/<%= set.id %>#comments"><%= set.comments.length %> comments</a> 

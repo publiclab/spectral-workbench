@@ -1,3 +1,4 @@
+require 'will_paginate/array'
 class SpectrumsController < ApplicationController
   protect_from_forgery :only => [:clone, :extract, :calibrate]
   # http://api.rubyonrails.org/classes/ActionController/RequestForgeryProtection/ClassMethods.html
@@ -7,6 +8,7 @@ class SpectrumsController < ApplicationController
   # GET /spectrums.xml
   def index
     @spectrums = Spectrum.find(:all,:order => "created_at DESC")
+    @spectrums = @spectrums.paginate :page => params[:page], :per_page => 24
     @sets = SpectraSet.find(:all,:limit => 4,:order => "created_at DESC")
     @comments = Comment.all :limit => 12, :order => "id DESC"
 
@@ -45,6 +47,7 @@ class SpectrumsController < ApplicationController
   # non REST
   def author
     @spectrums = Spectrum.find_all_by_author(params[:id])
+    @spectrums = @spectrums.paginate :page => params[:page], :per_page => 24
     render "spectrums/search"
   end
 
@@ -59,6 +62,7 @@ class SpectrumsController < ApplicationController
   def search
     params[:id] = params[:q]
     @spectrums = Spectrum.find(:all, :conditions => ['title LIKE ? OR notes LIKE ?',"%"+params[:id]+"%", "%"+params[:id]+"%"],:limit => 100)
+    @spectrums = @spectrums.paginate :page => params[:page], :per_page => 24
   end
 
   # non REST
@@ -231,6 +235,22 @@ class SpectrumsController < ApplicationController
         @spectrums = Spectrum.find_all_by_author(params[:id])
       end
     end
+  end
+
+  def rss
+    if params[:author]
+      @spectrums = Spectrum.find_all_by_author(params[:author],:order => "created_at DESC",:limit => 12)
+    else
+      @spectrums = Spectrum.find(:all,:order => "created_at DESC",:limit => 12)
+    end
+    render :layout => false
+    response.headers["Content-Type"] = "application/xml; charset=utf-8"
+  end
+
+  def plots_rss
+    @spectrums = Spectrum.find(:all,:order => "created_at DESC",:limit => 12, :conditions => ["author != ?","anonymous"])
+    render :layout => false
+    response.headers["Content-Type"] = "application/xml; charset=utf-8"
   end
 
 end

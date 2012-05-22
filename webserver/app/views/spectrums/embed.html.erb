@@ -23,9 +23,9 @@
     plot = $.plot($("#graph"),data,flotoptions);
 </script>
 
-<b><a href="http://spectralworkbench.org/spectra/show/<%= @spectrum.id %>"><%= @spectrum.title %></a></b>
-<span style="text-align:right;">by <a href="http://spectralworkbench.org/author/"><%= @spectrum.author %></a></span>
-<span style="text-align:right;">on <a href="http://spectralworkbench.org">SpectralWorkbench.org</a></span>
+<b><a target="_blank" href="http://spectralworkbench.org/spectra/show/<%= @spectrum.id %>"><%= @spectrum.title %></a></b>
+<span style="text-align:right;">by <a target="_blank" href="http://spectralworkbench.org/spectra/author/"><%= @spectrum.author %></a></span>
+<span style="text-align:right;">on <a target="_blank" href="http://spectralworkbench.org">SpectralWorkbench.org</a></span>
 <style>
 html {
 	font-family: lucida grande, lucida console, arial, sans-serif;
