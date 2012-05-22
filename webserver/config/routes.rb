@@ -12,6 +12,7 @@ ActionController::Routing::Routes.draw do |map|
   #map.open_id_complete 'session', :controller => "session", :action => "create", :requirements => { :method => :get }
 
   map.resources :videos
+  map.assign '/spectra/assign', :controller => 'spectrums', :action => 'assign'
   map.resources :spectrums
 #  map.resources :spectrums, :collection=>{
 #  :doSomething= > :get,
