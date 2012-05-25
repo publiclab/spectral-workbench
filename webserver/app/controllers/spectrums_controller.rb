@@ -77,48 +77,61 @@ class SpectrumsController < ApplicationController
   # GET /spectrums/new
   # GET /spectrums/new.xml
   def new
+    if logged_in?
     @spectrum = Spectrum.new
 
     respond_to do |format|
       format.html # new.html.erb 
       format.xml  { render :xml => @spectrum }
     end
+    else
+      flash[:error] = "You must be logged in to upload a new spectrum."
+      redirect_to "/login"
+    end
   end
 
   # GET /spectrums/1/edit
   def edit
+    if logged_in? && @spectrum.user_id == current_user.id
     @spectrum = Spectrum.find(params[:id])
+    else
+      flash[:error] = "You must be logged in and own this spectrum to edit."
+      redirect_to "/login"
+    end
   end
 
   # POST /spectrums
   # POST /spectrums.xml
   # ?spectrum[title]=TITLE&spectrum[author]=anonymous&client=VERSION&uniq_id=UNIQID&startWavelength=STARTW&endWavelength=ENDW;
   def create
-    client = params[:client] || "0"
-    uniq_id = params[:uniq_id] || "0"
-    client_code = client+"::"+uniq_id
-    puts client_code
+    if logged_in?
+      client = params[:client] || "0"
+      uniq_id = params[:uniq_id] || "0"
+      client_code = client+"::"+uniq_id
+      puts client_code
 
-    if params[:photo]
-      @spectrum = Spectrum.new({:title => params[:spectrum][:title],
-				:author => params[:spectrum][:author],
-				:photo => params[:photo]})
-      @spectrum.client_code = client_code if params[:client] || params[:uniq_id]
+      if params[:photo]
+        @spectrum = Spectrum.new({:title => params[:spectrum][:title],
+				  :author => current_user.login,
+				  :user_id => current_user.id,
+				  :photo => params[:photo]})
+        @spectrum.client_code = client_code if params[:client] || params[:uniq_id]
+      else
+        @spectrum = Spectrum.new({:title => params[:spectrum][:title],
+				  :author => current_user.login,
+				  :user_id => current_user.id,
+				  :photo => params[:spectrum][:photo]})
+      end
 
-
-    else
-      @spectrum = Spectrum.new(params[:spectrum])
-    end
-
-    respond_to do |format|
-      if (params[:client] || (APP_CONFIG["local"] || verify_recaptcha(:model => @spectrum, :message => "ReCAPTCHA thinks you're not a human!"))) && @spectrum.save!
-        if (params[:client]) # java client
-	  if params[:photo]
-            @spectrum = Spectrum.find @spectrum.id
-            @spectrum.extract_data
-            @spectrum.scale_data(params[:endWavelength],params[:startWavelength])
-            @spectrum.save!
-          end
+      respond_to do |format|
+        if (params[:client] || (APP_CONFIG["local"] || verify_recaptcha(:model => @spectrum, :message => "ReCAPTCHA thinks you're not a human!"))) && @spectrum.save!
+          if (params[:client]) # java client
+	    if params[:photo]
+              @spectrum = Spectrum.find @spectrum.id
+              @spectrum.extract_data
+              @spectrum.scale_data(params[:endWavelength],params[:startWavelength])
+              @spectrum.save!
+            end
           format.html { render :text => @spectrum.id }
         else
           flash[:notice] = 'Spectrum was successfully created.'
@@ -132,11 +145,17 @@ class SpectrumsController < ApplicationController
         format.xml  { render :xml => @spectrum.errors, :status => :unprocessable_entity }
       end
     end
+    else
+      # possibly, we don't have to redirect - we could prompt for login at the moment of save...
+      flash[:notice] = "You must first log in to upload spectra."
+      redirect_to "/login"
+    end
   end
 
   # PUT /spectrums/1
   # PUT /spectrums/1.xml
   def update
+    if logged_in? && @spectrum.user_id == current_user.id
     @spectrum = Spectrum.find(params[:id])
 
     respond_to do |format|
@@ -149,17 +168,26 @@ class SpectrumsController < ApplicationController
         format.xml  { render :xml => @spectrum.errors, :status => :unprocessable_entity }
       end
     end
+    else
+      flash[:error] = "You must be logged in to edit a spectrum."
+      redirect_to "/login"
+    end
   end
 
   # DELETE /spectrums/1
   # DELETE /spectrums/1.xml
   def destroy
     @spectrum = Spectrum.find(params[:id])
-    @spectrum.destroy
+    if logged_in? && (current_user.role == "admin" || current_user.id == @spectrum.user_id)
+      @spectrum.destroy
 
     respond_to do |format|
       format.html { redirect_to(spectrums_url) }
       format.xml  { head :ok }
+    end
+    else
+      flash[:error] = "You must be an admin to destroy comments."
+      redirect_to "/login"
     end
   end
 
@@ -172,8 +200,11 @@ class SpectrumsController < ApplicationController
 	:body => params[:comment][:body],
 	:author => params[:comment][:author],
 	:email => params[:comment][:email]})
-    if (APP_CONFIG["local"] || verify_recaptcha(:model => @comment, :message => "ReCAPTCHA thinks you're not a human!")) && @comment.save
-      redirect_to "/spectra/"+params[:id]
+    @comment.author = current_user.login if logged_in?
+    @comment.email = current_user.email if logged_in?
+    if (logged_in? || APP_CONFIG["local"] || verify_recaptcha(:model => @comment, :message => "ReCAPTCHA thinks you're not a human!")) && @comment.save
+      flash[:notice] = "Comment saved."
+      redirect_to "/spectra/"+params[:id]+"#comment_"+@comment.id.to_s
     else
       render :action => "show", :id => params[:id]
     end
@@ -183,31 +214,46 @@ class SpectrumsController < ApplicationController
   #def calibrate(x1,wavelength1,x2,wavelength2)
   def calibrate
     @spectrum = Spectrum.find(params[:id])
+    if logged_in? && @spectrum.user_id == current_user.id
     if request.post?
       @spectrum.calibrate(params[:x1],params[:w1],params[:x2],params[:w2]).save
       @spectrum.save
     end
     redirect_to "/spectra/show/"+@spectrum.id.to_s
+    else
+      flash[:error] = "You must be logged in and own this spectrum to calibrate."
+      redirect_back
+    end
   end
 
   # non REST
   def extract
     @spectrum = Spectrum.find(params[:id])
+    if logged_in? && @spectrum.user_id == current_user.id
     if request.post?
       @spectrum.extract_data
       @spectrum.save
     end
     redirect_to "/spectra/show/"+@spectrum.id.to_s
+    else
+      flash[:error] = "You must be logged in and own this spectrum to re-extract values."
+      redirect_back
+    end
   end
 
   # non REST
   def clone
     @spectrum = Spectrum.find(params[:id])
+    if logged_in? && @spectrum.user_id == current_user.id
     if request.post?
       @spectrum.clone(params[:clone_id])
       @spectrum.save
     end
     redirect_to "/spectra/show/"+@spectrum.id.to_s
+    else
+      flash[:error] = "You must be logged in and own this spectrum to clone calibrations."
+      redirect_back
+    end
   end
 
   def all
@@ -219,7 +265,7 @@ class SpectrumsController < ApplicationController
   end
 
   def assign
-    if current_user.login == "warren"
+    if current_user.role == "admin"
       if params[:claim] == "true"
         # assign each spectrum the current user's id
         @user = User.find_by_login(params[:id])

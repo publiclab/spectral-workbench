@@ -1,0 +1,11 @@
+<% @comments.each do |comment| %>
+
+  <div class="comment">
+
+    <i><%= time_ago_in_words(comment.created_at) %> ago, <a href="/spectra/<%= comment.author %>"><%= comment.author %></a> wrote:</i>
+    <p>"<%= comment.body %>"
+    <a href="/spectra/<%= comment.spectrum_id %>">Read more &raquo;</a></p>
+
+  </div>
+
+<% end %>

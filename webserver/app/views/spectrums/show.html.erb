@@ -239,9 +239,13 @@ This work is published from:
 
 <% @spectrum.comments.each do |comment| %>
 <div class="comment">
-	<b><%= time_ago_in_words(comment.created_at) %> ago, <%= comment.author %> wrote:</b>
-	<p><%= comment.body %></p>
-	<% if !params[:password].nil? && params[:password].to_i == APP_CONFIG["password"] %><p><a href="/comments/delete/<%= comment.id %>?password=<%= APP_CONFIG["password"] %>">Delete</a></p><% end %>
+	<a name="comment_<%= comment.id %>"></a>
+	<b><%= time_ago_in_words(comment.created_at) %> ago, 
+	<% if User.find_by_login(comment.author) %><a href="/spectra/author/<%= comment.author %>"><%= comment.author %></a> wrote:</b>
+	<% else %><%=h comment.author %> wrote:</b>
+	<% end %>
+	<p><%=h comment.body %></p>
+	<% if logged_in? && current_user.role == "admin" %><p><a href="/comments/delete/<%= comment.id %>">Delete</a></p><% end %>
 </div>
 <% end %>
 
@@ -261,6 +265,7 @@ This work is published from:
     <%= f.text_area :body, :rows => 6 %>
   </p>
 
+  <% if !logged_in? %>
   <p>
     <%= f.label :author %><br />
     <%= f.text_field :author %>
@@ -269,6 +274,8 @@ This work is published from:
     <%= f.label :email %><br />
     <%= f.text_field :email %>
   </p>
+  <% end %>
+
   <% if !APP_CONFIG["local"] %>
   <p>
     <%= recaptcha_tags :display => {:theme => "white"} %>

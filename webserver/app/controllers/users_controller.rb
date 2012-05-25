@@ -2,6 +2,12 @@ class UsersController < ApplicationController
   # Be sure to include AuthenticationSystem in Application Controller instead
   include AuthenticatedSystem
   
+  def dashboard
+    @spectrums = Spectrum.find_all_by_user_id current_user.id, :order => "created_at DESC"
+    @spectrums = @spectrums.paginate :page => params[:page], :per_page => 24
+    @sets = SpectraSet.find(:all,:limit => 4,:order => "created_at DESC")
+    @comments = current_user.received_comments[0..5]
+  end
 
   # render new.rhtml
   def new
@@ -9,8 +15,15 @@ class UsersController < ApplicationController
   end
  
   def list
-    @users = User.find :all
-    render :text => @users.inspect
+    if (current_user.role == "admin")
+      @users = User.find :all
+      render :text => @users.inspect
+    end
+  end
+ 
+  def comments
+    @comments = current_user.received_comments
+    @comments = @comments.paginate :page => params[:page], :per_page => 25
   end
  
   def create

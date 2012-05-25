@@ -18,6 +18,7 @@
       <p>
 	<a href="/spectra/<%= spectrum.id %>">View</a> | 
 	<%= link_to 'Edit', edit_spectrum_path(spectrum) %> |
+	<% if logged_in? && current_user.login == spectrum.author %><%= link_to 'Delete', "/spectrums/destroy/"+spectrum.id.to_s %> |<% end %>
 	<a href="/spectra/<%= spectrum.id %>#comments"><%= spectrum.comments.length %> comments</a> 
       </p>
   </div>

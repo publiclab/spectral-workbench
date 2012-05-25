@@ -1,12 +1,16 @@
 ActionController::Routing::Routes.draw do |map|
   map.users '/users', :controller => 'users', :action => 'list'
-  map.profile '/profile', :controller => 'users', :action => 'profile'
   map.logout '/logout', :controller => 'sessions', :action => 'destroy'
   map.login '/login', :controller => 'sessions', :action => 'new'
   map.register '/register', :controller => 'users', :action => 'create'
   map.signup '/signup', :controller => 'users', :action => 'new'
   map.resources :users
   map.resource :session
+
+  # Registered user pages:
+  map.profile '/profile', :controller => 'users', :action => 'profile'
+  map.dashboard '/dashboard', :controller => 'users', :action => 'dashboard'
+  map.comments '/comments', :controller => 'users', :action => 'comments'
 
   map.open_id_complete '/session', :controller => "session", :action => "create", :conditions => { :method => :get }
   #map.open_id_complete 'session', :controller => "session", :action => "create", :requirements => { :method => :get }

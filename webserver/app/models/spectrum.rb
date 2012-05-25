@@ -24,6 +24,17 @@ class Spectrum < ActiveRecord::Base
     self.title.gsub('"',"'")
   end
 
+  def before_destroy
+      self.sets.each do |set|
+        ids = []
+        spectra_ids = set.spectra_string.explode(',').each do |id|
+          ids << id if id != self.id
+        end
+        set.spectra_string = ids.join(',')
+        set.save
+      end
+  end
+
   # extracts serialized data from the top row of the stored image
   def extract_data
     require 'rubygems'
@@ -109,6 +120,7 @@ class Spectrum < ActiveRecord::Base
   end
 
   # this is embarassing 
+  # someday rewrite with a join table
   def sets
     SpectraSet.find(:all, :conditions => ["spectra_string LIKE '%,?,%' OR spectra_string LIKE '%,?' OR spectra_string LIKE '?,%'",self.id,self.id,self.id])
   end

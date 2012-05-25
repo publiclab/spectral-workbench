@@ -39,6 +39,9 @@ h1 {
 	margin:0;
 }
 
+.notice { color:#0a0; background:#afa; padding:4px; margin-top:0; }
+.error { color:#00a; background:#FCFFB3; padding:4px; margin-top:0; }
+
 /* embeds the openid image in the text field */
 input#openid_url {
    background: url(http://openid.net/login-bg.gif) no-repeat;

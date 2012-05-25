@@ -25,7 +25,22 @@ class User < ActiveRecord::Base
   # anything else you want your user to change should be added here.
   attr_accessible :login, :email, :name, :password, :password_confirmation
 
+  def spectra
+    Spectrum.find_all_by_user_id(self.id)
+  end
 
+  def comments
+    Comment.find_all_by_author(self.author)
+  end
+
+  def received_comments
+    spectrums = Spectrum.find_all_by_user_id self.id
+    spectrum_ids = []
+    spectrums.each do |spectrum|
+      spectrum_ids << spectrum.id
+    end
+    Comment.find_all_by_spectrum_id(spectrum_ids.uniq, :conditions => ["author != ?",self.login], :limit => 10)
+  end
 
   # Authenticates a user by their login name and unencrypted password.  Returns the user or nil.
   #

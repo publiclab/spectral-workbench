@@ -1,4 +1,8 @@
+<% if params[:action] == "search" %>
 <h2>Search for "<%= params[:id] %>"</h2>
+<% else %>
+<h2>Spectra for <%= params[:id] %> (<%= User.find_by_login(params[:id]).spectra.length %>)</h2>
+<% end %>
 
 <p><a href="/">&laquo; Return to home</a></p>
 

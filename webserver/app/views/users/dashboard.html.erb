@@ -1,0 +1,22 @@
+<div id="index">
+
+<%= render :partial => "spectrums/sidebar" %>
+
+<div id="maincolumn">
+
+<h1>Dashboard</h1>
+
+<br />
+
+<h2>// RECENT COMMENTS <a href="/comments">view all &raquo;</a></h2>
+
+<%= render :partial => 'comments' %>
+
+<h2>// YOUR SETS <a class="right" href="/sets/author/<%= current_user.login %>">view all &raquo;</a></h2>
+<%= render :partial => 'spectrums/sets' %>
+
+<h2>// YOUR SPECTRA</h2>
+<%= render :partial => 'spectrums/list' %>
+
+</div>
+</div>
