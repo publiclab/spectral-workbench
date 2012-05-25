@@ -13,4 +13,5 @@ webserver/public/system*
 webserver/config/initializers/recaptcha.rb
 webserver/config/initializers/site_keys.rb
 spectrometry_kit/spectra/*
+spectrometry_kit/data/settings.txt
 spectrometry_kit/application.macosx/spectra/*
