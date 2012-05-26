@@ -92,8 +92,8 @@ class SpectrumsController < ApplicationController
 
   # GET /spectrums/1/edit
   def edit
-    if logged_in? && @spectrum.user_id == current_user.id
     @spectrum = Spectrum.find(params[:id])
+    if logged_in? && (@spectrum.user_id == current_user.id || current_user.role == "admin")
     else
       flash[:error] = "You must be logged in and own this spectrum to edit."
       redirect_to "/login"
@@ -155,11 +155,11 @@ class SpectrumsController < ApplicationController
   # PUT /spectrums/1
   # PUT /spectrums/1.xml
   def update
-    if logged_in? && @spectrum.user_id == current_user.id
     @spectrum = Spectrum.find(params[:id])
+    if logged_in? && (@spectrum.user_id == current_user.id || current_user.role == "admin")
 
     respond_to do |format|
-      if (APP_CONFIG["local"] || verify_recaptcha(:model => @spectrum, :message => "ReCAPTCHA thinks you're not a human!")) && @spectrum.update_attributes(params[:spectrum])
+      if (@spectrum.update_attributes(params[:spectrum]) && (@spectrum.user_id = User.find_by_login(params[:spectrum][:author]).id) && @spectrum.save)
         flash[:notice] = 'Spectrum was successfully updated.'
         format.html { redirect_to(@spectrum) }
         format.xml  { head :ok }
