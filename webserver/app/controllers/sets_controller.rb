@@ -1,12 +1,6 @@
 class SetsController < ApplicationController
   # create and update are protected by recaptcha
 
-  def test # remove after solving SERVER_PORT issue
-    if logged_in? && current_user.role == "admin"
-    render :text => request.inspect
-    end
-  end
-
   def index
     @sets = SpectraSet.find(:all, :order => "created_at DESC")
     @comments = Comment.all :limit => 12, :order => "id DESC"
