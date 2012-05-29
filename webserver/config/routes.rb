@@ -1,6 +1,7 @@
 ActionController::Routing::Routes.draw do |map|
   map.users '/users', :controller => 'users', :action => 'list'
   map.profile '/profile', :controller => 'users', :action => 'profile'
+  map.profile '/profile/:id', :controller => 'users', :action => 'profile'
   map.logout '/logout', :controller => 'sessions', :action => 'destroy'
   map.login '/login', :controller => 'sessions', :action => 'new'
   map.register '/register', :controller => 'users', :action => 'create'

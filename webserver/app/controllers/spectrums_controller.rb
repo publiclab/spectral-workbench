@@ -252,7 +252,7 @@ class SpectrumsController < ApplicationController
     redirect_to "/spectra/show/"+@spectrum.id.to_s
     else
       flash[:error] = "You must be logged in and own this spectrum to clone calibrations."
-      redirect_back
+      redirect_to "/login"
     end
   end
 
@@ -278,8 +278,11 @@ class SpectrumsController < ApplicationController
         flash[:notice] = "Assigned "+@spectrums.length.to_s+" spectra to "+@user.login
         redirect_to "/"
       else
-        @spectrums = Spectrum.find_all_by_author(params[:id])
+        @spectrums = Spectrum.find_all_by_author(params[:author])
       end
+    else
+      flash[:error] = "You must be logged in and be an admin to assign spectra."
+      redirect_to "/login"
     end
   end
 
