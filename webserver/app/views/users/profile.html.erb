@@ -1,5 +1,7 @@
 <% if logged_in? %>
 
+	<p><a href="http://publiclaboratory.org/people/<%= @user.login %>">Public Lab profile &raquo;</a></p>
+
 	<b>Login:</b> 
 	<%=h current_user.login %>
 

@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
   # Be sure to include AuthenticationSystem in Application Controller instead
   include AuthenticatedSystem
-  
+
   def dashboard
     @spectrums = Spectrum.find_all_by_user_id current_user.id, :order => "created_at DESC"
     @spectrums = @spectrums.paginate :page => params[:page], :per_page => 24
