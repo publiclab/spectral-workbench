@@ -93,7 +93,7 @@ class SpectrumsController < ApplicationController
   # GET /spectrums/1/edit
   def edit
     @spectrum = Spectrum.find(params[:id])
-    if logged_in? && (@spectrum.user_id == current_user.id || current_user.role == "admin")
+    if (params[:login] && params[:client_code]) || (logged_in? && (@spectrum.user_id == current_user.id || current_user.role == "admin"))
     else
       flash[:error] = "You must be logged in and own this spectrum to edit."
       redirect_to "/login"
@@ -104,22 +104,26 @@ class SpectrumsController < ApplicationController
   # POST /spectrums.xml
   # ?spectrum[title]=TITLE&spectrum[author]=anonymous&client=VERSION&uniq_id=UNIQID&startWavelength=STARTW&endWavelength=ENDW;
   def create
-    if logged_in?
+    if params[:client] || logged_in?
       client = params[:client] || "0"
       uniq_id = params[:uniq_id] || "0"
       client_code = client+"::"+uniq_id
       puts client_code
+      user_id = current_user.id if logged_in?
+      user_id ||= "0"
+      author = current_user.login if logged_in?
+      author ||= "anonymous"
 
       if params[:photo]
         @spectrum = Spectrum.new({:title => params[:spectrum][:title],
-				  :author => current_user.login,
-				  :user_id => current_user.id,
+				  :author => author,
+				  :user_id => user_id,
 				  :photo => params[:photo]})
         @spectrum.client_code = client_code if params[:client] || params[:uniq_id]
       else
         @spectrum = Spectrum.new({:title => params[:spectrum][:title],
-				  :author => current_user.login,
-				  :user_id => current_user.id,
+				  :author => author,
+				  :user_id => user_id,
 				  :photo => params[:spectrum][:photo]})
       end
 
@@ -132,7 +136,11 @@ class SpectrumsController < ApplicationController
               @spectrum.scale_data(params[:endWavelength],params[:startWavelength])
               @spectrum.save!
             end
-          format.html { render :text => @spectrum.id }
+          if logged_in?
+            format.html { render :text => @spectrum.id }
+          else
+            format.html { render :text => @spectrum.id.to_s+"?login=true&client_code="+client+"::"+uniq_id} # <== here, also offer a unique code or pass client_id so that we can persist login
+          end
         else
           flash[:notice] = 'Spectrum was successfully created.'
           format.html { 
@@ -157,6 +165,10 @@ class SpectrumsController < ApplicationController
   def update
     @spectrum = Spectrum.find(params[:id])
     if logged_in? && (@spectrum.user_id == current_user.id || current_user.role == "admin")
+    if @spectrum.author == "anonymous"
+      @spectrum.author = current_user.login
+      @spectrum.user_id = current_user.id
+    end
 
     respond_to do |format|
       if (@spectrum.update_attributes(params[:spectrum]) && (@spectrum.user_id = User.find_by_login(params[:spectrum][:author]).id) && @spectrum.save)

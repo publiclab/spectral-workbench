@@ -12,8 +12,8 @@ body {
 }
 
 #page {
+	padding-top:10px;
 }
-
 hr {
 	padding:10px 0;
 	border:none;
@@ -39,8 +39,26 @@ h1 {
 	margin:0;
 }
 
-.notice { color:#0a0; background:#afa; padding:4px; margin-top:0; }
-.error { color:#a52; background:#FCFFB3; padding:4px; margin-top:0; }
+p.notice { color:#0a0; background:#afa; padding:4px; margin-top:0; }
+p.error { color:#a52; background:#FCFFB3; padding:4px; margin-top:0; }
+.flash {
+	margin-top:0;
+}
+
+div.notice {
+	width:350px;
+	padding:10px;
+	padding-top:0;
+	margin-top:16px;
+	margin-bottom:16px;
+	border:none;
+	border-top:8px solid #fd6;
+	background:#ffa;
+}
+div.notice p {
+	padding-bottom:8px;
+}
+
 
 /* embeds the openid image in the text field */
 input#openid_url {
