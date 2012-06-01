@@ -17,7 +17,6 @@ class UsersController < ApplicationController
   def list
     if (current_user.role == "admin")
       @users = User.find :all
-      render :text => @users.inspect
     end
   end
  
