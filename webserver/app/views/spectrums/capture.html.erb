@@ -1,0 +1,82 @@
+<script src="/javascripts/getUserMedia.min.js"> </script>
+
+<div id="webcam"></div > 
+
+<script>
+
+(function () {
+
+var $W = {
+	initialize: function() {
+		getUserMedia(this.options, this.success, this.deviceError)
+		window.webcam = this.options
+	},
+        success: function (stream) {
+                if ($W.options.context === 'webrtc') {
+                        var video = $W.options.videoEl,
+                                vendorURL = window.URL || window.webkitURL;
+                        video.src = vendorURL ? vendorURL.createObjectURL(stream) : stream;
+                        video.onerror = function () {
+                                stream.stop();
+                        	streamError();
+                	};
+                } else {
+                //flash context
+        	}
+        },
+	deviceError: function (error) {
+		console.log(error)
+	},
+	// options contains the configuration information for the shim
+	// it allows us to specify the width and height of the video
+	// output we're working with, the location of the fallback swf,
+	// events that are triggered onCapture and onSave (for the fallback)
+	// and so on.
+	options: {
+
+            "audio": false,
+            "video": true,
+
+            // the element (by id) you wish to apply
+            el: "webcam",
+
+            extern: null,
+            append: true,
+
+            // height and width of the output stream
+            // container
+
+            width: 1280,
+            height: 720,
+
+            // the recommended mode to be used is 'callback '
+            // where a callback is executed once data
+            // is available
+            mode: "callback",
+
+            // the flash fallback Url
+            swffile: "/javascripts/webcam-fallback/jscam_canvas_only.swf",
+
+            // quality of the fallback stream
+            quality: 85,
+            context: "",
+
+            debug: function () {},
+
+            // callback for capturing the fallback stream
+            onCapture: function () {
+                window.webcam.save();
+            },
+            onTick: function () {},
+
+            // callback for saving the stream, useful for
+            // relaying data further.
+            onSave: function (data) {},
+            onLoad: function () {}
+        }
+}
+$W.initialize()
+})()
+
+</script>
+

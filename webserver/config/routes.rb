@@ -26,6 +26,8 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :spectra_sets
   map.resources :comments, :belongs_to => :spectrums
 
+  map.connect 'spectra/capture', :controller => "spectrums", :action => "capture"
+
   map.connect 'spectra/feed', :controller => "spectrums", :action => "rss"
   map.connect 'spectra/search', :controller => "spectrums", :action => "search"
   map.connect 'spectra/search/:id', :controller => "spectrums", :action => "search"
