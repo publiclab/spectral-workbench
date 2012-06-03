@@ -1,15 +1,22 @@
 <script src="/javascripts/getUserMedia.min.js"> </script>
+<!-- https://github.com/addyosmani/getUserMedia.js/blob/master/face-detection-demo/js/demo.js -->
 
-<div id="webcam"></div > 
+<canvas id="canvas"></canvas> 
+<div id="webcam"></div> 
 
 <script>
 
+var $W
+
 (function () {
 
-var $W = {
+$W = {
 	initialize: function() {
 		getUserMedia(this.options, this.success, this.deviceError)
 		window.webcam = this.options
+		this.canvas = document.getElementById("canvas")
+		this.ctx = this.canvas.getContext("2d")
+		this.img = new Image()
 	},
         success: function (stream) {
                 if ($W.options.context === 'webrtc') {
@@ -71,9 +78,66 @@ var $W = {
 
             // callback for saving the stream, useful for
             // relaying data further.
-            onSave: function (data) {},
-            onLoad: function () {}
-        }
+	    onSave: function (data) {
+
+		var col = data.split(";"),
+			img = $W.image,
+			tmp = null,
+			w = this.width,
+			h = this.height;
+
+		for (var i = 0; i < w; i++) { 
+			tmp = parseInt(col[i], 10);
+			img.data[$W.pos + 0] = (tmp >> 16) & 0xff;
+			img.data[$W.pos + 1] = (tmp >> 8) & 0xff;
+			img.data[$W.pos + 2] = tmp & 0xff;
+			img.data[$W.pos + 3] = 0xff;
+			$W.pos += 4;
+		}
+
+		if ($W.pos >= 4 * w * h) { 
+			$W.ctx.putImageData(img, 0, 0);
+			$W.pos = 0;
+		}
+
+	    },
+	    onLoad: function () {}
+        },
+
+	getRow: function(y) {
+		if ($W.options.context === 'webrtc') {
+			var video = document.getElementsByTagName('video')[0]; 
+			$W.canvas.getContext('2d').drawImage(video, 0, 0);
+			//not complete
+		} else if($W.options.context === 'flash'){
+			window.webcam.capture();
+		} else {
+			alert('No context was supplied to getSnapshot()');
+		}
+	},
+
+	getSnapshot: function () {
+			// If the current context is WebRTC/getUserMedia (something
+			// passed back from the shim to avoid doing further feature
+			// detection), we handle getting video/images for our canvas 
+			// from our HTML5 <video> element.
+			if ($W.options.context === 'webrtc') {
+				var video = document.getElementsByTagName('video')[0]; 
+				$W.canvas.width = video.videoWidth;
+				$W.canvas.height = video.videoHeight;
+				$W.canvas.getContext('2d').drawImage(video, 0, 0);
+
+			// Otherwise, if the context is Flash, we ask the shim to
+			// directly call window.webcam, where our shim is located
+			// and ask it to capture for us.
+			} else if($W.options.context === 'flash'){
+				window.webcam.capture();
+			}
+			else{
+				alert('No context was supplied to getSnapshot()');
+			}
+		},
+
 }
 $W.initialize()
 })()
