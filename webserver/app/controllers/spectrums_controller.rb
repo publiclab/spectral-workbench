@@ -128,7 +128,7 @@ class SpectrumsController < ApplicationController
       end
 
       respond_to do |format|
-        if (params[:client] || (APP_CONFIG["local"] || verify_recaptcha(:model => @spectrum, :message => "ReCAPTCHA thinks you're not a human!"))) && @spectrum.save!
+        if (params[:client] || (APP_CONFIG["local"] || logged_in?)) && @spectrum.save!
           if (params[:client]) # java client
 	    if params[:photo]
               @spectrum = Spectrum.find @spectrum.id
