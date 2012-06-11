@@ -12,12 +12,6 @@ module Paperclip
     image = StringIO.new(data)
     image.class.class_eval { attr_accessor :original_filename, :content_type }
 
-    #tempfile = Tempfile.new(name)
-	# what about decoding base64?
-    #tempfile.binmode
-    #tempfile.write data
-    	#image.tempfile = name
-
     image.original_filename = name
     image.content_type = type
     return image

@@ -126,8 +126,11 @@ class Spectrum < ActiveRecord::Base
   end
 
   def image_from_dataurl(data)
-    #remove image/png:base,
+    # remove image/png:base,
     data = data.split(',').pop
+
+    # decode base64:
+    data = Base64.decode64(data)
 
     self.photo = Paperclip::string_to_file('capture.png', 'image/png', data)
     self.save

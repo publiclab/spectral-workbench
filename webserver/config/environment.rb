@@ -22,6 +22,7 @@ Rails::Initializer.run do |config|
   # config.gem "sqlite3-ruby", :lib => "sqlite3"
   # config.gem "aws-s3", :lib => "aws/s3"
   # config.gem 'paperclip', :source => 'http://rubygems.org'
+  config.gem "paperclip", "~> 2.0"
   config.gem "recaptcha", :lib => "recaptcha/rails"
   # now add this to config/initializers/recaptcha.rb (ignored in .gitignore)
   # Recaptcha.configure do |config|
