@@ -174,9 +174,11 @@ class SpectrumsController < ApplicationController
       @spectrum.author = current_user.login
       @spectrum.user_id = current_user.id
     end
+    @spectrum.title = params[:spectrum][:title]
+    @spectrum.notes = params[:spectrum][:notes]
 
     respond_to do |format|
-      if (@spectrum.update_attributes(params[:spectrum]) && (@spectrum.user_id = User.find_by_login(params[:spectrum][:author]).id) && @spectrum.save)
+      if @spectrum.save
         flash[:notice] = 'Spectrum was successfully updated.'
         format.html { redirect_to(@spectrum) }
         format.xml  { head :ok }

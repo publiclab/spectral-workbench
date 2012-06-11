@@ -44,7 +44,7 @@ class UsersController < ApplicationController
   end
 
   def profile
-	params[:id] ||= current_user.login if logged_in?
+	#params[:id] ||= current_user.login if logged_in?
 	@user = User.find_by_login(params[:id])
   end
 
