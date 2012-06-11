@@ -9,7 +9,7 @@ $W = {
 		getUserMedia(this.options, this.success, this.deviceError)
 		window.webcam = this.options
 		this.canvas = document.getElementById("canvas")
-
+		$('canvas').width = "640px"
 		this.ctx = this.canvas.getContext("2d")
 		this.image = this.ctx.getImageData(0, 0, this.options.width, this.options.height);
 	},
@@ -136,7 +136,7 @@ $W = {
 				data += red+','+green+','+blue+','+intensity
 				if (col != $W.width-1) data += '/'
 				$W.full_data.push([red,green,blue,intensity])
-				$W.data[0].data.push([col,intensity])
+				$W.data[0].data.push([col,intensity/2.55])
 			}
 			plot = $.plot($("#graph"),$W.data,flotoptions);
 		} else if($W.options.context === 'flash'){
