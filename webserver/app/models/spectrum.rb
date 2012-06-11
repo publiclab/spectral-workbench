@@ -125,4 +125,15 @@ class Spectrum < ActiveRecord::Base
     SpectraSet.find(:all, :conditions => ["spectra_string LIKE '%,?,%' OR spectra_string LIKE '%,?' OR spectra_string LIKE '?,%'",self.id,self.id,self.id])
   end
 
+  def image_from_dataurl(data)
+    # remove image/png:base,
+    data = data.split(',').pop
+
+    # decode base64:
+    data = Base64.decode64(data)
+
+    self.photo = Paperclip::string_to_file('capture.png', 'image/png', data)
+    self.save
+  end
+
 end

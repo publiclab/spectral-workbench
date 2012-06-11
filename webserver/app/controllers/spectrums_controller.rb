@@ -120,6 +120,11 @@ class SpectrumsController < ApplicationController
 				  :user_id => user_id,
 				  :photo => params[:photo]})
         @spectrum.client_code = client_code if params[:client] || params[:uniq_id]
+      elsif params[:dataurl]
+        @spectrum = Spectrum.new({:title => params[:spectrum][:title],
+				  :author => author,
+				  :user_id => user_id})
+	@spectrum.image_from_dataurl(params[:dataurl])
       else
         @spectrum = Spectrum.new({:title => params[:spectrum][:title],
 				  :author => author,
@@ -128,7 +133,7 @@ class SpectrumsController < ApplicationController
       end
 
       respond_to do |format|
-        if (params[:client] || (APP_CONFIG["local"] || verify_recaptcha(:model => @spectrum, :message => "ReCAPTCHA thinks you're not a human!"))) && @spectrum.save!
+        if (params[:client] || (APP_CONFIG["local"] || logged_in?)) && @spectrum.save!
           if (params[:client]) # java client
 	    if params[:photo]
               @spectrum = Spectrum.find @spectrum.id
@@ -317,7 +322,6 @@ class SpectrumsController < ApplicationController
   end
 
   def capture
-
   end
 
 end

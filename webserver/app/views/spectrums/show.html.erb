@@ -35,7 +35,7 @@
 
 <div id="show">
 <p>
-<img id="image" src="http://spectralworkbench.org<%= @spectrum.photo.url(:large) %>" />
+<img id="image" src="<%= @spectrum.photo.url(:large) %>" />
 <div id="graph" style="width:830px;height:200px;"></div>
 
 <script type="text/javascript">
@@ -279,7 +279,7 @@ This work is published from:
   </p>
   <% end %>
 
-  <% if !APP_CONFIG["local"] %>
+  <% if !logged_in? && !APP_CONFIG["local"] %>
   <p>
     <%= recaptcha_tags :display => {:theme => "white"} %>
   </p>

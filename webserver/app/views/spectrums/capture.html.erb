@@ -1,146 +1,37 @@
-<script src="/javascripts/getUserMedia.min.js"> </script>
-<!-- https://github.com/addyosmani/getUserMedia.js/blob/master/face-detection-demo/js/demo.js -->
+<script src="/javascripts/getUserMedia.js"> </script>
+<script src="/javascripts/capture.js"> </script>
 
-<canvas id="canvas"></canvas> 
-<div id="webcam"></div> 
+<br />
 
-<script>
+<div id="capture">
+	<div id="captureControls">
+		<a class="button" href="javascript:setInterval($W.getRow,500)">Start</a>
+		<a class="button" href="javascript:$W.saveSpectrum()">Save (not yet)</a>
+		<p><a href="javascript:$('#webcam').toggle()">Webcam preview</a> | Flash video not working? Learn how to <a href="http://publiclaboratory.org/wiki/spectral-workbench-web-video">enable native webcam access</a> in the Google Chrome browser</p>
+	</div>
 
-var $W
+	<canvas width="640px" id="canvas"></canvas> 
+	<div id="graph" style="width:830px;height:200px;"></div>
 
-(function () {
+	<div style="width:200px;display:none;" id="webcam"></div> 
 
-$W = {
-	initialize: function() {
-		getUserMedia(this.options, this.success, this.deviceError)
-		window.webcam = this.options
-		this.canvas = document.getElementById("canvas")
-		this.ctx = this.canvas.getContext("2d")
-		this.img = new Image()
-	},
-        success: function (stream) {
-                if ($W.options.context === 'webrtc') {
-                        var video = $W.options.videoEl,
-                                vendorURL = window.URL || window.webkitURL;
-                        video.src = vendorURL ? vendorURL.createObjectURL(stream) : stream;
-                        video.onerror = function () {
-                                stream.stop();
-                        	streamError();
-                	};
-                } else {
-                //flash context
-        	}
-        },
-	deviceError: function (error) {
-		console.log(error)
-	},
-	// options contains the configuration information for the shim
-	// it allows us to specify the width and height of the video
-	// output we're working with, the location of the fallback swf,
-	// events that are triggered onCapture and onSave (for the fallback)
-	// and so on.
-	options: {
+</div>
 
-            "audio": false,
-            "video": true,
+<script> (function () { $W.initialize() })() </script>
+<div id="save" style="display:none;">
 
-            // the element (by id) you wish to apply
-            el: "webcam",
+<h2>Save this spectrum</h2>
 
-            extern: null,
-            append: true,
+<p>You must be <a target="_blank" href="/login">logged in</a> to save spectra.</p>
+<p><a href="javascript:$('#save').hide();$('#capture').show();">cancel</a></p>
 
-            // height and width of the output stream
-            // container
-
-            width: 1280,
-            height: 720,
-
-            // the recommended mode to be used is 'callback '
-            // where a callback is executed once data
-            // is available
-            mode: "callback",
-
-            // the flash fallback Url
-            swffile: "/javascripts/webcam-fallback/jscam_canvas_only.swf",
-
-            // quality of the fallback stream
-            quality: 85,
-            context: "",
-
-            debug: function () {},
-
-            // callback for capturing the fallback stream
-            onCapture: function () {
-                window.webcam.save();
-            },
-            onTick: function () {},
-
-            // callback for saving the stream, useful for
-            // relaying data further.
-	    onSave: function (data) {
-
-		var col = data.split(";"),
-			img = $W.image,
-			tmp = null,
-			w = this.width,
-			h = this.height;
-
-		for (var i = 0; i < w; i++) { 
-			tmp = parseInt(col[i], 10);
-			img.data[$W.pos + 0] = (tmp >> 16) & 0xff;
-			img.data[$W.pos + 1] = (tmp >> 8) & 0xff;
-			img.data[$W.pos + 2] = tmp & 0xff;
-			img.data[$W.pos + 3] = 0xff;
-			$W.pos += 4;
-		}
-
-		if ($W.pos >= 4 * w * h) { 
-			$W.ctx.putImageData(img, 0, 0);
-			$W.pos = 0;
-		}
-
-	    },
-	    onLoad: function () {}
-        },
-
-	getRow: function(y) {
-		if ($W.options.context === 'webrtc') {
-			var video = document.getElementsByTagName('video')[0]; 
-			$W.canvas.getContext('2d').drawImage(video, 0, 0);
-			//not complete
-		} else if($W.options.context === 'flash'){
-			window.webcam.capture();
-		} else {
-			alert('No context was supplied to getSnapshot()');
-		}
-	},
-
-	getSnapshot: function () {
-			// If the current context is WebRTC/getUserMedia (something
-			// passed back from the shim to avoid doing further feature
-			// detection), we handle getting video/images for our canvas 
-			// from our HTML5 <video> element.
-			if ($W.options.context === 'webrtc') {
-				var video = document.getElementsByTagName('video')[0]; 
-				$W.canvas.width = video.videoWidth;
-				$W.canvas.height = video.videoHeight;
-				$W.canvas.getContext('2d').drawImage(video, 0, 0);
-
-			// Otherwise, if the context is Flash, we ask the shim to
-			// directly call window.webcam, where our shim is located
-			// and ask it to capture for us.
-			} else if($W.options.context === 'flash'){
-				window.webcam.capture();
-			}
-			else{
-				alert('No context was supplied to getSnapshot()');
-			}
-		},
-
-}
-$W.initialize()
-})()
-
-</script>
+<form action="/spectrums" method="post">
+	<label for="spectrum_title">Title:</label><br />
+	<input name="spectrum[title]" id="spectrum_notes" type="text" /><br />
+	<label for="spectrum_notes">Notes:</label><br />
+	<input name="spectrum[notes]" id="spectrum_notes" type="text" /><br />
+	<input name="dataurl" type="hidden" id="dataurl" />
+	<input type="submit" value="Save" />
+</form>
+</div>
 
