@@ -5,9 +5,11 @@
 	<b>Login:</b> 
 	<%=h @user.login %>
 
+	<% if logged_in? && current_user.role == "admin" %>
 	<br />
 	<b>Email:</b> 
 	<%=h @user.email %>
+	<% end %>
 
 	<br />
 	<b>Signed up:</b> 
