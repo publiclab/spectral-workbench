@@ -22,6 +22,9 @@
 
 <h2>Save this spectrum</h2>
 
+<p>You must be <a target="_blank" href="/login">logged in</a> to save spectra.</p>
+<p><a href="javascript:$('#save').hide();$('#capture').show();">cancel</a></p>
+
 <form action="/spectrums" method="post">
 	<label for="spectrum_title">Title:</label><br />
 	<input name="spectrum[title]" id="spectrum_notes" type="text" /><br />

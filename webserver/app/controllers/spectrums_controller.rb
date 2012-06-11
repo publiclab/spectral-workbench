@@ -320,7 +320,6 @@ class SpectrumsController < ApplicationController
   end
 
   def capture
-
   end
 
 end
