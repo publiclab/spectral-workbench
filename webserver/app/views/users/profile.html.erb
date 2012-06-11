@@ -3,14 +3,14 @@
 	<p><a href="http://publiclaboratory.org/people/<%= @user.login %>">Public Lab profile &raquo;</a></p>
 
 	<b>Login:</b> 
-	<%=h current_user.login %>
+	<%=h @user.login %>
 
 	<br />
 	<b>Email:</b> 
-	<%=h current_user.email %>
+	<%=h @user.email %>
 
 	<br />
 	<b>Signed up:</b> 
-	<%=h time_ago_in_words(current_user.created_at) %> ago
+	<%=h time_ago_in_words(@user.created_at) %> ago
 
 <% end %> 
