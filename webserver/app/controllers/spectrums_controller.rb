@@ -322,7 +322,7 @@ class SpectrumsController < ApplicationController
   end
 
   def capture
-    if true#request.env['HTTP_USER_AGENT'].match("Mobi")
+    if request.env['HTTP_USER_AGENT'].match("Mobi")
       render :template => "spectrums/capture.mobile.erb", :layout => "mobile"
     else
       
