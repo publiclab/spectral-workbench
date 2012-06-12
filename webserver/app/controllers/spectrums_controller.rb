@@ -118,17 +118,20 @@ class SpectrumsController < ApplicationController
         @spectrum = Spectrum.new({:title => params[:spectrum][:title],
 				  :author => author,
 				  :user_id => user_id,
+				  :notes => params[:spectrum][:notes],
 				  :photo => params[:photo]})
         @spectrum.client_code = client_code if params[:client] || params[:uniq_id]
       elsif params[:dataurl]
         @spectrum = Spectrum.new({:title => params[:spectrum][:title],
 				  :author => author,
+				  :notes => params[:spectrum][:notes],
 				  :user_id => user_id})
 	@spectrum.image_from_dataurl(params[:dataurl])
       else
         @spectrum = Spectrum.new({:title => params[:spectrum][:title],
 				  :author => author,
 				  :user_id => user_id,
+				  :notes => params[:spectrum][:notes],
 				  :photo => params[:spectrum][:photo]})
       end
 
