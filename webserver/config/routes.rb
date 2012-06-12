@@ -9,6 +9,8 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :users
   map.resource :session
 
+  map.capture '/capture', :controller => 'spectrums', :action => 'capture'
+
   # Registered user pages:
   map.profile '/profile', :controller => 'users', :action => 'profile'
   map.dashboard '/dashboard', :controller => 'users', :action => 'dashboard'

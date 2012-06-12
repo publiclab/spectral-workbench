@@ -5,7 +5,6 @@
 
 <div id="capture">
 	<div id="captureControls">
-		<a class="button" href="javascript:void(0);" onClick="setInterval($W.getRow,500)">Start</a>
 		<a class="button" href="javascript:void(0);" onClick="$W.saveSpectrum()">Save</a>
 		<p><a href="javascript:void(0);" onClick="$('#webcam').toggle()">Webcam preview</a> | Flash video not working? Learn how to <a href="http://publiclaboratory.org/wiki/spectral-workbench-web-video">enable native webcam access</a> in the Google Chrome browser</p>
 	</div>
@@ -18,7 +17,10 @@
 
 </div>
 
-<script> (function () { $W.initialize() })() </script>
+<script> (function () { 
+	$W.initialize()
+	setInterval($W.getRow,500)
+})() </script>
 <div id="save" style="display:none;">
 
 <h2>Save this spectrum</h2>

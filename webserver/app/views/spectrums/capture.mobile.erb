@@ -1,0 +1,29 @@
+<script src="/javascripts/getUserMedia.js"> </script>
+<script src="/javascripts/capture.js"> </script>
+
+<div data-role="page" id="page1">
+  <div data-theme="d" data-role="header">
+    <h3>
+    SpectralWorkbench
+    </h3>
+  </div>
+  <div data-role="content" style="padding: 15px">
+    <div style="">
+
+	<canvas width="300px" id="canvas"></canvas> 
+	<br />
+	<div id="graph" style="width:300px;height:100px;"></div>
+	<div style="width:300px;display:none;" id="webcam"></div> 
+
+    </div>
+    <a data-role="button" data-transition="fade" data-theme="b" href="javascript:void(0);" onClick="$W.saveSpectrum()">Save</a>
+    <a data-role="button" data-transition="fade" data-theme="d" href="javascript:void(0);" onClick="setInterval($W.getRow,500)">Start</a>
+    <div>
+      <a href="" data-transition="fade">&laquo; Back</a>
+    </div>
+  </div>
+</div>
+<script> (function () { 
+	$W.initialize() 
+	setInterval($W.getRow,500)
+})() </script>
