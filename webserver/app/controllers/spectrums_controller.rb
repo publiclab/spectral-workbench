@@ -32,7 +32,13 @@ class SpectrumsController < ApplicationController
     @spectrums = Spectrum.find(:all, :limit => 4, :order => "created_at DESC", :conditions => ["id != ?",@spectrum.id])
 
     respond_to do |format|
-      format.html { render 'spectrums/show' } # show.html.erb
+      format.html { 
+	if mobile?
+          render :template => "spectrums/show.mobile.erb", :layout => "mobile" 
+	else
+	  render 'spectrums/show' 
+	end
+      } # show.html.erb
       format.xml  { render :xml => @spectrum }
       format.json  { render :json => @spectrum }
     end
@@ -325,11 +331,7 @@ class SpectrumsController < ApplicationController
   end
 
   def capture
-    if request.env['HTTP_USER_AGENT'].match("Mobi")
-      render :template => "spectrums/capture.mobile.erb", :layout => "mobile"
-    else
-      
-    end
+    render :template => "spectrums/capture.mobile.erb", :layout => "mobile" if mobile?
   end
 
 end

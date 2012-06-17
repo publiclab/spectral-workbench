@@ -14,4 +14,8 @@ class ApplicationController < ActionController::Base
     APP_CONFIG["password"] == params[:password]
   end
 
+  def mobile?
+    request.env['HTTP_USER_AGENT'].match("Mobi")
+  end
+
 end
