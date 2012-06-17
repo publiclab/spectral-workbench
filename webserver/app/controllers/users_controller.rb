@@ -15,8 +15,11 @@ class UsersController < ApplicationController
   end
  
   def list
-    if (current_user.role == "admin")
+    if true#(logged_in? && current_user.role == "admin")
       @users = User.find :all
+    else
+      flash[:error] = "You must be logged in and an admin to view the users listing."
+      redirect_to "/login"
     end
   end
  
@@ -46,6 +49,8 @@ class UsersController < ApplicationController
   def profile
 	#params[:id] ||= current_user.login if logged_in?
 	@user = User.find_by_login(params[:id])
+	@spectrums = @user.spectra
+	@spectrums = @spectrums.paginate :page => params[:page], :per_page => 24
   end
 
   def delete # temporary for admin/dev

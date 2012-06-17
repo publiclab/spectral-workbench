@@ -38,7 +38,7 @@ data = [{label: "<%= @spectrum.title.gsub('"',"'") %> = 0% ",data:[]}];
 <h3>DETAILS</h3>
 
 <p>
-uploaded by <a href="/spectra/author/<%= @spectrum.author %>"><%= @spectrum.author %></a> (<a href="/spectra/feed/<%= @spectrum.author %>">RSS</a>)</p>
+uploaded by <a href="/profile/<%= @spectrum.author %>"><%= @spectrum.author %></a> (<a href="/spectra/feed/<%= @spectrum.author %>">RSS</a>)</p>
 <p>
 <a href="<%= @spectrum.id %>.json">JSON</a> | 
 <a href="<%= @spectrum.id %>.xml">XML</a>

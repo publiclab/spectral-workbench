@@ -129,6 +129,16 @@ a h2 {
 #header .links {
 	float:right;
 }
+#header #captureBtns {
+	float:right;
+	padding-bottom:10px;
+	clear:right;
+	margin-top:44px;
+}
+#header #captureBtns .button {
+	font-size:12px;
+	padding:8px;
+}
 
 .sidebar {
 	float:right;
