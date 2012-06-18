@@ -14,7 +14,9 @@ $W = {
 		this.image = this.ctx.getImageData(0, 0, this.options.width, this.options.height);
 	},
         success: function (stream) {
+		console.log('success')
                 if ($W.options.context === 'webrtc') {
+			console.log('webrtc')
                         var video = $W.options.videoEl,
                                 vendorURL = window.URL || window.webkitURL;
                         video.src = vendorURL ? vendorURL.createObjectURL(stream) : stream;
@@ -24,6 +26,7 @@ $W = {
                 	};
                 } else {
                 //flash context
+			console.log('flash or something else')
         	}
         },
 	deviceError: function (error) {
@@ -76,7 +79,7 @@ $W = {
             // callback for saving the stream, useful for
             // relaying data further.
 	    onSave: function (data) {
-		// in progress for Flash now, no html5 testing yet:
+		// in progress for Flash now
 		// seems to execute 240 times... once for each column?
 		var col = data.split(";"),
 			img = $W.canvas.getContext('2d').getImageData(0, 0, this.width, this.height);
@@ -92,11 +95,11 @@ $W = {
 			img.data[$W.pos + 3] = 0xff;
 			$W.pos += 4;
 		}
-
-		if ($W.pos >= 4 * w * h) { 
-			console.log('putting image')
-			console.log(img)
-			//$W.canvas.getContext('2d').putImageData(img, 0, 0);
+		
+		var sample_height = 10 // how many pixels to sample
+		if ($W.pos >= 4 * w * sample_height) { 
+			//console.log('putting image')
+			$W.canvas.getContext('2d').putImageData(img, 0, 0);
 			$W.ctx.drawImage(img, 0, 0);
 			$W.pos = 0;
 		}
@@ -142,30 +145,10 @@ $W = {
 		} else if($W.options.context === 'flash'){
 			window.webcam.capture();
 		} else {
-			alert('No context was supplied to getSnapshot()');
+			console.log('No context was supplied to getSnapshot()');
 		}
 	},
 
-	getSnapshot: function () {
-		// If the current context is WebRTC/getUserMedia (something
-		// passed back from the shim to avoid doing further feature
-		// detection), we handle getting video/images for our canvas 
-		// from our HTML5 <video> element.
-		if ($W.options.context === 'webrtc') {
-			var video = document.getElementsByTagName('video')[0]; 
-			$W.canvas.width = video.videoWidth;
-			$W.canvas.height = video.videoHeight;
-			$W.ctx.drawImage(video, 0, 0);
-		// Otherwise, if the context is Flash, we ask the shim to
-		// directly call window.webcam, where our shim is located
-		// and ask it to capture for us.
-		} else if($W.options.context === 'flash'){
-			window.webcam.capture();
-		}
-		else{
-			alert('No context was supplied to getSnapshot()');
-		}
-	},
 	saveSpectrum: function() {
 		$('#dataurl').val($W.canvas.toDataURL())
 		$('#save').show()
