@@ -54,7 +54,7 @@ class UsersController < ApplicationController
   end
 
   def delete
-    if (logged_in? && current_user.role == "admin"))
+    if (logged_in? && current_user.role == "admin")
       @user = User.find(params[:id])
       @user.delete
       flash[:notice] = "User "+@user.name+" deleted."

@@ -20,8 +20,8 @@ ActionController::Routing::Routes.draw do |map|
 
   map.resources :videos
   map.assign '/spectra/assign', :controller => 'spectrums', :action => 'assign'
+  map.tags '/tag/create', :controller => 'tag', :action => 'create'
   map.tags '/tag/:id', :controller => 'tag', :action => 'show'
-  map.tags '/tag/:action', :controller => 'tag', :action => 'create'
   map.resources :spectrums
 #  map.resources :spectrums, :collection=>{
 #  :doSomething= > :get,
