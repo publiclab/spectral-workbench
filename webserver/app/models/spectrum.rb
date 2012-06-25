@@ -140,4 +140,15 @@ class Spectrum < ActiveRecord::Base
     Tag.find_all_by_spectrum_id self.id
   end
 
+  # a string of either a single tag name or a series of comma-delimited tags
+  def tag(tags,user_id) 
+    tags.split(',').each do |name|
+      Tag.new({
+        :spectrum_id => self.id,
+        :name => name.strip,
+        :user_id => user_id,
+      }).save!
+    end
+  end
+
 end

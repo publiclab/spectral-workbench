@@ -166,6 +166,10 @@ class SpectrumsController < ApplicationController
             format.html { render :text => @spectrum.id.to_s+"?login=true&client_code="+client+"::"+uniq_id} # <== here, also offer a unique code or pass client_id so that we can persist login
           end
         else
+          if params[:tags]
+            @spectrum.tag(params[:tags],current_user.id)
+          end
+
           flash[:notice] = 'Spectrum was successfully created.'
           format.html { 
 		redirect_to :action => :show, :id => @spectrum.id

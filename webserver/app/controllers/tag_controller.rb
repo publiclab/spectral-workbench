@@ -2,14 +2,16 @@ class TagController < ApplicationController
 
   def create
     if logged_in?
-      @tag = Tag.new({
-        :name => params[:tag][:name],
-        :spectrum_id => params[:tag][:spectrum_id],
-        :user_id => current_user.id
-      })
-      @tag.save
-      flash[:notice] = "Tag added."
-      redirect_to "/spectra/show/"+@tag.spectrum_id.to_s
+      params[:tag][:name].split(',').each do |name|
+        tag = Tag.new({
+          :name => name.strip,
+          :spectrum_id => params[:tag][:spectrum_id],
+          :user_id => current_user.id
+        })
+        tag.save
+      end
+      flash[:notice] = "Tag(s) added."
+      redirect_to "/spectra/show/"+params[:tag][:spectrum_id]
     else
       flash[:error] = "You must be logged in to add tags."
       redirect_to "/login"
@@ -17,7 +19,7 @@ class TagController < ApplicationController
   end
 
   def show
-    @tag = Tag.find_by_name params[:id]
+    @tag = Tag.find_by_name(params[:id])
     @spectrums = @tag.spectra
     @spectrums = @spectrums.paginate :page => params[:page], :per_page => 24
     @comments = Comment.all :limit => 12, :order => "id DESC"
