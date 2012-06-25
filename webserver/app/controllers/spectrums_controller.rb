@@ -8,12 +8,22 @@ class SpectrumsController < ApplicationController
   # GET /spectrums.xml
   def index
     @spectrums = Spectrum.find(:all,:order => "created_at DESC")
-    @spectrums = @spectrums.paginate :page => params[:page], :per_page => 24
+    if mobile?
+      @spectrums = @spectrums.paginate :page => params[:page], :per_page => 12
+    else
+      @spectrums = @spectrums.paginate :page => params[:page], :per_page => 24
+    end
     @sets = SpectraSet.find(:all,:limit => 4,:order => "created_at DESC")
     @comments = Comment.all :limit => 12, :order => "id DESC"
 
     respond_to do |format|
-      format.html # index.html.erb
+      format.html { 
+	if mobile?
+          render :template => "spectrums/index.mobile.erb", :layout => "mobile" 
+	else
+	  render 'spectrums/index' 
+	end
+      } # show.html.erb
       format.xml  { render :xml => @spectrums }
     end
   end

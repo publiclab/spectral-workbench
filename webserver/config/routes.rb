@@ -1,7 +1,4 @@
 ActionController::Routing::Routes.draw do |map|
-  map.users '/users', :controller => 'users', :action => 'list'
-  map.profile '/profile', :controller => 'users', :action => 'profile'
-  map.profile '/profile/:id', :controller => 'users', :action => 'profile'
   map.logout '/logout', :controller => 'sessions', :action => 'destroy'
   map.login '/login', :controller => 'sessions', :action => 'new'
   map.register '/register', :controller => 'users', :action => 'create'
@@ -13,6 +10,7 @@ ActionController::Routing::Routes.draw do |map|
 
   # Registered user pages:
   map.profile '/profile', :controller => 'users', :action => 'profile'
+  map.profile '/profile/:id', :controller => 'users', :action => 'profile'
   map.dashboard '/dashboard', :controller => 'users', :action => 'dashboard'
   map.comments '/comments', :controller => 'users', :action => 'comments'
   map.users '/users', :controller => 'users', :action => 'list'
@@ -22,6 +20,8 @@ ActionController::Routing::Routes.draw do |map|
 
   map.resources :videos
   map.assign '/spectra/assign', :controller => 'spectrums', :action => 'assign'
+  map.tags '/tag/:id', :controller => 'tag', :action => 'show'
+  map.resources :tags
   map.resources :spectrums
 #  map.resources :spectrums, :collection=>{
 #  :doSomething= > :get,

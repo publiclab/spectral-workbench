@@ -209,6 +209,25 @@
 
 <h1><%= @spectrum.title %></h1>
 
+<h3>// TAGS</h3>
+
+<p>
+<% if @spectrum.tags %>
+<% @spectrum.tags.each_with_index do |tag,i| %>
+	<a href="/tag/<%= tag.name %>"><%= tag.name %></a><%= "," unless i == @spectrum.tags.length-1 %>
+<% end %>
+<% end %>
+</p>
+<% if logged_in? %>
+<p>
+<form id="tag" action="/tag/create">
+	<input type="text" name="tag[name]" />
+	<input type="hidden" name="tag[spectrum_id]" value="<%= @spectrum.id %>" />
+	<input type="submit" value="Tag" />
+</form>
+</p>
+<% end %>
+
 <h3>// DETAILS</h3>
 
 <p>

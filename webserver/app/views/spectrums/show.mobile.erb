@@ -34,6 +34,15 @@ data = [{label: "<%= @spectrum.title.gsub('"',"'") %> = 0% ",data:[]}];
 
 })() </script>
 
+<h3>TAGS</h3>
+
+<p>
+<% if @spectrum.tags %>
+<% @spectrum.tags.each_with_index do |tag,i| %>
+	<a href="/tag/<%= tag.name %>"><%= tag.name %></a><%= "," unless i == @spectrum.tags.length-1 %>
+<% end %>
+<% end %>
+</p>
 
 <h3>DETAILS</h3>
 

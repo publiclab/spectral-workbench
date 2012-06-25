@@ -1,0 +1,49 @@
+<style>
+
+.spectrum {
+	clear:both;
+}
+.spectrum .image {
+	float: left;	
+}
+
+</style>
+
+<div data-role="page" id="page1">
+	<div data-theme="d" data-role="header">
+		<a data-role="button" data-transition="fade" data-theme="b" href="/capture">Capture</a>
+		<h3>SpectralWorkbench</h3>
+	</div>
+
+	<div data-role="content" style="padding: 15px">
+
+	<% if APP_CONFIG['local'] != "true" %>
+	<div id="video">
+		<iframe width="610" height="370" src="http://www.youtube.com/embed/_yqRZLxcecs" frameborder="0" allowfullscreen></iframe>
+	</div>
+	<% end %>
+
+<h2>RECENT SETS <a class="right" href="/sets/">view all &raquo;</a></h2>
+<%= render :partial => 'sets' %>
+
+<h2>RECENT SPECTRA</h2>
+
+<div class="list">
+<% @spectrums.each do |spectrum| %>
+
+<div class="spectrum ui-listview">
+	<a class="image" href="/spectra/show/<%= spectrum.id %>"><img width="100px;" height="100px;" src="<%= spectrum.photo.url(:thumb) %>" class="image" style="background:#ccc;"></a>
+	<div class="text">
+		<h3><a href="/spectra/show/<%= spectrum.id %>"><%=h truncate(spectrum.title,:length => 24) %></a></h3>
+		<p><a href="/profile/<%=h spectrum.author %>"><%=h spectrum.author %></a> | <%= time_ago_in_words(spectrum.created_at) %> ago</p>
+	</div>
+</div>
+
+<% end %>
+</div>
+
+<br style="clear:both;" />
+<%= will_paginate @spectrums %>
+
+</div>
+</div>

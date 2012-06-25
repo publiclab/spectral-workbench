@@ -53,11 +53,16 @@ class UsersController < ApplicationController
 	@spectrums = @spectrums.paginate :page => params[:page], :per_page => 24
   end
 
-  def delete # temporary for admin/dev
-    @user = User.find(params[:id])
-    @user.delete
-    flash[:notice] = "User "+@user.name+" deleted."
-    redirect_to "/"
+  def delete
+    if (logged_in? && current_user.role == "admin"))
+      @user = User.find(params[:id])
+      @user.delete
+      flash[:notice] = "User "+@user.name+" deleted."
+      redirect_to "/"
+    else
+      flash[:error] = "You must be logged in and an admin."
+      redirect_to "/login"
+    end
   end
 
 end

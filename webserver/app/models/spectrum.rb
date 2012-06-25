@@ -136,4 +136,8 @@ class Spectrum < ActiveRecord::Base
     self.save
   end
 
+  def tags
+    Tag.find_all_by_spectrum_id self.id
+  end
+
 end
