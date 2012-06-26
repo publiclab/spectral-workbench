@@ -151,4 +151,9 @@ class Spectrum < ActiveRecord::Base
     end
   end
 
+  # compare self to other spectrum, return a # score
+  def compare(spectrum_id)
+    # 
+  end
+
 end

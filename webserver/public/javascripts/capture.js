@@ -148,9 +148,32 @@ $W = {
 		}
 		plot = $.plot($("#graph"),$W.data,flotoptions);
 	},
+	geolocate: function() {
+		if (navigator.geolocation) {
+			navigator.geolocation.getCurrentPosition($W.setGeolocation)
+			return true
+		}
+	},
+	setGeolocation: function(loc) {
+                if (loc.coords) {
+                        $('#lat').val(loc.coords.latitude)
+                        $('#lon').val(loc.coords.longitude)
+                }
+                else {
+                        $('#lat').val(loc.latitude)
+                        $('#lon').val(loc.longitude)
+                }
+	},
 	saveSpectrum: function() {
 		$('#dataurl').val($W.canvas.toDataURL())
+		$('#geotag').val($('#geotag-toggle').val() == "on")
 		$('#save').show()
 		$('#capture').hide()
+		setTimeout(function() { if ($('#geotag-toggle').val() == "on") $W.geolocate() },500)
+	},
+	cancelSave: function() {
+		$('#geotag').val('false')
+		$('#lon').val('')
+		$('#lat').val('')
 	}
 }

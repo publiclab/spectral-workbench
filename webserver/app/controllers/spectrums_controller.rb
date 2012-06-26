@@ -50,6 +50,7 @@ class SpectrumsController < ApplicationController
 	end
       } # show.html.erb
       format.xml  { render :xml => @spectrum }
+      format.csv  { render :template => "spectrums/show.csv.erb" }
       format.json  { render :json => @spectrum }
     end
   end
@@ -168,6 +169,11 @@ class SpectrumsController < ApplicationController
         else
           if params[:tags]
             @spectrum.tag(params[:tags],current_user.id)
+          end
+          if params[:geotag]
+            @spectrum.lat = params[:lat]
+            @spectrum.lon = params[:lon]
+            @spectrum.save!
           end
 
           flash[:notice] = 'Spectrum was successfully created.'

@@ -1,10 +1,18 @@
 <style>
 
+h1 { 
+	font-family: georgia; 
+	font-weight:normal; 
+}
 .spectrum {
 	clear:both;
 }
-.spectrum .image {
-	float: left;	
+li.spectrum {
+	padding-right:8px;
+}
+li.spectrum .text {
+	float:right;
+	margin-right:30px;
 }
 
 </style>
@@ -17,33 +25,44 @@
 
 	<div data-role="content" style="padding: 15px">
 
+	<h1>SpectralWorkbench</h1>
+
+	<p><i>Affordable, DIY, open source spectral analysis from your desktop or Android phone (<a href="javascript:void();" onClick="$('#readmore').toggle()">Read more</a>)</i></p>
+	<p id="readmore" style="display:none;">Spectrometry can reveal the composition of unknown materials -- either from samples you take from a site, or (with more difficulty) from a distance. It is used by NASA to identify substances on other planets. Typically, full-spectrum light (such as the sun) shines through a thin slice of the sample, which filters (absorbs) certain colors and allows others to pass through. This light can be split up by color using a prism, and the missing (absorbed) colors can be identified. Finally, the brightness of all the colors is compared to a database of known samples to find a match.</p>
+
+	<p><a href="https://www.wepay.com/stores/publiclaboratory/item/hd-video-spectrometer-kit-885355"><img src="/images/cart.png" /></a> <a href="https://www.wepay.com/stores/publiclaboratory/item/hd-video-spectrometer-kit-885355">Purchase a DIY spectrometer kit &raquo;</a></p>
+	<p>Or, <a href="http://publiclaboratory.org/wiki/video-spectrometer-construction">learn how to make one yourself</a> as part of an open-source research effort of the <a href="http://publiclaboratory.org">Public Laboratory</a> community.</p>
+
 	<% if APP_CONFIG['local'] != "true" %>
-	<div id="video">
+	<div id="video" style="display:none">
 		<iframe width="610" height="370" src="http://www.youtube.com/embed/_yqRZLxcecs" frameborder="0" allowfullscreen></iframe>
 	</div>
 	<% end %>
 
-<h2>RECENT SETS <a class="right" href="/sets/">view all &raquo;</a></h2>
+<h3>RECENT SETS <a class="right" href="/sets/">view all &raquo;</a></h3>
 <%= render :partial => 'sets' %>
 
-<h2>RECENT SPECTRA</h2>
+<h3>RECENT SPECTRA</h3>
 
-<div class="list">
+<ul data-role="listview" data-divider-theme="" data-inset="true">
 <% @spectrums.each do |spectrum| %>
 
-<div class="spectrum ui-listview">
-	<a class="image" href="/spectra/show/<%= spectrum.id %>"><img width="100px;" height="100px;" src="<%= spectrum.photo.url(:thumb) %>" class="image" style="background:#ccc;"></a>
+<li data-theme="c" class="spectrum">
 	<div class="text">
-		<h3><a href="/spectra/show/<%= spectrum.id %>"><%=h truncate(spectrum.title,:length => 24) %></a></h3>
-		<p><a href="/profile/<%=h spectrum.author %>"><%=h spectrum.author %></a> | <%= time_ago_in_words(spectrum.created_at) %> ago</p>
+		<h3><a data-transition="slide" href="/spectra/show/<%= spectrum.id %>"><%=h truncate(spectrum.title,:length => 18) %></a></h3>
+		<p><a data-transition="slide" href="/profile/<%=h spectrum.author %>"><%=h spectrum.author %></a> | <%= time_ago_in_words(spectrum.created_at) %> ago</p>
 	</div>
-</div>
+	<a class="image" href="/spectra/show/<%= spectrum.id %>"><img width="100px;" height="100px;" src="<%= spectrum.photo.url(:thumb) %>" class="image" style="background:#ccc;"></a>
+</li>
 
 <% end %>
-</div>
+</ul>
 
 <br style="clear:both;" />
 <%= will_paginate @spectrums %>
 
 </div>
+
+<%= render :partial => "layouts/footer" %>
+
 </div>

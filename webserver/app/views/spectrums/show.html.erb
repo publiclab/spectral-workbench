@@ -231,9 +231,11 @@
 <h3>// DETAILS</h3>
 
 <p>
-uploaded by <a href="/profile/<%= @spectrum.author %>"><%= @spectrum.author %></a> (<a href="/spectra/feed/<%= @spectrum.author %>">RSS</a>)</p>
+uploaded by <a href="/profile/<%= @spectrum.author %>"><%= @spectrum.author %></a> (<a href="/spectra/feed/<%= @spectrum.author %>">RSS</a>).</p>
+<% if @spectrum.lat != 0 && @spectrum.lon != 0 %><p>Collected at: Lat: <%= @spectrum.lat %>, Lon: <%= @spectrum.lon %> (<a href="http://www.openstreetmap.org/?lat=<%= @spectrum.lat %>&lon=<%= @spectrum.lon %>&zoom=10&layers=M">View in OpenStreetMap</a>)</p><% end %>
 <p>
 <a href="<%= @spectrum.id %>.json">JSON</a> | 
+<a href="<%= @spectrum.id %>.csv">CSV</a> | 
 <a href="<%= @spectrum.id %>.xml">XML</a>
 </p>
 
