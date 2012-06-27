@@ -27,8 +27,8 @@ class Spectrum < ActiveRecord::Base
   def before_destroy
       self.sets.each do |set|
         ids = []
-        spectra_ids = set.spectra_string.explode(',').each do |id|
-          ids << id if id != self.id
+        spectra_ids = set.spectra_string.split(',').each do |id|
+          ids << id if id.to_i != self.id
         end
         set.spectra_string = ids.join(',')
         set.save
@@ -151,9 +151,61 @@ class Spectrum < ActiveRecord::Base
     end
   end
 
+
+  def data_as_hash
+    ActiveSupport::JSON.decode(self.data)['lines']
+  end
+
+  def bin_data(binsize)
+    bins = {}
+    count = {}
+
+    self.data_as_hash.each do |datum|
+      bin = (datum['wavelength'].to_f/binsize).to_i
+      bins[bin] = 0 if bins[bin].nil?
+      bins[bin] += datum['average'].to_i
+      count[bin] = 0 if count[bin].nil?
+      count[bin] += 1 
+    end
+    result = {}
+    bins.each_with_index do |bin,i|
+      bin[1] = bin[1]/count[i] if count[i].to_i > 0
+      result[bin[0].to_i*binsize] = bin[1]
+    end
+    result
+  end
+
   # compare self to other spectrum, return a # score
   def compare(spectrum_id)
-    # 
+    # both must be calibrated (do we need a flag for this?)
+
+    # find difference, subtract average, square it
+    # find overall average
+    sum = 0
+    data = self.bin_data(10)
+    other = Spectrum.find(spectrum_id).bin_data(10)
+    difference = 0
+    difference_sum = 0
+    data.each do |bin|
+      sum += bin[1]
+      difference_sum += 1
+      difference += (other[bin[1]]-data[bin[1]])**2 unless (other[bin[1]].nil? || data[bin[1]].nil?)
+    end
+    average = sum/data.length
+
+    # can we generate a "score" of the match? how close it was?
+    difference
+  end
+
+  def find_match_in_set(set_id)
+    set = SpectraSet.find set_id
+    scored = {}
+
+    set.spectra_string.split(',').each do |id|
+      scored[id] = self.compare(id)
+    end
+    # find lowest score, return it
+    scored
   end
 
 end
