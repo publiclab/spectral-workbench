@@ -26,6 +26,8 @@
 
 	<div style="display:none;" id="webcam"></div> 
 
+<input type="text" id="sample_row" value="240" />
+
 </div>
 
 <script> (function () { 
@@ -58,6 +60,8 @@
 	<input name="spectrum[title]" id="spectrum_notes" type="text" /><br />
 	<label for="spectrum_notes">Notes:</label><br />
 	<input name="spectrum[notes]" id="spectrum_notes" type="text" /><br />
+	<label for="tags">Tags:</label><br />
+	<input name="tags" id="spectrum_tags" value="webclient," type="text" /><br />
 	<input name="dataurl" type="hidden" id="dataurl" />
 	<input type="submit" value="Save" />
 </form>
