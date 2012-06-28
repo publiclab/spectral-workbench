@@ -118,9 +118,11 @@ This work is published from:
   </p>
   <% end %>
 
+  <% if !logged_in? && !APP_CONFIG["local"] %>
   <p>
     <%= recaptcha_tags :display => {:theme => "white"} %>
   </p>
+  <% end %>
 
   <p>
     <%= f.submit 'Create' %>

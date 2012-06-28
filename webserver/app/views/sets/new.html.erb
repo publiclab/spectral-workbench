@@ -22,9 +22,11 @@
     <%= f.text_area :notes %>
   </p>
 
+  <% if !logged_in? && !APP_CONFIG["local"] %>
   <p>
     <%= recaptcha_tags :display => {:theme => "white"} %>
   </p>
+  <% end %>
 
   <p>
     <%= f.submit 'Create' %>

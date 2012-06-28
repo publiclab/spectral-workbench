@@ -354,4 +354,9 @@ class SpectrumsController < ApplicationController
     render :template => "spectrums/capture.mobile.erb", :layout => "mobile" if mobile?
   end
 
+  def match
+    @s = Spectrum.find params[:id]
+    render :text => @s.find_match_in_set(params[:set]).inspect
+  end
+
 end
