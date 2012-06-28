@@ -8,4 +8,19 @@ class SpectraSet < ActiveRecord::Base
 		Spectrum.find(self.spectra_string.split(','))
 	end
 
+	def match(spectrum)
+		set = self.sort_set(spectrum)
+		# find lowest score, return it
+ 		set = set.sort_by {|a| a[1]}
+		Spectrum.find set[0][0].to_i
+	end
+
+	def sort_set(spectrum)
+		scored = {}
+		self.spectra_string.split(',').each do |id|
+			scored[id] = spectrum.compare(id) if id != self.id
+		end
+		scored
+	end
+
 end

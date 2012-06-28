@@ -12,6 +12,28 @@ class SetsController < ApplicationController
     @comment = Comment.new
   end
 
+  def match
+    @set = SpectraSet.find params[:id]
+    if logged_in?
+      @calibration = current_user.last_calibration
+      @start_wavelength,@end_wavelength = @calibration.wavelength_range 
+    end
+    if mobile?
+      render :template => "spectrums/capture.mobile.erb", :layout => "mobile" 
+    else
+      render :template => "spectrums/capture.html.erb"
+    end
+  end
+
+  def find_match
+    @spectrum = Spectrum.new_from_string(params[:data])
+    @calibration = Spectrum.find params[:calibration]
+    @set = SpectraSet.find params[:id]
+    range = @calibration.wavelength_range
+    @spectrum.scale_data(range[0],range[1])
+    render :text => Spectrum.find(@set.match(@spectrum)).name
+  end
+
   def embed
     @set = SpectraSet.find params[:id]
     render :layout => false 

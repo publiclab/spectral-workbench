@@ -6,7 +6,18 @@
 <div id="capture">
 	<div id="captureControls">
 		<a class="button" href="javascript:void(0);" onClick="$W.saveSpectrum()">Save</a>
+		<a class="button" href="javascript:void(0);" onClick="$W.match()">Match</a>
+	<% if @set # if we're matching against a set %>
 		<p><a href="javascript:void(0);" onClick="$('#webcam').toggle()">Webcam preview</a> | Flash video not working? Learn how to <a href="http://publiclaboratory.org/wiki/spectral-workbench-web-video">enable native webcam access</a> in the Google Chrome browser</p>
+		
+		<div id="match"></div>
+	<% end %>
+	</div>
+
+	<div id="configure">
+		<div class="ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all">
+		<a style="left: 0%;" class="ui-slider-handle ui-state-default ui-corner-all" href="#"></a>
+		</div>
 	</div>
 
 	<canvas width="640px" id="canvas"></canvas> 
@@ -20,6 +31,15 @@
 <script> (function () { 
 	$W.initialize()
 	setInterval($W.getRow,500)
+	<% if @calibration %>
+		$W.calibrated = true
+		$W.calibration_id = <%= @calibration.id %>
+		$W.start_wavelength = <%= @start_wavelength %>
+		$W.end_wavelength = <%= @end_wavelength %>
+	<% else %>
+		$W.calibrated = false
+	<% end %>
+
 })() </script>
 <div id="save" style="display:none;">
 
@@ -27,6 +47,11 @@
 
 <p>You must be <a target="_blank" href="/login">logged in</a> to save spectra.</p>
 <p><a href="javascript:$('#save').hide();$('#capture').show();">cancel</a></p>
+
+<form action="/sets/match/1" method="post">
+	<input name="match[calibration]" type="hidden" id="match_calibration" value="<%= @calibration.id %>" />
+	<input name="match[dataurl]" type="hidden" id="match_dataurl" />
+</form>
 
 <form action="/spectrums" method="post">
 	<label for="spectrum_title">Title:</label><br />

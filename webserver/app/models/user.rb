@@ -62,5 +62,8 @@ class User < ActiveRecord::Base
     write_attribute :email, (value ? value.downcase : nil)
   end
 
+  def last_calibration
+    Tag.find_by_name("calibration",:conditions => {:user_id => self.id},:order => "created_at DESC").spectrum
+  end
   
 end

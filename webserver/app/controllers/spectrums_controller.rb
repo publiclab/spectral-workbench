@@ -351,12 +351,16 @@ class SpectrumsController < ApplicationController
   end
 
   def capture
+    if logged_in?
+      @calibration = current_user.last_calibration
+      @start_wavelength,@end_wavelength = @calibration.wavelength_range 
+    end
     render :template => "spectrums/capture.mobile.erb", :layout => "mobile" if mobile?
   end
 
   def match
-    @s = Spectrum.find params[:id]
-    render :text => @s.find_match_in_set(params[:set]).inspect
+    @spectrum = Spectrum.find params[:id]
+    render :text => @spectrum.find_match_in_set(params[:set]).to_json
   end
 
 end

@@ -198,14 +198,35 @@ class Spectrum < ActiveRecord::Base
   end
 
   def find_match_in_set(set_id)
+    set = sort_set(set_id)
+    # find lowest score, return it
+    set = set.sort_by {|a| a[1]}
+    Spectrum.find set[0][0].to_i
+  end
+
+  def sort_set(set_id)
     set = SpectraSet.find set_id
     scored = {}
 
     set.spectra_string.split(',').each do |id|
-      scored[id] = self.compare(id)
+      scored[id] = self.compare(id) if id != self.id
     end
-    # find lowest score, return it
     scored
+  end
+
+  def wavelength_range
+    d = ActiveSupport::JSON.decode(self.data)
+    [d['lines'][0]['wavelength'],d['lines'][d['lines'].length-1]['wavelength']]
+  end
+
+  # new spectrum from string of "wavelength:value,wavelength:value"
+  def self.new_from_string(data)
+    json = "{ data: {'lines': ["
+    data.split(',').each do |datum|
+      json += "{wavelength:"+datum[0]+",average:"+datum[1]+"},"
+    end
+    json += "]}"
+    self.new({:data => json})
   end
 
 end

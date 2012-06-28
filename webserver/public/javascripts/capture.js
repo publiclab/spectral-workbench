@@ -1,4 +1,6 @@
 // window.webcam.getCameraList()
+$.ajaxSetup ({ cache: false }); 
+var ajax_load = "<img src='/images/spinner-small.gif' alt='loading...' />";
 
 var $W
 
@@ -175,5 +177,20 @@ $W = {
 		$('#geotag').val('false')
 		$('#lon').val('')
 		$('#lat').val('')
+	},
+	match: function() {
+		cols = []
+		$.each($W.full_data,function(i,datum) {
+			cols.push(i+":"+datum[3])
+		})
+		$.ajax({
+			url: "/sets/match/1?calibration="+$W.calibration_id,
+			method: "POST",
+			data: {data: cols.join(',')},
+			//context: document.body
+			success: function(result) {
+				$("#match").html(result);
+			}
+		})
 	}
 }
