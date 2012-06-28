@@ -7,18 +7,34 @@ var $W
 $W = {
 	data: null,
 	pos: 0,
-	initialize: function() {
+	samplestartrow: 240,
+	sampleendrow: 250,
+        // height and width of the output stream
+        // container
+	height: 480,
+	width: 640,
+        //width: 1280,
+        //height: 720,
+	resize: function(w,h) {
+		this.width = w
+		this.height = h
+		//resize elements
+	},
+	initialize: function(calibrated) {
 		getUserMedia(this.options, this.success, this.deviceError)
 		window.webcam = this.options
 		this.canvas = document.getElementById("canvas")
-		$('canvas').width = "640px"
+		$('canvas').width = this.width+"px"
 		this.ctx = this.canvas.getContext("2d")
-		this.image = this.ctx.getImageData(0, 0, this.options.width, this.options.height);
+		this.image = this.ctx.getImageData(0, 0, this.width, this.height);
+		if (localStorage.getItem('sw:sample_start_row')) this.sample_start_row = localStorage.getItem('sw:sample_start_row')
+		if (localStorage.getItem('sw:sample_end_row')) this.sample_end_row = localStorage.getItem('sw:sample_end_row')
+		this.calibrated = calibrated // do we need to store this locally too? or store local calibrations?
 	},
         success: function (stream) {
-		console.log('success')
+		//console.log('success')
                 if ($W.options.context === 'webrtc') {
-			console.log('webrtc')
+			//console.log('webrtc')
                         var video = $W.options.videoEl,
                                 vendorURL = window.URL || window.webkitURL;
                         video.src = vendorURL ? vendorURL.createObjectURL(stream) : stream;
@@ -49,14 +65,6 @@ $W = {
 
             extern: null,
             append: true,
-
-            // height and width of the output stream
-            // container
-
-            width: 640,
-            height: 480,
-            //width: 1280,
-            //height: 720,
 
             // the recommended mode to be used is 'callback '
             // where a callback is executed once data
@@ -113,7 +121,7 @@ $W = {
 	getRow: function(y) {
 		if ($W.options.context === 'webrtc') {
 			var video = document.getElementsByTagName('video')[0]; 
-			var startrow = $('#sample_row').val()//parseInt($W.options.height/2)
+			var startrow = $W.samplestartrow//parseInt($W.options.height/2)
 			$W.ctx.drawImage(video, 0, -startrow);
 		} else if($W.options.context === 'flash'){
 			window.webcam.capture();
@@ -121,7 +129,7 @@ $W = {
 			console.log('No context was supplied to getSnapshot()');
 		}
 		//img = $W.image
-		var sample_height = 30 // how many pixels to sample
+		var sample_height = $W.sampleendrow - $W.samplestartrow // how many pixels to sample
 		img = $W.ctx.getImageData(0,0,$W.canvas.width,sample_height)
 		$W.data = [{label: "webcam",data:[]}]
 		$W.full_data = []
@@ -146,7 +154,8 @@ $W = {
 			data += red+','+green+','+blue+','+intensity
 			if (col != $W.width-1) data += '/'
 			$W.full_data.push([red,green,blue,intensity])
-			$W.data[0].data.push([col,intensity/2.55])
+			if (!$W.calibrated) $W.data[0].data.push([col,intensity/2.55])
+			else $W.data[0].data.push([parseInt($W.getWavelength(col)),intensity/2.55])
 		}
 		plot = $.plot($("#graph"),$W.data,flotoptions);
 	},
@@ -192,5 +201,14 @@ $W = {
 				$("#match").html(result);
 			}
 		})
-	}
+	},
+	setSampleRows: function(start,end) {
+		$W.sample_start_row = start
+		$W.sample_end_row = end
+		localStorage.setItem('sw:samplestartrow',$W.sample_start_row)
+		localStorage.setItem('sw:sampleendrow',$W.sample_end_row)
+	},
+	getWavelength: function(col) {
+		return $W.start_wavelength+(col/$W.width)*($W.end_wavelength-$W.start_wavelength)
+	},
 }

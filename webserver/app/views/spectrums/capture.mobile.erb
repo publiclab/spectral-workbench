@@ -58,7 +58,25 @@
 
 </div>
 
+<div data-role="page" id="page3">
+	<div data-role="fieldcontain">
+		<fieldset data-role="controlgroup" data-mini="true">
+			<label for="sample_slider">Range</label>
+			<input type="range" name="slider" id="sample_slider" value="250" min="0" max="640" data-highlight="false" />
+		</fieldset>
+	</div>
+</div>
+
 <script> (function () { 
-	$W.initialize() 
+	$W.initialize(<%= !@calibration.nil? %>) 
 	setInterval($W.getRow,500)
+	<% if @calibration %>
+		$W.calibrated = true
+		$W.calibration_id = <%= @calibration.id %>
+		$W.start_wavelength = <%= @start_wavelength %>
+		$W.end_wavelength = <%= @end_wavelength %>
+    		flotoptions.xaxis.show = true
+	<% else %>
+		$W.calibrated = false
+	<% end %>
 })() </script>

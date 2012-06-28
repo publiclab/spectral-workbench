@@ -6,41 +6,53 @@
 <div id="capture">
 	<div id="captureControls">
 		<a class="button" href="javascript:void(0);" onClick="$W.saveSpectrum()">Save</a>
-		<a class="button" href="javascript:void(0);" onClick="$W.match()">Match</a>
-	<% if @set # if we're matching against a set %>
-		<p><a href="javascript:void(0);" onClick="$('#webcam').toggle()">Webcam preview</a> | Flash video not working? Learn how to <a href="http://publiclaboratory.org/wiki/spectral-workbench-web-video">enable native webcam access</a> in the Google Chrome browser</p>
-		
-		<div id="match"></div>
-	<% end %>
+		<% unless @set.nil? # if we're matching against a set %>
+			<a class="button" href="javascript:void(0);" onClick="$W.match()">Match</a>
+			<div id="match"></div>
+		<% end %>
+		<span><i>Calibrated <%= time_ago_in_words(@calibration.created_at) %> ago. (<a href="http://publiclaboratory.org/wiki/recalibrate-spectral-workbench" target="_blank">Recalibrate &raquo;</a>)</i></span>
+		<p><a href="javascript:void(0);" onClick="$('#configure').toggle()">Configure</a> | Don't see anything? <a href="http://publiclaboratory.org/wiki/spectral-workbench-web-video">Enable webcam access</a> in the Google Chrome browser</p>
 	</div>
 
-	<div id="configure">
-		<div class="ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all">
-		<a style="left: 0%;" class="ui-slider-handle ui-state-default ui-corner-all" href="#"></a>
-		</div>
+	<div style="display:none;" id="configure">
+		<label for="range">Range:</label>
+		<input type="text" id="range" style="border:0; font-weight:bold;" />
+		<br />
+		<div style="float:right;height:480px;" id="sample_slider"></div>
+		<div id="webcam"></div> 
 	</div>
 
 	<canvas width="640px" id="canvas"></canvas> 
 	<br />
-	<div id="graph" style="width:830px;height:200px;"></div>
-
-	<div style="display:none;" id="webcam"></div> 
-
-<input type="text" id="sample_row" value="240" />
+	<div id="graph" style="width:640px;height:200px;"></div>
 
 </div>
 
 <script> (function () { 
-	$W.initialize()
-	setInterval($W.getRow,500)
+	$W.initialize(<%= !@calibration.nil? %>) 
+	setInterval($W.getRow,250)
 	<% if @calibration %>
 		$W.calibrated = true
 		$W.calibration_id = <%= @calibration.id %>
 		$W.start_wavelength = <%= @start_wavelength %>
 		$W.end_wavelength = <%= @end_wavelength %>
+    		flotoptions.xaxis.show = true
 	<% else %>
 		$W.calibrated = false
 	<% end %>
+
+	$("#sample_slider").slider({
+		range: true,
+		orientation: "vertical",
+		min: 0,
+		max: $W.height,
+		values: [ $W.height-$W.sample_end_row, $W.height-$W.sample_start_row ],
+		slide: function(event,ui) {
+			$("#range").val( ui.values[1] + " - " + ui.values[0] );
+			$W.setSampleRows($W.height-ui.values[1],$W.height-ui.values[0])
+		}
+	});
+	$( "#range" ).val( $( "#sample_slider" ).slider( "values", 0 ) + " - " + $( "#sample_slider" ).slider( "values", 1 ) )
 
 })() </script>
 <div id="save" style="display:none;">

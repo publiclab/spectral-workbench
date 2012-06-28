@@ -209,7 +209,7 @@ class Spectrum < ActiveRecord::Base
     scored = {}
 
     set.spectra_string.split(',').each do |id|
-      scored[id] = self.compare(id) if id != self.id
+      scored[id] = self.compare(id) if id.to_i != self.id
     end
     scored
   end

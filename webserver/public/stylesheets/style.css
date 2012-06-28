@@ -140,6 +140,12 @@ a h2 {
 	padding:8px;
 }
 
+#configure {
+	background:#eee;
+	padding:10px;
+	width:680px;
+}
+
 .sidebar {
 	float:right;
 	width:300px;
