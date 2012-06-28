@@ -59,7 +59,11 @@
 
 <h2>Save this spectrum</h2>
 
-<p>You must be <a target="_blank" href="/login">logged in</a> to save spectra.</p>
+<% if !logged_in? %>
+	<p>You must be <a target="_blank" href="/login">logged in</a> to save spectra.</p>
+<% else %>
+	<p>(logged in as <%=h current_user.login %>)</p>
+<% end %>
 <p><a href="javascript:$('#save').hide();$('#capture').show();">cancel</a></p>
 
 <form action="/sets/match/1" method="post">
@@ -75,6 +79,7 @@
 	<label for="tags">Tags:</label><br />
 	<input name="tags" id="spectrum_tags" value="webclient," type="text" /><br />
 	<input name="dataurl" type="hidden" id="dataurl" />
+	<input name="spectrum[calibration_id]" type="hidden" id="calibration_id" />
 	<input type="submit" value="Save" />
 </form>
 </div>

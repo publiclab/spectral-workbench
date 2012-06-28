@@ -177,6 +177,7 @@ $W = {
 	},
 	saveSpectrum: function() {
 		$('#dataurl').val($W.canvas.toDataURL())
+		$('#calibration_id').val($W.calibration_id)
 		$('#geotag').val($('#geotag-toggle').val() == "on")
 		$('#save').show()
 		$('#capture').hide()

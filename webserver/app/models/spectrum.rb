@@ -41,7 +41,7 @@ class Spectrum < ActiveRecord::Base
     require 'RMagick'
     pixels = []
 
-    image   = Magick::ImageList.new("public"+self.photo.url)
+    image   = Magick::ImageList.new("public"+self.photo.url.split('?')[0])
     row = image.export_pixels(0, 1, image.columns, 1, "RGB");
     (0..(row.length/3-1)).each do |p|
       r = row[p*3]/255

@@ -170,11 +170,15 @@ class SpectrumsController < ApplicationController
           if params[:tags]
             @spectrum.tag(params[:tags],current_user.id)
           end
+          if params[:spectrum][:calibration_id]
+            @spectrum.extract_data
+            @spectrum.clone(params[:spectrum][:calibration_id]) 
+          end
           if params[:geotag]
             @spectrum.lat = params[:lat]
             @spectrum.lon = params[:lon]
-            @spectrum.save!
           end
+          @spectrum.save!
 
           flash[:notice] = 'Spectrum was successfully created.'
           format.html { 
