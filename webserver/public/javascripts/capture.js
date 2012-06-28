@@ -111,7 +111,7 @@ $W = {
 	getRow: function(y) {
 		if ($W.options.context === 'webrtc') {
 			var video = document.getElementsByTagName('video')[0]; 
-			var startrow = parseInt($W.options.height/2)
+			var startrow = $('#sample_row').val()//parseInt($W.options.height/2)
 			$W.ctx.drawImage(video, 0, -startrow);
 		} else if($W.options.context === 'flash'){
 			window.webcam.capture();
