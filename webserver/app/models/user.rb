@@ -26,7 +26,7 @@ class User < ActiveRecord::Base
   attr_accessible :login, :email, :name, :password, :password_confirmation
 
   def spectra
-    Spectrum.find_all_by_user_id(self.id)
+    Spectrum.find_all_by_user_id(self.id,:order => "created_at DESC")
   end
 
   def comments
