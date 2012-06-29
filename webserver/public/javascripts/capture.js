@@ -15,12 +15,9 @@ $W = {
 	width: 640,
         //width: 1280,
         //height: 720,
-	resize: function(w,h) {
-		this.width = w
-		this.height = h
-		//resize elements
-	},
-	initialize: function(calibrated) {
+	initialize: function(calibrated,width,height) {
+		if (height) this.height = height 
+		if (width) this.width = width
 		getUserMedia(this.options, this.success, this.deviceError)
 		window.webcam = this.options
 		this.canvas = document.getElementById("canvas")
@@ -59,6 +56,11 @@ $W = {
 
             "audio": false,
             "video": true,
+
+            // height and width of the output stream
+            // container
+	    height: this.height,
+	    width: this.width,
 
             // the element (by id) you wish to apply
             el: "webcam",

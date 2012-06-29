@@ -15,10 +15,11 @@
 	</div>
 
 	<div style="display:none;" id="configure">
-		<p id="local_calibration">This device has a locally stored calibration. <a href="/capture?calibration_id=" id="local_calibration_link">Click here</a> to use it.</p>
+		<p style="display:none;" id="local_calibration">This device has a locally stored calibration. <a href="" id="local_calibration_link">Click here</a> to use it.</p>
 		<script>
 			if (localStorage.getItem("sw:calibration_id")) {
-				$("#local_calibration_link")[0].href += localStorage.getItem("sw:calibration_id")
+				$("#local_calibration_link")[0].href = "/capture?calibration_id="+localStorage.getItem("sw:calibration_id")
+				$("#local_calibration").show()
 			}
 		</script>
 		<p>Store a calibration in your browser:</p>
@@ -28,7 +29,7 @@
 			<% end %>
 		</select><br />
 		<div style="padding:10px 0;">
-			<a href="javascript:void()" onClick="localStorage.setItem('sw:calibration',$('#local_calibration_select').val())" class="smallbutton">Store calibration</a><br style="clear:both;"/>
+			<a href="javascript:void()" onClick="localStorage.setItem('sw:calibration_id',$('#local_calibration_select').val())" class="smallbutton">Store calibration</a><br style="clear:both;"/>
 		</div>
 		<label for="range">Range:</label>
 		<input type="text" id="range" style="border:0; font-weight:bold;" />
@@ -44,7 +45,11 @@
 </div>
 
 <script> (function () { 
-	$W.initialize(<%= !@calibration.nil? %>) 
+	<% if params[:height] %>
+		$W.initialize(<%= !@calibration.nil? %>,<%= params[:width] %>,<%= params[:height] %>) 
+	<% else %>
+		$W.initialize(<%= !@calibration.nil? %>) 
+	<% end %>
 	setInterval($W.getRow,250)
 	<% if @calibration %>
 		$W.calibrated = true
