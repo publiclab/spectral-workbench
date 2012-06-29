@@ -195,8 +195,8 @@ $W = {
 			cols.push(i+":"+datum[3])
 		})
 		$.ajax({
-			url: "/sets/match/1?calibration="+$W.calibration_id,
-			method: "POST",
+			url: "/sets/find_match/"+$W.set+"?calibration="+$W.calibration_id,
+			type: "POST",
 			data: {data: cols.join(',')},
 			//context: document.body
 			success: function(result) {

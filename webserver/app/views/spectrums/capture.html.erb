@@ -63,6 +63,10 @@
 		$W.calibrated = false
 	<% end %>
 
+	<% if params[:action] == "match" %>
+		$W.set = <%= @set.id %>
+	<% end %>
+
 	$("#sample_slider").slider({
 		range: true,
 		orientation: "vertical",
@@ -88,12 +92,7 @@
 <% end %>
 <p><a href="javascript:$('#save').hide();$('#capture').show();">&laquo; back</a></p>
 
-<form action="/sets/match/1" method="post">
-	<input name="match[calibration]" type="hidden" id="match_calibration" value="<%= @calibration.id %>" />
-	<input name="match[dataurl]" type="hidden" id="match_dataurl" />
-</form>
-
-<form action="/spectrums" method="post" target="_blank">
+<form action="/spectrums" method="post" target="_blank" onSubmit="$('#save').hide();$('#capture').show();">
 	<label for="spectrum_title">Title:</label><br />
 	<input name="spectrum[title]" id="spectrum_notes" type="text" /><br />
 	<label for="spectrum_notes">Notes:</label><br />

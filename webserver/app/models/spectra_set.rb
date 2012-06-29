@@ -17,6 +17,8 @@ class SpectraSet < ActiveRecord::Base
 
 	def sort_set(spectrum)
 		scored = {}
+puts self.id
+puts self.spectra_string
 		self.spectra_string.split(',').each do |id|
 			scored[id] = spectrum.compare(id) if id != self.id
 		end

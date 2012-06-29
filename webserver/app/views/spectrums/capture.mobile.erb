@@ -41,7 +41,7 @@
 		<p>(logged in as <%=h current_user.login %>)</p>
 	<% end %>
 
-	<form action="/spectrums" method="post" id="saveForm" target="_blank">
+	<form action="/spectrums" method="post" id="saveForm" target="_blank" onSubmit="$W.cancelSave();window.location='#page1'">
 		<label for="spectrum_title">Title:</label><br />
 		<input name="spectrum[title]" id="spectrum_notes" type="text" /><br />
 		<label for="tags">Tags:</label><br />

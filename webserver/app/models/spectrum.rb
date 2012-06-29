@@ -221,9 +221,12 @@ class Spectrum < ActiveRecord::Base
 
   # new spectrum from string of "wavelength:value,wavelength:value"
   def self.new_from_string(data)
-    json = "{ data: {'lines': ["
-    data.split(',').each do |datum|
-      json += "{wavelength:"+datum[0]+",average:"+datum[1]+"},"
+    json = "{ 'lines': ["
+    cols = data.split(',')
+    cols.each_with_index do |datum,i|
+      datum = datum.split(':')
+      json += "{'wavelength':"+datum[0]+",'average':"+datum[1]+"}"
+      json += "," if i < cols.length-1
     end
     json += "]}"
     self.new({:data => json})
