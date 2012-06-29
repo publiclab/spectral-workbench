@@ -63,7 +63,7 @@ class User < ActiveRecord::Base
   end
 
   def last_calibration 
-    self.tag('calibration').last
+    self.tag('calibration').first
   end
 
   # find spectra by user, tagged with <name>
