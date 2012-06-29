@@ -229,4 +229,8 @@ class Spectrum < ActiveRecord::Base
     self.new({:data => json})
   end
 
+  def has_tag(name)
+    !Tag.find_by_name(name,:conditions => {:spectrum_id => self.id}).nil?
+  end
+
 end

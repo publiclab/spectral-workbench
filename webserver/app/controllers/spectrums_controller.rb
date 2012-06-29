@@ -267,11 +267,12 @@ class SpectrumsController < ApplicationController
   def calibrate
     @spectrum = Spectrum.find(params[:id])
     if logged_in? && @spectrum.user_id == current_user.id
-    if request.post?
-      @spectrum.calibrate(params[:x1],params[:w1],params[:x2],params[:w2]).save
-      @spectrum.save
-    end
-    redirect_to "/spectra/show/"+@spectrum.id.to_s
+      if request.post?
+        @spectrum.calibrate(params[:x1],params[:w1],params[:x2],params[:w2]).save
+        @spectrum.save
+        tag = @spectrum.tag('calibration',current_user.id)
+      end
+      redirect_to "/spectra/show/"+@spectrum.id.to_s
     else
       flash[:error] = "You must be logged in and own this spectrum to calibrate."
       redirect_back
@@ -357,6 +358,7 @@ class SpectrumsController < ApplicationController
   def capture
     if logged_in?
       @calibration = current_user.last_calibration
+      @calibration = Spectrum.find(params[:calibration_id]) if params[:calibration_id]
       @start_wavelength,@end_wavelength = @calibration.wavelength_range 
     end
     render :template => "spectrums/capture.mobile.erb", :layout => "mobile" if mobile?

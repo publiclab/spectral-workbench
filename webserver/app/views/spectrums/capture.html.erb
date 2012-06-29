@@ -6,15 +6,30 @@
 <div id="capture">
 	<div id="captureControls">
 		<a class="button" href="javascript:void(0);" onClick="$W.saveSpectrum()">Save</a>
-		<% unless @set.nil? # if we're matching against a set %>
+		<% if params[:action] == "match" %>
 			<a class="button" href="javascript:void(0);" onClick="$W.match()">Match</a>
-			<div id="match"></div>
+			<span style="font-weight:bold;" id="match"></span>
 		<% end %>
 		<span><i>Calibrated <%= time_ago_in_words(@calibration.created_at) %> ago. (<a href="http://publiclaboratory.org/wiki/recalibrate-spectral-workbench" target="_blank">Recalibrate &raquo;</a>)</i></span>
 		<p><a href="javascript:void(0);" onClick="$('#configure').toggle()">Configure</a> | Don't see anything? <a href="http://publiclaboratory.org/wiki/spectral-workbench-web-video">Enable webcam access</a> in the Google Chrome browser</p>
 	</div>
 
 	<div style="display:none;" id="configure">
+		<p id="local_calibration">This device has a locally stored calibration. <a href="/capture?calibration_id=" id="local_calibration_link">Click here</a> to use it.</p>
+		<script>
+			if (localStorage.getItem("sw:calibration_id")) {
+				$("#local_calibration_link")[0].href += localStorage.getItem("sw:calibration_id")
+			}
+		</script>
+		<p>Store a calibration in your browser:</p>
+		<select id="local_calibration_select">
+			<% current_user.tag('calibration').each do |spectrum| %>
+			<option value="<%= spectrum.id %>"><%= spectrum.title %> (<%= time_ago_in_words(spectrum.created_at) %>)</option>
+			<% end %>
+		</select><br />
+		<div style="padding:10px 0;">
+			<a href="javascript:void()" onClick="localStorage.setItem('sw:calibration',$('#local_calibration_select').val())" class="smallbutton">Store calibration</a><br style="clear:both;"/>
+		</div>
 		<label for="range">Range:</label>
 		<input type="text" id="range" style="border:0; font-weight:bold;" />
 		<br />
@@ -78,8 +93,13 @@
 	<input name="spectrum[notes]" id="spectrum_notes" type="text" /><br />
 	<label for="tags">Tags:</label><br />
 	<input name="tags" id="spectrum_tags" value="webclient," type="text" /><br />
+	<label for="calibration_id">Calibration:</label><br />
+	<select name="spectrum[calibration_id]" id="calibration_id">
+		<% current_user.tag('calibration').each do |spectrum| %>
+		<option value="<%= spectrum.id %>"><%= spectrum.title %> (<%= time_ago_in_words(spectrum.created_at) %>)</option>
+		<% end %>
+	</select><br />
 	<input name="dataurl" type="hidden" id="dataurl" />
-	<input name="spectrum[calibration_id]" type="hidden" id="calibration_id" />
 	<input type="submit" value="Save" />
 </form>
 </div>

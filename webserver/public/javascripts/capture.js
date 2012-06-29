@@ -7,8 +7,8 @@ var $W
 $W = {
 	data: null,
 	pos: 0,
-	samplestartrow: 240,
-	sampleendrow: 250,
+	sample_start_row: 240,
+	sample_end_row: 280,
         // height and width of the output stream
         // container
 	height: 480,
@@ -121,7 +121,7 @@ $W = {
 	getRow: function(y) {
 		if ($W.options.context === 'webrtc') {
 			var video = document.getElementsByTagName('video')[0]; 
-			var startrow = $W.samplestartrow//parseInt($W.options.height/2)
+			var startrow = $W.sample_start_row//parseInt($W.options.height/2)
 			$W.ctx.drawImage(video, 0, -startrow);
 		} else if($W.options.context === 'flash'){
 			window.webcam.capture();
@@ -129,7 +129,7 @@ $W = {
 			console.log('No context was supplied to getSnapshot()');
 		}
 		//img = $W.image
-		var sample_height = $W.sampleendrow - $W.samplestartrow // how many pixels to sample
+		var sample_height = $W.sample_end_row - $W.sample_start_row // how many pixels to sample
 		img = $W.ctx.getImageData(0,0,$W.canvas.width,sample_height)
 		$W.data = [{label: "webcam",data:[]}]
 		$W.full_data = []
