@@ -22,6 +22,7 @@
 				$("#local_calibration").show()
 			}
 		</script>
+		<% if logged_in? %>
 		<p>Store a calibration in your browser:</p>
 		<select id="local_calibration_select">
 			<% current_user.tag('calibration').each do |spectrum| %>
@@ -31,6 +32,7 @@
 		<div style="padding:10px 0;">
 			<a href="javascript:void()" onClick="localStorage.setItem('sw:calibration_id',$('#local_calibration_select').val())" class="smallbutton">Store calibration</a><br style="clear:both;"/>
 		</div>
+		<% end %>
 		<label for="range">Range:</label>
 		<input type="text" id="range" style="border:0; font-weight:bold;" />
 		<br />
@@ -98,12 +100,14 @@
 	<input name="spectrum[notes]" id="spectrum_notes" type="text" /><br />
 	<label for="tags">Tags:</label><br />
 	<input name="tags" id="spectrum_tags" value="webclient," type="text" /><br />
+	<% if @calibration %>
 	<label for="calibration_id">Calibration:</label><br />
 	<select name="spectrum[calibration_id]" id="calibration_id">
 		<% current_user.tag('calibration').each do |spectrum| %>
 		<option value="<%= spectrum.id %>"><%= spectrum.title %> (<%= time_ago_in_words(spectrum.created_at) %>)</option>
 		<% end %>
 	</select><br />
+	<% end %>
 	<input name="dataurl" type="hidden" id="dataurl" />
 	<input type="submit" value="Save" />
 </form>
