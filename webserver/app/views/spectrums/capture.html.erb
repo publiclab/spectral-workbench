@@ -86,7 +86,7 @@
 <% else %>
 	<p>(logged in as <%=h current_user.login %>)</p>
 <% end %>
-<p><a href="javascript:$('#save').hide();$('#capture').show();">cancel</a></p>
+<p><a href="javascript:$('#save').hide();$('#capture').show();">&laquo; back</a></p>
 
 <form action="/sets/match/1" method="post">
 	<input name="match[calibration]" type="hidden" id="match_calibration" value="<%= @calibration.id %>" />
