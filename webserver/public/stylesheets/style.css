@@ -146,6 +146,13 @@ a h2 {
 	width:680px;
 }
 
+#match {
+	font-weight:bold;
+	padding:4px;
+	color:#0a0;
+	background:#afa;
+}
+
 .sidebar {
 	float:right;
 	width:300px;

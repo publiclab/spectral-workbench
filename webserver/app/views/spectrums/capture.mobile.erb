@@ -9,12 +9,19 @@
   </div>
   <div data-role="content" style="padding: 15px">
 
+	<% if params[:action] == "match" %>
+	<p><b>Click "Match" to find the closest spectrum in the set "<%= @set.title %>"</b></p>
+	<% end %>
+
 	<div id="graph" style="width:100%;height:100px;"></div>
 	<br />
 	<canvas style="width:100%;height:100px;" id="canvas"></canvas> 
 	<div style="width:100%;display:none;" id="webcam"></div> 
 
-    <a data-role="button" data-transition="fade" data-theme="b" href="#page2" onClick="$W.saveSpectrum();">Save</a>
+	<span id="match"></span>
+
+    <a data-role="button" data-theme="b" href="javascript:void()" onClick="$W.match();">Match</a>
+    <a data-role="button" data-transition="fade" data-theme="c" href="#page2" onClick="$W.saveSpectrum();">Save</a>
 
     <div data-role="fieldcontain">
       <fieldset data-role="controlgroup">
@@ -26,6 +33,7 @@
       </fieldset>
     </div>
 
+    <% unless logged_in? %><p><a href="/login">Log in</a> to use a recent calibration</p><% end %>
     <p>This interface works only on <a href="https://play.google.com/store/apps/details?id=com.opera.browser">Opera Mobile</a>, the only mobile browser currently supporting the MediaStream API</p>
 
   </div>
@@ -76,7 +84,7 @@
 
 <script> (function () { 
 	$W.initialize(<%= !@calibration.nil? %>) 
-	setInterval($W.getRow,500)
+	setInterval($W.getRow,250)
 	<% if @calibration %>
 		$W.calibrated = true
 		$W.calibration_id = <%= @calibration.id %>
@@ -85,5 +93,8 @@
     		flotoptions.xaxis.show = true
 	<% else %>
 		$W.calibrated = false
+	<% end %>
+	<% if params[:action] == "match" %>
+		$W.set = <%= @set.id %>
 	<% end %>
 })() </script>

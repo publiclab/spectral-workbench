@@ -18,6 +18,7 @@ class SetsController < ApplicationController
       @calibration = current_user.last_calibration
       @start_wavelength,@end_wavelength = @calibration.wavelength_range 
     end
+    @calibration = Spectrum.find :last if APP_CONFIG['local']
     if mobile?
       render :template => "spectrums/capture.mobile.erb", :layout => "mobile" 
     else
@@ -32,7 +33,7 @@ class SetsController < ApplicationController
     range = @calibration.wavelength_range
     @spectrum.scale_data(range[0],range[1])
     @match = Spectrum.find(@set.match(@spectrum))
-    render :text => "Match found: <a href='/spectra/"+@match.id.to_s+"'>"+@match.title+"</a> |"
+    render :text => "Matched: <a href='/spectra/"+@match.id.to_s+"'>"+@match.title+"</a>"
   end
 
   def embed

@@ -194,6 +194,7 @@ $W = {
 		$.each($W.full_data,function(i,datum) {
 			cols.push(i+":"+datum[3])
 		})
+		$("#match").html("<img src='/images/spinner-small.gif' />");
 		$.ajax({
 			url: "/sets/find_match/"+$W.set+"?calibration="+$W.calibration_id,
 			type: "POST",

@@ -1,16 +1,21 @@
 <script src="/javascripts/getUserMedia.js"> </script>
 <script src="/javascripts/capture.js"> </script>
 
+<% if params[:action] == "match" %>
+<p><b>Click "Match" to find the closest spectrum in the set "<%= @set.title %>"</b></p>
+<% unless logged_in? %><p><a href="/login">Log in</a> to use a recent calibration</p><% end %>
+<% end %>
 <br />
-
 <div id="capture">
 	<div id="captureControls">
 		<a class="button" href="javascript:void(0);" onClick="$W.saveSpectrum()">Save</a>
 		<% if params[:action] == "match" %>
 			<a class="button" href="javascript:void(0);" onClick="$W.match()">Match</a>
-			<span style="font-weight:bold;" id="match"></span>
+			<span id="match"></span> |
 		<% end %>
-		<span><i>Calibrated <%= time_ago_in_words(@calibration.created_at) %> ago. (<a href="http://publiclaboratory.org/wiki/recalibrate-spectral-workbench" target="_blank">Recalibrate &raquo;</a>)</i></span>
+		<% if logged_in? %>
+			<span><i>Calibrated <%= time_ago_in_words(@calibration.created_at) %> ago. (<a href="http://publiclaboratory.org/wiki/recalibrate-spectral-workbench" target="_blank">Recalibrate &raquo;</a>)</i></span>
+		<% end %>
 		<p><a href="javascript:void(0);" onClick="$('#configure').toggle()">Configure</a> | Don't see anything? <a href="http://publiclaboratory.org/wiki/spectral-workbench-web-video">Enable webcam access</a> in the Google Chrome browser</p>
 	</div>
 
