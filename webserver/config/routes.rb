@@ -3,6 +3,7 @@ ActionController::Routing::Routes.draw do |map|
   map.login '/login', :controller => 'sessions', :action => 'new'
   map.register '/register', :controller => 'users', :action => 'create'
   map.signup '/signup', :controller => 'users', :action => 'new'
+  map.users '/users', :controller => 'users', :action => 'list'
   map.resources :users
   map.resource :session
 
@@ -13,7 +14,6 @@ ActionController::Routing::Routes.draw do |map|
   map.profile '/profile/:id', :controller => 'users', :action => 'profile'
   map.dashboard '/dashboard', :controller => 'users', :action => 'dashboard'
   map.comments '/comments', :controller => 'users', :action => 'comments'
-  map.users '/users', :controller => 'users', :action => 'list'
 
   map.open_id_complete '/session', :controller => "session", :action => "create", :conditions => { :method => :get }
   #map.open_id_complete 'session', :controller => "session", :action => "create", :requirements => { :method => :get }
