@@ -20,8 +20,8 @@
 
 	<span id="match"></span>
 
-    <a data-role="button" data-theme="b" href="javascript:void()" onClick="$W.match();">Match</a>
-    <a data-role="button" data-transition="fade" data-theme="c" href="#page2" onClick="$W.saveSpectrum();">Save</a>
+    <a data-ajax="false" data-role="button" data-theme="b" href="javascript:void()" onClick="$W.match();">Match</a>
+    <a data-ajax="false" data-role="button" data-transition="fade" data-theme="c" href="#page2" onClick="$W.saveSpectrum();">Save</a>
 
     <div data-role="fieldcontain">
       <fieldset data-role="controlgroup">
@@ -33,7 +33,7 @@
       </fieldset>
     </div>
 
-    <% unless logged_in? %><p><a href="/login">Log in</a> to use a recent calibration</p><% end %>
+    <% unless logged_in? %><p><a data-ajax="false" href="/login">Log in</a> to use a recent calibration</p><% end %>
     <p>This interface works only on <a href="https://play.google.com/store/apps/details?id=com.opera.browser">Opera Mobile</a>, the only mobile browser currently supporting the MediaStream API</p>
 
   </div>
@@ -44,7 +44,7 @@
 	<h2>Save this spectrum</h2>
 
 	<% if !logged_in? %>
-		<p>You must be <a target="_blank" href="/login">logged in</a> to save spectra.</p>
+		<p>You must be <a target="_blank" data-ajax="false" href="/login">logged in</a> to save spectra.</p>
 	<% else %>
 		<p>(logged in as <%=h current_user.login %>)</p>
 	<% end %>
@@ -68,8 +68,8 @@
 		</select>
 		<% end %>
 	</form>
-	<a data-role="button" data-transition="fade" data-theme="b" href="javascript:void(0);" onClick="$('#saveForm').submit()">Save</a>
-	<a data-role="button" data-transition="fade" data-theme="d" href="#page1" onClick="$W.cancelSave()">&laquo; Back</a>
+	<a data-ajax="false" data-role="button" data-transition="fade" data-theme="b" href="javascript:void(0);" onClick="$('#saveForm').submit()">Save</a>
+	<a data-ajax="false" data-role="button" data-transition="fade" data-theme="d" href="#page1" onClick="$W.cancelSave()">&laquo; Back</a>
 
 </div>
 
