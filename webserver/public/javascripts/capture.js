@@ -15,13 +15,13 @@ $W = {
 	height: 480,
         //width: 1280,
         //height: 720,
-	initialize: function(calibrated,width,height) {
-		if (height) {
-			this.height = height 
-			this.width = width
+	initialize: function(args) {
+		this.mobile = args['mobile'] || false
+		this.calibrated = args['calibrated'] || false
+		if (args['height']) {
+			this.options.height = args['height'] 
+			this.options.width = args['width']
 		}
-		this.options.height = this.height 
-		this.options.width = this.width
 		getUserMedia(this.options, this.success, this.deviceError)
 		window.webcam = this.options
 		this.canvas = document.getElementById("canvas")
@@ -30,7 +30,6 @@ $W = {
 		this.image = this.ctx.getImageData(0, 0, this.width, this.height);
 		if (localStorage.getItem('sw:sample_start_row')) this.sample_start_row = localStorage.getItem('sw:sample_start_row')
 		if (localStorage.getItem('sw:sample_end_row')) this.sample_end_row = localStorage.getItem('sw:sample_end_row')
-		this.calibrated = calibrated // do we need to store this locally too? or store local calibrations?
 	},
         success: function (stream) {
 		//console.log('success')
@@ -76,7 +75,7 @@ $W = {
             swffile: "/javascripts/webcam-fallback/jscam_canvas_only.swf",
 
             // quality of the fallback stream
-            quality: 85,
+            quality: 100,
             context: "",
 
             debug: function () {},
@@ -131,10 +130,15 @@ $W = {
 		}
 		//img = $W.image
 		var sample_height = $W.sample_end_row - $W.sample_start_row // how many pixels to sample
-		img = $W.ctx.getImageData(0,0,$W.canvas.width,sample_height)
+		if ($W.mobile) {
+			img = $W.ctx.getImageData(0,0,sample_height,$W.canvas.height)
+		} else {
+			img = $W.ctx.getImageData(0,0,$W.canvas.width,sample_height)
+		}
 		$W.data = [{label: "webcam",data:[]}]
 		$W.full_data = []
 		var data = ''
+
 		for (var col = 0; col < $W.canvas.width; col++) {
 			var red = 0
 			for (row=0;row<sample_height;row++) {

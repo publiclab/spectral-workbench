@@ -53,9 +53,17 @@
 
 <script> (function () { 
 	<% if params[:height] %>
-		$W.initialize(<%= !@calibration.nil? %>,<%= params[:width] %>,<%= params[:height] %>) 
+		$W.initialize({
+			calibrated: <%= !@calibration.nil? %>,
+			width: <%= params[:width] %>,
+			height: <%= params[:height] %>,
+			mobile: false
+		})
 	<% else %>
-		$W.initialize(<%= !@calibration.nil? %>) 
+		$W.initialize({
+			calibrated: <%= !@calibration.nil? %>,
+			mobile: false
+		}) 
 	<% end %>
 	setInterval($W.getRow,250)
 	<% if @calibration %>
