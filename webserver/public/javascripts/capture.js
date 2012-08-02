@@ -57,7 +57,7 @@ $W = {
 	// and so on.
 	options: {
 
-            "audio": false,
+            "audio": true,
             "video": true,
 
             // the element (by id) you wish to apply

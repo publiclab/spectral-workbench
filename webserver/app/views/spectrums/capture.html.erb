@@ -51,7 +51,8 @@
 
 </div>
 
-<script> (function () { 
+<script type="text/javascript">
+(function () { 
 	<% if params[:height] %>
 		$W.initialize({
 			calibrated: <%= !@calibration.nil? %>,
@@ -93,7 +94,8 @@
 	});
 	$( "#range" ).val( $( "#sample_slider" ).slider( "values", 0 ) + " - " + $( "#sample_slider" ).slider( "values", 1 ) )
 
-})() </script>
+})() 
+</script>
 <div id="save" style="display:none;">
 
 <h2>Save this spectrum</h2>
