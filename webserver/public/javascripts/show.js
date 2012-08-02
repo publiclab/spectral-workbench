@@ -85,6 +85,12 @@ var legends;
 var updateLegendTimeout = null;
 var latestPosition = null;
 
+$("#compareForm").submit(function(){
+	var url = "/spectrums/compare/<%= @spectrum.id %>?q="+$("#searchinput").val();
+	$("#result").html(ajax_load).load(url);
+});
+
+
 function updateLegend() {
 	updateLegendTimeout = null;
 
