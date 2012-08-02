@@ -2,12 +2,6 @@ $.ajaxSetup ({ cache: false });
 
 var ajax_load = "<img src='/images/spinner-small.gif' alt='loading...' />";
 
-$("#compareForm").submit(function(){
-	var url = "/spectrums/compare/<%= @spectrum.id %>?q="+$("#searchinput").val();
-	$("#result").html(ajax_load).load(url);
-});
-
-
 spectrum = ""
 data = []
 $W = {
@@ -25,6 +19,11 @@ $W = {
 			data[0].data.push([line.wavelength,line.average/(2.55)])
 		})
 		this.plot = $.plot($("#graph"),data,flotoptions);
+
+		$("#compareForm").submit(function(){
+			var url = "/spectrums/compare/"+$W.spectrum_id+"?q="+$("#searchinput").val();
+			$("#result").html(ajax_load).load(url);
+		});
 		$('#units').click(function() {
 			if (flotoptions.xaxis.tickFormatter == wavenumbers) {
 				flotoptions.xaxis.tickFormatter = nanometers
@@ -84,11 +83,6 @@ init_hovers();
 var legends;
 var updateLegendTimeout = null;
 var latestPosition = null;
-
-$("#compareForm").submit(function(){
-	var url = "/spectrums/compare/<%= @spectrum.id %>?q="+$("#searchinput").val();
-	$("#result").html(ajax_load).load(url);
-});
 
 
 function updateLegend() {
