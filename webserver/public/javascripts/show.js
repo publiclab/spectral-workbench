@@ -120,19 +120,19 @@ function updateLegend() {
 			y = p1[1] + (p2[1] - p1[1]) * (pos.x - p1[0]) / (p2[0] - p1[0]);
 	
 		$('#wavelength').html(parseInt(pos.x))
-		console.log(parseInt(pos.x))
+		//console.log(parseInt(pos.x))
 		legends.eq(i).html(series.label.replace(/=.*%/, "= " + parseInt(y) + "%"));
 	}
 }
 
 function init_hovers() {
 	$("#graph").bind("plothover",  function (event, pos, item) {
-		console.log('updateLegend')
+		//console.log('updateLegend')
 		latestPosition = pos;
 		if (!updateLegendTimeout)
 			updateLegendTimeout = setTimeout(updateLegend, 50);
 	});
-	console.log('plothover bind')
+	//console.log('plothover bind')
 	legends = $("#graph .legendLabel");
 	legends.each(function () {
 		// fix the widths so they don't jump around
