@@ -74,6 +74,13 @@
 
 <h3>// DETAILS</h3>
 
+<% if logged_in? && current_user.login == @spectrum.author %>
+	<p>
+	<%= link_to 'Edit', edit_spectrum_path(@spectrum) %> |
+	<%= link_to 'Delete', "/spectrums/destroy/"+@spectrum.id.to_s %>
+	</p>
+<% end %>
+
 <p>
 uploaded by <a href="/profile/<%= @spectrum.author %>"><%= @spectrum.author %></a> (<a href="/spectra/feed/<%= @spectrum.author %>">RSS</a>).</p>
 <% if @spectrum.lat != 0 && @spectrum.lon != 0 %><p>Collected at: Lat: <%= @spectrum.lat %>, Lon: <%= @spectrum.lon %> (<a href="http://www.openstreetmap.org/?lat=<%= @spectrum.lat %>&lon=<%= @spectrum.lon %>&zoom=10&layers=M">View in OpenStreetMap</a>)</p><% end %>

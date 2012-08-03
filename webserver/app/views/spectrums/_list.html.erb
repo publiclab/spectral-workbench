@@ -17,10 +17,6 @@
       <p class="notes"><%=h truncate(spectrum.notes,:length => 200) %></p>
       <p>
 	<a href="/spectra/<%= spectrum.id %>">View</a> 
-	<% if logged_in? && current_user.login == spectrum.author %>
-	| <%= link_to 'Edit', edit_spectrum_path(spectrum) %> |
-		<%= link_to 'Delete', "/spectrums/destroy/"+spectrum.id.to_s %> |
-        <% end %>
 	<a href="/spectra/<%= spectrum.id %>#comments"><%= spectrum.comments.length %> comments</a> 
       </p>
   </div>
