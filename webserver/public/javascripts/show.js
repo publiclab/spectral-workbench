@@ -12,6 +12,7 @@ $W = {
 		this.title = args['title']
 		spectrum = args['spectrum_data']
 		data = [{label: $W.title+" = 0% ",data:[]}]
+		scaled = true
 		$.each(spectrum.lines,function(index,line) {
 			if (line.wavelength == null) {
 				line.wavelength = index
@@ -19,6 +20,7 @@ $W = {
 			}
 			data[0].data.push([line.wavelength,line.average/(2.55)])
 		})
+		flotoptions.xaxis.show = scaled
 		this.plot = $.plot($("#graph"),data,flotoptions);
 
 		this.init_hovers();
@@ -152,8 +154,6 @@ $W = {
 
 }
 
-scaled = true
-flotoptions.xaxis.show = scaled
 
 var legends;
 var latestPosition = null;

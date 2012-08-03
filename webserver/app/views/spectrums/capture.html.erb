@@ -114,12 +114,12 @@
 	<input name="spectrum[notes]" id="spectrum_notes" type="text" /><br />
 	<label for="tags">Tags:</label><br />
 	<input name="tags" id="spectrum_tags" value="webclient," type="text" /><br />
-	<input id="is_calibration" type="checkbox" name="is_calibration" />
+	<input id="is_calibration" type="checkbox" name="is_calibration" value="false"/>
 	<label for="tags">This is a calibration</label><br />
 	<script>
 		$('#is_calibration').bind("click",function(){
-			if (this.checked) $('#choose_calibration').hide()
-			else $('#choose_calibration').show()
+			if (this.checked) { $('#choose_calibration').hide(); this.val(true); }
+			else { $('#choose_calibration').show(); this.val(false) }
 		})
 	</script>
 	<% if @calibration %>

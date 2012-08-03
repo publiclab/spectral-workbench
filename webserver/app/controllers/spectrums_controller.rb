@@ -170,7 +170,7 @@ class SpectrumsController < ApplicationController
           if params[:tags]
             @spectrum.tag(params[:tags],current_user.id)
           end
-          if params[:spectrum][:calibration_id]
+          if params[:spectrum][:calibration_id] && !params[:is_calibration]
             @spectrum.extract_data
             @spectrum.clone(params[:spectrum][:calibration_id]) 
           end
@@ -358,7 +358,7 @@ class SpectrumsController < ApplicationController
   def capture
     if logged_in?
       @calibration = current_user.last_calibration
-      @calibration = Spectrum.find(params[:calibration_id]) if params[:calibration_id] && !params[:is_calibration]
+      @calibration = Spectrum.find(params[:calibration_id]) if params[:calibration_id]
       @start_wavelength,@end_wavelength = @calibration.wavelength_range 
     end
     render :template => "spectrums/capture.mobile.erb", :layout => "mobile" if mobile?
