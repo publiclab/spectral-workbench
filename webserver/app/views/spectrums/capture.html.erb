@@ -16,7 +16,7 @@
 		<% if logged_in? %>
 			<span><i>Calibrated <%= time_ago_in_words(@calibration.created_at) %> ago. (<a href="http://publiclaboratory.org/wiki/recalibrate-spectral-workbench" target="_blank">Recalibrate &raquo;</a>)</i></span>
 		<% end %>
-		<p><a href="javascript:void(0);" onClick="$('#configure').toggle()">Configure</a> | Don't see anything? <a href="http://publiclaboratory.org/wiki/spectral-workbench-web-video">Enable webcam access</a> in the Google Chrome browser</p>
+		<p><a href="javascript:void(0);" onClick="$('#configure').toggle()">Configure</a> | Don't see anything? <a href="http://publiclaboratory.org/wiki/spectral-workbench-web-video">Check if your browser is supported</a></p>
 	</div>
 
 	<div style="display:none;" id="configure">
