@@ -112,6 +112,7 @@
 	<input name="spectrum[title]" id="spectrum_notes" type="text" /><br />
 	<label for="spectrum_notes">Notes:</label><br />
 	<input name="spectrum[notes]" id="spectrum_notes" type="text" /><br />
+	<input name="geotag" type="hidden" id="geotag" />
 	<label for="tags">Tags:</label><br />
 	<input name="tags" id="spectrum_tags" value="webclient," type="text" /><br />
 	<input id="is_calibration" type="checkbox" name="is_calibration" value="false"/>
@@ -132,6 +133,11 @@
 	</select><br />
 	</div>
 	<% end %>
+        <label for="geotag_menu">Geotag</label>
+        <select name="geotag_menu" id="geotag-toggle">
+           <option value="off">Off</option>
+           <option value="on">On</option>
+        </select>
 	<input name="dataurl" type="hidden" id="dataurl" />
 	<input type="submit" value="Save" />
 </form>
