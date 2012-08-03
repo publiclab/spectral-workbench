@@ -114,13 +114,23 @@
 	<input name="spectrum[notes]" id="spectrum_notes" type="text" /><br />
 	<label for="tags">Tags:</label><br />
 	<input name="tags" id="spectrum_tags" value="webclient," type="text" /><br />
+	<input id="is_calibration" type="checkbox" name="is_calibration" />
+	<label for="tags">This is a calibration</label><br />
+	<script>
+		$('#is_calibration').bind("click",function(){
+			if (this.checked) $('#choose_calibration').hide()
+			else $('#choose_calibration').show()
+		})
+	</script>
 	<% if @calibration %>
+	<div id="choose_calibration">
 	<label for="calibration_id">Calibration:</label><br />
 	<select name="spectrum[calibration_id]" id="calibration_id">
 		<% current_user.tag('calibration').each do |spectrum| %>
 		<option value="<%= spectrum.id %>"><%= spectrum.title %> (<%= time_ago_in_words(spectrum.created_at) %>)</option>
 		<% end %>
 	</select><br />
+	</div>
 	<% end %>
 	<input name="dataurl" type="hidden" id="dataurl" />
 	<input type="submit" value="Save" />

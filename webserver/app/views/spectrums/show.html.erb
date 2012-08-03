@@ -77,7 +77,7 @@
 <% if logged_in? && current_user.login == @spectrum.author %>
 	<p>
 	<%= link_to 'Edit', edit_spectrum_path(@spectrum) %> |
-	<%= link_to 'Delete', "/spectrums/destroy/"+@spectrum.id.to_s %>
+	<%= link_to 'Delete', "/spectrums/destroy/"+@spectrum.id.to_s, :confirm => 'Are you sure?' %>
 	</p>
 <% end %>
 

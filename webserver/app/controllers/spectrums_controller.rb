@@ -358,7 +358,7 @@ class SpectrumsController < ApplicationController
   def capture
     if logged_in?
       @calibration = current_user.last_calibration
-      @calibration = Spectrum.find(params[:calibration_id]) if params[:calibration_id]
+      @calibration = Spectrum.find(params[:calibration_id]) if params[:calibration_id] && !params[:is_calibration]
       @start_wavelength,@end_wavelength = @calibration.wavelength_range 
     end
     render :template => "spectrums/capture.mobile.erb", :layout => "mobile" if mobile?

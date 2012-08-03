@@ -11,10 +11,10 @@ $W = {
 	sample_end_row: 280,
         // height and width of the output stream
         // container
-	width: 640,
-	height: 480,
-        //width: 1280,
-        //height: 720,
+	//width: 640,
+	//height: 480,
+        width: 1280,
+        height: 720,
 	initialize: function(args) {
 		this.mobile = args['mobile'] || false
 		this.calibrated = args['calibrated'] || false
