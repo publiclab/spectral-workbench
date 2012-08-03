@@ -3,6 +3,9 @@ class SessionsController < ApplicationController
 
   # render new.erb.html
   def new
+	if mobile?
+          render :template => "sessions/new.mobile.erb", :layout => "mobile" 
+	end
   end
 
   def create
