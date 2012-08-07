@@ -22,6 +22,13 @@ $W = {
 			this.options.height = args['height'] 
 			this.options.width = args['width']
 		}
+		if (this.mobile) {
+			this.sample_start_row = this.width/2
+			this.sample_end_row = this.width/2 + 10
+		} else {
+			this.sample_start_row = this.height/2
+			this.sample_end_row = this.height/2 + 10
+		}
 		getUserMedia(this.options, this.success, this.deviceError)
 		window.webcam = this.options
 		this.canvas = document.getElementById("canvas")
@@ -30,6 +37,7 @@ $W = {
 		this.image = this.ctx.getImageData(0, 0, this.width, this.height);
 		if (localStorage.getItem('sw:sample_start_row')) this.sample_start_row = localStorage.getItem('sw:sample_start_row')
 		if (localStorage.getItem('sw:sample_end_row')) this.sample_end_row = localStorage.getItem('sw:sample_end_row')
+		this.sample_height = this.sample_end_row - this.sample_start_row // how many pixels to sample
 	},
         success: function (stream) {
 		//console.log('success')
@@ -106,8 +114,7 @@ $W = {
 			$W.pos += 4;
 		}
 		
-		var sample_height = 10 // how many pixels to sample
-		if ($W.pos >= 4 * w * sample_height) { 
+		if ($W.pos >= 4 * w * $W.sample_height) { 
 			$W.canvas.getContext('2d').putImageData(img, 0, 0);
 			$W.ctx.drawImage(img, 0, 0);
 			$W.pos = 0;
@@ -121,41 +128,40 @@ $W = {
 		if ($W.options.context === 'webrtc') {
 			var video = document.getElementsByTagName('video')[0]; 
 			var startrow = $W.sample_start_row//parseInt($W.options.height/2)
-			$W.ctx.save()
 			if ($W.mobile) {
-				$W.ctx.rotate(Math.PI/2)
-				//$W.ctx.translate(32, 120);
+				$W.ctx.save()
+					$W.ctx.rotate(Math.PI/2)
+					$W.ctx.drawImage(video, -startrow/4, -$W.height/2);
+				$W.ctx.restore()
+			} else {
+				$W.ctx.drawImage(video, 0, -startrow);
 			}
-			$W.ctx.drawImage(video, 0, -startrow);
-			$W.ctx.restore()
 		} else if($W.options.context === 'flash'){
 			window.webcam.capture();
 		} else {
 			console.log('No context was supplied to getSnapshot()');
 		}
-		//img = $W.image
-		var sample_height = $W.sample_end_row - $W.sample_start_row // how many pixels to sample
-		img = $W.ctx.getImageData(0,0,$W.canvas.width,sample_height)
+		img = $W.ctx.getImageData(0,0,$W.canvas.width,$W.sample_height)
 		$W.data = [{label: "webcam",data:[]}]
 		$W.full_data = []
 		var data = ''
 
 		for (var col = 0; col < $W.canvas.width; col++) {
 			var red = 0
-			for (row=0;row<sample_height;row++) {
+			for (row=0;row<$W.sample_height;row++) {
 				 red += img.data[((row*(img.width*4)) + (col*4)) + 0]
 			}
-			red /= sample_height
+			red /= $W.sample_height
 			var green = 0
-			for (row=0;row<sample_height;row++) {
+			for (row=0;row<$W.sample_height;row++) {
 				 green += img.data[((row*(img.width*4)) + (col*4)) + 1]
 			}
-			green /= sample_height
+			green /= $W.sample_height
 			var blue = 0
-			for (row=0;row<sample_height;row++) {
+			for (row=0;row<$W.sample_height;row++) {
 				 blue += img.data[((row*(img.width*4)) + (col*4)) + 2]
 			}
-			blue /= sample_height
+			blue /= $W.sample_height
 			var intensity = (red+blue+green)/3
 			data += red+','+green+','+blue+','+intensity
 			if (col != $W.width-1) data += '/'
