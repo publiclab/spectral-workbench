@@ -108,7 +108,6 @@ $W = {
 		
 		var sample_height = 10 // how many pixels to sample
 		if ($W.pos >= 4 * w * sample_height) { 
-			console.log('putting image')
 			$W.canvas.getContext('2d').putImageData(img, 0, 0);
 			$W.ctx.drawImage(img, 0, 0);
 			$W.pos = 0;
@@ -122,7 +121,13 @@ $W = {
 		if ($W.options.context === 'webrtc') {
 			var video = document.getElementsByTagName('video')[0]; 
 			var startrow = $W.sample_start_row//parseInt($W.options.height/2)
+			$W.ctx.save()
+			if ($W.mobile) {
+				$W.ctx.rotate(Math.PI/2)
+				//$W.ctx.translate(32, 120);
+			}
 			$W.ctx.drawImage(video, 0, -startrow);
+			$W.ctx.restore()
 		} else if($W.options.context === 'flash'){
 			window.webcam.capture();
 		} else {
@@ -130,11 +135,7 @@ $W = {
 		}
 		//img = $W.image
 		var sample_height = $W.sample_end_row - $W.sample_start_row // how many pixels to sample
-		if ($W.mobile) {
-			img = $W.ctx.getImageData(0,0,sample_height,$W.canvas.height)
-		} else {
-			img = $W.ctx.getImageData(0,0,$W.canvas.width,sample_height)
-		}
+		img = $W.ctx.getImageData(0,0,$W.canvas.width,sample_height)
 		$W.data = [{label: "webcam",data:[]}]
 		$W.full_data = []
 		var data = ''
@@ -163,6 +164,7 @@ $W = {
 			else $W.data[0].data.push([parseInt($W.getWavelength(col)),intensity/2.55])
 		}
 		plot = $.plot($("#graph"),$W.data,flotoptions);
+
 	},
 	geolocate: function() {
 		if (navigator.geolocation) {
