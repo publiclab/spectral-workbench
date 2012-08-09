@@ -126,14 +126,18 @@ $W = {
 				$W.ctx.rotate(Math.PI/2)
 				//$W.ctx.translate(32, 120);
 			}
+			// Grab the existing canvas:
+			var saved = $W.excerptCanvas(0,0,$W.width,$W.height,$W.ctx).getImageData(0,0,$W.width,$W.height)
+			// Draw new data:
 			$W.ctx.drawImage(video, 0, -startrow);
+			// Draw old data below new row of data:
+			$W.ctx.putImageData(saved,0,1)
 			$W.ctx.restore()
 		} else if($W.options.context === 'flash'){
 			window.webcam.capture();
 		} else {
 			console.log('No context was supplied to getSnapshot()');
 		}
-		//img = $W.image
 		var sample_height = $W.sample_end_row - $W.sample_start_row // how many pixels to sample
 		img = $W.ctx.getImageData(0,0,$W.canvas.width,sample_height)
 		$W.data = [{label: "webcam",data:[]}]
@@ -228,4 +232,19 @@ $W = {
 	getWavelength: function(col) {
 		return $W.start_wavelength+(col/$W.width)*($W.end_wavelength-$W.start_wavelength)
 	},
+        /**
+         * Returns a canvas object of any rect from the offered canvas
+         */
+        excerptCanvas: function(x1,y1,x2,y2,source) {
+                source = source || $C
+                var width = x2-x1, height = y2-y1
+                $('body').append("<canvas style='' id='excerptCanvas'></canvas>")
+                var element = $('#excerptCanvas')[0]
+                element.width = width
+                element.height = height
+                var excerptCanvasContext = element.getContext('2d')
+                var sourcedata = source.getImageData(x1,y1,width,height)
+                excerptCanvasContext.putImageData(sourcedata,0,0)
+                return excerptCanvasContext
+        }
 }

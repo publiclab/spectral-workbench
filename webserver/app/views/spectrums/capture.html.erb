@@ -16,8 +16,10 @@
 		<% if logged_in? %>
 			<span><i>Calibrated <%= time_ago_in_words(@calibration.created_at) %> ago. (<a href="http://publiclaboratory.org/wiki/recalibrate-spectral-workbench" target="_blank">Recalibrate &raquo;</a>)</i></span>
 		<% end %>
-		<p><a href="javascript:void(0);" onClick="$('#configure').toggle()">Configure</a> | Don't see anything? <a href="http://publiclaboratory.org/wiki/spectral-workbench-web-video">Check if your browser is supported</a></p>
+		<span class="separator">&nbsp;</span>
+		<a href="javascript:void(0);" onClick="$('#configure').toggle()">Configure</a> | Don't see anything? <a href="http://publiclaboratory.org/wiki/spectral-workbench-web-video">Check if your browser is supported</a>
 	</div>
+	<br />
 
 	<div style="display:none;" id="configure">
 		<p style="display:none;" id="local_calibration">This device has a locally stored calibration. <a href="" id="local_calibration_link">Click here</a> to use it.</p>
@@ -47,7 +49,7 @@
 
 	<canvas width="640px" id="canvas"></canvas> 
 	<br />
-	<div id="graph" style="width:640px;height:200px;"></div>
+	<div id="graph" style="width:640px;height:160px;"></div>
 
 </div>
 
@@ -66,7 +68,7 @@
 			mobile: false
 		}) 
 	<% end %>
-	setInterval($W.getRow,250)
+	setInterval($W.getRow,100)
 	<% if @calibration %>
 		$W.calibrated = true
 		$W.calibration_id = <%= @calibration.id %>

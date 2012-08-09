@@ -93,7 +93,7 @@
 		calibrated:<%= !@calibration.nil? %>,
 		mobile:true
 	}) 
-	setInterval($W.getRow,250)
+	setInterval($W.getRow,100)
 	<% if @calibration %>
 		$W.calibrated = true
 		$W.calibration_id = <%= @calibration.id %>
