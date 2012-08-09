@@ -128,6 +128,8 @@ $W = {
 		if ($W.options.context === 'webrtc') {
 			var video = document.getElementsByTagName('video')[0]; 
 			var startrow = $W.sample_start_row//parseInt($W.options.height/2)
+			// Grab the existing canvas:
+			var saved = $W.excerptCanvas(0,0,$W.width,$W.height,$W.ctx).getImageData(0,0,$W.width,$W.height)
 			if ($W.mobile) {
 				$W.ctx.save()
 					$W.ctx.rotate(Math.PI/2)
@@ -136,10 +138,6 @@ $W = {
 			} else {
 				$W.ctx.drawImage(video, 0, -startrow);
 			}
-			// Grab the existing canvas:
-			var saved = $W.excerptCanvas(0,0,$W.width,$W.height,$W.ctx).getImageData(0,0,$W.width,$W.height)
-			// Draw new data:
-			$W.ctx.drawImage(video, 0, -startrow);
 			// Draw old data below new row of data:
 			$W.ctx.putImageData(saved,0,1)
 			$W.ctx.restore()
