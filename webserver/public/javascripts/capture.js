@@ -219,14 +219,14 @@ $W = {
 		$.each($W.full_data,function(i,datum) {
 			cols.push(i+":"+datum[3])
 		})
-		$("#match").html("<img src='/images/spinner-small.gif' />");
+		$("#match").html("<p><img src='/images/spinner-green.gif' /></p>");
 		$.ajax({
 			url: "/sets/find_match/"+$W.set+"?calibration="+$W.calibration_id,
 			type: "POST",
 			data: {data: cols.join(',')},
 			//context: document.body
 			success: function(result) {
-				$("#match").html(result);
+				$("#match").html("<p>"+result+"</p>");
 			}
 		})
 	},

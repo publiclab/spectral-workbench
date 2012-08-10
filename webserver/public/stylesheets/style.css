@@ -146,11 +146,19 @@ a h2 {
 	width:680px;
 }
 
-#match {
+#match span {
 	font-weight:bold;
-	padding:4px;
+	padding:8px;
 	color:#0a0;
 	background:#afa;
+        -moz-border-radius-topleft:5px;
+        -webkit-border-top-left-radius:5px;
+        -moz-border-radius-bottomleft:5px;
+        -webkit-border-bottom-left-radius:5px;
+        -moz-border-radius-topright:5px;
+        -webkit-border-top-right-radius:5px;
+        -moz-border-radius-bottomright:5px;
+        -webkit-border-bottom-right-radius:5px;
 }
 
 .sidebar {
