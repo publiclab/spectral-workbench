@@ -8,6 +8,7 @@ class Spectrum < ActiveRecord::Base
         validates_format_of :author, :with => /\A[a-zA-Z0-9_]+\z/, :message => "Only letters and numbers allowed" 
 
 	has_many :comments, :dependent => :destroy
+	has_many :tags, :dependent => :destroy
 	
 	# Paperclip
 	has_attached_file :photo,
