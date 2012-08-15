@@ -74,6 +74,7 @@
 
 <h3>// DETAILS</h3>
 
+	<% if @spectrum.author == "anonymous" %><a href="/spectra/edit/<%= @spectrum.id %>">Claim this spectrum</a><% end %>
 <% if logged_in? && current_user.login == @spectrum.author %>
 	<p>
 	<%= link_to 'Edit', edit_spectrum_path(@spectrum) %> |
