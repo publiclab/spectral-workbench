@@ -8,18 +8,18 @@
         <link rel="stylesheet" href="/stylesheets/mobile.css" />
         <script src="/javascripts/jquery.min.js">
         </script>
+        <script>
+          $(document).bind("mobileinit", function(){
+            // disable ajax nav
+            $.mobile.ajaxEnabled = false;
+          });
+        </script>
         <script src="/javascripts/jquery.mobile-1.1.0.min.js">
         </script>
 	<script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.js"></script> 
 	<script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.flot.js"></script> 
 	<script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.flot.crosshair.js"></script>
 	<%= javascript_include_tag "application" %>
-        <script>
-          $(document).ready(function() {
-            // disable ajax nav
-            $.mobile.ajaxLinksEnabled = false;
-          });
-        </script>
     </head>
     <body>
     <%= yield %>

@@ -17,6 +17,7 @@
       <p class="notes"><%=h truncate(spectrum.notes,:length => 200) %></p>
       <p>
 	<a href="/spectra/<%= spectrum.id %>">View</a> 
+	<% if spectrum.author == "anonymous" %><a href="/spectra/edit/<%= spectrum.id %>">Claim this spectrum</a><% end %>
 	<a href="/spectra/<%= spectrum.id %>#comments"><%= spectrum.comments.length %> comments</a> 
       </p>
   </div>

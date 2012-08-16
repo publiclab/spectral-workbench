@@ -158,7 +158,7 @@ class SpectrumsController < ApplicationController
 	    if params[:photo]
               @spectrum = Spectrum.find @spectrum.id
               @spectrum.extract_data
-              @spectrum.scale_data(params[:endWavelength],params[:startWavelength])
+              @spectrum.scale_data(params[:endWavelength],params[:startWavelength]) if (params[:endWavelength] && params[:startWavelength])
               @spectrum.save!
             end
           if logged_in?
