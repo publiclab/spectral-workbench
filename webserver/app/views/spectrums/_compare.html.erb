@@ -40,15 +40,15 @@
   $("#spectrum_btn_<%= spectrum.id %>").click(function() {
     spectra.push(<%= spectrum.id %>)
     $("#createSet").show()
-    data.push({id: <%= spectrum.id %>, label:"<%= spectrum.title.gsub('"',"'") %> = 0% (<a href='javascript:void(0);' onClick='remove(\"<%= spectrum.id %>\")'>remove</a>)", data: spectrum_<%= spectrum.id %>_data})
+    $W.data.push({id: <%= spectrum.id %>, label:"<%= spectrum.title.gsub('"',"'") %> = 0% (<a href='javascript:void(0);' onClick='remove(\"<%= spectrum.id %>\")'>remove</a>)", data: spectrum_<%= spectrum.id %>_data})
     plot = $.plot($("#graph"),data,flotoptions);
     init_hovers();
     $("#spectrum_<%= spectrum.id %>").remove()
   })
   function remove(id) {
-    $.each(data,function(index,s) {
+    $.each($W.data,function(index,s) {
       if (s.id == id) {
-        data.splice(index,1)
+        $W.data.splice(index,1)
       }
     })
     $.each(spectra,function(index,s) {
@@ -56,7 +56,7 @@
         spectra.splice(index,1)
       }
     })
-    plot = $.plot($("#graph"),data,flotoptions);
+    plot = $.plot($("#graph"),$W.data,flotoptions);
     init_hovers();
   }
 

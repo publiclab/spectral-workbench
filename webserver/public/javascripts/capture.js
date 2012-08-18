@@ -1,11 +1,12 @@
 // window.webcam.getCameraList()
-$.ajaxSetup ({ cache: false }); 
+//$.ajaxSetup ({ cache: false }); 
 var ajax_load = "<img src='/images/spinner-small.gif' alt='loading...' />";
 
 var $W
 
 $W = {
 	data: null,
+	mode: "average",
 	pos: 0,
 	sample_start_row: 240,
 	sample_end_row: 280,
@@ -147,7 +148,15 @@ $W = {
 			console.log('No context was supplied to getSnapshot()');
 		}
 		img = $W.ctx.getImageData(0,0,$W.canvas.width,$W.sample_height)
-		$W.data = [{label: "webcam",data:[]}]
+		if ($W.mode == "average") {
+			$W.data = [{label: "webcam",data:[]}]
+		} else if ($W.mode == "rgb") {
+			$W.data = [
+				{label: "r",data:[]},
+				{label: "g",data:[]},
+				{label: "b",data:[]}
+			]
+		}
 		$W.full_data = []
 		var data = ''
 
@@ -171,12 +180,28 @@ $W = {
 			data += red+','+green+','+blue+','+intensity
 			if (col != $W.width-1) data += '/'
 			$W.full_data.push([red,green,blue,intensity])
-			if (!$W.calibrated) $W.data[0].data.push([col,intensity/2.55])
-			else $W.data[0].data.push([parseInt($W.getWavelength(col)),intensity/2.55])
+			if (!$W.calibrated) {
+				if ($W.mode == "average") {
+					$W.data[0].data.push([col,intensity/2.55])
+				} else if ($W.mode == "rgb") {
+					$W.data[0].data.push([col,red/2.55])
+					$W.data[1].data.push([col,green/2.55])
+					$W.data[2].data.push([col,blue/2.55])
+				}
+			} else {
+				if ($W.mode == "average") {
+					$W.data[0].data.push([parseInt($W.getWavelength(col)),intensity/2.55])
+				} else if ($W.mode == "rgb") {
+					var w = $W.getWavelength(col)
+					$W.data[0].data.push([w,red/2.55])
+					$W.data[1].data.push([w,green/2.55])
+					$W.data[2].data.push([w,blue/2.55])
+				}
+			}
 		}
 		plot = $.plot($("#graph"),$W.data,flotoptions);
-
 	},
+
 	geolocate: function() {
 		if (navigator.geolocation) {
 			navigator.geolocation.getCurrentPosition($W.setGeolocation)
@@ -239,6 +264,22 @@ $W = {
 	getWavelength: function(col) {
 		return $W.start_wavelength+(col/$W.width)*($W.end_wavelength-$W.start_wavelength)
 	},
+
+	show_rgb: function() {
+		this.mode = "rgb"
+		flotoptions.colors = [ "#ff0000", "#00ff00", "#0000ff" ]
+		plot = $.plot($("#graph"),$W.data,flotoptions);
+	},
+	show_average: function() {
+		this.mode = "average"
+		flotoptions.colors = [ "#333333", "#E02130", "#FAB243", "#429867", "#2B5166" ]//, "#482344" ]
+		plot = $.plot($("#graph"),$W.data,flotoptions);
+	},
+	toggle_mode: function() {
+		if (this.mode == "rgb") $W.show_average()
+		else $W.show_rgb()
+	},
+
         /**
          * Returns a canvas object of any rect from the offered canvas
          */

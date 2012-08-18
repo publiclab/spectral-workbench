@@ -3,26 +3,18 @@ $.ajaxSetup ({ cache: false });
 var ajax_load = "<img src='/images/spinner-small.gif' alt='loading...' />";
 
 spectrum = ""
-data = []
 $W = {
 	updateLegendTimeout: null,
+	data: [],
+	mode: "average",
 	initialize: function(args) {
 		this.spectrum_id = args['spectrum_id']
 		this.form_authenticity_token = args['form_authenticity_token']
 		this.title = args['title']
-		spectrum = args['spectrum_data']
-		data = [{label: $W.title+" = 0% ",data:[]}]
+		this.spectrum = args['spectrum_data']
+		this.data = [{label: $W.title+" = 0% ",data:[]}]
 		scaled = true
-		$.each(spectrum.lines,function(index,line) {
-			if (line.wavelength == null) {
-				line.wavelength = index
-				scaled = false
-			}
-			data[0].data.push([line.wavelength,line.average/(2.55)])
-		})
-		flotoptions.xaxis.show = scaled
-		this.plot = $.plot($("#graph"),data,flotoptions);
-
+		this.show_average()
 		this.init_hovers();
 		$("#compareForm").submit(function(){
 			var url = "/spectrums/compare/"+$W.spectrum_id+"?q="+$("#searchinput").val();
@@ -36,7 +28,7 @@ $W = {
 				flotoptions.xaxis.tickFormatter = wavenumbers
 				flotoptions.xaxis.tickSize = wavenumber_tickSize
 			}
-			$.plot($("#graph"),data,flotoptions);
+			$.plot($("#graph"),this.data,flotoptions);
 		})
 		$('#createSet').click(function() {
 			var f = document.createElement('form');
@@ -96,6 +88,7 @@ $W = {
 		});
 	},
 
+	// must update to function during RGB mode
 	updateLegend: function() {
 		$W.updateLegendTimeout = null;
 	
@@ -151,6 +144,48 @@ $W = {
 		f.action = "/spectra/calibrate/"+$W.spectrum_id+"?x1="+x1+"&w1="+w1+"&x2="+x2+"&w2="+w2
 		f.submit();
 	},
+
+	show_rgb: function() {
+		this.mode = "rgb"
+		this.data = [
+			{label: "red = 0% ",data:[]},
+			{label: "green = 0% ",data:[]},
+			{label: "blue = 0% ",data:[]},
+		]
+		$.each(this.spectrum.lines,function(index,line) {
+			if (line.wavelength == null) {
+				line.wavelength = index
+				scaled = false
+			}
+			$W.data[0].data.push([line.wavelength,line.r/2.55])
+			$W.data[1].data.push([line.wavelength,line.g/2.55])
+			$W.data[2].data.push([line.wavelength,line.b/2.55])
+		})
+		flotoptions.colors = [ "#ff0000", "#00ff00", "#0000ff" ]
+		this.plot = $.plot($("#graph"),this.data,flotoptions);
+	},
+	show_average: function() {
+		this.mode = "average"
+		$W.data = [{label: $W.title+" = 0% ",data:[]}]
+		$.each(this.spectrum.lines,function(index,line) {
+			if (line.wavelength == null) {
+				line.wavelength = index
+				scaled = false
+			}
+			$W.data[0].data.push([line.wavelength,line.average/(2.55)])
+		})
+		flotoptions.xaxis.show = scaled
+		flotoptions.colors = [ "#333333", "#E02130", "#FAB243", "#429867", "#2B5166" ]//, "#482344" ]
+		this.plot = $.plot($("#graph"),$W.data,flotoptions);
+	},
+	toggle_mode: function() {
+		if (this.mode == "rgb") $W.show_average()
+		else $W.show_rgb()
+	},
+
+	find_blue_end: function() {
+		
+	}
 
 }
 
