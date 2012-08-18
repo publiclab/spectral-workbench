@@ -6,16 +6,20 @@ var $W
 
 $W = {
 	data: null,
+	full_data: [],
+	unflipped_data: [],
+	flipped: false,
 	mode: "average",
 	pos: 0,
 	sample_start_row: 240,
 	sample_end_row: 280,
         // height and width of the output stream
         // container
-	//width: 640,
-	//height: 480,
-        width: 1280,
-        height: 720,
+	width: 640,
+	height: 480,
+        //width: 1280,
+        //height: 720,
+	frame: 0,
 	initialize: function(args) {
 		this.mobile = args['mobile'] || false
 		this.calibrated = args['calibrated'] || false
@@ -126,22 +130,28 @@ $W = {
         },
 
 	getRow: function(y) {
+		$W.frame += 1
 		if ($W.options.context === 'webrtc') {
 			var video = document.getElementsByTagName('video')[0]; 
 			var startrow = $W.sample_start_row//parseInt($W.options.height/2)
 			// Grab the existing canvas:
 			var saved = $W.excerptCanvas(0,0,$W.width,$W.height,$W.ctx).getImageData(0,0,$W.width,$W.height)
+		// check for flipped spectrum every 10th frame... hmmm
+		if ($W.frame/10 - parseInt($W.frame/10) == 0) $W.autodetect_flipness()
+			$W.ctx.save()
 			if ($W.mobile) {
-				$W.ctx.save()
 					$W.ctx.rotate(Math.PI/2)
 					$W.ctx.drawImage(video, -startrow/4, -$W.height/2);
-				$W.ctx.restore()
 			} else {
+				if ($W.flipped) {
+					$W.ctx.translate($W.width,0)
+					$W.ctx.scale(-1,1)
+				}
 				$W.ctx.drawImage(video, 0, -startrow);
 			}
+			$W.ctx.restore()
 			// Draw old data below new row of data:
 			$W.ctx.putImageData(saved,0,1)
-			$W.ctx.restore()
 		} else if($W.options.context === 'flash'){
 			window.webcam.capture();
 		} else {
@@ -157,9 +167,8 @@ $W = {
 				{label: "b",data:[]}
 			]
 		}
-		$W.full_data = []
-		var data = ''
 
+		$W.full_data = []
 		for (var col = 0; col < $W.canvas.width; col++) {
 			var red = 0
 			for (row=0;row<$W.sample_height;row++) {
@@ -177,8 +186,6 @@ $W = {
 			}
 			blue /= $W.sample_height
 			var intensity = (red+blue+green)/3
-			data += red+','+green+','+blue+','+intensity
-			if (col != $W.width-1) data += '/'
 			$W.full_data.push([red,green,blue,intensity])
 			if (!$W.calibrated) {
 				if ($W.mode == "average") {
@@ -200,6 +207,8 @@ $W = {
 			}
 		}
 		plot = $.plot($("#graph"),$W.data,flotoptions);
+		$W.unflipped_data = $W.full_data
+		if ($W.flipped) $W.unflipped_data = $W.unflipped_data.reverse()
 	},
 
 	geolocate: function() {
@@ -279,6 +288,31 @@ $W = {
 		if (this.mode == "rgb") $W.show_average()
 		else $W.show_rgb()
 	},
+
+	// Changes $W.flipped based on detecting where the red end of the spectrum is
+	autodetect_flipness: function() {
+		$W.flipped = !$W.is_data_ascending_in_nm()
+	},
+	is_data_ascending_in_nm: function() {
+		var left_redness = 0, right_redness = 0
+		// sum redness and unblueness for each half
+		// REFACTOR to read from live video
+		if ($W.unflipped_data.length > 0) {
+			$.each($W.unflipped_data,function(index,col) {
+				if (index > $W.unflipped_data.length/2) {
+					left_redness += col[0]
+					left_redness -= col[2]
+				} else {
+					right_redness += col[0]
+					right_redness -= col[2]
+				}
+			})
+			return (left_redness > right_redness)
+		} else {
+			return true
+		}
+	},
+
 
         /**
          * Returns a canvas object of any rect from the offered canvas
