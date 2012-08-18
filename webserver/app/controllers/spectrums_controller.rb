@@ -33,6 +33,8 @@ class SpectrumsController < ApplicationController
   # GET /spectrums/1.json
   def show
     @spectrum = Spectrum.find(params[:id])
+    # eventually move this to "create" once they're all fixed:
+    @spectrum.correct_reversed_image
     if @spectrum.data == "" || @spectrum.data.nil?
       @spectrum.extract_data 
       @spectrum.save 

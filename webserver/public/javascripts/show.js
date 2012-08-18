@@ -183,9 +183,22 @@ $W = {
 		else $W.show_rgb()
 	},
 
-	find_blue_end: function() {
-		
-	}
+	reverse_data: function() {
+	},
+	is_data_ascending_in_nm: function() {
+		var left_redness = 0, right_redness = 0
+		// sum redness and unblueness for each half
+		$.each(this.spectrum.lines,function(index,line) {
+			if (index > $W.spectrum.lines.length/2) {
+				left_redness += line.r
+				left_redness -= line.b
+			} else {
+				right_redness += line.r
+				right_redness -= line.b
+			}
+		})
+		return (left_redness > right_redness)
+	},
 
 }
 

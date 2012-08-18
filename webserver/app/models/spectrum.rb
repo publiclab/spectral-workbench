@@ -25,6 +25,10 @@ class Spectrum < ActiveRecord::Base
     self.title.gsub('"',"'")
   end
 
+  def after_save
+    self.correct_reversed_image
+  end
+
   def before_destroy
       self.sets.each do |set|
         ids = []
@@ -36,6 +40,32 @@ class Spectrum < ActiveRecord::Base
       end
   end
 
+  def correct_reversed_image
+    require 'rubygems'
+    require 'RMagick'
+    pixels = []
+
+    image   = Magick::ImageList.new("public"+self.photo.url.split('?')[0])
+    row = image.export_pixels(0, 1, image.columns, 1, "RGB");
+    left_redness = 0
+    right_redness = 0
+    # sum redness for each half
+    (0..(row.length/3-1)).each do |i|
+      r = row[i*3]/255
+      b = row[i*3+2]/255
+      if i*3 > row.length/2
+        left_redness += r
+        left_redness -= b
+      else
+        right_redness += r
+        right_redness -= b
+      end
+    end
+    if left_redness < right_redness
+      self.reverse
+    end
+  end
+
   # extracts serialized data from the top row of the stored image
   def extract_data
     require 'rubygems'
@@ -44,6 +74,9 @@ class Spectrum < ActiveRecord::Base
 
     image   = Magick::ImageList.new("public"+self.photo.url.split('?')[0])
     row = image.export_pixels(0, 1, image.columns, 1, "RGB");
+
+    #
+
     (0..(row.length/3-1)).each do |p|
       r = row[p*3]/255
       g = row[p*3+1]/255
@@ -114,7 +147,7 @@ class Spectrum < ActiveRecord::Base
     require 'rubygems'
     require 'RMagick'
 
-    image = Magick::ImageList.new("public"+self.photo.url)
+    image   = Magick::ImageList.new("public"+self.photo.url.split('?')[0])
     image.flop!
     image.write("public"+self.photo.url)
     self.photo.reprocess!
