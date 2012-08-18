@@ -41,7 +41,7 @@
     spectra.push(<%= spectrum.id %>)
     $("#createSet").show()
     $W.data.push({id: <%= spectrum.id %>, label:"<%= spectrum.title.gsub('"',"'") %> = 0% (<a href='javascript:void(0);' onClick='remove(\"<%= spectrum.id %>\")'>remove</a>)", data: spectrum_<%= spectrum.id %>_data})
-    plot = $.plot($("#graph"),data,flotoptions);
+    plot = $.plot($("#graph"),$W.data,flotoptions);
     init_hovers();
     $("#spectrum_<%= spectrum.id %>").remove()
   })
