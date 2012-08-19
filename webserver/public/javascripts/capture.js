@@ -140,8 +140,12 @@ $W = {
 		if ($W.frame/10 - parseInt($W.frame/10) == 0) $W.autodetect_flipness()
 			$W.ctx.save()
 			if ($W.mobile) {
-					$W.ctx.rotate(Math.PI/2)
-					$W.ctx.drawImage(video, -startrow/4, -$W.height/2);
+				$W.ctx.rotate(Math.PI/2)
+				if ($W.flipped) {
+					$W.ctx.translate($W.width,0)
+					$W.ctx.scale(-1,1)
+				}
+				$W.ctx.drawImage(video, -startrow/4, -$W.height/2);
 			} else {
 				if ($W.flipped) {
 					$W.ctx.translate($W.width,0)
