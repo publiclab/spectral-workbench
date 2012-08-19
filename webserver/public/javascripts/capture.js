@@ -28,6 +28,8 @@ $W = {
 			this.options.width = args['width']
 		}
 		if (this.mobile) {
+        		this.width = 1280
+        		this.height = 720
 			this.sample_start_row = this.width/2
 			this.sample_end_row = this.width/2 + 10
 		} else {
@@ -136,15 +138,17 @@ $W = {
 			var startrow = $W.sample_start_row//parseInt($W.options.height/2)
 			// Grab the existing canvas:
 			var saved = $W.excerptCanvas(0,0,$W.width,$W.height,$W.ctx).getImageData(0,0,$W.width,$W.height)
-		// check for flipped spectrum every 10th frame... hmmm
-		if ($W.frame/10 - parseInt($W.frame/10) == 0) $W.autodetect_flipness()
+			// check for flipped spectrum every 10th frame... hmmm
+			if ($W.frame/10 - parseInt($W.frame/10) == 0) $W.autodetect_flipness()
 			$W.ctx.save()
 			if ($W.mobile) {
+				// the following is a complete mess:
 				$W.ctx.rotate(Math.PI/2)
 				if ($W.flipped) {
+					$('#home').html("FLIPPED")
 					$W.ctx.translate($W.width,0)
 					$W.ctx.scale(-1,1)
-				}
+				} else $('#home').html("NOT")
 				$W.ctx.drawImage(video, -startrow/4, -$W.height/2);
 			} else {
 				if ($W.flipped) {
