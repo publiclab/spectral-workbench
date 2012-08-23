@@ -60,6 +60,8 @@ class SpectrumsController < ApplicationController
   # non REST
   def embed
     @spectrum = Spectrum.find(params[:id])
+    @width = (params[:width] || 500).to_i
+    @height = (params[:height] || 300).to_i
     render :layout => false 
   end
 
@@ -363,7 +365,11 @@ class SpectrumsController < ApplicationController
       @calibration = Spectrum.find(params[:calibration_id]) if params[:calibration_id]
       @start_wavelength,@end_wavelength = @calibration.wavelength_range 
     end
-    render :template => "spectrums/capture.mobile.erb", :layout => "mobile" if mobile?
+    if params[:alt]
+      render :template => "spectrums/capture-alt.html.erb", :layout => "mobile"
+    elsif mobile?
+      render :template => "spectrums/capture.mobile.erb", :layout => "mobile"
+    end
   end
 
   def match
