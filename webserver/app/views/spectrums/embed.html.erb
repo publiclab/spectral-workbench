@@ -2,8 +2,8 @@
 <script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.flot.js"></script> 
 <script language="javascript" type="text/javascript" src="/javascripts/application.js"></script> 
 
-<img width="500px" src="<%= @spectrum.photo.url(:large) %>" />
-<div id="graph" style="width:500px;height:140px;"></div>
+<img width="<%= @width %>px" height="<%= (@height/2).to_i %>" src="<%= @spectrum.photo.url(:large) %>" />
+<div id="graph" style="width:<%= @width %>px;height:<%= (@height/2).to_i %>px;"></div>
 <script type="text/javascript">
   <% if @spectrum.data == "" || @spectrum.data.nil? %>
     spectrum = <%= @spectrum.extract_data %>
@@ -25,7 +25,7 @@
 
 <b><a target="_blank" href="http://spectralworkbench.org/spectra/show/<%= @spectrum.id %>"><%= @spectrum.title %></a></b>
 <span style="text-align:right;">by <a target="_blank" href="http://spectralworkbench.org/spectra/author/"><%= @spectrum.author %></a></span>
-<span style="text-align:right;">on <a target="_blank" href="http://spectralworkbench.org">SpectralWorkbench.org</a></span>
+<span style="text-align:right;">on <img src="/images/spectralworkbench.png" /> <a target="_blank" href="http://spectralworkbench.org">SpectralWorkbench.org</a></span>
 <style>
 html {
 	font-family: lucida grande, lucida console, arial, sans-serif;

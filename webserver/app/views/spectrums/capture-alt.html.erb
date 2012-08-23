@@ -1,0 +1,116 @@
+<script src="/javascripts/getUserMedia.js"> </script>
+<script src="/javascripts/capture.js"> </script>
+
+<div data-role="page" id="page1">
+  <div data-theme="a" data-role="header">
+    <h3>
+      <img src="/images/spectralworkbench.png" /> 
+      <a id="home" data-theme="b" href="/">SpectralWorkbench</a>
+    </h3>
+  </div>
+
+  <div data-role="content" style="padding: 15px">
+
+	<% if params[:action] == "match" %>
+	<p><b>Click "Match" to find the closest spectrum in the set "<%= @set.title %>"</b></p>
+	<% end %>
+
+	<div id="graph" style="width:100%;height:100px;"></div>
+	<br />
+	<canvas style="width:100%;height:100px;" id="canvas"></canvas> 
+	<div style="width:100%;display:none;" id="webcam"></div> 
+
+	<span id="match"></span>
+
+	<% if params[:action] == "match" %>
+    <a data-role="button" data-theme="b" href="javascript:void()" onClick="$W.match();">Match</a>
+    <a data-role="button" data-transition="fade" data-theme="c" href="#page2" onClick="$W.saveSpectrum();">Save</a>
+	<% else %>
+    <a data-role="button" data-transition="fade" data-theme="b" href="#page2" onClick="$W.saveSpectrum();">Save</a>
+	<% end %>
+
+    <div data-role="fieldcontain">
+      <fieldset data-role="controlgroup">
+        <label for="toggleswitch1">Geotag</label>
+        <select name="toggleswitch1" id="geotag-toggle" data-theme="c" data-role="slider" data-mini="true">
+           <option value="off">Off</option>
+           <option value="on">On</option>
+        </select>
+        <label for="toggleswitch2">RGB</label>
+        <select name="toggleswitch2" id="rgb-toggle" data-theme="c" data-role="slider" data-mini="true" onChange="$W.toggle_mode()">
+           <option value="off">Off</option>
+           <option value="on">On</option>
+        </select>
+      </fieldset>
+    </div>
+
+    <% unless logged_in? %><p><a href="/login">Log in</a> to use a recent calibration</p><% end %>
+    <p>This interface works only on <a href="https://play.google.com/store/apps/details?id=com.opera.browser">Opera Mobile</a>, the only mobile browser currently supporting the MediaStream API</p>
+
+    <p><a href="?m=false">Desktop site</a> | <a href="https://github.com/jywarren/spectral-workbench">SpectralWorkbench is free software</a> by <a href="http://publiclaboratory.org">Public Lab</a></p>
+
+  </div>
+</div>
+
+<div data-role="page" id="page2">
+
+	<h2>Save this spectrum</h2>
+
+	<% if !logged_in? %>
+		<p>You must be <a target="_blank" href="/login">logged in</a> to save spectra.</p>
+	<% else %>
+		<p>(logged in as <%=h current_user.login %>)</p>
+	<% end %>
+
+	<form action="/spectrums" method="post" id="saveForm" target="_blank" onSubmit="$W.cancelSave();window.location='#page1'">
+		<label for="spectrum_title">Title:</label><br />
+		<input name="spectrum[title]" id="spectrum_notes" type="text" /><br />
+		<label for="tags">Tags:</label><br />
+		<input name="tags" id="spectrum_tags" value="mobile," type="text" /><br />
+		<label for="spectrum_notes">Notes:</label>
+		<textarea name="spectrum[notes]" id="spectrum_notes"></textarea><br />
+		<input name="dataurl" type="hidden" id="dataurl" />
+		<input name="geotag" type="hidden" id="geotag" />
+		<input name="lat" type="hidden" id="lat" />
+		<input name="lon" type="hidden" id="lon" />
+		<% if logged_in? %>
+		<select name="spectrum[calibration_id]" id="calibration_id">
+			<% current_user.tag('calibration').each do |spectrum| %>
+			<option value="<%= spectrum.id %>"><%= spectrum.title %> (<%= time_ago_in_words(spectrum.created_at) %>)</option>
+			<% end %>
+		</select>
+		<% end %>
+	</form>
+	<a data-role="button" data-transition="fade" data-theme="b" href="javascript:void(0);" onClick="$('#saveForm').submit()">Save</a>
+	<a data-role="button" data-transition="fade" data-theme="d" href="#page1" onClick="$W.cancelSave()">&laquo; Back</a>
+
+</div>
+
+<div data-role="page" id="page3">
+	<div data-role="fieldcontain">
+		<fieldset data-role="controlgroup" data-mini="true">
+			<label for="sample_slider">Range</label>
+			<input type="range" name="slider" id="sample_slider" value="250" min="0" max="640" data-highlight="false" />
+		</fieldset>
+	</div>
+</div>
+
+<script> (function () { 
+	$W.initialize({
+		calibrated:<%= !@calibration.nil? %>,
+		mobile:true
+	}) 
+	setInterval($W.getRow,100)
+	<% if @calibration %>
+		$W.calibrated = true
+		$W.calibration_id = <%= @calibration.id %>
+		$W.start_wavelength = <%= @start_wavelength %>
+		$W.end_wavelength = <%= @end_wavelength %>
+    		flotoptions.xaxis.show = true
+	<% else %>
+		$W.calibrated = false
+	<% end %>
+	<% if params[:action] == "match" %>
+		$W.set = <%= @set.id %>
+	<% end %>
+})() </script>

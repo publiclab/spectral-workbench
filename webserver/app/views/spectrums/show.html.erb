@@ -36,9 +36,9 @@
 	<p>
 	<b><span id="wavelength"></span> <span id="#unit_label">nm</span></b> | 
 	<small>Embed code: <input style="font-size:11px" id="embedcode" type="text" value="<iframe width='500px' height='400px' border='0' src='http://spectralworkbench.org/spectra/embed/<%= @spectrum.id %>'></iframe>" /></small>
+	<a id="embed" class="smallbutton" href="javascript:void(0);">Custom embed</a>
 	<a id="units" class="smallbutton" href="javascript:void(0);">Toggle units</a>
 	<a id="rgb" class="smallbutton" href="javascript:void(0);" onClick="$W.toggle_mode()">Toggle RGB</a>
-	<a class="smallbutton" href="javascript:void(0);" onClick="alert($W.is_data_ascending_in_nm())">Descending?</a>
 	<% if logged_in? %>
 		<a id="createSet" class="smallbutton" style="display:none;" href="javascript:void(0);">Save as set +</a>
 		<% if current_user.id == @spectrum.user_id %>
@@ -92,6 +92,12 @@ uploaded by <a href="/profile/<%= @spectrum.author %>"><%= @spectrum.author %></
 <a href="<%= @spectrum.id %>.csv">CSV</a> | 
 <a href="<%= @spectrum.id %>.xml">XML</a>
 </p>
+
+<div id="share">
+	<div class="fb-like" data-send="false" data-layout="button_count" data-width="50" data-show-faces="false" style="vertical-align:top;zoom:1;*display:inline"></div>
+	<a href="https://twitter.com/share" class="twitter-share-button">Tweet</a>
+	<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+</div>
 
 <h3>// NOTES</h3>
 <p class="description"><%= markdown(@spectrum.notes) if @spectrum.notes %></p>

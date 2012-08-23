@@ -14,7 +14,17 @@
 <p>
 <div id="graph" style="width:800px;height:200px;"></div>
 
+<div id="toolbar">
+	<p>
+	<small>Embed code: <input style="font-size:11px;" id="embedcode" type="text" value="<iframe width='500px' height='200px' border='0' src='http://spectralworkbench.org/sets/embed/<%= @set.id %>'></iframe>" /></small>
+	<a id="embed" class="smallbutton" href="javascript:void(0);">Custom embed</a>
+	<a id="wavenumber" class="smallbutton" href="javascript:void(0);">Show wavenumber</a>
+	</p>
+</div>
+
 <script type="text/javascript">
+(function () { 
+
   data = []
   <% @set.spectra.each do |spectrum| %>
   <% if spectrum.data == "" || spectrum.data.nil? %>
@@ -34,14 +44,20 @@
   <% end %>
   flotoptions.xaxis.show = scaled
   $.plot($("#graph"),data,flotoptions);
+		$('#embedcode').click(function() {
+			this.focus()
+			this.select()
+		})
+		$('#embed').click(function() {
+			var size = prompt("What size, in WIDTHxHEIGHT?","500x300")
+			var width = size.split('x')[0]
+			var height = size.split('x')[1]
+			$('#embedcode').val("<iframe width='"+width+"px' height='"+height+"px' border='0' src='http://spectralworkbench.org/sets/embed/<%= @set.id %>?width="+width+"&height="+height+"'></iframe>")
+			$('#embedcode').focus()
+			$('#embedcode').select()
+		})
+})()
 </script>
-
-<div id="toolbar">
-	<p>
-	<small>Embed code: <input style="font-size:11px;" id="embedcode" type="text" value="<iframe width='500px' height='200px' border='0' src='http://spectralworkbench.org/sets/embed/<%= @set.id %>'></iframe>" /></small>
-	<a id="wavenumber" class="smallbutton" href="javascript:void(0);">Show wavenumber</a>
-	</p>
-</div>
 
 <script>
 

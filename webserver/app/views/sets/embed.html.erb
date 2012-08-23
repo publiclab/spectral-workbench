@@ -1,7 +1,7 @@
 <script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.js"></script> 
 <script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.flot.js"></script> 
 <script language="javascript" type="text/javascript" src="/javascripts/application.js"></script> 
-<div id="graph" style="width:500px;height:160px;"></div>
+<div id="graph" style="width:<%= @width %>px;height:<%= (@height/2).to_i %>px;"></div>
 
 <script type="text/javascript">
   data = []
@@ -28,7 +28,7 @@
 
 <b><a href="http://spectralworkbench.org/sets/show/<%= @set.id %>"><%= @set.title %></a></b>
 <span style="text-align:right;">by <a href="http://spectralworkbench.org/spectra/author/<%= @set.author %>"><%= @set.author %></a></span>
-<span style="text-align:right;">on <a href="http://spectralworkbench.org">SpectralWorkbench.org</a></span>
+<span style="text-align:right;">on <img src="/images/spectralworkbench.png" /> <a href="http://spectralworkbench.org">SpectralWorkbench.org</a></span>
 <style>
 html {
 	font-family: lucida grande, lucida console, arial, sans-serif;

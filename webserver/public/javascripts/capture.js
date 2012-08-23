@@ -142,13 +142,8 @@ $W = {
 			if ($W.frame/10 - parseInt($W.frame/10) == 0) $W.autodetect_flipness()
 			$W.ctx.save()
 			if ($W.mobile) {
-				// the following is a complete mess:
+				// mobile will never need to flip, can't be installed "upside down"
 				$W.ctx.rotate(Math.PI/2)
-				if ($W.flipped) {
-					$('#home').html("FLIPPED")
-					$W.ctx.translate(0,640)
-					$W.ctx.scale(1,-1)
-				} else $('#home').html("NOT")
 				$W.ctx.drawImage(video, -startrow/4, -$W.height/2);
 			} else {
 				if ($W.flipped) {
@@ -299,7 +294,7 @@ $W = {
 
 	// Changes $W.flipped based on detecting where the red end of the spectrum is
 	autodetect_flipness: function() {
-		$W.flipped = !$W.is_data_ascending_in_nm()
+		if (!$W.mobile) $W.flipped = !$W.is_data_ascending_in_nm()
 	},
 	is_data_ascending_in_nm: function() {
 		var left_redness = 0, right_redness = 0
