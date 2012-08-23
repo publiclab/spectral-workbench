@@ -146,8 +146,8 @@ $W = {
 				$W.ctx.rotate(Math.PI/2)
 				if ($W.flipped) {
 					$('#home').html("FLIPPED")
-					$W.ctx.translate($W.width,0)
-					$W.ctx.scale(-1,1)
+					$W.ctx.translate(0,640)
+					$W.ctx.scale(1,-1)
 				} else $('#home').html("NOT")
 				$W.ctx.drawImage(video, -startrow/4, -$W.height/2);
 			} else {
