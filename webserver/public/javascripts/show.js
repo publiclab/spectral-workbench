@@ -15,10 +15,11 @@ $W = {
 		this.data = [{label: $W.title+" = 0% ",data:[]}]
 		scaled = true
 		this.show_average()
-		this.init_hovers();
+		this.init_hovers()
+		this.alert_overexposure()
 		$("#compareForm").submit(function(){
-			var url = "/spectrums/compare/"+$W.spectrum_id+"?q="+$("#searchinput").val();
-			$("#result").html(ajax_load).load(url);
+			var url = "/spectrums/compare/"+$W.spectrum_id+"?q="+$("#searchinput").val()
+			$("#result").html(ajax_load).load(url)
 		});
 		$('#units').click(function() {
 			if (flotoptions.xaxis.tickFormatter == wavenumbers) {
@@ -153,6 +154,63 @@ $W = {
 		f.submit();
 	},
 
+	overexposure_threshold: 20, // how many pixels of consecutive 100% triggers an overexposure warning
+	/* Inspects a given color channel recursively for sequential 
+	 * pixels of 100%, which would indicate overexposure. Returns
+	 * whether it passed the threshold and the last inspected index. 
+	 */
+	overexposure_recurse: function(data,i,count,color) {
+		if (count > $W.overexposure_threshold) return [true,i]
+		else {
+			if (data[i][color] >= 255) {
+				return $W.overexposure_recurse(data,i+2,count+2,color)
+			} else return [false,i]
+		}
+	},
+	detect_overexposure: function() {
+		var overexposed = {r: false, g: false, b: false}
+		var colors = ["r","g","b"]
+		// check each channel for plateaus at 100%:	
+		$.each(colors,function(index,color) {
+			var i = 0;
+			while (i < $W.spectrum.lines.length) {
+				var line = $W.spectrum.lines[i]
+				var scan = $W.overexposure_recurse($W.spectrum.lines,i,0,color)
+				if (scan[0]) {
+					overexposed[color] = true
+					i = $W.spectrum.lines.length
+				} else i = scan[1]+10
+			}
+		})
+		return overexposed
+	},
+	// checks overexposure and displays an alert if it is so, and what channel
+	alert_overexposure: function() {
+		var oe = $W.detect_overexposure()
+		if (oe.r || oe.g || oe.b) {
+			var msg = "Light source is too strong; overexposure in channels: "
+			var channels = []
+			if (oe.r) channels.push("red")
+			if (oe.g) channels.push("green")
+			if (oe.b) channels.push("blue")
+			$W.notify(msg+channels.join(','),"warning")
+		} 
+	},
+
+	//setTimeout(5000,$W.alert_overexposure)
+	notify: function(msg,type,expire) {
+		expire = expire || true
+		var id = parseInt(Math.random()*100000)
+		$('#notify').html($('#notify').html()+"<div id='notify_"+id+"' class='notify'></div>")
+		if (type == "warning") $('#notify_'+id).html("<b>Warning:</b> "+msg).addClass('warning')
+		if (type == "error") $('#notify_'+id).html("<b>Error:</b> "+msg).addClass('error')
+		if (expire) {
+			setTimeout(function() {
+				$('#notify_'+id).remove()
+			},3000)
+		}
+	},
+
 	show_rgb: function() {
 		this.mode = "rgb"
 		this.data = [
@@ -172,6 +230,7 @@ $W = {
 		flotoptions.colors = [ "#ff0000", "#00ff00", "#0000ff" ]
 		this.plot = $.plot($("#graph"),this.data,flotoptions);
 	},
+
 	show_average: function() {
 		this.mode = "average"
 		$W.data = [{label: $W.title+" = 0% ",data:[]}]
@@ -191,8 +250,6 @@ $W = {
 		else $W.show_rgb()
 	},
 
-	reverse_data: function() {
-	},
 	is_data_ascending_in_nm: function() {
 		var left_redness = 0, right_redness = 0
 		// sum redness and unblueness for each half

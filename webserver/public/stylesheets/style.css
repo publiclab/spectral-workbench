@@ -39,6 +39,24 @@ h1 {
 	margin:0;
 }
 
+#notify {
+	padding:0;
+	margin:0;
+}
+.notify {
+	color:#0a0;
+	background:#afa;
+	padding:6px;
+}
+.notify.warning { 
+	color:#c62; 
+	background:#FCFCB3; 
+}
+.notify.error { 
+	color:#a52; 
+	background:#FCFFB3; 
+}
+
 p.notice { color:#0a0; background:#afa; padding:4px; margin-top:0; }
 p.error { color:#a52; background:#FCFFB3; padding:4px; margin-top:0; }
 .flash {
