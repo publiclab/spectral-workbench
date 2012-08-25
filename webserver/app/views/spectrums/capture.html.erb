@@ -17,7 +17,7 @@
 		<% if logged_in? %>
 			<span><i>Calibrated <%= time_ago_in_words(@calibration.created_at) %> ago. (<a href="http://publiclaboratory.org/wiki/recalibrate-spectral-workbench" target="_blank">Recalibrate &raquo;</a>)</i></span>
 		<% end %>
-		<a href="javascript:void(0);" onClick="$('#configure').toggle()">Configure</a> | <a href="javascript:void()" onClick="$W.toggle_mode()">RGB mode</a> | Don't see anything? <a href="http://publiclaboratory.org/wiki/spectral-workbench-web-video">Check if your browser is supported</a>
+		<b><a href="/capture?alt=true">Try the new interface</a></b> | <a href="javascript:void(0);" onClick="$('#configure').toggle()">Configure</a> | <a href="javascript:void()" onClick="$W.toggle_mode()">RGB mode</a> | Don't see anything? <a href="http://publiclaboratory.org/wiki/spectral-workbench-web-video">Check if your browser is supported</a>
 		</p>
 	</div>
 	<div id="notify"></div>

@@ -366,7 +366,7 @@ class SpectrumsController < ApplicationController
       @start_wavelength,@end_wavelength = @calibration.wavelength_range 
     end
     if params[:alt]
-      render :template => "spectrums/capture-alt.html.erb", :layout => "mobile"
+      render :template => "spectrums/capture-alt.html.erb", :layout => "capture"
     elsif mobile?
       render :template => "spectrums/capture.mobile.erb", :layout => "mobile"
     end

@@ -30,16 +30,10 @@
 
     <div data-role="fieldcontain">
       <fieldset data-role="controlgroup">
-        <label for="toggleswitch1">Geotag</label>
-        <select name="toggleswitch1" id="geotag-toggle" data-theme="c" data-role="slider" data-mini="true">
-           <option value="off">Off</option>
-           <option value="on">On</option>
-        </select>
-        <label for="toggleswitch2">RGB</label>
-        <select name="toggleswitch2" id="rgb-toggle" data-theme="c" data-role="slider" data-mini="true" onChange="$W.toggle_mode()">
-           <option value="off">Off</option>
-           <option value="on">On</option>
-        </select>
+        <label for="geotag-toggle">Geotag</label>
+        <input type="checkbox" name="geotag-toggle" id="geotag-toggle" type="checkbox" />
+        <label for="rgb-toggle">RGB</label>
+        <input type="checkbox" name="rgb-toggle" id="rgb-toggle" onChange="$W.toggle_mode()" />
       </fieldset>
     </div>
 
@@ -52,6 +46,7 @@
 </div>
 
 <div data-role="page" id="page2">
+  <div data-role="content" class="content" style="padding: 15px">
 
 	<h2>Save this spectrum</h2>
 
@@ -83,6 +78,7 @@
 	<a data-role="button" data-transition="fade" data-theme="b" href="javascript:void(0);" onClick="$('#saveForm').submit()">Save</a>
 	<a data-role="button" data-transition="fade" data-theme="d" href="#page1" onClick="$W.cancelSave()">&laquo; Back</a>
 
+  </div>
 </div>
 
 <div data-role="page" id="page3">

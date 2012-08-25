@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>SpectralWorkbench</title>
+        </script>
+        <!--<link rel="stylesheet" href="/stylesheets/jquery.mobile-1.1.0.min.css" />-->
+		<link rel="stylesheet" href="/stylesheets/jquery.mobile.splitview-compiled.css" />
+		<link rel="stylesheet" href="/stylesheets/jquery.mobile.splitview.css" />
+		<link rel="stylesheet" href="/stylesheets/jquery.mobile.grids.collapsible.css" />
+		<!--<link rel="stylesheet" href="/stylesheets/jquery.mobile.structure.splitview-compiled.css" />-->
+        <link rel="stylesheet" href="/stylesheets/mobile.css" />
+	<script src="/javascripts/getUserMedia.js"> </script>
+        <script src="/javascripts/jquery.min.js"> </script>
+	<script src="/javascripts/capture.js"> </script>
+		<script src="/javascripts/jquery.mobile.splitview.js"> </script>
+        <script>
+          $(document).bind("mobileinit", function(){
+            // disable ajax nav
+            $.mobile.ajaxEnabled = false;
+          });
+        </script>
+		<script src="/javascripts/jquery.mobile.splitview-compiled.js"> </script>
+		<script src="/javascripts/iscroll-wrapper.js"> </script>
+		<script src="/javascripts/iscroll.js"> </script>
+        <!--<script src="/javascripts/jquery.mobile-1.1.0.min.js"></script>-->
+	<!--<script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.js"></script>-->
+	<script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.flot.js"></script> 
+	<script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.flot.crosshair.js"></script>
+	<%= javascript_include_tag "application" %>
+    </head>
+    <body>
+    <%= yield %>
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-30020531-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+    </body>
+</html>

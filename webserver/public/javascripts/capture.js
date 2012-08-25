@@ -242,10 +242,10 @@ $W = {
 			$('#calibration_id').val($W.calibration_id)
 		}
 		$('#dataurl').val($W.canvas.toDataURL())
-		$('#geotag').val($('#geotag-toggle').val() == "on")
+		$('#geotag').val($('#geotag-toggle')[0].checked)
 		$('#save').show()
 		$('#capture').hide()
-		setTimeout(function() { if ($('#geotag-toggle').val() == "on") $W.geolocate() },500)
+		setTimeout(function() { if ($('#geotag-toggle').checked) $W.geolocate() },500)
 	},
 	cancelSave: function() {
 		$('#geotag').val('false')
@@ -280,12 +280,13 @@ $W = {
 
 	show_rgb: function() {
 		this.mode = "rgb"
+		$W.oldflotoptionscolors = flotoptions.colors
 		flotoptions.colors = [ "#ff0000", "#00ff00", "#0000ff" ]
 		plot = $.plot($("#graph"),$W.data,flotoptions);
 	},
 	show_average: function() {
 		this.mode = "average"
-		flotoptions.colors = [ "#333333", "#E02130", "#FAB243", "#429867", "#2B5166" ]//, "#482344" ]
+		flotoptions.colors = $W.oldflotoptionscolors
 		plot = $.plot($("#graph"),$W.data,flotoptions);
 	},
 	toggle_mode: function() {
@@ -380,7 +381,7 @@ $W = {
         excerptCanvas: function(x1,y1,x2,y2,source) {
                 source = source || $C
                 var width = x2-x1, height = y2-y1
-                $('body').append("<canvas style='' id='excerptCanvas'></canvas>")
+                $('body').append("<canvas style='display:none;' id='excerptCanvas'></canvas>")
                 var element = $('#excerptCanvas')[0]
                 element.width = width
                 element.height = height
