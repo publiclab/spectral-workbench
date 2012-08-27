@@ -2,8 +2,8 @@
 <script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.flot.js"></script> 
 <script language="javascript" type="text/javascript" src="/javascripts/application.js"></script> 
 
-<img width="<%= @width %>px" height="<%= (@height/2).to_i %>" src="<%= @spectrum.photo.url(:large) %>" />
-<div id="graph" style="width:<%= @width %>px;height:<%= (@height/2).to_i %>px;"></div>
+<img width="<%= @width.to_i-20 %>px" height="<%= (@height/2).to_i-50 %>" src="<%= @spectrum.photo.url(:large) %>" />
+<div id="graph" style="width:<%= @width.to_i-20 %>px;height:<%= (@height/2).to_i %>px;"></div>
 <script type="text/javascript">
   <% if @spectrum.data == "" || @spectrum.data.nil? %>
     spectrum = <%= @spectrum.extract_data %>
