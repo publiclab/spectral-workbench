@@ -17,6 +17,7 @@ $W = {
         // container
 	width: 640,
 	height: 480,
+	waterfall_height: 150,
         //width: 1280,
         //height: 720,
 	frame: 0,
@@ -40,6 +41,8 @@ $W = {
 		window.webcam = this.options
 		this.canvas = document.getElementById("canvas")
 		$('canvas').width = this.width+"px"
+		this.canvas.width = this.width
+		this.canvas.height = this.waterfall_height
 		this.ctx = this.canvas.getContext("2d")
 		this.image = this.ctx.getImageData(0, 0, this.width, this.height);
 		if (localStorage.getItem('sw:sample_start_row')) this.sample_start_row = localStorage.getItem('sw:sample_start_row')
