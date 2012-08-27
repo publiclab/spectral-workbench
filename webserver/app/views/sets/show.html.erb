@@ -49,7 +49,7 @@
 			this.select()
 		})
 		$('#embed').click(function() {
-			var size = prompt("What size, in WIDTHxHEIGHT?","500x300")
+			var size = prompt("What size, in WIDTHxHEIGHT?","500x150")
 			var width = size.split('x')[0]
 			var height = size.split('x')[1]
 			$('#embedcode').val("<iframe width='"+width+"px' height='"+height+"px' border='0' src='http://spectralworkbench.org/sets/embed/<%= @set.id %>?width="+width+"&height="+height+"'></iframe>")
