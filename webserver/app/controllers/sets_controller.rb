@@ -39,7 +39,7 @@ class SetsController < ApplicationController
   def embed
     @set = SpectraSet.find params[:id]
     @width = (params[:width] || 500).to_i
-    @height = (params[:height] || 300).to_i
+    @height = (params[:height] || 200).to_i
     render :layout => false 
   end
 

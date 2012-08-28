@@ -11,8 +11,8 @@
   <% else %>
     spectrum_<%= spectrum.id %> = <%= spectrum.data.chomp(",") %>
   <% end %>
-    data.push({data:[]})
-    //data.push({label: "<%= spectrum.title %> = 0% ",data:[]})
+    //data.push({data:[]})
+    data.push({label: "<%= spectrum.title %> = 0% ",data:[]})
     scaled = true
     $.each(spectrum_<%= spectrum.id %>.lines,function(index,line) {
       if (line.wavelength == null) {
