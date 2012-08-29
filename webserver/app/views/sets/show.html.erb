@@ -19,6 +19,7 @@
 	<small>Embed code: <input style="font-size:11px;" id="embedcode" type="text" value="<iframe width='500px' height='200px' border='0' src='http://spectralworkbench.org/sets/embed/<%= @set.id %>'></iframe>" /></small>
 	<a id="embed" class="smallbutton" href="javascript:void(0);">Custom embed</a>
 	<a id="wavenumber" class="smallbutton" href="javascript:void(0);">Show wavenumber</a>
+	<a class="smallbutton" href="javascript:void();" onClick="flotoptions.legend = {show:false};$.plot($('#graph'),data,flotoptions);">Hide legend</a>
 	</p>
 </div>
 
