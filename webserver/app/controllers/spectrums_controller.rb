@@ -365,10 +365,12 @@ class SpectrumsController < ApplicationController
       @calibration = Spectrum.find(params[:calibration_id]) if params[:calibration_id]
       @start_wavelength,@end_wavelength = @calibration.wavelength_range 
     end
-    if params[:alt]
-      render :template => "spectrums/capture-alt.html.erb", :layout => "capture"
+    if params[:old]
+      render :template => "spectrums/capture-old.html.erb"
     elsif mobile?
       render :template => "spectrums/capture.mobile.erb", :layout => "mobile"
+    else
+      render :template => "spectrums/capture.html.erb", :layout => "capture"
     end
   end
 

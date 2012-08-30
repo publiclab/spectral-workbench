@@ -1,0 +1,149 @@
+<script src="/javascripts/getUserMedia.js"> </script>
+<script src="/javascripts/capture.js"> </script>
+
+<% if params[:action] == "match" %>
+<p><b>Click "Match" to find the closest spectrum in the set "<%= @set.title %>"</b></p>
+<% unless logged_in? %><p><a href="/login">Log in</a> to use a recent calibration</p><% end %>
+<% end %>
+<br />
+<div id="capture">
+	<div id="captureControls">
+		<a class="button" href="javascript:void(0);" onClick="$W.saveSpectrum()">Save</a>
+		<% if params[:action] == "match" %>
+			<a class="button" href="javascript:void(0);" onClick="$W.match()">Match</a>
+			<span id="match"></span>
+		<% end %>
+		<p>
+		<% if logged_in? %>
+			<span><i>Calibrated <%= time_ago_in_words(@calibration.created_at) %> ago. (<a href="http://publiclaboratory.org/wiki/recalibrate-spectral-workbench" target="_blank">Recalibrate &raquo;</a>)</i></span>
+		<% end %>
+		<b><a href="/capture?alt=true">Try the new interface</a></b> | <a href="javascript:void(0);" onClick="$('#configure').toggle()">Configure</a> | <a href="javascript:void()" onClick="$W.toggle_mode()">RGB mode</a> | Don't see anything? <a href="http://publiclaboratory.org/wiki/spectral-workbench-web-video">Check if your browser is supported</a>
+		</p>
+	</div>
+	<div id="notify"></div>
+	<br />
+
+	<div style="display:none;" id="configure">
+		<p style="display:none;" id="local_calibration">This device has a locally stored calibration. <a href="" id="local_calibration_link">Click here</a> to use it.</p>
+		<script>
+			if (localStorage.getItem("sw:calibration_id")) {
+				$("#local_calibration_link")[0].href = "/capture?calibration_id="+localStorage.getItem("sw:calibration_id")
+				$("#local_calibration").show()
+			}
+		</script>
+		<% if logged_in? %>
+		<p>Store a calibration in your browser:</p>
+		<select id="local_calibration_select">
+			<% current_user.tag('calibration').each do |spectrum| %>
+			<option value="<%= spectrum.id %>"><%= spectrum.title %> (<%= time_ago_in_words(spectrum.created_at) %>)</option>
+			<% end %>
+		</select><br />
+		<div style="padding:10px 0;">
+			<a href="javascript:void()" onClick="localStorage.setItem('sw:calibration_id',$('#local_calibration_select').val())" class="smallbutton">Store calibration</a><br style="clear:both;"/>
+		</div>
+		<% end %>
+		<label for="range">Range:</label>
+		<input type="text" id="range" style="border:0; font-weight:bold;" />
+		<br />
+		<div style="float:right;height:480px;" id="sample_slider"></div>
+		<div id="webcam"></div> 
+	</div>
+
+	<canvas width="640px" id="canvas"></canvas> 
+	<br />
+	<div id="graph" style="width:640px;height:160px;"></div>
+
+</div>
+
+<script type="text/javascript">
+(function () { 
+	<% if params[:height] %>
+		$W.initialize({
+			calibrated: <%= !@calibration.nil? %>,
+			width: <%= params[:width] %>,
+			height: <%= params[:height] %>,
+			mobile: false
+		})
+	<% else %>
+		$W.initialize({
+			calibrated: <%= !@calibration.nil? %>,
+			mobile: false
+		}) 
+	<% end %>
+	setInterval($W.getRow,100)
+	<% if @calibration %>
+		$W.calibrated = true
+		$W.calibration_id = <%= @calibration.id %>
+		$W.start_wavelength = <%= @start_wavelength %>
+		$W.end_wavelength = <%= @end_wavelength %>
+    		flotoptions.xaxis.show = true
+	<% else %>
+		$W.calibrated = false
+	<% end %>
+
+	<% if params[:action] == "match" %>
+		$W.set = <%= @set.id %>
+	<% end %>
+
+	$("#sample_slider").slider({
+		range: true,
+		orientation: "vertical",
+		min: 0,
+		max: $W.height,
+		values: [ $W.height-$W.sample_end_row, $W.height-$W.sample_start_row ],
+		slide: function(event,ui) {
+			$("#range").val( ui.values[1] + " - " + ui.values[0] );
+			$W.setSampleRows($W.height-ui.values[1],$W.height-ui.values[0])
+		}
+	});
+	$( "#range" ).val( $( "#sample_slider" ).slider( "values", 0 ) + " - " + $( "#sample_slider" ).slider( "values", 1 ) )
+
+})() 
+</script>
+<div id="save" style="display:none;">
+
+<h2>Save this spectrum</h2>
+
+<% if !logged_in? %>
+	<p>You must be <a target="_blank" href="/login">logged in</a> to save spectra.</p>
+<% else %>
+	<p>(logged in as <%=h current_user.login %>)</p>
+<% end %>
+<p><a href="javascript:$('#save').hide();$('#capture').show();">&laquo; back</a></p>
+
+<form action="/spectrums" method="post" target="_blank" onSubmit="$('#save').hide();$('#capture').show();">
+	<label for="spectrum_title">Title:</label><br />
+	<input name="spectrum[title]" id="spectrum_notes" type="text" /><br />
+	<label for="spectrum_notes">Notes:</label><br />
+	<input name="spectrum[notes]" id="spectrum_notes" type="text" /><br />
+	<input name="geotag" type="hidden" id="geotag" />
+	<label for="tags">Tags:</label><br />
+	<input name="tags" id="spectrum_tags" value="webclient," type="text" /><br />
+	<input id="is_calibration" type="checkbox" name="is_calibration" value="false"/>
+	<label for="tags">This is a calibration</label><br />
+	<script>
+		$('#is_calibration').bind("click",function(){
+			if (this.checked) { $('#choose_calibration').hide(); this.val(true); }
+			else { $('#choose_calibration').show(); this.val(false) }
+		})
+	</script>
+	<% if @calibration %>
+	<div id="choose_calibration">
+	<label for="calibration_id">Calibration:</label><br />
+	<select name="spectrum[calibration_id]" id="calibration_id">
+		<% current_user.tag('calibration').each do |spectrum| %>
+		<option value="<%= spectrum.id %>"><%= spectrum.title %> (<%= time_ago_in_words(spectrum.created_at) %>)</option>
+		<% end %>
+	</select><br />
+	</div>
+	<% end %>
+        <label for="geotag_menu">Geotag</label>
+        <select name="geotag_menu" id="geotag-toggle">
+           <option value="off">Off</option>
+           <option value="on">On</option>
+        </select>
+	<input name="dataurl" type="hidden" id="dataurl" />
+	<input type="submit" value="Save" />
+</form>
+</div>
+
