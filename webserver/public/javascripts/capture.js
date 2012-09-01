@@ -330,10 +330,8 @@ $W = {
 
 	markers: [],
 	mark: function() {
-		markers.push(prompt("Enter a wavelength in nanometers","532"),prompt("Enter a label","Green laser"))
-	},
-	update_markers: function() {
-		$.plot()
+		$W.markers.push(prompt("Enter a wavelength in nanometers","532"),prompt("Enter a label","Green laser"))
+		//$.plot.
 	},
 
 	overexposure_threshold: 20, // how many pixels of consecutive 100% triggers an overexposure warning
