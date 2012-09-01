@@ -8,6 +8,7 @@ $W = {
 	data: null,
 	full_data: [],
 	unflipped_data: [],
+	detect_flip: true,
 	flipped: false,
 	mode: "average",
 	pos: 0,
@@ -37,6 +38,8 @@ $W = {
 			this.sample_start_row = this.height/2
 			this.sample_end_row = this.height/2 + 10
 		}
+		$('#samplerow-slider').max = this.options.height // this doesn't work!!!
+		$('#samplerow-slider').value = this.sample_start_row
 		getUserMedia(this.options, this.success, this.deviceError)
 		window.webcam = this.options
 		this.canvas = document.getElementById("canvas")
@@ -143,7 +146,7 @@ $W = {
 			// Grab the existing canvas:
 			var saved = $W.excerptCanvas(0,0,$W.width,$W.height,$W.ctx).getImageData(0,0,$W.width,$W.height)
 			// check for flipped spectrum every 10th frame... hmmm
-			if ($W.frame/10 - parseInt($W.frame/10) == 0) $W.autodetect_flipness()
+			if ($W.detect_flip && ($W.frame/10 - parseInt($W.frame/10) == 0)) $W.autodetect_flipness()
 			$W.ctx.save()
 			if ($W.mobile) {
 				// mobile will never need to flip, can't be installed "upside down"
@@ -255,6 +258,7 @@ $W = {
 		$('#lon').val('')
 		$('#lat').val('')
 	},
+
 	match: function() {
 		cols = []
 		$.each($W.full_data,function(i,datum) {
@@ -297,6 +301,9 @@ $W = {
 		else $W.show_rgb()
 	},
 
+	toggle_flip: function() {
+		$W.detect_flip = !$W.detect_flip
+	},
 	// Changes $W.flipped based on detecting where the red end of the spectrum is
 	autodetect_flipness: function() {
 		if (!$W.mobile) $W.flipped = !$W.is_data_ascending_in_nm()
@@ -319,6 +326,14 @@ $W = {
 		} else {
 			return true
 		}
+	},
+
+	markers: [],
+	mark: function() {
+		markers.push(prompt("Enter a wavelength in nanometers","532"),prompt("Enter a label","Green laser"))
+	},
+	update_markers: function() {
+		$.plot()
 	},
 
 	overexposure_threshold: 20, // how many pixels of consecutive 100% triggers an overexposure warning

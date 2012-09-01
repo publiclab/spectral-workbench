@@ -32,6 +32,8 @@ flotoptions.colors = [ "#ccc", "#E02130", "#FAB243", "#429867", "#2B5166" ]//, "
         <input data-theme="a" type="checkbox" name="geotag-toggle" id="geotag-toggle" type="checkbox" />
         <label for="rgb-toggle">RGB</label>
         <input data-theme="a" type="checkbox" name="rgb-toggle" id="rgb-toggle" onChange="$W.toggle_mode()" />
+        <label for="flip-toggle">Autoflip</label>
+        <input checked=true data-theme="a" type="checkbox" name="flip-toggle" id="flip-toggle" onChange="$W.toggle_flip()" />
       </fieldset>
     </div>
 
@@ -46,6 +48,7 @@ flotoptions.colors = [ "#ccc", "#E02130", "#FAB243", "#429867", "#2B5166" ]//, "
 	</ul>
     <p>Your input is invaluable! See <a href="https://github.com/jywarren/spectral-workbench/issues">Github issues</a> to help design/refine/debug new features.<p>
     <a data-role="button" data-theme="a" href="#configure" data-panel="main">Configure</a>
+    <a data-role="button" data-theme="a" href="#mark" data-panel="main" onClick="$W.mark()">Mark</a>
     <p>Don't see anything? <a href="http://publiclaboratory.org/wiki/spectral-workbench-web-video">Check if your browser is supported</a></p>
 
   </div>
@@ -154,10 +157,9 @@ flotoptions.colors = [ "#ccc", "#E02130", "#FAB243", "#429867", "#2B5166" ]//, "
 		
 		<p><i>This panel is under construction</i></p>
 
-		<label for="range">Range:</label>
-		<input type="text" id="range" style="border:0; font-weight:bold;" />
-		<br />
-		<div style="float:right;height:480px;" id="sample_slider"></div>
+		<label for="samplerow-slider">Input slider:</label>
+		<input type="range" name="samplerow-slider" id="samplerow-slider" value="240" min="0" max="480" onChange="$W.setSampleRows(parseInt($('#samplerow-slider').val()),parseInt($('#samplerow-slider').val())+40)"/>
+
 		<div id="webcam"></div> 
 		<a data-role="button" data-theme="a" href="#main" data-panel="main">&laquo; Back</a>
 	</div>
