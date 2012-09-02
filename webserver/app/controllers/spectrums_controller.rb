@@ -4,7 +4,7 @@ class SpectrumsController < ApplicationController
   # http://api.rubyonrails.org/classes/ActionController/RequestForgeryProtection/ClassMethods.html
   # create and update are protected by recaptcha
 
-	  # GET /spectrums
+  # GET /spectrums
   # GET /spectrums.xml
   def index
     @spectrums = Spectrum.find(:all,:order => "created_at DESC")
@@ -81,9 +81,10 @@ class SpectrumsController < ApplicationController
 
   # non REST
   def search
-    params[:id] = params[:q]
-    @spectrums = Spectrum.find(:all, :conditions => ['title LIKE ? OR notes LIKE ?',"%"+params[:id]+"%", "%"+params[:id]+"%"],:limit => 100)
+    params[:id] = params[:q].to_s if params[:id].nil?
+    @spectrums = Spectrum.find(:all, :conditions => ['title LIKE ? OR notes LIKE ?',"%"+params[:id]+"%", "%"+params[:id]+"%"],:limit => 100, :order => "id DESC")
     @spectrums = @spectrums.paginate :page => params[:page], :per_page => 24
+    render :partial => "capture/results.html.erb", :layout => false if params[:capture]
   end
 
   # non REST

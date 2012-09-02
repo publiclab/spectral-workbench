@@ -366,6 +366,13 @@ $W = {
 	/* Inspects a given color channel recursively for sequential 
 	 * pixels of 100%, which would indicate overexposure. Returns
 	 * whether it passed the threshold and the last inspected index. 
+
+	},
+
+	overexposure_threshold: 20, // how many pixels of consecutive 100% triggers an overexposure warning
+	/* Inspects a given color channel recursively for sequential 
+	 * pixels of 100%, which would indicate overexposure. Returns
+	 * whether it passed the threshold and the last inspected index. 
 	 */
 	overexposure_recurse: function(data,i,count,color) {
 		if (count > $W.overexposure_threshold) return [true,i]
