@@ -1,0 +1,32 @@
+<div data-role="page" id="capture" data-theme="a">
+<div data-theme="a" data-role="header">
+	<h3 class="header" style="text-align:left;margin-left:15px;">
+		<img src="/images/spectralworkbench.png" /> 
+		<a style="margin-left:3px;color:white;text-decoration:none;" id="home" data-theme="b" href="/" target="_blank">SpectralWorkbench</a>
+	<% if params[:action] == "match" %>- <span style="font-weight:normal;">Matching in set "<i><%= @set.title %></i>"</span><% end %>
+
+	</h3>
+</div>
+
+<div data-role="content" class="content" style="padding: 15px">
+
+	<div id="graph" style="width:100%;height:200px;"></div>
+	<br />
+	<canvas style="width:100%;height:100px;" id="canvas"></canvas> 
+
+	<span id="match"></span>
+
+	<% if params[:action] == "match" %>
+		<a data-role="button" data-theme="a" href="javascript:void()" onClick="$W.match();">Match</a>
+		<a data-role="button" data-transition="fade" data-theme="d" href="#save" onClick="$W.saveSpectrum();">Save</a>
+	<% else %>
+		<a data-role="button" data-transition="fade" data-theme="a" href="#save" onClick="$W.saveSpectrum();">Save</a>
+	<% end %>
+
+	<% unless logged_in? %><p><a href="#login">Log in</a> to use a recent calibration</p><% end %>
+
+	<p>This interface works on <a href="https://www.google.com/intl/en/chrome/browser/">Chrome 21+</a>, Opera, and any browser which supports the HTML5 getUserMedia() call. <a href="https://play.google.com/store/apps/details?id=com.opera.browser">Opera Mobile</a> for Android also works! Don't see anything? <a href="http://publiclaboratory.org/wiki/spectral-workbench-web-video">Check if your browser is supported</a></p>
+		<p><a href="https://github.com/jywarren/spectral-workbench">SpectralWorkbench is free software</a> by <a href="http://publiclaboratory.org">Public Lab</a></p>
+
+</div>
+</div>

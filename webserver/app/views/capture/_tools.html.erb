@@ -1,0 +1,38 @@
+<div data-role="page" id="tools" data-theme="a">
+  <div data-theme="a" data-role="header">
+    <h3 style="text-align:left;margin-left:15px;">Tools</h3>
+  </div>
+  <div data-role="content" class="content" style="padding: 15px">
+    <div id="notify"></div>
+    <!--<a data-role="button" data-theme="a" href="javascript:void()" onClick="">Calibrate</a>-->
+    <div data-role="fieldcontain">
+      <fieldset data-role="controlgroup">
+        <label for="geotag-toggle">Geotag</label>
+        <input data-theme="a" type="checkbox" name="geotag-toggle" id="geotag-toggle" type="checkbox" />
+        <label for="rgb-toggle">RGB</label>
+        <input data-theme="a" type="checkbox" name="rgb-toggle" id="rgb-toggle" onChange="$W.toggle_mode()" />
+        <label for="flip-toggle">Autoflip</label>
+        <input checked=true data-theme="a" type="checkbox" name="flip-toggle" id="flip-toggle" onChange="$W.toggle_flip()" />
+      </fieldset>
+    </div>
+
+    <small>
+      <a data-inline="true" style="width:40%;" data-role="button" data-theme="a" onClick="$W.mark()">Mark</a>
+      <a data-inline="true" style="width:44%;" data-role="button" data-theme="a" onClick="$W.add_spectrum(prompt('Enter a spectrum id (this interface will be improved soon))','22'))">Compare</a>
+    </small>
+
+    <p>
+	<b>Upcoming features:</b>
+    </p>
+	<ul>
+	<li>Range limiting</li>
+	<li>Auto-calibrate</li>
+	<li>Baseline storage</li>
+	</ul>
+    <p>Your input is invaluable! See <a href="https://github.com/jywarren/spectral-workbench/issues">Github issues</a> to help design/refine/debug new features.<p>
+    <a data-icon="gear" data-role="button" data-theme="a" href="#configure" data-panel="main">Configure</a>
+    <% if !logged_in? %>
+    <a data-role="button" data-theme="b" href="#login" data-panel="main">Log in</a>
+    <% end %>
+  </div>
+</div>
