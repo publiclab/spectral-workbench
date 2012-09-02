@@ -17,14 +17,15 @@ flotoptions = {
 		},
 	},
 	crosshair: { mode: "x" },
-	yaxis: { show: true, tickFormatter: function(n) { return (n+"").substr(0,4)+"%" } }, 
+	yaxis: { show: true, tickFormatter: function(n) { return (n+"").substr(0,4)+"%" }, max: 100 }, 
 	xaxis: { show: false, tickFormatter: nanometers },
 	shadowSize: 0,
 	grid: {
 		clickable: true,
 		hoverable:true,
 		borderWidth: 0,
-	        backgroundColor: "#eee"
+	        backgroundColor: "#eee",
+		markers: []
 	},
 	// Palette "i eat the rainbow" by svartedauden on Colourlovers: http://www.colourlovers.com/palette/1630898/i_eat_the_rainbow, CC-BY-NC
 	colors: [ "#333333", "#E02130", "#FAB243", "#429867", "#2B5166" ]//, "#482344" ]

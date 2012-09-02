@@ -24,13 +24,20 @@
 	color:#0a0;
 	background:#afa;
 	padding:6px;
+        -moz-border-radius-bottomleft:5px;
+        -webkit-border-bottom-left-radius:5px;
+        -moz-border-radius-bottomright:5px;
+        -webkit-border-bottom-right-radius:5px;
+	border-top:4px solid #0a0;
 }
 .notify.warning { 
 	color:#c62; 
 	background:#FCFCB3; 
+	border-top:4px solid #c62;
 }
 .notify.error { 
 	color:#a52; 
 	background:#FCFFB3; 
+	border-top:4px solid #a52;
 }
 

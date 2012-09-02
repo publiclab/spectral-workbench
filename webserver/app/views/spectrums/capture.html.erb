@@ -37,6 +37,11 @@ flotoptions.colors = [ "#ccc", "#E02130", "#FAB243", "#429867", "#2B5166" ]//, "
       </fieldset>
     </div>
 
+    <small>
+      <a data-inline="true" style="width:40%;" data-role="button" data-theme="a" data-panel="main" onClick="$W.mark()">Mark</a>
+      <a data-inline="true" style="width:44%;" data-role="button" data-theme="a" data-panel="main" onClick="$W.add_spectrum(prompt('Enter a spectrum id (this interface will be improved soon))','22'))">Compare</a>
+    </small>
+
     <p>
 	<b>Upcoming features:</b>
     </p>
@@ -47,10 +52,8 @@ flotoptions.colors = [ "#ccc", "#E02130", "#FAB243", "#429867", "#2B5166" ]//, "
 	<li>Match against set</li>
 	</ul>
     <p>Your input is invaluable! See <a href="https://github.com/jywarren/spectral-workbench/issues">Github issues</a> to help design/refine/debug new features.<p>
-    <a data-role="button" data-theme="a" href="#configure" data-panel="main">Configure</a>
-    <a data-role="button" data-theme="a" data-panel="main" onClick="$W.mark()">Mark</a>
-    <p>Don't see anything? <a href="http://publiclaboratory.org/wiki/spectral-workbench-web-video">Check if your browser is supported</a></p>
-
+    <a data-icon="gear" data-role="button" data-theme="a" href="#configure" data-panel="main">Configure</a>
+    
   </div>
 </div>
 </div>
@@ -60,7 +63,7 @@ flotoptions.colors = [ "#ccc", "#E02130", "#FAB243", "#429867", "#2B5166" ]//, "
   <div data-theme="a" data-role="header">
     <h3 class="header" style="text-align:left;margin-left:15px;">
       <img src="/images/spectralworkbench.png" /> 
-      <a style="margin-left:3px;color:white;text-decoration:none;" id="home" data-theme="b" href="/">SpectralWorkbench</a>
+      <a style="margin-left:3px;color:white;text-decoration:none;" id="home" data-theme="b" href="/" target="_blank">SpectralWorkbench</a>
     </h3>
   </div>
 
@@ -84,7 +87,7 @@ flotoptions.colors = [ "#ccc", "#E02130", "#FAB243", "#429867", "#2B5166" ]//, "
 	<% end %>
 
     <% unless logged_in? %><p><a href="/login">Log in</a> to use a recent calibration</p><% end %>
-    <p>This interface works on <a href="https://www.google.com/intl/en/chrome/browser/">Chrome 21+</a> and any browser which supports the HTML5 MediaStream (WebRTC video) API. <a href="https://play.google.com/store/apps/details?id=com.opera.browser">Opera Mobile</a> for Android also works!</p>
+    <p>This interface works on <a href="https://www.google.com/intl/en/chrome/browser/">Chrome 21+</a>, Opera, and any browser which supports the HTML5 MediaStream (WebRTC video) API. <a href="https://play.google.com/store/apps/details?id=com.opera.browser">Opera Mobile</a> for Android also works! Don't see anything? <a href="http://publiclaboratory.org/wiki/spectral-workbench-web-video">Check if your browser is supported</a></p>
 
     <p><a href="https://github.com/jywarren/spectral-workbench">SpectralWorkbench is free software</a> by <a href="http://publiclaboratory.org">Public Lab</a></p>
 
@@ -108,7 +111,7 @@ flotoptions.colors = [ "#ccc", "#E02130", "#FAB243", "#429867", "#2B5166" ]//, "
 		<label for="spectrum_title">Title:</label><br />
 		<input name="spectrum[title]" id="spectrum_notes" type="text" /><br />
 		<label for="tags">Tags:</label><br />
-		<input name="tags" id="spectrum_tags" value="" type="text" /><br />
+		<input name="tags" id="spectrum_tags" value="webclient," type="text" /><br />
 		<label for="spectrum_notes">Notes:</label>
 		<textarea name="spectrum[notes]" id="spectrum_notes"></textarea><br />
 		<input name="dataurl" type="hidden" id="dataurl" />
