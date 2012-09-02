@@ -174,7 +174,7 @@ class SpectrumsController < ApplicationController
           if params[:tags]
             @spectrum.tag(params[:tags],current_user.id)
           end
-          if params[:spectrum][:calibration_id] && !params[:is_calibration]
+          if params[:spectrum][:calibration_id] && !params[:is_calibration] && params[:spectrum][:calibration_id] != "calibration"
             @spectrum.extract_data
             @spectrum.clone(params[:spectrum][:calibration_id]) 
           end

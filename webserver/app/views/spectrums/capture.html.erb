@@ -19,6 +19,7 @@ flotoptions.colors = [ "#ccc", "#E02130", "#FAB243", "#429867", "#2B5166" ]//, "
 </script>
 
 <div data-role="panel" data-id="menu">
+
 <div data-role="page" id="page0" data-theme="a">
   <div data-theme="a" data-role="header">
     <h3 style="text-align:left;margin-left:15px;">Tools</h3>
@@ -38,8 +39,8 @@ flotoptions.colors = [ "#ccc", "#E02130", "#FAB243", "#429867", "#2B5166" ]//, "
     </div>
 
     <small>
-      <a data-inline="true" style="width:40%;" data-role="button" data-theme="a" data-panel="main" onClick="$W.mark()">Mark</a>
-      <a data-inline="true" style="width:44%;" data-role="button" data-theme="a" data-panel="main" onClick="$W.add_spectrum(prompt('Enter a spectrum id (this interface will be improved soon))','22'))">Compare</a>
+      <a data-inline="true" style="width:40%;" data-role="button" data-theme="a" onClick="$W.mark()">Mark</a>
+      <a data-inline="true" style="width:44%;" data-role="button" data-theme="a" onClick="$W.add_spectrum(prompt('Enter a spectrum id (this interface will be improved soon))','22'))">Compare</a>
     </small>
 
     <p>
@@ -53,9 +54,12 @@ flotoptions.colors = [ "#ccc", "#E02130", "#FAB243", "#429867", "#2B5166" ]//, "
 	</ul>
     <p>Your input is invaluable! See <a href="https://github.com/jywarren/spectral-workbench/issues">Github issues</a> to help design/refine/debug new features.<p>
     <a data-icon="gear" data-role="button" data-theme="a" href="#configure" data-panel="main">Configure</a>
-    
+    <% if !logged_in? %>
+    <a data-role="button" data-theme="b" href="#login" data-panel="main">Log in</a>
+    <% end %>
   </div>
 </div>
+
 </div>
 
 <div data-role="panel" data-id="main">
@@ -86,8 +90,8 @@ flotoptions.colors = [ "#ccc", "#E02130", "#FAB243", "#429867", "#2B5166" ]//, "
     <a data-role="button" data-transition="fade" data-theme="a" href="#page2" onClick="$W.saveSpectrum();">Save</a>
 	<% end %>
 
-    <% unless logged_in? %><p><a href="/login">Log in</a> to use a recent calibration</p><% end %>
-    <p>This interface works on <a href="https://www.google.com/intl/en/chrome/browser/">Chrome 21+</a>, Opera, and any browser which supports the HTML5 MediaStream (WebRTC video) API. <a href="https://play.google.com/store/apps/details?id=com.opera.browser">Opera Mobile</a> for Android also works! Don't see anything? <a href="http://publiclaboratory.org/wiki/spectral-workbench-web-video">Check if your browser is supported</a></p>
+    <% unless logged_in? %><p><a href="#login">Log in</a> to use a recent calibration</p><% end %>
+    <p>This interface works on <a href="https://www.google.com/intl/en/chrome/browser/">Chrome 21+</a>, Opera, and any browser which supports the HTML5 getUserMedia() call. <a href="https://play.google.com/store/apps/details?id=com.opera.browser">Opera Mobile</a> for Android also works! Don't see anything? <a href="http://publiclaboratory.org/wiki/spectral-workbench-web-video">Check if your browser is supported</a></p>
 
     <p><a href="https://github.com/jywarren/spectral-workbench">SpectralWorkbench is free software</a> by <a href="http://publiclaboratory.org">Public Lab</a></p>
 
@@ -102,7 +106,7 @@ flotoptions.colors = [ "#ccc", "#E02130", "#FAB243", "#429867", "#2B5166" ]//, "
   <div data-role="content" class="content" style="padding: 15px">
 
 	<% if !logged_in? %>
-		<p>You must be <a target="_blank" href="/login">logged in</a> to save spectra.</p>
+		<p>You must be <a target="_blank" href="#login">logged in</a> to save spectra.</p>
 	<% else %>
 		<p>(logged in as <%=h current_user.login %>)</p>
 	<% end %>
@@ -123,6 +127,7 @@ flotoptions.colors = [ "#ccc", "#E02130", "#FAB243", "#429867", "#2B5166" ]//, "
 			<% current_user.tag('calibration').each do |spectrum| %>
 			<option value="<%= spectrum.id %>"><%= spectrum.title %> (<%= time_ago_in_words(spectrum.created_at) %>)</option>
 			<% end %>
+			<option value="calibration">+ New calibration</option>
 		</select>
 		<% end %>
 	</form>
@@ -166,6 +171,28 @@ flotoptions.colors = [ "#ccc", "#E02130", "#FAB243", "#429867", "#2B5166" ]//, "
 		<div id="webcam"></div> 
 		<a data-role="button" data-theme="a" href="#main" data-panel="main">&laquo; Back</a>
 	</div>
+  </div>
+
+  <div data-role="page" id="login" data-theme="a">
+    <div data-theme="a" data-role="header">
+      <h3 style="text-align:left;margin-left:15px;">Log in</h3>
+    </div>
+    <div data-role="content" class="content" style="padding: 15px">
+	<p><i>Use your <a data-ajax="false" href="http://publiclaboratory.org" target="_blank">PublicLaboratory.org</a> username to log in. If you do not yet have one, sign up there first!</i></p>
+
+	<% form_tag session_path do -%>
+	<p><%= label_tag 'login' %>
+	<%= text_field_tag 'login', @login %></p>
+
+	<input type="hidden" name="return_to" value="<%= params[:return_to] %>" />
+
+	<!--<p><%= label_tag 'remember_me', 'Remember me' %>
+	<%= check_box_tag 'remember_me', '1', @remember_me %></p>
+	-->
+
+	<p><input data-ajax="false" name="commit" type="submit" value="Log in" /></p>
+	<% end -%>
+    </div>
   </div>
 </div>
 
