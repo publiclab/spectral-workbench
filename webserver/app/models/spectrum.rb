@@ -45,7 +45,7 @@ class Spectrum < ActiveRecord::Base
     require 'RMagick'
     pixels = []
 
-    image   = Magick::ImageList.new("public"+self.photo.url.split('?')[0])
+    image   = Magick::ImageList.new("public"+(self.photo.url.split('?')[0]).gsub('%20',' '))
     row = image.export_pixels(0, 1, image.columns, 1, "RGB");
     left_redness = 0
     right_redness = 0
@@ -72,7 +72,7 @@ class Spectrum < ActiveRecord::Base
     require 'RMagick'
     pixels = []
 
-    image   = Magick::ImageList.new("public"+self.photo.url.split('?')[0])
+    image   = Magick::ImageList.new("public"+(self.photo.url.split('?')[0]).gsub('%20',' '))
     row = image.export_pixels(0, 1, image.columns, 1, "RGB");
 
     #
@@ -147,7 +147,7 @@ class Spectrum < ActiveRecord::Base
     require 'rubygems'
     require 'RMagick'
 
-    image   = Magick::ImageList.new("public"+self.photo.url.split('?')[0])
+    image   = Magick::ImageList.new("public"+(self.photo.url.split('?')[0]).gsub('%20',' '))
     image.flop!
     image.write("public"+self.photo.url)
     self.photo.reprocess!
