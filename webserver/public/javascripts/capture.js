@@ -218,7 +218,7 @@ $W = {
 		}
 		$W.plot = $.plot($("#graph"),$W.data,flotoptions);
 		$.each($W.markers,function(i,m) {
-			$('#graph').append('<div style="position:absolute;left:' + (m[2] + 4) + 'px;top:10px;color:#aaa;font-size:smaller">'+m[0]+'</div>');
+			$('#graph').append('<div style="position:absolute;left:' + (m[2] + 4) + 'px;top:10px;color:#aaa;font-size:smaller">'+m[0]+': '+parseInt($W.getIntensity($W.data[0].data,m[1]))+'%</div>');
 		})
 		$W.unflipped_data = $W.full_data
 		if ($W.flipped) $W.unflipped_data = $W.unflipped_data.reverse()
@@ -413,6 +413,26 @@ $W = {
 				$('#notify_'+id).remove()
 			},2000)
 		}
+	},
+
+	getIntensity: function(data,x) {
+		var i, j
+	
+		// find the nearest points, x-wise
+		for (j = 0; j < data.length; ++j)
+			if (data[j][0] > x)
+				break;
+	            
+		// now interpolate
+		var y, p1 = data[j - 1], p2 = data[j];
+		if (p1 == null)
+			y = p2[1];
+		else if (p2 == null)
+			y = p1[1];
+		else
+			y = p1[1] + (p2[1] - p1[1]) * (x - p1[0]) / (p2[0] - p1[0]);
+
+		return y
 	},
 
         /**
