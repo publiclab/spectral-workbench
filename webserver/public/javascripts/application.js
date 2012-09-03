@@ -17,9 +17,10 @@ flotoptions = {
 		},
 	},
 	crosshair: { mode: "x" },
-	yaxis: { show: true, tickFormatter: function(n) { return (n+"").substr(0,4)+"%" }, max: 100 }, 
+	yaxis: { show: true, tickFormatter: function(n) { return (n+"").substr(0,4)+"%" }, max: 100, min: 0 }, 
 	xaxis: { show: false, tickFormatter: nanometers },
 	shadowSize: 0,
+	threshold: { below: 0, color: "#a00" }, //non-functional... not sure why
 	grid: {
 		clickable: true,
 		hoverable:true,

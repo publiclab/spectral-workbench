@@ -6,6 +6,7 @@ var $W
 
 $W = {
 	data: null,
+	baseline: null,
 	full_data: [],
 	unflipped_data: [],
 	detect_flip: true,
@@ -207,7 +208,10 @@ $W = {
 				}
 			} else {
 				if ($W.mode == "average") {
-					$W.data[0].data.push([parseInt($W.getWavelength(col)),intensity/2.55])
+					if ($W.baseline != null) {
+						var wavelength = parseInt($W.getWavelength(col))
+						$W.data[0].data.push([wavelength,$W.baseline[wavelength]-intensity/2.55])
+					} else $W.data[0].data.push([parseInt($W.getWavelength(col)),intensity/2.55])
 				} else if ($W.mode == "rgb") {
 					var w = $W.getWavelength(col)
 					$W.data[0].data.push([w,red/2.55])
@@ -243,7 +247,7 @@ $W = {
 	saveSpectrum: function() {
 		$('#dataurl').val($W.canvas.toDataURL())
 		$('#geotag').val($('#geotag-toggle')[0].checked)
-		setTimeout(function() { if ($('#geotag-toggle').checked) $W.geolocate() },500)
+		setTimeout(function() { if ($('#geotag-toggle')[0].checked) $W.geolocate() },500)
 	},
 	cancelSave: function() {
 		$('#geotag').val('false')
@@ -340,13 +344,23 @@ $W = {
 			//context: document.body
 			success: function(result) {
 				var spectrum = JSON.parse(result.spectrum.data) // probably need to convert from JSON
-				var label = result.spectrum.title
-				$W.data.push({label:label,data:[]})
-				$.each(spectrum.lines,function(index,line) {
-					if (line.wavelength == null) line.wavelength = index
-					$W.data[$W.data.length-1].data.push([line.wavelength,line.average/2.55])
-				})
-				$W.plot = $.plot($("#graph"),$W.data,flotoptions);
+				if ($('#baseline-toggle')[0].checked) { // use for subtracting baseline
+					//$('#spectrum_tags').val($('#spectrum_tags').val()+",absorption")
+					$W.baseline = []
+					$.each(spectrum.lines,function(index,line) {
+						if (line.wavelength == null) line.wavelength = index
+						// quite imprecise...
+						$W.baseline[parseInt(line.wavelength)] = line.average/2.55
+					})
+				} else {
+					var label = result.spectrum.title
+					$W.data.push({label:label,data:[]})
+					$.each(spectrum.lines,function(index,line) {
+						if (line.wavelength == null) line.wavelength = index
+						$W.data[$W.data.length-1].data.push([line.wavelength,line.average/2.55])
+					})
+					$W.plot = $.plot($("#graph"),$W.data,flotoptions);
+				}
 			}
 		})
 	},
