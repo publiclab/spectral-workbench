@@ -241,19 +241,8 @@ $W = {
                 }
 	},
 	saveSpectrum: function() {
-		is_c = $('#is_calibration')
-		if (is_c.checked) {
-			$('#choose_calibration').hide()
-			is_c.val(true) 
-		} else {
-			$('#choose_calibration').show()
-			is_c.val(false)
-			$('#calibration_id').val($W.calibration_id)
-		}
 		$('#dataurl').val($W.canvas.toDataURL())
 		$('#geotag').val($('#geotag-toggle')[0].checked)
-		$('#save').show()
-		$('#capture').hide()
 		setTimeout(function() { if ($('#geotag-toggle').checked) $W.geolocate() },500)
 	},
 	cancelSave: function() {

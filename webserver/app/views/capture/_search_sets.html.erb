@@ -1,6 +1,6 @@
-<div data-role="page" id="search" data-theme="a">
+<div data-role="page" id="search_sets" data-theme="a">
 	<div data-theme="a" data-role="header">
-		<h3 style="text-align:left;margin-left:15px;">Search for spectra</h3>
+		<h3 style="text-align:left;margin-left:15px;">Search for sets within which to match</h3>
 	</div>
 	<div data-role="content" class="content" style="padding: 15px">
 	
@@ -10,18 +10,14 @@
 			<a data-inline="true" style="width:200px;" data-role="button" data-transition="fade" data-theme="d" href="#capture" data-panel="main">&laquo; Back</a>
 		</form>
 
-		<div id="results">
-		<h3>Recent spectra (<a href="javascript:void()" id="refresh_recent">refresh</a>)</h3>
-		<%= render :partial => "results" %>	
-		</div>
-
 		<script> 
 			$('#search_form').submit(function() {
-				$('#results').load("/spectra/search/"+$('#search_term').val()+"?capture=true")
-			})
-			$('#refresh_recent').click(function() {
-				$('#results').load("/spectra/recent/?capture=true")
+				$('#results').load("/sets/search/"+$('#search_term').val()+"?capture=true")
 			})
 		</script>
+
+		<div id="results">
+		
+		</div>
 	</div>
 </div>

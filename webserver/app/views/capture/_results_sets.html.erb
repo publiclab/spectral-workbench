@@ -1,0 +1,11 @@
+<% @sets.each do |set| %>
+<div id="set_<%= set.id %>" class="set capture">
+	<a href="#capture" onClick="$W.match_setup(<%= set.id %>)">
+		<h4><%= set.title %></h4>
+	</a><br />
+	<small>
+		By <a href="/profile/<%= set.author %>" target="_blank"><%= set.author %></a><br />
+		<i><%= time_ago_in_words(set.created_at) %> ago</i>
+	</small>
+</div>
+<% end %>

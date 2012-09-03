@@ -10,6 +10,7 @@ class CaptureController < ApplicationController
       @calibration = Spectrum.find(params[:calibration_id]) if params[:calibration_id]
       @start_wavelength,@end_wavelength = @calibration.wavelength_range 
     end
+    @spectrums = Spectrum.find(:all, :limit => 12, :order => "id DESC")
     if mobile?
       render :template => "capture/index.mobile.erb", :layout => "mobile"
     end

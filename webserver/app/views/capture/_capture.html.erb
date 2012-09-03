@@ -18,9 +18,10 @@
 
 	<% if params[:action] == "match" %>
 		<a data-role="button" data-theme="a" href="javascript:void()" onClick="$W.match();">Match</a>
-		<a data-role="button" data-transition="fade" data-theme="d" href="#save" onClick="$W.saveSpectrum();">Save</a>
+		<a id="saveSpectrum" data-role="button" data-transition="fade" data-theme="d" href="#save" data-panel="main" onClick="$W.saveSpectrum();">Save</a>
 	<% else %>
-		<a data-role="button" data-transition="fade" data-theme="a" href="#save" onClick="$W.saveSpectrum();">Save</a>
+		<a id="saveSpectrum" data-role="button" data-transition="fade" data-theme="a" href="#save" data-panel="main">Save</a>
+		<script>$('#saveSpectrum').bind("click",function() {$W.saveSpectrum()})</script>
 	<% end %>
 
 	<% unless logged_in? %><p><a href="#login">Log in</a> to use a recent calibration</p><% end %>

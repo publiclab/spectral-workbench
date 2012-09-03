@@ -88,6 +88,12 @@ class SpectrumsController < ApplicationController
   end
 
   # non REST
+  def recent
+    @spectrums = Spectrum.find(:all, :limit => 10, :order => "id DESC")
+    render :partial => "capture/results.html.erb", :layout => false if params[:capture]
+  end
+
+  # non REST
   def detail
     @spectrum = Spectrum.find(params[:id])
 

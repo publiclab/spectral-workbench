@@ -86,4 +86,12 @@ class SetsController < ApplicationController
     end
   end
 
+  # non REST
+  def search
+    params[:id] = params[:q].to_s if params[:id].nil?
+    @sets = SpectraSet.find(:all, :conditions => ['title LIKE ? OR notes LIKE ?',"%"+params[:id]+"%", "%"+params[:id]+"%"],:limit => 100, :order => "id DESC")
+    @sets = @sets.paginate :page => params[:page], :per_page => 24
+    render :partial => "capture/results_sets.html.erb", :layout => false if params[:capture]
+  end
+
 end
