@@ -1,0 +1,33 @@
+<div data-role="page" id="configure" data-theme="a">
+	<div data-theme="a" data-role="header">
+		<h3 style="text-align:left;margin-left:15px;">Configure</h3>
+	</div>
+	<div data-role="content" class="content" style="padding: 15px">
+		<p style="display:none;" id="local_calibration">This device has a locally stored calibration. <a href="" id="local_calibration_link">Click here</a> to use it.</p>
+		<script>
+			if (localStorage.getItem("sw:calibration_id")) {
+				$("#local_calibration_link")[0].href = "/capture?calibration_id="+localStorage.getItem("sw:calibration_id")
+				$("#local_calibration").show()
+			}
+		</script>
+		<% if logged_in? %>
+		<p>Store a calibration in your browser:</p>
+		<select id="local_calibration_select">
+			<% current_user.tag('calibration').each do |spectrum| %>
+			<option value="<%= spectrum.id %>"><%= spectrum.title %> (<%= time_ago_in_words(spectrum.created_at) %>)</option>
+			<% end %>
+		</select><br />
+		<div style="padding:10px 0;">
+			<a href="javascript:void()" onClick="localStorage.setItem('sw:calibration_id',$('#local_calibration_select').val())" class="smallbutton">Store calibration</a><br style="clear:both;"/>
+		</div>
+		<% end %>
+		
+		<p><i>This panel is under construction</i></p>
+
+		<label for="samplerow-slider">Input slider:</label>
+		<input type="range" name="samplerow-slider" id="samplerow-slider" value="240" min="0" max="480" onChange="$W.setSampleRows(parseInt($('#samplerow-slider').val()),parseInt($('#samplerow-slider').val())+40)"/>
+
+		<div id="webcam"></div> 
+		<a data-role="button" data-theme="a" href="#capture" data-panel="main">&laquo; Back</a>
+	</div>
+</div>

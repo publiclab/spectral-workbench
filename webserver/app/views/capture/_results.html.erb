@@ -1,0 +1,12 @@
+<% @spectrums.each do |spectrum| %>
+<div id="spectrum_<%= spectrum.id %>" class="spectrum capture">
+	<a href="#capture" onClick="$W.add_spectrum(<%= spectrum.id %>)">
+		<img width="100px" src="<%= spectrum.photo.url(:thumb) %>" /><br />
+		<h4><%= spectrum.title %></h4>
+	</a><br />
+	<small>
+		By <a href="/profile/<%= spectrum.author %>" target="_blank"><%= spectrum.author %></a><br />
+		<i><%= time_ago_in_words(spectrum.created_at) %> ago</i>
+	</small>
+</div>
+<% end %>

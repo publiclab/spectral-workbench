@@ -1,0 +1,23 @@
+<div data-role="page" id="search" data-theme="a">
+	<div data-theme="a" data-role="header">
+		<h3 style="text-align:left;margin-left:15px;">Search for spectra</h3>
+	</div>
+	<div data-role="content" class="content" style="padding: 15px">
+	
+		<form id="search_form" action="javascript:void(0);" method='get'>
+			<input id='search_term' class='text' type='text' name='q' value=''/>
+			<a data-inline="true" style="width:200px;" data-role="button" data-theme="b" onClick="$('#search_form').submit()">Search</a>
+			<a data-inline="true" style="width:200px;" data-role="button" data-transition="fade" data-theme="d" href="#capture">&laquo; Back</a>
+		</form>
+
+		<script> 
+			$('#search_form').submit(function() {
+				$('#results').load("/spectra/search/"+$('#search_term').val()+"?capture=true")
+			})
+		</script>
+
+		<div id="results">
+		
+		</div>
+	</div>
+</div>

@@ -22,6 +22,7 @@ $W = {
         //width: 1280,
         //height: 720,
 	frame: 0,
+
 	initialize: function(args) {
 		this.mobile = args['mobile'] || false
 		this.calibrated = args['calibrated'] || false
@@ -52,6 +53,7 @@ $W = {
 		if (localStorage.getItem('sw:sample_end_row')) this.sample_end_row = localStorage.getItem('sw:sample_end_row')
 		this.sample_height = this.sample_end_row - this.sample_start_row // how many pixels to sample
 		setInterval($W.alert_overexposure,3000)
+		$W.data = [{label: "webcam",data:[]}]
 	},
         success: function (stream) {
 		//console.log('success')
@@ -169,13 +171,11 @@ $W = {
 		}
 		img = $W.ctx.getImageData(0,0,$W.canvas.width,$W.sample_height)
 		if ($W.mode == "average") {
-			$W.data = [{label: "webcam",data:[]}]
+			$W.data[0] = {label: "webcam",data:[]}
 		} else if ($W.mode == "rgb") {
-			$W.data = [
-				{label: "r",data:[]},
-				{label: "g",data:[]},
-				{label: "b",data:[]}
-			]
+			$W.data[0] = {label: "r",data:[]}
+			$W.data[1] = {label: "g",data:[]}
+			$W.data[2] = {label: "b",data:[]}
 		}
 
 		$W.full_data = []
@@ -216,7 +216,10 @@ $W = {
 				}
 			}
 		}
-		plot = $.plot($("#graph"),$W.data,flotoptions);
+		$W.plot = $.plot($("#graph"),$W.data,flotoptions);
+		$.each($W.markers,function(i,m) {
+			$('#graph').append('<div style="position:absolute;left:' + (m[2] + 4) + 'px;top:10px;color:#aaa;font-size:smaller">'+m[0]+'</div>');
+		})
 		$W.unflipped_data = $W.full_data
 		if ($W.flipped) $W.unflipped_data = $W.unflipped_data.reverse()
 	},
@@ -289,12 +292,13 @@ $W = {
 		this.mode = "rgb"
 		$W.oldflotoptionscolors = flotoptions.colors
 		flotoptions.colors = [ "#ff0000", "#00ff00", "#0000ff" ]
-		plot = $.plot($("#graph"),$W.data,flotoptions);
+		$W.plot = $.plot($("#graph"),$W.data,flotoptions);
 	},
 	show_average: function() {
 		this.mode = "average"
+		$W.data = [{label: "webcam",data:[]}]
 		flotoptions.colors = $W.oldflotoptionscolors
-		plot = $.plot($("#graph"),$W.data,flotoptions);
+		$W.plot = $.plot($("#graph"),$W.data,flotoptions);
 	},
 	toggle_mode: function() {
 		if (this.mode == "rgb") $W.show_average()
@@ -330,8 +334,39 @@ $W = {
 
 	markers: [],
 	mark: function() {
-		$W.markers.push(prompt("Enter a wavelength in nanometers","532"),prompt("Enter a label","Green laser"))
-		//$.plot.
+		var nm = prompt("Enter a wavelength in nanometers","532")
+		var label = prompt("Enter a label","Green laser")
+		var o = $W.plot.pointOffset({ x: nm, y: 90})
+		if (!flotoptions.grid.markings) flotoptions.grid.markings = []
+		flotoptions.grid.markings.push({ color: '#ccc', lineWidth: 1, xaxis: { from: nm, to: nm } })
+		$W.plot = $.plot($("#graph"),$W.data,flotoptions);
+		
+		$W.markers.push([label,nm,o.left])
+	},
+
+	add_spectrum: function(id) {
+		$.ajax({
+			url: "/spectra/show/"+id+".json",
+			type: "GET",
+			//context: document.body
+			success: function(result) {
+				var spectrum = JSON.parse(result.spectrum.data) // probably need to convert from JSON
+				var label = result.spectrum.title
+				$W.data.push({label:label,data:[]})
+				$.each(spectrum.lines,function(index,line) {
+					if (line.wavelength == null) line.wavelength = index
+					$W.data[$W.data.length-1].data.push([line.wavelength,line.average/2.55])
+				})
+				$W.plot = $.plot($("#graph"),$W.data,flotoptions);
+			}
+		})
+	},
+
+	overexposure_threshold: 20, // how many pixels of consecutive 100% triggers an overexposure warning
+	/* Inspects a given color channel recursively for sequential 
+	 * pixels of 100%, which would indicate overexposure. Returns
+	 * whether it passed the threshold and the last inspected index. 
+
 	},
 
 	overexposure_threshold: 20, // how many pixels of consecutive 100% triggers an overexposure warning
@@ -397,7 +432,9 @@ $W = {
         excerptCanvas: function(x1,y1,x2,y2,source) {
                 source = source || $C
                 var width = x2-x1, height = y2-y1
-                $('body').append("<canvas style='display:none;' id='excerptCanvas'></canvas>")
+                if ($('#excerptCanvas').length == 0) {
+			$('body').append("<canvas style='display:none;' id='excerptCanvas'></canvas>")
+		}
                 var element = $('#excerptCanvas')[0]
                 element.width = width
                 element.height = height
