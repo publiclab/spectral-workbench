@@ -34,7 +34,7 @@ class User < ActiveRecord::Base
   end
 
   def received_comments
-    spectrums = Spectrum.find_all_by_user_id self.id
+    spectrums = Spectrum.find_all_by_user_id self.id, :order => "id DESC"
     spectrum_ids = []
     spectrums.each do |spectrum|
       spectrum_ids << spectrum.id
