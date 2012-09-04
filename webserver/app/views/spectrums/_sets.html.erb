@@ -5,7 +5,7 @@
 		<div class="text">
 			<h3><a href="/sets/show/<%= set.id %>"><%= truncate(set.title,30) %></a></h3>
 			<p><a href="/spectra/author/<%= set.author %>"><%= set.author %></a> | <%= set.spectra.length %> spectra</p>
-      			<p class="notes"><%=h truncate(set.notes,:length => 200) %></p>
+      			<p class="notes"><%= truncate(set.notes,:length => 200) %></p>
 			<p>
 				<a href="/sets/show/<%= set.id %>#comments"><%= set.comments.length %> comments</a> 
 			</p>
@@ -28,11 +28,13 @@
 	line.wavelength = index
 	scaled = false
       }
-      data_set_<%= set.id %>[data_set_<%= set.id %>.length-1].data.push([line.wavelength,line.average])
+      data_set_<%= set.id %>[data_set_<%= set.id %>.length-1].data.push([line.wavelength,line.average/2.55])
     })
   <% end %>
-  flotoptions.xaxis.show = false
+  flotoptions.xaxis.tickFormatter = function(nm) { return nm }
+  flotoptions.xaxis.show = true
   flotoptions.yaxis.show = false
+  flotoptions.grid.backgroundColor = "#222"
   $.plot($("#graph_set_<%= set.id %>"),data_set_<%= set.id %>,flotoptions);
 </script>
 	</div>

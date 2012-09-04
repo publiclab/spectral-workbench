@@ -34,12 +34,12 @@ class User < ActiveRecord::Base
   end
 
   def received_comments
-    spectrums = Spectrum.find_all_by_user_id self.id, :order => "id DESC"
+    spectrums = Spectrum.find_all_by_user_id self.id
     spectrum_ids = []
     spectrums.each do |spectrum|
       spectrum_ids << spectrum.id
     end
-    Comment.find_all_by_spectrum_id(spectrum_ids.uniq, :conditions => ["author != ?",self.login], :limit => 10)
+    Comment.find_all_by_spectrum_id(spectrum_ids.uniq, :conditions => ["author != ?",self.login], :limit => 10, :order => "id DESC")
   end
 
   # Authenticates a user by their login name and unencrypted password.  Returns the user or nil.
