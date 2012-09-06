@@ -97,7 +97,7 @@ input#openid_url {
 	font-weight:bold;
 	font-style:normal;
 	font-family:lucida grande, lucida grande console, sans-serif;
-	font-size:11px !important;
+	font-size:12px !important;
 	padding-bottom:2px;
 	padding-top:2px;
 	border-bottom:4px solid #ccc;
@@ -246,7 +246,11 @@ a:hover.button {
 }
 
 #video {
-	height:400px;
+	height:500px;
+}
+
+#index #maincolumn h2 {
+	padding-top:20px;
 }
 
 .list {

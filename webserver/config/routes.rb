@@ -33,6 +33,7 @@ ActionController::Routing::Routes.draw do |map|
 
   map.connect 'spectra/feed', :controller => "spectrums", :action => "rss"
   map.connect 'spectra/search', :controller => "spectrums", :action => "search"
+  map.connect 'spectra/anonymous', :controller => "spectrums", :action => "anonymous"
   map.connect 'spectra/search/:id', :controller => "spectrums", :action => "search"
   map.connect 'spectra/plotsfeed', :controller => "spectrums", :action => "plots_rss"
   map.connect 'spectra/feed/:author', :controller => "spectrums", :action => "rss"

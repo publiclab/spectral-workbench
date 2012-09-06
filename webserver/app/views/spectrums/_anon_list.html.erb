@@ -1,5 +1,5 @@
 <div class="list">
-<% @spectrums.each do |spectrum| %>
+<% @anon_spectrums.each do |spectrum| %>
 <div class="spectrum">
    <% if spectrum.photo.exists? then %>
 	<% if spectrum.slice_data_url.nil? %>
@@ -24,4 +24,3 @@
 <% end %>
 </div>
 <br style="clear:left;" />
-<%= will_paginate @spectrums %>
