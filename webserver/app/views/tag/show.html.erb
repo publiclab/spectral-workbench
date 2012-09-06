@@ -1,11 +1,15 @@
 
-<h1>Spectra tagged "<%= @tag.name %>"</h1>
+<h1>Spectra tagged with "<%=h params[:id] %>"<% if @tag %> (<%= @spectrums.length %>)<% end %></h1>
 
 <hr style="clear:both;" />
 
 <%= render :partial => 'spectrums/sidebar' %>
 
 <div id="maincolumn">
+<% if @tag %>
 <%= render :partial => 'spectrums/list' %>
+<% else %>
+<p>No results for tag "<%=h params[:id] %></p>
+<% end %>
 </div>
 
