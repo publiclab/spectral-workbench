@@ -29,7 +29,7 @@ class SpectrumsController < ApplicationController
 
   def anonymous
     @spectrums = Spectrum.find(:all,:order => "created_at DESC", :conditions => {:author => "anonymous"})
-    @spectrums = @spectrums.paginate :page => params[:page], :per_page => 4
+    @spectrums = @spectrums.paginate :page => params[:page], :per_page => 24
     render :template => "spectrums/search.html.erb"
   end
 
