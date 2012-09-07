@@ -7,12 +7,11 @@ class SpectrumsController < ApplicationController
   # GET /spectrums
   # GET /spectrums.xml
   def index
-    @spectrums = Spectrum.find(:all,:order => "created_at DESC")
-    if mobile?
-      @spectrums = @spectrums.paginate :page => params[:page], :per_page => 12
-    else
-      @spectrums = @spectrums.paginate :page => params[:page], :per_page => 24
-    end
+    @spectrums = Spectrum.find(:all,:order => "created_at DESC", :conditions => ["author != 'anonymous'"])
+    @spectrums = @spectrums.paginate :page => params[:page], :per_page => 24
+
+    @anon_spectrums = Spectrum.find(:all,:order => "created_at DESC", :conditions => {:author => "anonymous"})
+    @anon_spectrums = @anon_spectrums.paginate :page => params[:page], :per_page => 4
     @sets = SpectraSet.find(:all,:limit => 4,:order => "created_at DESC")
     @comments = Comment.all :limit => 12, :order => "id DESC"
 
@@ -26,6 +25,12 @@ class SpectrumsController < ApplicationController
       } # show.html.erb
       format.xml  { render :xml => @spectrums }
     end
+  end
+
+  def anonymous
+    @spectrums = Spectrum.find(:all,:order => "created_at DESC", :conditions => {:author => "anonymous"})
+    @spectrums = @spectrums.paginate :page => params[:page], :per_page => 24
+    render :template => "spectrums/search.html.erb"
   end
 
   # GET /spectrums/1

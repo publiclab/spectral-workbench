@@ -6,12 +6,15 @@
 
 <% if APP_CONFIG['local'] != "true" %>
 <div id="video">
-<iframe width="610" height="370" src="http://www.youtube.com/embed/_yqRZLxcecs" frameborder="0" allowfullscreen></iframe>
+<iframe width="611" height="458" src="http://www.youtube.com/embed/idg10MiceEI" frameborder="0" allowfullscreen></iframe>
 </div>
 <% end %>
 
 <h2>// RECENT SETS <a class="right" href="/sets/">view all &raquo;</a></h2>
 <%= render :partial => 'sets' %>
+
+<h2>// RECENT ANONYMOUS SPECTRA (<a href="/spectra/anonymous">view all &raquo;</a>)</h2>
+<%= render :partial => 'anon_list' %>
 
 <h2>// RECENT SPECTRA (<a href="/spectra/feed">RSS</a>)</h2>
 <%= render :partial => 'list' %>
