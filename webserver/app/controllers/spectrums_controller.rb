@@ -218,7 +218,7 @@ class SpectrumsController < ApplicationController
   # PUT /spectrums/1.xml
   def update
     @spectrum = Spectrum.find(params[:id])
-    if logged_in? && (@spectrum.user_id == current_user.id || current_user.role == "admin")
+    if logged_in? && (@spectrum.user_id == current_user.id || @spectrum.author == "anonymous")#(current_user.role == "admin")
     if @spectrum.author == "anonymous"
       @spectrum.author = current_user.login
       @spectrum.user_id = current_user.id
