@@ -126,7 +126,7 @@ class SpectrumsController < ApplicationController
   # GET /spectrums/1/edit
   def edit
     @spectrum = Spectrum.find(params[:id])
-    if (params[:login] && params[:client_code]) || (logged_in? && (@spectrum.user_id == current_user.id || current_user.role == "admin"))
+    if (params[:login] && params[:client_code]) || (logged_in? && @spectrum.author == "anonymous")#(@spectrum.user_id == current_user.id || current_user.role == "admin"))
     else
       flash[:error] = "You must be logged in and own this spectrum to edit."
       redirect_to "/login"
