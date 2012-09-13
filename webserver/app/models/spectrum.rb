@@ -30,14 +30,20 @@ class Spectrum < ActiveRecord::Base
   end
 
   def before_destroy
-      self.sets.each do |set|
-        ids = []
-        spectra_ids = set.spectra_string.split(',').each do |id|
-          ids << id if id.to_i != self.id
-        end
-        set.spectra_string = ids.join(',')
-        set.save
-      end
+     self.sets.each do |set|
+       ids = []
+       spectra_ids = set.spectra_string.split(',').each do |id|
+         ids << id if id.to_i != self.id
+       end
+       if ids.length > 0 
+         puts ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+         set.spectra_string = ids.join(',')
+         set.save
+       else
+         puts ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>deleting"
+         set.delete
+       end
+    end
   end
 
   def correct_reversed_image
@@ -156,7 +162,7 @@ class Spectrum < ActiveRecord::Base
   # this is embarassing 
   # someday rewrite with a join table
   def sets
-    SpectraSet.find(:all, :conditions => ["spectra_string LIKE '%,?,%' OR spectra_string LIKE '%,?' OR spectra_string LIKE '?,%'",self.id,self.id,self.id])
+    SpectraSet.find(:all, :conditions => ["spectra_string = '?' OR spectra_string LIKE '%,?,%' OR spectra_string LIKE '%,?' OR spectra_string LIKE '?,%'",self.id,self.id,self.id,self.id])
   end
 
   def image_from_dataurl(data)
