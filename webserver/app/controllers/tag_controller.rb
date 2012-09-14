@@ -2,7 +2,7 @@ class TagController < ApplicationController
 
   def create
     if logged_in?
-      params[:tag][:name].split(',').each do |name|
+      params[:tag][:name].split(',').uniq.each do |name|
         tag = Tag.new({
           :name => name.strip,
           :spectrum_id => params[:tag][:spectrum_id],

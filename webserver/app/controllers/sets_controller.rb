@@ -29,6 +29,16 @@ class SetsController < ApplicationController
     render :layout => false 
   end
 
+  def add
+    @set = SpectraSet.find params[:id]
+    if @set.add(params[:spectrum_id])
+      flash[:notice] = "Added spectrum to set."
+    else
+      flash[:error] = "Failed to add to that set."
+    end
+    redirect_to "/sets/show/"+@set.id.to_s
+  end
+
   def new
     if logged_in?
       @set = SpectraSet.new

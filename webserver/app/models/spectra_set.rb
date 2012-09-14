@@ -1,6 +1,6 @@
 class SpectraSet < ActiveRecord::Base
 
-	validates_presence_of :title, :author, :spectra_string
+	validates_presence_of :title, :author#, :spectra_string
 	validates_length_of :title, :maximum => 60
 	has_many :comments, :dependent => :destroy
 	
@@ -21,6 +21,15 @@ class SpectraSet < ActiveRecord::Base
 			scored[id] = spectrum.compare(id) if id != self.id
 		end
 		scored
+	end
+
+	def add(spectrum_id)
+		if Spectrum.find(spectrum_id.to_i)
+			self.spectra_string = [self.spectra_string,spectrum_id].uniq.join(',') 
+			self.save
+		else
+			false
+		end
 	end
 
 end

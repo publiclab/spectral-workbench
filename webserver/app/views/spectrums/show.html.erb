@@ -38,6 +38,7 @@
 	<small>Embed code: <input style="font-size:11px" id="embedcode" type="text" value="<iframe width='500px' height='400px' border='0' src='http://spectralworkbench.org/spectra/embed/<%= @spectrum.id %>'></iframe>" /></small>
 	<a id="embed" class="smallbutton" href="javascript:void(0);">Custom embed</a>
 	<a id="units" class="smallbutton" href="javascript:void(0);">Toggle units</a>
+	<a id="add" class="smallbutton" href="javascript:void(0);" onClick="window.location = '/sets/add/'+prompt('Add to which set? (enter an id)')+'?spectrum_id=<%= @spectrum.id %>'">Add to set</a>
 	<a id="rgb" class="smallbutton" href="javascript:void(0);" onClick="$W.toggle_mode()">Toggle RGB</a>
 	<% if logged_in? %>
 		<a id="createSet" class="smallbutton" style="display:none;" href="javascript:void(0);">Save as set +</a>
