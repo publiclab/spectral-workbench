@@ -38,6 +38,7 @@ class Spectrum < ActiveRecord::Base
         set.spectra_string = ids.join(',')
         set.save
       end
+      # this didn't work?? if it's the last one in a set, the set should be destroyed too...
   end
 
   def correct_reversed_image
