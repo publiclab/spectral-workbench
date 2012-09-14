@@ -13,7 +13,7 @@ class Tag < ActiveRecord::Base
 		tags.each do |tag|
 			spectra << tag.spectrum_id
 		end
-		Spectrum.find spectra.uniq
+		Spectrum.find spectra.uniq, :order => "id DESC"
 	end
 
 end
