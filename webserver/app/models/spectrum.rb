@@ -50,7 +50,7 @@ class Spectrum < ActiveRecord::Base
     pixels = []
 
     image   = Magick::ImageList.new("public"+(self.photo.url.split('?')[0]).gsub('%20',' '))
-    row = image.export_pixels(0, 1, image.columns, 1, "RGB");
+    row = image.export_pixels(0, self.sample_row, image.columns, 1, "RGB");
     left_redness = 0
     right_redness = 0
     # sum redness for each half
@@ -77,9 +77,7 @@ class Spectrum < ActiveRecord::Base
     pixels = []
 
     image   = Magick::ImageList.new("public"+(self.photo.url.split('?')[0]).gsub('%20',' '))
-    row = image.export_pixels(0, 1, image.columns, 1, "RGB");
-
-    #
+    row = image.export_pixels(0, self.sample_row, image.columns, 1, "RGB");
 
     (0..(row.length/3-1)).each do |p|
       r = row[p*3]/255

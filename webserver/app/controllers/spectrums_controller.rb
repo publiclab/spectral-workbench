@@ -391,4 +391,16 @@ class SpectrumsController < ApplicationController
     render :text => @spectrum.find_match_in_set(params[:set]).to_json
   end
 
+  def setsamplerow
+    @spectrum = Spectrum.find params[:id]
+    if logged_in? && (@spectrum.user_id == current_user.id || current_user.role == "admin")
+      @spectrum.sample_row = params[:row].to_i
+      @spectrum.extract_data
+      @spectrum.save
+    else
+      flash[:error] = "You must be logged in and own this spectrum to set the sample row."
+    end
+    redirect_to "/spectra/show/"+@spectrum.id.to_s
+  end
+
 end

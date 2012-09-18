@@ -29,7 +29,7 @@
 
 <div id="show">
 <div id="notify"></div>
-<img id="image" src="<%= @spectrum.photo.url(:large) %>" />
+<a href="<%= @spectrum.photo.url(:original) %>"><img id="image" src="<%= @spectrum.photo.url(:large) %>" /></a>
 <div id="graph" style="width:830px;height:200px;"></div>
 
 <div id="toolbar">
@@ -46,6 +46,7 @@
 			<a id="extract" class="smallbutton" href="javascript:void(0);">Re-extract from photo</a>
 			<a id="clone" class="smallbutton" href="javascript:void(0);">Clone calibration</a>
 			<a id="calibrate" class="smallbutton" href="javascript:void(0);">Calibrate</a>
+			<a id="samplerow" class="smallbutton" href="javascript:void(0);" onClick="window.location = '/spectrums/setsamplerow/<%= @spectrum.id %>?row='+prompt('Enter the pixel row you would like to extract a spectrum from, where row 0 is the top edge of the original image.','100')">Set sample row</a>
 		<% end %>
 	<% end %>
 	<span id="toolbar_notification"></span>
