@@ -403,4 +403,9 @@ class SpectrumsController < ApplicationController
     redirect_to "/spectra/show/"+@spectrum.id.to_s
   end
 
+  def print
+    @spectrum = Spectrum.find params[:id]
+    render :layout => false
+  end
+
 end
