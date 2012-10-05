@@ -44,6 +44,7 @@
         <p><b>spectralworkbench.org/spectra/show/<%= @spectrum.id %></b></p>
 	<div id="graph" style="width:100%;height:200px;"></div>
         <p><img src="/images/spectralworkbench.png" /> <i>SpectralWorkbench.org</i></p>
+        <p><b>PublicLaboratory.org</b></p>
 	<script>
 		spectrum = <%= @spectrum.data.gsub('"',"'") %>
 		data = [{data:[]}]
