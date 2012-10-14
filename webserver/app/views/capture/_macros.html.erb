@@ -5,7 +5,13 @@
 	<div data-role="content" class="content" style="padding: 15px">
 		<p>Experiment with writing macros based on the still-evolving <a href="http://publiclaboratory.org/wiki/spectral-workbench-api">Spectral Workbench API</a>:</p>	
 
-		<textarea style="font-size:11px;font-family:courier,sans-serif;" id="code"></textarea>
+		<textarea style="font-size:11px;font-family:courier,sans-serif;" id="code">setup: function() {
+  // code to run on startup
+  window.open($W.canvas.toDataURL(),'_newtab').focus() // this may not work if popups are blocked
+},
+draw: function() {
+  // code to run every frame
+}</textarea>
 		<a data-inline="true" style="width:200px;" id="run" data-role="button" data-theme="b">Run</a>
 		<a data-inline="true" style="width:200px;" data-role="button" data-transition="fade" data-theme="d" href="#capture" data-panel="main">&laquo; Back</a>
 
