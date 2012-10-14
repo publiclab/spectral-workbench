@@ -226,6 +226,13 @@ $W = {
 		})
 		$W.unflipped_data = $W.full_data
 		if ($W.flipped) $W.unflipped_data = $W.unflipped_data.reverse()
+		if ($W.macro && $W.macro.draw) {
+			try {
+				$W.macro.draw()
+			} catch(e) {
+				console.log(e)
+			}
+		}
 	},
 
 	geolocate: function() {
