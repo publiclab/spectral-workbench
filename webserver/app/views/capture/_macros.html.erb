@@ -1,0 +1,21 @@
+<div data-role="page" id="macros" data-theme="a">
+	<div data-theme="a" data-role="header">
+		<h3 style="text-align:left;margin-left:15px;">Search for spectra</h3>
+	</div>
+	<div data-role="content" class="content" style="padding: 15px">
+	
+		<textarea style="font-size:11px;font-family:courier,sans-serif;" id="code"></textarea>
+		<a data-inline="true" style="width:200px;" id="run" data-role="button" data-theme="b">Run</a>
+		<a data-inline="true" style="width:200px;" data-role="button" data-transition="fade" data-theme="d" href="#capture" data-panel="main">&laquo; Back</a>
+
+		<code id="output">
+		</code>
+
+		<script> 
+			$('#run').click(function() {
+				//$('#output').val(eval($('#code').val()))
+				eval($('#code').val())
+			})
+		</script>
+	</div>
+</div>
