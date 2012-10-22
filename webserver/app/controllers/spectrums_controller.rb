@@ -80,7 +80,7 @@ class SpectrumsController < ApplicationController
   # non REST
   def compare
     @spectrum = Spectrum.find(params[:id])
-    @spectrums = Spectrum.find(:all, :conditions => ['id != ? AND (title LIKE ? OR notes LIKE ?)',@spectrum.id,"%"+params[:q]+"%", "%"+params[:q]+"%"],:limit => 100,:order => "created_at DESC")
+    @spectrums = Spectrum.find(:all, :conditions => ['id != ? AND (title LIKE ? OR notes LIKE ?)',@spectrum.id,"%"+params[:q]+"%", "%"+params[:q]+"%"],:limit => 20,:order => "created_at DESC")
     render :partial => "compare", :layout => false
   end
 
