@@ -262,6 +262,16 @@ $W = {
 		$('#lat').val('')
 	},
 
+	calibrate: function(id,x1,w1,x2,w2) {
+		$.ajax({
+			url: "/spectra/calibrate/"+$W.spectrum_id+"?x1="+x1+"&w1="+w1+"&x2="+x2+"&w2="+w2,
+			type: "POST",
+			success: function(result) {
+				$W.notify('The spectrum with id '+id+' was calibrated successfully.')
+			}
+		})
+	},
+
 	match: function() {
 		cols = []
 		$.each($W.full_data,function(i,datum) {
