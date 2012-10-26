@@ -55,6 +55,8 @@ $W = {
 		this.sample_height = this.sample_end_row - this.sample_start_row // how many pixels to sample
 		setInterval($W.alert_overexposure,3000)
 		$W.data = [{label: "webcam",data:[]}]
+		$('video')[0].width = "320"
+		$('video')[0].height = "280"
 	},
         success: function (stream) {
 		//console.log('success')
