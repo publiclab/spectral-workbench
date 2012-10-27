@@ -55,6 +55,8 @@ $W = {
 		this.sample_height = this.sample_end_row - this.sample_start_row // how many pixels to sample
 		setInterval($W.alert_overexposure,3000)
 		$W.data = [{label: "webcam",data:[]}]
+		$('video')[0].width = "320"
+		$('video')[0].height = "280"
 	},
         success: function (stream) {
 		//console.log('success')
@@ -260,6 +262,16 @@ $W = {
 		$('#geotag').val('false')
 		$('#lon').val('')
 		$('#lat').val('')
+	},
+
+	calibrate: function(id,x1,w1,x2,w2) {
+		$.ajax({
+			url: "/spectra/calibrate/"+$W.spectrum_id+"?x1="+x1+"&w1="+w1+"&x2="+x2+"&w2="+w2,
+			type: "POST",
+			success: function(result) {
+				$W.notify('The spectrum with id '+id+' was calibrated successfully.')
+			}
+		})
 	},
 
 	match: function() {
