@@ -56,7 +56,7 @@ $W = {
 		setInterval($W.alert_overexposure,3000)
 		$W.data = [{label: "webcam",data:[]}]
 		$('video')[0].width = "320"
-		$('video')[0].height = "280"
+		$('video')[0].height = "240"
 	},
         success: function (stream) {
 		//console.log('success')
