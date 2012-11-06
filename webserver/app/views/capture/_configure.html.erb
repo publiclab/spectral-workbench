@@ -27,7 +27,7 @@
 		<label for="samplerow-slider">Sample row height (zero = top):</label>
 		<input type="range" name="samplerow-slider" id="samplerow-slider" value="240" min="0" max="480" onChange="$W.setSampleRows(parseInt($('#samplerow-slider').val()),parseInt($('#samplerow-slider').val())+40);$('#heightIndicator')[0].style.height = parseInt(($('#samplerow-slider').val()/480)*280)+'px';"/>
 
-		<div id="heightIndicator" style="position:absolute;z-index:999;opacity:0.4;background:black;height:120px;width:320px;"></div> 
+		<div id="heightIndicator" style="position:absolute;z-index:999;opacity:0.4;background:#888;border-bottom:1px solid #ccc;height:120px;width:320px;"></div> 
 		<div id="webcam"></div> 
 		<a data-role="button" data-theme="a" href="#capture" data-panel="main">&laquo; Back</a>
 	</div>
