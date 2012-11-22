@@ -242,7 +242,6 @@ $W = {
 			$W.data[0].data.push([line.wavelength,line.average/(2.55)])
 		})
 		flotoptions.xaxis.show = scaled
-		flotoptions.colors = [ "#333333", "#E02130", "#FAB243", "#429867", "#2B5166" ]//, "#482344" ]
 		this.plot = $.plot($("#graph"),$W.data,flotoptions);
 	},
 	toggle_mode: function() {

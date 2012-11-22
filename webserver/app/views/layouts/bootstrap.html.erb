@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Public Lab<%= ": "+@title unless @title.nil? %></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="The Public Laboratory for Open Technology and Science (PLOTS) collaborative
+ly develops and publicizes accessible technologies for investigating and reporting on local environmental health 
+and justice issues. PLOTS provides an online research space for citizens, linking them to scientists, social scientists, and technologists. PLOTS is an expansion of Grassroots Mapping, where citizens use helium-filled balloons and digital cameras to generate high resolution “satellite” maps.">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <%= stylesheet_link_tag    "bootstrap", :media => "all" %>
+    <link href="/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="/bootstraptp://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" href="/bootstrap/ico/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/bootstrap/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/bootstrap/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/bootstrap/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="/bootstrap/ico/apple-touch-icon-57-precomposed.png">
+
+    <%= javascript_include_tag "application" %>
+    <script src="/javascripts/jquery.min.js"></script>
+
+  </head>
+
+  <body>
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+
+    <div id="header">
+      <a id="logo" href="/"><img src="/images/logo.png" /></a>
+      <h3 class="pull-left"><a class="title" href="/">Spectral Workbench</a><small> by <a href="http://publiclaboratory.org">Public Lab</a></small></h3>
+
+      <div class="btn-group pull-right">
+        <a class="btn btn-primary btn-large" href="/capture"><i class="icon icon-camera icon-white"></i> Capture online</a>
+        <a class="btn btn-primary btn-large dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="/spectrums/new" class="button"><i class="icon icon-upload"></i> Upload image</a></li>
+      </div>
+      <ul class="nav nav-pills pull-right">
+        <li><a class="btn btn-link" href="/"><i class="icon icon-home"></i></a></li> 
+        <li class="dropdown">
+          <a class="btn btn-link dropdown-toggle" data-toggle="dropdown">Learn <b class="caret"></b></a> 
+          <ul class="dropdown-menu">
+            <li><a href="http://publiclaboratory.org/wiki/spectral-workbench-usage">Using Spectral Workbench</a></li>
+            <li><a href="http://publiclaboratory.org/wiki/spectral-workbench-usage">Build a spectrometer</a></li>
+            <li><a href="http://publiclaboratory.org/wiki/spectral-analysis">Applications</a></li>
+            <li class="divider"></li>
+            <li><a href="http://publiclaboratory.org/wiki/spectral-workbench">About Spectral Workbench</a></li>
+          </ul>
+        </li>
+
+        <li><a class="btn btn-link" href="http://publiclaboratory.org/wiki/spectral-workbench-help">Help</a></li> 
+        <% if logged_in? %>
+        <li><a class="btn btn-link" href="/dashboard">Dashboard</a></li> 
+        <li><a class="btn btn-link" href="/profile/<%=h current_user.login %>"><%=h current_user.login %></a></li> 
+        <li><%= link_to '<i class="icon icon-user"></i> Logout', logout_path %></li>
+        <% else %>
+        <li><%= link_to '<i class="icon icon-user"></i> Log in', login_path %></li>
+        <% end %>
+      </ul>
+    </div>
+
+    <%= yield %>
+
+    <footer>
+
+      <hr />
+      <div class="span4">
+        <p><b>Spectral Workbench</b> is <a href="https://github.com/jywarren/spectral-workbench">open source software</a></p>
+        <p>Report bugs and help improve this software <a href="https://github.com/jywarren/spectral-workbench/issues/new">on Github</a></p>
+      </div>
+
+    </footer>
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/bootstrap/js/bootstrap.typeahead.js"></script>
+    <script>
+      (function() {
+        $("[rel=tooltip]").tooltip()
+        $("[rel=popover]").popover()
+      })()
+    </script>
+    <script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-7636025-2']);
+  _gaq.push(['_setDomainName', 'publiclaboratory.org']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+    </script>
+  </body>
+</html>

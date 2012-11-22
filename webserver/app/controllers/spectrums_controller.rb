@@ -62,6 +62,13 @@ class SpectrumsController < ApplicationController
     end
   end
 
+  def analyze
+    @spectrum = Spectrum.find(params[:id])
+    @spectrums = Spectrum.find(:all, :limit => 4, :order => "created_at DESC", :conditions => ["id != ?",@spectrum.id])
+    @comment = Comment.new
+    render :layout => "bootstrap"
+  end
+
   # non REST
   def embed
     @spectrum = Spectrum.find(params[:id])
