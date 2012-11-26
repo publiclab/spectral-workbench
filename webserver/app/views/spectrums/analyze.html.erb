@@ -11,7 +11,6 @@
 
     <div class="navbar navbar-inverse navbar-static-bottom" style="margin:0;">
       <div class="navbar-inner">
-        <div class="container-fluid">
           <a class="btn btn-primary"><i class="icon icon-white icon-screenshot"></i> Calibrate</a>
           <a href="#embed" class="btn btn-inverse" data-toggle="modal"><i class="icon icon-white icon-share"></i> Embed</a>
           <%= render :partial => "embed" %>
@@ -25,7 +24,6 @@
             <button type="submit" class="btn btn-inverse"><i class="icon-search icon-white"></i></button>
           </form>
 
-        </div>
       </div>
     </div>
 
@@ -33,7 +31,7 @@
   <div class="row-fluid">
     <div class="span3">
       <h3><%= @spectrum.title %></h3>
-      <p>uploaded by <a href="/profile/<%= @spectrum.author %>"><%= @spectrum.author %></a> <a class="btn btn-mini" href="/spectra/feed/<%= @spectrum.author %>">RSS</a></p>
+      <p><small>uploaded by <a href="/profile/<%= @spectrum.author %>"><%= @spectrum.author %></a></small> <a class="btn btn-mini" href="/spectra/feed/<%= @spectrum.author %>">RSS</a></p>
       <% if @spectrum.lat != 0 && @spectrum.lon != 0 %><p>Collected at: Lat: <%= @spectrum.lat %>, Lon: <%= @spectrum.lon %> (<a href="http://www.openstreetmap.org/?lat=<%= @spectrum.lat %>&lon=<%= @spectrum.lon %>&zoom=10&layers=M">View in OpenStreetMap</a>)</p><% end %>
       <p><%= @spectrum.notes %></p>
       <% if logged_in? && current_user.login == @spectrum.author || true %>
