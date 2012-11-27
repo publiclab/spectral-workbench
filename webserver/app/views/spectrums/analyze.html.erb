@@ -6,15 +6,17 @@
 <div class="container-fluid" style="clear:both;">
   <div class="row-fluid" id="display">
 
-    <img style="width:100%;height:100px;" id="image" src="<%= @spectrum.photo.url(:original) %>" />
+    <img style="width:95%;height:100px;padding:0 1% 0 4%;background:black;" id="image" src="<%= @spectrum.photo.url(:original) %>" />
     <div id="graph" style="width:98%;height:200px;"></div>
 
     <div class="navbar navbar-inverse navbar-static-bottom" style="margin:0;">
       <div class="navbar-inner">
-          <a class="btn btn-primary"><i class="icon icon-white icon-screenshot"></i><span class="hidden-phone"> Calibrate</span></a>
-          <a href="#embed" class="btn btn-inverse" data-toggle="modal"><i class="icon icon-white icon-share"></i><span class="hidden-phone"> Embed</span></a>
+          <a data-toggle="modal" href="#calibratemodal1" class="btn btn-primary"><i class="icon icon-white icon-screenshot"></i><span class="hidden-phone"> Calibrate</span></a>
+          <%= render :partial => "calibrate" %>
+
+          <a href="#embedmodal" class="btn btn-inverse" data-toggle="modal"><i class="icon icon-white icon-share"></i><span class="hidden-phone"> Embed</span></a>
           <%= render :partial => "embed" %>
-          <a class="btn btn-inverse"><i class="icon icon-white icon-plus-sign"></i><span class="hidden-phone"> Add to set</span></a>
+          <a class="btn btn-inverse" href="javascript:void(0);" onClick="window.location = '/sets/add/'+prompt('Add to which set? (enter an id)')+'?spectrum_id=<%= @spectrum.id %>'"><i class="icon icon-white icon-plus-sign"></i><span class="hidden-phone"> Add to set</span></a>
           <a class="btn btn-inverse"><i class="icon icon-white icon-align-left"></i><span class="hidden-phone"> Compare</span></a>
 
           <a rel="popover" data-placement="left" class="pull-right btn btn-inverse" data-content='<ul class="nav nav-list"><li><a>Toggle units</a></li><li><a>Toggle RGB</a></li><li><a>Re-extract from photo</a></li><li><a>Set sample row</a></li></ul>'><i class="icon icon-white icon-briefcase"></i><span class="hidden-phone"> More tools</span></a>
@@ -43,16 +45,22 @@
       <% end %>
       <br />
       <div class="btn-group">
-        <a class="btn btn-small" href="<%= @spectrum.id %>.json"><b>JSON</b></a>
-        <a class="btn btn-small" href="<%= @spectrum.id %>.csv"><b>CSV</b></a>
-        <a class="btn btn-small" href="<%= @spectrum.id %>.xml"><b>XML</b></a>
+        <a class="btn btn-small" href="/spectra/show/<%= @spectrum.id %>.json"><b>JSON</b></a>
+        <a class="btn btn-small" href="/spectra/show/<%= @spectrum.id %>.csv"><b>CSV</b></a>
+        <a class="btn btn-small" href="/spectra/show/<%= @spectrum.id %>.xml"><b>XML</b></a>
         <a rel="tooltip" class="btn btn-small" href="http://publiclaboratory.org/wiki/spectral-workbench-exporting" title="About export formats"><i class="icon icon-question-sign"></i></a> 
       </div>
+
+      <hr />
+
+      <div id="share">
+        <div class="fb-like" data-send="false" data-layout="button_count" data-width="50" data-show-faces="false" style="vertical-align:top;zoom:1;*display:inline"></div>
+        <a href="https://twitter.com/share" class="twitter-share-button">Tweet</a>
+        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+      </div>
     </div>
+
     <div class="span9">
-
-      
-
       <a name="comments"></a>
       <h3>Comments (<%= @spectrum.comments.length %>)</h3>
 

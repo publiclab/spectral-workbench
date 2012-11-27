@@ -1,0 +1,27 @@
+<div class="modal hide fade" id="calibratemodal1">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <b>Use a fluorescent bulb spectrum to calibrate your spectrometer</b>
+  </div>
+  <div class="modal-body">
+    <p>You'll need a clear fluorescent spectrum like the one shown here. First, click on the highest peak of the middle blue band:</p>
+    <p style="text-align:center;"><img class="img-rounded" src="/images/calibrate-blue.png"></p>
+  </div>
+  <div class="modal-footer">
+    <a data-dismiss="modal" class="btn" href="javascript:void();">Cancel</a>
+    <a data-dismiss="modal" class="btn btn-primary" href="#calibrationmodal2" onClick="$('#graph').bind('plotclick', function (event, pos, item) { $('#graph').unbind('plotclick');$W.second_calibration(pos.x,435.833);$('#calibratemodal2').modal('show'); })">Begin</a></p>
+  </div>
+</div> 
+<div class="modal hide fade" id="calibratemodal2">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <b>Complete your calibration</b>
+  </div>
+  <div class="modal-body">
+    <p>Now, click at the peak of the green band as shown here: </p>
+    <p style="text-align:center;"><img class="img-rounded" src="/images/calibrate-green.png"></p>
+  </div>
+  <div class="modal-footer">
+    <a data-dismiss="modal" class="btn btn-primary" href="javascript:void();">Finish</a></p>
+  </div>
+</div> 

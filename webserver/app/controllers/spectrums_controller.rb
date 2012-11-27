@@ -298,7 +298,7 @@ class SpectrumsController < ApplicationController
       redirect_to "/spectra/show/"+@spectrum.id.to_s
     else
       flash[:error] = "You must be logged in and own this spectrum to calibrate."
-      redirect_back
+      redirect_to "/spectra/show/"+@spectrum.id.to_s
     end
   end
 
