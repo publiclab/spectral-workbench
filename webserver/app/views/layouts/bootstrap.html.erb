@@ -69,12 +69,17 @@ and justice issues. PLOTS provides an online research space for citizens, linkin
 
         <li><a class="btn btn-link" href="http://publiclaboratory.org/wiki/spectral-workbench-help">Help</a></li> 
         <% if logged_in? %>
-        <li><a class="btn btn-link" href="/dashboard">Dashboard</a></li> 
-        <li><a class="btn btn-link" href="/profile/<%=h current_user.login %>"><%=h current_user.login %></a></li> 
-        <li><%= link_to '<i class="icon icon-user"></i> Logout', logout_path %></li>
+        <li class="dropdown">
+          <a class="btn btn-link dropdown-toggle" data-toggle="dropdown" href="/profile/<%=h current_user.login %>"><i class="icon icon-user"></i> <%=h current_user.login %> <b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li><a href="/dashboard">Dashboard</a></li> 
+            <li><%= link_to 'Log out', logout_path %></li>
+          </ul>
+        </li>
         <% else %>
         <li><%= link_to '<i class="icon icon-user"></i> Log in', login_path %></li>
         <% end %>
+
       </ul>
     </div>
 
