@@ -24,9 +24,15 @@ h1,h2,h3,h4 {
   padding-left:10px;
   height:30px;
 }
+#header #logo.mobile img {
+  padding-left:0;
+}
 #header div.btn-group {
   margin:4px;
   padding-right:17px;
+}
+#header div.btn-group.mobile {
+  padding-right:0px;
 }
 #header ul.nav {
   margin:10px;
@@ -42,7 +48,7 @@ h1,h2,h3,h4 {
   background:#444;
 }
 #display #graph {
-  margin-top:10px;
+  margin:10px;
 }
 
 
