@@ -35,7 +35,7 @@
       <p><small>uploaded by <a href="/profile/<%= @spectrum.author %>"><%= @spectrum.author %></a></small> <a class="btn btn-mini" href="/spectra/feed/<%= @spectrum.author %>">RSS</a></p>
       <% if @spectrum.lat != 0 && @spectrum.lon != 0 %><p>Collected at: Lat: <%= @spectrum.lat %>, Lon: <%= @spectrum.lon %> (<a href="http://www.openstreetmap.org/?lat=<%= @spectrum.lat %>&lon=<%= @spectrum.lon %>&zoom=10&layers=M">View in OpenStreetMap</a>)</p><% end %>
       <p><%= @spectrum.notes %></p>
-      <% if logged_in? && current_user.login == @spectrum.author || true %>
+      <% if logged_in? && current_user.login == @spectrum.author %>
         <div class="btn-group">
           <a class="btn btn-small btn-link" href="/spectrums/<%= @spectrum.id %>/edit"><i class="icon icon-pencil"></i> Edit</a>
           <%= link_to '<i class="icon icon-remove-sign"></i> Delete', "/spectrums/destroy/"+@spectrum.id.to_s, :confirm => 'Are you sure?', :class => "btn btn-small btn-link" %>
