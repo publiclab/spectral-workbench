@@ -21,16 +21,7 @@ $W = {
 			var url = "/spectrums/compare/"+$W.spectrum_id+"?q="+$("#searchinput").val()
 			$("#result").html(ajax_load).load(url)
 		});
-		$('#units').click(function() {
-			if (flotoptions.xaxis.tickFormatter == wavenumbers) {
-				flotoptions.xaxis.tickFormatter = nanometers
-				flotoptions.xaxis.tickSize = 100
-			} else {
-				flotoptions.xaxis.tickFormatter = wavenumbers
-				flotoptions.xaxis.tickSize = wavenumber_tickSize
-			}
-			$.plot($("#graph"),this.data,flotoptions);
-		})
+		$('#units').click($W.units)
 		$('#createSet').click(function() {
 			var f = document.createElement('form');
 			f.style.display = 'none';
@@ -44,19 +35,7 @@ $W = {
 			f.action = "/sets/new/"+spectra.join(',')
 			f.submit();
 		})
-		$('#extract').click(function() {
-			var f = document.createElement('form');
-			f.style.display = 'none';
-			$('#graph').append(f);
-			f.id = "extractform"
-			var i = document.createElement('input');
-			i.name = "authenticity_token"
-			i.value = $W.form_authenticity_token
-			$('#extractform').append(i);
-			f.method = 'POST';
-			f.action = "/spectrums/extract/"+$W.spectrum_id
-			f.submit();
-		})
+		$('#extract').click($W.extract)
 		$('#clone').click(function() {
 			// use uniq_id as a CSS class, only show those from the same device
 			$('.cloneCalibration').show()
@@ -263,7 +242,33 @@ $W = {
 		})
 		return (left_redness > right_redness)
 	},
-
+	units: function() {
+		if (flotoptions.xaxis.tickFormatter == wavenumbers) {
+			flotoptions.xaxis.tickFormatter = nanometers
+			flotoptions.xaxis.tickSize = 100
+		} else {
+			flotoptions.xaxis.tickFormatter = wavenumbers
+			flotoptions.xaxis.tickSize = wavenumber_tickSize
+		}
+		$.plot($("#graph"),this.data,flotoptions);
+	},
+	extract: function() {
+		var f = document.createElement('form');
+		f.style.display = 'none';
+		$('#graph').append(f);
+		f.id = "extractform"
+		var i = document.createElement('input');
+		i.name = "authenticity_token"
+		i.value = $W.form_authenticity_token
+		$('#extractform').append(i);
+		f.method = 'POST';
+		f.action = "/spectrums/extract/"+$W.spectrum_id
+		f.submit();
+	},
+        set_sample_row: function() {
+		var rownum = prompt('Enter the pixel row you would like to extract a spectrum from, where row 0 is the top edge of the original image.','100')
+		if (rownum) window.location = '/spectrums/setsamplerow/'+$W.spectrum_id+'?row='+rownum
+	}
 }
 
 
