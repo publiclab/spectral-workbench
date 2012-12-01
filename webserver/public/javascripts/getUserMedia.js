@@ -1,169 +1,136 @@
-/*globals document:true, localStorage:true, navigator: true*/
-
-;(function( window, document ) {
+/*global navigator, document */
+;(function (window, document) {
     "use strict";
 
-    window.getUserMedia = function( options, successCallback, errorCallback ) {
+    window.getUserMedia = function (options, successCallback, errorCallback) {
 
-        // getUserMedia() feature detection
-        navigator.getUserMedia_ = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
+        // Options are required
+        if (options !== undefined) {
 
-        // detect if {video: true} or "video" style options
-        // by creating an iframe and blowing it up
-        // style jacked from @kangax
-        // taken here from @miketaylr: //gist.github.com/f2ac64ed7fc467ccdfe3
-        var optionStyle = (function( win ) {
+            // getUserMedia() feature detection
+            navigator.getUserMedia_ = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
 
-            var el = document.createElement( 'iframe' ),
-                root = document.body || document.documentElement,
-                string = true,
-                object = true,
-                nop = function() {},
-                f;
+            if ( !! navigator.getUserMedia_) {
 
-            root.appendChild(el);
 
-            try {
-                // Try spec (object) syntax
-                navigator.getUserMedia_({
-                    video: true,
-                    audio: true
-                }, nop);
+                // constructing a getUserMedia config-object and 
+                // an string (we will try both)
+                var option_object = {};
+                var option_string = '';
+                var getUserMediaOptions, container, temp, video, ow, oh;
 
-            } catch (e) {
-                object = false;
+                if (options.video === true) {
+                    option_object.video = true;
+                    option_string = 'video';
+                }
+                if (options.audio === true) {
+                    option_object.audio = true;
+                    if (option_string !== '') {
+                        option_string = option_string + ', ';
+                    }
+                    option_string = option_string + 'audio';
+                }
+
+                container = document.getElementById(options.el);
+                temp = document.createElement('video');
+
+                // Fix for ratio
+                ow = parseInt(container.offsetWidth, 10);
+                oh = parseInt(container.offsetHeight, 10);
+
+                if (options.width < ow && options.height < oh) {
+                    options.width = ow;
+                    options.height = oh;
+                }
+
+                // configure the interim video
+                temp.width = options.width;
+                temp.height = options.height;
+                temp.autoplay = true;
+                container.appendChild(temp);
+                video = temp;
+
+                // referenced for use in your applications
+                options.videoEl = video;
+                options.context = 'webrtc';
+
+                // first we try if getUserMedia supports the config object
                 try {
-                    // Try string syntax
-                    navigator.getUserMedia_("video, audio", nop);
-                } catch (e) { // Neither supported
-                    string = false;
-                }
-            } finally { // Clean up
-                root.removeChild(el);
-                el = null;
-            }
-
-            return {
-                string: string,
-                object: object
-            };
-
-        }( window ));
-
-        if ( !!navigator.getUserMedia_ ) {
-
-
-            var getUserMediaOptions, container, temp, video, ow, oh;
-
-            if ( !optionStyle.string && !optionStyle.object ) {
-                return undefined;
-            }
-
-            if (optionStyle.string) {
-                //canary latest
-                    if( options.video && options.audio && optionStyle.object ){
-                        getUserMediaOptions = {};
-                        getUserMediaOptions.audio = true;
-                        getUserMediaOptions.video = true;
+                    // try object
+                    navigator.getUserMedia_(option_object, successCallback, errorCallback);
+                } catch (e) {
+                    // option object fails
+                    try {
+                        // try string syntax
+                        // if the config object failes, we try a config string
+                        navigator.getUserMedia_(option_string, successCallback, errorCallback);
+                    } catch (e2) {
+                        // both failed
+                        // neither object nor string works
+                        return undefined;
                     }
-                    else if ( options.video && options.audio ) {
-                        getUserMediaOptions = 'video, audio';
-                    } else if ( options.video ) {
-                        getUserMediaOptions = 'video';
-                    } else if ( options.audio ) {
-                        getUserMediaOptions = 'audio';
-                    }
-            } else if ( optionStyle.object ) {
-
-                getUserMediaOptions = {};
-
-                if ( options.video ) {
-                    getUserMediaOptions.video = true;
                 }
-                if ( options.audio ) {
-                    getUserMediaOptions.audio = true;
-                }
-            }
+            } else {
 
-            
+                // Act as a plain getUserMedia shield if no fallback is required
+                if (options.noFallback === undefined || options.noFallback === false) {
 
-            container = document.getElementById( options.el );
-            temp = document.createElement('video');
+                    // Fallback to flash
+                    var source, el, cam;
 
-            // Fix for ratio
-            ow = parseInt(container.offsetWidth, 10);
-            oh = parseInt(container.offsetHeight, 10);
-
-            if (options.width < ow && options.height < oh) {
-                options.width = ow;
-                options.height = oh;
-            }
-
-            // configure the interim video
-            temp.width = options.width;
-            temp.height = options.height;
-            temp.autoplay = true;
-            container.appendChild(temp);
-            video = temp;
-
-            // referenced for use in your applications
-            options.videoEl = video;
-            options.context = 'webrtc';
-            navigator.getUserMedia_(getUserMediaOptions, successCallback, errorCallback);
-
-        } else {
-            // Fallback to flash
-            var source, el, cam;
-
-            source = '<object id="XwebcamXobjectX" type="application/x-shockwave-flash" data="' + options.swffile + '" width="' + options.width + '" height="' + options.height + '"><param name="movie" value="' + options.swffile + '" /><param name="FlashVars" value="mode=' + options.mode + '&amp;quality=' + options.quality + '" /><param name="allowScriptAccess" value="always" /></object>';
-            el = document.getElementById(options.el);
-            el.innerHTML = source;
+                    source = '<object id="XwebcamXobjectX" type="application/x-shockwave-flash" data="' + options.swffile + '" width="' + options.width + '" height="' + options.height + '"><param name="movie" value="' + options.swffile + '" /><param name="FlashVars" value="mode=' + options.mode + '&amp;quality=' + options.quality + '" /><param name="allowScriptAccess" value="always" /></object>';
+                    el = document.getElementById(options.el);
+                    el.innerHTML = source;
 
 
-            (function register(run) {
+                    (function register(run) {
 
-                cam = document.getElementById('XwebcamXobjectX');
+                        cam = document.getElementById('XwebcamXobjectX');
 
-                if (cam.capture !== undefined) {
+                        if (cam.capture !== undefined) {
 
-                    // Simple callback methods are not allowed 
-                    options.capture = function(x) {
-                        try {
-                            return cam.capture(x);
-                        } catch (e) {}
-                    };
-                    options.save = function(x) {
-                        try {
-                            return cam.save(x);
-                        } catch (e) {
+                            // Simple callback methods are not allowed 
+                            options.capture = function (x) {
+                                try {
+                                    return cam.capture(x);
+                                } catch (e) {}
+                            };
+                            options.save = function (x) {
+                                try {
+                                    return cam.save(x);
+                                } catch (e) {
 
+                                }
+                            };
+                            options.setCamera = function (x) {
+                                try {
+                                    return cam.setCamera(x);
+                                } catch (e) {}
+                            };
+                            options.getCameraList = function () {
+                                try {
+                                    return cam.getCameraList();
+                                } catch (e) {}
+                            };
+
+                            // options.onLoad();
+                            options.context = 'flash';
+                            options.onLoad = successCallback;
+
+                        } else if (run === 0) {
+                            // options.debug("error", "Flash movie not yet registered!");
+                            errorCallback();
+                        } else {
+                            // Flash interface not ready yet 
+                            window.setTimeout(register, 1000 * (4 - run), run - 1);
                         }
-                    };
-                    options.setCamera = function(x) {
-                        try {
-                            return cam.setCamera(x);
-                        } catch (e) {}
-                    };
-                    options.getCameraList = function() {
-                        try {
-                            return cam.getCameraList();
-                        } catch (e) {}
-                    };
+                    }(3));
 
-                    // options.onLoad();
-                    options.context = 'flash';
-                    options.onLoad = successCallback;
-
-                } else if (run === 0) {
-                    // options.debug("error", "Flash movie not yet registered!");
-                    errorCallback();
-                } else {
-                    // Flash interface not ready yet 
-                    window.setTimeout(register, 1000 * (4 - run), run - 1);
                 }
-            }(3));
 
+            }
         }
     };
 
 }(this, document));
+

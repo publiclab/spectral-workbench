@@ -42,7 +42,9 @@ $W = {
 		}
 		$('#samplerow-slider').max = this.options.height // this doesn't work!!!
 		$('#samplerow-slider').value = this.sample_start_row
+
 		getUserMedia(this.options, this.success, this.deviceError)
+
 		window.webcam = this.options
 		this.canvas = document.getElementById("canvas")
 		$('canvas').width = this.width+"px"
@@ -55,17 +57,25 @@ $W = {
 		this.sample_height = this.sample_end_row - this.sample_start_row // how many pixels to sample
 		setInterval($W.alert_overexposure,3000)
 		$W.data = [{label: "webcam",data:[]}]
-		$('video')[0].width = "320"
-		$('video')[0].height = "240"
+		if ($('video')[0]) {
+			$('video')[0].width = "320"
+			$('video')[0].height = "240"
+		} else {
+			$('video').width = "320"
+			$('video').height = "240"
+		}
 	},
+
         success: function (stream) {
 		//console.log('success')
                 if ($W.options.context === 'webrtc') {
 			//console.log('webrtc')
                         var video = $W.options.videoEl,
                                 vendorURL = window.URL || window.webkitURL;
-                        video.src = vendorURL ? vendorURL.createObjectURL(stream) : stream;
-                        video.onerror = function () {
+                        if (navigator.mozGetUserMedia) video.src = stream;
+			else video.src = vendorURL ? vendorURL.createObjectURL(stream) : stream;
+                        video.onerror = function (e) {
+				console.log(e);
                                 stream.stop();
                         	streamError();
                 	};
@@ -75,7 +85,7 @@ $W = {
         	}
         },
 	deviceError: function (error) {
-		console.log(error)
+		//console.log(error)
 	},
 	// options contains the configuration information for the shim
 	// it allows us to specify the width and height of the video
@@ -84,7 +94,7 @@ $W = {
 	// and so on.
 	options: {
 
-            "audio": true,
+            "audio": false,
             "video": true,
 
             // the element (by id) you wish to apply
@@ -155,8 +165,12 @@ $W = {
 			$W.ctx.save()
 			if ($W.mobile) {
 				// mobile will never need to flip, can't be installed "upside down"
+				//$W.ctx.save()
+				$W.ctx.translate(320,0)
 				$W.ctx.rotate(Math.PI/2)
 				$W.ctx.drawImage(video, -startrow/4, -$W.height/2);
+				//$W.ctx.drawImage(video, 0,0)
+				//$W.ctx.restore()
 			} else {
 				if ($W.flipped) {
 					$W.ctx.translate($W.width,0)
