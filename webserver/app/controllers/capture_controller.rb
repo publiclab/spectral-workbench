@@ -12,7 +12,7 @@ class CaptureController < ApplicationController
     end
     @spectrums = Spectrum.find(:all, :limit => 12, :order => "id DESC")
     if mobile?
-      render :template => "capture/index.mobile.erb", :layout => "mobile"
+      render :template => "capture/index-mobile.html.erb", :layout => "mobile"
     end
   end
 
