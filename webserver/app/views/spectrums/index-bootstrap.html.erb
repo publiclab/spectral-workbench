@@ -1,0 +1,52 @@
+<script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.flot.js"></script> 
+<script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.flot.crosshair.js"></script>
+
+<div class="container-fluid" style="clear:both;">
+  
+  <div class="row-fluid">
+    <iframe class="span4" height="240px;" src="http://www.youtube.com/embed/idg10MiceEI" frameborder="0" allowfullscreen></iframe>
+    <div class="span8">
+      <div class="jumbotron">
+        <h2>DIY materials analysis</h2>
+        <p class="lead">Use a homemade spectrometer to scan different materials, and contribute to an open source database for as little as $10.</p>
+        <a class="btn btn-large btn-success" href="http://publiclaboratory.org/tool/spectrometer"><i class="icon icon-wrench icon-white"></i> Build one</a>
+        <a class="btn btn-large btn-primary" href="#"><i class="icon icon-shopping-cart icon-white"></i> Preorder one &raquo;</a>
+      </div>
+    </div>
+  </div>
+
+  <hr />
+
+  <h2>Recently uploaded spectra <small>by contributors like you</small></h2>
+
+  <div id="spectra" class="row-fluid">
+
+<style>.row { clear:left; padding-left:20px;} </style>
+
+  <div class="row">
+  <% @spectrums.each_with_index do |spectrum,i| %>
+    <div class="span3 clearfix">
+      <a class="image" href="/spectra/show/<%= spectrum.id %>"><img src="<%= spectrum.photo.url(:thumb) %>" class="image" style="background:#ccc;"></a>
+      <h3><a data-transition="slide" href="/spectra/show/<%= spectrum.id %>"><%=h truncate(spectrum.title,:length => 18) %></a></h3>
+      <p><a data-transition="slide" href="/profile/<%=h spectrum.author %>"><%=h spectrum.author %></a> | <%= time_ago_in_words(spectrum.created_at) %> ago</p>
+    </div>
+    <% if ((i+1)/4.0).to_i == ((i+1)/4.0) %>
+    </div>
+    <hr />
+    <div class="row">
+    <% end %>
+  <% end %>
+
+  </div>
+
+</div>
+<script type="text/javascript">
+
+(function () { 
+
+
+
+})()
+
+</script>
+

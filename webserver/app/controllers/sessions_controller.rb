@@ -4,7 +4,7 @@ class SessionsController < ApplicationController
   # render new.erb.html
   def new
 	if mobile?
-          render :template => "sessions/new.mobile.erb", :layout => "mobile" 
+          render :template => "sessions/new-mobile.html.erb", :layout => "mobile" 
 	end
   end
 
