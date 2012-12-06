@@ -17,17 +17,27 @@
 
   <hr />
 
-  <h2>Recently uploaded spectra <small>by contributors like you</small></h2>
-
   <div id="spectra" class="row-fluid">
 
-<style>.row { clear:left; padding-left:20px;} </style>
+  <div class="span3 pull-right" style="padding-left:20px;">
+    <h3>Recent authors</h3>
+    <ul class="nav">
+    <% User.find_all_by_login(@spectrums.collect(&:author).uniq).each do |user| %>
+      <li><a href="/profile/<%= user.login %>"><i class="icon icon-user"></i> <%= user.login %></a></li>
+    <% end %>
+    </ul>
+  </div>
 
+  <style>.row { clear:left;} </style>
+
+  <h2>Recently uploaded spectra <small class="hidden-phone">by contributors like you</small></h2>
+
+  <div class="span9">
   <div class="row">
   <% @spectrums.each_with_index do |spectrum,i| %>
     <div class="span3 clearfix">
       <a class="image" href="/spectra/show/<%= spectrum.id %>"><img src="<%= spectrum.photo.url(:thumb) %>" class="image" style="background:#ccc;"></a>
-      <h3><a data-transition="slide" href="/spectra/show/<%= spectrum.id %>"><%=h truncate(spectrum.title,:length => 18) %></a></h3>
+      <h4><a data-transition="slide" href="/spectra/show/<%= spectrum.id %>"><%=h truncate(spectrum.title,:length => 18) %></a></h4>
       <p><a data-transition="slide" href="/profile/<%=h spectrum.author %>"><%=h spectrum.author %></a> | <%= time_ago_in_words(spectrum.created_at) %> ago</p>
     </div>
     <% if ((i+1)/4.0).to_i == ((i+1)/4.0) %>
@@ -36,7 +46,7 @@
     <div class="row">
     <% end %>
   <% end %>
-
+  </div>
   </div>
 
 </div>
