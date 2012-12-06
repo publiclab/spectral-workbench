@@ -48,7 +48,8 @@ and justice issues. PLOTS provides an online research space for citizens, linkin
       <script> if ($('body').width() < 767) { $('#logo').addClass('mobile'); setTimeout(function() {$('#headerBtns').addClass('mobile'); },250) } </script>
 
       <div id="headerBtns" class="btn-group pull-right">
-        <a rel="tooltip" title="Connect to a DIY spectrometer with USB" data-placement="bottom" class="btn btn-primary btn-large" href="/capture"><i class="icon icon-camera icon-white"></i><span class="hidden-phone"> Capture spectra</span></a>
+        <% if ios? %><a rel="tooltip" title="Upload a spectrum from your spectrometer attachment" data-placement="bottom" class="btn btn-primary btn-large" href="/spectrums/new"><i class="icon icon-camera icon-white"></i><span class="hidden-phone"> Capture spectra</span></a>
+        <% else %><a rel="tooltip" title="Connect to a webcam-based DIY spectrometer" data-placement="bottom" class="btn btn-primary btn-large" href="/capture"><i class="icon icon-camera icon-white"></i><span class="hidden-phone"> Capture spectra</span></a><% end %>
         <a class="btn btn-primary btn-large dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
           <ul class="dropdown-menu">
             <li><a href="/spectrums/new" class="button"><i class="icon icon-upload"></i> Upload image</a></li>
@@ -82,6 +83,10 @@ and justice issues. PLOTS provides an online research space for citizens, linkin
 
       </ul>
     </div>
+
+    <% if flash[:notice] %><div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">×</button><%= flash[:notice] %></div><% end %>
+    <% if flash[:error] %><div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">×</button><%= flash[:error] %></div><% end %>
+    <% if flash[:warning] %><div class="alert alert"><button type="button" class="close" data-dismiss="alert">×</button><%= flash[:warning] %></div><% end %>
 
     <%= yield %>
 

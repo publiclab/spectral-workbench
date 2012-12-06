@@ -17,8 +17,10 @@ class SpectrumsController < ApplicationController
 
     respond_to do |format|
       format.html { 
-	if mobile?
-          render :template => "spectrums/index.mobile.erb", :layout => "mobile" 
+	if params[:alt] == "true"
+          render :template => "spectrums/index-bootstrap.html.erb", :layout => "bootstrap" 
+	elsif mobile?
+          render :template => "spectrums/index-mobile.html.erb", :layout => "mobile" 
 	else
 	  render 'spectrums/index' 
 	end
@@ -51,7 +53,7 @@ class SpectrumsController < ApplicationController
     respond_to do |format|
       format.html { 
 	if mobile?
-          render :template => "spectrums/show.mobile.erb", :layout => "mobile" 
+          render :template => "spectrums/show-mobile.html.erb", :layout => "mobile" 
 	else
 	  render 'spectrums/show' 
 	end
@@ -114,7 +116,10 @@ class SpectrumsController < ApplicationController
     @spectrum = Spectrum.new
 
     respond_to do |format|
-      format.html # new.html.erb 
+      format.html { # new.html.erb 
+        render :template => "spectrums/new-mobile.html.erb", :layout => "bootstrap" if mobile?
+        render :template => "spectrums/new.html.erb" unless mobile?
+      }
       format.xml  { render :xml => @spectrum }
     end
     else
@@ -380,7 +385,7 @@ class SpectrumsController < ApplicationController
     if params[:old]
       render :template => "spectrums/capture-old.html.erb"
     elsif mobile?
-      render :template => "spectrums/capture.mobile.erb", :layout => "mobile"
+      render :template => "spectrums/capture-mobile.html.erb", :layout => "mobile"
     else
       render :template => "spectrums/capture.html.erb", :layout => "capture"
     end

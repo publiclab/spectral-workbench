@@ -15,4 +15,8 @@ module ApplicationHelper
     APP_CONFIG["password"] == params[:password]
   end
 
+  def ios?
+    (request.env['HTTP_USER_AGENT'].match("iPad") || request.env['HTTP_USER_AGENT'].match("iPhone") || params[:ios] == "true")
+  end
+
 end

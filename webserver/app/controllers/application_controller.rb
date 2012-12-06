@@ -18,4 +18,8 @@ class ApplicationController < ActionController::Base
     (request.env['HTTP_USER_AGENT'].match("Mobi") || params[:format] == "mobile") && params[:format] != "html" && params[:m] != "false" || params[:m] == "true"
   end
 
+  def ios?
+    (request.env['HTTP_USER_AGENT'].match("iPad") || request.env['HTTP_USER_AGENT'].match("iPhone") || params[:ios] == "true")
+  end
+
 end

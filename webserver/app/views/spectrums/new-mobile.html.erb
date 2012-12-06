@@ -1,0 +1,31 @@
+<div class="container-fluid" style="clear:both;">
+  <h1>Upload a spectrum</h1>
+
+  <p>Take a picture through your spectrometer and upload it. (Android or iOS 6+)</p> 
+
+  <p>By uploading your data, you agree to release it under the <a href="http://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Zero license</a></p>
+
+
+<form action="/spectrums" class="form well" enctype="multipart/form-data" method="post">
+
+  <div>
+    <input type="text" id="inputTitle" placeholder="Title">
+  </div>
+
+  <div>
+    <textarea name="spectrum[notes]" id="textareaNotes" cols="8" rows="6" placeholder="Notes"></textarea>
+  </div>
+
+  <p>You may have to crop your images -- Spectral Workbench reads only the top line of pixels by default.</p>
+
+  <div class="control-group">
+    <label class="control-label" for="inputPhoto"><b>Photo</b></label>
+    <div class="controls">
+      <input id="inputPhoto" name="spectrum[photo]" size="30" type="file" />
+    </div>
+  </div>
+
+    <input type='hidden' name='authenticity_token' value="<%= form_authenticity_token %>"/>
+    <input class="btn btn-primary btn-large" type="submit" value="Upload" />
+
+</form>
