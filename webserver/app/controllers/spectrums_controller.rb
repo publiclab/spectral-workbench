@@ -17,12 +17,10 @@ class SpectrumsController < ApplicationController
 
     respond_to do |format|
       format.html { 
-	if params[:alt] == "true"
-          render :template => "spectrums/index-bootstrap.html.erb", :layout => "bootstrap" 
-	elsif mobile?
+	if mobile?
           render :template => "spectrums/index-mobile.html.erb", :layout => "mobile" 
 	else
-	  render 'spectrums/index' 
+          render :template => "spectrums/index-bootstrap.html.erb", :layout => "bootstrap" 
 	end
       } # show.html.erb
       format.xml  { render :xml => @spectrums }

@@ -11,7 +11,9 @@ class CaptureController < ApplicationController
       @start_wavelength,@end_wavelength = @calibration.wavelength_range if @calibration
     end
     @spectrums = Spectrum.find(:all, :limit => 12, :order => "id DESC")
-    if mobile?
+    if params[:alt] == "true"
+      render :template => "capture/index-mobile-alt.html.erb", :layout => "bootstrap"
+    elsif mobile?
       render :template => "capture/index-mobile.html.erb", :layout => "mobile"
     end
   end

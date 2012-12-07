@@ -1,6 +1,9 @@
 <script src="/javascripts/show.js"> </script>
 
 <div class="sidebar spectrumpage">
+<a href="/analyze/spectrum/<%= @spectrum.id %>" style="display:block;" class="button">Analyze &raquo;</a>
+<br />
+
 <div class="box">
   <h3>// SETS WITH THIS SPECTRUM</h3>
   <% @spectrum.sets.each do |set| %>

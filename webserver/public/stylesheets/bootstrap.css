@@ -9,7 +9,7 @@
     font-style: normal;
 }
 
-h1,h2,h3,h4 {
+h1,h2,h3,h4,.lead {
   font-family:junctionregular, lucida grande,lucida sans console,sans-serif;
   font-weight:normal;
 }
@@ -50,5 +50,4 @@ h1,h2,h3,h4 {
 #display #graph {
   margin:10px;
 }
-
 
