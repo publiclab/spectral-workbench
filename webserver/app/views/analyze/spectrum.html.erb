@@ -82,18 +82,19 @@
       <form action="/spectra/comment/<%= @spectrum.id %>" class="well form" id="new_comment" method="post">
 
         <h3 style="margin-top:0;">Post a comment</h3>
-        <textarea id="body" cols="8" rows="6"></textarea>
+        <textarea name="comment[body]" id="body" cols="8" rows="6"></textarea>
 
         <% if !logged_in? %>
           <div class="control-group">
-            <input id="email" type="text" placeholder="you@email.com"><br />
-            <input id="author" type="text" placeholder="Your name"><br />
+            <input name="comment[email]" id="email" type="text" placeholder="you@email.com"><br />
+            <input name="comment[author]" id="author" type="text" placeholder="Your name"><br />
           </div>
         <% end %>
         <% if !logged_in? && !APP_CONFIG["local"] %><p><%= recaptcha_tags :display => {:theme => "white"} %></p><% end %>
 
         <br />
         <input type='hidden' name='authenticity_token' value="<%= form_authenticity_token %>"/>
+        <input type='hidden' name='goto' value="analyze"/>
         <input class="btn btn-primary" type="submit" value="Post" />
 
       </form>

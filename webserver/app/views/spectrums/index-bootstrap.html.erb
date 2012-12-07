@@ -11,7 +11,7 @@
         <p class="lead">Use a homemade spectrometer to scan different materials, and contribute to an open source database.</p>
         <a class="btn btn-large btn-success" href="http://publiclaboratory.org/tool/spectrometer"><i class="icon icon-wrench icon-white"></i> Build one</a>
         <a class="btn btn-large btn-primary" href="http://shop.breadpig.com/products/desktop-spectrometry-kit"><i class="icon icon-shopping-cart icon-white"></i> Preorder one &raquo;</a>
-        <a class="btn btn-large" href="#"><i class="icon icon-book"></i> Learn more</a>
+        <a class="btn btn-large" href="http://publiclaboratory.org/tool/spectrometer"><i class="icon icon-book"></i> Learn more</a>
       </div>
     </div>
   </div>
@@ -20,20 +20,25 @@
 
   <div id="spectra" class="row-fluid">
 
-  <div class="span3 pull-right" style="padding-left:20px;">
+  <div class="span4 pull-right" style="padding-left:20px;">
     <h3>Recent authors</h3>
     <ul class="nav">
     <% User.find_all_by_login(@spectrums.collect(&:author).uniq).each do |user| %>
       <li><a href="/profile/<%= user.login %>"><i class="icon icon-user"></i> <%= user.login %></a></li>
     <% end %>
     </ul>
+
+    <hr />
+    <h3>Recent sets</h3>
+    <%= render :partial => 'sets' %>
+
   </div>
 
   <style>.row { clear:left;} </style>
 
   <h2>Recently uploaded spectra <small class="hidden-phone">by contributors like you</small></h2>
 
-  <div class="span9">
+  <div class="span8">
   <div class="row">
   <% @spectrums.each_with_index do |spectrum,i| %>
     <div class="span3 clearfix">

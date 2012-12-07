@@ -276,7 +276,8 @@ class SpectrumsController < ApplicationController
     @comment.email = current_user.email if logged_in?
     if (logged_in? || APP_CONFIG["local"] || verify_recaptcha(:model => @comment, :message => "ReCAPTCHA thinks you're not a human!")) && @comment.save
       flash[:notice] = "Comment saved."
-      redirect_to "/spectra/"+params[:id]+"#comment_"+@comment.id.to_s
+      redirect_to "/spectra/"+params[:id]+"#comment_"+@comment.id.to_s unless params[:goto] == "analyze"
+      redirect_to "/analyze/spectrum/"+params[:id]+"#comment_"+@comment.id.to_s if params[:goto] == "analyze"
     else
       render :action => "show", :id => params[:id]
     end
