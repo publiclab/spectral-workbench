@@ -115,8 +115,7 @@ class SpectrumsController < ApplicationController
 
     respond_to do |format|
       format.html { # new.html.erb 
-        render :template => "spectrums/new-mobile.html.erb", :layout => "bootstrap" if mobile?
-        render :template => "spectrums/new.html.erb" unless mobile?
+        render :template => "spectrums/new-mobile.html.erb", :layout => "bootstrap"
       }
       format.xml  { render :xml => @spectrum }
     end
