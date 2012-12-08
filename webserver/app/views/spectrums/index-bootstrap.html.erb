@@ -20,6 +20,11 @@
 
   <div id="spectra" class="row-fluid">
 
+    <form action="/spectra/search" method='get' class="form">
+      <input class='text' type='text' name='q' value='<%= params[:id] %>'/>
+      <input type='submit' value='search' />
+   </form>
+
   <div class="span4 pull-right" style="padding-left:20px;">
     <h3>Recent authors</h3>
     <ul class="nav">

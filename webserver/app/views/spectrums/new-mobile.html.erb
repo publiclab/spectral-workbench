@@ -1,7 +1,7 @@
 <div class="container-fluid" style="clear:both;">
   <h1>Upload a spectrum</h1>
 
-  <p>Take a picture through your spectrometer and upload it. (Android or iOS 6+)</p> 
+  <p>Take a picture through <a href="http://publiclaboratory.org/tool/spectrometer">your spectrometer</a> and upload it. (Android or iOS 6+)</p> 
 
   <p>By uploading your data, you agree to release it under the <a href="http://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Zero license</a></p>
 
@@ -13,19 +13,30 @@
   </div>
 
   <div>
-    <textarea name="spectrum[notes]" id="textareaNotes" cols="8" rows="6" placeholder="Notes"></textarea>
+    <textarea name="spectrum[notes]" id="textareaNotes" cols="8" rows="6" placeholder="Notes: where, what, why"></textarea>
   </div>
 
-  <p>You may have to crop your images -- Spectral Workbench reads only the top line of pixels by default.</p>
+  <div style="padding-bottom:10px;">
+    <h4 style="margin-top:4px">Examples: <small>(<a href="http://publiclaboratory.org/wiki/spectral-workbench-usage">Learn more &raquo;</a>)</small></h4>
+    <img class="img-rounded" src="/images/example-cfl.jpg" style="width:100px;height:80px" />
+    <img class="img-rounded" src="/images/example-sky.jpg" style="width:100px;height:80px" />
+  </div>
 
   <div class="control-group">
-    <label class="control-label" for="inputPhoto"><b>Photo</b></label>
     <div class="controls">
       <input id="inputPhoto" name="spectrum[photo]" size="30" type="file" />
     </div>
   </div>
 
   <input type='hidden' name='authenticity_token' value="<%= form_authenticity_token %>"/>
-  <input class="btn btn-primary btn-large" type="submit" value="Upload" />
+  <input class="btn btn-primary btn-large" type="submit" value="Upload" style="margin-right:10px;" />
+<!--  <label class="checkbox inline">
+    <input type="checkbox" id="inlineCheckbox1" value="geotag"> 1
+  </label>
+-->
+  <label class="checkbox inline">
+    <input type="checkbox" id="vertical" name="vertical" checked="true"> Vertical
+  </label>
+
 
 </form>
