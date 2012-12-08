@@ -180,37 +180,44 @@ class SpectrumsController < ApplicationController
               @spectrum.scale_data(params[:endWavelength],params[:startWavelength]) if (params[:endWavelength] && params[:startWavelength])
               @spectrum.save!
             end
-          if logged_in?
-            format.html { render :text => @spectrum.id }
+            if logged_in?
+              format.html { render :text => @spectrum.id }
+            else
+              format.html { render :text => @spectrum.id.to_s+"?login=true&client_code="+client+"::"+uniq_id} # <== here, also offer a unique code or pass client_id so that we can persist login
+            end
           else
-            format.html { render :text => @spectrum.id.to_s+"?login=true&client_code="+client+"::"+uniq_id} # <== here, also offer a unique code or pass client_id so that we can persist login
-          end
-        else
-          if params[:tags]
-            @spectrum.tag(params[:tags],current_user.id)
-          end
-          if params[:spectrum][:calibration_id] && !params[:is_calibration] && params[:spectrum][:calibration_id] != "calibration"
-            @spectrum.extract_data
-            @spectrum.clone(params[:spectrum][:calibration_id]) 
-          end
-          if params[:geotag]
-            @spectrum.lat = params[:lat]
-            @spectrum.lon = params[:lon]
-          end
-          @spectrum.save!
 
-          flash[:notice] = 'Spectrum was successfully created.'
-          format.html { 
+            if mobile?
+              @spectrum.rotate
+              @spectrum.find_brightest_row
+            end
+
+            if params[:tags]
+              @spectrum.tag(params[:tags],current_user.id)
+            end
+            if params[:spectrum][:calibration_id] && !params[:is_calibration] && params[:spectrum][:calibration_id] != "calibration"
+              @spectrum.extract_data
+              @spectrum.clone(params[:spectrum][:calibration_id]) 
+            end
+            if params[:geotag]
+              @spectrum.lat = params[:lat]
+              @spectrum.lon = params[:lon]
+            end
+
+            @spectrum.save!
+
+            flash[:notice] = 'Spectrum was successfully created.'
+            format.html { 
 		redirect_to :action => :show, :id => @spectrum.id unless mobile?
 		redirect_to :controller => :analyze, :action => :spectrum, :id => @spectrum.id if mobile?
-	  }
-          format.xml  { render :xml => @spectrum, :status => :created, :location => @spectrum }
+	    }
+            format.xml  { render :xml => @spectrum, :status => :created, :location => @spectrum }
+          end
+        else
+          format.html { render :action => "new" }
+          format.xml  { render :xml => @spectrum.errors, :status => :unprocessable_entity }
         end
-      else
-        format.html { render :action => "new" }
-        format.xml  { render :xml => @spectrum.errors, :status => :unprocessable_entity }
       end
-    end
     else
       # possibly, we don't have to redirect - we could prompt for login at the moment of save...
       flash[:notice] = "You must first log in to upload spectra."
@@ -411,6 +418,32 @@ class SpectrumsController < ApplicationController
   def print
     @spectrum = Spectrum.find params[:id]
     render :layout => false
+  end
+
+  def find_brightest_row
+    @spectrum = Spectrum.find params[:id]
+    if logged_in? && (@spectrum.user_id == current_user.id || current_user.role == "admin")
+      @spectrum.find_brightest_row
+      @spectrum.extract_data
+      @spectrum.clone(@spectrum.id)
+      @spectrum.save
+    else
+      flash[:error] = "You must be logged in and own this spectrum to do this."
+    end
+    redirect_to "/analyze/spectrum/"+@spectrum.id.to_s
+  end
+
+  def rotate
+    @spectrum = Spectrum.find params[:id]
+    if logged_in? && (@spectrum.user_id == current_user.id || current_user.role == "admin")
+      @spectrum.rotate
+      @spectrum.extract_data
+      @spectrum.clone(@spectrum.id)
+      @spectrum.save
+    else
+      flash[:error] = "You must be logged in and own this spectrum to do this."
+    end
+    redirect_to "/analyze/spectrum/"+@spectrum.id.to_s
   end
 
 end

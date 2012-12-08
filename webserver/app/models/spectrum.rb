@@ -44,6 +44,27 @@ class Spectrum < ActiveRecord::Base
     end
   end
 
+  # finds the brightest row of the image and uses that as its sample row
+  def find_brightest_row
+    require 'rubygems'
+    require 'RMagick'
+    pixels = []
+
+    image   = Magick::ImageList.new("public"+(self.photo.url.split('?')[0]).gsub('%20',' '))
+    rows = image.export_pixels(0, 0, image.columns, image.rows, "RGB");
+    brightest_row = 0
+    brightest = 0
+    # sum brightness for each row
+    (0..(image.rows-1)).each do |row|
+      brightness = 0
+      (0..(image.columns/3-1)).each do |col|
+        brightness += rows[row*image.columns+col*3]+rows[row*image.columns+col*3+1]+rows[row*image.columns+col*3+2]
+      end
+      brightest_row = row if brightness > brightest
+    end
+    self.sample_row = brightest_row
+  end
+
   def correct_reversed_image
     require 'rubygems'
     require 'RMagick'
@@ -139,8 +160,19 @@ class Spectrum < ActiveRecord::Base
     # figure out how to know when to reverse based on a cloned calibration... maybe we need to store reversal...
     #self.reverse if (wavelength1 < wavelength2 && x1 > x2) || (wavelength1 > wavelength2 && x1 < x2)
     self.data = ActiveSupport::JSON.encode(d)
-    self.notes = self.notes.to_s+" -- (Cloned calibration from <a href='/spectra/show/"+clone_id+"'>"+clone_source.title+"</a>)"
+    self.notes = self.notes.to_s+" -- (Cloned calibration from <a href='/spectra/show/"+clone_id.to_s+"'>"+clone_source.title+"</a>)"
     self
+  end
+
+  # rotate clockwise
+  def rotate
+    require 'rubygems'
+    require 'RMagick'
+
+    image   = Magick::ImageList.new("public"+(self.photo.url.split('?')[0]).gsub('%20',' '))
+    image.rotate!(90)
+    image.write("public"+self.photo.url)
+    self.photo.reprocess!
   end
 
   # horizontally flips image to match reversed spectrum

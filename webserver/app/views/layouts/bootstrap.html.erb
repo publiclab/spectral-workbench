@@ -84,9 +84,11 @@ and justice issues. PLOTS provides an online research space for citizens, linkin
       </ul>
     </div>
 
-    <% if flash[:notice] %><div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">×</button><%= flash[:notice] %></div><% end %>
-    <% if flash[:error] %><div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">×</button><%= flash[:error] %></div><% end %>
-    <% if flash[:warning] %><div class="alert alert"><button type="button" class="close" data-dismiss="alert">×</button><%= flash[:warning] %></div><% end %>
+    <div class="container">
+      <% if flash[:notice] %><div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">×</button><%= flash[:notice] %></div><% end %>
+      <% if flash[:error] %><div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">×</button><%= flash[:error] %></div><% end %>
+      <% if flash[:warning] %><div class="alert alert"><button type="button" class="close" data-dismiss="alert">×</button><%= flash[:warning] %></div><% end %>
+    </div>
 
     <%= yield %>
 
