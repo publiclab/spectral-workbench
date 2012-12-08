@@ -17,11 +17,7 @@ class SpectrumsController < ApplicationController
 
     respond_to do |format|
       format.html { 
-	if mobile?
-          render :template => "spectrums/index-mobile.html.erb", :layout => "mobile" 
-	else
-          render :template => "spectrums/index-bootstrap.html.erb", :layout => "bootstrap" 
-	end
+        render :template => "spectrums/index-bootstrap.html.erb", :layout => "bootstrap" 
       } # show.html.erb
       format.xml  { render :xml => @spectrums }
     end
@@ -143,7 +139,6 @@ class SpectrumsController < ApplicationController
       client = params[:client] || "0"
       uniq_id = params[:uniq_id] || "0"
       client_code = client+"::"+uniq_id
-      puts client_code
       user_id = current_user.id if logged_in?
       user_id ||= "0"
       author = current_user.login if logged_in?
@@ -186,11 +181,11 @@ class SpectrumsController < ApplicationController
             end
           else
 
-            if mobile?
+            if mobile? || ios?
+              @spectrum.save!
               @spectrum.rotate
               @spectrum.find_brightest_row
             end
-
             if params[:tags]
               @spectrum.tag(params[:tags],current_user.id)
             end
@@ -260,7 +255,7 @@ class SpectrumsController < ApplicationController
       @spectrum.destroy
 
     respond_to do |format|
-      format.html { redirect_to(spectrums_url) }
+      format.html { redirect_to('/') }
       format.xml  { head :ok }
     end
     else
