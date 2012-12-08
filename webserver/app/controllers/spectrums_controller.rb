@@ -423,9 +423,9 @@ class SpectrumsController < ApplicationController
   def find_brightest_row
     @spectrum = Spectrum.find params[:id]
     if logged_in? && (@spectrum.user_id == current_user.id || current_user.role == "admin")
-      @spectrum.find_brightest_row
+      @spectrum.sample_row = @spectrum.find_brightest_row
       @spectrum.extract_data
-      @spectrum.clone(@spectrum.id)
+      @spectrum.clone(@spectrum.id) # recover calibration
       @spectrum.save
     else
       flash[:error] = "You must be logged in and own this spectrum to do this."

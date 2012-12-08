@@ -58,11 +58,18 @@ class Spectrum < ActiveRecord::Base
     (0..(image.rows-1)).each do |row|
       brightness = 0
       (0..(image.columns/3-1)).each do |col|
-        brightness += rows[row*image.columns+col*3]+rows[row*image.columns+col*3+1]+rows[row*image.columns+col*3+2]
+        r = rows[row*image.columns+col*3]
+        g = rows[row*image.columns+col*3+1]
+        b = rows[row*image.columns+col*3+2]
+        brightness += (r-g).abs+(g-b).abs+(b-r).abs # difference between colors
+        brightness += r+g+b # overall brightness
       end
-      brightest_row = row if brightness > brightest
+      if brightness > brightest
+        brightest_row = row 
+        brightest = brightness
+      end
     end
-    self.sample_row = brightest_row
+    brightest_row
   end
 
   def correct_reversed_image
