@@ -182,9 +182,10 @@ class SpectrumsController < ApplicationController
           else
 
             if mobile? || ios?
-              @spectrum.save!
+              @spectrum.save
+              @spectrum = Spectrum.find @spectrum.id
               @spectrum.rotate
-              @spectrum.find_brightest_row
+              @spectrum.sample_row = @spectrum.find_brightest_row
             end
             if params[:tags]
               @spectrum.tag(params[:tags],current_user.id)
