@@ -85,7 +85,11 @@ class SpectrumsController < ApplicationController
     params[:id] = params[:q].to_s if params[:id].nil?
     @spectrums = Spectrum.find(:all, :conditions => ['title LIKE ? OR notes LIKE ?',"%"+params[:id]+"%", "%"+params[:id]+"%"],:limit => 100, :order => "id DESC")
     @spectrums = @spectrums.paginate :page => params[:page], :per_page => 24
-    render :partial => "capture/results.html.erb", :layout => false if params[:capture]
+    if params[:capture]
+      render :partial => "capture/results.html.erb", :layout => false 
+    else 
+      render :layout => "bootstrap"
+    end
   end
 
   # non REST

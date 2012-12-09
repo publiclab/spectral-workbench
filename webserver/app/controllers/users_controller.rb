@@ -51,6 +51,7 @@ class UsersController < ApplicationController
 	@user = User.find_by_login(params[:id])
 	@spectrums = @user.spectra
 	@spectrums = @spectrums.paginate :page => params[:page], :per_page => 24
+    render :layout => "bootstrap"
   end
 
   def delete

@@ -1,0 +1,25 @@
+<form id="searchform" action="/spectra/search" method='get' class="form-search" style="padding-left:10px;">
+  <input id="searchform_input" class='search-query' type='text' name='q' value='<%= params[:id] %>'/>
+  <button class="btn btn-primary" type='submit'><i class="icon icon-search icon-white"></i></button>
+</form>
+<script>
+  jQuery(document).ready(function() {
+    $('#searchform').submit(function(e){ 
+      e.preventDefault()
+      window.location = '/search/'+$('#searchform_input').val()
+    })
+    // working off of http://stackoverflow.com/questions/9232748/twitter-bootstrap-typeahead-ajax-example
+    $('#searchform_input').typeahead({
+      source: function (typeahead, query) {
+        return $.post('/search/typeahead/'+query, {}, function (data) {
+          return typeahead.process(data)
+        })
+      },
+      items: 15,
+      // Autoselect is disabled so that users can enter new tags
+      autoselect: false,
+      autowidth: false
+    })
+  })
+</script>
+

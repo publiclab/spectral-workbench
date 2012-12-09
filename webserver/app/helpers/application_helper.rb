@@ -19,4 +19,12 @@ module ApplicationHelper
     (request.env['HTTP_USER_AGENT'].match("iPad") || request.env['HTTP_USER_AGENT'].match("iPhone") || params[:ios] == "true")
   end
 
+  def opera?
+    request.env['HTTP_USER_AGENT'].match("Opera")
+  end
+
+  def mobile?
+    request.env['HTTP_USER_AGENT'].match("Mobi")
+  end
+
 end
