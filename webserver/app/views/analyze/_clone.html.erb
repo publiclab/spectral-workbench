@@ -8,13 +8,13 @@
     <p>First, choose a recent calibrated spectrum; the most recent is selected by default:</p>
 
     <% unless logged_in? %>
-      <p>You must be logged in to copy a calibration.</p>
+      <p><b>You must be logged in to copy a calibration.</b></p>
     <% else %>
     <table class="table">
     <% @calibrations.each do |spectrum| %>
     <tr id="spectrum_<%= spectrum.id %>">
       <td><img width="120px" class="img" src="<%= spectrum.photo.url(:thumb) %>" /></td>
-      <td><b><%= spectrum.title %></b></td> 
+      <td width="160px;"><b><%= spectrum.title %></b></td> 
     <!--<a class="" id="spectrum_btn_<%= spectrum.id %>" href="javascript:void(0);">Add +</a> <span id="scaledFlag_<%= spectrum.id %>"></span>-->
       <td><% if @spectrum %><a class="btn btn-primary" id="clone_btn_<%= spectrum.id %>" href="javascript:void(0)">Copy this calibration</a><% end %></td> 
     <script>
