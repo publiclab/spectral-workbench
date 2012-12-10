@@ -66,6 +66,10 @@ class User < ActiveRecord::Base
     self.tag('calibration').first
   end
 
+  def calibrations
+    self.tag('calibration')
+  end
+
   # find spectra by user, tagged with <name>
   def tag(name)
     tagged = []

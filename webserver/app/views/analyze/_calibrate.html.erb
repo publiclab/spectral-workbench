@@ -4,12 +4,14 @@
     <b>Use a fluorescent bulb spectrum to calibrate your spectrometer</b>
   </div>
   <div class="modal-body">
-    <p>You'll need a clear fluorescent spectrum like the one shown here. First, click on the highest peak of the middle blue band:</p>
+    <p>You can calibrate with a clear fluorescent spectrum like the one shown here. If the current spectrum is not usable, you can <a href="/capture">record a new one</a>, and if you do not change your spectrometer, you can <a href="#clonemodal" data-dismiss="modal" data-toggle="modal">use the calibration for subsequent spectra</a>.</p>
+    <p>First, click on the highest peak of the middle blue band:</p>
     <p style="text-align:center;"><img class="img-rounded" src="/images/calibrate-blue.png"></p>
   </div>
   <div class="modal-footer">
     <a data-dismiss="modal" class="btn" href="javascript:void();">Cancel</a>
-    <a data-dismiss="modal" class="btn btn-primary" href="#calibrationmodal2" onClick="$('#graph').bind('plotclick', function (event, pos, item) { $('#graph').unbind('plotclick');$W.second_calibration(pos.x,435.833);$('#calibratemodal2').modal('show'); })">Begin</a></p>
+    <a data-dismiss="modal" data-toggle="modal" class="btn" href="#clonemodal">Use existing calibration</a>
+    <a data-dismiss="modal" class="btn btn-primary" href="#calibrationmodal2" onClick="$('#graph').bind('plotclick', function (event, pos, item) { $('#graph').unbind('plotclick');$W.second_calibration(pos.x,435.833);$('#calibratemodal2').modal('show'); })">Begin</a>
   </div>
 </div> 
 <div class="modal hide fade" id="calibratemodal2">
@@ -22,6 +24,6 @@
     <p style="text-align:center;"><img class="img-rounded" src="/images/calibrate-green.png"></p>
   </div>
   <div class="modal-footer">
-    <a data-dismiss="modal" class="btn btn-primary" href="javascript:void();">Finish</a></p>
+    <a data-dismiss="modal" class="btn btn-primary" href="javascript:void();">Finish</a>
   </div>
 </div> 
