@@ -134,6 +134,11 @@ class Spectrum < ActiveRecord::Base
     self
   end
 
+  def calibrated
+    d = ActiveSupport::JSON.decode(self.data)
+    !d['lines'].first['wavelength'].nil?
+  end
+
   def calibrate(x1,wavelength1,x2,wavelength2)
     d = ActiveSupport::JSON.decode(self.data)
     i = 0 
