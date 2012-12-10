@@ -5,7 +5,7 @@
 
 <div class="container-fluid" style="clear:both;">
 
-  <% if @spectrum.author == current_user.login && !@spectrum.calibrated %><div class="alert alert-warning"><button type="button" class="close" data-dismiss="alert">×</button> This spectrum is not yet calibrated. Calibrate it below or <a href="http://publiclaboratory.org/wiki/spectral-workbench-calibration">learn more about calibration</a></div><% end %>
+  <% if logged_in? && @spectrum.author == current_user.login && !@spectrum.calibrated %><div class="alert alert-warning"><button type="button" class="close" data-dismiss="alert">×</button> This spectrum is not yet calibrated. Calibrate it below or <a href="http://publiclaboratory.org/wiki/spectral-workbench-calibration">learn more about calibration</a></div><% end %>
 
   <div class="row-fluid" id="display">
 
