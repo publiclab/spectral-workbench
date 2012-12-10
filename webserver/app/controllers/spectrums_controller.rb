@@ -47,7 +47,7 @@ class SpectrumsController < ApplicationController
     respond_to do |format|
       format.html { 
 	if mobile?
-          render :template => "spectrums/show-mobile.html.erb", :layout => "mobile" 
+          redirect_to "analyze/spectrums/"+@spectrum.id.to_s
 	else
 	  render 'spectrums/show' 
 	end
