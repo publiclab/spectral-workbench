@@ -40,4 +40,18 @@ class TagController < ApplicationController
     end
   end
 
+  def index
+    @tags = Tag.find :all, :order => "id DESC"
+    count = {}
+    @tagnames = @tags.collect(&:name).each do |tag|
+      if count[tag]
+        count[tag] += 1
+      else
+        count[tag] = 1
+      end
+    end
+    @tagnames = count.sort_by {|k,v| v }.reverse
+    render :layout => "bootstrap"
+  end
+
 end
