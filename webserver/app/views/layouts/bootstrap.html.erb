@@ -41,6 +41,7 @@ and justice issues. PLOTS provides an online research space for citizens, linkin
       fjs.parentNode.insertBefore(js, fjs);
     }(document, 'script', 'facebook-jssdk'));</script>
 
+    <% if params[:controller] != "capture" %>
     <div id="header">
       <a id="logo" href="/"><img src="/images/logo.png" /></a>
       <h3 class="hidden-desktop visible-phone pull-left"><a class="title" href="/">SW</a></h3>
@@ -92,7 +93,9 @@ and justice issues. PLOTS provides an online research space for citizens, linkin
 
       </ul>
     </div>
+    <% end %>
 
+    <% if params[:controller] != "capture" %>
     <div class="container">
       <% if flash[:notice] %><div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">×</button><%= flash[:notice] %></div><% end %>
       <% if flash[:error] %><div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">×</button><%= flash[:error] %></div><% end %>
@@ -106,6 +109,7 @@ and justice issues. PLOTS provides an online research space for citizens, linkin
         <% end %>
       <% end %>
     </div>
+    <% end %>
 
     <%= yield %>
 
