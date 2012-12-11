@@ -13,6 +13,11 @@ class UsersController < ApplicationController
   def new
     @user = User.new
   end
+
+  def contributors
+    @users = User.find :all
+    render :layout => "bootstrap"
+  end
  
   def list
     if true#(logged_in? && current_user.role == "admin")

@@ -1,0 +1,26 @@
+<div class="container">
+
+<h2>Spectral Workbench contributors</h2>
+
+  <table class="table">
+    <tr>
+      <th>Most recent spectrum</th>
+      <th>Name</th>
+      <th></th>
+      <th>Comments</th>
+      <th>Activity</th>
+    </tr>
+    <% @users.each do |user| %>
+    <% if user.spectra.length > 0 %>
+    <tr>
+      <td><img width="120px" class="img" src="<%= user.spectra.first.photo.url(:thumb) %>" /></td>
+      <td><a href="/profile/<%= user.login %>"><%= user.login %></a> | <a href="http://publiclaboratory.org/people/<%= user.login %>">Public Lab profile</a></td>
+      <td><%= user.spectra.length %> spectra</td>
+      <td><%= user.comments.length %> comments</td>
+      <td>Last uploaded <%= time_ago_in_words(user.spectra.first.created_at) %> ago</td>
+    </tr>
+    <% end %>
+    <% end %>
+  </table>
+
+</div>

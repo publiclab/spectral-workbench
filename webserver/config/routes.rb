@@ -4,6 +4,7 @@ ActionController::Routing::Routes.draw do |map|
   map.register '/register', :controller => 'users', :action => 'create'
   map.signup '/signup', :controller => 'users', :action => 'new'
   map.users '/users', :controller => 'users', :action => 'list'
+  map.users '/contributors', :controller => 'users', :action => 'contributors'
   map.resources :users
   map.resource :session
 

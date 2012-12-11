@@ -30,7 +30,7 @@ class User < ActiveRecord::Base
   end
 
   def comments
-    Comment.find_all_by_author(self.author)
+    Comment.find_all_by_author(self.login)
   end
 
   def received_comments
