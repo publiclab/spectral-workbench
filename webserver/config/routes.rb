@@ -9,6 +9,8 @@ ActionController::Routing::Routes.draw do |map|
   map.resource :session
 
   map.capture '/capture', :controller => 'capture', :action => 'index'
+  map.connect '/upload', :controller => "spectrums", :action => "new"
+  map.connect '/capture/2', :controller => "capture", :action => "index", :alt => "true"
 
   # Registered user pages:
   map.profile '/profile', :controller => 'users', :action => 'profile'
@@ -31,7 +33,6 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :spectra_sets
   map.resources :comments, :belongs_to => :spectrums
 
-  map.connect 'spectra/capture', :controller => "spectrums", :action => "capture"
 
   map.connect 'spectra/feed', :controller => "spectrums", :action => "rss"
   map.connect 'spectra/search', :controller => "spectrums", :action => "search"

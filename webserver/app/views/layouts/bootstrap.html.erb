@@ -49,12 +49,14 @@ and justice issues. PLOTS provides an online research space for citizens, linkin
       <script> if ($('body').width() < 767) { $('#logo').addClass('mobile'); setTimeout(function() {$('#headerBtns').addClass('mobile'); },250) } </script>
 
       <div id="headerBtns" class="btn-group pull-right">
-        <% if (!opera? && mobile?) %><a class="btn btn-primary btn-large" href="/spectrums/new"><i class="icon icon-camera icon-white"></i><span class="hidden-phone"> Capture spectra</span></a>
+        <% if (!opera? && mobile?) %><a class="btn btn-primary btn-large" href="/upload"><i class="icon icon-camera icon-white"></i><span class="hidden-phone"> Capture spectra</span></a>
         <% else %><a <% if !mobile? %>rel="tooltip" title="Connect to a webcam-based DIY spectrometer" data-placement="bottom"<% end %> class="btn btn-primary btn-large" href="/capture"><i class="icon icon-camera icon-white"></i><span class="hidden-phone"> Capture spectra</span></a>
         <% end %>
         <a class="btn btn-primary btn-large dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
           <ul class="dropdown-menu">
-            <li><a href="/spectrums/new" class="button"><i class="icon icon-upload"></i> Upload image</a></li>
+            <li><a href="/upload" class="button"><i class="icon icon-upload"></i> Upload image</a></li>
+            <li><a href="/capture" class="button"><i class="icon icon-camera"></i> Live-capture spectra</a></li>
+            <li><a href="/capture/2" class="button"><i class="icon icon-camera"></i> Live-capture beta interface</a></li>
             <li><a href="http://publiclaboratory.org/wiki/spectral-workbench-usage" class="button"><i class="icon icon-question-sign"></i> Learn how</a></li>
       </div>
       <ul class="hidden-phone nav nav-pills pull-right">
