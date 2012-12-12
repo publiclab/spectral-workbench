@@ -28,7 +28,7 @@
   }
 </style>
 
-<div class="navbar navbar-inverse navbar-fixed-top" style="margin-bottom:20px;padding-top:0;">
+<div class="navbar navbar-inverse navbar-static-top" style="margin-bottom:20px;padding-top:0;">
   <div class="navbar-inner" style="padding:0 10px;">
     <a class="brand" href="/"><img style="padding:-2px;width:20px;" src="/images/logo.png" /></a>
     <ul class="nav">
@@ -39,7 +39,7 @@
   </div>
 </div>
 
-<div class="tab-content">
+<div class="tab-content container">
 <div id="settings" class="tab-pane active">
   <div id="webcam-msg"><p>Requesting camera access... (Opera Mobile only)</p></div> 
   <div style="width:100%;" id="webcam"></div>
@@ -73,14 +73,13 @@
   <div class="btn-group">
   <% if params[:action] == "match" %>
     <a class="btn btn-primary" href="javascript:void()" onClick="$W.match();">Match</a>
-    <a class="btn btn-primary" href="#page2" onClick="$W.saveSpectrum();">Save</a>
+    <a class="btn btn-primary" data-toggle="tab" href="#save" onClick="$W.saveSpectrum();">Save</a>
   <% else %>
-      <a class="btn btn-primary btn-large" href="#save" onClick="$W.saveSpectrum();">Save</a>
-      <a class="btn btn-large" href="#page2" onClick="$W.saveSpectrum();"><i class="icon icon-question-sign"></i></a>
+      <a class="btn btn-primary btn-large" data-toggle="tab" href="#save" onClick="$W.saveSpectrum();">Save</a>
+      <a class="btn btn-large" data-toggle="tab" href="#help" onClick="$W.saveSpectrum();"><i class="icon icon-question-sign"></i> Help</a>
   <% end %>
   </div>
 
-  <hr />
   <form class="form">
     <label class="checkbox inline" for="geotag-toggle">Geotag</label>
     <input type="checkbox" name="geotag-toggle" id="geotag-toggle" type="checkbox" />

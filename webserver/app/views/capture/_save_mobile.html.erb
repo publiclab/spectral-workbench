@@ -3,16 +3,16 @@
 <% if !logged_in? %>
 	<p>You must be <a target="_blank" href="/login">logged in</a> to save spectra.</p>
 <% else %>
-	<p>(logged in as <%=h current_user.login %>)</p>
+	<p><small><i>(logged in as <%=h current_user.login %>)</i></small></p>
 <% end %>
 
-<form action="/spectrums" method="post" id="saveForm" target="_blank" onSubmit="$W.cancelSave();window.location='#page1'">
-	<label for="spectrum_title">Title:</label><br />
-	<input name="spectrum[title]" id="spectrum_notes" type="text" /><br />
-	<label for="tags">Tags:</label><br />
-	<input name="tags" id="spectrum_tags" value="mobile," type="text" /><br />
-	<label for="spectrum_notes">Notes:</label>
-	<textarea name="spectrum[notes]" id="spectrum_notes"></textarea><br />
+<form class="form" action="/spectrums" method="post" id="saveForm" target="_blank" onSubmit="$W.cancelSave();window.location='#page1'">
+	<input placeholder="Title (required)" name="spectrum[title]" id="spectrum_notes" type="text" /><br />
+        <div class="input-prepend">
+          <span class="add-on"><i class="icon-tags"></i></span>
+          <input name="tags" id="spectrum_tags" type="text" placeholder="mobile, soil, sunlight" data-provide="typeahead" data-source="['calibration','soil','']">
+        </div>
+	<textarea placeholder="Notes" name="spectrum[notes]" id="spectrum_notes"></textarea><br />
 	<input name="dataurl" type="hidden" id="dataurl" />
 	<input name="geotag" type="hidden" id="geotag" />
 	<input name="lat" type="hidden" id="lat" />
@@ -26,5 +26,5 @@
 	</select>
 	<% end %>
 </form>
-<a data-role="button" data-transition="fade" data-theme="b" href="javascript:void(0);" onClick="$('#saveForm').submit()">Save</a>
-<a data-role="button" data-transition="fade" data-theme="d" href="#page1" onClick="$W.cancelSave()">&laquo; Back</a>
+<a class="btn btn-large" href="#capture" onClick="$W.cancelSave()">&laquo; Back</a>
+<a class="btn btn-primary btn-large" href="javascript:void(0);" onClick="$('#saveForm').submit()">Save</a>
