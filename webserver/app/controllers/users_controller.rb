@@ -15,7 +15,7 @@ class UsersController < ApplicationController
   end
 
   def contributors
-    @users = User.find :all
+    @users = User.find :all, :order => "id DESC"
     render :layout => "bootstrap"
   end
  
