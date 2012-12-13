@@ -20,7 +20,7 @@ class UsersController < ApplicationController
   end
  
   def list
-    if true#(logged_in? && current_user.role == "admin")
+    if (logged_in? && current_user.role == "admin")
       @users = User.find :all
     else
       flash[:error] = "You must be logged in and an admin to view the users listing."
