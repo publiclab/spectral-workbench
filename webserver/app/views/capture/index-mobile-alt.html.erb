@@ -41,7 +41,7 @@
 
 <div class="tab-content container">
 <div id="settings" class="tab-pane active">
-  <div id="webcam-msg"><p>Requesting camera access... (Opera Mobile only)</p></div> 
+  <div id="webcam-msg"><p><b>Requesting camera access... <br />(<a href="https://play.google.com/store/apps/details?id=com.opera.browser">Opera Mobile</a> only)</b></p></div> 
   <div style="width:100%;" id="webcam"></div>
 
   <div style="padding-bottom:10px;padding-top:250px;">
@@ -54,6 +54,10 @@
     <label for="sample_slider">Range</label>
     <input type="range" name="slider" id="sample_slider" value="250" min="0" max="640" data-highlight="false" />
   </form>
+
+  <% if ios? || (mobile? && !opera?) %>
+      
+  <% end %>
 
   <a class="btn btn-large btn-primary" href="#capture" data-toggle="tab">Start capturing &raquo;</a>
 
