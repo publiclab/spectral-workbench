@@ -1,0 +1,18 @@
+<div class="modal hide fade" id="selectrowmodal">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <b>Choose where to extract data from this image</b>
+  </div>
+  <div class="modal-body">
+    <p>To generate data, we look at the brightness of one slice of the image. Here, click on the image to choose which row to sample from.</p>
+
+    <% unless logged_in? %>
+      <p><b>You must be logged in to choose a sample row.</b></p>
+    <% end %>
+
+  </div>
+  <div class="modal-footer">
+    <a data-dismiss="modal" class="btn" href="javascript:void();">Cancel</a>
+    <a data-dismiss="modal" class="btn btn-primary" onClick="$W.click_to_set_sample_row()" href="javascript:void();">Begin</a>
+  </div>
+</div> 

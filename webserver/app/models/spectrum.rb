@@ -50,7 +50,7 @@ class Spectrum < ActiveRecord::Base
     require 'RMagick'
     pixels = []
 
-    image   = Magick::ImageList.new("public"+(self.photo.url.split('?')[0]).gsub('%20',' '))
+    image = Magick::ImageList.new("public"+(self.photo.url.split('?')[0]).gsub('%20',' '))
     rows = image.export_pixels(0, 0, image.columns, image.rows, "RGB");
     brightest_row = 0
     brightest = 0

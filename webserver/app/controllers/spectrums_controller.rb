@@ -406,13 +406,14 @@ class SpectrumsController < ApplicationController
   def setsamplerow
     @spectrum = Spectrum.find params[:id]
     if logged_in? && (@spectrum.user_id == current_user.id || current_user.role == "admin")
-      @spectrum.sample_row = params[:row].to_i
+      image = Magick::ImageList.new("public"+(@spectrum.photo.url.split('?')[0]).gsub('%20',' '))
+      @spectrum.sample_row = params[:row].to_i*0.01*image.rows
       @spectrum.extract_data
       @spectrum.save
     else
       flash[:error] = "You must be logged in and own this spectrum to set the sample row."
     end
-    redirect_to "/spectra/show/"+@spectrum.id.to_s
+    redirect_to "/analyze/spectrum/"+@spectrum.id.to_s
   end
 
   def print
