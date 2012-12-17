@@ -51,18 +51,18 @@ class Spectrum < ActiveRecord::Base
     pixels = []
 
     image = Magick::ImageList.new("public"+(self.photo.url.split('?')[0]).gsub('%20',' '))
-    rows = image.export_pixels(0, 0, image.columns, image.rows, "RGB");
     brightest_row = 0
     brightest = 0
     # sum brightness for each row
     (0..(image.rows-1)).each do |row|
       brightness = 0
+      px = image.export_pixels(0, row, image.columns, 1, "RGB");
       (0..(image.columns/3-1)).each do |col|
-        r = rows[row*image.columns+col*3]
-        g = rows[row*image.columns+col*3+1]
-        b = rows[row*image.columns+col*3+2]
+        r = px[col*3]
+        g = px[col*3+1]
+        b = px[col*3+2]
         brightness += (r-g).abs+(g-b).abs+(b-r).abs # difference between colors
-        brightness += r+g+b # overall brightness
+        brightness += (r+g+b) # overall brightness
       end
       if brightness > brightest
         brightest_row = row 
