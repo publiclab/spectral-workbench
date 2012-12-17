@@ -3,7 +3,7 @@ class UsersController < ApplicationController
   include AuthenticatedSystem
 
   def dashboard
-    @spectrums = Spectrum.find_all_by_user_id current_user.id, :order => "created_at DESC"
+    @spectrums = Spectrum.find(:all,:order => "created_at DESC", :conditions => ["author != 'anonymous'"])
     @spectrums = @spectrums.paginate :page => params[:page], :per_page => 24
     @sets = SpectraSet.find(:all,:limit => 4,:order => "created_at DESC")
     @comments = current_user.received_comments[0..5]
