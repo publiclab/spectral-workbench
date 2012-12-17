@@ -1,4 +1,6 @@
-<div class="row">
+<style>._row { clear:left;} </style>
+
+<div class="_row">
   <% @spectrums.each_with_index do |spectrum,i| %>
     <div class="span3 clearfix">
       <a class="image" href="/spectra/show/<%= spectrum.id %>"><img src="<%= spectrum.photo.url(:thumb) %>" class="image" style="background:#ccc;"></a>
@@ -8,7 +10,7 @@
     <% if ((i+1)/4.0).to_i == ((i+1)/4.0) %>
     </div>
     <hr />
-    <div class="row">
+    <div class="_row">
     <% end %>
   <% end %>
 </div>

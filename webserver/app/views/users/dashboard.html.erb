@@ -1,22 +1,49 @@
-<div id="index">
+<script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.flot.js"></script> 
+<script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.flot.crosshair.js"></script>
 
-<%= render :partial => "spectrums/sidebar" %>
+<div class="container">
 
-<div id="maincolumn">
+  <div class="row-fluid">
 
-<h1>Dashboard</h1>
+    <div class="span4">
+      <h2>Dashboard</h2>
+      <hr />
 
-<br />
+      <%= render :partial => 'spectrums/search' %>
+      <hr />
 
-<h2>// RECENT COMMENTS <a href="/comments">view all &raquo;</a></h2>
+      <p><strong>Subscribe to the "plots-spectrometry" mailing list</strong> for support, discussion, and to share your work:</p>
+<form class="form" action="http://groups.google.com/group/plots-boston/boxsubscribe"><input type=text name=email /><br /> <input class="btn btn-primary" type=submit name="sub" value="Subscribe" /></form>
 
-<%= render :partial => 'comments' %>
+      <hr />
+      <h3>Recent comments</h3>
 
-<h2>// YOUR SETS <a class="right" href="/sets/author/<%= current_user.login %>">view all &raquo;</a></h2>
-<%= render :partial => 'spectrums/sets' %>
+      <%= render :partial => 'comments' %>
 
-<h2>// YOUR SPECTRA</h2>
-<%= render :partial => 'spectrums/list' %>
+      <p><a href="/comments">More comments &raquo;</a></p>
+      <hr />
 
-</div>
+      <h3>Recent authors</h3>
+      <ul class="nav">
+      <% User.find_all_by_login(@spectrums.collect(&:author).uniq).each do |user| %>
+        <li><a href="/profile/<%= user.login %>"><i class="icon icon-user"></i> <%= user.login %></a></li>
+      <% end %>
+      </ul>
+
+      <hr />
+      <h3>Recent sets</h3>
+      <%= render :partial => 'spectrums/sets' %>
+
+      <hr />
+
+    </div>
+
+    <div class="span8">
+
+      <h3 style="padding-top:0;">Recently uploaded spectra <small class="hidden-phone">by contributors like you</small></h3>
+
+      <%= render :partial => 'spectrums/list_bootstrap' %>
+
+    </div>
+  </div>
 </div>

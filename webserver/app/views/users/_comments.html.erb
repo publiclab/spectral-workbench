@@ -2,7 +2,7 @@
 
   <div class="comment">
 
-    <i><%= time_ago_in_words(comment.created_at) %> ago, <a href="/profile/<%= comment.author %>"><%= comment.author %></a> wrote:</i>
+    <small><b><%= time_ago_in_words(comment.created_at) %> ago, <a href="/profile/<%= comment.author %>"><%= comment.author %></a> wrote:</b></small>
     <p>"<%= comment.body %>"
     <a href="/spectra/<%= comment.spectrum_id %>">Read more &raquo;</a></p>
 

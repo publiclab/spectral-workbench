@@ -20,7 +20,7 @@
 
   <div id="spectra" class="row-fluid">
 
-  <div class="span4 pull-right" style="padding-left:20px;">
+  <div class="span4">
 
     <%= render :partial => "search" %>
 
@@ -35,24 +35,25 @@
     <h3>Recent sets</h3>
     <%= render :partial => 'sets' %>
 
+    <hr />
   </div>
 
-  <style>.row { clear:left;} </style>
-
-  <h2>Recently uploaded spectra <small class="hidden-phone">by contributors like you</small></h2>
+  <style>._row { clear:left;} </style>
 
   <div class="span8">
-  <div class="row">
-  <% @spectrums.each_with_index do |spectrum,i| %>
-    <div class="span3 clearfix">
-      <a class="image" href="/spectra/show/<%= spectrum.id %>"><img src="<%= spectrum.photo.url(:thumb) %>" class="image" style="background:#ccc;"></a>
-      <h4><a data-transition="slide" href="/spectra/show/<%= spectrum.id %>"><%=h truncate(spectrum.title,:length => 18) %></a></h4>
-      <p><a data-transition="slide" href="/profile/<%=h spectrum.author %>"><%=h spectrum.author %></a> | <%= time_ago_in_words(spectrum.created_at) %> ago</p>
-    </div>
+    <h2>Recently uploaded spectra <small class="hidden-phone">by contributors like you</small></h2>
+
+    <div class="_row">
+    <% @spectrums.each_with_index do |spectrum,i| %>
+      <div class="span3 clearfix">
+        <a class="image" href="/spectra/show/<%= spectrum.id %>"><img src="<%= spectrum.photo.url(:thumb) %>" class="image" style="background:#ccc;"></a>
+        <h4><a data-transition="slide" href="/spectra/show/<%= spectrum.id %>"><%=h truncate(spectrum.title,:length => 18) %></a></h4>
+        <p><a data-transition="slide" href="/profile/<%=h spectrum.author %>"><%=h spectrum.author %></a> | <%= time_ago_in_words(spectrum.created_at) %> ago</p>
+      </div>
     <% if ((i+1)/4.0).to_i == ((i+1)/4.0) %>
     </div>
     <hr />
-    <div class="row">
+    <div class="_row">
     <% end %>
   <% end %>
   </div>

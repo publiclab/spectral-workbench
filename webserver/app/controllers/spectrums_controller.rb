@@ -7,19 +7,23 @@ class SpectrumsController < ApplicationController
   # GET /spectrums
   # GET /spectrums.xml
   def index
-    @spectrums = Spectrum.find(:all,:order => "created_at DESC", :conditions => ["author != 'anonymous'"])
-    @spectrums = @spectrums.paginate :page => params[:page], :per_page => 24
+    if logged_in?
+      redirect_to "/dashboard"
+    else
+      @spectrums = Spectrum.find(:all,:order => "created_at DESC", :conditions => ["author != 'anonymous'"])
+      @spectrums = @spectrums.paginate :page => params[:page], :per_page => 24
 
-    @anon_spectrums = Spectrum.find(:all,:order => "created_at DESC", :conditions => {:author => "anonymous"})
-    @anon_spectrums = @anon_spectrums.paginate :page => params[:page], :per_page => 4
-    @sets = SpectraSet.find(:all,:limit => 4,:order => "created_at DESC")
-    @comments = Comment.all :limit => 12, :order => "id DESC"
+      @anon_spectrums = Spectrum.find(:all,:order => "created_at DESC", :conditions => {:author => "anonymous"})
+      @anon_spectrums = @anon_spectrums.paginate :page => params[:page], :per_page => 4
+      @sets = SpectraSet.find(:all,:limit => 4,:order => "created_at DESC")
+      @comments = Comment.all :limit => 12, :order => "id DESC"
 
-    respond_to do |format|
-      format.html { 
-        render :template => "spectrums/index-bootstrap.html.erb", :layout => "bootstrap" 
-      } # show.html.erb
-      format.xml  { render :xml => @spectrums }
+      respond_to do |format|
+        format.html { 
+          render :template => "spectrums/index-bootstrap.html.erb", :layout => "bootstrap" 
+        } # show.html.erb
+        format.xml  { render :xml => @spectrums }
+      end
     end
   end
 

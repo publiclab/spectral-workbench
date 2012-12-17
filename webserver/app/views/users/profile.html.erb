@@ -1,9 +1,11 @@
-<div id="spectra" class="container">
+<div class="container">
 
 <h2><%= @user.login %> <small>(<%= @user.spectra.length %> spectra) | <a class="btn btn-mini" href="/spectra/feed/<%= @user.login %>">RSS</a> | <a href="http://publiclaboratory.org/people/<%= @user.login %>">Public Lab profile &raquo;</a></small></h2>
 
+<hr />
+
 <div class="row-fluid">
-  <div class="span4 pull-right">
+  <div class="span4">
     <%= render :partial => 'spectrums/search' %>
 
     <div class="container" style="padding-left:10px;">

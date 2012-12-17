@@ -7,6 +7,7 @@ class UsersController < ApplicationController
     @spectrums = @spectrums.paginate :page => params[:page], :per_page => 24
     @sets = SpectraSet.find(:all,:limit => 4,:order => "created_at DESC")
     @comments = current_user.received_comments[0..5]
+    render :layout => "bootstrap"
   end
 
   # render new.rhtml
