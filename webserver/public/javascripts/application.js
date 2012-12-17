@@ -23,7 +23,7 @@ flotoptions = {
 	threshold: { below: 0, color: "#a00" }, //non-functional... not sure why
 	grid: {
 		clickable: true,
-		hoverable:true,
+//		hoverable:true,
 		borderWidth: 0,
 	        backgroundColor: "#eee",
 		markers: []

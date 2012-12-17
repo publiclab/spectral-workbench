@@ -8,7 +8,17 @@
 
 <div class="container-fluid" style="clear:both;">
 
-  <% if logged_in? && @spectrum.author == current_user.login && !@spectrum.calibrated %><div class="alert alert-warning"><button type="button" class="close" data-dismiss="alert">×</button> This spectrum is not yet calibrated. <a class="btn btn-primary btn-small" data-toggle="modal" href="#calibratemodal1">Calibrate</a> <a class="btn btn-small" href="http://publiclaboratory.org/wiki/spectral-workbench-calibration">Learn more</a></div><% end %>
+  <% if logged_in? && @spectrum.author == current_user.login && !@spectrum.calibrated %>
+    <div class="alert alert-warning"><button type="button" class="close" data-dismiss="alert">×</button> 
+      This spectrum is not yet calibrated. <a class="btn btn-primary btn-small" data-toggle="modal" href="#calibratemodal1">Calibrate</a> 
+      <a class="btn btn-small" href="http://publiclaboratory.org/wiki/spectral-workbench-calibration">Learn more</a>
+    </div>
+  <% end %>
+  <% if mobile? && !@spectrum.calibrated %>
+    <div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">×</button> 
+      <i class="icon icon-exclamation-sign"></i> Calibration is easiest <b>from a computer</b>, after which you can use it from your phone.
+    </div>
+  <% end %>
 
   <div class="row-fluid" id="display">
 

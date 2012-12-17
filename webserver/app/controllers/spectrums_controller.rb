@@ -148,20 +148,20 @@ class SpectrumsController < ApplicationController
       author = current_user.login if logged_in?
       author ||= "anonymous"
 
-      if params[:photo]
+      if params[:photo] # i think this is the java client? Lets try to get rid of it
         @spectrum = Spectrum.new({:title => params[:spectrum][:title],
 				  :author => author,
 				  :user_id => user_id,
 				  :notes => params[:spectrum][:notes],
 				  :photo => params[:photo]})
         @spectrum.client_code = client_code if params[:client] || params[:uniq_id]
-      elsif params[:dataurl]
+      elsif params[:dataurl] # mediastream webclient
         @spectrum = Spectrum.new({:title => params[:spectrum][:title],
 				  :author => author,
 				  :notes => params[:spectrum][:notes],
 				  :user_id => user_id})
 	@spectrum.image_from_dataurl(params[:dataurl])
-      else
+      else # upload form at /upload
         @spectrum = Spectrum.new({:title => params[:spectrum][:title],
 				  :author => author,
 				  :user_id => user_id,
@@ -299,6 +299,7 @@ class SpectrumsController < ApplicationController
         @spectrum.save
         tag = @spectrum.tag('calibration',current_user.id)
       end
+      flash[:notice] = "Great, calibrated! <b>Next steps:</b> sign up on <a href='http://publiclaboratory.org/tool/spectrometer'>the mailing list</a>, or browse/contribute to <a href='http://publiclaboratory.org'>Public Lab website</a>"
       redirect_to "/spectra/show/"+@spectrum.id.to_s
     else
       flash[:error] = "You must be logged in and own this spectrum to calibrate."

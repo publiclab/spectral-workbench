@@ -6,10 +6,11 @@
   <p>By uploading your data, you agree to release it under the <a href="http://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Zero license</a></p>
 
 
-<form action="/spectrums?m=true" class="form well" enctype="multipart/form-data" method="post">
+<form id="upload" action="/spectrums?m=true" class="form well" enctype="multipart/form-data" method="post">
 
-  <div>
+  <div class="control-group" id="title">
     <input name="spectrum[title]" type="text" id="inputTitle" placeholder="Title">
+    <span class="help-inline"></span>
   </div>
 
   <div>
@@ -24,21 +25,65 @@
 
   <p><i>Be sure your flash is off!</i></p>
 
-  <div class="control-group">
-    <div class="controls">
-      <input id="inputPhoto" name="spectrum[photo]" size="30" type="file" />
-    </div>
+  <div class="control-group" id="photo">
+    <input id="inputPhoto" name="spectrum[photo]" size="30" type="file" />
+    <span class="help-inline"></span>
   </div>
 
-  <input type='hidden' name='authenticity_token' value="<%= form_authenticity_token %>"/>
-  <input class="btn btn-primary btn-large" type="submit" value="Upload" style="margin-right:10px;" />
-<!--  <label class="checkbox inline">
-    <input type="checkbox" id="inlineCheckbox1" value="geotag"> 1
-  </label>
--->
-  <label class="checkbox inline">
-    <input type="checkbox" id="vertical" name="vertical" checked="true"> Vertical
-  </label>
+  <% if logged_in? && current_user.calibrations.length > 0 %>
+    <select name="spectrum[calibration_id]" id="calibration_id">
+    <% current_user.tag('calibration').each do |spectrum| %>
+      <option value="<%= spectrum.id %>"><%= spectrum.title %> (<%= time_ago_in_words(spectrum.created_at) %>)</option>
+      <option value="calibration">[+] New calibration</option>
+    <% end %>
+    </select><br />
+  <% end %>
 
+  <script>
+    var $W = {};
+    (function(){
+      $W.setGeolocation = function(loc) {
+        if (loc.coords) {
+          $('#lat').val(loc.coords.latitude)
+          $('#lon').val(loc.coords.longitude)
+        } else {
+          $('#lat').val(loc.latitude)
+          $('#lon').val(loc.longitude)
+        }
+        $('#geotag').val($('#geotagInput').is(":checked"))
+        $('#upload').submit()
+      }
+      $W.save = function() {
+        if ($('#inputPhoto').val() == '') {
+          $('#photo').addClass('error')
+          $('#photo .help-inline').html('You must select an image.')
+        } else if ($('#inputTitle').val() == '') {
+          $('#title').addClass('error')
+          $('#title .help-inline').html('You must enter a title, using only letters, numbers, and spaces.')
+        } else {
+         if (navigator.geolocation && $('#geotagInput').is(':checked')) {
+            navigator.geolocation.getCurrentPosition($W.setGeolocation)
+            return true
+          } else {
+            $('#upload').submit()
+          }
+        } 
+      }
+    })()
+  </script>
+
+  <input type='hidden' name='authenticity_token' value="<%= form_authenticity_token %>"/>
+  <input class="btn btn-primary btn-large" onClick="$W.save()" value="Upload" style="margin-right:10px;" />
+
+  <input name="geotag" type="hidden" id="geotag" />
+  <input name="lat" type="hidden" id="lat" />
+  <input name="lon" type="hidden" id="lon" />
+
+  <label class="checkbox inline">
+    <input type="checkbox" id="vertical" name="vertical" checked="true" /> Vertical
+  </label>
+  <label class="checkbox inline">
+    <input type="checkbox" id="geotagInput" value="geotag" checked="true" /> Geotag
+  </label>
 
 </form>
