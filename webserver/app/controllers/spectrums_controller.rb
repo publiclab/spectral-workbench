@@ -50,11 +50,7 @@ class SpectrumsController < ApplicationController
 
     respond_to do |format|
       format.html { 
-	if mobile?
           redirect_to "/analyze/spectrum/"+@spectrum.id.to_s
-	else
-	  render 'spectrums/show' 
-	end
       } # show.html.erb
       format.xml  { render :xml => @spectrum }
       format.csv  { render :template => "spectrums/show.csv.erb" }
@@ -80,8 +76,8 @@ class SpectrumsController < ApplicationController
   # non REST
   def compare
     @spectrum = Spectrum.find(params[:id])
-    @spectrums = Spectrum.find(:all, :conditions => ['id != ? AND (title LIKE ? OR notes LIKE ?)',@spectrum.id,"%"+params[:q]+"%", "%"+params[:q]+"%"],:limit => 20,:order => "created_at DESC")
-    render :partial => "compare", :layout => false
+    @spectra = Spectrum.find(:all, :conditions => ['id != ? AND (title LIKE ? OR notes LIKE ?)',@spectrum.id,"%"+params[:q]+"%", "%"+params[:q]+"%"],:limit => 20,:order => "created_at DESC")
+    render :partial => "analyze/compare_search", :layout => false
   end
 
   # non REST

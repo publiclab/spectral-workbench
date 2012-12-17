@@ -1,0 +1,25 @@
+<div class="modal hide fade" id="comparemodal">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <b>Use a fluorescent bulb spectrum to calibrate your spectrometer</b>
+  </div>
+  <div class="modal-body">
+
+    <form method="get" id="compareForm" action="javascript:void(0);" class="form-search">
+      <input placeholder="Search spectra" class='search-query input-medium' id='searchinput' type='text' name='q' value=''/>
+      <button class="btn btn-primary" type='submit'><i class="icon icon-search icon-white"></i></button>
+    </form>
+
+    <script>
+	var spectra = [<%= @spectrum.id %>]
+    </script>
+
+    <div id="result">
+      <%= render :partial => "compare_search" %>
+    </div>
+
+  </div>
+  <div class="modal-footer">
+    <a data-dismiss="modal" class="btn" href="javascript:void();">Cancel</a>
+  </div>
+</div> 

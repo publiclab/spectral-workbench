@@ -3,6 +3,14 @@
 
 <div class="container">
 
+  <% if logged_in? && !flash[:notice] && !flash[:error] && !flash[:warning] && !mobile? %>
+    <% if current_user.spectra.length < 3 %>
+      <div class="alert alert"><button type="button" class="close" data-dismiss="alert">×</button>Join other open source spectrometry experimenters on the <a href="http://publiclaboratory.org/user/register">plots-spectrometry mailing list</a>.</a></div>
+    <% elsif current_user.spectra.length >= 3 %>
+      <div class="alert alert"><button type="button" class="close" data-dismiss="alert">×</button><a href="http://publiclaboratory.org">Share your research</a> and reach out to collaborators at <a href="http://publiclaboratory.org">PublicLaboratory.org</a>.</a></div>
+    <% end %>
+  <% end %>
+
   <div class="row-fluid">
 
     <div class="span4">
