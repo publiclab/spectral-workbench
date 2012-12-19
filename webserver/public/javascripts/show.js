@@ -4,6 +4,7 @@ var ajax_load = "<img src='/images/spinner-small.gif' alt='loading...' />";
 
 spectrum = ""
 $W = {
+	latestPosition: null,
 	updateLegendTimeout: null,
 	data: [],
 	mode: "average",
@@ -65,7 +66,7 @@ $W = {
 
 	init_hovers: function() {
 		$("#graph").bind("plothover",  function (event, pos, item) {
-			latestPosition = pos;
+			$W.latestPosition = pos;
 			if (!$W.updateLegendTimeout)
 				$W.updateLegendTimeout = setTimeout($W.updateLegend, 50);
 		});
@@ -80,7 +81,7 @@ $W = {
 	updateLegend: function() {
 		$W.updateLegendTimeout = null;
 	
-		var pos = latestPosition;
+		var pos = $W.latestPosition;
 	
 		var axes = $W.plot.getAxes();
 		if (pos.x < axes.xaxis.min || pos.x > axes.xaxis.max ||
@@ -278,5 +279,4 @@ $W = {
 
 
 var legends;
-var latestPosition = null;
 

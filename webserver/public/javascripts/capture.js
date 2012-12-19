@@ -166,7 +166,8 @@ $W = {
 			if ($W.mobile) {
 				// mobile will never need to flip, can't be installed "upside down"
 				//$W.ctx.save()
-				$W.ctx.scale($('#canvas').width()/$('video').height(),1)
+				//$W.ctx.scale($('#canvas').width()/$('video').height(),1)
+				$W.ctx.scale(3,1)
 				$W.ctx.translate($('video').height()/2,0)
 				$W.ctx.rotate(Math.PI/2)
 				$W.ctx.drawImage(video, -startrow/4, -$W.height/2);

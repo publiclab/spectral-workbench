@@ -1,8 +1,5 @@
 <script src="/javascripts/show.js"> </script>
 <script src="/javascripts/analyze.js"> </script>
-<script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.flot.js"></script> 
-<script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.flot.crosshair.js"></script>
-
 <%= render :partial => "clone" %>
 <%= render :partial => "calibrate" %>
 <%= render :partial => "select_row" %>
@@ -37,6 +34,7 @@
           <a data-toggle="modal" class="btn btn-inverse" href="#comparemodal"><i class="icon icon-white icon-align-left"></i><span class="hidden-phone"> Compare</span></a>
 
           <a rel="popover" data-placement="left" class="pull-right btn btn-inverse" data-content='<ul class="nav nav-list"><li><a onClick="$W.units()">Toggle units</a></li><li><a onClick="$W.toggle_mode()">Toggle RGB</a></li><li><a onClick="$W.extract()"><i class="icon icon-refresh"></i> Re-extract from photo</a></li><li><a href="#selectrowmodal" data-toggle="modal">Set sample row</a></li><li><a href="/spectra/rotate/<%= @spectrum.id %>">Rotate image</a></li><li><a href="/spectra/find_brightest_row/<%= @spectrum.id %>">Auto-detect brightest spectrum</a></li></ul>'><i class="icon icon-white icon-briefcase"></i><span class="hidden-phone"> More tools</span></a>
+          <b class="pull-right" style="padding-top:10px;margin-right:10px;"><span id="wavelength"></span> <span id="#unit_label">nm</span></b> 
 
           <a style="margin-right:4px;" class="pull-right hidden-desktop btn btn-inverse"><i class="icon icon-white icon-search"></i></a></span>
 
@@ -161,4 +159,3 @@
 })()
 
 </script>
-
