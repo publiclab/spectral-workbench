@@ -72,9 +72,19 @@
     })()
   </script>
 
+  <label for="device">If possible, identify your device:</label>
+  <select name="device" id="device">
+	<option value="none">- choose a device -</option>
+	<option value="device:dsk">Desktop Spectrometry Kit</option>
+	<option value="device:foldable">Foldable Mini-Spectrometer</option>
+	<option value="device:custom">custom design</option>
+  </select>
+  <br />
+
   <input type='hidden' name='authenticity_token' value="<%= form_authenticity_token %>"/>
   <button class="btn btn-primary btn-large" onClick="$W.save()" style="margin-right:10px;">Upload</button>
 
+  <input name="upload" type="hidden" id="upload" value="true" />
   <input name="geotag" type="hidden" id="geotag" />
   <input name="lat" type="hidden" id="lat" />
   <input name="lon" type="hidden" id="lon" />

@@ -223,11 +223,12 @@ class Spectrum < ActiveRecord::Base
   # a string of either a single tag name or a series of comma-delimited tags
   def tag(tags,user_id) 
     tags.split(',').each do |name|
-      Tag.new({
+      tag = Tag.new({
         :spectrum_id => self.id,
         :name => name.strip,
         :user_id => user_id,
-      }).save!
+      })
+      tag.save! unless self.has_tag(tag.name)
     end
   end
 

@@ -65,7 +65,14 @@
 		<input name="geotag" type="hidden" id="geotag" />
 		<input name="lat" type="hidden" id="lat" />
 		<input name="lon" type="hidden" id="lon" />
+		<label for="device">If possible, identify your device:</label>
+		<select name="device" id="device">
+			<option value="device:foldable">Foldable Mini-Spectrometer</option>
+			<option value="device:dsk">Desktop Spectrometry Kit</option>
+			<option value="device:custom">custom design</option>
+		</select>
 		<% if logged_in? %>
+		<label for="calibration_id">Use an existing calibration:</label>
 		<select name="spectrum[calibration_id]" id="calibration_id">
 			<% current_user.tag('calibration').each do |spectrum| %>
 			<option value="<%= spectrum.id %>"><%= spectrum.title %> (<%= time_ago_in_words(spectrum.created_at) %>)</option>

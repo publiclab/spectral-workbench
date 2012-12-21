@@ -190,10 +190,12 @@ class SpectrumsController < ApplicationController
               @spectrum = Spectrum.find @spectrum.id
               @spectrum.rotate if params[:vertical] == "on"
               @spectrum.sample_row = @spectrum.find_brightest_row
+              @spectrum.tag("mobile",current_user.id)
             end
-            if params[:tags]
-              @spectrum.tag(params[:tags],current_user.id)
-            end
+            @spectrum.tag("iOS",current_user.id) if ios?
+            @spectrum.tag(params[:tags],current_user.id) if params[:tags]
+            @spectrum.tag("upload",current_user.id) if params[:upload]
+            @spectrum.tag(params[:device],current_user.id) if params[:device] && params[:device] != "none"
             if params[:spectrum][:calibration_id] && !params[:is_calibration] && params[:spectrum][:calibration_id] != "calibration"
               @spectrum.extract_data
               @spectrum.clone(params[:spectrum][:calibration_id]) 
