@@ -400,7 +400,7 @@ $W = {
 		})
 	},
 
-	overexposure_threshold: 20, // how many pixels of consecutive 100% triggers an overexposure warning
+	overexposure_threshold: 15, // how many pixels of consecutive 100% triggers an overexposure warning
 	/* Inspects a given color channel recursively for sequential 
 	 * pixels of 100%, which would indicate overexposure. Returns
 	 * whether it passed the threshold and the last inspected index. 
@@ -482,6 +482,10 @@ $W = {
 			y = p1[1] + (p2[1] - p1[1]) * (x - p1[0]) / (p2[0] - p1[0]);
 
 		return y
+	},
+
+	auto_detect_sample_row: function() {
+		
 	},
 
         /**

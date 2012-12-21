@@ -6,7 +6,7 @@ class AnalyzeController < ApplicationController
       @spectrum.extract_data 
       @spectrum.save 
     end
-    @spectra = Spectrum.find(:all, :limit => 4, :order => "created_at DESC", :conditions => ["id != ?",@spectrum.id])
+    @spectra = Spectrum.find(:all, :limit => 12, :order => "created_at DESC", :conditions => ["id != ?",@spectrum.id])
     @calibrations = current_user.calibrations if logged_in?
     @comment = Comment.new
     render :layout => "bootstrap"
