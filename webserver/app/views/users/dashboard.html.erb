@@ -5,7 +5,7 @@
 
   <% if logged_in? && !flash[:notice] && !flash[:error] && !flash[:warning] && !mobile? %>
     <% if current_user.spectra.length < 3 %>
-      <div class="alert alert"><button type="button" class="close" data-dismiss="alert">×</button>Join other open source spectrometry experimenters on the <a href="http://publiclaboratory.org/user/register">plots-spectrometry mailing list</a>.</a></div>
+      <div class="alert error"><button type="button" class="close" data-dismiss="alert">×</button><b>Warning:</b> due to an error in the printed instructions, the webcam of your Desktop Spectrometry Kit may need to be refocused. <a href="http://publiclaboratory.org/wiki/spectral-workbench-help#the-spectrum-image-is-blurry-no-sharp-peaks">Read more &raquo;</a></div>
     <% elsif current_user.spectra.length >= 3 %>
       <div class="alert alert"><button type="button" class="close" data-dismiss="alert">×</button><a href="http://publiclaboratory.org">Share your research</a> and reach out to collaborators at <a href="http://publiclaboratory.org">PublicLaboratory.org</a>.</a></div>
     <% end %>
