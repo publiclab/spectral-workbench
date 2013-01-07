@@ -25,7 +25,9 @@ class TagController < ApplicationController
       @count = @spectrums.length
       @spectrums = @spectrums.paginate :page => params[:page], :per_page => 24
     end
+    @spectrums = [] if @spectrums.nil?
     @comments = Comment.all :limit => 12, :order => "id DESC"
+    render :layout => 'bootstrap'
   end
 
   def delete

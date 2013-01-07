@@ -1,15 +1,38 @@
+<script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.flot.js"></script> 
+<script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.flot.crosshair.js"></script>
 
-<h1>Spectra tagged with "<%=h params[:id] %>"<% if @tag %> (<%= @count %>)<% end %></h1>
+  <div style="margin-left:20px;width:95%;height:160px;" id="graph"></div>
+  <h2 style="margin-left:10px;">Spectra tagged with "<%=h params[:id] %>"<% if @tag %> (<%= @count %>)<% end %></h2>
 
-<hr style="clear:both;" />
+  <% if @tag %>
+  <%= render :partial => 'spectrums/list_bootstrap' %>
+  <% else %>
+  <p>No results for tag "<%=h params[:id] %></p>
+  <% end %>
 
-<%= render :partial => 'spectrums/sidebar' %>
+<script type="text/javascript">
+  data = []
 
-<div id="maincolumn">
-<% if @tag %>
-<%= render :partial => 'spectrums/list' %>
-<% else %>
-<p>No results for tag "<%=h params[:id] %></p>
-<% end %>
-</div>
-
+  <% @spectrums.each do |spectrum| %>
+  <% if spectrum.data == "" || spectrum.data.nil? %>
+    spectrum = <%= spectrum.extract_data %>
+  <% else %>
+    spectrum = <%= spectrum.data.chomp(",") %>
+  <% end %>
+    data.push({data:[]})
+    scaled = true
+    $.each(spectrum.lines,function(index,line) {
+      if (line.wavelength == null) {
+	line.wavelength = index
+	scaled = false
+      }
+      data[data.length-1].data.push([line.wavelength,line.average/2.55])
+    })
+  <% end %>
+  flotoptions.xaxis.tickFormatter = function(nm) { return nm }
+  flotoptions.xaxis.show = true
+  flotoptions.colors = ["#ddd"]
+  flotoptions.colors = ["#ddd"]
+  flotoptions.grid.backgroundColor = "#222"
+  $.plot($("#graph"),data,flotoptions);
+</script>
