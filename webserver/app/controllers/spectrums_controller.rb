@@ -39,7 +39,6 @@ class SpectrumsController < ApplicationController
   def show
     @spectrum = Spectrum.find(params[:id])
     # eventually move this to "create" once they're all fixed:
-    @spectrum.correct_reversed_image
     if @spectrum.data == "" || @spectrum.data.nil?
       @spectrum.extract_data 
       @spectrum.save 
@@ -205,6 +204,7 @@ class SpectrumsController < ApplicationController
               @spectrum.lon = params[:lon]
             end
 
+            @spectrum.correct_reversed_image
             @spectrum.save!
 
             flash[:notice] = 'Spectrum was successfully created.'
@@ -296,8 +296,8 @@ class SpectrumsController < ApplicationController
   def calibrate
     @spectrum = Spectrum.find(params[:id])
     if logged_in? && @spectrum.user_id == current_user.id
-      if request.post?
-        @spectrum.calibrate(params[:x1],params[:w1],params[:x2],params[:w2]).save
+      if true#request.post?
+        @spectrum.calibrate(params[:x1],params[:w1],params[:x2],params[:w2])
         @spectrum.save
         tag = @spectrum.tag('calibration',current_user.id)
       end
@@ -442,6 +442,18 @@ class SpectrumsController < ApplicationController
       @spectrum.rotate
       @spectrum.extract_data
       @spectrum.clone(@spectrum.id)
+      @spectrum.save
+    else
+      flash[:error] = "You must be logged in and own this spectrum to do this."
+    end
+    redirect_to "/analyze/spectrum/"+@spectrum.id.to_s
+  end
+
+  # Just reverses the image, not the data.
+  def reverse
+    @spectrum = Spectrum.find params[:id]
+    if logged_in? && (@spectrum.user_id == current_user.id || current_user.role == "admin")
+      @spectrum.reverse
       @spectrum.save
     else
       flash[:error] = "You must be logged in and own this spectrum to do this."

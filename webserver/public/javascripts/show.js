@@ -11,6 +11,7 @@ $W = {
 	initialize: function(args) {
 		this.spectrum_id = args['spectrum_id']
 		this.form_authenticity_token = args['form_authenticity_token']
+		this.interface = args['interface'] || false
 		this.title = args['title']
 		this.spectrum = args['spectrum_data']
 		this.data = [{label: $W.title+" = 0% ",data:[]}]
@@ -275,6 +276,8 @@ $W = {
 			window.location = '/spectrums/setsamplerow/'+$W.spectrum_id+'?row='+e.offsetY
 		})
 	}
+
+
 }
 
 

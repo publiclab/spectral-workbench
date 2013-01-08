@@ -1,5 +1,8 @@
 *.swp
 *.swo
+*.db
+*.pid.lock
+*.log
 .DS_Store
 webserver/log/
 webserver/tmp/*

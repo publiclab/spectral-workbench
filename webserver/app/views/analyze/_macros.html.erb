@@ -1,0 +1,29 @@
+<div class="modal hide fade" id="macrosmodal">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <b>Write and run macros to manipulate your data</b>
+  </div>
+  <div class="modal-body">
+    <p>Use the in-development <a target="_blank" href="http://publiclaboratory.org/wiki/spectral-workbench-api">Spectral Workbench API</a> to run scripts (macros).</p>
+
+    <textarea rows="6" style="width:95%;font-size:11px;font-family:courier,sans-serif;" id="code">setup: function() {
+  // code to run on startup
+  window.open($W.canvas.toDataURL(),'_newtab').focus() // this may not work if popups are blocked
+},
+draw: function() {
+  // code to run every frame
+}</textarea>
+
+  </div>
+  <div class="modal-footer">
+    <a data-dismiss="modal" class="btn" href="javascript:void();">Cancel</a>
+    <a id="run" data-dismiss="modal" class="btn btn-primary" href="javascript:void();">Run</a>
+  </div>
+</div> 
+
+<script> 
+	$('#run').click(function() {
+		eval("$W.macro = {"+$('#code').val()+"}")
+		$W.macro.setup()
+	})
+</script>

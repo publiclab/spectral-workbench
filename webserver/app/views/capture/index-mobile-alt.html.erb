@@ -1,6 +1,7 @@
 <script src="/javascripts/getUserMedia.js"> </script>
 <script src="/javascripts/jquery.min.js"> </script>
 <script src="/javascripts/capture.js"> </script>
+<script src="/javascripts/api.js"> </script>
 <script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.flot.js"></script> 
 <script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.flot.crosshair.js"></script>
 <script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.flot.threshold.min.js"></script>
@@ -105,7 +106,9 @@
 <script> (function () { 
   $W.initialize({
   	calibrated:<%= !@calibration.nil? %>,
-  	mobile:true
+	interface:"capture",
+  	mobile:true,
+        spectrum_id:<%= @spectrum.id %>
   }) 
   setInterval($W.getRow,100)
   <% if @calibration %>

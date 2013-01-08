@@ -1,6 +1,8 @@
 <script src="/javascripts/show.js"> </script>
+<script src="/javascripts/api.js"> </script>
 <script src="/javascripts/analyze.js"> </script>
 <%= render :partial => "clone" %>
+<%= render :partial => "macros" %>
 <%= render :partial => "calibrate" %>
 <%= render :partial => "select_row" %>
 <%= render :partial => "compare" %>
@@ -21,7 +23,7 @@
 
   <div class="row-fluid" id="display">
 
-    <img style="width:95%;height:100px;padding:0 1% 0 4%;background:black;" id="image" src="<%= @spectrum.photo.url(:original) %>" />
+    <img style="width:95%;height:100px;padding:0 1% 0 4%;background:black;" id="image" src="<%= @spectrum.photo.url(:original) %>?<%= DateTime.now.to_i %>" />
     <div id="graph" style="width:98%;height:200px;"></div>
 
     <div class="navbar navbar-inverse navbar-static-bottom" style="margin:0;">
@@ -34,7 +36,7 @@
         <a class="btn btn-inverse hidden-phone" id="createSet" href="javascript:void(0);"><i class="icon icon-white icon-list"></i><span class="hidden-phone"> Save as set</span></a>
         <a data-toggle="modal" class="btn btn-inverse" href="#comparemodal"><i class="icon icon-white icon-align-left"></i><span class="hidden-phone"> Compare</span></a>
 
-        <a rel="popover" data-placement="left" class="pull-right btn btn-inverse" data-content='<ul class="nav nav-list"><li><a onClick="$W.units()">Toggle units</a></li><li><a onClick="$W.toggle_mode()">Toggle RGB</a></li><li><a onClick="$W.extract()"><i class="icon icon-refresh"></i> Re-extract from photo</a></li><li><a href="#selectrowmodal" data-toggle="modal">Set sample row</a></li><li><a href="/spectra/rotate/<%= @spectrum.id %>">Rotate image</a></li><li><a href="/spectra/find_brightest_row/<%= @spectrum.id %>">Auto-detect brightest spectrum</a></li></ul>'><i class="icon icon-white icon-briefcase"></i><span class="hidden-phone"> More tools</span></a>
+        <a rel="popover" data-placement="left" class="pull-right btn btn-inverse" data-content='<ul class="nav nav-list"><li><a onClick="$W.units()">Toggle units</a></li><li><a onClick="$W.toggle_mode()">Toggle RGB</a></li><li><a onClick="$W.extract()"><i class="icon icon-refresh"></i> Re-extract from photo</a></li><li><a href="#selectrowmodal" data-toggle="modal">Set sample row</a></li><li><a href="/spectra/rotate/<%= @spectrum.id %>">Rotate image</a></li><li><a href="/spectra/reverse/<%= @spectrum.id %>"><i class="icon icon-resize-horizontal"></i> Flip image horizontally</a></li><li><a href="/spectra/find_brightest_row/<%= @spectrum.id %>">Auto-detect brightest spectrum</a></li><li><a href="#macrosmodal" data-toggle="modal"><i class="icon icon-forward"></i> Macros/scripting</a></li></ul>'><i class="icon icon-white icon-briefcase"></i><span class="hidden-phone"> More tools</span></a>
         <b class="pull-right" style="padding-top:10px;margin-right:10px;"><span id="wavelength"></span> <span id="#unit_label">nm</span></b> 
 
       </div>
@@ -150,6 +152,7 @@
 
 	$W.initialize({
 		spectrum_id:<%= @spectrum.id %>,
+		interface:"analyze",
 		title: "<%= @spectrum.title.gsub('"',"'") %>",
 		form_authenticity_token: "<%= form_authenticity_token %>",
 		spectrum_data: <%= @spectrum.data.gsub('"',"'") %>
