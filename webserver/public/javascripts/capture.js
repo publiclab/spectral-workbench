@@ -63,11 +63,11 @@ $W = {
 			$('video').height = "240"
 		}
 
+		// retrieve and apply locally stored sample row height
 		if (localStorage.getItem('sw:sample_start_row')) this.sample_start_row = parseInt(localStorage.getItem('sw:sample_start_row'))
 		if (localStorage.getItem('sw:sample_end_row')) this.sample_end_row = parseInt(localStorage.getItem('sw:sample_end_row'))
 		this.sample_height = this.sample_end_row - this.sample_start_row // how many pixels to sample
-		$('#samplerow-slider').max = this.options.height // this doesn't work!!!
-		setTimeout(function() {$('#samplerow-slider').val($W.sample_start_row)},1000)
+		$W.setSampleRow($W.sample_start_row)
 
 	},
 
@@ -301,12 +301,22 @@ $W = {
 			}
 		})
 	},
+
+	auto_detect_sample_row: function() {
+		
+	},
+	setSampleRow: function(row) {
+		$W.sample_start_row = parseInt(row)
+		$('#samplerow-slider').val( $W.sample_start_row );
+		localStorage.setItem('sw:samplestartrow',$W.sample_start_row)
+	},
 	setSampleRows: function(start,end) {
 		$W.sample_start_row = start
 		$W.sample_end_row = end
 		localStorage.setItem('sw:samplestartrow',$W.sample_start_row)
 		localStorage.setItem('sw:sampleendrow',$W.sample_end_row)
 	},
+
 	getWavelength: function(col) {
 		return $W.start_wavelength+(col/$W.width)*($W.end_wavelength-$W.start_wavelength)
 	},
@@ -477,10 +487,6 @@ $W = {
 			y = p1[1] + (p2[1] - p1[1]) * (x - p1[0]) / (p2[0] - p1[0]);
 
 		return y
-	},
-
-	auto_detect_sample_row: function() {
-		
 	},
 
         /**
