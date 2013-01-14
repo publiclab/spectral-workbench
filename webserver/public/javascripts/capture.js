@@ -41,8 +41,7 @@ $W = {
 			this.sample_start_row = this.height/2
 			this.sample_end_row = this.height/2 + 10
 		}
-		$('#samplerow-slider').max = this.options.height // this doesn't work!!!
-		$('#samplerow-slider').value = this.sample_start_row
+
 
 		getUserMedia(this.options, this.success, this.deviceError)
 
@@ -53,9 +52,7 @@ $W = {
 		this.canvas.height = this.waterfall_height
 		this.ctx = this.canvas.getContext("2d")
 		this.image = this.ctx.getImageData(0, 0, this.width, this.height);
-		if (localStorage.getItem('sw:sample_start_row')) this.sample_start_row = localStorage.getItem('sw:sample_start_row')
-		if (localStorage.getItem('sw:sample_end_row')) this.sample_end_row = localStorage.getItem('sw:sample_end_row')
-		this.sample_height = this.sample_end_row - this.sample_start_row // how many pixels to sample
+
 		setInterval($W.alert_overexposure,3000)
 		$W.data = [{label: "webcam",data:[]}]
 		if ($('video')[0]) {
@@ -65,6 +62,13 @@ $W = {
 			$('video').width = "320"
 			$('video').height = "240"
 		}
+
+		if (localStorage.getItem('sw:sample_start_row')) this.sample_start_row = parseInt(localStorage.getItem('sw:sample_start_row'))
+		if (localStorage.getItem('sw:sample_end_row')) this.sample_end_row = parseInt(localStorage.getItem('sw:sample_end_row'))
+		this.sample_height = this.sample_end_row - this.sample_start_row // how many pixels to sample
+		$('#samplerow-slider').max = this.options.height // this doesn't work!!!
+		setTimeout(function() {$('#samplerow-slider').val($W.sample_start_row)},1000)
+
 	},
 
         success: function (stream) {
