@@ -20,7 +20,7 @@ class SpectrumsController < ApplicationController
 
       respond_to do |format|
         format.html { 
-          render :template => "spectrums/index-bootstrap.html.erb", :layout => "bootstrap" 
+          render :template => "spectrums/index.html.erb", :layout => "bootstrap" 
         } # show.html.erb
         format.xml  { render :xml => @spectrums }
       end

@@ -10,6 +10,7 @@ class SetsController < ApplicationController
     @set = SpectraSet.find params[:id]
     @spectrums = Spectrum.find(:all, :limit => 4, :order => "created_at DESC")
     @comment = Comment.new
+    render :template => "sets/show-bootstrap", :layout => "bootstrap"
   end
 
   def find_match
@@ -88,7 +89,7 @@ class SetsController < ApplicationController
 	:email => params[:comment][:email]})
     @comment.author = current_user.login if logged_in?
     @comment.email = current_user.email if logged_in?
-    if (logged_in? || verify_recaptcha(:model => @comment, :message => "ReCAPTCHA thinks you're not a human!")) && @comment.save
+    if (logged_in? || APP_CONFIG['local'] || verify_recaptcha(:model => @comment, :message => "ReCAPTCHA thinks you're not a human!")) && @comment.save
       flash[:notice] = "Comment saved."
       redirect_to "/sets/show/"+params[:id]+"#comment_"+@comment.id.to_s
     else
