@@ -317,4 +317,10 @@ class Spectrum < ActiveRecord::Base
     !Tag.find_by_name(name,:conditions => {:spectrum_id => self.id}).nil?
   end
 
+  # if it has horizontally flipped input image: red is at left
+  def is_flipped
+    d = ActiveSupport::JSON.decode(self.data)
+    d['lines'][0]['wavelength'] < d['lines'][d['lines'].length-1]['wavelength']
+  end
+
 end

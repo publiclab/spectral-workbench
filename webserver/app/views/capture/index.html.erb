@@ -37,6 +37,7 @@ flotoptions.colors = [ "#ccc", "#E02130", "#FAB243", "#429867", "#2B5166" ]//, "
 (function () { 
 	$W.initialize({
 		calibrated:<%= !@calibration.nil? %>,
+		flipped:<%= @calibration.is_flipped %>,
 		mobile:false
 	}) 
 	setInterval($W.getRow,100)
