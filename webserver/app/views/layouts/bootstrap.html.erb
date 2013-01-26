@@ -61,6 +61,8 @@ and justice issues. PLOTS provides an online research space for citizens, linkin
             <li><a href="/capture" class="button"><i class="icon icon-camera"></i> Live-capture spectra</a></li>
             <li><a href="/capture/beta" class="button"><i class="icon icon-camera"></i> Live-capture beta interface</a></li>
             <li><a href="http://publiclaboratory.org/wiki/spectral-workbench-usage" class="button"><i class="icon icon-question-sign"></i> Learn how</a></li>
+            <% if logged_in? %><li><a href="/logout" class="button"><i class="icon icon-user"></i> Log out</a></li><% else %>
+            <li><a href="/login" class="button"><i class="icon icon-user"></i> Log in</a></li><% end %>
       </div>
       <div id="headerBtns" class="btn-group pull-right hidden-desktop" style="padding-right:0;">
         <a class="btn btn-large" href="http://publiclaboratory.org/wiki/spectral-workbench-help"><i class="icon icon-question-sign" /></i></a>

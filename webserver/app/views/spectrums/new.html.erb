@@ -1,31 +1,100 @@
-<h1>New spectrum</h1>
+<div class="container-fluid" style="clear:both;">
+  <h1>Upload a spectrum</h1>
 
-<p>Manually upload a spectrum. The best way to collect a spectrum for upload is to use a <a href="http://publiclaboratory.org/wiki/video-spectrometer">PLOTS video spectrometer</a> and the downloadable <a href="http://publiclaboratory.org/wiki/spectral-workbench">Spectral Workbench client application</a> (Mac/Linux/maybe-Windows).</p>
+  <p>Take a picture through <a href="http://publiclaboratory.org/tool/spectrometer">your spectrometer</a> and upload it. (Android or iOS 6+)</p> 
 
-<p>By uploading your data, you agree to release it under the <a href="http://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Zero license</a></p>
+  <p>By uploading your data, you agree to release it under the <a href="http://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Zero license</a></p>
 
-<% form_for(@spectrum,:html => { :multipart => true }) do |f| %>
-  <%= f.error_messages %>
 
-  <p>
-    <%= f.label :title %><br />
-    <%= f.text_field :title %>
-  </p>
-  <p>
-    <%= f.label :notes %><br />
-    <%= f.text_area :notes %>
-  </p>
+<form id="upload" action="/spectrums?m=true" class="form well" enctype="multipart/form-data" method="post">
 
-  <p>You may have to crop your images -- Spectral Workbench reads only the top line of pixels by default.</p>
+  <div class="control-group" id="title">
+    <input name="spectrum[title]" type="text" id="inputTitle" placeholder="Title">
+    <span class="help-inline"></span>
+  </div>
 
-  <p>
-    <%= f.label 'Photo of spectrum' %><br />
-    <%= f.file_field :photo %>
-  </p>
+  <div>
+    <textarea name="spectrum[notes]" id="textareaNotes" cols="8" rows="6" placeholder="Notes: where, what, why"></textarea>
+  </div>
 
-  <p>
-    <%= f.submit 'Create' %>
-  </p>
-<% end %>
+  <div style="padding-bottom:10px;">
+    <h4 style="margin-top:4px">Examples: <small>(<a href="http://publiclaboratory.org/wiki/spectral-workbench-usage">Learn more &raquo;</a>)</small></h4>
+    <img class="img-rounded" src="/images/example-cfl.jpg" style="width:100px;height:80px" />
+    <img class="img-rounded" src="/images/example-sky.jpg" style="width:100px;height:80px" />
+  </div>
 
-<%= link_to 'Back', spectrums_path %>
+  <p><i>Be sure your flash is off!</i></p>
+
+  <div class="control-group" id="photo">
+    <input id="inputPhoto" name="spectrum[photo]" size="30" type="file" />
+    <span class="help-inline"></span>
+  </div>
+
+  <% if logged_in? && current_user.calibrations.length > 0 %>
+    <label for="calibration_id">Use or create a calibration:</label>
+    <select name="spectrum[calibration_id]" id="calibration_id">
+      <% current_user.tag('calibration').each do |spectrum| %>
+      <option value="<%= spectrum.id %>"><%= spectrum.title %> (<%= time_ago_in_words(spectrum.created_at) %>)</option>
+      <% end %>
+      <option value="calibration">[+] New calibration</option>
+    </select><br />
+  <% end %>
+
+  <script>
+    var $W = {};
+    (function(){
+      $W.setGeolocation = function(loc) {
+        if (loc.coords) {
+          $('#lat').val(loc.coords.latitude)
+          $('#lon').val(loc.coords.longitude)
+        } else {
+          $('#lat').val(loc.latitude)
+          $('#lon').val(loc.longitude)
+        }
+        $('#geotag').val($('#geotagInput').is(":checked"))
+        $('#upload').submit()
+      }
+      $W.save = function() {
+        if ($('#inputPhoto').val() == '') {
+          $('#photo').addClass('error')
+          $('#photo .help-inline').html('You must select an image.')
+        } else if ($('#inputTitle').val() == '') {
+          $('#title').addClass('error')
+          $('#title .help-inline').html('You must enter a title, using only letters, numbers, and spaces.')
+        } else {
+         if (navigator.geolocation && $('#geotagInput').is(':checked')) {
+            navigator.geolocation.getCurrentPosition($W.setGeolocation)
+            return true
+          } else {
+            $('#upload').submit()
+          }
+        } 
+      }
+    })()
+  </script>
+
+  <label for="device">If possible, identify your device:</label>
+  <select name="device" id="device">
+	<option value="none">- choose a device -</option>
+	<option value="device:dsk">Desktop Spectrometry Kit</option>
+	<option value="device:foldable">Foldable Mini-Spectrometer</option>
+	<option value="device:custom">custom design</option>
+  </select>
+  <br />
+
+  <input type='hidden' name='authenticity_token' value="<%= form_authenticity_token %>"/>
+  <a href="#" class="btn btn-primary btn-large" onClick="$W.save()" style="margin-right:10px;">Upload</a>
+
+  <input name="upload" type="hidden" id="upload" value="true" />
+  <input name="geotag" type="hidden" id="geotag" />
+  <input name="lat" type="hidden" id="lat" />
+  <input name="lon" type="hidden" id="lon" />
+
+  <label rel="tooltip" title="Are colors arrayed vertically as in the examples, or horizontally?" class="checkbox inline">
+    <input type="checkbox" id="vertical" name="vertical" checked="true" /> Vertical
+  </label>
+  <label rel="tooltip" title="Detect your location and tag this data?" class="checkbox inline">
+    <input type="checkbox" id="geotagInput" value="geotag" checked="true" /> Geotag
+  </label>
+
+</form>
