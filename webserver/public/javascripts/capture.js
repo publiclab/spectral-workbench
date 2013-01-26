@@ -9,7 +9,7 @@ $W = {
 	baseline: null,
 	full_data: [],
 	unflipped_data: [],
-	detect_flip: true,
+	detect_flip: false,
 	flipped: false,
 	mode: "average",
 	pos: 0,
@@ -26,6 +26,7 @@ $W = {
 
 	initialize: function(args) {
 		this.mobile = args['mobile'] || false
+		this.flipped = args['flipped'] || false
 		this.interface = args['interface'] || false
 		this.calibrated = args['calibrated'] || false
 		if (args['height']) {

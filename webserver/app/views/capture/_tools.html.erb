@@ -12,8 +12,6 @@
 			<input data-theme="a" type="checkbox" name="geotag-toggle" id="geotag-toggle" type="checkbox" />
 			<label for="rgb-toggle">RGB</label>
 			<input data-theme="a" type="checkbox" name="rgb-toggle" id="rgb-toggle" onChange="$W.toggle_mode()" />
-			<label for="flip-toggle">Autoflip</label>
-			<input checked=true data-theme="a" type="checkbox" name="flip-toggle" id="flip-toggle" onChange="$W.toggle_flip()" />
 		</fieldset>
 	</div>
 	<div data-role="collapsible-set" style="padding:8px;">
@@ -22,6 +20,7 @@
 			<a data-role="button" data-theme="a" onClick="$W.mark()">Mark wavelength</a>
 			<a data-role="button" data-theme="a" href="#search">Compare</a>
 			<a data-role="button" data-theme="a" href="#macros">Macros</a>
+			<a data-role="button" data-theme="a" onClick="$W.flipped = !$W.flipped">Flip video horizontally</a>
 		</div>
 	</div>
 
