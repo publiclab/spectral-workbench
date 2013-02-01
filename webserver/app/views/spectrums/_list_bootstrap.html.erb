@@ -8,7 +8,6 @@
       <h4><a data-transition="slide" href="/spectra/show/<%= spectrum.id %>"><%=h truncate(spectrum.title,:length => 18) %></a></h4>
       <p><a data-transition="slide" href="/profile/<%=h spectrum.author %>"><%=h spectrum.author %></a> | <%= time_ago_in_words(spectrum.created_at) %> ago</p>
     </div>
-    <hr class="display-phone" />
     <% if ((i+1)/4.0).to_i == ((i+1)/4.0) %>
     </div>
     <hr class="hidden-phone" style="clear:both;"/>
