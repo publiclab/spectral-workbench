@@ -114,7 +114,7 @@ class SpectrumsController < ApplicationController
 
     respond_to do |format|
       format.html { # new.html.erb 
-        render :template => "spectrums/new-mobile.html.erb", :layout => "bootstrap"
+        render :layout => "bootstrap"
       }
       format.xml  { render :xml => @spectrum }
     end
@@ -204,7 +204,9 @@ class SpectrumsController < ApplicationController
               @spectrum.lon = params[:lon]
             end
 
-            @spectrum.correct_reversed_image
+            if current_user.last_calibration && params[:upload] # i.e. it's a static image upload
+              @spectrum.correct_reversed_image if current_user.last_calibration.is_flipped
+            end
             @spectrum.save!
 
             flash[:notice] = 'Spectrum was successfully created.'
