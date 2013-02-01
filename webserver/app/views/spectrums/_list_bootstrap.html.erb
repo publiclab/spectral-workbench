@@ -3,13 +3,15 @@
 <div class="_row">
   <% @spectrums.each_with_index do |spectrum,i| %>
     <div class="span3 clearfix">
-      <a class="image" href="/spectra/show/<%= spectrum.id %>"><img src="<%= spectrum.photo.url(:thumb) %>" class="image" style="background:#ccc;"></a>
+      <a class="image hidden-phone" href="/spectra/show/<%= spectrum.id %>"><img src="<%= spectrum.photo.url(:thumb) %>" class="image" style="background:#ccc;"></a>
+      <a class="image visible-phone" style="float:left;width:50%;margin-right:10px;" href="/spectra/show/<%= spectrum.id %>"><img src="<%= spectrum.photo.url(:thumb) %>" class="image" style="background:#ccc;"></a>
       <h4><a data-transition="slide" href="/spectra/show/<%= spectrum.id %>"><%=h truncate(spectrum.title,:length => 18) %></a></h4>
       <p><a data-transition="slide" href="/profile/<%=h spectrum.author %>"><%=h spectrum.author %></a> | <%= time_ago_in_words(spectrum.created_at) %> ago</p>
     </div>
+    <hr class="display-phone" />
     <% if ((i+1)/4.0).to_i == ((i+1)/4.0) %>
     </div>
-    <hr style="clear:both;"/>
+    <hr class="hidden-phone" style="clear:both;"/>
     <div class="_row">
     <% end %>
   <% end %>
