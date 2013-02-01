@@ -204,9 +204,11 @@ class SpectrumsController < ApplicationController
               @spectrum.lon = params[:lon]
             end
 
-            if current_user.last_calibration && params[:upload] # i.e. it's a static image upload
-              @spectrum.correct_reversed_image if current_user.last_calibration.is_flipped
-            end
+            # Attempt to save user time by seeing if most recent calibration had to be flipped, 
+            # and trying to correct current upload similarly. Poorly implemented. 
+            #if current_user.last_calibration && params[:upload] # i.e. it's a static image upload
+              #@spectrum.correct_reversed_image if current_user.last_calibration.is_flipped
+            #end
             @spectrum.save!
 
             flash[:notice] = 'Spectrum was successfully created.'
