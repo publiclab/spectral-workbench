@@ -3,11 +3,16 @@ class UsersController < ApplicationController
   include AuthenticatedSystem
 
   def dashboard
-    @spectrums = Spectrum.find(:all,:order => "created_at DESC", :conditions => ["author != 'anonymous'"])
-    @spectrums = @spectrums.paginate :page => params[:page], :per_page => 24
-    @sets = SpectraSet.find(:all,:limit => 4,:order => "created_at DESC")
-    @comments = current_user.received_comments[0..5]
-    render :layout => "bootstrap"
+    if logged_in?
+      @spectrums = Spectrum.find(:all,:order => "created_at DESC", :conditions => ["author != 'anonymous'"])
+      @spectrums = @spectrums.paginate :page => params[:page], :per_page => 24
+      @sets = SpectraSet.find(:all,:limit => 4,:order => "created_at DESC")
+      @comments = current_user.received_comments[0..5]
+      render :layout => "bootstrap"
+    else
+      flash[:error] = "You must be logged in to view your dashboard."
+      redirect_to "/login"
+    end
   end
 
   # render new.rhtml
