@@ -87,9 +87,16 @@
 
     <div class="span9">
       <% if logged_in? && current_user.login == @spectrum.author %>
-        <div class="btn-group pull-right" style="margin-top:10px;">
+        <div class="btn-group pull-right" style="margin-top:10px;margin-left:10px;">
           <a class="btn btn-small" href="/spectrums/<%= @spectrum.id %>/edit"><i class="icon icon-pencil"></i> Edit</a>
           <%= link_to '<i class="icon icon-remove-sign"></i> Delete', "/spectrums/destroy/"+@spectrum.id.to_s, :confirm => 'Are you sure?', :class => "btn btn-small" %>
+        </div>
+      <% end %>
+
+      <% if logged_in? && current_user.login != @spectrum.author %>
+        <div style="margin-top:10px;margin-left:10px;" class="pull-right btn-group"> 
+          <a class="btn btn-small"><i class="icon icon-star"></i> Liked <%= @spectrum.likes.length %> times</a>
+          <a class="btn btn-small" href="#" onClick="$W.like(<%= @spectrum.id %>)"><i class="icon icon-star-empty"></i> Like</a>
         </div>
       <% end %>
 

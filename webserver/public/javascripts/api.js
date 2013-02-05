@@ -11,3 +11,13 @@ $W.calibrate = function(id,x1,w1,x2,w2) {
 		})
 	}
 }
+
+$W.like = function(id) {
+	$.ajax({
+			url: "/likes/create/"+id,
+			type: "GET",
+			success: function(result) {
+				$W.notify('You liked this spectrum.')
+			}
+		})
+}
