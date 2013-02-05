@@ -93,12 +93,16 @@
         </div>
       <% end %>
 
-      <% if logged_in? && current_user.login != @spectrum.author %>
         <div style="margin-top:10px;margin-left:10px;" class="pull-right btn-group"> 
-          <a class="btn btn-small"><i class="icon icon-star"></i> Liked <%= @spectrum.likes.length %> times</a>
-          <a class="btn btn-small" href="#" onClick="$W.like(<%= @spectrum.id %>)"><i class="icon icon-star-empty"></i> Like</a>
+          <a <% if !logged_in? %>rel="tooltip" title="Log in first!" <% end %>class="btn btn-small"><i class="icon icon-star"></i> <span id="liked"><%= @spectrum.like_count %></span> like<% if @spectrum.like_count > 1 %>s<% end %></a>
+          <% if logged_in? && current_user.login != @spectrum.author %>
+          <a id="likebtn" class="btn btn-small" href="#" onClick="$W.toggle_like(<%= @spectrum.id %>)"><i class="icon icon-star-empty"></i> 
+            <span id="likeaction">
+            <% if @spectrum.liked_by(current_user.id) %>Unlike<% else %> Like<% end %>
+            </span>
+          </a>
+          <% end %>
         </div>
-      <% end %>
 
       <div id="share" class="pull-right" style="margin-top:14px;"> 
         <div class="fb-like" data-send="false" data-layout="button_count" data-width="50" data-show-faces="false" style="vertical-align:top;zoom:1;*display:inline"></div>

@@ -17,6 +17,7 @@ ActionController::Routing::Routes.draw do |map|
   map.profile '/profile', :controller => 'users', :action => 'profile'
   map.profile '/profile/:id', :controller => 'users', :action => 'profile'
   map.dashboard '/dashboard', :controller => 'users', :action => 'dashboard'
+  map.popular '/popular', :controller => 'likes', :action => 'index'
   map.comments '/comments', :controller => 'comments', :action => 'index'
 
   map.open_id_complete '/session', :controller => "session", :action => "create", :conditions => { :method => :get }

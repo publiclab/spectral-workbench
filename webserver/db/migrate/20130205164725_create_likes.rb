@@ -7,9 +7,11 @@ class CreateLikes < ActiveRecord::Migration
 
       t.timestamps
     end
+    add_column :spectrums, :like_count, :integer, :default => 0, :null => false
   end
 
   def self.down
     drop_table "likes"
+    remove_column :spectrums, :like_count
   end
 end

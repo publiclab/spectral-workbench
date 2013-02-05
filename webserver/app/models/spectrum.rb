@@ -324,8 +324,8 @@ class Spectrum < ActiveRecord::Base
     d['lines'][0]['wavelength'] > d['lines'][d['lines'].length-1]['wavelength']
   end
 
-  def liked_by(id)
-    Like.find_by_user_id(current_user.id,:conditions => {:spectrum_id => id}) 
+  def liked_by(user_id)
+    Like.find_by_user_id(user_id,:conditions => {:spectrum_id => self.id}) 
   end
 
 end
