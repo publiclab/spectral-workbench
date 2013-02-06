@@ -4,6 +4,10 @@ class SpectrumsController < ApplicationController
   # http://api.rubyonrails.org/classes/ActionController/RequestForgeryProtection/ClassMethods.html
   # create and update are protected by recaptcha
 
+  def test
+    render :text => "Geometry:"+`identify -format %wx%h public/images/logo.png`
+  end
+
   # GET /spectrums
   # GET /spectrums.xml
   def index
