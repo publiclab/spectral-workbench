@@ -8,6 +8,7 @@ class Spectrum < ActiveRecord::Base
         validates_format_of :author, :with => /\A\w[\w\.\-_@]+\z/, :message => "Only letters, numbers, hyphens and periods allowed"
 
 	has_many :comments, :dependent => :destroy
+	has_many :likes, :dependent => :destroy
 	has_many :tags, :dependent => :destroy
 	
 	# Paperclip
@@ -321,6 +322,10 @@ class Spectrum < ActiveRecord::Base
   def is_flipped
     d = ActiveSupport::JSON.decode(self.data)
     d['lines'][0]['wavelength'] > d['lines'][d['lines'].length-1]['wavelength']
+  end
+
+  def liked_by(user_id)
+    Like.find_by_user_id(user_id,:conditions => {:spectrum_id => self.id}) 
   end
 
 end
