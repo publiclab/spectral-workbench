@@ -2,6 +2,12 @@ class UsersController < ApplicationController
   # Be sure to include AuthenticationSystem in Application Controller instead
   include AuthenticatedSystem
 
+  def mail
+    UserMailer.deliver_direct_message(current_user,"Hello world!")
+    flash[:notice] = "Sent successfully."
+    redirect_to "/dashboard"
+  end
+
   def dashboard
     if logged_in?
       @spectrums = Spectrum.find(:all,:order => "created_at DESC", :conditions => ["author != 'anonymous'"])

@@ -94,7 +94,7 @@
       <% end %>
 
         <div style="margin-top:10px;margin-left:10px;" class="pull-right btn-group"> 
-          <a <% if !logged_in? %>rel="tooltip" title="Log in first!" <% end %>class="btn btn-small"><i class="icon icon-star"></i> <span id="liked"><%= @spectrum.like_count %></span> like<% if @spectrum.like_count > 1 %>s<% end %></a>
+          <a <% if !logged_in? %>rel="tooltip" title="Log in first!" <% end %>class="btn btn-small"><i class="icon icon-star"></i> <span id="liked"><%= @spectrum.like_count %></span> like<% if @spectrum.like_count != 1 %>s<% end %></a>
           <% if logged_in? && current_user.login != @spectrum.author %>
           <a id="likebtn" class="btn btn-small" href="#" onClick="$W.toggle_like(<%= @spectrum.id %>)"><i class="icon icon-star-empty"></i> 
             <span id="likeaction">
