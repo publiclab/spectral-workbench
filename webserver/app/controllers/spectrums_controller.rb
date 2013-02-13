@@ -4,17 +4,21 @@ class SpectrumsController < ApplicationController
   # http://api.rubyonrails.org/classes/ActionController/RequestForgeryProtection/ClassMethods.html
   # create and update are protected by recaptcha
 
+  def test
+    render :text => "Geometry:"+`identify -format %wx%h public/images/logo.png`
+  end
+
   # GET /spectrums
   # GET /spectrums.xml
   def index
     if logged_in?
       redirect_to "/dashboard"
     else
-      @spectrums = Spectrum.find(:all,:order => "created_at DESC", :conditions => ["author != 'anonymous'"])
+      @spectrums = Spectrum.find(:all,:order => "created_at DESC", :conditions => ["author != 'anonymous'"], :limit => 100)
       @spectrums = @spectrums.paginate :page => params[:page], :per_page => 24
 
-      @anon_spectrums = Spectrum.find(:all,:order => "created_at DESC", :conditions => {:author => "anonymous"})
-      @anon_spectrums = @anon_spectrums.paginate :page => params[:page], :per_page => 4
+#      @anon_spectrums = Spectrum.find(:all,:order => "created_at DESC", :conditions => {:author => "anonymous"})
+#      @anon_spectrums = @anon_spectrums.paginate :page => params[:page], :per_page => 4
       @sets = SpectraSet.find(:all,:limit => 4,:order => "created_at DESC")
       @comments = Comment.all :limit => 12, :order => "id DESC"
 
