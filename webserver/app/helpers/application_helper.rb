@@ -16,15 +16,15 @@ module ApplicationHelper
   end
 
   def ios?
-    (request.env['HTTP_USER_AGENT'].match("iPad") || request.env['HTTP_USER_AGENT'].match("iPhone") || params[:ios] == "true")
+    request.env['HTTP_USER_AGENT'] && (request.env['HTTP_USER_AGENT'].match("iPad") || request.env['HTTP_USER_AGENT'].match("iPhone") || params[:ios] == "true")
   end
 
   def opera?
-    request.env['HTTP_USER_AGENT'].match("Opera")
+    request.env['HTTP_USER_AGENT'] && request.env['HTTP_USER_AGENT'].match("Opera")
   end
 
   def mobile?
-    request.env['HTTP_USER_AGENT'].match("Mobi")
+    request.env['HTTP_USER_AGENT'] && request.env['HTTP_USER_AGENT'].match("Mobi")
   end
 
 end

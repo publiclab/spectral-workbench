@@ -1,4 +1,10 @@
-<%= @user.login %>, hi!
+<%= @user.login %>, <%= @author.login %> has sent you a message: 
 
-This is a test message.
+------------------------------------
+
+<%= @body %> 
+
+------------------------------------
+See <%= @author.login %>'s profile and respond at: http://spectralworkbench.org/profile/<%= @author.login %>
+Please report spam or abuse to web@publiclaboratory.org
 

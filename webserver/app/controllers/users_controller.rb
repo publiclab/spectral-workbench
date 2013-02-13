@@ -2,10 +2,16 @@ class UsersController < ApplicationController
   # Be sure to include AuthenticationSystem in Application Controller instead
   include AuthenticatedSystem
 
-  def mail
-    UserMailer.deliver_direct_message(current_user,"Hello world!")
-    flash[:notice] = "Sent successfully."
-    redirect_to "/dashboard"
+  def message
+    @user = User.find params[:user_id]
+    if logged_in? && @user
+      UserMailer.deliver_direct_message(@user,current_user,params[:title],params[:body])
+      flash[:notice] = "Sent successfully."
+      redirect_to "/dashboard"
+    else
+      flash[:error] = "You must be logged in to message users."
+      redirect_to "/login"
+    end
   end
 
   def dashboard

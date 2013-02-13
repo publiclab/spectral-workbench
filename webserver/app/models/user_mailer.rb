@@ -1,17 +1,10 @@
 class UserMailer < ActionMailer::Base
 
-  def direct_message(user,title)
+  def direct_message(user,author,title,body)
     recipients  user.email
     from        "site@spectralworkbench.org"
-    subject     title
-    body        :user => user
-  end
-
-  def email(email,title,body)
-    recipients  email
-    from        "site@spectralworkbench.org"
-    subject     title
-    body        body
+    subject     "[SpectralWorkbench] "+title
+    body        :user => user, :body => body, :author => author
   end
 
 end

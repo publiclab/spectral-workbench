@@ -8,6 +8,19 @@
   <div class="span4">
     <%= render :partial => 'spectrums/search' %>
 
+    <% if logged_in? && current_user.role == "admin" %>
+    <hr />
+    <div class="container">
+      <h4>Send a direct message:</h4>
+      <form class="form" action="/message">
+        <input type="hidden" name="user_id" value="<%= @user.id %>" />
+        <input placeholder="Title" type="text" name="title" /><br />
+        <textarea placeholder="Message" name="body"></textarea><br />
+        <button type="submit" class="btn">Send</button>
+      </form>
+    </div>
+    <% end %>
+
     <div class="container" style="padding-left:10px;">
       <% if logged_in? && current_user.role == "admin" %>
         <br />

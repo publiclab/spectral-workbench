@@ -35,7 +35,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :spectra_sets
   map.resources :comments, :belongs_to => :spectrums
 
-  map.connect 'mail', :controller => "users", :action => "mail"
+  map.connect 'message', :controller => "users", :action => "message"
 
   map.connect 'test', :controller => "spectrums", :action => "test"
   map.connect 'spectra/feed', :controller => "spectrums", :action => "rss"
