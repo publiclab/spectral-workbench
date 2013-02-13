@@ -8,11 +8,12 @@
   <div class="span4">
     <%= render :partial => 'spectrums/search' %>
 
-    <% if logged_in? && current_user.role == "admin" %>
+    <% if logged_in? %> 
     <hr />
     <div class="container">
       <h4>Send a direct message:</h4>
-      <form class="form" action="/message">
+      <form method="post" class="form" action="/message">
+        <input type='hidden' name='authenticity_token' value="<%= form_authenticity_token %>"/>
         <input type="hidden" name="user_id" value="<%= @user.id %>" />
         <input placeholder="Title" type="text" name="title" /><br />
         <textarea placeholder="Message" name="body"></textarea><br />

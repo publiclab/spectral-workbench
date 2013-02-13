@@ -4,7 +4,7 @@ class UserMailer < ActionMailer::Base
     recipients  user.email
     from        "site@spectralworkbench.org"
     subject     "[SpectralWorkbench] "+title
-    body        :user => user, :body => body, :author => author
+    body(        {:user => user, :body => body, :author => author})
   end
 
 end
