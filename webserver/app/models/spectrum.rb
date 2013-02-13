@@ -141,6 +141,7 @@ class Spectrum < ActiveRecord::Base
   end
 
   def calibrate(x1,wavelength1,x2,wavelength2)
+    self.extract_data
     d = ActiveSupport::JSON.decode(self.data)
     i = 0 
     stepsize = ((wavelength2.to_f-wavelength1.to_f)*1.00/(x2.to_f-x1.to_f))
