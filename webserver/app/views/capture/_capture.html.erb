@@ -1,6 +1,15 @@
 <div data-role="page" id="capture" data-theme="a">
 <div data-theme="a" data-role="header">
-	<% if logged_in? && current_user.calibrations.length == 0 %><span style="float:right;padding:14px;font-size:14px;font-weight:normal;">To calibrate, <a href="http://publiclaboratory.org/wiki/spectral-workbench-calibration" target="_blank">save a CFL spectrum</a>.</span><% end %>
+	<style>
+		.topbar {
+			float:right;
+			padding:14px;
+			font-size:14px;
+			font-weight:normal;
+		}
+	</style>
+	<% if logged_in? && current_user.calibrations.length == 0 %><span class="topbar">To calibrate, <a href="http://publiclaboratory.org/wiki/spectral-workbench-calibration" target="_blank">save a CFL spectrum</a>.</span><% end %>
+	<span style="color:#aaa;" class="topbar" id="readout"></span>
 	<h3 class="header" style="text-align:left;margin-left:15px;">
 		<img src="/images/spectralworkbench.png" /> 
 		<a style="margin-left:3px;color:white;text-decoration:none;" id="home" data-theme="b" href="/" target="_blank">SpectralWorkbench</a>

@@ -494,7 +494,7 @@ $W = {
          * Returns a canvas object of any rect from the offered canvas
          */
         excerptCanvas: function(x1,y1,x2,y2,source) {
-                source = source || $C
+                source = source || $W.canvas
                 var width = x2-x1, height = y2-y1
                 if ($('#excerptCanvas').length == 0) {
 			$('body').append("<canvas style='display:none;' id='excerptCanvas'></canvas>")
