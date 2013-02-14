@@ -291,8 +291,7 @@ class SpectrumsController < ApplicationController
     @comment.author = current_user.login if logged_in?
     @comment.email = current_user.email if logged_in?
     if (logged_in? || APP_CONFIG["local"] || verify_recaptcha(:model => @comment, :message => "ReCAPTCHA thinks you're not a human!")) && @comment.save
-      # testing only now
-      UserMailer.deliver_comment_notification(@spectrum,@comment,User.find(@spectrum.user_id)) if current_user.role == "admin" # && current_user.id != @spectrum.user_id
+      UserMailer.deliver_comment_notification(@spectrum,@comment,User.find(@spectrum.user_id)) && current_user.id != @spectrum.user_id
       flash[:notice] = "Comment saved."
       redirect_to "/spectra/"+params[:id]+"#comment_"+@comment.id.to_s unless params[:goto] == "analyze"
       redirect_to "/analyze/spectrum/"+params[:id]+"#comment_"+@comment.id.to_s if params[:goto] == "analyze"
