@@ -123,7 +123,7 @@
       <div class="comment">
         <a name="comment_<%= comment.id %>"></a>
         <b><%= time_ago_in_words(comment.created_at) %> ago, 
-        <% if User.find_by_login(comment.author) %><a href="/spectra/author/<%= comment.author %>"><%= comment.author %></a> wrote:</b>
+        <% if User.find_by_login(comment.author) %><a href="/profile/<%= comment.author %>"><%= comment.author %></a> wrote:</b>
         <% else %><%=h comment.author %> wrote:</b>
         <% end %>
         <p><%=h comment.body %></p>

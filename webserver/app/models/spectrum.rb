@@ -329,4 +329,25 @@ class Spectrum < ActiveRecord::Base
     Like.find_by_user_id(user_id,:conditions => {:spectrum_id => self.id}) 
   end
 
+  # notify each commenter about a new comment 
+  def notify_commenters(new_comment,current_user)
+    emails = []
+    self.comments.each do |comment|
+      if comment != new_comment && (!current_user || (comment.author != current_user.login)) && comment.author != self.author
+        emails << comment.email
+      end
+    end
+    # send for every commenter, whether they are a registered user or not...
+    emails.uniq.each do |email|
+      registered_commenter = User.find_by_email(email)
+      if (registered_commenter)
+        UserMailer.deliver_commenter_notification(self,new_comment,registered_commenter)
+      else
+        UserMailer.deliver_unregistered_commenter_notification(self,new_comment,email)
+      end
+    end
+  end
+
 end
+
+

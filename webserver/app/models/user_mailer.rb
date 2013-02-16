@@ -11,8 +11,24 @@ class UserMailer < ActionMailer::Base
   def comment_notification(spectrum,comment,spectrum_author)
     recipients  spectrum_author.email
     from        "do-not-reply@spectralworkbench.org"
-    subject     "[SpectralWorkbench] "+comment.author+" commented on your data"
-    body(        {:user => comment.author, :body => comment.body, :author => comment.author, :spectrum => spectrum})
+    subject     "[SpectralWorkbench] "+comment.author+" commented on your Spectrum #"+spectrum.id.to_s+': "'+spectrum.title+'"'
+    body(        {:user => spectrum.author, :comment => comment, :spectrum => spectrum})
+  end
+
+  # we can change spectrum_author when we get rid of the "author" field in @spectrums
+  def commenter_notification(spectrum,comment,old_commenter)
+    recipients  old_commenter.email
+    from        "do-not-reply@spectralworkbench.org"
+    subject     "[SpectralWorkbench] "+comment.author+" commented on Spectrum #"+spectrum.id.to_s+': "'+spectrum.title+'"'
+    body(        {:user => old_commenter.login, :comment => comment})
+  end
+
+  # we can change spectrum_author when we get rid of the "author" field in @spectrums
+  def unregistered_commenter_notification(spectrum,comment,email)
+    recipients  email
+    from        "do-not-reply@spectralworkbench.org"
+    subject     "[SpectralWorkbench] "+comment.author+" commented on Spectrum #"+spectrum.id.to_s+': "'+spectrum.title+'"'
+    body(        {:comment => comment})
   end
 
 end

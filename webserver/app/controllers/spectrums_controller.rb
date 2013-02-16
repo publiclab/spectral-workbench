@@ -186,7 +186,7 @@ class SpectrumsController < ApplicationController
             else
               format.html { render :text => @spectrum.id.to_s+"?login=true&client_code="+client+"::"+uniq_id} # <== here, also offer a unique code or pass client_id so that we can persist login
             end
-          else
+          else # not java client
 
             if mobile? || ios?
               @spectrum.save
@@ -291,7 +291,9 @@ class SpectrumsController < ApplicationController
     @comment.author = current_user.login if logged_in?
     @comment.email = current_user.email if logged_in?
     if (logged_in? || APP_CONFIG["local"] || verify_recaptcha(:model => @comment, :message => "ReCAPTCHA thinks you're not a human!")) && @comment.save
-      UserMailer.deliver_comment_notification(@spectrum,@comment,User.find(@spectrum.user_id)) && current_user.id != @spectrum.user_id
+      UserMailer.deliver_comment_notification(@spectrum,@comment,User.find(@spectrum.user_id)) if (!logged_in? || current_user.id != @spectrum.user_id)
+      @spectrum.notify_commenters(@comment,current_user) if logged_in?
+      @spectrum.notify_commenters(@comment,false) unless logged_in?
       flash[:notice] = "Comment saved."
       redirect_to "/spectra/"+params[:id]+"#comment_"+@comment.id.to_s unless params[:goto] == "analyze"
       redirect_to "/analyze/spectrum/"+params[:id]+"#comment_"+@comment.id.to_s if params[:goto] == "analyze"
