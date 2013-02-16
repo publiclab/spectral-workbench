@@ -1,7 +1,40 @@
 <script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.flot.js"></script> 
 <script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.flot.crosshair.js"></script>
 
-  <div style="margin-left:20px;width:95%;height:160px;" id="graph"></div>
+<div style="margin-left:10px;">
+  <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.4/leaflet.css" />
+  <!--[if lte IE 8]>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.4/leaflet.ie.css" />
+  <![endif]-->
+  <script src="http://cdn.leafletjs.com/leaflet-0.4/leaflet.js"></script>
+
+  <ul class="nav nav-tabs">
+    <li class="active"><a data-toggle="tab" href="#graph">Graph</a></li>
+    <li><a data-toggle="tab" href="#map_box" onClick="setTimeout(init_map,1000);is_initialized = true;"><i class="icon icon-globe"></i> Map (<span id="mapcount">0</span>)</a></li>
+  </ul>
+
+  <div class="tab-content">
+    <div id="map_box" class="tab-pane">
+      <div class="span12" style="height:400px;" id="map"></div>
+  <script>
+    is_initialized = false
+    init_map = function(){
+    var map = L.map('map').setView([0,20], 2);
+    L.tileLayer("http://a.tiles.mapbox.com/v3/jywarren.map-lmrwb2em/{z}/{x}/{y}.png").addTo(map)
+
+    <% geolocated = 0 %>
+    <% @spectrums.each do |spectrum| %><% if spectrum.lat != 0 %>L.marker([<%= spectrum.lat %>, <%= spectrum.lon %>]).addTo(map).bindPopup("<a href='/analyze/spectrum/<%= spectrum.id %>'><%= spectrum.title %></a>");<% geolocated += 1 %><% end %><% end %>
+    }
+    $('#mapcount').html("<%= geolocated.to_s %>")
+  </script>
+
+    </div>
+
+    <div class="tab-pane" style="margin-left:20px;width:95%;height:160px;" id="graph"></div>
+  </div>
+
+</div>
+
   <h2 style="margin-left:10px;">Spectra tagged with "<%=h params[:id] %>"<% if @tag %> (<%= @count %>)<% end %></h2>
 
   <% if @tag %>
