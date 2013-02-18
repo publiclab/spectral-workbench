@@ -58,10 +58,11 @@ class SpectrumsController < ApplicationController
       format.xml  { render :xml => @spectrum }
       format.csv  { 
         if params[:raw]
-          render :template => "spectrums/raw.csv.erb" }
+          render :template => "spectrums/raw.csv.erb" 
         else
-          render :template => "spectrums/show.csv.erb" }
+          render :template => "spectrums/show.csv.erb" 
         end
+      }
       format.json  { render :json => @spectrum }
     end
   end

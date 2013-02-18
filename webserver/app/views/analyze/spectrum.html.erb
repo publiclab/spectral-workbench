@@ -44,7 +44,7 @@
 
   </div>
   <div class="row-fluid">
-    <div class="span3">
+    <div class="span4">
       <h3 style="margin-bottom:0px;"><%= @spectrum.title %></h3>
       <p>uploaded by <a href="/profile/<%= @spectrum.author %>"><%= @spectrum.author %></a></p>
       <% if @spectrum.lat != 0 && @spectrum.lon != 0 %><p>Collected at: Lat: <%= @spectrum.lat %>, Lon: <%= @spectrum.lon %> (<a href="http://www.openstreetmap.org/?lat=<%= @spectrum.lat %>&lon=<%= @spectrum.lon %>&zoom=10&layers=M">View in OpenStreetMap</a>)</p><% end %>
@@ -63,6 +63,7 @@
         <hr />
         <a class="btn btn-small" href="/spectra/show/<%= @spectrum.id %>.json"><b>JSON</b></a>
         <a class="btn btn-small" href="/spectra/show/<%= @spectrum.id %>.csv"><b>CSV</b></a>
+        <a class="btn btn-small" href="/spectra/show/<%= @spectrum.id %>.csv?raw=true"><b>CSV (raw)</b></a>
         <a class="btn btn-small" href="/spectra/show/<%= @spectrum.id %>.xml"><b>XML</b></a>
         <a rel="tooltip" class="btn btn-small" href="http://publiclaboratory.org/wiki/spectral-workbench-exporting" title="About export formats"><i class="icon icon-question-sign"></i></a> 
       </div>
@@ -85,7 +86,7 @@
       </div>
     </div>
 
-    <div class="span9">
+    <div class="span8">
       <% if logged_in? && current_user.login == @spectrum.author %>
         <div class="btn-group pull-right" style="margin-top:10px;margin-left:10px;">
           <a class="btn btn-small" href="/spectrums/<%= @spectrum.id %>/edit"><i class="icon icon-pencil"></i> Edit</a>
