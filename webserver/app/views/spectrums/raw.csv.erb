@@ -1,4 +1,4 @@
-Wavelength,Average
+Wavelength,Average,Red,Green,Blue
 <%
 
 data = JSON.parse(@spectrum.data.gsub("'",'"'))['lines']
@@ -7,6 +7,9 @@ data.each do |datum|
 
 w = datum['wavelength'].to_s[0..6]
 a = datum['average'].to_s[0..3]
+r = datum['r']
+g = datum['g']
+b = datum['b']
 
-%><%= w %>,<%= a %>
+%><%= w %>,<%= a %>,<%= r %>,<%= g %>,<%= b %>
 <% end %>

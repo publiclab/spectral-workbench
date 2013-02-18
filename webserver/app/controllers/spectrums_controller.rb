@@ -56,7 +56,12 @@ class SpectrumsController < ApplicationController
           redirect_to "/analyze/spectrum/"+@spectrum.id.to_s
       } # show.html.erb
       format.xml  { render :xml => @spectrum }
-      format.csv  { render :template => "spectrums/show.csv.erb" }
+      format.csv  { 
+        if params[:raw]
+          render :template => "spectrums/raw.csv.erb" }
+        else
+          render :template => "spectrums/show.csv.erb" }
+        end
       format.json  { render :json => @spectrum }
     end
   end
