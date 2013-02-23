@@ -116,7 +116,7 @@ class Spectrum < ActiveRecord::Base
     end
 
     # save it internally
-    s = "{name:'"+self.title+"',lines: ["
+    s = "{name:'"+self.title.gsub("'","\\\\'")+"',lines: ["
     s += pixels.join(',')
     s += "]}"
     self.data = s

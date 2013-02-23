@@ -301,10 +301,9 @@ class SpectrumsController < ApplicationController
       @spectrum.notify_commenters(@comment,current_user) if logged_in?
       @spectrum.notify_commenters(@comment,false) unless logged_in?
       flash[:notice] = "Comment saved."
-      redirect_to "/spectra/"+params[:id]+"#comment_"+@comment.id.to_s unless params[:goto] == "analyze"
-      redirect_to "/analyze/spectrum/"+params[:id]+"#comment_"+@comment.id.to_s if params[:goto] == "analyze"
+      redirect_to "/analyze/spectrum/"+params[:id]+"#comment_"+@comment.id.to_s
     else
-      render :action => "show", :id => params[:id]
+      render :controller => "analyze", :action => "spectrum", :id => params[:id]
     end
   end
 
@@ -319,25 +318,25 @@ class SpectrumsController < ApplicationController
         tag = @spectrum.tag('calibration',current_user.id)
       end
       flash[:notice] = "Great, calibrated! <b>Next steps:</b> sign up on <a href='http://publiclaboratory.org/tool/spectrometer'>the mailing list</a>, or browse/contribute to <a href='http://publiclaboratory.org'>Public Lab website</a>"
-      redirect_to "/spectra/show/"+@spectrum.id.to_s
+      redirect_to "/analyze/spectrum/"+@spectrum.id.to_s
     else
       flash[:error] = "You must be logged in and own this spectrum to calibrate."
-      redirect_to "/spectra/show/"+@spectrum.id.to_s
+      redirect_to "/analyze/spectrum/"+@spectrum.id.to_s
     end
   end
 
   # non REST
   def extract
     @spectrum = Spectrum.find(params[:id])
-    if logged_in? && @spectrum.user_id == current_user.id
+    if logged_in? && @spectrum.user_id == current_user.id || current_user.role == "admin"
     if request.post?
       @spectrum.extract_data
       @spectrum.save
     end
-    redirect_to "/spectra/show/"+@spectrum.id.to_s
+    redirect_to "/analyze/spectrum/"+@spectrum.id.to_s
     else
       flash[:error] = "You must be logged in and own this spectrum to re-extract values."
-      redirect_back
+      redirect_to "/analyze/spectrum/"+@spectrum.id.to_s
     end
   end
 
@@ -349,7 +348,7 @@ class SpectrumsController < ApplicationController
       @spectrum.clone(params[:clone_id])
       @spectrum.save
     end
-    redirect_to "/spectra/show/"+@spectrum.id.to_s
+    redirect_to "/analyze/spectrum/"+@spectrum.id.to_s
     else
       flash[:error] = "You must be logged in and own this spectrum to clone calibrations."
       redirect_to "/login"
