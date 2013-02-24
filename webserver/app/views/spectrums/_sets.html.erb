@@ -2,7 +2,7 @@
 <% @sets.each do |set| %>
 	<div class="set pull-left">
 		<a class="graph_set" id="graph_set_<%= set.id %>" style="width:300px;height:100px;display:block;"></a>
-		<div class="text">
+		<div class="text" style="width:300px;">
 			<h3><a href="/sets/show/<%= set.id %>"><%= truncate(set.title,30) %></a></h3>
 			<p><a href="/profile/<%= set.author %>"><%= set.author %></a> | <%= set.spectra.length %> spectra | 
 				<a href="/sets/show/<%= set.id %>#comments"><i class="icon icon-comment"></i> <%= set.comments.length %></a> 
