@@ -1,11 +1,26 @@
-<div id="index">
+<script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.flot.js"></script> 
+<script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.flot.crosshair.js"></script>
+  
+<div class="container-fluid" style="clear:both;">
+  
+<div id="spectra" class="row-fluid">
 
-<%= render :partial => "spectrums/sidebar" %>
+  <div class="span4">
 
-<div id="maincolumn">
+    <%= render :partial => "spectrums/search" %>
 
-<h2>// RECENT SETS</h2>
-<%= render :partial => 'spectrums/sets' %>
+    <hr />
+  </div>
+
+  <style>._row { clear:left;} </style>
+
+  <div class="span8">
+    <h2>Recent sets <small class="hidden-phone">by contributors like you</small></h2>
+
+    <%= render :partial => 'spectrums/sets' %>
+
+    <%= will_paginate @sets %>
+  </div>
 
 </div>
-</div>
+

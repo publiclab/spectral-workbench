@@ -1,17 +1,16 @@
 <div id="sets" class="list">
 <% @sets.each do |set| %>
-	<div class="set">
+	<div class="set pull-left">
 		<a class="graph_set" id="graph_set_<%= set.id %>" style="width:300px;height:100px;display:block;"></a>
 		<div class="text">
 			<h3><a href="/sets/show/<%= set.id %>"><%= truncate(set.title,30) %></a></h3>
-			<p><a href="/profile/<%= set.author %>"><%= set.author %></a> | <%= set.spectra.length %> spectra</p>
+			<p><a href="/profile/<%= set.author %>"><%= set.author %></a> | <%= set.spectra.length %> spectra | 
+				<a href="/sets/show/<%= set.id %>#comments"><i class="icon icon-comment"></i> <%= set.comments.length %></a> 
       			<p class="notes"><%= truncate(set.notes,:length => 200) %></p>
-			<p>
-				<a href="/sets/show/<%= set.id %>#comments"><%= set.comments.length %> comments</a> 
-			</p>
 		</div>
 
 <script type="text/javascript">
+  (function(){
   data_set_<%= set.id %> = []
 
   <% set.spectra.each do |spectrum| %>
@@ -31,11 +30,8 @@
       data_set_<%= set.id %>[data_set_<%= set.id %>.length-1].data.push([line.wavelength,line.average/2.55])
     })
   <% end %>
-  flotoptions.xaxis.tickFormatter = function(nm) { return nm }
-  flotoptions.xaxis.show = true
-  flotoptions.yaxis.show = false
-  flotoptions.grid.backgroundColor = "#222"
-  $.plot($("#graph_set_<%= set.id %>"),data_set_<%= set.id %>,flotoptions);
+  $.plot($("#graph_set_<%= set.id %>"),data_set_<%= set.id %>,flotoptions_minimal);
+  })()
 </script>
 	</div>
 <% end %>

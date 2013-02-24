@@ -43,7 +43,7 @@
       </ul>
 
       <hr />
-      <h3>Recent sets</h3>
+      <h3>Recent sets <small>(<a href="/sets">View all &raquo;</a>)</small></h3>
       <%= render :partial => 'spectrums/sets' %>
 
       <hr />
@@ -52,7 +52,8 @@
 
     <div class="span8">
 
-      <h3 style="padding-top:0;">Recently uploaded spectra <small class="hidden-phone">by contributors like you</small></h3>
+      <span style="margin-top:22px;" class="pull-right"><a href="/sets"><i class="icon icon-list"></i> Sets</a> | <a href="/profile/<%= current_user.login %>"><i class="icon icon-user"></i> Your data</a></span></small>
+      <h3 style="padding-top:0;">Recent spectra <small class="hidden-phone">by contributors like you </h3>
 
       <%= render :partial => 'spectrums/list_bootstrap' %>
       <%= will_paginate @spectrums %>

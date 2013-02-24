@@ -37,36 +37,6 @@ class SpectrumsController < ApplicationController
     render :template => "spectrums/search.html.erb"
   end
 
-  # GET /spectrums/1
-  # GET /spectrums/1.xml
-  # GET /spectrums/1.json
-  def show
-    @spectrum = Spectrum.find(params[:id])
-    # eventually move this to "create" once they're all fixed:
-    if @spectrum.data == "" || @spectrum.data.nil?
-      @spectrum.extract_data 
-      @spectrum.save 
-    end
-    @comment = Comment.new
-
-    @spectrums = Spectrum.find(:all, :limit => 4, :order => "created_at DESC", :conditions => ["id != ?",@spectrum.id])
-
-    respond_to do |format|
-      format.html { 
-          redirect_to "/analyze/spectrum/"+@spectrum.id.to_s
-      } # show.html.erb
-      format.xml  { render :xml => @spectrum }
-      format.csv  { 
-        if params[:raw]
-          render :template => "spectrums/raw.csv.erb" 
-        else
-          render :template => "spectrums/show.csv.erb" 
-        end
-      }
-      format.json  { render :json => @spectrum }
-    end
-  end
-
   # non REST
   def embed
     @spectrum = Spectrum.find(params[:id])
@@ -97,6 +67,7 @@ class SpectrumsController < ApplicationController
     if params[:capture]
       render :partial => "capture/results.html.erb", :layout => false 
     else 
+      @sets = SpectraSet.find(:all, :conditions => ['title LIKE ? OR notes LIKE ?',"%"+params[:id]+"%", "%"+params[:id]+"%"],:limit => 100, :order => "id DESC")
       render :layout => "bootstrap"
     end
   end
