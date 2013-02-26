@@ -1,6 +1,6 @@
 <%
 
-data = JSON.parse(@spectrum.data.gsub("'",'"'))['lines']
+data = ActiveSupport::JSON.encode(@spectrum.data)['lines']
 
 data.each do |datum|
 
