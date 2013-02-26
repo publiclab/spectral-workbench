@@ -1,7 +1,7 @@
 Wavelength,Average,Red,Green,Blue
 <%
 
-data = ActiveSupport::JSON.encode(@spectrum.data)['lines']
+data = ActiveSupport::JSON.decode(@spectrum.data)["lines"]
 
 data.each do |datum|
 
@@ -10,6 +10,7 @@ a = datum['average'].to_s[0..3]
 r = datum['r']
 g = datum['g']
 b = datum['b']
+w = 0 if w = ""
 
 %><%= w %>,<%= a %>,<%= r %>,<%= g %>,<%= b %>
 <% end %>

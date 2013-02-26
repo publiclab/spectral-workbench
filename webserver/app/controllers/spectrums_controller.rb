@@ -194,8 +194,7 @@ class SpectrumsController < ApplicationController
 
             flash[:notice] = 'Spectrum was successfully created.'
             format.html { 
-		redirect_to :action => :show, :id => @spectrum.id unless mobile?
-		redirect_to :controller => :analyze, :action => :spectrum, :id => @spectrum.id if mobile?
+		redirect_to :controller => :analyze, :action => :spectrum, :id => @spectrum.id
 	    }
             format.xml  { render :xml => @spectrum, :status => :created, :location => @spectrum }
           end
