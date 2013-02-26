@@ -62,12 +62,11 @@
           $('#title').addClass('error')
           $('#title .help-inline').html('You must enter a title, using only letters, numbers, and spaces.')
         } else {
-         if (navigator.geolocation && $('#geotagInput').is(':checked')) {
+          if (navigator.geolocation && $('#geotagInput').is(':checked')) {
             navigator.geolocation.getCurrentPosition($W.setGeolocation)
-            return true
-          } else {
-            $('#upload').submit()
           }
+          $('#uploadBtn').button('loading')
+          $('#upload').submit()
         } 
       }
     })()
@@ -83,7 +82,7 @@
   <br />
 
   <input type='hidden' name='authenticity_token' value="<%= form_authenticity_token %>"/>
-  <a href="#" class="btn btn-primary btn-large" onClick="$W.save()" style="margin-right:10px;">Upload</a>
+  <a href="javascript:void();" data-loading-text="Saving..." id="uploadBtn" class="btn btn-primary btn-large" onClick="$W.save()" style="margin-right:10px;">Upload</a>
 
   <input name="upload" type="hidden" id="upload" value="true" />
   <input name="geotag" type="hidden" id="geotag" />

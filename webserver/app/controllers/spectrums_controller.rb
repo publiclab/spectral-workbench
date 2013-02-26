@@ -448,4 +448,8 @@ class SpectrumsController < ApplicationController
     redirect_to "/analyze/spectrum/"+@spectrum.id.to_s
   end
 
+  def show
+    redirect_to "/analyze/spectrum/"+params[:id]
+  end
+
 end

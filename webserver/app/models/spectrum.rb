@@ -204,7 +204,8 @@ class Spectrum < ActiveRecord::Base
   # this is embarassing 
   # someday rewrite with a join table
   def sets
-    SpectraSet.find(:all, :conditions => ["spectra_string = '?' OR spectra_string LIKE '%,?,%' OR spectra_string LIKE '%,?' OR spectra_string LIKE '?,%'",self.id,self.id,self.id,self.id])
+    s = SpectraSet.find(:all, :conditions => ["spectra_string = '?' OR spectra_string LIKE '%,?,%' OR spectra_string LIKE '%,?' OR spectra_string LIKE '?,%'",self.id,self.id,self.id,self.id])
+    s = s || []
   end
 
   def image_from_dataurl(data)
