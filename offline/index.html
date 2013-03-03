@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<!-- saved from url=(0036)http://spectralworkbench.org/capture -->
+<html class="splitview ui-mobile"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><!--<base href="http://spectralworkbench.org/capture">--><base href=".">
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>SpectralWorkbench</title>
+        
+        <!--<link rel="stylesheet" href="/stylesheets/jquery.mobile-1.1.0.min.css" />-->
+		<link rel="stylesheet" href="http://spectralworkbench.org/stylesheets/jquery.mobile.splitview-compiled.css">
+		<link rel="stylesheet" href="http://spectralworkbench.org/stylesheets/jquery.mobile.splitview.css">
+		<link rel="stylesheet" href="http://spectralworkbench.org/stylesheets/jquery.mobile.grids.collapsible.css">
+		<!--<link rel="stylesheet" href="/stylesheets/jquery.mobile.structure.splitview-compiled.css" />-->
+        <link rel="stylesheet" href="http://spectralworkbench.org/stylesheets/mobile.css">
+	<script type="text/javascript" async="" src="./index_files/ga.js"></script><script src="./index_files/getUserMedia.js"> </script>
+        <script src="./index_files/jquery.min.js"> </script>
+	<script src="./index_files/capture.js"> </script>
+		<script src="./index_files/jquery.mobile.splitview.js"> </script>
+        <script>
+          $(document).bind("mobileinit", function(){
+            // disable ajax nav
+            $.mobile.ajaxEnabled = false;
+          });
+        </script>
+		<script src="./index_files/jquery.mobile.splitview-compiled.js"> </script>
+		<script src="./index_files/iscroll-wrapper.js"> </script>
+		<script src="./index_files/iscroll.js"> </script>
+        <!--<script src="/javascripts/jquery.mobile-1.1.0.min.js"></script>-->
+	<!--<script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.js"></script>-->
+	<script language="javascript" type="text/javascript" src="./index_files/jquery.flot.js"></script> 
+	<script language="javascript" type="text/javascript" src="./index_files/jquery.flot.crosshair.js"></script>
+	<script language="javascript" type="text/javascript" src="./index_files/jquery.flot.threshold.min.js"></script>
+	<script src="./index_files/application.js" type="text/javascript"></script>
+    </head>
+    <body>
+    <style>
+
+.content {
+	background:#444;
+	color:#eee;
+}
+
+</style>
+<script>
+
+flotoptions.grid = {
+		clickable: true,
+		hoverable:true,
+		borderWidth: 0,
+		color: "#ccc",
+	        backgroundColor: "#111"
+}
+flotoptions.colors = [ "#ccc", "#E02130", "#FAB243", "#429867", "#2B5166" ]//, "#482344" ]
+
+</script>
+
+<div data-role="panel" data-id="menu" class="ui-mobile-viewport ui-panel ui-panel-left" style="width: 25%; min-width: 250px; ">
+	<div data-role="page" id="tools" data-theme="a" data-url="tools" tabindex="0" class="ui-page ui-body-a ui-page-active" style="min-height: 478px; ">
+<div data-theme="a" data-role="header" class="ui-header ui-bar-a" role="banner">
+	<h3 style="text-align:left;margin-left:15px;" class="ui-title" tabindex="0" role="heading" aria-level="1">Tools</h3>
+</div>
+<div data-role="content" class="content ui-content" style="padding: 15px" role="main">
+	<div id="notify"></div>
+	<!--<a data-role="button" data-theme="a" href="javascript:void()" onClick="">Calibrate</a>-->
+
+	<div data-role="fieldcontain" class="ui-field-contain ui-body ui-br">
+		<fieldset data-role="controlgroup" class="ui-corner-all ui-controlgroup ui-controlgroup-vertical">
+			<div class="ui-checkbox"><label for="geotag-toggle" data-theme="a" class="ui-btn ui-btn-up-a ui-btn-icon-left ui-checkbox-off ui-corner-top"><span class="ui-btn-inner ui-corner-top"><span class="ui-btn-text">Geotag</span><span class="ui-icon ui-icon-checkbox-off ui-icon-shadow"></span></span></label><input data-theme="a" type="checkbox" name="geotag-toggle" id="geotag-toggle"></div>
+			
+			<div class="ui-checkbox"><label for="rgb-toggle" data-theme="a" class="ui-btn ui-btn-up-a ui-btn-icon-left ui-checkbox-off"><span class="ui-btn-inner"><span class="ui-btn-text">RGB</span><span class="ui-icon ui-icon-checkbox-off ui-icon-shadow"></span></span></label><input data-theme="a" type="checkbox" name="rgb-toggle" id="rgb-toggle" onchange="$W.toggle_mode()"></div>
+			
+			<div class="ui-checkbox"><label for="flip-toggle" data-theme="a" class="ui-btn ui-btn-up-a ui-btn-icon-left ui-checkbox-on ui-corner-bottom ui-controlgroup-last"><span class="ui-btn-inner ui-corner-bottom ui-controlgroup-last"><span class="ui-btn-text">Autoflip</span><span class="ui-icon ui-icon-shadow ui-icon-checkbox-on"></span></span></label><input checked="true" data-theme="a" type="checkbox" name="flip-toggle" id="flip-toggle" onchange="$W.toggle_flip()"></div>
+			
+		</fieldset>
+	</div>
+	<div data-role="collapsible-set" style="padding:8px;" class="ui-collapsible-set">
+		<div data-role="collapsible" data-collapsed="true" class="ui-collapsible ui-collapsible-collapsed"><h3 class="ui-collapsible-heading ui-collapsible-heading-collapsed"><a href="http://spectralworkbench.org/capture#" class="ui-collapsible-heading-toggle ui-btn ui-btn-up-a ui-btn-icon-left ui-corner-top ui-corner-bottom" data-theme="a"><span class="ui-btn-inner ui-corner-top ui-corner-bottom"><span class="ui-btn-text">Analysis<span class="ui-collapsible-heading-status"> click to expand contents</span></span><span class="ui-icon ui-icon-plus ui-icon-shadow"></span></span></a></h3><div class="ui-collapsible-content ui-collapsible-content-collapsed" aria-hidden="true">
+			
+			<a data-role="button" data-theme="a" onclick="$W.mark()" class="ui-btn ui-btn-up-a ui-btn-corner-all ui-shadow"><span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">Mark wavelength</span></span></a>
+			<a data-role="button" data-theme="a" href="http://spectralworkbench.org/capture#search" class="ui-btn ui-btn-up-a ui-btn-corner-all ui-shadow"><span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">Compare</span></span></a>
+			<a data-role="button" data-theme="a" href="http://spectralworkbench.org/capture#macros" class="ui-btn ui-btn-up-a ui-btn-corner-all ui-shadow"><span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">Macros</span></span></a>
+		</div></div>
+	</div>
+
+	<p><a href="https://github.com/jywarren/spectral-workbench" class="ui-link">SpectralWorkbench is free software</a> by <a href="http://publiclaboratory.org/" class="ui-link">Public Lab</a> Your input is invaluable! See <a href="https://github.com/jywarren/spectral-workbench/issues" class="ui-link">Github issues</a> to help design/refine/debug new features.</p><p>
+
+	<a data-icon="gear" data-role="button" data-theme="a" href="http://spectralworkbench.org/capture#configure" data-panel="main" class="ui-btn ui-btn-up-a ui-btn-icon-left ui-btn-corner-all ui-shadow"><span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">Configure</span><span class="ui-icon ui-icon-gear ui-icon-shadow"></span></span></a>
+	<a data-role="button" data-theme="b" href="http://spectralworkbench.org/capture#login" data-panel="main" class="ui-btn ui-btn-up-b ui-btn-corner-all ui-shadow"><span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">Log in</span></span></a>
+</p></div>
+</div>
+
+<div class="ui-loader ui-body-a ui-corner-all" style="top: 285.5px; "><span class="ui-icon ui-icon-loading spin"></span><h1>loading</h1></div></div>
+
+<div data-role="panel" data-id="main" class="ui-mobile-viewport ui-panel ui-panel-right" style="width: 853px; ">
+	<div data-role="page" id="capture" data-theme="a" tabindex="0" class="ui-page ui-body-a ui-page-active" style="min-height: 478px; " data-url="capture">
+<div data-theme="a" data-role="header" class="ui-header ui-bar-a" role="banner">
+	<h3 class="header ui-title" style="text-align:left;margin-left:15px;" tabindex="0" role="heading" aria-level="1">
+		<img src="./index_files/spectralworkbench.png"> 
+		<a style="margin-left:3px;color:white;text-decoration:none;" id="home" data-theme="b" href="http://spectralworkbench.org/" target="_blank" class="ui-link">SpectralWorkbench</a>
+	
+
+	</h3>
+</div>
+
+<div data-role="content" class="content ui-content" style="padding: 15px" role="main">
+
+	<div id="graph" style="width: 100%; height: 200px; padding: 0px; position: relative; "><canvas class="base" width="805" height="200"></canvas><canvas class="overlay" width="805" height="200" style="position: absolute; left: 0px; top: 0px; "></canvas><div class="tickLabels" style="font-size:smaller"><div class="yAxis y1Axis" style="color:#ccc"><div class="tickLabel" style="position:absolute;text-align:right;top:188px;right:770px;width:35px">0%</div><div class="tickLabel" style="position:absolute;text-align:right;top:140px;right:770px;width:35px">25%</div><div class="tickLabel" style="position:absolute;text-align:right;top:92px;right:770px;width:35px">50%</div><div class="tickLabel" style="position:absolute;text-align:right;top:44px;right:770px;width:35px">75%</div><div class="tickLabel" style="position:absolute;text-align:right;top:-4px;right:770px;width:35px">100%</div></div></div><div class="legend"><div style="position: absolute; width: 74px; height: 18px; top: 9px; right: 9px; background-color: rgb(17, 17, 17); opacity: 0.85; "> </div><table style="position:absolute;top:9px;right:9px;;font-size:smaller;color:#ccc"><tbody><tr><td class="legendColorBox"><div style="border:1px solid #ccc;padding:1px"><div style="width:4px;height:0;border:5px solid rgb(204,204,204);overflow:hidden"></div></div></td><td class="legendLabel">webcam</td></tr></tbody></table></div></div>
+	<br>
+	<canvas style="width:100%;height:100px;" id="canvas" width="640" height="150"></canvas> 
+
+	<span id="match"></span>
+
+	
+		<a id="saveSpectrum" data-role="button" data-transition="fade" data-theme="a" href="http://spectralworkbench.org/capture#save" data-panel="main" class="ui-btn ui-btn-corner-all ui-shadow ui-btn-up-a"><span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">Save</span></span></a>
+		<script>$('#saveSpectrum').bind("click",function() {$W.saveSpectrum()})</script>
+	
+
+	<p><a href="http://spectralworkbench.org/capture#login" class="ui-link">Log in</a> to use a recent calibration</p>
+
+	<p>By uploading your data, you agree to release it under the <a href="http://creativecommons.org/publicdomain/zero/1.0/" class="ui-link">Creative Commons Zero license</a></p>
+
+	<p>This interface works on <a href="https://www.google.com/intl/en/chrome/browser/" class="ui-link">Chrome 21+</a>, Opera, and any browser which supports the HTML5 getUserMedia() call. <a href="https://play.google.com/store/apps/details?id=com.opera.browser" class="ui-link">Opera Mobile</a> for Android also works! Don't see anything? <a href="http://publiclaboratory.org/wiki/spectral-workbench-web-video" class="ui-link">Check if your browser is supported</a></p>
+
+</div>
+</div>
+
+	<div data-role="page" id="save" data-theme="a" data-url="save">
+<div data-theme="a" data-role="header">
+	<h3 style="text-align:left;margin-left:15px;">Save spectrum</h3>
+</div>
+<div data-role="content" class="content" style="padding: 15px">
+	
+		<p>You must be <a target="_blank" href="http://spectralworkbench.org/capture#login">logged in</a> to save spectra.</p>
+	
+
+	<form action="http://spectralworkbench.org/spectrums" method="post" id="saveForm" target="_blank" onsubmit="$W.cancelSave();window.location=&#39;#capture&#39;">
+		<label for="spectrum_title">Title:</label><br>
+		<input name="spectrum[title]" id="spectrum_notes" type="text"><br>
+		<label for="tags">Tags:</label><br>
+		<input name="tags" id="spectrum_tags" value="webclient," type="text"><br>
+		<label for="spectrum_notes">Notes:</label>
+		<textarea name="spectrum[notes]" id="spectrum_notes"></textarea><br>
+		<input name="dataurl" type="hidden" id="dataurl">
+		<input name="geotag" type="hidden" id="geotag">
+		<input name="lat" type="hidden" id="lat">
+		<input name="lon" type="hidden" id="lon">
+		
+	</form>
+	<a data-role="button" data-transition="fade" data-theme="b" href="javascript:void(0);" onclick="$(&#39;#saveForm&#39;).submit()">Save</a>
+	<a data-role="button" data-transition="fade" data-theme="d" href="http://spectralworkbench.org/capture#capture" data-panel="main" onclick="$W.cancelSave()">« Back</a>
+
+</div>
+</div>
+
+	<div data-role="page" id="configure" data-theme="a" data-url="configure">
+	<div data-theme="a" data-role="header">
+		<h3 style="text-align:left;margin-left:15px;">Configure</h3>
+	</div>
+	<div data-role="content" class="content" style="padding: 15px">
+		<p style="display:none;" id="local_calibration">This device has a locally stored calibration. <a href="" id="local_calibration_link">Click here</a> to use it.</p>
+		<script>
+			if (localStorage.getItem("sw:calibration_id")) {
+				$("#local_calibration_link")[0].href = "/capture?calibration_id="+localStorage.getItem("sw:calibration_id")
+				$("#local_calibration").show()
+			}
+		</script>
+		
+		
+		<p><i>This panel is under construction</i></p>
+
+		<label for="samplerow-slider">Sample row height (zero = top):</label>
+		<input type="range" name="samplerow-slider" id="samplerow-slider" value="240" min="0" max="480" onchange="$W.setSampleRows(parseInt($(&#39;#samplerow-slider&#39;).val()),parseInt($(&#39;#samplerow-slider&#39;).val())+40);$(&#39;#heightIndicator&#39;)[0].style.height = parseInt(($(&#39;#samplerow-slider&#39;).val()/480)*280)+&#39;px&#39;;">
+
+		<div id="heightIndicator" style="position:absolute;z-index:999;opacity:0.4;background:black;height:120px;width:320px;"></div> 
+		<div id="webcam"><video width="320" height="280" autoplay=""></video></div> 
+		<a data-role="button" data-theme="a" href="http://spectralworkbench.org/capture#capture" data-panel="main">« Back</a>
+	</div>
+</div>
+
+	<div data-role="page" id="login" data-theme="a" data-url="login">
+	<div data-theme="a" data-role="header">
+		<h3 style="text-align:left;margin-left:15px;">Log in</h3>
+	</div>
+	<div data-role="content" class="content" style="padding: 15px">
+		<p><i>Use your <a data-ajax="false" href="http://publiclaboratory.org/" target="_blank">PublicLaboratory.org</a> username to log in. If you do not yet have one, sign up there first!</i></p>
+	
+		<form action="http://spectralworkbench.org/session" method="post"><div style="margin:0;padding:0;display:inline"><input name="authenticity_token" type="hidden" value="EDvaSRDfJEWw3o7Pc9XlUsLm0nBxcKoaWdgXI+lIyt8="></div>		<p><label for="login">Login</label>
+		<input id="login" name="login" type="text"></p>
+	
+		<input type="hidden" name="return_to" value="/capture">
+	
+		<!--<p><label for="remember_me">Remember me</label>
+		<input id="remember_me" name="remember_me" type="checkbox" value="1" /></p>
+		-->
+	
+		<p>
+			<input data-theme="b" data-ajax="false" name="commit" type="submit" value="Log in">
+			<a data-role="button" data-transition="fade" data-theme="d" href="http://spectralworkbench.org/capture#capture" data-panel="main">« Back</a>
+		</p>
+		</form>	</div>
+</div>
+
+	<div data-role="page" id="search" data-theme="a" data-url="search">
+	<div data-theme="a" data-role="header">
+		<h3 style="text-align:left;margin-left:15px;">Search for spectra</h3>
+	</div>
+	<div data-role="content" class="content" style="padding: 15px">
+	
+		<form id="search_form" action="javascript:void(0);" method="get">
+			<input id="search_term" class="text" type="text" name="q" value="">
+			<a data-inline="true" style="width:200px;" data-role="button" data-theme="b" onclick="$(&#39;#search_form&#39;).submit()">Search</a>
+			<a data-inline="true" style="width:200px;" data-role="button" data-transition="fade" data-theme="d" href="http://spectralworkbench.org/capture#capture" data-panel="main">« Back</a>
+			
+		</form>
+
+		<div id="results">
+		<h3>Recent spectra (<a href="javascript:void()" id="refresh_recent">refresh</a>)</h3>
+		
+<div id="spectrum_1198" class="spectrum capture">
+	<a href="http://spectralworkbench.org/capture#capture" onclick="$W.add_spectrum(1198)">
+		<img width="100px" src="./index_files/type_to_label_next_spectrum.png"><br>
+		<h4>2012-11-4-17-19-untitled</h4>
+	</a><br>
+	<small>
+		By <a href="http://spectralworkbench.org/profile/anonymous" target="_blank">anonymous</a><br>
+		<i>about 1 hour ago</i>
+	</small>
+</div>
+
+<div id="spectrum_1197" class="spectrum capture">
+	<a href="http://spectralworkbench.org/capture#capture" onclick="$W.add_spectrum(1197)">
+		<img width="100px" src="./index_files/type_to_label_next_spectrum(1).png"><br>
+		<h4>2012-11-4-17-19-untitled</h4>
+	</a><br>
+	<small>
+		By <a href="http://spectralworkbench.org/profile/anonymous" target="_blank">anonymous</a><br>
+		<i>about 1 hour ago</i>
+	</small>
+</div>
+
+<div id="spectrum_1196" class="spectrum capture">
+	<a href="http://spectralworkbench.org/capture#capture" onclick="$W.add_spectrum(1196)">
+		<img width="100px" src="./index_files/2012-11-4-17-18-_________________________________.png"><br>
+		<h4>2012-11-4-17-18-untitled</h4>
+	</a><br>
+	<small>
+		By <a href="http://spectralworkbench.org/profile/anonymous" target="_blank">anonymous</a><br>
+		<i>about 1 hour ago</i>
+	</small>
+</div>
+
+<div id="spectrum_1195" class="spectrum capture">
+	<a href="http://spectralworkbench.org/capture#capture" onclick="$W.add_spectrum(1195)">
+		<img width="100px" src="./index_files/capture.png"><br>
+		<h4>Vinegar and salt with penny soaked, in flame</h4>
+	</a><br>
+	<small>
+		By <a href="http://spectralworkbench.org/profile/warren" target="_blank">warren</a><br>
+		<i>about 3 hours ago</i>
+	</small>
+</div>
+
+<div id="spectrum_1194" class="spectrum capture">
+	<a href="http://spectralworkbench.org/capture#capture" onclick="$W.add_spectrum(1194)">
+		<img width="100px" src="./index_files/2012-11-4-14-54.png"><br>
+		<h4>2012-11-4-14-54-untitled</h4>
+	</a><br>
+	<small>
+		By <a href="http://spectralworkbench.org/profile/anonymous" target="_blank">anonymous</a><br>
+		<i>about 3 hours ago</i>
+	</small>
+</div>
+
+<div id="spectrum_1193" class="spectrum capture">
+	<a href="http://spectralworkbench.org/capture#capture" onclick="$W.add_spectrum(1193)">
+		<img width="100px" src="./index_files/capture(1).png"><br>
+		<h4>Betelgeuce2</h4>
+	</a><br>
+	<small>
+		By <a href="http://spectralworkbench.org/profile/billhinge" target="_blank">billhinge</a><br>
+		<i>about 4 hours ago</i>
+	</small>
+</div>
+
+<div id="spectrum_1192" class="spectrum capture">
+	<a href="http://spectralworkbench.org/capture#capture" onclick="$W.add_spectrum(1192)">
+		<img width="100px" src="./index_files/capture(2).png"><br>
+		<h4>Betelgeuce2</h4>
+	</a><br>
+	<small>
+		By <a href="http://spectralworkbench.org/profile/billhinge" target="_blank">billhinge</a><br>
+		<i>about 4 hours ago</i>
+	</small>
+</div>
+
+<div id="spectrum_1191" class="spectrum capture">
+	<a href="http://spectralworkbench.org/capture#capture" onclick="$W.add_spectrum(1191)">
+		<img width="100px" src="./index_files/capture(3).png"><br>
+		<h4>Betelgeuce2</h4>
+	</a><br>
+	<small>
+		By <a href="http://spectralworkbench.org/profile/billhinge" target="_blank">billhinge</a><br>
+		<i>about 4 hours ago</i>
+	</small>
+</div>
+
+<div id="spectrum_1190" class="spectrum capture">
+	<a href="http://spectralworkbench.org/capture#capture" onclick="$W.add_spectrum(1190)">
+		<img width="100px" src="./index_files/beteljuice_(1_of_1).tif"><br>
+		<h4>Betelgeuce</h4>
+	</a><br>
+	<small>
+		By <a href="http://spectralworkbench.org/profile/billhinge" target="_blank">billhinge</a><br>
+		<i>about 4 hours ago</i>
+	</small>
+</div>
+
+<div id="spectrum_1189" class="spectrum capture">
+	<a href="http://spectralworkbench.org/capture#capture" onclick="$W.add_spectrum(1189)">
+		<img width="100px" src="./index_files/capture(4).png"><br>
+		<h4>penny in flame at LUMCON</h4>
+	</a><br>
+	<small>
+		By <a href="http://spectralworkbench.org/profile/warren" target="_blank">warren</a><br>
+		<i>about 14 hours ago</i>
+	</small>
+</div>
+
+<div id="spectrum_1188" class="spectrum capture">
+	<a href="http://spectralworkbench.org/capture#capture" onclick="$W.add_spectrum(1188)">
+		<img width="100px" src="./index_files/capture(5).png"><br>
+		<h4>LUMCON mud in vinegar 5%</h4>
+	</a><br>
+	<small>
+		By <a href="http://spectralworkbench.org/profile/warren" target="_blank">warren</a><br>
+		<i>about 15 hours ago</i>
+	</small>
+</div>
+
+<div id="spectrum_1187" class="spectrum capture">
+	<a href="http://spectralworkbench.org/capture#capture" onclick="$W.add_spectrum(1187)">
+		<img width="100px" src="./index_files/capture(6).png"><br>
+		<h4>LUMCON mud in water</h4>
+	</a><br>
+	<small>
+		By <a href="http://spectralworkbench.org/profile/warren" target="_blank">warren</a><br>
+		<i>about 15 hours ago</i>
+	</small>
+</div>
+
+	
+		</div>
+
+		<script> 
+			$('#search_form').submit(function() {
+				$('#results').load("/spectra/search/"+$('#search_term').val()+"?capture=true")
+			})
+			$('#refresh_recent').click(function() {
+				$('#results').load("/spectra/recent/?capture=true")
+			})
+		</script>
+	</div>
+</div>
+
+	<div data-role="page" id="search_sets" data-theme="a" data-url="search_sets">
+	<div data-theme="a" data-role="header">
+		<h3 style="text-align:left;margin-left:15px;">Search for sets within which to match</h3>
+	</div>
+	<div data-role="content" class="content" style="padding: 15px">
+	
+		<form id="search_form" action="javascript:void(0);" method="get">
+			<input id="search_term" class="text" type="text" name="q" value="">
+			<a data-inline="true" style="width:200px;" data-role="button" data-theme="b" onclick="$(&#39;#search_form&#39;).submit()">Search</a>
+			<a data-inline="true" style="width:200px;" data-role="button" data-transition="fade" data-theme="d" href="http://spectralworkbench.org/capture#capture" data-panel="main">« Back</a>
+		</form>
+
+		<script> 
+			$('#search_form').submit(function() {
+				$('#results').load("/sets/search/"+$('#search_term').val()+"?capture=true")
+			})
+		</script>
+
+		<div id="results">
+		
+		</div>
+	</div>
+</div>
+
+	<div data-role="page" id="macros" data-theme="a" data-url="macros">
+	<div data-theme="a" data-role="header">
+		<h3 style="text-align:left;margin-left:15px;">Macros</h3>
+	</div>
+	<div data-role="content" class="content" style="padding: 15px">
+		<p>Experiment with writing macros based on the still-evolving <a href="http://publiclaboratory.org/wiki/spectral-workbench-api">Spectral Workbench API</a>:</p>	
+
+		<textarea style="font-size:11px;font-family:courier,sans-serif;" id="code">setup: function() {
+  // code to run on startup
+  window.open($W.canvas.toDataURL(),'_newtab').focus() // this may not work if popups are blocked
+},
+draw: function() {
+  // code to run every frame
+}</textarea>
+		<a data-inline="true" style="width:200px;" id="run" data-role="button" data-theme="b">Run</a>
+		<a data-inline="true" style="width:200px;" data-role="button" data-transition="fade" data-theme="d" href="http://spectralworkbench.org/capture#capture" data-panel="main">« Back</a>
+
+		<code id="output">
+		</code>
+
+		<p>As you create macros, please share them by <a href="http://publiclaboratory.org/note/add">posting research notes</a> at PublicLaboratory.org. Tag them with "macro".</p>
+
+		<script> 
+			$('#run').click(function() {
+				eval("$W.macro = {"+$('#code').val()+"}")
+				$W.macro.setup()
+			})
+		</script>
+	</div>
+</div>
+
+</div>
+
+<script> (function () { 
+	$W.initialize({
+		calibrated:false,
+		mobile:false
+	}) 
+	setInterval($W.getRow,100)
+	
+		$W.calibrated = false
+	
+	
+})() </script>
+
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-30020531-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+    
+
+<canvas style="display:none;" id="excerptCanvas" width="640" height="480"></canvas></body></html>

@@ -45,7 +45,7 @@ class SetsController < ApplicationController
     if logged_in?
       @set = SpectraSet.new
       respond_to do |format|
-        format.html # new.html.erb 
+        format.html { render :layout => "bootstrap" } # new.html.erb 
         format.xml  { render :xml => @set }
       end
     else
@@ -68,7 +68,7 @@ class SetsController < ApplicationController
         :author => current_user.login
       })
       if @set.save
-        redirect_to :action => :show, :id => @set.id
+        redirect_to "/sets/show/"+@set.id.to_s
       else
         flash[:error] = "Failed to save set."
         render :action => "new", :id => params[:id]

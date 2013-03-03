@@ -1,35 +1,27 @@
+<div class="container-fluid">
 <h1>New set</h1>
 
-<br />
-<div id="spectra">
+<div id="spectra" class="pull-right span6">
 <% params[:id].split(',').each do |s| %>
   <% spectrum = Spectrum.find s %>
 <img src="<%= spectrum.photo.url(:thumb) %>" />
 <% end %>
 </div>
+<div class="span6">
 
 <br />
 
-<% form_for(@set, :url => {:action => "create", :id => params[:id]}) do |f| %>
-  <%= f.error_messages %>
+<form action="/sets/create/69" class="form" id="new_spectra_set" method="post">
 
-  <p>
-    <%= f.label :title %><br />
-    <%= f.text_field :title %>
-  </p>
-  <p>
-    <%= f.label :notes %><br />
-    <%= f.text_area :notes %>
-  </p>
+  <input type='hidden' name='authenticity_token' value="<%= form_authenticity_token %>"/>
+  
+  <input placeholder="Title" id="spectra_set_title" name="spectra_set[title]" size="30" type="text" value="" />
+  <br />
+  <textarea placeholder="describe your set" cols="40" name="spectra_set[notes]" rows="10"></textarea>
 
-  <% if !logged_in? && !APP_CONFIG["local"] %>
-  <p>
-    <%= recaptcha_tags :display => {:theme => "white"} %>
-  </p>
-  <% end %>
+  <br />
+  <button class="btn-large btn-primary" type="submit">Save</button>
+</form>
 
-  <p>
-    <%= f.submit 'Create' %>
-  </p>
-<% end %>
-
+</div>
+</div>
