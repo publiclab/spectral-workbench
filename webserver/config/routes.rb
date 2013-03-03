@@ -9,6 +9,10 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :users
   map.resource :session
 
+  map.connect '/key/:id', :controller => 'device', :action => 'create_key'
+  map.connect '/lookup', :controller => 'device', :action => 'lookup'
+  map.connect '/device/claim', :controller => 'device', :action => 'claim'
+
   map.capture '/capture', :controller => 'capture', :action => 'index'
   map.connect '/upload', :controller => "spectrums", :action => "new"
   map.connect '/capture/beta', :controller => "capture", :action => "index", :alt => "true"

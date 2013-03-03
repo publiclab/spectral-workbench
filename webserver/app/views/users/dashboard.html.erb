@@ -8,7 +8,7 @@
     <% if current_user.spectra.length < 3 %>
       <div class="alert error"><button type="button" class="close" data-dismiss="alert">×</button><b>Warning:</b> due to an error in the printed instructions, the webcam of your Desktop Spectrometry Kit may need to be refocused. <a href="http://publiclaboratory.org/wiki/spectral-workbench-help#the-spectrum-image-is-blurry-no-sharp-peaks">Read more &raquo;</a></div>
     <% elsif current_user.spectra.length >= 3 %>
-      <div class="alert alert"><button type="button" class="close" data-dismiss="alert">×</button><a href="http://publiclaboratory.org/note/add" class="btn"><i class="icon icon-pencil"></i> Share your research</a> and reach out to collaborators at <a href="http://publiclaboratory.org">PublicLaboratory.org</a>.</a></div>
+      <div class="hidden-phone alert alert"><button type="button" class="close" data-dismiss="alert">×</button><a href="http://publiclaboratory.org/note/add" class="btn"><i class="icon icon-pencil"></i> Share your research</a> and reach out to collaborators at <a href="http://publiclaboratory.org">PublicLaboratory.org</a>.</a></div>
     <% end %>
   <% end %>
 
@@ -21,6 +21,16 @@
       <%= render :partial => 'spectrums/search' %>
       <hr />
 
+      <div class="hidden-desktop">
+        <ul class="nav nav-tabs nav-stacked">
+          <li><a href="#comments">Comments</a></li>
+          <li><a href="#sets">Sets</a></li>
+          <li><a href="#authors">Authors</a></li>
+          <li><a href="#spectra">Spectra</a></li>
+        </ul>
+        <hr />
+      </div>
+
       <p><strong>Subscribe to the "plots-spectrometry" mailing list</strong> for support, discussion, and to share your work:</p>
 <form class="form" action="http://groups.google.com/group/plots-spectrometry/boxsubscribe"><input type=text name=email /><br /> <input class="btn btn-primary" type=submit name="sub" value="Subscribe" /></form>
 
@@ -29,14 +39,14 @@
 <iframe class="shopify-widget" frameborder="0" scrolling="no" width="240" height="390" src="http://widgets.shopifyapps.com/products/desktop-spectrometry-kit?shop=publiclab.myshopify.com&style=artgallery&image-size=medium&destination=checkout"></iframe>
 
       <hr />
-      <h3>Recent comments <small>(<a href="/comments">view all</a>)</small></h3>
+      <h3><a name="comments"></a>Recent comments <small>(<a href="/comments">view all</a>)</small></h3>
 
       <%= render :partial => 'comments' %>
 
       <p><a href="/comments">More comments &raquo;</a></p>
       <hr />
 
-      <h3>Recent authors</h3>
+      <h3><a name="authors"></a>Recent authors</h3>
       <ul class="nav">
       <% User.find_all_by_login(@spectrums.collect(&:author).uniq).each do |user| %>
         <li><a href="/profile/<%= user.login %>"><i class="icon icon-user"></i> <%= user.login %></a></li>
@@ -44,17 +54,19 @@
       </ul>
 
       <hr />
-      <h3>Recent sets <small>(<a href="/sets">View all &raquo;</a>)</small></h3>
-      <%= render :partial => 'spectrums/sets' %>
-
-      <hr />
 
     </div>
 
-    <div class="span8">
+    <div class="span8 pull-right">
 
-      <span style="margin-top:22px;" class="pull-right"><a href="/sets"><i class="icon icon-list"></i> Sets</a> | <a href="/profile/<%= current_user.login %>"><i class="icon icon-user"></i> Your data</a></span></small>
-      <h3 style="padding-top:0;">Recent spectra <small class="hidden-phone">by contributors like you </h3>
+      <span style="margin-top:22px;" class="pull-right"><a href="/sets"><i class="icon icon-list"></i> All sets</a> | <a href="/profile/<%= current_user.login %>"><i class="icon icon-user"></i> Your data</a></span></small>
+
+      <h3><a name="sets"></a>Recent sets <small class="hidden-phone">by contributors like you</small></h3>
+      <%= render :partial => 'spectrums/sets' %>
+
+      <hr style="clear:both;" />
+
+      <h3 style="padding-top:0;"><a name="spectra"></a>Recent spectra <small class="hidden-phone">by contributors like you</small></h3>
 
       <%= render :partial => 'spectrums/list_bootstrap' %>
       <%= will_paginate @spectrums %>
