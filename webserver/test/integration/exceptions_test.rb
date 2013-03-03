@@ -46,4 +46,13 @@ class ExceptionsTest < ActionController::IntegrationTest
     get "/tags"
     assert_response :success
   end
+
+  test "GET /profile/#" do
+    get "/local/tester"
+    assert_response :redirect
+    assert_redirected_to "/"
+#    get "/dashboard"
+#    assert_tag (:content => /Recent sets/)
+#    assert_template "users/dashboard"
+  end
 end
