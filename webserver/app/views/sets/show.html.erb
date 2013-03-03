@@ -33,7 +33,7 @@
       <hr />
       <h4>Spectra in this set</h4>
       <%= render :partial => "spectra" %>
-      <hr />
+      <hr style="clear:both;" />
 
       <div xmlns:dct="http://purl.org/dc/terms/" xmlns:vcard="http://www.w3.org/2001/vcard-rdf/3.0#">
         <p><a rel="license" href="http://creativecommons.org/publicdomain/zero/1.0/"><img src="http://i.creativecommons.org/p/zero/1.0/88x31.png" style="border-style: none;" alt="CC0" /></a></p>
@@ -50,8 +50,8 @@
     <div class="span9">
       <% if logged_in? && current_user.login == @set.author %>
         <div class="btn-group pull-right" style="margin-top:10px;">
-          <a class="btn btn-small" href="/set/<%= @set.id %>/edit"><i class="icon icon-pencil"></i> Edit</a>
-          <%= link_to '<i class="icon icon-remove-sign"></i> Delete', "/set/destroy/"+@set.id.to_s, :confirm => 'Are you sure?', :class => "btn btn-small" %>
+          <a class="btn btn-small" href="/sets/edit/<%= @set.id %>"><i class="icon icon-pencil"></i> Edit</a>
+          <%= link_to '<i class="icon icon-remove-sign"></i> Delete', "/sets/delete/"+@set.id.to_s, :confirm => 'Are you sure?', :class => "btn btn-small" %>
         </div>
       <% end %>
 

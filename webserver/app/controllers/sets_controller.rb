@@ -91,6 +91,9 @@ class SetsController < ApplicationController
     @comment.author = current_user.login if logged_in?
     @comment.email = current_user.email if logged_in?
     if (logged_in? || APP_CONFIG['local'] || verify_recaptcha(:model => @comment, :message => "ReCAPTCHA thinks you're not a human!")) && @comment.save
+      UserMailer.deliver_set_comment_notification(@set,@comment,User.find_by_login(@set.author)) if (!logged_in? || current_user.login != @set.author)
+      @set.notify_commenters(@comment,current_user) if logged_in?
+      @set.notify_commenters(@comment,false) unless logged_in?
       flash[:notice] = "Comment saved."
       redirect_to "/sets/show/"+params[:id]+"#comment_"+@comment.id.to_s
     else
@@ -104,6 +107,65 @@ class SetsController < ApplicationController
     @sets = SpectraSet.find(:all, :conditions => ['title LIKE ? OR notes LIKE ?',"%"+params[:id]+"%", "%"+params[:id]+"%"],:limit => 100, :order => "id DESC")
     @sets = @sets.paginate :page => params[:page], :per_page => 24
     render :partial => "capture/results_sets.html.erb", :layout => false if params[:capture]
+  end
+
+  def remove
+    @set = SpectraSet.find params[:id] 
+    if logged_in? && (@set.author == current_user.login || current_user.role == "admin")
+      if @set.spectra_string.split(',').length > 1
+        @set.remove(params[:s])
+        flash[:notice] = "Spectrum removed."
+      else
+        flash[:error] = "A set must have at least one spectrum."
+      end
+      redirect_to "/sets/show/"+@set.id.to_s
+    else
+      flash[:error] = "You must be logged in and own the set to edit it."
+      redirect_to "/login"
+    end
+  end
+
+  def delete
+    @set = SpectraSet.find params[:id]
+    if logged_in? && (@set.author == current_user.login || current_user.role == "admin")
+      if @set.delete!
+        redirect_to "/sets/show/"+@set.id.to_s
+      else
+        flash[:error] = "Failed to save set."
+        redirect_to "/sets/edit/"+@set.id.to_s
+      end
+    else
+      flash[:error] = "You must be logged in and own the set to edit it."
+      redirect_to "/login"
+    end
+  end
+
+  def edit
+    @set = SpectraSet.find params[:id]
+    if logged_in? && (@set.author == current_user.login || current_user.role == "admin")
+      @spectrums = Spectrum.find(:all, :limit => 4, :order => "created_at DESC")
+      render :layout => "bootstrap"
+    else
+      flash[:error] = "You must be logged in and own the set to edit it."
+      redirect_to "/login"
+    end
+  end
+
+  def update
+    @set = SpectraSet.find params[:id]
+    if logged_in? && (@set.author == current_user.login || current_user.role == "admin")
+      @set.notes = params[:notes]
+      @set.title = params[:title]
+      if @set.save!
+        redirect_to "/sets/show/"+@set.id.to_s
+      else
+        flash[:error] = "Failed to save set."
+        redirect_to "/sets/edit/"+@set.id.to_s
+      end
+    else
+      flash[:error] = "You must be logged in and own the set to edit it."
+      redirect_to "/login"
+    end
   end
 
 end

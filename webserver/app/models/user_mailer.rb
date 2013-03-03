@@ -31,4 +31,26 @@ class UserMailer < ActionMailer::Base
     body(        {:comment => comment})
   end
 
+  def set_comment_notification(set,comment,set_author)
+    recipients  set_author.email
+    from        "do-not-reply@spectralworkbench.org"
+    subject     "[SpectralWorkbench] "+comment.author+" commented on your Set #"+set.id.to_s+': "'+set.title+'"'
+    body(        {:user => set.author, :comment => comment, :set => set})
+  end
+
+  def set_commenter_notification(set,comment,old_commenter)
+    recipients  old_commenter.email
+    from        "do-not-reply@spectralworkbench.org"
+    subject     "[SpectralWorkbench] "+comment.author+" commented on Set #"+set.id.to_s+': "'+set.title+'"'
+    body(        {:user => old_commenter.login, :comment => comment})
+  end
+
+  # we can change set_author when we get rid of the "author" field in @spectrums
+  def unregistered_set_commenter_notification(set,comment,email)
+    recipients  email
+    from        "do-not-reply@spectralworkbench.org"
+    subject     "[SpectralWorkbench] "+comment.author+" commented on Set #"+set.id.to_s+': "'+set.title+'"'
+    body(        {:comment => comment})
+  end
+
 end

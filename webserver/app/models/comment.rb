@@ -3,10 +3,10 @@ class Comment < ActiveRecord::Base
 	validates_presence_of :author, :email, :body
 
 	def set
-		if self.set_id == 0
+		if self.spectra_set_id == 0
 			false
 		else
-			Set.find self.set_id
+			Set.find self.spectra_set_id
 		end
 	end
 

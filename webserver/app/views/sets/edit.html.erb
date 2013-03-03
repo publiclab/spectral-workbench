@@ -1,0 +1,26 @@
+<div class="container-fluid">
+<h1>Edit set</h1>
+
+<div id="spectra" class="pull-right span6">
+<% @set.spectra.each do |spectrum| %>
+<img src="<%= spectrum.photo.url(:thumb) %>" />
+<% end %>
+</div>
+<div class="span6">
+
+<br />
+
+<form action="/sets/update/<%= @set.id %>" class="form" id="new_spectra_set" method="post">
+
+  <input type='hidden' name='authenticity_token' value="<%= form_authenticity_token %>"/>
+  
+  <input placeholder="Title" name="title" size="30" type="text" tabindex="1" value="<%= @set.title %>" />
+  <br />
+  <textarea placeholder="describe your set" cols="40" name="notes" tabindex="2" rows="10"><%=h @set.notes %></textarea>
+
+  <br />
+  <button tabindex="3" class="btn-large btn-primary" type="submit">Save</button>
+</form>
+
+</div>
+</div>
