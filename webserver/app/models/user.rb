@@ -29,6 +29,10 @@ class User < ActiveRecord::Base
     Spectrum.find_all_by_user_id(self.id,:order => "created_at DESC")
   end
 
+  def sets
+    SpectraSet.find_all_by_author(self.login)
+  end
+
   def comments
     Comment.find_all_by_author(self.login)
   end

@@ -1,3 +1,4 @@
+<script src="/javascripts/analyze.js"> </script>
 <div class="container">
 
 <h2><%= @user.login %> <small>(<%= @user.spectra.length %> spectra) | <a class="btn btn-mini" href="/spectra/feed/<%= @user.login %>">RSS</a> | <a href="http://publiclaboratory.org/people/<%= @user.login %>">Public Lab profile &raquo;</a></small></h2>
@@ -33,6 +34,9 @@
       <%=h time_ago_in_words(@user.created_at) %> ago
     </div>
     <hr />
+
+    <%= render :partial => 'spectrums/sets' %>
+
   </div>
 
   <div class="span8">

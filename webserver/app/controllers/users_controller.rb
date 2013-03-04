@@ -70,10 +70,11 @@ class UsersController < ApplicationController
   end
 
   def profile
-	#params[:id] ||= current_user.login if logged_in?
-	@user = User.find_by_login(params[:id])
-	@spectrums = @user.spectra
-	@spectrums = @spectrums.paginate :page => params[:page], :per_page => 24
+    #params[:id] ||= current_user.login if logged_in?
+    @user = User.find_by_login(params[:id])
+    @spectrums = @user.spectra
+    @spectrums = @spectrums.paginate :page => params[:page], :per_page => 24
+    @sets = @user.sets
     render :layout => "bootstrap"
   end
 

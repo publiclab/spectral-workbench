@@ -128,8 +128,9 @@ class SetsController < ApplicationController
   def delete
     @set = SpectraSet.find params[:id]
     if logged_in? && (@set.author == current_user.login || current_user.role == "admin")
-      if @set.delete!
-        redirect_to "/sets/show/"+@set.id.to_s
+      if @set.delete
+        flash[:notice] = "Deleted set."
+        redirect_to "/sets/"
       else
         flash[:error] = "Failed to save set."
         redirect_to "/sets/edit/"+@set.id.to_s

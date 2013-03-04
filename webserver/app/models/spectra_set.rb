@@ -7,7 +7,7 @@ class SpectraSet < ActiveRecord::Base
   def spectra
     Spectrum.find(self.spectra_string.split(','))
   end
-
+  
   def match(spectrum)
     set = self.sort_set(spectrum)
     # find lowest score, return it
