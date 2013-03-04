@@ -11,7 +11,7 @@
 
 <br />
 
-<form action="/sets/create/69" class="form" id="new_spectra_set" method="post">
+<form action="/sets/create/<%= params[:id] %>" class="form" id="new_spectra_set" method="post">
 
   <input type='hidden' name='authenticity_token' value="<%= form_authenticity_token %>"/>
   
