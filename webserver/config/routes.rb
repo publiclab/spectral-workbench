@@ -9,6 +9,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :users
   map.resource :session
 
+  # countertop spectrometer and device paths
   map.connect '/key/:id', :controller => 'device', :action => 'create_key'
   map.connect '/lookup', :controller => 'device', :action => 'lookup'
   map.connect '/device/claim', :controller => 'device', :action => 'claim'
@@ -20,6 +21,8 @@ ActionController::Routing::Routes.draw do |map|
   # Registered user pages:
   map.profile '/profile', :controller => 'users', :action => 'profile'
   map.profile '/profile/:id', :controller => 'users', :action => 'profile'
+  map.profile '/macro/:author/:id', :controller => 'macros', :action => 'show'
+  map.profile '/macro/:author/:id.:format', :controller => 'macros', :action => 'show'
   map.dashboard '/dashboard', :controller => 'users', :action => 'dashboard'
   map.popular '/popular', :controller => 'likes', :action => 'index'
   map.comments '/comments', :controller => 'comments', :action => 'index'

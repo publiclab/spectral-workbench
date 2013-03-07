@@ -1,0 +1,23 @@
+<div class="container-fluid">
+
+<ul class="breadcrumb">
+  <li><a href="/macros">Macros</a> <span class="divider">/</span></li>
+  <li><a href="/macros/author/<%= @macro.user.login %>"><%= @macro.user.login %></a></li>
+</ul>
+
+<div class="span9">
+
+<h1>'<%= @macro.title %>' <small>by <a href="/profile/<%= @macro.user.login %>"><%= @macro.user.login %></a></h1>
+
+<hr />
+
+<p><a class="btn btn-small" href="mailto:web@publiclaboratory.org"><i class="icon icon-flag"></i> Report abuse</a>
+  <% if logged_in? && (current_user.id == @macro.user_id || current_user.role == "admin") %><%= link_to '<i class="icon icon-remove-sign"></i> Delete', "/macros/delete/"+@macro.id.to_s, :confirm => 'Are you sure?', :class => "btn btn-small" %><% end %>
+
+<p>Created on <%= @macro.created_at.to_s(:long) %> | Updated <%= time_ago_in_words(@macro.updated_at) %> ago</p>
+<p><b>Link:</b> <a href="<%= @macro.url %>"><%= @macro.url %></a></p>
+<p><%=h @macro.description %></p>
+<p class="well"><%=h @macro.code %></p>
+
+</div>
+</div>

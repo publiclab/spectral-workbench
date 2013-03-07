@@ -8,7 +8,7 @@
 
     <script>
 
-    spectrum_<%= spectrum.id %> = <%= spectrum.data %>
+    spectrum_<%= spectrum.id %> = <%= spectrum.data || "{lines:[]}" %>
 
     spectrum_<%= spectrum.id %>_data = []
     scaled = true

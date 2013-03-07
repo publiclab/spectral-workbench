@@ -1,0 +1,18 @@
+<table class="table">
+  <tr>
+    <th>Title</th>
+    <th>Description</th>
+    <th>Author</th>
+    <th>Link</th>
+    <th>Actions</th>
+  </tr>
+  <% @macros.each do |macro| %>
+  <tr>
+    <td><b><a target="_blank" href="/macro/<%= macro.user.login %>/<%= macro.title %>"><%= macro.title %></a></b></td>
+    <td style="width:30%;"><small><%=h macro.description %></small></td>
+    <td><a href="/macros/author/<%= macro.user.login %>"><%= macro.user.login %></a></td>
+    <td><a href="<%= macro.url %>"><%= macro.url %></a></td>
+    <td><% if params[:action] == "spectrum" %><a class="btn btn-primary" onClick="$W.run_macro('<%= macro.user.login+'\',\''+macro.title %>')" href="javascript:void();">Run</a><% end %></td>
+  </tr>
+  <% end %>
+</table>

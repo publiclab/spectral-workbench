@@ -8,6 +8,7 @@ class AnalyzeController < ApplicationController
     end
     @spectra = Spectrum.find(:all, :limit => 12, :order => "created_at DESC", :conditions => ["id != ?",@spectrum.id])
     @sets = @spectrum.sets
+    @macros = Macro.find :all, :conditions => {:macro_type => "analyze"}
     @calibrations = current_user.calibrations if logged_in?
     @comment = Comment.new
     respond_to do |format|

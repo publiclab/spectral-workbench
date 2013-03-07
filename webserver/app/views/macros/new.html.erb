@@ -1,0 +1,47 @@
+<div class="container-fluid">
+
+<div class="span9">
+
+<h1>New macro</h1>
+
+<p>Use the <a href="http://publiclaboratory.org/wiki/spectral-workbench-api">Spectral Workbench API</a> to create, save, and share macros to manipulate your spectra. Also share your macros on <a href="http://gist.github.com">gist.github.com</a>.</p>
+
+<% if error_messages_for('macro').to_s != "" %><div class="alert alert-error"><%= error_messages_for 'macro' %></div><% end %> 
+
+<form action="/macros/create/" class="form" method="post">
+
+  <input type='hidden' name='authenticity_token' value="<%= form_authenticity_token %>"/>
+  
+  <input placeholder="title: no spaces or punctuation" name="title" size="30" type="text" value="<%=h params[:title] %>" />
+  <br />
+  <label for="url">Enter a URL for your macro:</label>
+  <input placeholder="http://gist.github.com/..." name="url" size="30" type="text" value="<%=h params[:url] %>" />
+
+  <br />
+  <textarea class="span6" placeholder="describe your macro" name="description" rows="2"><%=h params[:description] %></textarea>
+
+  <br />
+
+  <label for="code">Paste your macro's code here:</label>
+  <textarea class="span6" name="code" rows="10"><%=h params[:code] || "setup: function() {
+  // code to run on startup
+
+},
+draw: function() {
+  // code to run every frame
+
+}" %></textarea>
+
+  <br />
+  <label for="macro_type">On what page is your macro used:</label>
+  <select name="macro_type">
+    <option value="analyze">Analyze</option>
+    <option value="analyze">Capture</option>
+  </select>
+ 
+  <br />
+  <button class="btn-large btn-primary" type="submit">Save</button>
+</form>
+
+</div>
+</div>

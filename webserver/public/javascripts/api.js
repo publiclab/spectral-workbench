@@ -34,3 +34,31 @@ $W.toggle_like = function(id) {
 			}
 		})
 }
+
+$W.run_macro = function(author,macro) {
+  $('body').append("<script type='text/javascript' src='/macro/"+author+"/"+macro+".js?run=true'></script>")
+}
+
+// These are not really useful anymore:
+
+// Needs rewriting for multiple macros:
+$W.load_macro = function(macro) {
+    //eval("$W.macro = {"+$('#code').val()+"}")
+    $W.macro = macro
+    $W.macro.setup()
+}
+$W.macros = {
+  download_image: {
+    author: "warren",
+    type: "capture", // or "analyze"
+    link: "http://unterbahn.com",
+    // code to run on startup
+    setup: function() {
+      window.open($W.canvas.toDataURL(),'_newtab').focus() // this may not work if popups are blocked
+    },
+    // code to run every frame
+    draw: function() {
+    }
+  }
+}
+
