@@ -12,6 +12,7 @@ $W = {
 	detect_flip: false,
 	flipped: false,
 	mode: "average",
+	rotated: false,
 	pos: 0,
 	sample_start_row: 240,
 	sample_end_row: 280,
@@ -175,7 +176,7 @@ $W = {
 				//$W.ctx.scale($('#canvas').width()/$('video').height(),1)
 				$W.ctx.scale(3,1)
 				$W.ctx.translate($('video').height()/2,0)
-				$W.ctx.rotate(Math.PI/2)
+				if (!$W.rotated) $W.ctx.rotate(Math.PI/2)
 				$W.ctx.drawImage(video, -startrow/4, -$W.height/2);
 				//$W.ctx.drawImage(video, 0,0)
 				//$W.ctx.restore()
@@ -184,8 +185,14 @@ $W = {
 					$W.ctx.translate($W.width,0)
 					$W.ctx.scale(-1,1)
 				}
+				if ($W.rotated) {
+					$W.ctx.translate($W.width/2,0) // this is not quite right, it's driving me nuts
+					$W.ctx.rotate(Math.PI/2)
+					$W.ctx.scale($W.height/$W.width,$W.width/$W.height) // adjust for aspect ratio
+				}
 				$W.ctx.drawImage(video, 0, -startrow);
 			}
+
 			$W.ctx.restore()
 			// Draw old data below new row of data:
 			$W.ctx.putImageData(saved,0,1)
