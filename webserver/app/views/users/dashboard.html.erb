@@ -62,9 +62,7 @@
       <span style="margin-top:22px;" class="pull-right"><a href="/sets"><i class="icon icon-list"></i> All sets</a> | <a href="/profile/<%= current_user.login %>"><i class="icon icon-user"></i> Your data</a></span></small>
 
       <h3><a name="sets"></a>Recent sets <small class="hidden-phone">by contributors like you</small></h3>
-      <%= render :partial => 'spectrums/sets' %>
-
-      <hr style="clear:both;" />
+      <%= render :partial => 'spectrums/sets', :locals => {:row => 2} %>
 
       <h3 style="padding-top:0;"><a name="spectra"></a>Recent spectra <small class="hidden-phone">by contributors like you</small></h3>
 
