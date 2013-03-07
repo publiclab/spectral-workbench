@@ -266,7 +266,8 @@ class SpectrumsController < ApplicationController
 	:email => params[:comment][:email]})
     @comment.author = current_user.login if logged_in?
     @comment.email = current_user.email if logged_in?
-    if (logged_in? || APP_CONFIG["local"] || verify_recaptcha(:model => @comment, :message => "ReCAPTCHA thinks you're not a human!")) && @comment.save
+    if (logged_in? || APP_CONFIG["local"]) && @comment.save
+    #if (logged_in? || APP_CONFIG["local"] || verify_recaptcha(:model => @comment, :message => "ReCAPTCHA thinks you're not a human!")) && @comment.save
       UserMailer.deliver_comment_notification(@spectrum,@comment,User.find(@spectrum.user_id)) if (!logged_in? || current_user.id != @spectrum.user_id)
       @spectrum.notify_commenters(@comment,current_user) if logged_in?
       @spectrum.notify_commenters(@comment,false) unless logged_in?
