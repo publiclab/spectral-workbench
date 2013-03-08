@@ -138,6 +138,7 @@ class SpectrumsController < ApplicationController
       elsif params[:dataurl] # mediastream webclient
         @spectrum = Spectrum.new({:title => params[:spectrum][:title],
 				  :author => author,
+				  :video_row => params[:spectrum][:video_row],
 				  :notes => params[:spectrum][:notes],
 				  :user_id => user_id})
 	@spectrum.image_from_dataurl(params[:dataurl])

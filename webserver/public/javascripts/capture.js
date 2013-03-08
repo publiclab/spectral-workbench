@@ -284,6 +284,7 @@ $W = {
 	},
 	saveSpectrum: function() {
 		$('#dataurl').val($W.canvas.toDataURL())
+		$('#video_row').val($W.sample_start_row)
 		$('#geotag').val($('#geotag-toggle')[0].checked)
 		setTimeout(function() { if ($('#geotag-toggle')[0].checked) $W.geolocate() },500)
 	},
