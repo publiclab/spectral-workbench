@@ -25,8 +25,13 @@ class User < ActiveRecord::Base
   # anything else you want your user to change should be added here.
   attr_accessible :login, :email, :name, :password, :password_confirmation
 
-  def spectra
-    Spectrum.find_all_by_user_id(self.id,:order => "created_at DESC")
+  def spectra(count)
+    count ||= 20
+    Spectrum.find_all_by_user_id(self.id,:order => "created_at DESC",:limit => count)
+  end
+
+  def spectrum_count
+    Spectrum.count(:all, :conditions => {:user_id => self.id})
   end
 
   def sets
@@ -38,7 +43,7 @@ class User < ActiveRecord::Base
   end
 
   def received_comments
-    spectrums = Spectrum.find_all_by_user_id self.id
+    spectrums = Spectrum.find_all_by_user_id self.id, :limit => 20
     spectrum_ids = []
     spectrums.each do |spectrum|
       spectrum_ids << spectrum.id
@@ -67,22 +72,19 @@ class User < ActiveRecord::Base
   end
 
   def last_calibration 
-    self.tag('calibration').first
+    self.tag('calibration',20).first
   end
 
   def calibrations
-    self.tag('calibration')
+    self.tag('calibration',20)
   end
 
   # find spectra by user, tagged with <name>
-  def tag(name)
-    tagged = []
-    self.spectra.each do |spectrum|
-      if spectrum.has_tag(name)
-        tagged << spectrum
-      end
-    end
-    tagged
+  def tag(name,count)
+    tags = Tag.find :all, :conditions => {:user_id => self.id, :name => name}, :include => :spectrum, :limit => count
+    spectrum_ids = tags.collect(&:spectrum_id)
+    spectra = Spectrum.find spectrum_ids
+    spectra ||= []
   end  
 
 end

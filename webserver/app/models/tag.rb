@@ -3,11 +3,8 @@ class Tag < ActiveRecord::Base
   validates_presence_of :user_id, :on => :create, :message => "can't be blank"
   validates_presence_of :spectrum_id, :on => :create, :message => "can't be blank"
 
+  belongs_to :spectrum
   belongs_to :user
-
-  def spectrum
-  	Spectrum.find_by_id self.spectrum_id
-  end
 
   def spectra
   	tags = Tag.find_all_by_name(self.name)

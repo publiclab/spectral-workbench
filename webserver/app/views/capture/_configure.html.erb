@@ -14,7 +14,7 @@
 		<% if logged_in? && current_user.calibrations.length > 0 %>
 		<p>Store a calibration in your browser:</p>
 		<select id="local_calibration_select">
-			<% current_user.tag('calibration').each do |spectrum| %>
+			<% current_user.tag('calibration',20).each do |spectrum| %>
 			<option value="<%= spectrum.id %>"><%= spectrum.title %> (<%= time_ago_in_words(spectrum.created_at) %>)</option>
 			<% end %>
 		</select><br />
