@@ -33,7 +33,7 @@
   <% if logged_in? && current_user.calibrations.length > 0 %>
     <label for="calibration_id">Use or create a calibration:</label>
     <select name="spectrum[calibration_id]" id="calibration_id">
-      <% current_user.tag('calibration').each do |spectrum| %>
+      <% current_user.tag('calibration',20).each do |spectrum| %>
       <option value="<%= spectrum.id %>"><%= spectrum.title %> (<%= time_ago_in_words(spectrum.created_at) %>)</option>
       <% end %>
       <option value="calibration">[+] New calibration</option>

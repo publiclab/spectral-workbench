@@ -33,7 +33,7 @@ class UsersController < ApplicationController
   end
 
   def contributors
-    @users = User.find :all, :order => "id DESC"
+    @users = User.find :all, :order => "id DESC", :limit => 50
     render :layout => "bootstrap"
   end
  

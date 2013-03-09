@@ -18,7 +18,7 @@
   <div class="span8">
     <h2>Recent sets <small class="hidden-phone">by contributors like you</small></h2>
 
-    <%= render :partial => 'spectrums/sets' %>
+    <%= render :partial => 'spectrums/sets', :locals => {:row => 2} %>
 
     <hr />
     <%= will_paginate @sets %>
