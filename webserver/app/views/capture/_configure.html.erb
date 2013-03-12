@@ -3,6 +3,30 @@
 		<h3 style="text-align:left;margin-left:15px;">Configure</h3>
 	</div>
 	<div data-role="content" class="content" style="padding: 15px">
+		
+		<h3>Connecting to and setting up your webcam</h3>
+
+		<p>If you are using Chrome 25+ and have a webcam in addition to your spectrometer, Google has hidden the "camera selection" menu under <b>Settings &gt; Advanced Settings &gt; Privacy &gt; Content Settings &gt; Media &gt; Camera</b>. This is really unfortunate and we hope Google will improve that interface in the future.</p>
+
+		<p>For Chrome 21-24, you can just choose a camera in the dropdown to the upper-right corner, then click <b>Allow</b> to the upper left.</p>
+
+		<a onClick="$W.rotated = !$W.rotated" data-role="button" data-theme="a" href="javascript:void()">Rotate image 90&deg;</a>
+
+		<img style="float:left;margin-right:20px;" src="/images/calibration-example.png" />
+		<p><b>(Beta):</b> Your spectrometer samples just one row of pixels, so adjust this slider until the yellow line intersects the brightest, clearest part of your spectrum. You'll have to point this at a light bulb or bright light source.</p>
+
+		<label for="samplerow-slider">Sample row height (zero = top):</label>
+		<input type="range" name="samplerow-slider" id="samplerow-slider" value="240" min="0" max="480" onChange="$W.setSampleRows(parseInt($('#samplerow-slider').val()),parseInt($('#samplerow-slider').val()));$('#heightIndicator')[0].style.height = parseInt(($('#samplerow-slider').val()/480)*240)+'px';"/>
+
+		<br />
+
+		<div id="heightIndicator" style="position:absolute;margin:0;z-index:999;border-bottom:2px solid #ff4;height:120px;width:320px;"></div> 
+		<div id="webcam"></div> 
+		<a onClick="localStorage.setItem('sw:sample_start_row',$W.sample_start_row)" data-role="button" data-theme="b" href="#capture" data-panel="main">Start capturing spectra</a>
+		<a data-role="button" data-theme="a" href="#capture" data-panel="main">&laquo; Back</a>
+
+		<hr />
+		<h3>Locally stored calibrations</h3>
 
 		<p style="display:none;" id="local_calibration">This device has a locally stored calibration. <a href="" id="local_calibration_link">Click here</a> to use it.</p>
 		<script>
@@ -22,20 +46,5 @@
 			<a href="javascript:void()" onClick="localStorage.setItem('sw:calibration_id',$('#local_calibration_select').val())" class="smallbutton">Store calibration</a><br style="clear:both;"/>
 		</div>
 		<% end %>
-		
-		<a onClick="$W.rotated = !$W.rotated" data-role="button" data-theme="a" href="javascript:void()">Rotate image 90&deg;</a>
-
-		<img style="float:left;margin-right:20px;" src="/images/calibration-example.png" />
-		<p><b>(Beta):</b> Your spectrometer samples just one row of pixels, so adjust this slider until the yellow line intersects the brightest, clearest part of your spectrum. You'll have to point this at a light bulb or bright light source.</p>
-
-		<label for="samplerow-slider">Sample row height (zero = top):</label>
-		<input type="range" name="samplerow-slider" id="samplerow-slider" value="240" min="0" max="480" onChange="$W.setSampleRows(parseInt($('#samplerow-slider').val()),parseInt($('#samplerow-slider').val()));$('#heightIndicator')[0].style.height = parseInt(($('#samplerow-slider').val()/480)*240)+'px';"/>
-
-		<br />
-
-		<div id="heightIndicator" style="position:absolute;margin:0;z-index:999;border-bottom:2px solid #ff4;height:120px;width:320px;"></div> 
-		<div id="webcam"></div> 
-		<a onClick="localStorage.setItem('sw:sample_start_row',$W.sample_start_row)" data-role="button" data-theme="b" href="#capture" data-panel="main">Save</a>
-		<a data-role="button" data-theme="a" href="#capture" data-panel="main">&laquo; Back</a>
 	</div>
 </div>
