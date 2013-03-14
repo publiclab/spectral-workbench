@@ -81,7 +81,7 @@ class User < ActiveRecord::Base
 
   # find spectra by user, tagged with <name>
   def tag(name,count)
-    tags = Tag.find :all, :conditions => {:user_id => self.id, :name => name}, :include => :spectrum, :limit => count
+    tags = Tag.find :all, :conditions => {:user_id => self.id, :name => name}, :include => :spectrum, :limit => count, :order => "id DESC"
     spectrum_ids = tags.collect(&:spectrum_id)
     spectra = Spectrum.find spectrum_ids
     spectra ||= []

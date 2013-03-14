@@ -11,7 +11,7 @@
 
   <% if logged_in? && @spectrum.author == current_user.login && !@spectrum.calibrated %>
     <div class="alert alert-warning"><button type="button" class="close" data-dismiss="alert">×</button> 
-      This spectrum is not yet calibrated. <a class="btn btn-primary btn-small" data-toggle="modal" href="#calibratemodal1">Calibrate</a> 
+      This spectrum is not yet calibrated. <a class="btn btn-primary btn-small" data-toggle="modal" href="#calibratemodal1" onClick="$('calibrate-begin').focus()">Calibrate</a> 
       <a class="btn btn-small" href="http://publiclaboratory.org/wiki/spectral-workbench-calibration">Learn more</a>
     </div>
   <% end %>
@@ -28,7 +28,7 @@
 
     <div class="navbar navbar-inverse navbar-static-bottom" style="margin:0;">
       <div class="navbar-inner">
-        <a data-toggle="modal" href="#calibratemodal1" class="btn btn-primary"><i class="icon icon-white icon-screenshot"></i><span class="hidden-phone"> Calibrate</span></a>
+        <a id="$('#calibrate-begin').focus()" data-toggle="modal" href="#calibratemodal1" class="btn btn-primary"><i class="icon icon-white icon-screenshot"></i><span class="hidden-phone"> Calibrate</span></a>
 
         <a href="#embedmodal" class="btn btn-inverse hidden-phone" data-toggle="modal"><i class="icon icon-white icon-share"></i><span class="hidden-phone"> Embed</span></a>
         <%= render :partial => "embed" %>
