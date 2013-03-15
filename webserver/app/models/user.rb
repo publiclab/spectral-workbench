@@ -84,7 +84,7 @@ class User < ActiveRecord::Base
     tags = Tag.find :all, :conditions => {:user_id => self.id, :name => name}, :include => :spectrum, :limit => count, :order => "id DESC"
     spectrum_ids = tags.collect(&:spectrum_id)
     spectra = Spectrum.find spectrum_ids
-    spectra ||= []
+    spectra.reverse ||= []
   end  
 
 end
