@@ -27,7 +27,7 @@ class Spectrum < ActiveRecord::Base
   end
 
   def after_save
-    self.correct_reversed_image
+    #self.correct_reversed_image
   end
 
   def before_destroy

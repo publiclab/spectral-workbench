@@ -30,7 +30,7 @@
 
     </div>
 
-    <div class="tab-pane" style="margin-left:20px;width:95%;height:160px;" id="graph"></div>
+    <div class="tab-pane active" style="margin-left:20px;width:90%;height:200px;margin-top:10px;margin-bottom:10px;" id="graph"></div>
   </div>
 
 </div>
@@ -64,6 +64,8 @@
   <% end %>
   flotoptions.xaxis.tickFormatter = function(nm) { return nm }
   flotoptions.xaxis.show = true
+  flotoptions.xaxis.max = 1000
+  flotoptions.xaxis.min = 200
   flotoptions.colors = ["#ddd"]
   flotoptions.colors = ["#ddd"]
   flotoptions.grid.backgroundColor = "#222"
