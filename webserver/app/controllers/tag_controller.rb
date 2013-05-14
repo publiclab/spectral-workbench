@@ -27,7 +27,13 @@ class TagController < ApplicationController
     end
     @spectrums = [] if @spectrums.nil?
     @comments = Comment.all :limit => 12, :order => "id DESC"
-    render :layout => 'bootstrap'
+    respond_to do |format|
+      format.html { 
+        render :layout => 'bootstrap'
+      } # show.html.erb
+      format.xml  { render :xml => @spectrums }
+      format.json  { render :json => @spectrums }
+    end
   end
 
   def delete

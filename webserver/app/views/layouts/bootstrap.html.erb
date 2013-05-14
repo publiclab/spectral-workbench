@@ -47,7 +47,7 @@
     <div id="header">
       <a id="logo" href="/"><img src="/images/logo.png" /></a>
       <h3 class="hidden-desktop visible-phone pull-left"><a class="title" href="/">SW</a></h3>
-      <h3 class="hidden-phone visible-desktop pull-left"><a class="title" href="/">Spectral Workbench</a><small> by <a href="http://publiclaboratory.org">Public Lab</a></small></h3>
+      <h3 class="hidden-phone visible-desktop pull-left"><a class="title" href="/">Spectral Workbench</a><small> by <a href="http://publiclab.org">Public Lab</a></small></h3>
       <script> if ($('body').width() < 767) { $('#logo').addClass('mobile'); setTimeout(function() {$('#headerBtns').addClass('mobile'); },250) } </script>
 
       <div id="headerBtns" class="btn-group pull-right">
@@ -60,12 +60,12 @@
             <li><a href="/upload" class="button"><i class="icon icon-upload"></i> Upload image</a></li>
             <li class="divider"></li>
             <li><a href="/capture/beta" class="button"><i class="icon icon-camera"></i> Live-capture beta interface</a></li>
-            <li><a href="http://publiclaboratory.org/wiki/spectral-workbench-usage" class="button"><i class="icon icon-question-sign"></i> Learn how</a></li>
+            <li><a href="http://publiclab.org/wiki/spectral-workbench-usage" class="button"><i class="icon icon-question-sign"></i> Learn how</a></li>
             <% if logged_in? %><li><a href="/logout" class="button"><i class="icon icon-user"></i> Log out</a></li><% else %>
             <li><a href="/login" class="button"><i class="icon icon-user"></i> Log in</a></li><% end %>
       </div>
       <div id="headerBtns" class="btn-group pull-right hidden-desktop" style="padding-right:0;">
-        <a class="btn btn-large" href="http://publiclaboratory.org/wiki/spectral-workbench-help"><i class="icon icon-question-sign" /></i></a>
+        <a class="btn btn-large" href="http://publiclab.org/wiki/spectral-workbench-help"><i class="icon icon-question-sign" /></i></a>
       </div>
       <ul class="hidden-phone nav nav-pills pull-right">
         <li><a class="btn btn-link" href="/"><i class="icon icon-home"></i></a></li> 
@@ -81,17 +81,17 @@
         <li class="dropdown">
           <a class="btn btn-link dropdown-toggle" data-toggle="dropdown">Learn <b class="caret"></b></a> 
           <ul class="dropdown-menu">
-            <li><a href="http://publiclaboratory.org/wiki/spectral-workbench-usage">Using Spectral Workbench</a></li>
-            <li><a href="http://publiclaboratory.org/wiki/spectrometer-construction">Build a spectrometer</a></li>
-            <li><a href="http://store.publiclaboratory.org/">Buy a spectrometer kit</a></li>
-            <li><a href="http://publiclaboratory.org/tool/spectrometer">Open source spectrometry</a></li>
-            <li><a href="http://publiclaboratory.org/wiki/spectral-analysis">Applications</a></li>
+            <li><a href="http://publiclab.org/wiki/spectral-workbench-usage">Using Spectral Workbench</a></li>
+            <li><a href="http://publiclab.org/wiki/spectrometer-construction">Build a spectrometer</a></li>
+            <li><a href="http://store.publiclab.org/">Buy a spectrometer kit</a></li>
+            <li><a href="http://publiclab.org/tool/spectrometer">Open source spectrometry</a></li>
+            <li><a href="http://publiclab.org/wiki/spectral-analysis">Applications</a></li>
             <li class="divider"></li>
-            <li><a href="http://publiclaboratory.org/wiki/spectral-workbench">About Spectral Workbench</a></li>
+            <li><a href="http://publiclab.org/wiki/spectral-workbench">About Spectral Workbench</a></li>
           </ul>
         </li>
 
-        <li><a class="btn btn-link" href="http://publiclaboratory.org/wiki/spectral-workbench-help">Help</a></li> 
+        <li><a class="btn btn-link" href="http://publiclab.org/wiki/spectral-workbench-help">Help</a></li> 
         <% if logged_in? %>
         <li class="dropdown">
           <a class="btn btn-link dropdown-toggle" data-toggle="dropdown" href="/profile/<%=h current_user.login %>"><i class="icon icon-user"></i> <%=h current_user.login %> <b class="caret"></b></a>

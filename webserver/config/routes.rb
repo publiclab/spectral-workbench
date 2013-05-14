@@ -34,6 +34,7 @@ ActionController::Routing::Routes.draw do |map|
   map.assign '/spectra/assign', :controller => 'spectrums', :action => 'assign'
   map.tags '/tag/create', :controller => 'tag', :action => 'create'
   map.tags '/tag/:id', :controller => 'tag', :action => 'show'
+  map.connect '/tag/:id.:format', :controller => "tag", :action => "show"
   map.tags '/tags', :controller => 'tag', :action => 'index'
   map.resources :spectrums
 #  map.resources :spectrums, :collection=>{

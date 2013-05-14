@@ -14,7 +14,7 @@
     <% if user.spectrum_count > 0 %>
     <tr>
       <td><img width="120px" class="img" src="<%= user.spectra(1).first.photo.url(:thumb) %>" /></td>
-      <td><a href="/profile/<%= user.login %>"><%= user.login %></a> | <a href="http://publiclaboratory.org/people/<%= user.login %>">Public Lab profile</a></td>
+      <td><a href="/profile/<%= user.login %>"><%= user.login %></a> | <a href="http://publiclab.org/profile/<%= user.login %>">Public Lab profile</a></td>
       <td><%= user.spectrum_count %> spectra</td>
       <td><%= user.comments.length %> comments</td>
       <td>Last uploaded <%= time_ago_in_words(user.spectra(1).first.created_at) %> ago</td>
