@@ -38,10 +38,10 @@ $W = {
         		this.width = 1280
         		this.height = 720
 			this.sample_start_row = this.width/2
-			this.sample_end_row = this.width/2 + 10
+			this.sample_end_row = this.width/2 + 1
 		} else {
 			this.sample_start_row = this.height/2
-			this.sample_end_row = this.height/2 + 10
+			this.sample_end_row = this.height/2 + 1
 		}
 
 

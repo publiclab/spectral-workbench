@@ -11,8 +11,8 @@
 
   <% if logged_in? && @spectrum.author == current_user.login && !@spectrum.calibrated %>
     <div class="alert alert-warning"><button type="button" class="close" data-dismiss="alert">×</button> 
-      This spectrum is not yet calibrated. <a class="btn btn-primary btn-small" data-toggle="modal" href="#calibratemodal1">Calibrate</a> 
-      <a class="btn btn-small" href="http://publiclaboratory.org/wiki/spectral-workbench-calibration">Learn more</a>
+      This spectrum is not yet calibrated. <a class="btn btn-primary btn-small" data-toggle="modal" href="#calibratemodal1" onClick="$('calibrate-begin').focus()">Calibrate</a> 
+      <a class="btn btn-small" href="http://publiclab.org/wiki/spectral-workbench-calibration">Learn more</a>
     </div>
   <% end %>
   <% if mobile? && !@spectrum.calibrated %>
@@ -28,7 +28,7 @@
 
     <div class="navbar navbar-inverse navbar-static-bottom" style="margin:0;">
       <div class="navbar-inner">
-        <a data-toggle="modal" href="#calibratemodal1" class="btn btn-primary"><i class="icon icon-white icon-screenshot"></i><span class="hidden-phone"> Calibrate</span></a>
+        <a id="$('#calibrate-begin').focus()" data-toggle="modal" href="#calibratemodal1" class="btn btn-primary"><i class="icon icon-white icon-screenshot"></i><span class="hidden-phone"> Calibrate</span></a>
 
         <a href="#embedmodal" class="btn btn-inverse hidden-phone" data-toggle="modal"><i class="icon icon-white icon-share"></i><span class="hidden-phone"> Embed</span></a>
         <%= render :partial => "embed" %>
@@ -47,7 +47,7 @@
   <div class="row-fluid">
     <div class="span4">
       <h3 style="margin-bottom:0px;"><%= @spectrum.title %></h3>
-      <p>uploaded by <a href="/profile/<%= @spectrum.author %>"><%= @spectrum.author %></a></p>
+      <p>uploaded by <a href="/profile/<%= @spectrum.author %>"><%= @spectrum.author %></a> | <%= @spectrum.created_at.to_s(:long) %></p>
       <% if @spectrum.lat != 0 && @spectrum.lon != 0 %><p>Collected at: Lat: <%= @spectrum.lat %>, Lon: <%= @spectrum.lon %> (<a href="http://www.openstreetmap.org/?lat=<%= @spectrum.lat %>&lon=<%= @spectrum.lon %>&zoom=10&layers=M">View in OpenStreetMap</a>)</p><% end %>
 
       <p><b>Tags:</b> <% @spectrum.tags.each do |tag| %><a class="label label-info" href="/tag/<%= tag.name %>"><%= tag.name %></a> <% end %></p>
@@ -66,7 +66,7 @@
         <a class="btn btn-small" href="/spectra/show/<%= @spectrum.id %>.csv"><b>CSV</b></a>
         <a class="btn btn-small" href="/spectra/show/<%= @spectrum.id %>.csv?raw=true"><b>CSV (raw)</b></a>
         <a class="btn btn-small" href="/spectra/show/<%= @spectrum.id %>.xml"><b>XML</b></a>
-        <a rel="tooltip" class="btn btn-small" href="http://publiclaboratory.org/wiki/spectral-workbench-exporting" title="About export formats"><i class="icon icon-question-sign"></i></a> 
+        <a rel="tooltip" class="btn btn-small" href="http://publiclab.org/wiki/spectral-workbench-exporting" title="About export formats"><i class="icon icon-question-sign"></i></a> 
       </div>
 
       <div class="hidden-phone">
@@ -82,7 +82,7 @@
         <p><a rel="license" href="http://creativecommons.org/publicdomain/zero/1.0/"><img src="http://i.creativecommons.org/p/zero/1.0/88x31.png" style="border-style: none;" alt="CC0" /></a></p>
         <p class="hidden-phone"><small>
         To the extent possible under law,
-        <%# if @spectrum.author.url %><a rel="dct:publisher" href="http://publiclaboratory.org"><%# end %>
+        <%# if @spectrum.author.url %><a rel="dct:publisher" href="http://publiclab.org"><%# end %>
         <span property="dct:title"><%= @spectrum.author %></span><%# if @spectrum.author.url %></a><%# end %>
         has waived all copyright and related or neighboring rights to
         "<span property="dct:title"><%= @spectrum.title %></span>".
@@ -123,7 +123,7 @@
 
       <h3>Notes</h3>
 
-      <p><%= @spectrum.notes %></p>
+      <p><%= RDiscount.new(@spectrum.notes).to_html %></p>
 
       <a name="comments"></a>
       <h3>Comments (<%= @spectrum.comments.length %>)</h3>
@@ -137,7 +137,7 @@
         <% if User.find_by_login(comment.author) %><a href="/profile/<%= comment.author %>"><%= comment.author %></a> wrote:</b>
         <% else %><%=h comment.author %> wrote:</b>
         <% end %>
-        <p><%=h comment.body %></p>
+        <p><%= RDiscount.new(comment.body).to_html %></p>
         <% if logged_in? && current_user.role == "admin" %><p><%= link_to '<i class="icon icon-remove-sign"></i> Delete', "/comments/delete/"+comment.id.to_s, :confirm => 'Are you sure?' %></p><% end %>
       </div>
       <% end %>

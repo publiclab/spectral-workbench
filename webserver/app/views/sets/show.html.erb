@@ -37,7 +37,7 @@
         <p><a rel="license" href="http://creativecommons.org/publicdomain/zero/1.0/"><img src="http://i.creativecommons.org/p/zero/1.0/88x31.png" style="border-style: none;" alt="CC0" /></a></p>
         <p class="hidden-phone"><small>
         To the extent possible under law,
-        <%# if @set.author.url %><a rel="dct:publisher" href="http://publiclaboratory.org"><%# end %>
+        <%# if @set.author.url %><a rel="dct:publisher" href="http://publiclab.org"><%# end %>
         <span property="dct:title"><%= @set.author %></span><%# if @set.author.url %></a><%# end %>
         has waived all copyright and related or neighboring rights to
         "<span property="dct:title"><%= @set.title %></span>".
@@ -61,7 +61,7 @@
 
       <h3>Notes</h3>
 
-      <p><%= @set.notes %></p>
+      <p><%= RDiscount.new(@set.notes).to_html %></p>
 
       <a name="comments"></a>
       <h3>Comments (<%= @set.comments.length %>)</h3>
@@ -75,7 +75,7 @@
         <% if User.find_by_login(comment.author) %><a href="/spectra/author/<%= comment.author %>"><%= comment.author %></a> wrote:</b>
         <% else %><%=h comment.author %> wrote:</b>
         <% end %>
-        <p><%=h comment.body %></p>
+        <p><%= RDiscount.new(comment.body).to_html %></p>
         <% if logged_in? && current_user.role == "admin" %><p><a href="/comments/delete/<%= comment.id %>">Delete</a></p><% end %>
       </div>
       <% end %>

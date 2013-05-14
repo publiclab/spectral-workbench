@@ -24,6 +24,8 @@ Rails::Initializer.run do |config|
   # config.gem 'paperclip', :source => 'http://rubygems.org'
   config.gem "paperclip", "~> 2.0"
   config.gem "recaptcha", :lib => "recaptcha/rails"
+  #config.gem 'rmagick', :require => 'RMagick'
+
   # now add this to config/initializers/recaptcha.rb (ignored in .gitignore)
   # Recaptcha.configure do |config|
   #   config.public_key  = '6Lff6sESAAAAAK9cp9A2ajSGESoHnd3EZI4XaLQe'
@@ -31,6 +33,7 @@ Rails::Initializer.run do |config|
   # end
   config.gem "redcarpet"
   config.gem "will_paginate", :version => "2.3.16"
+  config.gem "rdiscount"
 
   # Only load the plugins named here, in the order given (default is alphabetical).
   # :all can be used as a placeholder for all plugins not explicitly named

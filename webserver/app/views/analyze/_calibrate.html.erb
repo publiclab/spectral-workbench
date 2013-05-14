@@ -11,7 +11,7 @@
   <div class="modal-footer">
     <a data-dismiss="modal" class="btn" href="javascript:void();">Cancel</a>
     <a data-dismiss="modal" data-toggle="modal" class="btn" href="#clonemodal">Use existing calibration</a>
-    <a data-dismiss="modal" class="btn btn-primary" href="#calibrationmodal2" onClick="$('#graph').bind('plotclick', function (event, pos, item) { $('#graph').unbind('plotclick');$W.second_calibration(pos.x,435.833);$('#calibratemodal2').modal('show'); })">Begin</a>
+    <a id="calibrate-begin" data-dismiss="modal" class="btn btn-primary" href="#calibrationmodal2" onClick="$('#graph').bind('plotclick', function (event, pos, item) { $('#graph').unbind('plotclick');$W.second_calibration(pos.x,435.833);$('#calibratemodal2').modal('show');$('#calibrate-finish').focus(); })">Begin</a>
   </div>
 </div> 
 <div class="modal hide fade" id="calibratemodal2">
@@ -24,6 +24,6 @@
     <p style="text-align:center;"><img class="img-rounded" src="/images/calibrate-green.png"></p>
   </div>
   <div class="modal-footer">
-    <a data-dismiss="modal" class="btn btn-primary" href="javascript:void();">Finish</a>
+    <a id="calibrate-finish" data-dismiss="modal" class="btn btn-primary" href="javascript:void();">Finish</a>
   </div>
 </div> 
