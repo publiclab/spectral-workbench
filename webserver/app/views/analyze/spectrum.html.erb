@@ -138,7 +138,7 @@
         <% else %><%=h comment.author %> wrote:</b>
         <% end %>
         <p><%=h comment.body %></p>
-        <% if logged_in? && current_user.role == "admin" %><p><a href="/comments/delete/<%= comment.id %>">Delete</a></p><% end %>
+        <% if logged_in? && current_user.role == "admin" %><p><%= link_to '<i class="icon icon-remove-sign"></i> Delete', "/comments/delete/"+comment.id.to_s, :confirm => 'Are you sure?' %></p><% end %>
       </div>
       <% end %>
 
