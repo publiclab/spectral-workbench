@@ -13,12 +13,15 @@
   }
   #webcam-msg {
     position:absolute;
-    background:#eee;
+    background:#777;
     color:#aaa;
     text-align:center;
     height:240px;
     width:320px;
     font-size:14px;
+  }
+  a {
+    color:#0af;
   }
   #webcam-msg p {
     padding:100px 20px; 
@@ -30,26 +33,40 @@
   #header.navbar-inner {
     margin-right:-40px;
   }
+
+  body {
+    background:#444;
+    color:#ccc;
+  }
+  hr {
+    border-color:#666;
+  }
 </style>
 
-<div id="header" class="navbar navbar-inverse navbar-static-top" style="margin-bottom:20px;padding-top:0;">
+<div id="header" class="navbar navbar-inverse navbar-static-top" style="padding-top:0;">
   <div class="navbar-inner" style="padding:0 10px;">
+    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </a>
     <a class="brand" href="/"><img style="padding:-2px;width:20px;" src="/images/logo.png" /></a>
-    <ul class="nav">
+    <a class="btn pull-right" href="http://publiclab.org/wiki/spectral-workbench"><i class="icon icon-question-sign"></i></a>
+    <ul class="nav" style="margin:0">
       <li><a href="#capture" data-toggle="tab">Capture</a></li>
       <li class="active"><a href="#settings" data-toggle="tab">Settings</a></li>
     </ul>
-    <a style="margin-left:6px;" href="http://publiclaboratory.org/wiki/spectral-workbench" class="btn"><i class="icon icon-question-sign"></i></a>
   </div>
 </div>
 
-<div class="tab-content container">
+<div class="tab-content" style="padding:0 20px;">
+
 <div id="settings" class="tab-pane active">
-  <div id="webcam-msg"><p><b>Requesting camera access... <br />(<a href="https://play.google.com/store/apps/details?id=com.opera.browser">Opera Mobile</a> only)</b></p></div> 
-  <div style="width:100%;" id="webcam"></div>
+  <div id="webcam-msg"><p><b>Requesting camera access... <br />(<a href="https://play.google.com/store/apps/details?id=com.opera.browser">Opera Mobile</a> or Chrome <a href="http://publiclab.org/wiki/spectral-workbench-mobile-setup" target="_blank">with flags enabled</a> only)</b></p></div> 
+  <div style="" id="webcam"></div>
 
   <div style="padding-bottom:10px;padding-top:250px;">
-    <h4 style="margin-top:4px">Examples: <small>(<a href="http://publiclaboratory.org/wiki/spectral-workbench-usage">Learn more &raquo;</a>)</small></h4>
+    <p style="margin-top:4px;">Point your spectrometer at a light and it should look like the below images. (<a href="http://publiclab.org/wiki/spectral-workbench-usage">Learn more &raquo;</a>)</p>
     <img class="img-rounded" src="/images/example-cfl.jpg" style="width:100px;height:80px" />
     <img class="img-rounded" src="/images/example-sky.jpg" style="width:100px;height:80px" />
   </div>
@@ -63,7 +80,7 @@
       
   <% end %>
 
-  <a class="btn btn-large btn-primary" href="#capture" data-toggle="tab">Start capturing &raquo;</a>
+  <a class="btn btn-large btn-primary" href="#capture" data-toggle="tab">Begin capturing &raquo;</a>
 
 </div>
 
@@ -73,20 +90,11 @@
   <p><b>Click "Match" to find the closest spectrum in the set "<%= @set.title %>"</b></p>
   <% end %>
 
-  <div id="graph" style="width:100%;height:100px;"></div>
+  <div id="graph" style="width:100%;height:100px;margin:10px 0;"></div>
   <canvas style="width:100%;height:100px;" id="canvas"></canvas> 
 
-  <span id="match"></span>
-
-  <div class="btn-group">
-  <% if params[:action] == "match" %>
-    <a class="btn btn-primary" href="javascript:void()" onClick="$W.match();">Match</a>
-    <a class="btn btn-primary" data-toggle="tab" href="#save" onClick="$W.saveSpectrum();">Save</a>
-  <% else %>
-      <a class="btn btn-primary btn-large" data-toggle="tab" href="#save" onClick="$W.saveSpectrum();">Save</a>
-      <a class="btn btn-large" data-toggle="tab" href="#help" onClick="$W.saveSpectrum();"><i class="icon icon-question-sign"></i> Help</a>
-  <% end %>
-  </div>
+  <a class="btn btn-primary btn-large" data-toggle="tab" href="#save" onClick="$W.saveSpectrum();">Save</a>
+  <a class="btn btn-large" data-toggle="tab" href="#help" onClick="$W.saveSpectrum();"><i class="icon icon-question-sign"></i> Help</a>
 
   <form class="form">
     <label class="checkbox inline" for="geotag-toggle">Geotag</label>
@@ -96,7 +104,7 @@
   </form>
 
     <% unless logged_in? %><p><a href="/login">Log in</a> to use a recent calibration</p><% end %>
-    <p>This interface works only on <a href="https://play.google.com/store/apps/details?id=com.opera.browser">Opera Mobile</a>, the only mobile browser currently supporting the MediaStream API</p>
+    <p>This interface works only on <a href="https://play.google.com/store/apps/details?id=com.opera.browser">Opera Mobile</a> or Chrome <a href="http://publiclab.org/wiki/spectral-workbench-mobile-setup" target="_blank">with flags enabled</a></p>
 
 </div>
 
@@ -106,11 +114,22 @@
 
 </div>
 
-<script> (function () { 
+<script>
+ (function () { 
+
+  flotoptions.grid = {
+    clickable: true,
+    hoverable:true,
+    borderWidth: 0,
+    color: "#ccc",
+    backgroundColor: "#111"
+  }
+  flotoptions.colors = [ "#ccc", "#E02130", "#FAB243", "#429867", "#2B5166" ]//, "#482344" ]
+
   $W.initialize({
   	calibrated:<%= !@calibration.nil? %>,
 	interface:"capture",
-  	mobile:true,
+  	width:640
   }) 
   setInterval($W.getRow,100)
   <% if @calibration %>

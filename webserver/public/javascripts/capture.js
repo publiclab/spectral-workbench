@@ -30,20 +30,14 @@ $W = {
 		this.flipped = args['flipped'] || false
 		this.interface = args['interface'] || false
 		this.calibrated = args['calibrated'] || false
+		this.width = args['width'] || this.width
+		this.height = args['height'] || this.height
 		if (args['height']) {
 			this.options.height = args['height'] 
 			this.options.width = args['width']
 		}
-		if (this.mobile) {
-        		this.width = 1280
-        		this.height = 720
-			this.sample_start_row = this.width/2
-			this.sample_end_row = this.width/2 + 1
-		} else {
-			this.sample_start_row = this.height/2
-			this.sample_end_row = this.height/2 + 1
-		}
-
+		this.sample_start_row = this.width/2
+		this.sample_end_row = this.width/2 + 1
 
 		getUserMedia(this.options, this.success, this.deviceError)
 
@@ -82,9 +76,8 @@ $W = {
                         if (navigator.mozGetUserMedia) video.src = stream;
 			else video.src = vendorURL ? vendorURL.createObjectURL(stream) : stream;
                         video.onerror = function (e) {
-				console.log(e);
+				//console.log(e);
                                 stream.stop();
-                        	streamError();
                 	};
                 } else {
                 //flash context

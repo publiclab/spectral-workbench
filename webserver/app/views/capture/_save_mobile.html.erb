@@ -1,30 +1,30 @@
 <h2>Save this spectrum</h2>
 
 <% if !logged_in? %>
-	<p>You must be <a target="_blank" href="/login">logged in</a> to save spectra.</p>
+  <p>You must be <a target="_blank" href="/login">logged in</a> to save spectra.</p>
 <% else %>
-	<p><small><i>(logged in as <%=h current_user.login %>)</i></small></p>
+  <p><small><i>(logged in as <%=h current_user.login %>)</i></small></p>
 <% end %>
 
 <form class="form" action="/spectrums" method="post" id="saveForm" target="_blank" onSubmit="$W.cancelSave();window.location='#page1'">
-	<input placeholder="Title (required)" name="spectrum[title]" id="spectrum_notes" type="text" /><br />
+  <input placeholder="Title (required)" name="spectrum[title]" id="spectrum_notes" type="text" /><br />
         <div class="input-prepend">
           <span class="add-on"><i class="icon-tags"></i></span>
           <input name="tags" id="spectrum_tags" type="text" placeholder="mobile, soil, sunlight" data-provide="typeahead" data-source="['calibration','soil','']">
         </div>
-	<textarea placeholder="Notes" name="spectrum[notes]" id="spectrum_notes"></textarea><br />
-	<input name="dataurl" type="hidden" id="dataurl" />
-	<input name="geotag" type="hidden" id="geotag" />
-	<input name="lat" type="hidden" id="lat" />
-	<input name="lon" type="hidden" id="lon" />
-	<% if logged_in? %>
-	<select name="spectrum[calibration_id]" id="calibration_id">
-		<% current_user.tag('calibration',20).each do |spectrum| %>
-		<option value="<%= spectrum.id %>"><%= spectrum.title %> (<%= time_ago_in_words(spectrum.created_at) %>)</option>
-		<option value="calibration">[+] New calibration</option>
-		<% end %>
-	</select>
-	<% end %>
+  <textarea placeholder="Notes" name="spectrum[notes]" id="spectrum_notes"></textarea><br />
+  <input name="dataurl" type="hidden" id="dataurl" />
+  <input name="geotag" type="hidden" id="geotag" />
+  <input name="lat" type="hidden" id="lat" />
+  <input name="lon" type="hidden" id="lon" />
+  <% if logged_in? %>
+  <select name="spectrum[calibration_id]" id="calibration_id">
+    <% current_user.tag('calibration',20).each do |spectrum| %>
+    <option value="<%= spectrum.id %>"><%= spectrum.title %> (<%= time_ago_in_words(spectrum.created_at) %>)</option>
+    <option value="calibration">[+] New calibration</option>
+    <% end %>
+  </select>
+  <% end %>
 </form>
 <a class="btn btn-large" href="#capture" onClick="$W.cancelSave()">&laquo; Back</a>
 <a class="btn btn-primary btn-large" href="javascript:void(0);" onClick="$('#saveForm').submit()">Save</a>
