@@ -44,6 +44,8 @@ $W = {
 			this.sample_end_row = this.height/2 + 1
 		}
 
+		this.sample_start_row = args['sample_start_row'] || this.sample_start_row
+		this.sample_end_row = args['sample_end_row'] || this.sample_end_row
 
 		getUserMedia(this.options, this.success, this.deviceError)
 

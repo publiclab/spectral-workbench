@@ -37,6 +37,10 @@ flotoptions.colors = [ "#ccc", "#E02130", "#FAB243", "#429867", "#2B5166" ]//, "
 (function () { 
 	$W.initialize({
 		calibrated:<%= !@calibration.nil? %>,
+		<% if @calibration && @calibration.video_row!= 0 && !@calibration.video_row.nil? %>
+		sample_start_row: <%= @calibration.video_row %>,
+		sample_end_row: <%= @calibration.video_row+1 %>,
+		<% end %>
 		flipped:<%= !@calibration.nil? && @calibration.is_flipped %>,
 		mobile:false
 	}) 
