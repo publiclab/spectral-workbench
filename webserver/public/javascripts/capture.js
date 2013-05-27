@@ -15,7 +15,7 @@ $W = {
 	rotated: false,
 	pos: 0,
 	sample_start_row: 240,
-	sample_end_row: 280,
+	sample_end_row: 241,
         // height and width of the output stream
         // container
 	width: 640,
