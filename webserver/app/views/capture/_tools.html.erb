@@ -3,8 +3,6 @@
 	<h3 style="text-align:left;margin-left:15px;">Tools</h3>
 </div>
 <div data-role="content" class="content" style="padding: 15px">
-	<div id="notify"></div>
-	<!--<a data-role="button" data-theme="a" href="javascript:void()" onClick="">Calibrate</a>-->
 
 	<div data-role="fieldcontain">
 		<fieldset data-role="controlgroup">
@@ -12,6 +10,9 @@
 			<input data-theme="a" type="checkbox" name="geotag-toggle" id="geotag-toggle" type="checkbox" />
 			<label for="rgb-toggle">RGB</label>
 			<input data-theme="a" type="checkbox" name="rgb-toggle" id="rgb-toggle" onChange="$W.toggle_mode()" />
+			<label for="rotate-toggle">Rotate</label>
+			<input onChange="$W.rotated = !$W.rotated" data-theme="a" type="checkbox" name="rotate-toggle" id="rotate-toggle" />
+
 		</fieldset>
 	</div>
 	<div data-role="collapsible-set" style="padding:8px;">
@@ -32,4 +33,7 @@
 	<p>This interface works on <a href="https://www.google.com/intl/en/chrome/browser/">Chrome 21+</a>, Opera, and any browser which supports the HTML5 getUserMedia() call. <a href="https://play.google.com/store/apps/details?id=com.opera.browser">Opera Mobile</a> for Android also works! Don't see anything? <a href="http://publiclab.org/wiki/spectral-workbench-web-video">Check if your browser is supported</a></p>
 
 </div>
+
+<div id="notify"></div>
+	<!--<a data-role="button" data-theme="a" href="javascript:void()" onClick="">Calibrate</a>-->
 </div>

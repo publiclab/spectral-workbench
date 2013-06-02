@@ -47,6 +47,11 @@ $W = {
 		this.sample_start_row = args['sample_start_row'] || this.sample_start_row
 		this.sample_end_row = args['sample_end_row'] || this.sample_end_row
 
+		//if (localStorage.getItem('sw:sample_start_row')) this.sample_start_row = parseInt(localStorage.getItem('sw:sample_start_row'))
+		//if (localStorage.getItem('sw:sample_end_row')) this.sample_end_row = parseInt(localStorage.getItem('sw:sample_end_row'))
+		this.sample_height = Math.abs(this.sample_end_row - this.sample_start_row) // how many pixels to sample
+		$W.setSampleRow($W.sample_start_row)
+
 		getUserMedia(this.options, this.success, this.deviceError)
 
 		window.webcam = this.options
@@ -66,12 +71,6 @@ $W = {
 			$('video').width = "320"
 			$('video').height = "240"
 		}
-
-		// retrieve and apply locally stored sample row height
-		if (localStorage.getItem('sw:sample_start_row')) this.sample_start_row = parseInt(localStorage.getItem('sw:sample_start_row'))
-		if (localStorage.getItem('sw:sample_end_row')) this.sample_end_row = parseInt(localStorage.getItem('sw:sample_end_row'))
-		this.sample_height = Math.abs(this.sample_end_row - this.sample_start_row) // how many pixels to sample
-		$W.setSampleRow($W.sample_start_row)
 
 	},
 
