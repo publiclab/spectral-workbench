@@ -6,7 +6,7 @@ class Comment < ActiveRecord::Base
     if self.spectra_set_id == 0
       false
     else
-      Set.find self.spectra_set_id
+      SpectraSet.find self.spectra_set_id
     end
   end
 
