@@ -1,23 +1,23 @@
 <div class="container">
 <h2>Comments</h2>
 <table class="table">
-	<tr>
-		<th>Author</th>
-		<th>Time</th>
-		<th>Tools</th>
-		<th>Comment</th>
-	</tr>
-	<% @comments.each do |comment| %>
-	<tr>
-		<% if User.find_by_login(comment.author) %>
-		<td><a href="/profile/<%= comment.author %>"><%= comment.author %></a></td>
-		<% else %>
-		<td><%= comment.author %></td>
-		<% end %>
-		<td><%= time_ago_in_words(comment.created_at) %> ago</td>
-		<td><% if logged_in? && current_user.role == "admin" %><a class="btn btn-mini btn-error" href="/comments/delete/<%= comment.id %>?index=true"><i class="icon icon-trash"></i> Delete</a><% end %>&nbsp;</td>
-		<td style="width:60%"><%= sanitize(truncate(comment.body,40,"...")) %> <br /><a href="/spectra/show/<%= comment.spectrum_id %>">Read more &raquo;</a></td>
-	</tr>
-	<% end %>
+  <tr>
+    <th>Author</th>
+    <th>Time</th>
+    <th>Tools</th>
+    <th>Comment</th>
+  </tr>
+  <% @comments.each do |comment| %>
+  <tr>
+    <% if User.find_by_login(comment.author) %>
+    <td><a href="/profile/<%= comment.author %>"><%= comment.author %></a></td>
+    <% else %>
+    <td><%= comment.author %></td>
+    <% end %>
+    <td><%= time_ago_in_words(comment.created_at) %> ago</td>
+    <td><% if logged_in? && current_user.role == "admin" %><a class="btn btn-mini btn-error" href="/comments/delete/<%= comment.id %>?index=true"><i class="icon icon-trash"></i> Delete</a><% end %>&nbsp;</td>
+    <td style="width:60%"><%= sanitize(truncate(comment.body,40,"...")) %> <br /><a href="/spectra/show/<%= comment.spectrum_id %>">Read more &raquo;</a></td>
+  </tr>
+  <% end %>
 </table>
 </div>
