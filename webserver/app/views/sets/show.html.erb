@@ -76,7 +76,7 @@
         <% else %><%=h comment.author %> wrote:</b>
         <% end %>
         <p><%= RDiscount.new(comment.body).to_html %></p>
-        <% if logged_in? && current_user.role == "admin" %><p><a href="/comments/delete/<%= comment.id %>">Delete</a></p><% end %>
+        <% if logged_in? && comment.can_delete(current_user) %><p><a href="/comments/delete/<%= comment.id %>">Delete</a></p><% end %>
       </div>
       <% end %>
 

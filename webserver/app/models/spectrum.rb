@@ -190,12 +190,12 @@ class Spectrum < ActiveRecord::Base
   end
 
   # horizontally flips image to match reversed spectrum
-  # this needs to re-save all the Paperclip versions too... it only works for the original image now
   def reverse
     require 'rubygems'
     require 'RMagick'
 
     image   = Magick::ImageList.new("public"+(self.photo.url.split('?')[0]).gsub('%20',' '))
+puts "reversing"
     image.flop!
     image.write("public"+self.photo.url)
     self.photo.reprocess!
