@@ -8,12 +8,12 @@ class SessionsController < ApplicationController
 
   def create
     #params[:openid_url] = "localhost:3000/openid/"+params[:login] if params[:login]
-    params[:openid_url] = "publiclab.org/openid/"+params[:login] if params[:login]
+    #params[:openid_url] = "publiclab.org/openid/"+params[:login] if params[:login]
     #params[:openid_url] = "localhost:3000/people/"+params[:login]+"/identity" if params[:login]
-    #params[:openid_url] = "publiclaboratory.org/people/"+params[:login]+"/identity" if params[:login]
-    params[:openid_url] = "publiclab.org/openid/"+params[:openid][:identity] if params[:openid] && params[:openid][:identity]
-puts 'request:'
-puts request.inspect
+    params[:openid_url] = "publiclaboratory.org/people/"+params[:login]+"/identity" if params[:login]
+    #params[:openid_url] = "publiclab.org/openid/"+params[:openid][:identity] if params[:openid] && params[:openid][:identity]
+#puts 'request:'
+#puts request.inspect
     open_id_authentication(params[:openid_url],params[:return_to])
   end
 
@@ -54,8 +54,8 @@ protected
 
   def open_id_authentication(openid_url,return_to)
     return_to ||= "/dashboard"
-    authenticate_with_open_id(openid_url, :required => [:nickname, :email]) do |result, identity_url, registration|
-    #authenticate_with_open_id(openid_url, :required => [:nickname, :email],:return_to => "http://"+request.host+"/session?_method=post&return_to="+return_to) do |result, identity_url, registration|
+    #authenticate_with_open_id(openid_url, :required => [:nickname, :email]) do |result, identity_url, registration|
+    authenticate_with_open_id(openid_url, :required => [:nickname, :email],:return_to => "http://"+request.host+"/session?_method=post&return_to="+return_to) do |result, identity_url, registration|
       if result.successful?
         @user = User.find_or_initialize_by_identity_url(identity_url)
         if @user.new_record?
