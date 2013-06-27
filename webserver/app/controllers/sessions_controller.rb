@@ -7,8 +7,8 @@ class SessionsController < ApplicationController
   end
 
   def create
-    params[:openid_url] = "localhost:3000/openid/"+params[:login] if params[:login]
-    #params[:openid_url] = "publiclab.org/openid/"+params[:login] if params[:login]
+    #params[:openid_url] = "localhost:3000/openid/"+params[:login] if params[:login]
+    params[:openid_url] = "publiclab.org/openid/"+params[:login] if params[:login]
     #params[:openid_url] = "localhost/people/"+params[:login]+"/identity" if params[:login]
     #params[:openid_url] = "publiclaboratory.org/people/"+params[:login]+"/identity" if params[:login]
     #params[:openid_url] = "publiclab.org/openid/"+params[:openid][:identity] if params[:openid] && params[:openid][:identity]
