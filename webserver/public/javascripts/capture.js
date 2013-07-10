@@ -196,6 +196,12 @@ $W = {
 			$W.data[0] = {label: "r",data:[]}
 			$W.data[1] = {label: "g",data:[]}
 			$W.data[2] = {label: "b",data:[]}
+		} else if ($W.mode == "combined") {
+			$W.data[0] = {label: "webcam",data:[]}
+			$W.data[1] = {label: "r",data:[]}
+			$W.data[2] = {label: "g",data:[]}
+			$W.data[3] = {label: "b",data:[]}
+			$W.data[4] = {label: "overexposed",data:[]}
 		}
 
 		$W.full_data = []
@@ -224,6 +230,14 @@ $W = {
 					$W.data[0].data.push([col,red/2.55])
 					$W.data[1].data.push([col,green/2.55])
 					$W.data[2].data.push([col,blue/2.55])
+				} else if ($W.mode == "combined") {
+					$W.data[0].data.push([col,intensity/2.55])
+					$W.data[1].data.push([col,red/2.55])
+					$W.data[2].data.push([col,green/2.55])
+					$W.data[3].data.push([col,blue/2.55])
+					if (red == 255) $W.data[4].data.push([col,100])
+					if (green == 255) $W.data[4].data.push([col,100])
+					if (blue == 255) $W.data[4].data.push([col,100])
 				}
 			} else {
 				if ($W.mode == "average") {
@@ -236,6 +250,18 @@ $W = {
 					$W.data[0].data.push([w,red/2.55])
 					$W.data[1].data.push([w,green/2.55])
 					$W.data[2].data.push([w,blue/2.55])
+				} else if ($W.mode == "combined") {
+					if ($W.baseline != null) {
+						var wavelength = parseInt($W.getWavelength(col))
+						$W.data[0].data.push([wavelength,$W.baseline[wavelength]-intensity/2.55])
+					} else $W.data[0].data.push([parseInt($W.getWavelength(col)),intensity/2.55])
+					var w = $W.getWavelength(col)
+					$W.data[1].data.push([w,red/2.55])
+					$W.data[2].data.push([w,green/2.55])
+					$W.data[3].data.push([w,blue/2.55])
+					if (red == 255) $W.data[4].data.push([w,100])
+					if (green == 255) $W.data[4].data.push([w,100])
+					if (blue == 255) $W.data[4].data.push([w,100])
 				}
 			}
 		}
@@ -333,6 +359,10 @@ $W = {
 	toggle_mode: function() {
 		if (this.mode == "rgb") $W.show_average()
 		else $W.show_rgb()
+	},
+	show_combined: function() {
+		this.mode = "combined"
+		flotoptions.colors = [ "#ffffff", "rgba(255,0,0,0.3)", "rgba(0,255,0,0.3)", "rgba(0,0,255,0.3)", "#ffff00"]
 	},
 
 	toggle_flip: function() {
