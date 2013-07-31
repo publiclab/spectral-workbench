@@ -37,6 +37,8 @@ $W.toggle_like = function(id) {
 
 $W.run_macro = function(author,macro) {
   $('body').append("<script type='text/javascript' src='/macro/"+author+"/"+macro+".js?run=true'></script>")
+  $('#macrosmodal').modal('hide')
+  $('a').popover('hide')
 }
 
 // These are not really useful anymore:
