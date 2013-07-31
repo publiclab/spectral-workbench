@@ -40,6 +40,8 @@ draw: function() {
 <script> 
   $('#run').click(function() {
     eval("$W.macro = {"+$('#code').val()+"}")
+    $('#macrosmodal').modal('hide')
+    $('a').popover('hide')
     $W.macro.setup()
   })
 </script>
