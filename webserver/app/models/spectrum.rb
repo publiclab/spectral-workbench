@@ -106,6 +106,9 @@ class Spectrum < ActiveRecord::Base
     pixels = []
 
     image   = Magick::ImageList.new("public"+(self.photo.url.split('?')[0]).gsub('%20',' '))
+    # saved sample_row may be greater than image height, so temporarily compensate, 
+    # but preserve sample_row in case we rotate back or something
+    self.sample_row = image.rows-2 if self.sample_row > image.rows
     row = image.export_pixels(0, self.sample_row, image.columns, 1, "RGB");
 
     (0..(row.length/3-1)).each do |p|
