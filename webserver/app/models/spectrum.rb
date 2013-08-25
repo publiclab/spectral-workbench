@@ -137,10 +137,14 @@ class Spectrum < ActiveRecord::Base
   end
 
   def calibrated
-    d = ActiveSupport::JSON.decode(self.data)
-    !d['lines'].first['wavelength'].nil?
+    begin
+      d = ActiveSupport::JSON.decode(self.data)
+      !d.nil? && !d['lines'].nil? && !d['lines'].first['wavelength'].nil?
+    rescue
+      return false
+    end
   end
-
+  
   def calibrate(x1,wavelength1,x2,wavelength2)
     self.extract_data
     d = ActiveSupport::JSON.decode(self.data)
@@ -353,9 +357,10 @@ puts "reversing"
   # Process the spectrum for the "Closest Match Module"
   def generate_processed_spectrum
     id = self.id
-    
-    @processed = ProcessedSpectrum.new(generate_hashed_values)
-    @processed.save
+    if self.calibrated
+      @processed = ProcessedSpectrum.new(generate_hashed_values)
+      @processed.save
+    end
   end
   
   # Generate the values hash for the processed spectrum
@@ -387,16 +392,24 @@ puts "reversing"
     end
 
     lines.each do |line|
-      bins_to_consider = get_bins(line['wavelength'].round)
+      wlength = line['wavelength']
+
+      if !wlength.nil? && wlength.class != String
+      
+      # Some spectrums have "NaN" as wavelength and a, r, g, b values
+      # Also, this protects from the condition where the wlength is nil
+      
+        bins_to_consider = get_bins(line['wavelength'].round)
      
-      bins_to_consider.each do |bin|
-        types.each do |type|
-          values["#{type}#{bin}"] += line[labels[type]].round
+        bins_to_consider.each do |bin|
+          types.each do |type|
+            values["#{type}#{bin}"] += line[labels[type]].round
+          end
+          counts[bin] += 1
         end
-        counts[bin] += 1
       end
     end
-
+    
     # Time to average the values and return
 
     bins.each do |bin|
@@ -415,23 +428,29 @@ puts "reversing"
     base = (wavelength/10) * 10
     diff = wavelength - base
    
-    if base < 10
-      return [10]
-    elsif base > 1490
-      return [1490]
+    if base < 10 || base > 1490
+      return [] # Skipping it off
     end
+
     
     if diff > 6 # This is in the next bin
-      return [base + 10]
+      if base + 10 > 1490
+        return [] # Falls into 1500. So, Skip
+      else
+        return [base + 10]
+      end
     elsif diff < 4 # This is in this bin
       return [base]
-    else # This is in both the present and next bin
-      return [base, base + 10]
+    else 
+      # This is in both the present and next bin
+      if base + 10 > 1490
+        return [base] # 1500 again. Skip
+      else
+        return [base, base + 10]
+      end
     end
 
   end
   
 
 end
-
-
