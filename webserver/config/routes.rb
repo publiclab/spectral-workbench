@@ -61,7 +61,6 @@ ActionController::Routing::Routes.draw do |map|
 
   # Here comes the matching controller
   map.connect 'match/:id', :controller => "match", :action => "index"
-  map.connect 'match/add/:id', :controller => "match", :action => "add"
 
   # The priority is based upon order of creation: first created -> highest priority.
 

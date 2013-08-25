@@ -601,6 +601,11 @@ class ClosestMatch < ActiveRecord::Migration
       t.integer	  :g1490, :default => 0
       t.integer	  :b1490, :default => 0     
     end
+    
+    # Generate the processed spectrums for all the existing spectrums
+    Spectrum.find(:all).each do	|spectrum|
+      spectrum.generate_processed_spectrum
+    end
   end
 
   def self.down

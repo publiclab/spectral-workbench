@@ -28,6 +28,7 @@ class Spectrum < ActiveRecord::Base
 
   def after_save
     #self.correct_reversed_image
+    self.generate_processed_spectrum
   end
 
   def before_destroy
@@ -348,6 +349,88 @@ puts "reversing"
       end
     end
   end
+  
+  # Process the spectrum for the "Closest Match Module"
+  def generate_processed_spectrum
+    id = self.id
+    
+    @processed = ProcessedSpectrum.new(generate_hashed_values)
+    @processed.save
+  end
+  
+  # Generate the values hash for the processed spectrum
+  def generate_hashed_values
+    
+    decoded = ActiveSupport::JSON.decode(self.data)
+
+    lines = decoded['lines']
+    
+    values = {}
+    counts = {}
+    types = ['a', 'r', 'g', 'b']
+    
+    labels = {}
+    labels['a'] = 'average'
+    labels['r'] = 'r'
+    labels['g'] = 'g'
+    labels['b'] = 'b'
+
+    bins = (10...1500).step(10)
+  
+    values['spectrum_id'] = id
+
+    bins.each do |bin|
+      types.each do |type|
+        values["#{type}#{bin}"] = 0
+      end
+      counts[bin] = 0
+    end
+
+    lines.each do |line|
+      bins_to_consider = get_bins(line['wavelength'].round)
+     
+      bins_to_consider.each do |bin|
+        types.each do |type|
+          values["#{type}#{bin}"] += line[labels[type]].round
+        end
+        counts[bin] += 1
+      end
+    end
+
+    # Time to average the values and return
+
+    bins.each do |bin|
+      if counts[bin] > 0
+        types.each do |type|
+          values["#{type}#{bin}"] /= counts[bin]
+        end
+      end
+    end 
+
+    return values
+  end
+
+  # Given a wavelength, decide which bin(s) it should fall into
+  def get_bins(wavelength)
+    base = (wavelength/10) * 10
+    diff = wavelength - base
+   
+    if base < 10
+      return [10]
+    elsif base > 1490
+      return [1490]
+    end
+    
+    if diff > 6 # This is in the next bin
+      return [base + 10]
+    elsif diff < 4 # This is in this bin
+      return [base]
+    else # This is in both the present and next bin
+      return [base, base + 10]
+    end
+
+  end
+  
 
 end
 
