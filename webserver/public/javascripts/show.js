@@ -23,6 +23,11 @@ $W = {
 			var url = "/spectrums/compare/"+$W.spectrum_id+"?q="+$("#searchinput").val()
 			$("#result").html(ajax_load).load(url)
 		});
+		$("#fitAdjustForm").submit(function(){
+			var url = "/match/"+$W.spectrum_id+"?fit="+$("#fitinput").val()
+			$("#results").html(ajax_load).load(url)
+ 			$("#result").html(ajax_load).load(url+"&c=1")
+		});
 		$('#units').click($W.units)
 		$('#createSet').click(function() {
 			var f = document.createElement('form');
