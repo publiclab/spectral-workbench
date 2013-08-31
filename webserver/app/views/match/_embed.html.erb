@@ -1,0 +1,14 @@
+<div class="modal hide fade" id="embedmodal">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <b>Embed this spectrum on your website</b>
+  </div>
+  <div class="modal-body">
+    <p>Copy this code onto your blog to share your spectral data:</p>
+    <textarea id="embedcode" cols="50" rows="4"><iframe width='500px' height='400px' border='0' src='http://spectralworkbench.org/spectra/embed/<%= @spectrum.id %>'></iframe></textarea>
+    <p><a class="btn" href="javascript:void();" id="embed">Custom size</a></p>
+  </div>
+  <div class="modal-footer">
+    <a data-dismiss="modal" href="#" class="btn">Close</a>
+  </div>
+</div> 

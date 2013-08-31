@@ -1,0 +1,45 @@
+<div class="modal hide fade" id="macrosmodal">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <b>Write and run macros to manipulate your data</b>
+  </div>
+  <div class="modal-body">
+    <p>Use the in-development <a target="_blank" href="http://publiclab.org/wiki/spectral-workbench-api">Spectral Workbench API</a> to run scripts (macros).</p>
+
+  <ul class="nav nav-tabs" id="macro_tabs">
+    <li class="active"><a href="#macro_list" data-toggle="tab">List</a></li>
+    <li><a href="#macro_editor" data-toggle="tab">Editor</a></li>
+  </ul>
+
+  <div class="tab-content">
+    <div class="tab-pane active" id="macro_list">
+
+      <%= render :partial => "macros/list" %>
+
+      <p>The macro publishing and sharing system is under construction. To share your macros, please email the mailing list at <a href="mailto:plots-spectrometry@googlegroups.com">plots-spectrometry@googlegroups.com</a> -- ideally with a link to your macro on <a href="http://gist.github.com">gist.github.com</a> and it will be added. </p>
+    </div>
+
+    <div class="tab-pane" id="macro_editor">
+      <textarea rows="12" style="width:95%;font-size:11px;font-family:courier,sans-serif;" id="code">setup: function() {
+  // code to run on startup
+  window.open($W.canvas.toDataURL(),'_newtab').focus() // this may not work if popups are blocked
+},
+draw: function() {
+  // code to run every frame
+}</textarea>
+      <a id="run" data-dismiss="modal" class="btn btn-primary" href="javascript:void();">Run</a>
+    </div>
+  </div>
+
+  </div>
+  <div class="modal-footer">
+    <a data-dismiss="modal" class="btn" href="javascript:void();">Cancel</a>
+  </div>
+</div> 
+
+<script> 
+  $('#run').click(function() {
+    eval("$W.macro = {"+$('#code').val()+"}")
+    $W.macro.setup()
+  })
+</script>
