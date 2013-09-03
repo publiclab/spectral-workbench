@@ -81,7 +81,14 @@ $W.macros = {
       for (i = 0; i < reference.length; i++) {
         if (Math.abs(1-ratios[i]/reference[i]) > threshold) is_cfl = false
       }
-      return is_cfl
+      // try looking for a CFL which is missing its first blue line
+      var is_offset_cfl = true
+      for (i = 0; i < reference.length-1; i++) {
+        if (Math.abs(1-ratios[i]/reference[i+1]) > threshold) is_offset_cfl = false
+      }
+      // have to try backwards order too!
+
+      return is_cfl || is_offset_cfl
     }
   },
 
