@@ -1,36 +1,12 @@
-                     _              __              _ 
-                    | |            / _|            | |
- ___ _ __   ___  ___| |_ _ __ ___ | |_ _ __ ___  __| |
-/ __| '_ \ / _ \/ __| __| '__/ _ \|  _| '__/ _ \/ _` |
-\__ | |_) |  __| (__| |_| | | (_) | | | | |  __| (_| |
-|___| .__/ \___|\___|\__|_|  \___/|_| |_|  \___|\__,_|
-    | |                                               
-    |_|                                               
-
-Spectral Workbench is a web application built on Ruby on Rails and using the Fred graphics library for JavaScript. It allows you to upload images you've taken of spectra (using a prism or diffraction grating) and generate graphs for analysis. By Jeffrey Warren (http://unterbahn.com)
+Spectral Workbench is a web application built on Ruby on Rails and JavaScript. It allows you to upload images you've taken of spectra (using a DIY spectrometer: http://publiclab.org/wiki/spectrometer) and generate graphs for analysis. By Jeffrey Warren (http://publiclab.org/profile/warren)
 
 =============================================================
 
-You can see it in action at: http://spectrometer.publiclaboratory.org
+You can see it in action at: http://spectralworkbench.org
 
 This project started in the Environmental Justice research cluster at RISD's Digital+Media department, run by Sara Wylie and Jeff Warren. It is now part of the Public Laboratory for Open Technology and Science's civic science toolkit.
 
 =============================================================
 
-Read more about our experiments and work here: http://publiclaboratory.org
+Read more about our experiments and work here: http://publiclab.org
 
-To learn more about the Fred environment in which this was built, see http://github.com/jywarren/fred
-
-TO DO:
-
-* need a way to completely stabilize the camera to the spectrometer so people can just upload pairs which are already lined up
-* maybe offer a "sample" spectrum with marked absorbtion lines, color transitions, which you line up your spectrum with?
-* boundary or wavelength identification should be automatic, but is quite primitive - we need a way to identify a slope with parameters like "over 20 pixels, an average slope of x, with smoothness y, or at least continuously positive slope. Then we can say: "has_slope(red,start,end,slope,smoothness)"
-* more advanced version of the above where we an auto-identify dips and peaks, and/or patterns of them - like the HO bands in infrared, to calibrate the image.
-* need thumbnails of the actual spectrum, not the whole image
-* need to start storing wavelength/intensity pairs which belong_to spectrums
-* need comments and a better page layout - comments ought to be able to reference wavelengths with a @445 notation, maybe by doubleclicking on a wavelength?
-
-Architectural:
-
-* clean up functions in /app/views/spectrums/show.html.erb and move them into a spectral-workbench.js file and a Spork namespace

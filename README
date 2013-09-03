@@ -31,6 +31,22 @@ You should have received a copy of the GNU General Public License
 along with Spectral Workbench.  If not, see <http://www.gnu.org/licenses/>.
 
 ==========================
+INSTALLATION
+==========================
+
+These instructions are for the webapp in /webserver/ only:
+
+The app requires Ruby 1.8.7 and Rails 2.3.15.
+
+Thanks to YvesAD, there is a rough but detailed installation guide here: https://gist.github.com/YvesAD/5520784
+
+However, instead of individually installing gems with "sudo gem install blablabla", you should be able to run "rake gems:install". 
+
+This was based on his work in the Github issue here: https://github.com/jywarren/spectral-workbench/issues/206
+
+Installation is not very straightforward, but we hope to improve it soon.
+
+==========================
 BUGS AND SUPPORT
 ==========================
 
@@ -43,4 +59,6 @@ DEVELOPERS
 ==========================
 
 Development is occurring at https://github.com/jywarren/spectral-workbench/; please fork and submit pull requests.
+
+
 
