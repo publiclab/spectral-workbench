@@ -1,0 +1,51 @@
+<table class="table">
+  <% @spectra.each do |spectrum| %>
+    <tr id="spectrum_<%= spectrum.id %>">
+      <td width="240px;"><a href="/analyze/spectrum/<%= spectrum.id %>" ><b><%= spectrum.title %></b></a><br /> by <a href="/profile/<%= spectrum.author %>"><%= spectrum.author %></a> <%= time_ago_in_words(spectrum.created_at) %> ago</td>
+    <!--<a class="" id="spectrum_btn_<%= spectrum.id %>" href="javascript:void(0);">Add +</a> <span id="scaledFlag_<%= spectrum.id %>"></span>-->
+      <td><% if @spectrum %><a data-dismiss="modal" class="btn btn-primary" id="spectrum_btn_<%= spectrum.id %>" href="javascript:void(0)">Compare</a><% end %></td> 
+
+    <script>
+
+    spectrum_<%= spectrum.id %> = <%= spectrum.data || "{lines:[]}" %>
+
+    spectrum_<%= spectrum.id %>_data = []
+    scaled = true
+    $.each(spectrum_<%= spectrum.id %>.lines,function(index,line) {
+      if (line.wavelength == null) {
+        line.wavelength = index
+        scaled = false
+      }
+      spectrum_<%= spectrum.id %>_data.push([line.wavelength,line.average/2.55])
+    })
+    if (!scaled) {
+      $('#scaledFlag_<%= spectrum.id %>').html('(<a href="http://publiclaboratory.org/wiki/spectral-workbench-calibration">Uncalibrated</a>)')
+    }
+
+    $("#spectrum_btn_<%= spectrum.id %>").click(function() {
+      spectra.push(<%= spectrum.id %>)
+      $("#createSet").show()
+      $W.data.push({id: <%= spectrum.id %>, label:"<%= spectrum.title.gsub('"',"'") %> = 0% (<a href='javascript:void(0);' onClick='remove(\"<%= spectrum.id %>\")'>remove</a>)", data: spectrum_<%= spectrum.id %>_data})
+      plot = $.plot($("#graph"),$W.data,flotoptions);
+      init_hovers();
+      $("#spectrum_<%= spectrum.id %>").remove()
+    })
+    function remove(id) {
+      $.each($W.data,function(index,s) {
+        if (s.id == id) {
+          $W.data.splice(index,1)
+        }
+      })
+      $.each(spectra,function(index,s) {
+        if (s == id) {
+          spectra.splice(index,1)
+        }
+      })
+      plot = $.plot($("#graph"),$W.data,flotoptions);
+      init_hovers();
+    }
+
+    </script>
+    </tr>
+  <% end %>
+</table>

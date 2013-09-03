@@ -28,6 +28,7 @@ class Spectrum < ActiveRecord::Base
 
   def after_save
     #self.correct_reversed_image
+    self.generate_processed_spectrum
   end
 
   def before_destroy
@@ -139,10 +140,14 @@ class Spectrum < ActiveRecord::Base
   end
 
   def calibrated
-    d = ActiveSupport::JSON.decode(self.data)
-    !d['lines'].first['wavelength'].nil?
+    begin
+      d = ActiveSupport::JSON.decode(self.data)
+      !d.nil? && !d['lines'].nil? && !d['lines'].first['wavelength'].nil?
+    rescue
+      return false
+    end
   end
-
+  
   def calibrate(x1,wavelength1,x2,wavelength2)
     self.extract_data
     d = ActiveSupport::JSON.decode(self.data)
@@ -351,7 +356,104 @@ puts "reversing"
       end
     end
   end
+  
+  # Process the spectrum for the "Closest Match Module"
+  def generate_processed_spectrum
+    id = self.id
+    if self.calibrated
+      @processed = ProcessedSpectrum.new(generate_hashed_values)
+      @processed.save
+    end
+  end
+  
+  # Generate the values hash for the processed spectrum
+  def generate_hashed_values
+    
+    decoded = ActiveSupport::JSON.decode(self.data)
+
+    lines = decoded['lines']
+    
+    values = {}
+    counts = {}
+    types = ['a', 'r', 'g', 'b']
+    
+    labels = {}
+    labels['a'] = 'average'
+    labels['r'] = 'r'
+    labels['g'] = 'g'
+    labels['b'] = 'b'
+
+    bins = (10...1500).step(10)
+  
+    values['spectrum_id'] = id
+
+    bins.each do |bin|
+      types.each do |type|
+        values["#{type}#{bin}"] = 0
+      end
+      counts[bin] = 0
+    end
+
+    lines.each do |line|
+      wlength = line['wavelength']
+
+      if !wlength.nil? && wlength.class != String
+      
+      # Some spectrums have "NaN" as wavelength and a, r, g, b values
+      # Also, this protects from the condition where the wlength is nil
+      
+        bins_to_consider = get_bins(line['wavelength'].round)
+     
+        bins_to_consider.each do |bin|
+          types.each do |type|
+            values["#{type}#{bin}"] += line[labels[type]].round
+          end
+          counts[bin] += 1
+        end
+      end
+    end
+    
+    # Time to average the values and return
+
+    bins.each do |bin|
+      if counts[bin] > 0
+        types.each do |type|
+          values["#{type}#{bin}"] /= counts[bin]
+        end
+      end
+    end 
+
+    return values
+  end
+
+  # Given a wavelength, decide which bin(s) it should fall into
+  def get_bins(wavelength)
+    base = (wavelength/10) * 10
+    diff = wavelength - base
+   
+    if base < 10 || base > 1490
+      return [] # Skipping it off
+    end
+
+    
+    if diff > 6 # This is in the next bin
+      if base + 10 > 1490
+        return [] # Falls into 1500. So, Skip
+      else
+        return [base + 10]
+      end
+    elsif diff < 4 # This is in this bin
+      return [base]
+    else 
+      # This is in both the present and next bin
+      if base + 10 > 1490
+        return [base] # 1500 again. Skip
+      else
+        return [base, base + 10]
+      end
+    end
+
+  end
+  
 
 end
-
-
