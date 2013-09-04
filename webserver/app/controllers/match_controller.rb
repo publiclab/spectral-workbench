@@ -50,7 +50,13 @@ class MatchController < ApplicationController
       @spectrum.save 
     end
     
-    @spectra = ProcessedSpectrum.find_by_spectrum_id(id).closest_match(@range)
+    @processed_spectra = ProcessedSpectrum.find_by_spectrum_id(id)
+    if @processed_spectra.nil? || @processed_spectra == ""
+      @spectra = @spectrum
+    else
+      @spectra = @processed_spectra.closest_match(@range)
+    end
+    
     @sets = @spectrum.sets
     @macros = Macro.find :all, :conditions => {:macro_type => "analyze"}
     @calibrations = current_user.calibrations if logged_in?
