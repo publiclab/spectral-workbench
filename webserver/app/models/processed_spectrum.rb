@@ -26,8 +26,7 @@ class ProcessedSpectrum < ActiveRecord::Base
     end
 
     id_string = ids.join(" OR ")
-    return Spectrum.find(:all, :conditions => [id_string])
-
+    Spectrum.find(:all, :conditions => [id_string])
   end
 
 end
