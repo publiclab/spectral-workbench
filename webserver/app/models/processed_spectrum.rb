@@ -1,6 +1,6 @@
 class ProcessedSpectrum < ActiveRecord::Base
   
-  def closest_match(range = 100)
+  def closest_match(range,limit)
     bins = (10...1500).step(10)
     types = ['a', 'r', 'g', 'b']
     
@@ -19,7 +19,7 @@ class ProcessedSpectrum < ActiveRecord::Base
     end
     
     condition_string = conditions.join(" AND ")
-    matches = ProcessedSpectrum.find(:all, :conditions => [condition_string])
+    matches = ProcessedSpectrum.find(:all, :conditions => [condition_string],:limit => limit)
       
     matches.each do |match|
       ids += ["id = #{match.spectrum_id}"]

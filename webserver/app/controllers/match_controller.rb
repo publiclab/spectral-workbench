@@ -13,7 +13,7 @@ class MatchController < ApplicationController
 	      @c = 1
         end
         
-        @spectra = @spectrum.closest_match(params[:fit].to_i)
+        @spectra = @spectrum.closest_match(params[:fit].to_i,20)
         render :partial => "match_results", :layout => false
         
         return # Cannot render two times. So return
@@ -54,7 +54,7 @@ class MatchController < ApplicationController
     if @processed_spectra.nil? || @processed_spectra == ""
       @spectra = @spectrum
     else
-      @spectra = @processed_spectra.closest_match(@range)
+      @spectra = @processed_spectra.closest_match(@range,20)
     end
     
     @sets = @spectrum.sets
