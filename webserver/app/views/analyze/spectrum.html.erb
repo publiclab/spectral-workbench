@@ -123,7 +123,7 @@
 
       <h3>Notes</h3>
 
-      <p><%= RDiscount.new(@spectrum.notes).to_html %></p>
+      <p><% if @spectrum.notes %><%= RDiscount.new(@spectrum.notes).to_html %><% end %></p>
 
       <a name="comments"></a>
       <h3>Comments (<%= @spectrum.comments.length %>)</h3>

@@ -10,6 +10,7 @@ class Spectrum < ActiveRecord::Base
 	has_many :comments, :dependent => :destroy
 	has_many :likes, :dependent => :destroy
 	has_many :tags, :dependent => :destroy
+	has_one :processed_spectrum, :dependent => :destroy
 	
 	# Paperclip
 	has_attached_file :photo,
@@ -361,8 +362,13 @@ puts "reversing"
   def generate_processed_spectrum
     id = self.id
     if self.calibrated
-      @processed = ProcessedSpectrum.new(generate_hashed_values)
-      @processed.save
+      if self.processed_spectrum
+        self.processed_spectrum.update_attributes(generate_hashed_values)
+        self.processed_spectrum.save
+      else
+        self.processed_spectrum = ProcessedSpectrum.new(generate_hashed_values)
+        self.processed_spectrum.save
+      end
     end
   end
   

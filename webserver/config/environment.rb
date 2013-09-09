@@ -25,12 +25,14 @@ Rails::Initializer.run do |config|
   config.gem "paperclip", "~> 2.0"
   config.gem "recaptcha", :lib => "recaptcha/rails"
   #config.gem 'rmagick', :require => 'RMagick'
+  #config.gem 'SyslogLogger'
 
   # now add this to config/initializers/recaptcha.rb (ignored in .gitignore)
   # Recaptcha.configure do |config|
   #   config.public_key  = '6Lff6sESAAAAAK9cp9A2ajSGESoHnd3EZI4XaLQe'
   #   config.private_key = '6Lff6sESAAAAAGY676NdprFOT9HSGgllMGdFnGeT'
   # end
+  config.gem 'cocaine', :version => '0.2.1'
   config.gem "redcarpet"
   config.gem "will_paginate", :version => "2.3.16"
   config.gem "rdiscount"
