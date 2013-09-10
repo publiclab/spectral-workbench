@@ -20,15 +20,15 @@
         <a class="btn btn-inverse hidden-phone" id="createSet" href="javascript:void(0);"><i class="icon icon-white icon-list"></i><span class="hidden-phone"> Save as set</span></a>
         <a data-toggle="modal" class="btn btn-inverse" href="#comparemodal"><i class="icon icon-white icon-align-left"></i><span class="hidden-phone"> Compare</span></a>
         <a class="btn btn-inverse hidden-phone" id="clearPlot" href="javascript:void(0);"><i class="icon icon-white icon-remove"></i><span class="hidden-phone"> Clear Plot</span></a>
-<script type="text/javascript">
-		$('#clearPlot').click(function() {
-			$W.data = []
-			spectra.push(<%= @spectrum.id %>)
-      			$W.data.push({id: <%= @spectrum.id %>, label:"<%= @spectrum.title.gsub('"',"'") %> = 0%", data: spectrum_<%= @spectrum.id %>_data})
-			plot = $.plot($("#graph"),$W.data,flotoptions);
-			init_hovers();
-		})
-</script>
+		<script type="text/javascript">
+				$('#clearPlot').click(function() {
+					$W.data = []
+					spectra.push(<%= @spectrum.id %>)
+					$W.data.push({id: <%= @spectrum.id %>, label:"<%= @spectrum.title.gsub('"',"'") %> = 0%", data: spectrum_<%= @spectrum.id %>_data})
+					plot = $.plot($("#graph"),$W.data,flotoptions);
+					init_hovers();
+				})
+		</script>
         <% if logged_in? && current_user.id == 1 && @spectrum.calibrated %><a href="/key/<%= @spectrum.id %>" class="btn btn-inverse">Make key</a><% end %>
 
         <a rel="popover" data-placement="left" class="pull-right btn btn-inverse" data-content='<ul class="nav nav-list"><li><a onClick="$W.units()">Toggle units</a></li><li><a onClick="$W.toggle_mode()">Toggle RGB</a></li><li><a onClick="$W.extract()"><i class="icon icon-refresh"></i> Re-extract from photo</a></li><li><a href="#selectrowmodal" data-toggle="modal">Set sample row</a></li><li><a href="/spectra/rotate/<%= @spectrum.id %>">Rotate image</a></li><li><a href="/spectra/reverse/<%= @spectrum.id %>"><i class="icon icon-resize-horizontal"></i> Flip image horizontally</a></li><li><a href="/spectra/find_brightest_row/<%= @spectrum.id %>">Auto-detect brightest spectrum</a></li><li><a href="#macrosmodal" data-toggle="modal"><i class="icon icon-forward"></i> Macros/scripting</a></li></ul>'><i class="icon icon-white icon-briefcase"></i><span class="hidden-phone"> More tools</span></a>
