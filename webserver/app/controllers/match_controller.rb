@@ -80,7 +80,7 @@ class MatchController < ApplicationController
 
     range_visits = [@range] # To check the ranges visited
 
-    # This loop will take 5 iterations at maximum.
+    # This loop will take 10 iterations at maximum.
     while !proc_nil and (@spectra.size < 2 or @spectra.size > 6)
       if @spectra.size > 6 # Need to reduce the range
        	@range = @range - 10
