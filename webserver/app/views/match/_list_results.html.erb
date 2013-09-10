@@ -28,33 +28,37 @@
 
 <script type="text/javascript">
 (function () {
-spectra.push(<%= @spectrum.id %>) // As we consider other spectra separately
+	spectra.push(<%= @spectrum.id %>) // As we consider other spectra separately
 
-<% @spectra.each do |spectrum| %>
-if (<%= @spectrum.id %> != <%= spectrum.id %>){ // All spectra except the search spectra
-spectra.push(<%= spectrum.id %>)
-      $W.data.push({id: <%= spectrum.id %>, label:"<%= spectrum.title.gsub('"',"'") %> = 0% (<a href='javascript:void(0);' onClick='remove_spectrum(\"<%= spectrum.id %>\")'>remove</a>)", data: spectrum_<%= spectrum.id %>_data})
-      }
-<% end %>
-plot = $.plot($("#graph"),$W.data,flotoptions);
-      init_hovers();
+	<% @spectra.each do |spectrum| %>
+		if (<%= @spectrum.id %> != <%= spectrum.id %>){ // All spectra except the search spectra
+			spectra.push(<%= spectrum.id %>)
+			$W.data.push({id: <%= spectrum.id %>, label:"<%= spectrum.title.gsub('"',"'") %> = 0% (<a href='javascript:void(0);' onClick='remove_spectrum(\"<%= spectrum.id %>\")'>remove</a>)", data: spectrum_<%= spectrum.id %>_data})
+		}
+	<% end %>
+	
+	plot = $.plot($("#graph"),$W.data,flotoptions);
+    init_hovers();
 })()
 
 </script>
+
 <script type="text/javascript">
 function remove_spectrum(id) {
-	//alert('hi');
-$.each($W.data, function(index,s) {
-      if (s.id == id) {
-       $W.data.splice(index,1)
-    }
-})
-     $.each(spectra,function(index,s) {
-       if (s == id) {
-        spectra.splice(index,1)
-     }
-  })
-  plot = $.plot($("#graph"),$W.data,flotoptions);
-  init_hovers();
+	$.each($W.data, function(index,s) {
+		if (s.id == id) {
+			$W.data.splice(index,1)
+		}
+	})
+    
+    $.each(spectra,function(index,s) {
+		if (s == id) {
+			spectra.splice(index,1)
+		}
+	})
+  
+	plot = $.plot($("#graph"),$W.data,flotoptions);
+	init_hovers();
 }
+
 </script>
