@@ -25,8 +25,8 @@ $W = {
     });
     $("#fitAdjustForm").submit(function(){
       var url = "/match/"+$W.spectrum_id+"?fit="+$("#fitinput").val()
+      $("#result").html(ajax_load).load(url+"&c=1")
       $("#results").html(ajax_load).load(url)
-       $("#result").html(ajax_load).load(url+"&c=1")
     });
     $('#units').click($W.units)
     $('#createSet').click(function() {
