@@ -100,7 +100,7 @@ class MatchController < ApplicationController
     @macros = Macro.find :all, :conditions => {:macro_type => "analyze"}
     @calibrations = current_user.calibrations if logged_in?
     @comment = Comment.new
-    
+
     respond_to do |format|
       format.html { render :layout => "bootstrap" }
       format.xml  { render :xml => @spectrum }
