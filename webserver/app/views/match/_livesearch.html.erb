@@ -1,0 +1,10 @@
+<% if @spectra %>
+Matches Found
+<table class="table">
+  <% @spectra.each do |spectrum| %>
+    <tr id="spectrum_<%= spectrum.id %>">
+      <td width="240px;"><a href="/analyze/spectrum/<%= spectrum.id %>" ><b><%= spectrum.title %></b></a><br /> by <a href="/profile/<%= spectrum.author %>"><%= spectrum.author %></a> <%= time_ago_in_words(spectrum.created_at) %> ago</td>
+    </tr>
+  <% end %>
+</table>
+<% end %>

@@ -25,6 +25,109 @@
 			<a data-role="button" data-theme="a" onClick="$W.flipped = !$W.flipped">Flip video horizontally</a>
 		</div>
 	</div>
+	
+	<div id="matches">
+	</div>
+	<script type="text/javascript">
+		
+	var limit = 10
+	
+	beginrefresh()
+
+	function beginrefresh(){
+		if (limit==1) {
+			
+			limit = 10
+			cols = []
+			bin_data = []
+			types = ['r', 'g', 'b', 'a']
+		
+			for (var k = 64; k>0; k--) {
+				$.each(types, function(i, type) {
+					bin_data[type + (k*10)] = []
+				})	
+			}
+
+			$.each($W.full_data,function(i,line) {
+				var bins = get_bin(i)
+				$.each(bins,function(j,bin) {
+					$.each(types, function(t, type) {
+						bin_data[type + bin].push(line[t])
+					})
+				})
+			})
+
+			for (k = 64; k>0; k--) {
+				$.each(types, function(i, type) {
+					cols.push('"'+type+(k*10) +'":'+ average(bin_data[type + (k*10)])) 
+				})	
+			}
+
+			$.ajax({
+				url: "/match/livesearch/",
+				type: "POST",
+				data: {data: cols.join(','), calibration: "Not calibrated"},
+				success: function(result) {
+					$("#matches").html(result);
+				}
+			})
+		}
+
+		else {
+			limit-=1
+		}
+		setTimeout("beginrefresh()",1000)
+	}
+
+	function get_bin(wavelength) {
+		var diff = wavelength % 10
+		var base = wavelength - diff
+		bins = []  
+	 
+	    if((base < 10) || (base > 1490)) {
+			return bins
+		}
+
+		if (diff > 6) { //This is in the next bin
+	      	if ((base + 10) > 1490)
+			return bins
+
+	      	else {
+				bins.push(base+10)
+				return bins
+			}
+		}
+
+	    else if (diff < 4) { // This is in this bin
+	    	bins.push(base)
+			return bins
+		}
+
+		else { // This is in both the present and next bin
+			if ((base + 10) > 1490) {
+				bins.push(base)
+				return bins
+			}
+		
+			else {
+				bins.push(base)
+				bins.push(base+10)
+				return bins
+			}
+		}
+	}
+
+	function average(a) {
+		sum = 0
+		count = 0
+		$.each(a,function(i,number) {
+			sum+= number
+			count++
+		})
+		if(count>0) return sum/count
+		else return 0
+	}
+	</script>
 
 	<p><a href="https://github.com/jywarren/spectral-workbench">SpectralWorkbench is free software</a> by <a href="http://publiclab.org">Public Lab</a> Your input is invaluable! See <a href="https://github.com/jywarren/spectral-workbench/issues">Github issues</a> to help design/refine/debug new features.<p>
 
