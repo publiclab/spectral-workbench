@@ -282,7 +282,7 @@ class SpectrumsController < ApplicationController
   #def calibrate(x1,wavelength1,x2,wavelength2)
   def calibrate
     @spectrum = Spectrum.find(params[:id])
-    if logged_in? && @spectrum.user_id == current_user.id
+    if logged_in? && @spectrum.user_id == current_user.id || current_user.role == "admin"
       if true#request.post?
         @spectrum.calibrate(params[:x1],params[:w1],params[:x2],params[:w2])
         @spectrum.save
