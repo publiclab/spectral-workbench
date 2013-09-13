@@ -26,13 +26,30 @@
 		</div>
 	</div>
 	
-	<div id="matches">
+	<div id="matches" style="min-height:120px; min-height:auto; min-height:120px; display:none">
 	</div>
+	
+	<p id="countdown"></p>
+	
+	<div data-role="fieldcontain" id="start_timer"> 
+		<a data-role="button" data-theme="a" data-icon="search" onClick="start_timer()">Start Live Matching!</a>
+	</div>
+	
 	<script type="text/javascript">
 		
-	var limit = 10
+	var limit = 1 // So that it directly displays results when the button is clicked
 	
-	beginrefresh()
+	var Timer =0
+
+	function start_timer() {
+		
+		$('#start_timer').click(function() {
+			$(this).hide('slow', function(){
+			});
+		});
+		$('#matches').show()
+		Timer = setInterval("beginrefresh()",1000)
+	}
 
 	function beginrefresh(){
 		if (limit==1) {
@@ -62,7 +79,8 @@
 					cols.push('"'+type+(k*10) +'":'+ average(bin_data[type + (k*10)])) 
 				})	
 			}
-
+			
+			$("#matches").html("<p><img src='/images/spinner-transparent.gif' /></p>");
 			$.ajax({
 				url: "/match/livesearch/",
 				type: "POST",
@@ -71,12 +89,16 @@
 					$("#matches").html(result);
 				}
 			})
+			$("#countdown").hide('slow', function(){})
 		}
 
 		else {
 			limit-=1
+			if (limit <= 5)
+			$("#countdown").html("Refreshing in "+limit+" secs (<a href='#' onClick='stop_timer()'>Stop</a>)");
+			if(limit==5) $("#countdown").show('slow', function(){
+				});
 		}
-		setTimeout("beginrefresh()",1000)
 	}
 
 	function get_bin(wavelength) {
@@ -126,6 +148,15 @@
 		})
 		if(count>0) return sum/count
 		else return 0
+	}
+
+	function stop_timer() {
+		clearInterval(Timer)
+		$('#countdown').hide('slow', function(){
+			});
+		$('#start_timer').show('slow', function(){
+			});
+		$('#matches').hide()
 	}
 	</script>
 
