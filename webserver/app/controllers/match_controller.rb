@@ -100,7 +100,7 @@ class MatchController < ApplicationController
     @macros = Macro.find :all, :conditions => {:macro_type => "analyze"}
     @calibrations = current_user.calibrations if logged_in?
     @comment = Comment.new
-
+    
     respond_to do |format|
       format.html { render :layout => "bootstrap" }
       format.xml  { render :xml => @spectrum }
@@ -113,6 +113,37 @@ class MatchController < ApplicationController
       }
       format.json  { render :json => @spectrum }
     end
+  end
+  
+  def livesearch
+    d = ActiveSupport::JSON.decode("{" + params[:data] + "}")
+    bins = (10...640).step(10) # Omitting 0 and 640.
+    types = ['a', 'r', 'g', 'b']
+	range = 10
+    conditions = []
+    ids = []
+
+    bins.each do |bin|
+      types.each do |type|
+        bin_string = "#{type}#{bin}"
+        low = d[bin_string].to_i - range
+        high = d[bin_string].to_i + range
+        conditions += ["#{bin_string} BETWEEN #{low} AND #{high}"]
+      end
+    end
+    
+    condition_string = conditions.join(" AND ")
+    
+    matches = ProcessedSpectrum.find(:all, :conditions => [condition_string])
+      
+    matches.each do |match|
+      ids += ["id = #{match.spectrum_id}"]
+    end
+
+    id_string = ids.join(" OR ")
+    @spectra = Spectrum.find(:all, :conditions => [id_string], :limit => 2)
+	
+	render :partial => "livesearch", :layout => false
   end
 
 end
