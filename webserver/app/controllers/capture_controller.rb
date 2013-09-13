@@ -4,6 +4,8 @@ class CaptureController < ApplicationController
   # http://api.rubyonrails.org/classes/ActionController/RequestForgeryProtection/ClassMethods.html
   # create and update are protected by recaptcha
 
+  skip_before_filter :verify_authenticity_token
+
   def index
     if logged_in?
       @calibration = current_user.last_calibration

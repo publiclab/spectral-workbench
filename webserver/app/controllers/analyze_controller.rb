@@ -1,5 +1,7 @@
 class AnalyzeController < ApplicationController
 
+  skip_before_filter :verify_authenticity_token
+
   def spectrum
     @spectrum = Spectrum.find(params[:id])
     if @spectrum.data == "" || @spectrum.data.nil?
