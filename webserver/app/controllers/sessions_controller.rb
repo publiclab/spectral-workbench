@@ -3,7 +3,12 @@ class SessionsController < ApplicationController
 
   # render new.erb.html
   def new
-    render :layout => "bootstrap"
+    if logged_in?
+      flash[:warning] = "You are already logged in!"
+      redirect_to "/dashboard"
+    else
+      render :layout => "bootstrap"
+    end
   end
 
   def create
