@@ -4,7 +4,7 @@
 </div>
 <div data-role="content" class="content" style="padding: 15px">
 	<% if !logged_in? %>
-		<p>You must be <a target="_blank" href="#login">logged in</a> to save spectra.</p>
+		<p>You must be <a href="#login">logged in</a> to save spectra. Once logged in, you must refresh this page.</p>
 	<% else %>
 		<p>(logged in as <%=h current_user.login %>)</p>
 	<% end %>
