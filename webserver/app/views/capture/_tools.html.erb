@@ -76,7 +76,7 @@
 
 			for (k = 64; k>0; k--) {
 				$.each(types, function(i, type) {
-					cols.push('"'+type+(k*10) +'":'+ average(bin_data[type + (k*10)])) 
+					cols.push('"'+type+(k*10) +'":'+ Math.floor(average(bin_data[type + (k*10)])))
 				})	
 			}
 			
