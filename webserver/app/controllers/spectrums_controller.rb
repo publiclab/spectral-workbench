@@ -396,7 +396,7 @@ class SpectrumsController < ApplicationController
     @spectrum = Spectrum.find params[:id]
     if logged_in? && (@spectrum.user_id == current_user.id || current_user.role == "admin")
       image = Magick::ImageList.new("public"+(@spectrum.photo.url.split('?')[0]).gsub('%20',' '))
-      @spectrum.sample_row = params[:row].to_i*0.01*image.rows
+      @spectrum.sample_row = (params[:row].to_i)*image.rows
       @spectrum.extract_data
       @spectrum.save
     else

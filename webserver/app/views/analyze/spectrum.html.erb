@@ -23,7 +23,7 @@
 
   <div class="row-fluid" id="display">
 
-    <img style="width:95%;height:100px;padding:0 1% 0 4%;background:black;" id="image" src="<%= @spectrum.photo.url(:original) %>?<%= DateTime.now.to_i %>" />
+    <a id="imagelink" rel="tooltip" title="Click to expand vertically." href="javascript:void();" onClick="$('#image').css('height','300px');$('#imagelink').tooltip('destroy')"><img style="width:95%;height:100px;padding:0 1% 0 4%;background:black;" id="image" src="<%= @spectrum.photo.url(:original) %>?<%= DateTime.now.to_i %>" /></a>
     <div id="graph" style="width:98%;height:200px;"></div>
 
     <div class="navbar navbar-inverse navbar-static-bottom" style="margin:0;">

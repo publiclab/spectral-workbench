@@ -284,7 +284,7 @@ $W = {
 
   click_to_set_sample_row: function() {
     $('#image').click(function(e){
-      window.location = '/spectrums/setsamplerow/'+$W.spectrum_id+'?row='+e.offsetY
+      window.location = '/spectrums/setsamplerow/'+$W.spectrum_id+'?row='+e.offsetY/$('#image').height()
     })
   },
 
