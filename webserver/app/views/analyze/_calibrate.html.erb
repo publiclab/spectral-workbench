@@ -12,7 +12,7 @@
   </div>
   <div class="modal-footer">
     <a data-dismiss="modal" class="btn" href="javascript:void();">Cancel</a>
-    <a data-dismiss="modal" data-toggle="modal" class="btn" href="#clonemodal">Use <span class="hidden-phone">existing</span> calibration</a>
+    <a data-dismiss="modal" data-toggle="modal" class="btn" href="#clonemodal">Use existing <span class="hidden-phone">calibration</span></a>
     <a id="calibrate-begin" data-dismiss="modal" class="btn btn-primary" href="#calibrationmodal2" onClick="$('#graph').bind('plotclick', function (event, pos, item) { $('#graph').unbind('plotclick');$W.second_calibration($W.getPixelFromWavelength(pos.x),435.833);$('#calibratemodal2').modal('show');$('#calibrate-finish').focus(); })">Begin</a>
   </div>
 </div> 
