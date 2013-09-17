@@ -310,7 +310,7 @@ puts "reversing"
   def wavelength_range
     d = ActiveSupport::JSON.decode(self.data)
     range = [d['lines'][0]['wavelength'],d['lines'][d['lines'].length-1]['wavelength']]
-    range.reverse! if range.first > range.last
+    range.reverse! if range.first && (range.first > range.last)
     range
   end
 

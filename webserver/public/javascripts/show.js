@@ -285,6 +285,8 @@ $W = {
   },
 
   click_to_set_sample_row: function() {
+    $("#imagelink")[0].onclick = ""
+    $('#imagelink').tooltip('destroy')
     $('#image').click(function(e){
       window.location = '/spectrums/setsamplerow/'+$W.spectrum_id+'?row='+e.offsetY/$('#image').height()
     })

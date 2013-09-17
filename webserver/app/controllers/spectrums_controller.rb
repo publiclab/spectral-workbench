@@ -393,10 +393,12 @@ class SpectrumsController < ApplicationController
   end
 
   def setsamplerow
+    require 'rubygems'
+    require 'RMagick'
     @spectrum = Spectrum.find params[:id]
     if logged_in? && (@spectrum.user_id == current_user.id || current_user.role == "admin")
       image = Magick::ImageList.new("public"+(@spectrum.photo.url.split('?')[0]).gsub('%20',' '))
-      @spectrum.sample_row = (params[:row].to_i)*image.rows
+      @spectrum.sample_row = (params[:row].to_f*image.rows)
       @spectrum.extract_data
       @spectrum.save
     else
