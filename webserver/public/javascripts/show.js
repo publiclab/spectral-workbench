@@ -279,6 +279,8 @@ $W = {
 
   set_sample_row: function() {
     var rownum = prompt('Enter the pixel row you would like to extract a spectrum from, where row 0 is the top edge of the original image.','100')
+    $("#imagelink")[0].onclick = ""
+    $('#imagelink').tooltip('destroy')
     if (rownum) window.location = '/spectrums/setsamplerow/'+$W.spectrum_id+'?row='+rownum
   },
 
