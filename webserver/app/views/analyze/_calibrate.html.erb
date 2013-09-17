@@ -4,13 +4,15 @@
     <b>Use a fluorescent bulb spectrum to calibrate your spectrometer</b>
   </div>
   <div class="modal-body">
-    <p>You can calibrate with a clear fluorescent spectrum like the one shown here. If the current spectrum is not usable, you can <a href="/capture">record a new one</a>, and if you do not change your spectrometer, you can <a href="#clonemodal" data-dismiss="modal" data-toggle="modal">use the calibration for subsequent spectra</a>.</p>
+    <p class="visible-phone"><a href="javascript:void();" onClick="$('#calib-explanation').toggle()">Learn how &raquo;</a></p>
+    <p class="hidden-phone">You can calibrate with a clear fluorescent spectrum like the one shown here. If the current spectrum is not usable, you can <a href="/capture">record a new one</a>, and if you do not change your spectrometer, you can <a href="#clonemodal" data-dismiss="modal" data-toggle="modal">use the calibration for subsequent spectra</a>.</p>
     <p>First, click on the highest peak of the middle blue band:</p>
-    <p style="text-align:center;"><img class="img-rounded" src="/images/calibrate-blue.png"></p>
+    <p class="hidden-phone" style="text-align:center;"><img class="img-rounded" src="/images/calibrate-blue.png"></p>
+    <p class="visible-phone" style="text-align:center;"><img class="img-rounded" style="width:80%;" src="/images/calibrate-blue.png"></p>
   </div>
   <div class="modal-footer">
     <a data-dismiss="modal" class="btn" href="javascript:void();">Cancel</a>
-    <a data-dismiss="modal" data-toggle="modal" class="btn" href="#clonemodal">Use existing calibration</a>
+    <a data-dismiss="modal" data-toggle="modal" class="btn" href="#clonemodal">Use <span class="hidden-phone">existing</span> calibration</a>
     <a id="calibrate-begin" data-dismiss="modal" class="btn btn-primary" href="#calibrationmodal2" onClick="$('#graph').bind('plotclick', function (event, pos, item) { $('#graph').unbind('plotclick');$W.second_calibration($W.getPixelFromWavelength(pos.x),435.833);$('#calibratemodal2').modal('show');$('#calibrate-finish').focus(); })">Begin</a>
   </div>
 </div> 
