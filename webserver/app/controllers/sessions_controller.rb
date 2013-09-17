@@ -3,16 +3,26 @@ class SessionsController < ApplicationController
 
   # render new.erb.html
   def new
-    render :layout => "bootstrap"
+    if logged_in?
+      flash[:warning] = "You are already logged in!"
+      redirect_to "/dashboard"
+    else
+      render :layout => "bootstrap"
+    end
   end
 
   def create
-    params[:openid_url] = "publiclab.org/openid/"+params[:login] if params[:login]
-    #params[:openid_url] = "publiclaboratory.org/people/"+params[:login]+"/identity" if params[:login]
-    #params[:openid_url] = "localhost:3000/openid/"+params[:login] if params[:login]
-    #params[:openid_url] = "localhost/people/"+params[:login]+"/identity" if params[:login]
-    #params[:openid_url] = "publiclab.org/openid/"+params[:openid][:identity] if params[:openid] && params[:openid][:identity]
-    open_id_authentication(params[:openid_url],params[:return_to])
+    if logged_in?
+      flash[:warning] = "You are already logged in!"
+      redirect_to "/dashboard"
+    else
+      params[:openid_url] = "publiclab.org/openid/"+params[:login] if params[:login]
+      #params[:openid_url] = "publiclaboratory.org/people/"+params[:login]+"/identity" if params[:login]
+      #params[:openid_url] = "localhost:3000/openid/"+params[:login] if params[:login]
+      #params[:openid_url] = "localhost/people/"+params[:login]+"/identity" if params[:login]
+      #params[:openid_url] = "publiclab.org/openid/"+params[:openid][:identity] if params[:openid] && params[:openid][:identity]
+      open_id_authentication(params[:openid_url],params[:return_to])
+    end
   end
 
   def destroy

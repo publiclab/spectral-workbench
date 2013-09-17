@@ -119,33 +119,58 @@ class MatchController < ApplicationController
   
   def livesearch
     d = ActiveSupport::JSON.decode("{" + params[:data] + "}")
-    bins = (10...640).step(10) # Omitting 0 and 640.
+    bins = (10...640).step(10)
     types = ['a', 'r', 'g', 'b']
-	range = 10
-    conditions = []
+    range = 50
     ids = []
 
+    matches = ProcessedSpectrum.find(:all, :conditions => [get_conditions(d, bins, types, range)])
+
+    range_visits = [range] # To check the ranges visited
+
+    # This loop will take 8 iterations at maximum.
+    while matches.size <1 or matches.size>5
+      if matches.size > 5 # Need to reduce the range
+       	range = range - 10
+      else
+	range = range + 10
+      end
+      
+      if range_visits.member?(range) or range < 0 or range > 80
+        break
+      end
+      
+      range_visits.push(range)
+      matches = ProcessedSpectrum.find(:all, :conditions => [get_conditions(d, bins, types, range)])
+    end
+     
+    matches.each do |match|
+      ids += ["id = #{match.spectrum_id}"]
+    end
+
+    if ids == [] # This means that we have not found even a single match
+      @error = "Sorry, No Matches found!"
+    else
+      id_string = ids.join(" OR ")
+      @spectra = Spectrum.find(:all, :order => "created_at DESC", :conditions => [id_string], :limit => 2)
+    end
+
+    render :partial => "livesearch", :layout => false
+  end
+
+  def get_conditions(d, bins, types, range)
+    conditions = []
     bins.each do |bin|
       types.each do |type|
         bin_string = "#{type}#{bin}"
+
         low = d[bin_string].to_i - range
         high = d[bin_string].to_i + range
         conditions += ["#{bin_string} BETWEEN #{low} AND #{high}"]
       end
     end
-    
-    condition_string = conditions.join(" AND ")
-    
-    matches = ProcessedSpectrum.find(:all, :conditions => [condition_string])
-      
-    matches.each do |match|
-      ids += ["id = #{match.spectrum_id}"]
-    end
 
-    id_string = ids.join(" OR ")
-    @spectra = Spectrum.find(:all, :conditions => [id_string], :limit => 2)
-	
-	render :partial => "livesearch", :layout => false
+    return conditions.join(" AND ")
   end
 
 end
