@@ -21,6 +21,7 @@
 		<input name="lat" type="hidden" id="lat" />
 		<input name="lon" type="hidden" id="lon" />
 		<input name="spectrum[video_row]" type="hidden" id="video_row" />
+		<input name="spectrum[reversed]" type="hidden" id="spectrum_reversed" value="<%= !@calibration.nil? && @calibration.reversed %>" />
 
 		<p>
 		<label for="device">Choose a device:</label>

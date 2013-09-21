@@ -4,8 +4,10 @@ class AddSpectrumReversal < ActiveRecord::Migration
       
     # Base reversal stated on best guess -- ascending pixel values. 
     Spectrum.find(:all).each do	|spectrum|
-      spectrum.reversed = spectrum.is_flipped
-      spectrum.save
+      if spectrum.data
+        spectrum.reversed = spectrum.is_flipped
+        spectrum.save
+      end
     end
   end
 

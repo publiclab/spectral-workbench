@@ -41,7 +41,7 @@ flotoptions.colors = [ "#ccc", "#E02130", "#FAB243", "#429867", "#2B5166" ]//, "
 		sample_start_row: <%= @calibration.video_row %>,
 		sample_end_row: <%= @calibration.video_row+1 %>,
 		<% end %>
-		flipped:<%= !@calibration.nil? && @calibration.is_flipped %>,
+		flipped:<%= !@calibration.nil? && @calibration.reversed %>,
 		mobile:false
 	}) 
 	setInterval($W.getRow,100)

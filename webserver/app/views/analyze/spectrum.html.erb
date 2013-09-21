@@ -85,8 +85,9 @@
 
         <hr />
 
-        <p><b>Sample row:</b> <%= @spectrum.sample_row %></p>
-        <p><b>Video row:</b> <%= @spectrum.video_row %></p>
+        <% if @spectrum.reversed %><p><small>This spectrum was reversed from its original orientation at the time of capture. <a href="http://publiclab.org/wiki/spectral-workbench-calibration#Reversed+spectra">Read more &raquo;</a></small></p><% end %>
+        <p rel="tooltip" title="The pixel row from the captured image used to sample data from."><b>Sample row:</b> <%= @spectrum.sample_row %></p>
+        <p rel="tooltip" title="The pixel row from the webcam used to sample data from."><b>Video row:</b> <%= @spectrum.video_row %></p>
 
       </div>
 
