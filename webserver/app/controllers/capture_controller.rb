@@ -20,6 +20,7 @@ class CaptureController < ApplicationController
     end
   end
 
+  # older match interface; displaced by new match controller
   def match
     @set = SpectraSet.find params[:id]
     if logged_in?

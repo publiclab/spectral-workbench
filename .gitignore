@@ -3,6 +3,7 @@
 *.db
 *.pid.lock
 *.log
+*.local
 .DS_Store
 webserver/log/
 webserver/tmp/*

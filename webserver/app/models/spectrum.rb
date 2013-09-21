@@ -1,27 +1,27 @@
 class Spectrum < ActiveRecord::Base
 
-	validates_presence_of :title, :on => :create, :message => "can't be blank"
-	validates_presence_of :author, :on => :create, :message => "can't be blank"
-	validates_presence_of :photo, :on => :create, :message => "can't be blank"
-	validates_length_of :title, :maximum=>60
-        validates_format_of :title, :with => /\A[a-zA-Z0-9\ -_]+\z/, :message => "Only letters, numbers, and spaces allowed" 
-        validates_format_of :author, :with => /\A\w[\w\.\-_@]+\z/, :message => "Only letters, numbers, hyphens and periods allowed"
+  validates_presence_of :title, :on => :create, :message => "can't be blank"
+  validates_presence_of :author, :on => :create, :message => "can't be blank"
+  validates_presence_of :photo, :on => :create, :message => "can't be blank"
+  validates_length_of :title, :maximum=>60
+  validates_format_of :title, :with => /\A[a-zA-Z0-9\ -_]+\z/, :message => "Only letters, numbers, and spaces allowed" 
+  validates_format_of :author, :with => /\A\w[\w\.\-_@]+\z/, :message => "Only letters, numbers, hyphens and periods allowed"
 
-	has_many :comments, :dependent => :destroy
-	has_many :likes, :dependent => :destroy
-	has_many :tags, :dependent => :destroy
-	has_one :processed_spectrum, :dependent => :destroy
-	
-	# Paperclip
-	has_attached_file :photo,
-	  :styles => {
-	    :thumb=> "300x100!",
-	    :large =>   "800x200!" }
+  has_many :comments, :dependent => :destroy
+  has_many :likes, :dependent => :destroy
+  has_many :tags, :dependent => :destroy
+  has_one :processed_spectrum, :dependent => :destroy
+  
+  # Paperclip
+  has_attached_file :photo,
+    :styles => {
+      :thumb=> "300x100!",
+      :large =>   "800x200!" }
 
-	has_attached_file :baseline,
-	  :styles => {
-	    :thumb=> "300x100!",
-	    :large =>   "800x200!" }
+  has_attached_file :baseline,
+    :styles => {
+      :thumb=> "300x100!",
+      :large =>   "800x200!" }
 
   def before_save
     self.title.gsub('"',"'")
@@ -183,6 +183,7 @@ class Spectrum < ActiveRecord::Base
     # figure out how to know when to reverse based on a cloned calibration... maybe we need to store reversal...
     #self.reverse if (wavelength1 < wavelength2 && x1 > x2) || (wavelength1 > wavelength2 && x1 < x2)
     self.data = ActiveSupport::JSON.encode(d)
+    self.reversed = clone_source.reversed
     self.notes = self.notes.to_s+" -- (Cloned calibration from <a href='/spectra/show/"+clone_id.to_s+"'>"+clone_source.title+"</a>)"
     self
   end
@@ -198,7 +199,7 @@ class Spectrum < ActiveRecord::Base
     self.photo.reprocess!
   end
 
-  # horizontally flips image to match reversed spectrum
+  # horizontally flips image to match reversed spectrum, toggles 'reversed' flag
   def reverse
     require 'rubygems'
     require 'RMagick'
@@ -207,6 +208,7 @@ class Spectrum < ActiveRecord::Base
 puts "reversing"
     image.flop!
     image.write("public"+self.photo.url)
+    self.reversed = !self.reversed
     self.photo.reprocess!
   end
 
@@ -332,6 +334,7 @@ puts "reversing"
   end
 
   # if it has horizontally flipped input image: red is at left
+  # here, we have made an assumption of ascending pixel values. Deprecate this. 
   def is_flipped
     d = ActiveSupport::JSON.decode(self.data)
     !d['lines'][0]['wavelength'].nil? && !d['lines'][d['lines'].length-1]['wavelength'].nil? && d['lines'][0]['wavelength'] > d['lines'][d['lines'].length-1]['wavelength']
