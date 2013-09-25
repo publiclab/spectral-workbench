@@ -337,7 +337,7 @@ puts "reversing"
   # here, we have made an assumption of ascending pixel values. Deprecate this. 
   def is_flipped
     d = ActiveSupport::JSON.decode(self.data)
-    !d['lines'][0]['wavelength'].nil? && !d['lines'][d['lines'].length-1]['wavelength'].nil? && d['lines'][0]['wavelength'] > d['lines'][d['lines'].length-1]['wavelength']
+    !d['lines'].nil? && !d['lines'][0].nil? && !d['lines'][0]['wavelength'].nil? && !d['lines'][d['lines'].length-1]['wavelength'].nil? && d['lines'][0]['wavelength'] > d['lines'][d['lines'].length-1]['wavelength']
   end
 
   def liked_by(user_id)
