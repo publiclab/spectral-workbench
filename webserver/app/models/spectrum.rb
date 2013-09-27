@@ -47,6 +47,15 @@ class Spectrum < ActiveRecord::Base
     end
   end
 
+  def self.weekly_tallies
+    # past 52 weeks of data
+    weeks = {}
+    (0..52).each do |week|
+      weeks[week] = Spectrum.count :all, :select => :created_at, :limit => 10, :conditions => {:created_at => Time.now-week.weeks..Time.now-(week-1).weeks}
+    end
+    weeks
+  end
+
   # finds the brightest row of the image and uses that as its sample row
   def find_brightest_row
     require 'rubygems'

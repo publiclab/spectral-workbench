@@ -25,6 +25,15 @@ class User < ActiveRecord::Base
   # anything else you want your user to change should be added here.
   attr_accessible :login, :email, :name, :password, :password_confirmation
 
+  def self.weekly_tallies
+    # past 52 weeks of data
+    weeks = {}
+    (0..52).each do |week|
+      weeks[week] = User.count :all, :select => :created_at, :limit => 10, :conditions => {:created_at => Time.now-week.weeks..Time.now-(week-1).weeks}
+    end
+    weeks
+  end
+
   def spectra(count)
     count ||= 20
     Spectrum.find_all_by_user_id(self.id,:order => "created_at DESC",:limit => count)
