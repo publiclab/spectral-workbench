@@ -16,62 +16,69 @@
   <div class="row-fluid">
 
     <div class="span4">
-      <h2>Dashboard</h2>
-      <hr />
-
-      <%= render :partial => 'spectrums/search' %>
-      <hr />
-
-      <div class="hidden-desktop">
-        <ul class="nav nav-tabs nav-stacked">
-          <li><a href="#comments">Comments</a></li>
-          <li><a href="#sets">Sets</a></li>
-          <li><a href="#authors">Authors</a></li>
-          <li><a href="#spectra">Spectra</a></li>
-        </ul>
+      <div class="hidden-phone">
+        <h2>Dashboard</h2>
         <hr />
       </div>
 
-      <p><strong>Subscribe to the "plots-spectrometry" mailing list</strong> for support, discussion, and to share your work:</p>
-<form class="form" action="http://groups.google.com/group/plots-spectrometry/boxsubscribe"><input type=text name=email /><br /> <input class="btn btn-primary" type=submit name="sub" value="Subscribe" /></form>
+      <%= render :partial => 'spectrums/search' %>
 
-      <hr />
-      <a href="http://spectralchallenge.org"><img src="http://farm9.staticflickr.com/8248/8558319598_2dd807da8e.jpg"/></a>
-      <hr />
+      <div class="hidden-phone">
+        <p><strong>Subscribe to the "plots-spectrometry" mailing list</strong> for support, discussion, and to share your work:</p>
+        <form class="form form-inline" action="http://groups.google.com/group/plots-spectrometry/boxsubscribe"><input class="input-medium" type=text name=email /> <input class="btn btn-primary" type=submit name="sub" value="Subscribe" /></form>
 
-<iframe class="shopify-widget" frameborder="0" scrolling="no" width="240" height="390" src="http://widgets.shopifyapps.com/products/desktop-spectrometry-kit?shop=publiclab.myshopify.com&style=artgallery&image-size=medium&destination=checkout"></iframe>
+        <hr />
+        <a href="http://spectralchallenge.org"><img src="http://farm9.staticflickr.com/8248/8558319598_2dd807da8e.jpg"/></a>
+        <hr />
+       
+        <iframe class="shopify-widget" frameborder="0" scrolling="no" width="240" height="390" src="http://widgets.shopifyapps.com/products/desktop-spectrometry-kit?shop=publiclab.myshopify.com&style=artgallery&image-size=medium&destination=checkout"></iframe>
+        <hr />
 
-      <hr />
-      <h3><a name="comments"></a>Recent comments <small>(<a href="/comments">view all</a>)</small></h3>
+      </div>
 
-      <%= render :partial => 'comments' %>
-
-      <p><a href="/comments">More comments &raquo;</a></p>
-      <hr />
-
-      <h3><a name="authors"></a>Recent authors</h3>
-      <ul class="nav">
-      <% User.find_all_by_login(@spectrums.collect(&:author).uniq).each do |user| %>
-        <li><a href="/profile/<%= user.login %>"><i class="icon icon-user"></i> <%= user.login %></a></li>
-      <% end %>
-      </ul>
-
-      <hr />
 
     </div>
 
     <div class="span8 pull-right">
 
-      <span style="margin-top:22px;" class="pull-right"><a href="/sets"><i class="icon icon-list"></i> All sets</a> | <a href="/profile/<%= current_user.login %>"><i class="icon icon-user"></i> Your data</a></span></small>
+      <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#spectra"><i class="icon icon-signal"></i><span class="hidden-phone"> Spectra</span></a></li>
+        <li><a data-toggle="tab" href="#comments"><i class="icon icon-comment"></i><span class="hidden-phone"> Comments</span></a></li>
+        <li><a data-toggle="tab" href="#sets"><i class="icon icon-list"></i><span class="hidden-phone"> Sets</span></a></li>
+        <li><a data-toggle="tab" href="#authors"><i class="icon icon-user"></i><span class="hidden-phone"> Authors</span></a></li>
+      </ul>
 
-      <h3><a name="sets"></a>Recent sets <small class="hidden-phone">by contributors like you</small></h3>
-      <%= render :partial => 'spectrums/sets', :locals => {:row => 2} %>
+      <div class="tab-content">
 
-      <h3 style="padding-top:0;"><a name="spectra"></a>Recent spectra <small class="hidden-phone">by contributors like you</small></h3>
+        <div class="tab-pane active" id="spectra">
+          <h3 style="padding-top:0;"><a name="spectra"></a>Recent spectra <small class="hidden-phone">by contributors like you</small></h3>
+          <%= render :partial => 'spectrums/list_bootstrap' %>
+          <%= will_paginate @spectrums %>
+        </div>
+       
+        <div class="tab-pane" id="comments">
+          <%= render :partial => 'users/comments' %>
+          <hr />
+        </div>
+       
+        <div class="tab-pane" id="sets">
+          <h3><a name="sets"></a>Recent sets <small class="hidden-phone">by contributors like you</small></h3>
+          <%= render :partial => 'spectrums/sets', :locals => {:row => 4} %>
+          <hr />
+        </div>
 
-      <%= render :partial => 'spectrums/list_bootstrap' %>
-      <%= will_paginate @spectrums %>
+        <div class="tab-pane" id="authors">
+          <h3><a name="authors"></a>Recent authors</h3>
+          <ul class="nav">
+          <% User.find_all_by_login(@spectrums.collect(&:author).uniq).each do |user| %>
+            <li><a href="/profile/<%= user.login %>"><i class="icon icon-user"></i> <%= user.login %></a></li>
+          <% end %>
+          </ul>
+ 
+          <hr />
+        </div>
 
+      </div>
     </div>
   </div>
 </div>
