@@ -18,8 +18,8 @@ class UsersController < ApplicationController
     if logged_in?
       @spectrums = Spectrum.find(:all,:order => "created_at DESC", :conditions => ["author != 'anonymous'"], :limit => 100)
       @spectrums = @spectrums.paginate :page => params[:page], :per_page => 24
-      @sets = SpectraSet.find(:all,:limit => 4,:order => "created_at DESC")
-      @comments = current_user.received_comments[0..5]
+      @sets = SpectraSet.find(:all,:limit => 8,:order => "created_at DESC")
+      @comments = Comment.find(:all,:limit => 12,:order => "created_at DESC")
       render :layout => "bootstrap"
     else
       flash[:error] = "You must be logged in to view your dashboard."

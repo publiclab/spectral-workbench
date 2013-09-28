@@ -52,7 +52,7 @@
 
       <div id="headerBtns" class="btn-group pull-right">
         <% if (!opera? && mobile?) %><a class="btn btn-primary btn-large" href="/upload"><i class="icon icon-camera icon-white"></i><span class="hidden-phone"> Capture spectra</span></a>
-        <% else %><a <% if !mobile? %>rel="tooltip" title="Connect to a webcam-based DIY spectrometer" data-placement="bottom"<% end %> class="btn btn-primary btn-large" href="/capture"><i class="icon icon-camera icon-white"></i><span class="hidden-phone"> Capture spectra</span></a>
+        <% else %><a class="btn btn-primary btn-large" href="/capture"><i class="icon icon-camera icon-white"></i><span class="hidden-phone"> Capture spectra</span></a>
         <% end %>
         <a class="btn btn-primary btn-large dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
         <ul class="dropdown-menu">
@@ -63,6 +63,7 @@
           <li><a href="http://publiclab.org/wiki/spectral-workbench-usage" class="button"><i class="icon icon-question-sign"></i> Learn how</a></li>
           <% if logged_in? %><li><a href="/logout" class="button"><i class="icon icon-user"></i> Log out</a></li><% else %>
           <li><a href="/login" class="button"><i class="icon icon-user"></i> Log in</a></li><% end %>
+        </ul>
       </div>
       <div id="headerBtns" class="btn-group pull-right hidden-desktop" style="padding-right:0;">
         <a class="btn btn-large" href="http://publiclab.org/wiki/spectral-workbench-help"><i class="icon icon-question-sign" /></i></a>
@@ -81,6 +82,7 @@
         <li class="dropdown">
           <a class="btn btn-link dropdown-toggle" data-toggle="dropdown">Learn <b class="caret"></b></a> 
           <ul class="dropdown-menu">
+            <li><a href="http://publiclab.org/wiki/spectral-workbench-help">Help</a></li> 
             <li><a href="http://publiclab.org/wiki/spectral-workbench-usage">Using Spectral Workbench</a></li>
             <li><a href="http://publiclab.org/wiki/spectrometer-construction">Build a spectrometer</a></li>
             <li><a href="http://store.publiclab.org/">Buy a spectrometer kit</a></li>
@@ -91,7 +93,6 @@
           </ul>
         </li>
 
-        <li><a class="btn btn-link" href="http://publiclab.org/wiki/spectral-workbench-help">Help</a></li> 
         <% if logged_in? %>
         <li class="dropdown">
           <a class="btn btn-link dropdown-toggle" data-toggle="dropdown" href="/profile/<%=h current_user.login %>"><i class="icon icon-user"></i> <%=h current_user.login %> <b class="caret"></b></a>
