@@ -26,6 +26,7 @@ ActionController::Routing::Routes.draw do |map|
   map.dashboard '/dashboard', :controller => 'users', :action => 'dashboard'
   map.popular '/popular', :controller => 'likes', :action => 'index'
   map.comments '/comments', :controller => 'comments', :action => 'index'
+  map.comment '/comment/create/:id', :controller => 'comments', :action => 'create'
 
   map.open_id_complete '/session', :controller => "session", :action => "create", :conditions => { :method => :get }
   #map.open_id_complete 'session', :controller => "session", :action => "create", :requirements => { :method => :get }

@@ -251,28 +251,6 @@ class SpectrumsController < ApplicationController
     end
   end
 
-  def comment
-    @spectrum = Spectrum.find(params[:id])
-    @spectrums = Spectrum.find(:all, :limit => 4, :order => "created_at DESC", :conditions => ["id != ?",@spectrum.id])
-    @jump_to_comment = true
-    @comment = Comment.new({
-	:spectrum_id => @spectrum.id,
-	:body => params[:comment][:body],
-	:author => params[:comment][:author],
-	:email => params[:comment][:email]})
-    @comment.author = current_user.login if logged_in?
-    @comment.email = current_user.email if logged_in?
-    if (logged_in? || APP_CONFIG["local"]) && @comment.save
-      UserMailer.deliver_comment_notification(@spectrum,@comment,User.find(@spectrum.user_id)) if (!logged_in? || current_user.id != @spectrum.user_id)
-      @spectrum.notify_commenters(@comment,current_user) if logged_in?
-      @spectrum.notify_commenters(@comment,false) unless logged_in?
-      flash[:notice] = "Comment saved."
-      redirect_to "/analyze/spectrum/"+params[:id]+"#comment_"+@comment.id.to_s
-    else
-      render :controller => "analyze", :action => "spectrum", :id => params[:id]
-    end
-  end
-
   # non REST
   #def calibrate(x1,wavelength1,x2,wavelength2)
   def calibrate
