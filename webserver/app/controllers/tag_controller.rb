@@ -2,16 +2,31 @@ class TagController < ApplicationController
 
   def create
     if logged_in?
+      response = { :errors => [],
+        :saved => [],
+      }
       params[:tag][:name].split(',').uniq.each do |name|
         tag = Tag.new({
           :name => name.strip,
           :spectrum_id => params[:tag][:spectrum_id],
           :user_id => current_user.id
         })
-        tag.save
+        if tag.save
+          response[:saved] << [tag.name,tag.id]
+        else
+          response[:errors] << "Error: tags "+tag.errors[:name].first
+        end
       end
-      flash[:notice] = "Tag(s) added."
-      redirect_to "/spectra/show/"+params[:tag][:spectrum_id]
+      respond_to do |format|
+        format.html do
+          if request.xhr?
+            render :json => response
+          else
+            flash[:notice] = "Tag(s) added."
+            redirect_to "/spectra/show/"+params[:tag][:spectrum_id]
+          end
+        end
+      end
     else
       flash[:error] = "You must be logged in to add tags."
       redirect_to "/login"
