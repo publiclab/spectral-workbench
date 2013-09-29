@@ -47,6 +47,10 @@ class User < ActiveRecord::Base
     SpectraSet.find_all_by_author(self.login)
   end
 
+  def set_count
+    SpectraSet.count(:all, :conditions => {:author => self.login})
+  end
+
   def comments
     Comment.find_all_by_author(self.login)
   end
