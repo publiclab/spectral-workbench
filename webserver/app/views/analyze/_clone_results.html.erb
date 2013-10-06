@@ -1,0 +1,66 @@
+<table class="table">
+<% @calibrations.each do |spectrum| %>
+<tr id="spectrum_<%= spectrum.id %>">
+  <td><img width="120px" class="img" src="<%= spectrum.photo.url(:thumb) %>" /></td>
+  <td width="160px;"><b><%= spectrum.title %></b><br /> <%= time_ago_in_words(spectrum.created_at) %> ago</td>
+<!--<a class="" id="spectrum_btn_<%= spectrum.id %>" href="javascript:void(0);">Add +</a> <span id="scaledFlag_<%= spectrum.id %>"></span>-->
+  <td><% if @spectrum %><a class="btn btn-primary" id="clone_btn_<%= spectrum.id %>" href="javascript:void(0)">Copy this calibration</a><% end %></td> 
+<script>
+
+$('#clone_btn_<%= spectrum.id %>').click(function() {
+    var f = document.createElement('form');
+    f.style.display = 'none';
+    $('#graph').append(f);
+    	f.id = "clone<%= spectrum.id %>form"
+    	var i = document.createElement('input');
+    	i.name = "authenticity_token"
+    	i.value = "<%= form_authenticity_token %>"
+    	$('#clone<%= spectrum.id %>form').append(i);
+    f.method = 'POST';
+    f.action = "/spectrums/clone/<%= @spectrum.id %>?clone_id=<%= spectrum.id %>"
+    f.submit();
+})
+
+spectrum_<%= spectrum.id %> = <%= spectrum.data %>
+
+spectrum_<%= spectrum.id %>_data = []
+scaled = true
+$.each(spectrum_<%= spectrum.id %>.lines,function(index,line) {
+  if (line.wavelength == null) {
+    line.wavelength = index
+    scaled = false
+  }
+  spectrum_<%= spectrum.id %>_data.push([line.wavelength,line.average/2.55])
+})
+if (!scaled) {
+  $('#scaledFlag_<%= spectrum.id %>').html('(<a href="http://publiclab.org/wiki/spectral-workbench-calibration">Uncalibrated</a>)')
+  $('#clone_btn_<%= spectrum.id %>').remove()
+}
+
+$("#spectrum_btn_<%= spectrum.id %>").click(function() {
+  spectra.push(<%= spectrum.id %>)
+  $("#createSet").show()
+  $W.data.push({id: <%= spectrum.id %>, label:"<%= spectrum.title.gsub('"',"'") %> = 0% (<a href='javascript:void(0);' onClick='remove(\"<%= spectrum.id %>\")'>remove</a>)", data: spectrum_<%= spectrum.id %>_data})
+  plot = $.plot($("#graph"),$W.data,flotoptions);
+  init_hovers();
+  $("#spectrum_<%= spectrum.id %>").remove()
+})
+function remove(id) {
+  $.each($W.data,function(index,s) {
+    if (s.id == id) {
+      $W.data.splice(index,1)
+    }
+  })
+  $.each(spectra,function(index,s) {
+    if (s == id) {
+      spectra.splice(index,1)
+    }
+  })
+  plot = $.plot($("#graph"),$W.data,flotoptions);
+  init_hovers();
+}
+
+</script>
+</tr>
+<% end %>
+</table>
