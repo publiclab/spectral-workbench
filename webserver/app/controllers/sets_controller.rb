@@ -33,12 +33,18 @@ class SetsController < ApplicationController
 
   def add
     @set = SpectraSet.find params[:id]
-    if @set.add(params[:spectrum_id])
-      flash[:notice] = "Added spectrum to set."
+    @spectrum = Spectrum.find params[:spectrum_id]
+    if logged_in? && @set.author == current_user.login
+      if @set.add(params[:spectrum_id])
+        flash[:notice] = "Added spectrum to set."
+      else
+        flash[:error] = "Failed to add to that set."
+      end
+      redirect_to "/sets/show/"+@set.id.to_s
     else
-      flash[:error] = "Failed to add to that set."
+      flash[:error] = "You must be logged in and own that set to add to it."
+      redirect_to "/analyze/spectrum/"+@spectrum.id.to_s
     end
-    redirect_to "/sets/show/"+@set.id.to_s
   end
 
   def new
