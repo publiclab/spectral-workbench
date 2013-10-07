@@ -53,10 +53,23 @@ class TagController < ApplicationController
 
   def delete
     @tag = Tag.find(params[:id])
-    if logged_in? && (@tag.user_id == current_user.id || current_user.role == "admin")
-      @tag.delete
-      flash[:notice] = "Tag "+@tag.name+" deleted."
-      redirect_to "/spectra/show/"+@tag.spectrum_id
+    if logged_in?
+      if @tag.user_id == current_user.id || current_user.role == "admin"
+        @tag.delete
+        respond_to do |format|
+          format.html do
+            if request.xhr?
+              render :text => "success"
+            else
+              flash[:notice] = "Tag '"+@tag.name+"' deleted."
+              redirect_to "/analyze/spectrum/"+@tag.spectrum_id.to_s
+            end
+          end
+        end
+      else
+        flash[:error] = "You must own a tag to delete it."
+        redirect_to "/analyze/spectrum/"+@tag.spectrum_id.to_s
+      end
     else
       flash[:error] = "You must be logged in to delete tags."
       redirect_to "/login"

@@ -1,4 +1,4 @@
-<p><b>Tags:</b> <span id="tags"><% @spectrum.tags.each do |tag| %><a id="tag_<%= tag.id %>" class="label label-info" href="/tag/<%= tag.name %>"><%= tag.name %></a> <% end %></span></p>
+<p><b>Tags:</b> <span id="tags"><% @spectrum.tags.each do |tag| %> <span id="tag_<%= tag.id %>" class="label label-info"> <a href="/tag/<%= tag.name %>"><%= tag.name %></a>  <a class='tagdelete' data-remote='true' href='/tag/delete/<%= tag.id %>'>x</a></span><% end %></span></p>
 
 <form id="tagform" class="form" action="/tag/create">
   <input type="hidden" name="tag[spectrum_id]" value="<%= @spectrum.id %>" />
@@ -27,8 +27,7 @@
           $.each(response['saved'],function(i,tag) {
             var tag_name = tag[0]
             var tag_id = tag[1]
-            //$('#tags').append("<span id='tag_"+tag_id+"' class='label label-info'><a href='/tag/"+tag_name+"'>"+tag_name+"</a> <a class='tagdelete' data-remote='true' href='/tag/delete/"+tag_id+"'>x</a></span> ")
-            $('#tags').append("<a id='tag_"+tag_id+"' class='label label-info' href='/tag/"+tag_name+"'>"+tag_name+"</a> ")
+            $('#tags').append("<span id='tag_"+tag_id+"' class='label label-info'><a href='/tag/"+tag_name+"'>"+tag_name+"</a> <a class='tagdelete' data-remote='true' href='/tag/delete/"+tag_id+"'>x</a></span> ")
             $('#taginput').val("")
             $('#tagform .control-group').removeClass('error')
             $('#tagform .control-group .help-inline').remove()

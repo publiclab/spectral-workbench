@@ -63,3 +63,7 @@ h1,h2,h3,h4,.lead {
   margin:10px;
 }
 
+.label a {
+  color:white;
+}
+
