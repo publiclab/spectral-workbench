@@ -54,7 +54,7 @@ class TagController < ApplicationController
   def delete
     @tag = Tag.find(params[:id])
     if logged_in?
-      if @tag.user_id == current_user.id || current_user.role == "admin"
+      if @tag.user_id == current_user.id || @tag.spectrum.author == current_user.login || current_user.role == "admin"
         @tag.delete
         respond_to do |format|
           format.html do
@@ -67,7 +67,7 @@ class TagController < ApplicationController
           end
         end
       else
-        flash[:error] = "You must own a tag to delete it."
+        flash[:error] = "You must have authored a tag or own its spectrum to delete it."
         redirect_to "/analyze/spectrum/"+@tag.spectrum_id.to_s
       end
     else
