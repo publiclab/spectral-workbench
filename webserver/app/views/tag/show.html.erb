@@ -58,20 +58,22 @@
   data = []
 
   <% @spectrums.each do |spectrum| %>
-  <% if spectrum.data == "" || spectrum.data.nil? %>
-    spectrum = <%= spectrum.extract_data %>
-  <% else %>
-    spectrum = <%= spectrum.data.chomp(",") %>
-  <% end %>
-    data.push({data:[]})
-    scaled = true
-    $.each(spectrum.lines,function(index,line) {
-      if (line.wavelength == null) {
-	line.wavelength = index
-	scaled = false
-      }
-      data[data.length-1].data.push([line.wavelength,line.average/2.55])
-    })
+    <% if spectrum.calibrated %>
+      <% if spectrum.data == "" || spectrum.data.nil? %>
+        spectrum = <%= spectrum.extract_data %>
+      <% else %>
+        spectrum = <%= spectrum.data.chomp(",") %>
+      <% end %>
+        data.push({data:[]})
+        scaled = true
+        $.each(spectrum.lines,function(index,line) {
+          if (line.wavelength == null) {
+            line.wavelength = index
+            scaled = false
+          }
+          data[data.length-1].data.push([line.wavelength,line.average/2.55])
+        })
+    <% end %>
   <% end %>
   flotoptions.xaxis.tickFormatter = function(nm) { return nm }
   flotoptions.xaxis.show = true
