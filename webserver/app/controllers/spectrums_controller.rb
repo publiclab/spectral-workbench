@@ -287,12 +287,12 @@ class SpectrumsController < ApplicationController
   # non REST
   def clone
     @spectrum = Spectrum.find(params[:id])
-    if logged_in? && @spectrum.user_id == current_user.id
-    if request.post?
-      @spectrum.clone(params[:clone_id])
-      @spectrum.save
-    end
-    redirect_to "/analyze/spectrum/"+@spectrum.id.to_s
+    if logged_in? && @spectrum.user_id == current_user.id || current_user.role == "admin"
+      if request.post?
+        @spectrum.clone(params[:clone_id])
+        @spectrum.save
+      end
+      redirect_to "/analyze/spectrum/"+@spectrum.id.to_s
     else
       flash[:error] = "You must be logged in and own this spectrum to clone calibrations."
       redirect_to "/login"
