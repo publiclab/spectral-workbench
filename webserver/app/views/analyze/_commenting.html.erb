@@ -12,7 +12,7 @@
     <% else %><%=h comment.author %> wrote:</b>
     <% end %>
     <p><%= RDiscount.new(comment.body).to_html %></p>
-    <% if logged_in? && current_user.role == "admin" || current_user.id == comment.user_id %><p><small><%= link_to '<i class="icon icon-remove-sign"></i> Delete', "/comments/delete/"+comment.id.to_s, :confirm => 'Are you sure?' %></small></p><% end %>
+    <% if logged_in? && (current_user.role == "admin" || current_user.login == comment.author) %><p><small><%= link_to '<i class="icon icon-remove-sign"></i> Delete', "/comments/delete/"+comment.id.to_s, :confirm => 'Are you sure?' %></small></p><% end %>
   </div>
   <% end %>
 </div>
