@@ -127,6 +127,7 @@
 
     <%= yield %>
 
+    <% if params[:controller] != "capture" %>
     <footer style="margin-bottom:200px;" class="visible-desktop">
 
       <hr />
@@ -141,6 +142,7 @@
       </div>
 
     </footer>
+    <% end %>
 
     <!-- Le javascript
     ================================================== -->

@@ -51,10 +51,13 @@
       <span class="icon-bar"></span>
     </a>
     <a class="brand" href="/"><img style="padding:-2px;width:20px;" src="/images/logo.png" /></a>
-    <a class="btn btn-inverse pull-right" href="http://publiclab.org/wiki/spectral-workbench"><i class="icon icon-white icon-question-sign"></i></a>
+    <div class="pull-right">
+      <% unless logged_in? %><a href="/login" class="btn">Log in</a><% end %>
+      <a class="btn btn-inverse" href="http://publiclab.org/wiki/spectral-workbench"><i class="icon icon-white icon-question-sign"></i></a>
+    </div>
     <ul class="nav" style="margin:0">
-      <li id="capture-btn"><a href="#capture" data-toggle="tab">Capture</a></li>
-      <li id="settings-btn" class="active"><a href="#settings" data-toggle="tab">Settings</a></li>
+      <li id="capture-btn"><a href="#capture" data-toggle="tab"><i class="icon-white icon-camera"></i> Capture</a></li>
+      <li id="settings-btn" class="active"><a href="#settings" data-toggle="tab"><i class="icon-white icon-cog"></i>Settings</a></li>
     </ul>
   </div>
 </div>

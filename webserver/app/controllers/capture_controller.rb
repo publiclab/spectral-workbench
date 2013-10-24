@@ -20,19 +20,4 @@ class CaptureController < ApplicationController
     end
   end
 
-  # older match interface; displaced by new match controller
-  def match
-    @set = SpectraSet.find params[:id]
-    if logged_in?
-      @calibration = current_user.last_calibration
-      @start_wavelength,@end_wavelength = @calibration.wavelength_range 
-    end
-    @calibration = Spectrum.find :last if APP_CONFIG['local']
-    if mobile?
-      render :template => "capture/index.mobile.erb", :layout => "mobile" 
-    else
-      render :template => "capture/index.html.erb"
-    end
-  end
-
 end

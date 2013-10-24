@@ -12,7 +12,26 @@
           <span class="add-on"><i class="icon-tags"></i></span>
           <input name="tags" id="spectrum_tags" type="text" placeholder="mobile, soil, sunlight" data-provide="typeahead" data-source="['calibration','soil','']">
         </div>
-  <textarea placeholder="Notes" name="spectrum[notes]" id="spectrum_notes"></textarea><br />
+  <p>Recent tags:<span id="recent-tags"> 
+    <a class="label label-info" onClick="tag(this.innerHTML)">mobile</a> 
+  </span></p>
+  <script>
+    tag = function(tag) {
+      if ($('#spectrum_tags').val() =="") {
+        $('#spectrum_tags').val(tag)
+      } else {
+        $('#spectrum_tags').val($('#spectrum_tags').val()+','+tag)
+      }
+    }
+    save_tags = function(tags) {
+      tags = $('#spectrum_tags').val().split(',').concat(tags)
+      $.each(tags,function(tag) {
+        $('#recent-tags').append('<a class="label label-info" onClick="tag(this.innerHTML)">'+tag+'</a> ')
+      })
+    }
+  </script>
+  <br />
+  <textarea placeholder="Notes" rows="6" name="spectrum[notes]" id="spectrum_notes"></textarea><br />
   <input name="dataurl" type="hidden" id="dataurl" />
   <input name="geotag" type="hidden" id="geotag" />
   <input name="lat" type="hidden" id="lat" />
@@ -26,5 +45,5 @@
   </select>
   <% end %>
 </form>
-<a class="btn btn-large" href="#capture" onClick="$W.cancelSave()">&laquo; Back</a>
+<a class="btn btn-large" href="#capture" onClick="$W.cancelSave();$('#capture-btn').addClass('active');$('#settings-btn').removeClass('active');" data-toggle="tab">&laquo; Back</a>
 <a class="btn btn-primary btn-large" href="javascript:void(0);" onClick="$('#saveForm').submit()">Save</a>

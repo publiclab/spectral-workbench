@@ -32,6 +32,9 @@
       <br />
       <b>Signed up:</b> 
       <%=h time_ago_in_words(@user.created_at) %> ago
+      <br />
+      <b>Tags added:</b> 
+      <%=h Tag.count :all, :conditions => {:user_id => @user.id} %>
     </div>
     <hr />
 
