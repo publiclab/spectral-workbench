@@ -4,14 +4,12 @@ class SetsController < ApplicationController
   def index
     @sets = SpectraSet.find(:all, :order => "created_at DESC", :limit => 100)
     @sets = @sets.paginate :page => params[:page], :per_page => 24
-    render :layout => "bootstrap"
   end
 
   def show
     @set = SpectraSet.find params[:id]
     @spectrums = Spectrum.find(:all, :limit => 4, :order => "created_at DESC")
     @comment = Comment.new
-    render :layout => "bootstrap"
   end
 
   def find_match
@@ -51,7 +49,7 @@ class SetsController < ApplicationController
     if logged_in?
       @set = SpectraSet.new
       respond_to do |format|
-        format.html { render :layout => "bootstrap" } # new.html.erb 
+        format.html {} # new.html.erb 
         format.xml  { render :xml => @set }
       end
     else
@@ -151,7 +149,6 @@ class SetsController < ApplicationController
     @set = SpectraSet.find params[:id]
     if logged_in? && (@set.author == current_user.login || current_user.role == "admin")
       @spectrums = Spectrum.find(:all, :limit => 4, :order => "created_at DESC")
-      render :layout => "bootstrap"
     else
       flash[:error] = "You must be logged in and own the set to edit it."
       redirect_to "/login"

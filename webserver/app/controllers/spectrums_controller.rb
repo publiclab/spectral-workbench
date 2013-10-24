@@ -5,7 +5,6 @@ class SpectrumsController < ApplicationController
   # create and update are protected by recaptcha
 
   def stats
-    render :layout => "bootstrap" 
   end
 
   # GET /spectrums
@@ -24,7 +23,7 @@ class SpectrumsController < ApplicationController
 
       respond_to do |format|
         format.html { 
-          render :template => "spectrums/index.html.erb", :layout => "bootstrap" 
+          render :template => "spectrums/index.html.erb"
         } # show.html.erb
         format.xml  { render :xml => @spectrums }
       end
@@ -68,7 +67,6 @@ class SpectrumsController < ApplicationController
       render :partial => "capture/results.html.erb", :layout => false 
     else 
       @sets = SpectraSet.find(:all, :conditions => ['title LIKE ? OR notes LIKE ?',"%"+params[:id]+"%", "%"+params[:id]+"%"],:limit => 100, :order => "id DESC")
-      render :layout => "bootstrap"
     end
   end
 
@@ -94,9 +92,7 @@ class SpectrumsController < ApplicationController
     @spectrum = Spectrum.new
 
     respond_to do |format|
-      format.html { # new.html.erb 
-        render :layout => "bootstrap"
-      }
+      format.html {}
       format.xml  { render :xml => @spectrum }
     end
     else

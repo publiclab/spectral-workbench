@@ -31,8 +31,6 @@ class MatchController < ApplicationController
         return
       end
     end
-
-    render :layout => "bootstrap"
   end
 
 
@@ -104,7 +102,7 @@ class MatchController < ApplicationController
     @comment = Comment.new
     
     respond_to do |format|
-      format.html { render :layout => "bootstrap" }
+      format.html {}
       format.xml  { render :xml => @spectrum }
       format.csv  { 
         if params[:raw]

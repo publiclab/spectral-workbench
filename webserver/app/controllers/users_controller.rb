@@ -20,7 +20,6 @@ class UsersController < ApplicationController
       @spectrums = @spectrums.paginate :page => params[:page], :per_page => 24
       @sets = SpectraSet.find(:all,:limit => 8,:order => "created_at DESC")
       @comments = Comment.find(:all,:limit => 12,:order => "created_at DESC")
-      render :layout => "bootstrap"
     else
       flash[:error] = "You must be logged in to view your dashboard."
       redirect_to "/login"
@@ -34,7 +33,6 @@ class UsersController < ApplicationController
 
   def contributors
     @users = User.find :all, :order => "id DESC", :limit => 50
-    render :layout => "bootstrap"
   end
  
   def list
@@ -75,7 +73,6 @@ class UsersController < ApplicationController
     @spectrums = @user.spectra(100)
     @spectrums = @spectrums.paginate :page => params[:page], :per_page => 24
     @sets = @user.sets
-    render :layout => "bootstrap"
   end
 
   def delete

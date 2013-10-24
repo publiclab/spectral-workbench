@@ -1,0 +1,45 @@
+<style>
+  .toolbar a {
+  }
+</style>
+
+<div id="capture" class="tab-pane">
+
+  <div class="span3" style="margin-left:4px;">
+    <p><small><b>TOOLS</b></small></p>
+    <div class="btn-group toolbar">
+      <a rel="tooltip" title="Scripting" class="btn btn-inverse"><i class="icon-white icon-search"></i></a>
+      <a class="btn btn-inverse"><i class="icon-white icon-search"></i></a>
+      <a class="btn btn-inverse"><i class="icon-white icon-search"></i></a>
+      <a class="btn btn-inverse"><i class="icon-white icon-search"></i></a>
+    </div>
+
+    <div class="well">
+    </div>
+
+  </div>
+
+  <div class="span9">
+
+  <% if params[:action] == "match" %>
+  <p><b>Click "Match" to find the closest spectrum in the set "<%= @set.title %>"</b></p>
+  <% end %>
+
+  <div id="graph" style="width:100%;height:100px;margin:10px 0;"></div>
+  <canvas style="width:100%;height:100px;" id="canvas"></canvas> 
+
+  <a class="btn btn-primary btn-large" data-toggle="tab" href="#save" onClick="$W.saveSpectrum();">Save</a>
+  <a class="btn btn-large" data-toggle="tab" href="#help" onClick="$W.saveSpectrum();"><i class="icon icon-question-sign"></i> Help</a>
+
+  <form class="form">
+    <label class="checkbox inline" for="geotag-toggle">Geotag</label>
+    <input type="checkbox" name="geotag-toggle" id="geotag-toggle" type="checkbox" />
+    <label class="checkbox inline" for="rgb-toggle">RGB</label>
+    <input type="checkbox" name="rgb-toggle" id="rgb-toggle" onChange="$W.toggle_mode()" />
+  </form>
+
+    <% unless logged_in? %><p><a href="/login">Log in</a> to use a recent calibration</p><% end %>
+
+  </div>
+
+</div>

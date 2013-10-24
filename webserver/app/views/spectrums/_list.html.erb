@@ -1,27 +1,17 @@
-<div class="list">
-<% @spectrums.each do |spectrum| %>
-<div class="spectrum">
-   <% if spectrum.photo.exists? then %>
-	<% if spectrum.slice_data_url.nil? %>
-	<a href="/spectra/show/<%= spectrum.id %>"><%= image_tag spectrum.photo.url(:thumb) %></a>
-	<% else %>
-	<a href="/spectra/show/<%= spectrum.id %>"><div src="<%= spectrum.photo.url(:thumb) %>" class="image" style="background:url('<%= spectrum.slice_data_url %>') repeat-y left;"></div></a>
-	<% end %>
-    <% else %>
-	<a href="/spectra/show/<%= spectrum.id %>"><div src="<%= spectrum.photo.url(:thumb) %>" class="image" style="background:#ccc;"></div></a>
+<style>._row { clear:left;} </style>
+
+<div class="_row">
+  <% @spectrums.each_with_index do |spectrum,i| %>
+    <div class="span3 clearfix">
+      <a class="image hidden-phone" href="/analyze/spectrum/<%= spectrum.id %>"><img src="<%= spectrum.photo.url(:thumb) %>" class="image" style="background:#ccc;"></a>
+      <a class="image visible-phone" style="float:left;width:50%;margin-right:10px;" href="/analyze/spectrum/<%= spectrum.id %>"><img src="<%= spectrum.photo.url(:thumb) %>" class="image" style="background:#ccc;"></a>
+      <h4><a data-transition="slide" href="/analyze/spectrum/<%= spectrum.id %>"><%=h truncate(spectrum.title,:length => 18) %></a></h4>
+      <p><a data-transition="slide" href="/profile/<%=h spectrum.author %>"><%=h spectrum.author %></a> | <%= time_ago_in_words(spectrum.created_at) %> ago<% if spectrum.like_count > 0 %> <i class="icon icon-star"></i> <%= spectrum.like_count %><% end %></p>
+    </div>
+    <% if ((i+1)/4.0).to_i == ((i+1)/4.0) %>
+    </div>
+    <hr class="hidden-phone" style="clear:both;"/>
+    <div class="_row">
     <% end %>
-    <div class="text">
-      <h3><a href="/spectra/show/<%= spectrum.id %>"><%=h truncate(spectrum.title,:length => 24) %></a></h3>
-      <p><a href="/profile/<%=h spectrum.author %>"><%=h spectrum.author %></a> | <%= time_ago_in_words(spectrum.created_at) %> ago</p>
-      <p class="notes"><%=h truncate(spectrum.notes,:length => 200) %></p>
-      <p>
-	<a href="/spectra/<%= spectrum.id %>">View</a> | 
-	<% if spectrum.author == "anonymous" %><a href="/spectra/edit/<%= spectrum.id %>">Claim this spectrum</a> | <% end %>
-	<a href="/spectra/<%= spectrum.id %>#comments"><%= spectrum.comments.length %> comments</a> 
-      </p>
-  </div>
+  <% end %>
 </div>
-<% end %>
-</div>
-<br style="clear:left;" />
-<%= will_paginate @spectrums %>

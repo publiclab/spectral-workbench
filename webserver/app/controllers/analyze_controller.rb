@@ -14,7 +14,7 @@ class AnalyzeController < ApplicationController
     @calibrations = current_user.calibrations if logged_in?
     @comment = Comment.new
     respond_to do |format|
-      format.html { render :layout => "bootstrap" }
+      format.html {}
       format.xml  { render :xml => @spectrum }
       format.csv  { 
         if params[:raw]

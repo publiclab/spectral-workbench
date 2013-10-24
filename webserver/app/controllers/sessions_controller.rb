@@ -6,8 +6,6 @@ class SessionsController < ApplicationController
     if logged_in?
       flash[:warning] = "You are already logged in!"
       redirect_to "/dashboard"
-    else
-      render :layout => "bootstrap"
     end
   end
 
@@ -58,7 +56,7 @@ protected
   def failed_login(message = "Authentication failed.")
     flash.now[:error] = message
     logger.warn "Failed login for '#{params[:login]}' from #{request.remote_ip} at #{Time.now.utc}"
-    render :action => 'new', :layout => "bootstrap"
+    render :action => 'new'
   end
 
   def open_id_authentication(openid_url,return_to)

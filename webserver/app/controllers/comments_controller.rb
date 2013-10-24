@@ -2,7 +2,6 @@ class CommentsController < ApplicationController
 
   def index
     @comments = Comment.find :all, :order => "id DESC"
-    render :layout => "bootstrap"
   end
 
   def create

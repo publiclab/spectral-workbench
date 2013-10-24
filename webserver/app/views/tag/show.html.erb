@@ -46,7 +46,7 @@
   <h2 style="margin-left:10px;">Spectra tagged with "<%=h params[:id] %>"<% if @tag %> (<%= @count %>)<% end %></h2>
 
   <% if @tag %>
-  <%= render :partial => 'spectrums/list_bootstrap' %>
+  <%= render :partial => 'spectrums/list' %>
   <% else %>
   <p>No results for tag "<%=h params[:id] %></p>
   <% end %>

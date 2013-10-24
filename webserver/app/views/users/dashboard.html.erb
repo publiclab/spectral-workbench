@@ -52,7 +52,7 @@
 
         <div class="tab-pane active" id="spectra">
           <h3 style="padding-top:0;"><a name="spectra"></a>Recent spectra <small class="hidden-phone">by contributors like you | <a href="/profile/<%= current_user.login %>">Your spectra</a></small></h3>
-          <%= render :partial => 'spectrums/list_bootstrap' %>
+          <%= render :partial => 'spectrums/list' %>
           <%= will_paginate @spectrums %>
         </div>
        

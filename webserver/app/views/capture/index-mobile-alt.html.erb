@@ -51,10 +51,10 @@
       <span class="icon-bar"></span>
     </a>
     <a class="brand" href="/"><img style="padding:-2px;width:20px;" src="/images/logo.png" /></a>
-    <a class="btn pull-right" href="http://publiclab.org/wiki/spectral-workbench"><i class="icon icon-question-sign"></i></a>
+    <a class="btn btn-inverse pull-right" href="http://publiclab.org/wiki/spectral-workbench"><i class="icon icon-white icon-question-sign"></i></a>
     <ul class="nav" style="margin:0">
-      <li><a href="#capture" data-toggle="tab">Capture</a></li>
-      <li class="active"><a href="#settings" data-toggle="tab">Settings</a></li>
+      <li id="capture-btn"><a href="#capture" data-toggle="tab">Capture</a></li>
+      <li id="settings-btn" class="active"><a href="#settings" data-toggle="tab">Settings</a></li>
     </ul>
   </div>
 </div>
@@ -62,7 +62,7 @@
 <div class="tab-content" style="padding:0 20px;">
 
 <div id="settings" class="tab-pane active">
-  <div id="webcam-msg"><p><b>Requesting camera access... <br />(<a href="https://play.google.com/store/apps/details?id=com.opera.browser">Opera Mobile</a> or Chrome <a href="http://publiclab.org/wiki/spectral-workbench-mobile-setup" target="_blank">with flags enabled</a> only)</b></p></div> 
+  <div id="webcam-msg"><p><b>Requesting camera access... <br />(<a href="https://play.google.com/store/apps/details?id=com.opera.browser">Opera Mobile</a> or Chrome <a href="http://publiclab.org/wiki/spectral-workbench-mobile-setup" target="_blank">with flags enabled</a> if necessary)</b></p></div> 
   <div style="" id="webcam"></div>
 
   <div style="padding-bottom:10px;padding-top:250px;">
@@ -80,33 +80,11 @@
       
   <% end %>
 
-  <a class="btn btn-large btn-primary" href="#capture" data-toggle="tab">Begin capturing &raquo;</a>
+  <a class="btn btn-large btn-primary" href="#capture" onClick="$('#capture-btn').addClass('active');$('#settings-btn').removeClass('active');" data-toggle="tab">Begin capturing &raquo;</a>
 
 </div>
 
-<div id="capture" class="tab-pane">
-
-  <% if params[:action] == "match" %>
-  <p><b>Click "Match" to find the closest spectrum in the set "<%= @set.title %>"</b></p>
-  <% end %>
-
-  <div id="graph" style="width:100%;height:100px;margin:10px 0;"></div>
-  <canvas style="width:100%;height:100px;" id="canvas"></canvas> 
-
-  <a class="btn btn-primary btn-large" data-toggle="tab" href="#save" onClick="$W.saveSpectrum();">Save</a>
-  <a class="btn btn-large" data-toggle="tab" href="#help" onClick="$W.saveSpectrum();"><i class="icon icon-question-sign"></i> Help</a>
-
-  <form class="form">
-    <label class="checkbox inline" for="geotag-toggle">Geotag</label>
-    <input type="checkbox" name="geotag-toggle" id="geotag-toggle" type="checkbox" />
-    <label class="checkbox inline" for="rgb-toggle">RGB</label>
-    <input type="checkbox" name="rgb-toggle" id="rgb-toggle" onChange="$W.toggle_mode()" />
-  </form>
-
-    <% unless logged_in? %><p><a href="/login">Log in</a> to use a recent calibration</p><% end %>
-    <p>This interface works only on <a href="https://play.google.com/store/apps/details?id=com.opera.browser">Opera Mobile</a> or Chrome <a href="http://publiclab.org/wiki/spectral-workbench-mobile-setup" target="_blank">with flags enabled</a></p>
-
-</div>
+<%= render :partial => "capture_beta" %>
 
 <div id="save" class="tab-pane">
   <%= render :partial => "save_mobile" %>

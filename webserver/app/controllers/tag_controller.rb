@@ -43,9 +43,7 @@ class TagController < ApplicationController
     @spectrums = [] if @spectrums.nil?
     @comments = Comment.all :limit => 12, :order => "id DESC"
     respond_to do |format|
-      format.html { 
-        render :layout => 'bootstrap'
-      } # show.html.erb
+      format.html {} # show.html.erb
       format.xml  { render :xml => @spectrums }
       format.json  { render :json => @spectrums }
     end
@@ -87,7 +85,6 @@ class TagController < ApplicationController
       end
     end
     @tagnames = count.sort_by {|k,v| v }.reverse
-    render :layout => "bootstrap"
   end
 
 end

@@ -3,7 +3,6 @@ class DeviceController < ApplicationController
   def index
     if logged_in?
       @devices = Device.find_all_by_user_id current_user.id, :order => "id DESC"
-      render :layout => "bootstrap" 
     else
       flash[:error] = "You must be logged in to view that page."
       redirect_to "/login"
@@ -33,7 +32,6 @@ class DeviceController < ApplicationController
   end
 
   def lookup
-    render :layout => "bootstrap"
   end
 
   # for claiming a calibration based on a key
