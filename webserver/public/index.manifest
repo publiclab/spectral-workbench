@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# v5 - 2013-10-26
+# v6 - 2013-10-28
 /capture
 /capture/beta
 /stylesheets/*
@@ -7,8 +7,8 @@ CACHE MANIFEST
 /fontawesome/*
 /javascripts/*
 /images/spectralworkbench.png
-/images/images/example-sky.jpg
-/images/images/example-cfl.jpg
+/images/example-sky.jpg
+/images/example-cfl.jpg
 
 FALLBACK:
 / /offline
