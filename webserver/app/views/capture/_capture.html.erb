@@ -35,6 +35,7 @@
     <% else %>
     <p>You must be <a href='/login'>logged in</a> to save spectra.</p>
     <% end %>
+    <a data-role="button" data-theme="a" href="javascript:void()" onClick="window.open($W.canvas.toDataURL(),'_newtab').focus()">Download</a>
   <% end %>
 
     <% if logged_in? %>

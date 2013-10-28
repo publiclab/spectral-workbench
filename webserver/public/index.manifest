@@ -1,14 +1,47 @@
 CACHE MANIFEST
-# v6 - 2013-10-28
+# v12 - 2013-10-28
 /capture
 /capture/beta
-/stylesheets/*
-/bootstrap/*
-/fontawesome/*
-/javascripts/*
+/offline
+#/stylesheets/*
+/stylesheets/jquery.mobile.splitview-compiled.css
+/stylesheets/jquery.mobile.splitview.css
+/stylesheets/jquery.mobile.grids.collapsible.css
+/stylesheets/mobile.css
+/fonts/junction-webfont.eot
+/fonts/junction-webfont.woff
+/fonts/junction-webfont.ttf
+/fonts/junction-webfont.svg
+#/bootstrap/*
+/bootstrap/js/bootstrap.min.js
+/bootstrap/js/bootstrap.typeahead.js
+/bootstrap/css/bootstrap.css
+/bootstrap/css/bootstrap-responsive.css
+/stylesheets/bootstrap.css
+#/fontawesome/*
+/fontawesome/font/fontawesome-webfont.woff?v=3.0.1
+#/javascripts/*
+/javascripts/jquery.min.js
+/javascripts/getUserMedia.js
+# old capture page
+/javascripts/jquery.mobile.splitview.js
+/javascripts/jquery.mobile.splitview-compiled.js
+/javascripts/iscroll-wrapper.js
+/javascripts/iscroll.js
+# flot
+/javascripts/flot/jquery.flot.js
+/javascripts/flot/jquery.flot.crosshair.js
+/javascripts/flot/jquery.flot.threshold.min.js
+# app
+/javascripts/application.js?1359217147
+/javascripts/capture.js
+/javascripts/capture.js?2
+/javascripts/analyze.js
+# images
 /images/spectralworkbench.png
 /images/example-sky.jpg
 /images/example-cfl.jpg
+/images/calibration-example.png
 
 FALLBACK:
 / /offline
