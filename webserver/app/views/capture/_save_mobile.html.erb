@@ -1,4 +1,4 @@
-<h2>Save this spectrum</h2>
+<h3>Save this spectrum</h3>
 
 <% if !logged_in? %>
   <p>You must be <a target="_blank" href="/login">logged in</a> to save spectra.</p>
@@ -13,7 +13,12 @@
           <input name="tags" id="spectrum_tags" type="text" placeholder="mobile, soil, sunlight" data-provide="typeahead" data-source="['calibration','soil','']">
         </div>
   <p>Recent tags:<span id="recent-tags"> 
-    <a class="label label-info" onClick="tag(this.innerHTML)">mobile</a> 
+    <% if @calibration %>
+      (<a onClick="tag('<%= @calibration.tags.collect(&:name).join(',') %>')">all</a>)
+      <% @calibration.tags.each do |tag| %>
+        <a class="label label-info" onClick="tag(this.innerHTML);this.remove()"><%= tag.name %></a> 
+      <% end %>
+    <% end %>
   </span></p>
   <script>
     tag = function(tag) {
@@ -47,3 +52,4 @@
 </form>
 <a class="btn btn-large" href="#capture" onClick="$W.cancelSave();$('#capture-btn').addClass('active');$('#settings-btn').removeClass('active');" data-toggle="tab">&laquo; Back</a>
 <a class="btn btn-primary btn-large" href="javascript:void(0);" onClick="$('#saveForm').submit()">Save</a>
+<br style="margin-top:20px;" />

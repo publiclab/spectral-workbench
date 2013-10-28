@@ -6,6 +6,9 @@
 <div id="capture" class="tab-pane">
 
   <div class="span2" style="margin-left:0;margin-bottom:20px;">
+
+    <a style="margin-bottom:6px;" class="btn btn-primary btn-large" data-toggle="tab" href="#save" onClick="$W.saveSpectrum();"><i class="icon-white icon-save"></i> Save</a>
+
     <p><small><b>ADJUSTMENTS</b></small></p>
     <div class="btn-group toolbar" data-toggle="buttons-checkbox" style="margin-bottom:5px;">
       <a rel="tooltip" title="Geocode" class="btn btn-inverse"><i class="icon-white icon-map-marker"></i></a>
@@ -27,9 +30,6 @@
       <a rel="tooltip" title="Combined readout (beta)" class="btn btn-inverse" onClick="$W.show_combined()"><i class="icon-white icon-list-ul"></i></a>
     </div>
 
-    <div class="">
-    </div>
-
   </div>
 
   <div class="span10">
@@ -41,8 +41,7 @@
     <div id="graph" style="width:100%;height:200px;margin:10px 0;"></div>
     <canvas style="width:100%;height:100px;" id="canvas"></canvas> 
  
-    <a class="btn btn-primary btn-large" data-toggle="tab" href="#save" onClick="$W.saveSpectrum();">Save</a>
-    <a class="btn btn-large" data-toggle="tab" href="#help" onClick="$W.saveSpectrum();"><i class="icon icon-question-sign"></i> Help</a>
+    <span style="display:none;margin-left:6px;" class="alert alert-warning"><b>Message!</b> Testing. </span>
 
     <% unless logged_in? %><a style="margin-left:10px;" href="/login">Log in</a> to use a recent calibration<% end %>
  

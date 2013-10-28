@@ -10,6 +10,7 @@ class SpectrumsController < ApplicationController
   # GET /spectrums
   # GET /spectrums.xml
   def index
+    @offline = true
     if logged_in?
       redirect_to "/dashboard"
     else

@@ -15,6 +15,7 @@ class UsersController < ApplicationController
   end
 
   def dashboard
+    @offline = true
     if logged_in?
       @spectrums = Spectrum.find(:all,:order => "created_at DESC", :conditions => ["author != 'anonymous'"], :limit => 100)
       @spectrums = @spectrums.paginate :page => params[:page], :per_page => 24

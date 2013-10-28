@@ -1,5 +1,9 @@
 <!DOCTYPE html>
+<% if @offline %>
+<html manifest="/index.manifest">
+<% else %>
 <html lang="en">
+<% end %>
   <head>
     <meta charset="utf-8">
     <title>SpectralWorkbench<%= ": "+@title unless @title.nil? %></title>
