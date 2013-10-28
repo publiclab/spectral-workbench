@@ -1,0 +1,14 @@
+CACHE MANIFEST
+# v5 - 2013-10-26
+/capture
+/capture/beta
+/stylesheets/*
+/bootstrap/*
+/fontawesome/*
+/javascripts/*
+/images/spectralworkbench.png
+/images/images/example-sky.jpg
+/images/images/example-cfl.jpg
+
+FALLBACK:
+/ /offline
