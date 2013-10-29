@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# v13 - 2013-10-28
+# v15 - 2013-10-29
 /capture
 /capture/beta
 /offline
@@ -42,6 +42,10 @@ CACHE MANIFEST
 /images/example-sky.jpg
 /images/example-cfl.jpg
 /images/calibration-example.png
+/500.html
+/404.html
+
+NETWORK:
 
 FALLBACK:
 / /offline
