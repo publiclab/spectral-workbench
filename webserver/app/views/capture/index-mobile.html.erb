@@ -25,6 +25,7 @@
 	<% else %>
     <a data-role="button" data-transition="fade" data-theme="b" href="#page2" onClick="$W.saveSpectrum();">Save</a>
 	<% end %>
+    <a data-role="button" data-theme="c" href="javascript:void()" onClick="window.open($W.canvas.toDataURL(),'_newtab').focus()">Download</a>
 
     <div data-role="fieldcontain">
       <fieldset data-role="controlgroup">
