@@ -46,6 +46,7 @@ CACHE MANIFEST
 /404.html
 
 NETWORK:
+/dashboard
 
 FALLBACK:
 / /offline
