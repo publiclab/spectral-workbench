@@ -15,8 +15,11 @@
 
 	<div id="graph" style="width:100%;height:100px;"></div>
 	<br />
-	<canvas style="width:100%;height:100px;" id="canvas"></canvas> 
-
+	<canvas style="width:100%;height:100px;z-index:99;position:absolute;" id="canvas"></canvas> 
+        <div id="webcam-msg" style="width:100%;height:100px;background:#ddd;color:#aaa;font-weight:bold;text-align:center;">
+          <p style="padding:10px;">Requesting camera access...</p>
+          <p style="padding:0 10px;">If your browser does not prompt you to connect to a webcam, try the <a href="/upload">Upload page</a>. At this time, Android <a href="https://play.google.com/store/apps/details?id=com.android.chrome">Chrome</a> &amp; <a href="https://play.google.com/store/apps/details?id=com.opera.browser">Opera Mobile</a> support the HTML5 webcam API.</p>
+        </div>
 	<span id="match"></span>
 
 	<% if params[:action] == "match" %>

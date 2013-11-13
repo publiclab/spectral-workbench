@@ -65,6 +65,7 @@ $W = {
         success: function (stream) {
 		//console.log('success')
                 if ($W.options.context === 'webrtc') {
+                        $('#webcam-msg p').hide()
 			//console.log('webrtc')
                         var video = $W.options.videoEl,
                                 vendorURL = window.URL || window.webkitURL;
