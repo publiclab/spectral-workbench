@@ -1,7 +1,7 @@
 CACHE MANIFEST
-# v15 - 2013-10-29
+# v28 - 2013-10-29
 /capture
-/capture/beta
+#/capture/beta
 /offline
 #/stylesheets/*
 /stylesheets/jquery.mobile.splitview-compiled.css
@@ -47,6 +47,7 @@ CACHE MANIFEST
 
 NETWORK:
 /dashboard
+/capture/beta
 
 FALLBACK:
 / /offline
