@@ -9,8 +9,13 @@
 
     <span class="visible-phone" style="float:right;"><a class="btn btn-inverse btn-large" onClick="$('#tool-pane').toggle()"><i class="icon-white icon-wrench"></i> More tools <i class="caret"></i></a></span>
 
-    <div class="btn-group">
+    <div class="btn-group visible-phone">
       <a class="btn btn-primary btn-large" data-toggle="tab" href="#save" onClick="$W.saveSpectrum();"><i class="icon-white icon-save"></i> Save</a>
+      <a class="btn btn-inverse btn-large" onClick="window.open($W.canvas.toDataURL(),'_newtab').focus()"><i class="icon-white icon-download"></i> Download</a>
+    </div>
+
+    <div class="hidden-phone">
+      <a class="btn btn-primary btn-large" style="margin-bottom:4px;" data-toggle="tab" href="#save" onClick="$W.saveSpectrum();"><i class="icon-white icon-save"></i> Save</a>
       <a class="btn btn-inverse btn-large" onClick="window.open($W.canvas.toDataURL(),'_newtab').focus()"><i class="icon-white icon-download"></i> Download</a>
     </div>
 
@@ -19,7 +24,12 @@
  
       <p><small><b>ADJUSTMENTS</b></small></p>
       <div class="btn-group toolbar" data-toggle="buttons-checkbox" style="margin-bottom:5px;">
-        <a rel="tooltip" title="Geocode" class="btn btn-inverse"><i class="icon-white icon-map-marker"></i></a>
+
+        <!-- THIS SECTION DOESNT YET WORK -->
+        <a rel="tooltip" title="Geocode" class="btn btn-inverse active" onClick="$('#geotag-toggle').toggle()"><i class="icon-white icon-map-marker"></i></a>
+        <input type="hidden" name="geotag-toggle" id="geotag-toggle" />
+        <!-- THIS SECTION DOESNT YET WORK -->
+
         <a rel="tooltip" title="Rotate video" class="btn btn-inverse" onClick="$W.rotated = !$W.rotated"><i class="icon-white icon-repeat"></i></a>
         <a rel="tooltip" title="Flip video horizontally" class="btn btn-inverse" onClick="$W.flipped = !$W.flipped;$('#spectrum_reversed').val($('#spectrum_reversed').val() == 'false')"><i class="icon-white icon-resize-horizontal"></i></a>
       </div>

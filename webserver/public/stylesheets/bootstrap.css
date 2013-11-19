@@ -14,11 +14,11 @@ h1,h2,h3,h4,.lead {
   font-weight:normal;
 }
 
-div.tab-content.capture {
-  padding:0 !important;
-}
-
 @media (max-width: 767px) {
+  div.tab-content.capture {
+    padding:0 !important;
+  }
+
   .navbar-inner {
     margin-right: -40px !important;
   }
