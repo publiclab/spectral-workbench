@@ -1,16 +1,18 @@
-<h3>Save this spectrum</h3>
+<img style="display:none;" id="spectrum-preview" />
 
-<% if !logged_in? %>
-  <p>You must be <a target="_blank" href="/login">logged in</a> to save spectra.</p>
+<h3 style="margin-bottom:6px;">Save this spectrum
+<% if logged_in? %>
+  <small><i>(logged in as <%=h current_user.login %>)</i></small></h3>
 <% else %>
-  <p><small><i>(logged in as <%=h current_user.login %>)</i></small></p>
+  </h3>
+  <p class="alert">You must be <a target="_blank" href="/login">logged in</a> to save spectra.</small></p>
 <% end %>
 
 <form class="form" action="/spectrums" method="post" id="saveForm" target="_blank" onSubmit="$W.cancelSave();window.location='#page1'">
   <input placeholder="Title (required)" name="spectrum[title]" id="spectrum_notes" type="text" /><br />
         <div class="input-prepend">
           <span class="add-on"><i class="icon-tags"></i></span>
-          <input name="tags" id="spectrum_tags" type="text" placeholder="mobile, soil, sunlight" data-provide="typeahead" data-source="['calibration','soil','']">
+          <input name="tags" id="spectrum_tags" type="text" placeholder="Tags: mobile, soil, sunlight" data-provide="typeahead" data-source="['calibration','soil','']">
         </div>
   <p>Recent tags:<span id="recent-tags"> 
     <% if @calibration %>
@@ -36,20 +38,24 @@
     }
   </script>
   <br />
-  <textarea placeholder="Notes" rows="6" name="spectrum[notes]" id="spectrum_notes"></textarea><br />
+  <textarea placeholder="Describe your spectrum: light source? Sample preparation? What's your goal?" rows="6" name="spectrum[notes]" id="spectrum_notes"></textarea><br />
   <input name="dataurl" type="hidden" id="dataurl" />
   <input name="geotag" type="hidden" id="geotag" />
   <input name="lat" type="hidden" id="lat" />
   <input name="lon" type="hidden" id="lon" />
   <% if logged_in? %>
+  <p><small>Choose a recent reference calibration, or use this as a new calibration.</small></p>
   <select name="spectrum[calibration_id]" id="calibration_id">
     <% current_user.tag('calibration',20).each do |spectrum| %>
-    <option value="<%= spectrum.id %>"><%= spectrum.title %> (<%= time_ago_in_words(spectrum.created_at) %>)</option>
-    <option value="calibration">[+] New calibration</option>
+    <option value="<%= spectrum.id %>"><%= spectrum.title %> (<%= time_ago_in_words(spectrum.created_at) %> ago)</option>
     <% end %>
+    <option value="calibration">[+] New calibration</option>
   </select>
   <% end %>
 </form>
 <a class="btn btn-large" href="#capture" onClick="$W.cancelSave();$('#capture-btn').addClass('active');$('#settings-btn').removeClass('active');" data-toggle="tab">&laquo; Back</a>
-<a class="btn btn-primary btn-large" href="javascript:void(0);" onClick="$('#saveForm').submit()">Save</a>
+<a class="btn btn-primary btn-large" href="javascript:void(0);" onClick="$('#saveForm').submit();$('#spectrum-preview').show()">Save</a>
+
+<p>By uploading your data, you agree to release it under the <a href="http://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Zero license</a></p>
 <br style="margin-top:20px;" />
+

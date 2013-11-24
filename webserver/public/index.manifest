@@ -1,7 +1,7 @@
 CACHE MANIFEST
-# v38 - 2013-11-17
+# v62 - 2013-11-21
 /capture
-/capture/beta
+#/capture/beta
 /offline
 #/stylesheets/*
 /stylesheets/jquery.mobile.splitview-compiled.css
@@ -21,6 +21,7 @@ CACHE MANIFEST
 #/fontawesome/*
 /fontawesome/font/fontawesome-webfont.woff?v=3.0.1
 #/javascripts/*
+/javascripts/application.js
 /javascripts/jquery.min.js
 /javascripts/getUserMedia.js
 # old capture page
@@ -46,7 +47,8 @@ CACHE MANIFEST
 /404.html
 
 NETWORK:
-/dashboard
+/capture/beta
 
 FALLBACK:
 / /offline
+/dashboard /offline

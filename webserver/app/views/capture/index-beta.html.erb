@@ -1,0 +1,138 @@
+<script src="/javascripts/getUserMedia.js"> </script>
+<script src="/javascripts/jquery.min.js"> </script>
+<script src="/javascripts/capture.js"> </script>
+<script src="/javascripts/api.js"> </script>
+<script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.flot.js"></script> 
+<script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.flot.crosshair.js"></script>
+<script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.flot.threshold.min.js"></script>
+
+<style>
+  .navbar-fixed-top .nav li {
+    padding-top:3px;
+    font-family:junction,sans-serif;
+  }
+  #webcam-msg {
+    position:absolute;
+    background:#777;
+    color:#aaa;
+    text-align:center;
+    height:240px;
+    width:320px;
+    font-size:14px;
+  }
+  a {
+    color:#0af;
+  }
+  #webcam-msg p {
+    padding:100px 20px; 
+  }
+  #webcam {
+    position:absolute;
+    z-index:1;
+  }
+  #header.navbar-inner {
+    margin-right:-40px;
+  }
+
+  body {
+    background:#444;
+    color:#ccc;
+  }
+  hr {
+    border-color:#666;
+  }
+</style>
+
+<div id="header" class="navbar navbar-inverse navbar-static-top" style="padding-top:0;">
+  <div class="navbar-inner" style="padding:0 10px;">
+    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </a>
+    <a class="brand" href="/"><img style="padding:-2px;width:20px;" src="/images/logo.png" /></a>
+    <div class="pull-right">
+      <% unless logged_in? %><a href="/login" class="btn">Log in</a><% end %>
+      <a class="btn btn-inverse" href="http://publiclab.org/wiki/spectral-workbench"><i class="icon icon-white icon-question-sign"></i></a>
+    </div>
+    <ul class="nav" style="margin:0">
+      <li id="capture-btn"><a href="#capture" data-toggle="tab"><i class="icon-white icon-camera"></i><span class="hidden-phone"> Capture</a></a></li>
+      <li id="settings-btn" class="active"><a href="#settings" data-toggle="tab"><i class="icon-white icon-cog"></i><span class="hidden-phone"> Settings</span></a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="tab-content capture" style="padding:0 20px;">
+
+<div id="settings" class="tab-pane active">
+  <div id="heightIndicator" style="position:absolute;margin:0;z-index:999;border-bottom:2px solid #ff4;height:1px;margin-top:120px;width:320px;"></div> 
+  <div id="webcam-msg"><p><b>Requesting camera access... <br />(<a href="https://play.google.com/store/apps/details?id=org.mozilla.firefox">Firefox</a>, <a href="https://play.google.com/store/apps/details?id=com.opera.browser">Opera</a> or Chrome on Android, or <a href="https://itunes.apple.com/us/app/bowser/id560478358">Bowser</a> on iOS). Please click "Allow" when prompted.</b></p></div> 
+  <div style="" id="webcam"></div>
+
+  <div style="padding-bottom:10px;padding-top:250px;">
+    <div class="visible-phone">
+      <p style="margin-top:4px;">Point your spectrometer at a light and click on the video above to choose a cross-section to sample. (<a href="http://publiclab.org/wiki/spectral-workbench-usage">Learn more &raquo;</a>)</p>
+      <img class="img-rounded" src="/images/example-cfl.jpg" style="width:100px;height:80px" />
+      <img class="img-rounded" src="/images/example-sky.jpg" style="width:100px;height:80px" />
+    </div>
+    <div class="hidden-phone">
+      <p style="margin-top:4px;">Point your spectrometer at a light and click on the video above to choose a cross-section as shown below. (<a href="http://publiclab.org/wiki/spectral-workbench-usage">Learn more &raquo;</a>)</p>
+      <img src="/images/calibration-example.png" />
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      $('#webcam').click(function(e){
+        percent = parseInt(e.offsetY/$('#webcam').height()*480)
+        $W.setSampleRows(percent,percent);$('#heightIndicator')[0].style.marginTop = parseInt((percent/480)*240)+'px';
+      })
+    })()
+  </script>
+
+  <% if ios? || (mobile? && !opera?) %>
+  <% end %>
+
+  <a class="btn btn-large btn-primary" href="#capture" onClick="$('#capture-btn').addClass('active');$('#settings-btn').removeClass('active');" data-toggle="tab">Begin capturing &raquo;</a>
+
+</div>
+
+<%= render :partial => "capture_beta" %>
+
+<div id="save" class="tab-pane">
+  <%= render :partial => "save_mobile" %>
+</div>
+
+</div>
+
+<script>
+ (function () { 
+
+  flotoptions.grid = {
+    clickable: true,
+    hoverable:true,
+    borderWidth: 0,
+    color: "#ccc",
+    backgroundColor: "#111"
+  }
+  flotoptions.colors = [ "#ccc", "#E02130", "#FAB243", "#429867", "#2B5166" ]//, "#482344" ]
+
+  $W.initialize({
+  	calibrated:<%= !@calibration.nil? %>,
+	interface:"capture",
+  	width:640
+  }) 
+  setInterval($W.getRow,100)
+  <% if @calibration %>
+  	$W.calibrated = true
+  	$W.calibration_id = <%= @calibration.id %>
+  	$W.start_wavelength = <%= @start_wavelength %>
+  	$W.end_wavelength = <%= @end_wavelength %>
+      	flotoptions.xaxis.show = true
+  <% else %>
+  	$W.calibrated = false
+  <% end %>
+  <% if params[:action] == "match" %>
+  	$W.set = <%= @set.id %>
+  <% end %>
+})() </script>

@@ -15,7 +15,7 @@ class CaptureController < ApplicationController
     end
     @spectrums = Spectrum.find(:all, :limit => 12, :order => "id DESC")
     if params[:alt] == "true"
-      render :template => "capture/index-mobile-alt.html.erb", :layout => "application"
+      render :template => "capture/index-beta.html.erb", :layout => "application"
     elsif mobile?
       render :template => "capture/index-mobile.html.erb", :layout => "mobile"
     end
