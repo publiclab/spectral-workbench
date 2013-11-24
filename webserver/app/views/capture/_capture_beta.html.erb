@@ -15,20 +15,16 @@
     </div>
 
     <div class="hidden-phone">
-      <a class="btn btn-primary btn-large" style="margin-bottom:4px;" data-toggle="tab" href="#save" onClick="$W.saveSpectrum();"><i class="icon-white icon-save"></i> Save</a>
-      <a class="btn btn-inverse btn-large" onClick="window.open($W.canvas.toDataURL(),'_newtab').focus()"><i class="icon-white icon-download"></i> Download</a>
+      <a class="btn btn-primary btn-large" style="margin-bottom:4px;width:80%;" data-toggle="tab" href="#save" onClick="$W.saveSpectrum();"><i class="icon-white icon-save"></i> Save</a>
+      <a class="btn btn-inverse btn-large" style="margin-bottom:8px;width:80%;" onClick="window.open($W.canvas.toDataURL(),'_newtab').focus()"><i class="icon-white icon-download"></i> Download</a>
     </div>
 
     <div class="tool-pane" id="tool-pane">
-      <hr />
  
       <p><small><b>ADJUSTMENTS</b></small></p>
       <div class="btn-group toolbar" data-toggle="buttons-checkbox" style="margin-bottom:5px;">
 
-        <!-- THIS SECTION DOESNT YET WORK -->
-        <a rel="tooltip" title="Geocode" class="btn btn-inverse active" onClick="$('#geotag-toggle').toggle()"><i class="icon-white icon-map-marker"></i></a>
-        <input type="hidden" name="geotag-toggle" id="geotag-toggle" />
-        <!-- THIS SECTION DOESNT YET WORK -->
+        <a id="geotag-btn" rel="tooltip" title="Geocode" class="btn btn-inverse active" onClick="$('#geotag-btn').button('toggle');$('#geotag').val('true'!=$('#geotag').val());$W.geolocate()"><i class="icon-white icon-map-marker"></i></a>
 
         <a rel="tooltip" title="Rotate video" class="btn btn-inverse" onClick="$W.rotated = !$W.rotated"><i class="icon-white icon-repeat"></i></a>
         <a rel="tooltip" title="Flip video horizontally" class="btn btn-inverse" onClick="$W.flipped = !$W.flipped;$('#spectrum_reversed').val($('#spectrum_reversed').val() == 'false')"><i class="icon-white icon-resize-horizontal"></i></a>
@@ -54,24 +50,13 @@
 
   <div class="span10">
 
-  <% if params[:action] == "match" %>
-  <p><b>Click "Match" to find the closest spectrum in the set "<%= @set.title %>"</b></p>
-  <% end %>
-
     <div id="graph" style="width:100%;height:200px;margin:10px 0;"></div>
     <canvas style="width:100%;height:100px;" id="canvas"></canvas> 
  
-    <span style="display:none;margin-left:6px;" class="alert alert-warning"><b>Message!</b> Testing. </span>
+    <span id="message-area" style="display:none;margin-left:6px;" class="alert alert-warning"><b>Message!</b> Testing. </span>
 
     <% unless logged_in? %><a style="margin-left:10px;" href="/login">Log in</a> to use a recent calibration<% end %>
  
-    <form class="form" style='display:none;'>
-      <label class="checkbox inline" for="geotag-toggle">Geotag</label>
-      <input type="checkbox" name="geotag-toggle" id="geotag-toggle" type="checkbox" />
-      <label class="checkbox inline" for="rgb-toggle">RGB</label>
-      <input type="checkbox" name="rgb-toggle" id="rgb-toggle" onChange="$W.toggle_mode()" />
-    </form>
-
   </div>
 
 </div>

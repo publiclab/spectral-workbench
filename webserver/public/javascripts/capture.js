@@ -297,9 +297,13 @@ $W = {
   },
   saveSpectrum: function() {
     $('#dataurl').val($W.canvas.toDataURL())
+    if ($('#spectrum-preview')) {
+      $('#spectrum-preview')[0].src = $('#dataurl').val()
+      $('#spectrum-preview').show()
+    }
     $('#video_row').val($W.sample_start_row)
-    $('#geotag').val($('#geotag-toggle')[0].checked)
-    setTimeout(function() { if ($('#geotag-toggle')[0].checked) $W.geolocate() },500)
+    if ($('#geotag-toggle').length > 0) $('#geotag').val($('#geotag-toggle')[0].checked)
+    setTimeout(function() { if ($('#geotag').val() == "true") $W.geolocate() },500)
   },
   cancelSave: function() {
     $('#geotag').val('false')

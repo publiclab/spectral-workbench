@@ -9,25 +9,25 @@
   </div>
   <div data-role="content" style="padding: 15px">
 
-	<% if params[:action] == "match" %>
-	<p><b>Click "Match" to find the closest spectrum in the set "<%= @set.title %>"</b></p>
-	<% end %>
+  <% if params[:action] == "match" %>
+  <p><b>Click "Match" to find the closest spectrum in the set "<%= @set.title %>"</b></p>
+  <% end %>
 
-	<div id="graph" style="width:100%;height:100px;"></div>
-	<br />
-	<canvas style="width:100%;height:100px;z-index:99;position:absolute;" id="canvas"></canvas> 
+  <div id="graph" style="width:100%;height:100px;"></div>
+  <br />
+  <canvas style="width:100%;height:100px;z-index:99;position:absolute;" id="canvas"></canvas> 
         <div id="webcam-msg" style="width:100%;height:100px;background:#ddd;color:#aaa;font-weight:bold;text-align:center;font-size:10px;">
           <p style="padding:10px;">Requesting camera access...</p>
           <p style="padding:0 10px;">If your browser does not prompt you to connect to a webcam, try the <a href="/upload">Upload page</a>. At this time, <a href="https://play.google.com/store/apps/details?id=org.mozilla.firefox">Firefox</a>, <a href="https://play.google.com/store/apps/details?id=com.opera.browser">Opera</a> or <a href="https://play.google.com/store/apps/details?id=com.android.chrome">Chrome</a> on Android, or <a href="https://itunes.apple.com/us/app/bowser/id560478358">Bowser</a> on iOS support the HTML5 webcam API.</p>
         </div>
-	<span id="match"></span>
+  <span id="match"></span>
 
-	<% if params[:action] == "match" %>
+  <% if params[:action] == "match" %>
     <a data-role="button" data-theme="b" href="javascript:void()" onClick="$W.match();">Match</a>
     <a data-role="button" data-transition="fade" data-theme="c" href="#page2" onClick="$W.saveSpectrum();">Save</a>
-	<% else %>
+  <% else %>
     <a data-role="button" data-transition="fade" data-theme="b" href="#page2" onClick="$W.saveSpectrum();">Save</a>
-	<% end %>
+  <% end %>
     <a data-role="button" data-theme="c" href="javascript:void()" onClick="window.open($W.canvas.toDataURL(),'_newtab').focus()">Download</a>
 
     <div data-role="fieldcontain">
@@ -49,74 +49,74 @@
 <div data-role="page" id="page2">
   <div data-role="content" class="content" style="padding: 15px">
 
-	<h2>Save this spectrum</h2>
+  <h2>Save this spectrum</h2>
 
-	<% if !logged_in? %>
-		<p>You must be <a target="_blank" href="/login">logged in</a> to save spectra.</p>
-	<% else %>
-		<p>(logged in as <%=h current_user.login %>)</p>
-	<% end %>
+  <% if !logged_in? %>
+    <p>You must be <a target="_blank" href="/login">logged in</a> to save spectra.</p>
+  <% else %>
+    <p>(logged in as <%=h current_user.login %>)</p>
+  <% end %>
 
-	<form action="/spectrums" method="post" id="saveForm" target="_blank" onSubmit="$W.cancelSave();window.location='#page1'">
-		<label for="spectrum_title">Title:</label><br />
-		<input name="spectrum[title]" id="spectrum_notes" type="text" /><br />
-		<label for="tags">Tags:</label><br />
-		<input name="tags" id="spectrum_tags" value="mobile," type="text" /><br />
-		<label for="spectrum_notes">Notes:</label>
-		<textarea name="spectrum[notes]" id="spectrum_notes"></textarea><br />
-		<input name="dataurl" type="hidden" id="dataurl" />
-		<input name="geotag" type="hidden" id="geotag" />
-		<input name="lat" type="hidden" id="lat" />
-		<input name="lon" type="hidden" id="lon" />
-		<label for="device">If possible, identify your device:</label>
-		<select name="device" id="device">
-			<option value="device:foldable">Foldable Mini-Spectrometer</option>
-			<option value="device:dsk">Desktop Spectrometry Kit</option>
-			<option value="device:custom">custom design</option>
-		</select>
-		<% if logged_in? %>
-		<label for="calibration_id">Use an existing calibration:</label>
-		<select name="spectrum[calibration_id]" id="calibration_id">
-			<% current_user.tag('calibration',20).each do |spectrum| %>
-			<option value="<%= spectrum.id %>"><%= spectrum.title %> (<%= time_ago_in_words(spectrum.created_at) %>)</option>
-			<option value="calibration">[+] New calibration</option>
-			<% end %>
-		</select>
-		<% end %>
-	</form>
-	<a data-role="button" data-transition="fade" data-theme="b" href="javascript:void(0);" onClick="$('#saveForm').submit()">Save</a>
-	<a data-role="button" data-transition="fade" data-theme="d" href="#page1" onClick="$W.cancelSave()">&laquo; Back</a>
+  <form action="/spectrums" method="post" id="saveForm" target="_blank" onSubmit="$W.cancelSave();window.location='#page1'">
+    <label for="spectrum_title">Title:</label><br />
+    <input name="spectrum[title]" id="spectrum_notes" type="text" /><br />
+    <label for="tags">Tags:</label><br />
+    <input name="tags" id="spectrum_tags" value="mobile," type="text" /><br />
+    <label for="spectrum_notes">Notes:</label>
+    <textarea name="spectrum[notes]" id="spectrum_notes"></textarea><br />
+    <input name="dataurl" type="hidden" id="dataurl" />
+    <input name="geotag" type="hidden" id="geotag" />
+    <input name="lat" type="hidden" id="lat" />
+    <input name="lon" type="hidden" id="lon" />
+    <label for="device">If possible, identify your device:</label>
+    <select name="device" id="device">
+      <option value="device:foldable">Foldable Mini-Spectrometer</option>
+      <option value="device:dsk">Desktop Spectrometry Kit</option>
+      <option value="device:custom">custom design</option>
+    </select>
+    <% if logged_in? %>
+    <label for="calibration_id">Use an existing calibration:</label>
+    <select name="spectrum[calibration_id]" id="calibration_id">
+      <% current_user.tag('calibration',20).each do |spectrum| %>
+      <option value="<%= spectrum.id %>"><%= spectrum.title %> (<%= time_ago_in_words(spectrum.created_at) %>)</option>
+      <option value="calibration">[+] New calibration</option>
+      <% end %>
+    </select>
+    <% end %>
+  </form>
+  <a data-role="button" data-transition="fade" data-theme="b" href="javascript:void(0);" onClick="$('#saveForm').submit()">Save</a>
+  <a data-role="button" data-transition="fade" data-theme="d" href="#page1" onClick="$W.cancelSave()">&laquo; Back</a>
 
   </div>
 </div>
 
 <div data-role="page" id="settings">
-	<div style="height:40%;" id="webcam"></div> 
-	<div data-role="fieldcontain">
-		<fieldset data-role="controlgroup" data-mini="true">
-			<label for="sample_slider">Choose where to sample:</label>
-			<input type="range" name="slider" id="sample_slider" value="250" min="0" max="640" data-highlight="false" />
-		</fieldset>
-	</div>
-	<a data-role="button" data-transition="fade" data-theme="d" href="#page1" onClick="$W.cancelSave()">&laquo; Back</a>
+  <div style="height:40%;" id="webcam"></div> 
+  <div data-role="fieldcontain">
+    <fieldset data-role="controlgroup" data-mini="true">
+      <label for="sample_slider">Choose where to sample:</label>
+      <input type="range" name="slider" id="sample_slider" value="250" min="0" max="640" data-highlight="false" />
+    </fieldset>
+  </div>
+  <a data-role="button" data-transition="fade" data-theme="d" href="#page1" onClick="$W.cancelSave()">&laquo; Back</a>
 </div>
 
 <script> (function () { 
-	$W.initialize({
-		calibrated:<%= !@calibration.nil? %>,
-		mobile:true
-	}) 
-	setInterval($W.getRow,100)
-	<% if @calibration %>
-		$W.calibrated = true
-		$W.calibration_id = <%= @calibration.id %>
-		$W.start_wavelength = <%= @start_wavelength %>
-		$W.end_wavelength = <%= @end_wavelength %>
-    		flotoptions.xaxis.show = true
-	<% else %>
-		$W.calibrated = false
-	<% end %>
-	<% if params[:action] == "match" %>
-		$W.set = <%= @set.id %>
-	<% end %>
+  $W.initialize({
+    calibrated:<%= !@calibration.nil? %>,
+    mobile:true
+  }) 
+  setInterval($W.getRow,100)
+  <% if @calibration %>
+    $W.calibrated = true
+    $W.calibration_id = <%= @calibration.id %>
+    $W.start_wavelength = <%= @start_wavelength %>
+    $W.end_wavelength = <%= @end_wavelength %>
+        flotoptions.xaxis.show = true
+  <% else %>
+    $W.calibrated = false
+  <% end %>
+  <% if params[:action] == "match" %>
+    $W.set = <%= @set.id %>
+  <% end %>
 })() </script>
