@@ -8,7 +8,11 @@ class AnalyzeController < ApplicationController
       @spectrum.extract_data 
       @spectrum.save 
     end
-    @spectra = Spectrum.find(:all, :limit => 12, :order => "created_at DESC", :conditions => ["id != ?",@spectrum.id])
+    if logged_in?
+      @spectra = Spectrum.find(:all, :limit => 12, :order => "created_at DESC", :conditions => ["id != ? AND author = ?",@spectrum.id,current_user.login])
+    else
+      @spectra = Spectrum.find(:all, :limit => 12, :order => "created_at DESC", :conditions => ["id != ?",@spectrum.id])
+    end
     @sets = @spectrum.sets
     @macros = Macro.find :all, :conditions => {:macro_type => "analyze"}
     @calibrations = current_user.calibrations if logged_in?
