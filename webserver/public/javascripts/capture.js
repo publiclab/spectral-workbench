@@ -156,39 +156,42 @@ $W = {
       var saved = $W.excerptCanvas(0,0,$W.width,$W.height,$W.ctx).getImageData(0,0,$W.width,$W.height)
       // check for flipped spectrum every 10th frame... hmmm
       if ($W.detect_flip && ($W.frame/10 - parseInt($W.frame/10) == 0)) $W.autodetect_flipness()
-      $W.ctx.save()
-      if ($W.mobile) {
-        // mobile will never need to flip, can't be installed "upside down"
-        //$W.ctx.save()
-        //$W.ctx.scale($('#canvas').width()/$('video').height(),1)
-        $W.ctx.scale(3,1)
-        $W.ctx.translate($('video').height()/2,0)
-        if (!$W.rotated) $W.ctx.rotate(Math.PI/2)
-        $W.ctx.drawImage(video, -startrow/4, -$W.height/2);
-        //$W.ctx.drawImage(video, 0,0)
-        //$W.ctx.restore()
-      } else {
-        if ($W.flipped) {
-          $W.ctx.translate($W.width,0)
-          $W.ctx.scale(-1,1)
-        }
-        if ($W.rotated) {
-          $W.ctx.translate($W.width/2,0) // this is not quite right, it's driving me nuts
-          $W.ctx.rotate(Math.PI/2)
-          $W.ctx.scale($W.height/$W.width,$W.width/$W.height) // adjust for aspect ratio
-        }
-        $W.ctx.drawImage(video, 0, -startrow);
-      }
 
+      // manipulate the canvas to get the image to copy onto the canvas in the right orientation
+      $W.ctx.save()
+        // draw the new data on the canvas, overwriting what's there now
+        if ($W.mobile) {
+          // mobile will never need to flip, can't be installed "upside down"
+          $W.ctx.scale(3,1)
+          $W.ctx.translate($('video').height()/2,0)
+          if (!$W.rotated) $W.ctx.rotate(Math.PI/2)
+          $W.ctx.drawImage(video, -startrow/4, -$W.height/2);
+        } else {
+          if ($W.flipped) {
+            $W.ctx.translate($W.width,0)
+            $W.ctx.scale(-1,1)
+          }
+          if ($W.rotated) {
+            $W.ctx.translate($W.width/2,0) // this is not quite right, it's driving me nuts
+            $W.ctx.rotate(Math.PI/2)
+            $W.ctx.scale($W.height/$W.width,$W.width/$W.height) // adjust for aspect ratio
+          }
+          $W.ctx.drawImage(video, 0, -startrow);
+        }
       $W.ctx.restore()
-      // Draw old data below new row of data:
+
+      // draw old data 1px below new row of data:
       $W.ctx.putImageData(saved,0,1)
     } else if($W.options.context === 'flash'){
       window.webcam.capture();
     } else {
       console.log('No context was supplied to getSnapshot()');
     }
+
+    // get the slice of data
     img = $W.ctx.getImageData(0,0,$W.canvas.width,$W.sample_height)
+
+    // use it to generate a graph
     if ($W.mode == "average") {
       $W.data[0] = {label: "webcam",data:[]}
     } else if ($W.mode == "rgb") {
@@ -203,6 +206,7 @@ $W = {
       $W.data[4] = {label: "overexposed",data:[]}
     }
 
+    // store it in the "raw" data store too
     $W.full_data = []
     for (var col = 0; col < $W.canvas.width; col++) {
       var red = 0
