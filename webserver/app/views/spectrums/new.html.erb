@@ -8,6 +8,8 @@
 
 <form id="upload" action="/spectrums?m=true" class="form well" enctype="multipart/form-data" method="post">
 
+  <div class="alert alert-error"><%= error_messages_for :spectrum %></div>
+
   <div class="control-group" id="title">
     <input name="spectrum[title]" type="text" id="inputTitle" placeholder="Title">
     <span class="help-inline"></span>

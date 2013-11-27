@@ -17,13 +17,12 @@ $W = {
   sample_start_row: 240,
   sample_end_row: 241,
   sample_height: 1,
-        // height and width of the output stream
-        // container
+  // height and width of the output stream container
   width: 640,
   height: 480,
   waterfall_height: 150,
-        //width: 1280,
-        //height: 720,
+  // width: 1280,
+  // height: 720,
   frame: 0,
 
   initialize: function(args) {
@@ -147,11 +146,35 @@ $W = {
     onLoad: function () {}
   },
 
+  // Draws the appropriate pixels onto the top row of the waterfall. 
+  // Override this if you want a non-linear cross section or somethine
+  // else special! <video> is the video element
+  getCrossSection: function(video) {
+    // draw the new data on the top row of pixels of the canvas, overwriting what's there now
+    if ($W.mobile) {
+      // mobile will never need to flip, can't be installed "upside down"
+      $W.ctx.scale(3,1)
+      $W.ctx.translate($('video').height()/2,0)
+      if (!$W.rotated) $W.ctx.rotate(Math.PI/2)
+      $W.ctx.drawImage(video, -$W.sample_start_row/4, -$W.height/2);
+    } else {
+      if ($W.flipped) {
+        $W.ctx.translate($W.width,0)
+        $W.ctx.scale(-1,1)
+      }
+      if ($W.rotated) {
+        $W.ctx.translate($W.width/2,0) // this is not quite right, it's driving me nuts
+        $W.ctx.rotate(Math.PI/2)
+        $W.ctx.scale($W.height/$W.width,$W.width/$W.height) // adjust for aspect ratio
+      }
+      $W.ctx.drawImage(video, 0, -$W.sample_start_row);
+    }
+  },
+
   getRow: function(y) {
     $W.frame += 1
     if ($W.options.context === 'webrtc') {
-      var video = document.getElementsByTagName('video')[0]; 
-      var startrow = $W.sample_start_row//parseInt($W.options.height/2)
+      var video = $('video')[0]; 
       // Grab the existing canvas:
       var saved = $W.excerptCanvas(0,0,$W.width,$W.height,$W.ctx).getImageData(0,0,$W.width,$W.height)
       // check for flipped spectrum every 10th frame... hmmm
@@ -159,25 +182,7 @@ $W = {
 
       // manipulate the canvas to get the image to copy onto the canvas in the right orientation
       $W.ctx.save()
-        // draw the new data on the canvas, overwriting what's there now
-        if ($W.mobile) {
-          // mobile will never need to flip, can't be installed "upside down"
-          $W.ctx.scale(3,1)
-          $W.ctx.translate($('video').height()/2,0)
-          if (!$W.rotated) $W.ctx.rotate(Math.PI/2)
-          $W.ctx.drawImage(video, -startrow/4, -$W.height/2);
-        } else {
-          if ($W.flipped) {
-            $W.ctx.translate($W.width,0)
-            $W.ctx.scale(-1,1)
-          }
-          if ($W.rotated) {
-            $W.ctx.translate($W.width/2,0) // this is not quite right, it's driving me nuts
-            $W.ctx.rotate(Math.PI/2)
-            $W.ctx.scale($W.height/$W.width,$W.width/$W.height) // adjust for aspect ratio
-          }
-          $W.ctx.drawImage(video, 0, -startrow);
-        }
+      $W.getCrossSection(video)
       $W.ctx.restore()
 
       // draw old data 1px below new row of data:

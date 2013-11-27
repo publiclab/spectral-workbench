@@ -54,6 +54,7 @@
     <div class="pull-right">
       <% unless logged_in? %><a href="/login" class="btn">Log in</a><% end %>
       <a class="btn btn-inverse" href="http://publiclab.org/wiki/spectral-workbench"><i class="icon icon-white icon-question-sign"></i></a>
+      <span class="tool-toggle"><a class="btn btn-inverse" onClick="$('#tool-pane').toggle()"><i class="icon-white icon-wrench"></i></a></span>
     </div>
     <ul class="nav" style="margin:0">
       <li id="capture-btn"><a href="#capture" data-toggle="tab"><i class="icon-white icon-camera"></i><span class="hidden-phone"> Capture</a></a></li>
@@ -103,6 +104,10 @@
   <%= render :partial => "save_mobile" %>
 </div>
 
+<div id="compare" class="tab-pane">
+  <%= render :partial => "compare_beta" %>
+</div>
+
 </div>
 
 <script>
@@ -135,4 +140,7 @@
   <% if params[:action] == "match" %>
   	$W.set = <%= @set.id %>
   <% end %>
+
+  if ($('body').width() > 768) $('#tool-toggle').hide()
+  else $('#tool-pane').hide()
 })() </script>
