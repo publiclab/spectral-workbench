@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<% if @offline %>
+<% if @offline == "flush" %>
+<html manifest="/not-existing.appcache">
+<% elsif @offline %>
 <html manifest="/index.manifest">
 <% else %>
 <html lang="en">
