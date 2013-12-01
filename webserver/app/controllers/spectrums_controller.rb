@@ -64,7 +64,11 @@ class SpectrumsController < ApplicationController
     @spectrums = Spectrum.find(:all, :conditions => ['title LIKE ? OR notes LIKE ?',"%"+params[:id]+"%", "%"+params[:id]+"%"],:limit => 100, :order => "id DESC")
     @spectrums = @spectrums.paginate :page => params[:page], :per_page => 24
     if params[:capture]
-      render :partial => "capture/results.html.erb", :layout => false 
+      if params[:beta]
+        render :partial => "capture/results_beta.html.erb", :layout => false  
+      else
+        render :partial => "capture/results.html.erb", :layout => false
+      end
     else 
       @sets = SpectraSet.find(:all, :conditions => ['title LIKE ? OR notes LIKE ?',"%"+params[:id]+"%", "%"+params[:id]+"%"],:limit => 100, :order => "id DESC")
     end
@@ -146,54 +150,60 @@ class SpectrumsController < ApplicationController
 				  :photo => params[:spectrum][:photo]})
       end
 
-      respond_to do |format|
-        if (params[:client] || (APP_CONFIG["local"] || logged_in?)) && @spectrum.save!
-          if (params[:client]) # java client
-	    if params[:photo]
-              @spectrum = Spectrum.find @spectrum.id
-              @spectrum.extract_data
-              @spectrum.scale_data(params[:endWavelength],params[:startWavelength]) if (params[:endWavelength] && params[:startWavelength])
-              @spectrum.save!
+      if @spectrum.save
+        respond_to do |format|
+          if (params[:client] || (APP_CONFIG["local"] || logged_in?))
+            if (params[:client]) # java client
+	      if params[:photo]
+                @spectrum = Spectrum.find @spectrum.id
+                @spectrum.extract_data
+                @spectrum.scale_data(params[:endWavelength],params[:startWavelength]) if (params[:endWavelength] && params[:startWavelength])
+                @spectrum.save!
+              end
+              if logged_in?
+                format.html { render :text => @spectrum.id }
+              else
+                format.html { render :text => @spectrum.id.to_s+"?login=true&client_code="+client+"::"+uniq_id} # <== here, also offer a unique code or pass client_id so that we can persist login
+              end
+            else # not java client
+           
+              if mobile? || ios?
+                @spectrum.save
+                @spectrum = Spectrum.find @spectrum.id
+                @spectrum.rotate if params[:vertical] == "on"
+                @spectrum.sample_row = @spectrum.find_brightest_row
+                @spectrum.tag("mobile",current_user.id)
+              end
+              @spectrum.tag("iOS",current_user.id) if ios?
+              @spectrum.tag(params[:tags],current_user.id) if params[:tags]
+              @spectrum.tag("upload",current_user.id) if params[:upload]
+              @spectrum.tag(params[:device],current_user.id) if params[:device] && params[:device] != "none"
+              if params[:spectrum][:calibration_id] && !params[:is_calibration] && params[:spectrum][:calibration_id] != "calibration" && params[:spectrum][:calibration_id] != "undefined"
+                @spectrum.extract_data
+                @spectrum.clone(params[:spectrum][:calibration_id]) 
+              end
+              if params[:geotag]
+                @spectrum.lat = params[:lat]
+                @spectrum.lon = params[:lon]
+              end
+              @spectrum.reversed = true if params[:spectrum][:reversed] == "true"
+              if @spectrum.save!
+                flash[:notice] = 'Spectrum was successfully created.'
+                format.html { 
+	          redirect_to :controller => :analyze, :action => :spectrum, :id => @spectrum.id
+	        }
+                format.xml  { render :xml => @spectrum, :status => :created, :location => @spectrum }
+              else
+                render "spectrums/new-errors"
+              end
             end
-            if logged_in?
-              format.html { render :text => @spectrum.id }
-            else
-              format.html { render :text => @spectrum.id.to_s+"?login=true&client_code="+client+"::"+uniq_id} # <== here, also offer a unique code or pass client_id so that we can persist login
-            end
-          else # not java client
-
-            if mobile? || ios?
-              @spectrum.save
-              @spectrum = Spectrum.find @spectrum.id
-              @spectrum.rotate if params[:vertical] == "on"
-              @spectrum.sample_row = @spectrum.find_brightest_row
-              @spectrum.tag("mobile",current_user.id)
-            end
-            @spectrum.tag("iOS",current_user.id) if ios?
-            @spectrum.tag(params[:tags],current_user.id) if params[:tags]
-            @spectrum.tag("upload",current_user.id) if params[:upload]
-            @spectrum.tag(params[:device],current_user.id) if params[:device] && params[:device] != "none"
-            if params[:spectrum][:calibration_id] && !params[:is_calibration] && params[:spectrum][:calibration_id] != "calibration" && params[:spectrum][:calibration_id] != "undefined"
-              @spectrum.extract_data
-              @spectrum.clone(params[:spectrum][:calibration_id]) 
-            end
-            if params[:geotag]
-              @spectrum.lat = params[:lat]
-              @spectrum.lon = params[:lon]
-            end
-            @spectrum.reversed = true if params[:spectrum][:reversed] == "true"
-            @spectrum.save!
-
-            flash[:notice] = 'Spectrum was successfully created.'
-            format.html { 
-		redirect_to :controller => :analyze, :action => :spectrum, :id => @spectrum.id
-	    }
-            format.xml  { render :xml => @spectrum, :status => :created, :location => @spectrum }
+          else
+            format.html { render :action => "new" }
+            format.xml  { render :xml => @spectrum.errors, :status => :unprocessable_entity }
           end
-        else
-          format.html { render :action => "new" }
-          format.xml  { render :xml => @spectrum.errors, :status => :unprocessable_entity }
         end
+      else
+        render "spectrums/new-errors"
       end
     else
       # possibly, we don't have to redirect - we could prompt for login at the moment of save...

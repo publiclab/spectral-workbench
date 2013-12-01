@@ -1,7 +1,7 @@
 CACHE MANIFEST
-# v66 - 2013-11-24
+# v107 - 2013-11-29
 /capture
-#/capture/beta
+/capture/beta
 /offline
 #/stylesheets/*
 /stylesheets/jquery.mobile.splitview-compiled.css
@@ -35,7 +35,7 @@ CACHE MANIFEST
 /javascripts/flot/jquery.flot.threshold.min.js
 # app
 /javascripts/application.js?1359217147
-/javascripts/capture.js
+#/javascripts/capture.js
 /javascripts/capture.js?2
 /javascripts/analyze.js
 # images

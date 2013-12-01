@@ -1,0 +1,42 @@
+
+<form id="upload" action="/spectrums" class="form well" enctype="multipart/form-data" method="post">
+
+  <div class="alert alert-error"><%= error_messages_for :spectrum %></div>
+
+  <p><img src="<%= params[:dataurl] %>" /></p>
+
+  <div class="control-group" id="title">
+    <input name="spectrum[title]" type="text" id="inputTitle" placeholder="Title" value="<%= params[:spectrum][:title] %>">
+    <span class="help-inline"></span>
+  </div>
+
+  <div>
+    <textarea name="spectrum[notes]" id="textareaNotes" cols="8" rows="6" placeholder="Notes: where, what, why"><%= params[:spectrum][:notes] %></textarea>
+  </div>
+
+  <% if logged_in? && current_user.calibrations.length > 0 %>
+    <label for="calibration_id">Use or create a calibration:</label>
+    <select name="spectrum[calibration_id]" id="calibration_id">
+      <% current_user.tag('calibration',20).each do |spectrum| %>
+      <option<% if spectrum.id == params[:spectrum][:calibration_id].to_i %> selected="true"<% end %> value="<%= spectrum.id %>"><%= spectrum.title %> (<%= time_ago_in_words(spectrum.created_at) %>)</option>
+      <% end %>
+      <option value="calibration">[+] New calibration</option>
+    </select><br />
+  <% end %>
+
+  <div class="input-prepend">
+    <span class="add-on"><i class="icon-tags"></i></span>
+    <input name="tags" id="spectrum_tags" type="text" placeholder="Tags: mobile, soil, sunlight" data-provide="typeahead" data-source="['calibration','soil','']" value="<%= params[:tags] %>">
+  </div>
+  <br />
+
+  <input type='hidden' name='authenticity_token' value="<%= form_authenticity_token %>"/>
+  <button type="submit" class="btn btn-primary btn-large">Save</button>
+
+  <input name="dataurl" type="hidden" id="upload" value="<%= params[:dataurl] %>" />
+  <input name="upload" type="hidden" id="upload" value="<%= params[:upload] %>" />
+  <input name="geotag" type="hidden" id="geotag" value="<%= params[:geotag] %>" />
+  <input name="lat" type="hidden" id="lat" value="<%= params[:lat] %>" />
+  <input name="lon" type="hidden" id="lon" value="<%= params[:lon] %>" />
+
+</form>
