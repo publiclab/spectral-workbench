@@ -5,6 +5,8 @@
 *.log
 *.local
 .DS_Store
+*.sql
+backup.sh
 webserver/log/
 webserver/tmp/*
 webserver/tmp/**/*
