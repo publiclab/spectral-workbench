@@ -2,19 +2,24 @@
   <p>Experiment with writing macros based on the still-evolving <a href="http://publiclab.org/wiki/spectral-workbench-api">Spectral Workbench API</a>.</p>  
   <p><a target="_blank" href="/macros" Browse macros &raquo;</a></p>  
 
-  <textarea style="font-size:11px;font-family:courier,sans-serif;" id="code">setup: function() {
+  <p>
+  <textarea style="font-size:11px;font-family:courier,sans-serif;" class="span10" rows="10" id="code">setup: function() {
 // code to run on startup
 window.open($W.canvas.toDataURL(),'_newtab').focus() // this may not work if popups are blocked
-
-raw: function() {
+},
+draw: function() {
 // code to run every frame
-</textarea>
+}</textarea>
+  </p>
 
-  <a id="run" style=="btn-primary btn-large">Run</a>
-  <a href="#capture" data-toggle="tab" style="btn btn-large>&laquo; Back</a>
+  <p>
+    <a id="run" class="btn-primary btn-large">Run</a> <a href="#capture" data-toggle="tab" class="btn btn-large">&laquo; Back</a>
+  </p>
 
-  <code id="output">
+  <p>
+  <code id="output" class="span10" style="height:120px;">
   </code>
+  </p>
 
   <p>As you create macros, please share them by <a href="http://publiclab.org/post">posting research notes</a> at PublicLab.org. Tag them with "macro".</p>
 
