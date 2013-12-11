@@ -13,18 +13,21 @@
 
 </div>
 
-<script>
-  // detect if we are actually offline?
-  // 
-</script>
+<div class="container online" style="display:none;">
+  <h2>We're sorry, but something went wrong. (499b)</h2>
 
-<div class="container offline" style="display:none;">
-  <h1>You are offline</h1>
-
-  <hr />
-
-  <p>You are currently not connected to the internet. You can still capture spectra in offline mode, but you will be prompted to download them as images for later upload instead of their being automatically uploaded and shared.</p>
+  <p>Please <a href="https://github.com/jywarren/spectral-workbench/issues/new">report a bug on Github</a> or <a href="mailto:web@publiclab.org">email web@publiclab.org</a> and thoroughly describe what happened. Thank you for helping to improve open source software!.</p>
 
   <br style="clear:both;" />
 
 </div>
+
+<script>
+  (function(){
+  // detect if we are actually offline?
+  if (navigator.onLine) {
+    $('.offline').hide()
+    $('.online').show()
+  }
+  })()
+</script>

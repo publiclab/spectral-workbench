@@ -1,3 +1,5 @@
+//import codeanticode.gsvideo.*;
+
 /*
 Spectrometry_kit - a Processing.org-based interface for spectral analysis with a USB webcam-based spectrometer. Also a spectrometer-based musical instrument or guitar pedal
 

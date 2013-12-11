@@ -1,7 +1,8 @@
-#Fri Jan 27 10:58:01 EST 2012
+#Mon Sep 16 12:20:02 CEST 2013
 video.sampleheight=52
 video.samplerow=164
 client.version=0.4
+user.uniqId=213599571
 calibration.firstMarkerWavelength=435.833
 video.width=1280
 video.height=720
