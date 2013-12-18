@@ -1,5 +1,19 @@
 class UserMailer < ActionMailer::Base
 
+  def welcome_email(user)
+    recipients  user.email
+    from        "do-not-reply@spectralworkbench.org"
+    subject     "Welcome to Spectral Workbench"
+    body(        {:user => user})
+  end
+
+  def google_groups_email(user)
+    recipients  'plots-spectrometry+subscribe@googlegroups.com'
+    from        user.email
+    subject     "subscribe"
+    body(        {:list => 'plots-spectrometry'})
+  end
+
   def direct_message(user,author,title,body)
     recipients  user.email
     from        "do-not-reply@spectralworkbench.org"

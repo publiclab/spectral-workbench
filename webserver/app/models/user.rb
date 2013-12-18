@@ -25,6 +25,11 @@ class User < ActiveRecord::Base
   # anything else you want your user to change should be added here.
   attr_accessible :login, :email, :name, :password, :password_confirmation
 
+  def after_create
+    UserMailer.deliver_google_groups_email(@user)
+    UserMailer.deliver_welcome_email(@user)
+  end
+
   def self.weekly_tallies
     # past 52 weeks of data
     weeks = {}
