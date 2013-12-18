@@ -288,7 +288,15 @@ $W = {
     $("#imagelink")[0].onclick = ""
     $('#imagelink').tooltip('destroy')
     $('#image').click(function(e){
-      window.location = '/spectrums/setsamplerow/'+$W.spectrum_id+'?row='+e.offsetY/$('#image').height()
+      var offX, offY;
+      if (!(e.offsetX || e.offsetY)) {
+	offX = e.screenX - $(e.target).offset().left;
+	offY = e.screenY - $(e.target).offset().top;
+      } else {
+	offX = e.offsetX;
+	offY = e.offsetY;
+      }
+      window.location = '/spectrums/setsamplerow/'+$W.spectrum_id+'?row='+offY/$('#image').height()
     })
   },
 
