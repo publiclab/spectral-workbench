@@ -17,7 +17,7 @@
 <p>Created on <%= @macro.created_at.to_s(:long) %> | Updated <%= time_ago_in_words(@macro.updated_at) %> ago</p>
 <p><b>Link:</b> <a href="<%= @macro.url %>"><%= @macro.url %></a></p>
 <p><%=h @macro.description %></p>
-<p class="well"><%=h @macro.code %></p>
+<pre class="well"><%=h @macro.code %></pre>
 
 </div>
 </div>
