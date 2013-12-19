@@ -1,7 +1,8 @@
 CACHE MANIFEST
-# v131 - 2013-12-19
+# v132 - 2013-12-19
 /capture
 /capture/beta
+/capture/legacy
 /offline
 #/stylesheets/*
 /stylesheets/jquery.mobile.splitview-compiled.css
@@ -43,6 +44,8 @@ CACHE MANIFEST
 /images/example-sky.jpg
 /images/example-cfl.jpg
 /images/calibration-example.png
+/images/logo.png
+
 /500.html
 /404.html
 
