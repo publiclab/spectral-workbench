@@ -1,0 +1,60 @@
+<style>
+
+.content {
+	background:#444;
+	color:#eee;
+}
+
+</style>
+<script>
+
+flotoptions.grid = {
+		clickable: true,
+		hoverable:true,
+		borderWidth: 0,
+		color: "#ccc",
+	        backgroundColor: "#111"
+}
+flotoptions.colors = [ "#ccc", "#E02130", "#FAB243", "#429867", "#2B5166" ]//, "#482344" ]
+
+</script>
+
+<div data-role="panel" data-id="menu">
+	<%= render :partial => "tools" %>
+</div>
+
+<div data-role="panel" data-id="main">
+	<%= render :partial => "configure" %>
+	<%= render :partial => "capture" %>
+	<%= render :partial => "save" %>
+	<%= render :partial => "login" %>
+	<%= render :partial => "search" %>
+	<%= render :partial => "search_sets" %>
+	<%= render :partial => "macros" %>
+</div>
+
+<script> 
+(function () { 
+	$W.initialize({
+		calibrated:<%= !@calibration.nil? %>,
+		<% if @calibration && @calibration.video_row!= 0 && !@calibration.video_row.nil? %>
+		sample_start_row: <%= @calibration.video_row %>,
+		sample_end_row: <%= @calibration.video_row+1 %>,
+		<% end %>
+		flipped:<%= !@calibration.nil? && @calibration.reversed %>,
+		mobile:false
+	}) 
+	setInterval($W.getRow,100)
+	<% if @calibration %>
+		$W.calibrated = true
+		$W.calibration_id = <%= @calibration.id %>
+		$W.start_wavelength = <%= @start_wavelength %>
+		$W.end_wavelength = <%= @end_wavelength %>
+    		flotoptions.xaxis.show = true
+	<% else %>
+		$W.calibrated = false
+	<% end %>
+	<% if params[:action] == "match" %>
+		$W.set = <%= @set.id %>
+	<% end %>
+})() </script>

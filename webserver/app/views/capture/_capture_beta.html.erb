@@ -14,8 +14,8 @@
 
         <a id="geotag-btn" rel="tooltip" title="Geocode" class="btn btn-inverse active" onClick="$('#geotag-btn').button('toggle');$('#geotag').val('true'!=$('#geotag').val());$W.geolocate()"><i class="icon-white icon-map-marker"></i></a>
 
-        <a rel="tooltip" title="Rotate video" class="btn btn-inverse" onClick="$W.rotated = !$W.rotated"><i class="icon-white icon-repeat"></i></a>
-        <a rel="tooltip" title="Flip video horizontally" class="btn btn-inverse" onClick="$W.flipped = !$W.flipped;$('#spectrum_reversed').val($('#spectrum_reversed').val() == 'false')"><i class="icon-white icon-resize-horizontal"></i></a>
+        <a rel="tooltip" title="Rotate video" class="btn btn-inverse" onClick="$W.toggle_rotation()"><i class="icon-white icon-repeat"></i></a>
+        <a rel="tooltip" title="Flip video horizontally" class="btn btn-inverse" onClick="$W.flip_horizontal()"><i class="icon-white icon-resize-horizontal"></i></a>
       </div>
  
       <p><small><b>TOOLS</b></small></p>

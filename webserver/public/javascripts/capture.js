@@ -177,7 +177,7 @@ $W = {
       var video = $('video')[0]; 
       // Grab the existing canvas:
       var saved = $W.excerptCanvas(0,0,$W.width,$W.height,$W.ctx).getImageData(0,0,$W.width,$W.height)
-      // check for flipped spectrum every 10th frame... hmmm
+      // check for flipped spectrum every 10th frame... deprecated
       if ($W.detect_flip && ($W.frame/10 - parseInt($W.frame/10) == 0)) $W.autodetect_flipness()
 
       // manipulate the canvas to get the image to copy onto the canvas in the right orientation
@@ -377,6 +377,46 @@ $W = {
     flotoptions.colors = [ "#ffffff", "rgba(255,0,0,0.3)", "rgba(0,255,0,0.3)", "rgba(0,0,255,0.3)", "#ffff00"]
   },
 
+  flip_horizontal: function() {
+    $W.flipped = !$W.flipped
+    $('#spectrum_reversed').val($('#spectrum_reversed').val() == 'false')
+    var style = $('#webcam video')[0].style
+    if ($W.flipped) {
+      style.webkitTransform = "scaleX(-1)"
+      style.mozTransform = "scaleX(-1)"
+      style.oTransform = "scaleX(-1)"
+      style.transform = "scaleX(-1)"
+      style.filter = "FlipH"
+      style.msFilter = "FlipH"
+    } else {
+      style.webkitTransform = "scaleX(1)"
+      style.mozTransform = "scaleX(1)"
+      style.oTransform = "scaleX(1)"
+      style.transform = "scaleX(1)"
+      style.filter = "none"
+      style.msFilter = "none"
+    } 
+  },
+
+  toggle_rotation: function() {
+    $W.rotated = !$W.rotated
+    var style = $('#webcam video')[0].style
+    if ($W.rotated) {
+      style.webkitTransform = "rotate(270deg)"
+      style.mozTransform =    "rotate(270deg)"
+      style.oTransform =      "rotate(270deg)"
+      style.transform =       "rotate(270deg)"
+      style.filter = "progid:DXImageTransform.Microsoft.BasicImage(rotation=3)"
+    } else {
+      style.webkitTransform = "rotate(0deg)"
+      style.mozTransform =    "rotate(0deg)"
+      style.oTransform =      "rotate(0deg)"
+      style.transform =       "rotate(0deg)"
+      style.filter = "none"
+    } 
+  },
+
+  // poorly named; this actually toggles "flippedness detection"
   toggle_flip: function() {
     $W.detect_flip = !$W.detect_flip
   },

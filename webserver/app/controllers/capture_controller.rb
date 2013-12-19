@@ -16,10 +16,14 @@ class CaptureController < ApplicationController
       @offline = "flush"
     end
     @spectrums = Spectrum.find(:all, :limit => 12, :order => "id DESC")
-    if params[:alt] == "true"
-      render :template => "capture/index-beta.html.erb", :layout => "application"
-    elsif mobile?
-      render :template => "capture/index-mobile.html.erb", :layout => "mobile"
+    if params[:legacy] == "true"
+      if params[:m]
+        render :template => "capture/index-mobile.html.erb", :layout => "mobile"
+      else
+        render :template => "capture/index-legacy.html.erb", :layout => "capture"
+      end
+    else
+      render :template => "capture/index.html.erb", :layout => "application"
     end
   end
 

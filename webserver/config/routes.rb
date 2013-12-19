@@ -18,6 +18,7 @@ ActionController::Routing::Routes.draw do |map|
   map.capture '/capture', :controller => 'capture', :action => 'index'
   map.connect '/upload', :controller => "spectrums", :action => "new"
   map.connect '/capture/beta', :controller => "capture", :action => "index", :alt => "true"
+  map.connect '/capture/legacy', :controller => "capture", :action => "index", :legacy => "true"
 
   # Registered user pages:
   map.profile '/profile', :controller => 'users', :action => 'profile'
