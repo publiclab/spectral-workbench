@@ -66,7 +66,7 @@
 <div class="tab-content capture" style="padding:0 20px;">
 
 <div id="settings" class="tab-pane active">
-  <div id="heightIndicator" style="position:absolute;margin:0;z-index:999;border-bottom:2px solid #ff4;height:1px;margin-top:120px;width:320px;"></div> 
+  <div id="heightIndicator" style="position:absolute;margin:0;z-index:999;border-right:0px solid #ff4;border-bottom:2px solid #ff4;height:1px;margin-top:120px;width:320px;"></div> 
   <div id="webcam-msg"><p><b>Requesting camera access... <br />(<a href="https://play.google.com/store/apps/details?id=org.mozilla.firefox">Firefox</a>, <a href="https://play.google.com/store/apps/details?id=com.opera.browser">Opera</a> or Chrome on Android, or <a href="https://itunes.apple.com/us/app/bowser/id560478358">Bowser</a> on iOS). Please click "Allow" when prompted.</b></p></div> 
   <div style="" id="webcam"></div>
 
@@ -84,10 +84,7 @@
 
   <script>
     (function(){
-      $('#webcam').click(function(e){
-        percent = parseInt(e.offsetY/$('#webcam').height()*480)
-        $W.setSampleRows(percent,percent);$('#heightIndicator')[0].style.marginTop = parseInt((percent/480)*240)+'px';
-      })
+      $W.setSampleRowClickListener()
     })()
   </script>
 
@@ -95,8 +92,10 @@
   <% end %>
 
   <a class="btn btn-large btn-primary" href="#capture" onClick="$('#capture-btn').addClass('active');$('#settings-btn').removeClass('active');" data-toggle="tab">Begin capturing &raquo;</a>
-  <a rel="tooltip" title="Flip video horizontally" class="btn btn-inverse" onClick="$W.flip_horizontal()"><i class="icon-white icon-resize-horizontal"></i></a>
-  <!--<a rel="tooltip" title="Rotate video 90 &deg;" class="btn btn-inverse" onClick="$W.toggle_rotation()"><i class="icon-white icon-repeat"></i></a>-->
+  <p style="padding-top:5px;">
+    <a rel="tooltip" title="Flip video horizontally" class="btn btn-inverse" onClick="$W.flip_horizontal()"><i class="icon-white icon-resize-horizontal"></i> Flip</a>
+    <a rel="tooltip" title="Rotate video 90 &deg;" class="btn btn-inverse" onClick="$W.toggle_rotation()"><i class="icon-white icon-repeat"></i> Rotate</a>
+  </p>
   <p style="padding-top:5px;">
     <a href="/capture/legacy">Use legacy interface &raquo;</a>
   </p>

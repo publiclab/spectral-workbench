@@ -163,11 +163,13 @@ $W = {
         $W.ctx.scale(-1,1)
       }
       if ($W.rotated) {
-        $W.ctx.translate($W.width/2,0) // this is not quite right, it's driving me nuts
-        $W.ctx.rotate(Math.PI/2)
-        $W.ctx.scale($W.height/$W.width,$W.width/$W.height) // adjust for aspect ratio
+        $W.ctx.scale($W.width/$W.height,$W.width/$('#canvas').height()); // 1 here should be adjusted for sample row range
+        $W.ctx.translate($W.height,-$W.sample_start_row);
+        $W.ctx.rotate(Math.PI/2);
+        $W.ctx.drawImage(video,0,0);
+      } else {
+        $W.ctx.drawImage(video,0,-$W.sample_start_row);
       }
-      $W.ctx.drawImage(video, 0, -$W.sample_start_row);
     }
   },
 
@@ -345,11 +347,44 @@ $W = {
     $('#samplerow-slider').val( $W.sample_start_row );
     localStorage.setItem('sw:samplestartrow',$W.sample_start_row)
   },
-  setSampleRows: function(start,end) {
+  setSampleRows: function(start,end,legacy) {
     $W.sample_start_row = start
     $W.sample_end_row = end
     localStorage.setItem('sw:samplestartrow',$W.sample_start_row)
     localStorage.setItem('sw:sampleendrow',$W.sample_end_row)
+    if ($W.rotated) {
+      percent = start/$W.width
+      if (legacy) $('#heightIndicator')[0].style.marginLeft = parseInt(percent*320)+'px';
+    } else {
+      percent = start/$W.height
+      if (legacy) $('#heightIndicator')[0].style.marginTop = parseInt(percent*240)+'px';
+    }
+  },
+
+  setSampleRowClickListener: function() { 
+    $('#webcam').click(function(e){
+      var offX, offY;
+      if (!(e.offsetX || e.offsetY)) {
+        offX = e.screenX - $(e.target).offset().left;
+        offY = e.screenY - $(e.target).offset().top;
+      } else {
+        offX = e.offsetX;
+        offY = e.offsetY;
+      }
+      var percent, row 
+      if ($W.rotated) {
+        percent = offX/$('#webcam').width()
+        if ($W.flipped) {
+          row = $W.width-parseInt(percent*$W.width)
+        } else {
+          row = parseInt(percent*$W.width)
+        }
+      } else {
+        percent = offY/$('#webcam').height()
+        row = parseInt(percent*$W.height)
+      }
+      $W.setSampleRows(row,row);
+    })
   },
 
   getWavelength: function(col) {
@@ -400,20 +435,22 @@ $W = {
 
   toggle_rotation: function() {
     $W.rotated = !$W.rotated
-    var style = $('#webcam video')[0].style
+    var style = $('#heightIndicator')[0].style
     if ($W.rotated) {
-      style.webkitTransform = "rotate(270deg)"
-      style.mozTransform =    "rotate(270deg)"
-      style.oTransform =      "rotate(270deg)"
-      style.transform =       "rotate(270deg)"
-      style.filter = "progid:DXImageTransform.Microsoft.BasicImage(rotation=3)"
+      style.marginTop = '0px';
+      style.borderBottomWidth = "0px"
+      style.borderRightWidth = "2px"
+      style.height = "240px"
+      style.width = "0px"
     } else {
-      style.webkitTransform = "rotate(0deg)"
-      style.mozTransform =    "rotate(0deg)"
-      style.oTransform =      "rotate(0deg)"
-      style.transform =       "rotate(0deg)"
-      style.filter = "none"
+      style.marginLeft = '0px';
+      style.borderBottomWidth = "2px"
+      style.borderRightWidth = "0px"
+      style.width = "320px"
+      style.height = "0px"
     } 
+    // reset the indicator to the correct sample row:
+    $W.setSampleRows($W.sample_start_row,$W.sample_start_row)
   },
 
   // poorly named; this actually toggles "flippedness detection"

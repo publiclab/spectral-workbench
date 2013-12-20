@@ -28,7 +28,7 @@
   (function(){
   $('#webcam').click(function(e){
     percent = parseInt(e.offsetY/$('#webcam').height()*480)
-    $W.setSampleRows(percent,percent);$('#heightIndicator')[0].style.marginTop = parseInt((percent/480)*240)+'px';
+    $W.setSampleRows(percent,percent,true);$('#heightIndicator')[0].style.marginTop = parseInt((percent/480)*240)+'px';
   })
   })()
 </script>
