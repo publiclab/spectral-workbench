@@ -354,10 +354,10 @@ $W = {
     localStorage.setItem('sw:sampleendrow',$W.sample_end_row)
     if ($W.rotated) {
       percent = start/$W.width
-      if (!legacy) $('#heightIndicator')[0].style.marginLeft = parseInt(percent*320)+'px';
+      if (legacy != true) $('#heightIndicator')[0].style.marginLeft = parseInt(percent*320)+'px';
     } else {
       percent = start/$W.height
-      if (!legacy) $('#heightIndicator')[0].style.marginTop = parseInt(percent*240)+'px';
+      if (legacy != true) $('#heightIndicator')[0].style.marginTop = parseInt(percent*240)+'px';
     }
   },
 
