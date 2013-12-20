@@ -58,13 +58,13 @@ $W = {
       $('video').width = "320"
       $('video').height = "240"
     }
-
   },
 
   success: function (stream) {
     //console.log('success')
     if ($W.options.context === 'webrtc') {
-      $('#webcam-msg p').hide()
+      $('#heightIndicator').show()
+      $('#webcam-msg').hide()
       var video = $W.options.videoEl,
               vendorURL = window.URL || window.webkitURL;
       if (navigator.mozGetUserMedia) video.mozSrcObject = stream;
