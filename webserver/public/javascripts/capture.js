@@ -365,8 +365,8 @@ $W = {
     $('#webcam').click(function(e){
       var offX, offY;
       if (!(e.offsetX || e.offsetY)) {
-        offX = e.screenX - $(e.target).offset().left;
-        offY = e.screenY - $(e.target).offset().top;
+        offX = e.pageX - $(e.target).offset().left;
+        offY = e.pageY - $(e.target).offset().top;
       } else {
         offX = e.offsetX;
         offY = e.offsetY;
