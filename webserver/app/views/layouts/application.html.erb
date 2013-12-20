@@ -58,15 +58,17 @@
       <script> if ($('body').width() < 767) { $('#logo').addClass('mobile'); setTimeout(function() {$('#headerBtns').addClass('mobile'); },250) } </script>
 
       <div id="headerBtns" class="btn-group pull-right">
-        <% if (!opera? && mobile?) %><a class="btn btn-primary btn-large" href="/upload"><i class="icon icon-camera icon-white"></i><span class="hidden-phone"> Capture spectra</span></a>
-        <% else %><a class="btn btn-primary btn-large" href="/capture"><i class="icon icon-camera icon-white"></i><span class="hidden-phone"> Capture spectra</span></a>
+        <% if (webrtc?) %>
+          <a class="btn btn-primary btn-large" href="/capture"><i class="icon icon-camera icon-white"></i><span class="hidden-phone"> Capture spectra</span></a>
+        <% else %>
+          <a class="btn btn-primary btn-large" href="/upload"><i class="icon icon-camera icon-white"></i><span class="hidden-phone"> Capture spectra</span></a>
         <% end %>
         <a class="btn btn-primary btn-large dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
         <ul class="dropdown-menu">
           <li><a href="/capture" class="button"><i class="icon icon-camera"></i> <b>Live-capture spectra (default)</b></a></li>
           <li><a href="/upload" class="button"><i class="icon icon-upload"></i> Upload image</a></li>
           <li class="divider"></li>
-          <li><a href="/capture/beta" class="button"><i class="icon icon-camera"></i> Live-capture beta interface</a></li>
+          <li><a href="/capture/legacy" class="button"><i class="icon icon-camera"></i> Live-capture legacy interface</a></li>
           <li><a href="http://publiclab.org/wiki/spectral-workbench-usage" class="button"><i class="icon icon-question-sign"></i> Learn how</a></li>
           <% if logged_in? %><li><a href="/logout" class="button"><i class="icon icon-user"></i> Log out</a></li><% else %>
           <li><a href="/login" class="button"><i class="icon icon-user"></i> Log in</a></li><% end %>
