@@ -9,12 +9,21 @@
 
 <div class="container-fluid" style="clear:both;">
 
-  <% if logged_in? && @spectrum.author == current_user.login && !@spectrum.calibrated %>
-    <div class="alert alert-warning"><button type="button" class="close" data-dismiss="alert">×</button> 
-      This spectrum is not yet calibrated. <a class="btn btn-primary btn-small" data-toggle="modal" href="#calibratemodal1" onClick="$('calibrate-begin').focus()">Calibrate</a> 
-      <a class="btn btn-small" href="http://publiclab.org/wiki/spectral-workbench-calibration">Learn more</a>
-    </div>
+  <% if logged_in? %>
+    <% if @spectrum.author == current_user.login %>
+      <% if !@spectrum.calibrated %>
+        <div class="alert alert-warning"><button type="button" class="close" data-dismiss="alert">×</button> 
+          This spectrum is not yet calibrated. <a class="btn btn-primary btn-small" data-toggle="modal" href="#calibratemodal1" onClick="$('calibrate-begin').focus()">Calibrate</a> 
+          <a class="btn btn-small" href="http://publiclab.org/wiki/spectral-workbench-calibration">Learn more</a>
+        </div>
+      <% elsif @spectrum.tags.length == 0 %>
+        <div class="alert"><button type="button" class="close" data-dismiss="alert">×</button> 
+          This spectrum is not tagged. <a onClick="$('#tagform .input-prepend').addClass('control-group info');$('#taginput').css('background','#eff')" href="#tags">Add descriptive tags</a> to help categorize your data and build a comprehensive open source library of spectra. 
+        </div>
+      <% end %>
+    <% end %>
   <% end %>
+
   <% if mobile? && !@spectrum.calibrated %>
     <div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">×</button> 
       <i class="icon icon-exclamation-sign"></i> Calibration is easiest <b>from a computer</b>, after which you can use it from your phone.

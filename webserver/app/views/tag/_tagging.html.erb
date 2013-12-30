@@ -1,4 +1,4 @@
-<p><b>Tags:</b> <span id="tags"><% @spectrum.tags.each do |tag| %> <span id="tag_<%= tag.id %>" class="label label-info"> <a href="/tag/<%= tag.name %>"><%= tag.name %></a> <% if logged_in? && (tag.user_id == current_user.id || tag.spectrum.author == current_user.login || current_user.role == "admin") %><a class='tagdelete' data-remote='true' href='/tag/delete/<%= tag.id %>'>x</a><% end %></span><% end %></span></p>
+<p id="tags"><b>Tags:</b> <span><% @spectrum.tags.each do |tag| %> <span id="tag_<%= tag.id %>" class="label label-info"> <a href="/tag/<%= tag.name %>"><%= tag.name %></a> <% if logged_in? && (tag.user_id == current_user.id || tag.spectrum.author == current_user.login || current_user.role == "admin") %><a class='tagdelete' data-remote='true' href='/tag/delete/<%= tag.id %>'>x</a><% end %></span><% end %></span></p>
 
 <form id="tagform" class="form" action="/tag/create">
   <input type="hidden" name="tag[spectrum_id]" value="<%= @spectrum.id %>" />
