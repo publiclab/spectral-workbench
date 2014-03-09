@@ -2,6 +2,7 @@
 <script src="/javascripts/api.js?1"> </script>
 <script src="/javascripts/analyze.js"> </script>
 <%= render :partial => "clone" %>
+<%= render :partial => "set" %>
 <%= render :partial => "macros" %>
 <%= render :partial => "calibrate" %>
 <%= render :partial => "select_row" %>
@@ -41,7 +42,7 @@
 
         <a href="#embedmodal" class="btn btn-inverse hidden-phone" data-toggle="modal"><i class="icon icon-white icon-share"></i><span class="hidden-phone"> Embed</span></a>
         <%= render :partial => "embed" %>
-        <a class="btn btn-inverse" href="javascript:void(0);" onClick="window.location = '/sets/add/'+prompt('Add to which set? (enter an id)')+'?spectrum_id=<%= @spectrum.id %>'"><i class="icon icon-white icon-plus-sign"></i><span class="hidden-phone"> Add to set</span></a>
+        <a class="btn btn-inverse" data-toggle="modal" href="#setmodal"><i class="icon icon-white icon-plus-sign"></i><span class="hidden-phone"> Add to set</span></a>
         <a class="btn btn-inverse hidden-phone" id="createSet" href="javascript:void(0);"><i class="icon icon-white icon-list"></i><span class="hidden-phone"> Save as set</span></a>
         <a data-toggle="modal" class="btn btn-inverse" href="#comparemodal"><i class="icon icon-white icon-align-left"></i><span class="hidden-phone"> Compare</span></a>
         <a class="btn btn-inverse" href="/match/search/<%= @spectrum.id %>">Find similar</a>

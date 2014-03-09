@@ -14,6 +14,7 @@ class AnalyzeController < ApplicationController
       @spectra = Spectrum.find(:all, :limit => 12, :order => "created_at DESC", :conditions => ["id != ?",@spectrum.id])
     end
     @sets = @spectrum.sets
+    @user_sets = current_user.sets if logged_in?
     @macros = Macro.find :all, :conditions => {:macro_type => "analyze"}
     @calibrations = current_user.calibrations if logged_in?
     @comment = Comment.new
@@ -37,4 +38,9 @@ class AnalyzeController < ApplicationController
     render :partial => "analyze/clone_results", :layout => false
   end
 
+  def set_search
+    @spectrum = Spectrum.find(params[:id])
+    @user_sets = SpectraSet.find(:all, :conditions => ['author = ? AND (title LIKE ? OR notes LIKE ?)',current_user.login,"%"+params[:q]+"%", "%"+params[:q]+"%"],:limit => 20,:order => "created_at DESC")
+    render :partial => "analyze/set_results", :layout => false
+  end
 end
