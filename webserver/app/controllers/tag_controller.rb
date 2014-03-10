@@ -75,7 +75,7 @@ class TagController < ApplicationController
   end
 
   def index
-    @tags = Tag.find :all, :order => "id DESC", :limit => 500
+    @tags = Tag.find :all, :order => "id DESC", :conditions => {:created_at => Time.now-1.month..Time.now}
     count = {}
     @tagnames = @tags.collect(&:name).each do |tag|
       if count[tag]

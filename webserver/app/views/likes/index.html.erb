@@ -1,18 +1,18 @@
 <div id="spectra" class="container">
 
-<h2>Popular spectra</h2>
+<% if params[:action] == "index" %>
+  <h2>Popular spectra <small>| <a href="/popular/recent">Recently liked</a></small></h2>
+<% else %>
+  <h2>Recently liked spectra <small>| <a href="/popular">Most popular</a></small></h2>
+<% end %>
+
+<hr />
 
 <div class="row-fluid">
-  <div class="span4 pull-right">
-    <%= render :partial => 'spectrums/search' %>
-  </div>
-
   <style>._row { clear:left;} </style>
 
-  <div class="span8">
-    <%= render :partial => 'spectrums/list' %>
-    <%= will_paginate @spectrums %>
-  </div>
+  <%= render :partial => 'spectrums/list' %>
+  <%= will_paginate @spectrums %>
 </div>
 </div>
 

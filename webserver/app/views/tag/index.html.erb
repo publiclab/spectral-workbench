@@ -1,24 +1,61 @@
 <div class="container">
 
-<h2>Tags</h2>
+<style>
+  .tag {
+    padding:20px;
+    border-top:4px solid #666;
+    -webkit-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+       -moz-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+  }
+  .tag h1 {
+    padding-top:10px;
+  }
+  .tag h2 {
+    margin-top:20px;
+    margin-bottom:0;
+  }
+  a .tag {
+    color:#444;
+  }
+  a:hover .tag {
+    color:#666;
+    background:#eef;
+    -webkit-box-shadow: 0 3px 3px rgba(0, 0, 0, 0.3);
+       -moz-box-shadow: 0 3px 3px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 3px 3px rgba(0, 0, 0, 0.3);
+  }
+  .tags a:hover {
+    text-decoration:none !important;
+  }
+</style>
 
-  <table class="table">
-    <tr>
-      <th></th>
-      <th>Name</th>
-      <th>Count</th>
-    </tr>
-    <% @tagnames.each do |name,count| %>
+<h1>Popular Tags <small>this month</small></h1>
+<hr />
+
+  <% i = 0 %>
+  <div class="row tags">
+  <% @tagnames.each do |name,count| %>
     <% if tag = Tag.find_by_name(name, :order => "id DESC") %>
-    <% if tag.spectrum %>
-    <tr>
-      <td><img width="120px" class="img" src="<%= tag.spectrum.photo.url(:thumb) %>" /></td>
-      <td><a href="/tag/<%= name %>"><%= name %></a></td>
-      <td><%= count %></td>
-    </tr>
+      <% if tag.spectrum %>
+        <div class="span3">
+        <a href="/tag/<%= name %>">
+        <div class="tag">
+          <img width="100%" class="img" src="<%= tag.spectrum.photo.url(:thumb) %>" />
+          <h1 style="font-size:4em;"><%= count %></h1>
+          <h2><%= name %></h2>
+        </div>
+        </a>
+        </div>
+        <% if ((i+1)/4.0).to_i == ((i+1)/4.0) %>
+          </div>
+          <hr class="hidden-phone" style="clear:both;"/>
+          <div class="row tags">
+        <% end %>
+        <% i += 1 %>
+      <% end %>
     <% end %>
-    <% end %>
-    <% end %>
-  </table>
+  <% end %>
+  </div>
 
 </div>

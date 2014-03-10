@@ -71,12 +71,20 @@
         <li><a data-toggle="tab" href="#comments"><i class="icon icon-comment"></i><span class="hidden-phone"> Comments</span></a></li>
         <li><a data-toggle="tab" href="#sets"><i class="icon icon-list"></i><span class="hidden-phone"> Sets</span></a></li>
         <li><a data-toggle="tab" href="#authors"><i class="icon icon-user"></i><span class="hidden-phone"> Authors</span></a></li>
+        <li><a data-toggle="tab" href="/tags"><i class="icon icon-tag"></i><span class="hidden-phone"> Popular Tags</span></a></li>
       </ul>
 
       <div class="tab-content">
 
         <div class="tab-pane active" id="spectra">
-          <h3 style="padding-top:0;"><a name="spectra"></a>Recent spectra <small class="hidden-phone">by contributors like you | <a href="/profile/<%= current_user.login %>">Your spectra</a></small></h3>
+          <h3 style="padding-top:0;">
+            <a name="spectra"></a>Recent spectra 
+            <small class="hidden-phone">
+              by contributors like you | 
+              <a href="/profile/<%= current_user.login %>">Your spectra</a> | 
+              <a href="/popular">Popular</a> | 
+              <a href="/popular/recent">Recently liked</a> 
+          </small></h3>
           <%= render :partial => 'spectrums/list' %>
           <%= will_paginate @spectrums %>
         </div>
