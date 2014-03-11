@@ -27,6 +27,7 @@ ActionController::Routing::Routes.draw do |map|
   map.profile '/macro/:author/:id.:format', :controller => 'macros', :action => 'show'
   map.dashboard '/dashboard', :controller => 'users', :action => 'dashboard'
   map.popular '/popular', :controller => 'likes', :action => 'index'
+  map.popular '/popular/recent', :controller => 'likes', :action => 'recent'
   map.comments '/comments', :controller => 'comments', :action => 'index'
   map.comment '/comment/create/:id', :controller => 'comments', :action => 'create'
 

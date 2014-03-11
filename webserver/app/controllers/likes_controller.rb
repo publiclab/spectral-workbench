@@ -5,6 +5,13 @@ class LikesController < ApplicationController
     @spectrums = @spectrums.paginate :page => params[:page], :per_page => 24
   end
 
+  # recently liked
+  def recent
+    @spectrums = Spectrum.find(:all,:order => "created_at DESC", :conditions => ["author != 'anonymous'"], :limit => 100, :joins => :likes)
+    @spectrums = @spectrums.paginate :page => params[:page], :per_page => 24
+    render :template => "likes/index"
+  end
+
   # Adds a like to spectrum from current_user
   # as: /likes/toggle/:id where params[:id] is spectrum_id
   def toggle
