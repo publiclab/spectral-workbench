@@ -151,9 +151,9 @@ $W = {
   // else special! <video> is the video element
   getCrossSection: function(video) {
     // draw the new data on the top row of pixels of the canvas, overwriting what's there now
-    if ($W.mobile) {
-      // mobile will never need to flip, can't be installed "upside down"
-      $W.ctx.scale(3,1)
+    if ($W.mobile) { 
+      // this is only for the deprecated mobile version
+      $W.ctx.scale(3,1) 
       $W.ctx.translate($('video').height()/2,0)
       if (!$W.rotated) $W.ctx.rotate(Math.PI/2)
       $W.ctx.drawImage(video, -$W.sample_start_row/4, -$W.height/2);
@@ -163,13 +163,20 @@ $W = {
         $W.ctx.scale(-1,1)
       }
       if ($W.rotated) {
-        $W.ctx.scale($W.width/$W.height,$W.width/$('#canvas').height()); // 1 here should be adjusted for sample row range
+
+        // these lines may not be working properly for high-resolution cameras on mobile devices? 
+        // or maybe odd aspect ratios. Do we need to be accounting for the incoming video size? 
+        $W.ctx.scale($W.width/$W.height,$W.width/$('#canvas').height());
         $W.ctx.translate($W.height,-$W.sample_start_row);
+
         $W.ctx.rotate(Math.PI/2);
         $W.ctx.drawImage(video,0,0);
       } else {
         $W.ctx.drawImage(video,0,-$W.sample_start_row);
       }
+
+      // testing line; go to http://spectralworkbench.org/capture?debug=true
+      if ($W.debug_tmp) $W.debug_log = "$W.height="+$W.height+" $W.width="+$W.width+" #canvas height="+$('#canvas').height()
     }
   },
 
