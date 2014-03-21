@@ -96,6 +96,9 @@
   <p style="padding-top:5px;">
     <a rel="tooltip" title="Flip video horizontally" class="btn btn-inverse" onClick="$W.flip_horizontal()"><i class="icon-white icon-resize-horizontal"></i> Flip</a>
     <a rel="tooltip" title="Rotate video 90 &deg;" class="btn btn-inverse" onClick="$W.toggle_rotation()"><i class="icon-white icon-repeat"></i> Rotate</a>
+
+    <% if params[:debug] %><a class="btn btn-inverse" onClick="$W.debug_tmp = true;alert($W.debug_log)">Debug</a><% end %>
+
   </p>
   <p style="padding-top:5px;">
     <a href="/capture/legacy">Use legacy interface &raquo;</a>
