@@ -21,6 +21,8 @@ $W = {
   width: 640,
   height: 480,
   waterfall_height: 150,
+  scale_h: 1,
+  scale_w: 1,
   // width: 1280,
   // height: 720,
   frame: 0,
@@ -162,17 +164,18 @@ $W = {
         $W.ctx.translate($W.width,0)
         $W.ctx.scale(-1,1)
       }
+      $W.ctx.scale($W.scale_h,$W.scale_w)
       if ($W.rotated) {
 
         // these lines may not be working properly for high-resolution cameras on mobile devices? 
         // or maybe odd aspect ratios. Do we need to be accounting for the incoming video size? 
-        $W.ctx.scale($W.width/$W.height,$W.width/$('#canvas').height());
-        $W.ctx.translate($W.height,-$W.sample_start_row);
+        $W.ctx.scale($W.width/$W.height,$W.width/$('#canvas').height())
+        $W.ctx.translate($W.height,-$W.sample_start_row)
 
-        $W.ctx.rotate(Math.PI/2);
-        $W.ctx.drawImage(video,0,0);
+        $W.ctx.rotate(Math.PI/2)
+        $W.ctx.drawImage(video,0,0)
       } else {
-        $W.ctx.drawImage(video,0,-$W.sample_start_row);
+        $W.ctx.drawImage(video,0,-$W.sample_start_row)
       }
 
       // testing line; go to http://spectralworkbench.org/capture?debug=true
