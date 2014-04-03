@@ -69,13 +69,19 @@ $W = {
     if ($W.options.context === 'webrtc') {
       $('#heightIndicator').show()
       $('#webcam-msg').hide()
-      var video = $W.options.videoEl,
-              vendorURL = window.URL || window.webkitURL;
+      var video = $W.options.videoEl, vendorURL = window.URL || window.webkitURL;
+      window.stream = stream
+      window.video = video
+      //if (!!stream) {
+      //  video.src = null;
+      //  stream.stop();
+      //}
       if (navigator.mozGetUserMedia) video.mozSrcObject = stream;
       else video.src = vendorURL ? vendorURL.createObjectURL(stream) : stream;
-        video.onerror = function (e) {
+      video.onerror = function (e) {
         stream.stop();
       };
+      //video.play()
       $W.chromeCameraSelect()
     } else {
       //flash context
@@ -155,8 +161,16 @@ $W = {
     $W.chrome_current_camera += 1
     if ($W.chrome_current_camera > $W.chrome_cameras.length-1) $W.chrome_current_camera = 0 
     var id = $W.chrome_cameras[$W.chrome_current_camera].id
-    $W.options.video = {optional: [{sourceId: id}]}
-    getUserMedia($W.options, $W.success, $W.deviceError);
+    var options = {
+      el: $W.options.el,
+      audio: {
+      },
+      video: {
+        optional: [{sourceId: id}]
+      }
+    }
+    // skipping the shim here... couldn't get it to work, and this switcher is Chrome-only
+    navigator.getUserMedia_(options, $W.success, $W.deviceError);
   },
 
   chromeCameraSelect: function() {
