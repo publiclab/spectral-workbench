@@ -96,10 +96,12 @@
   <p style="padding-top:5px;">
     <a rel="tooltip" title="Flip video horizontally" class="btn btn-inverse" onClick="$W.flip_horizontal()"><i class="icon-white icon-resize-horizontal"></i> Flip</a>
     <a rel="tooltip" title="Rotate video 90 &deg;" class="btn btn-inverse" onClick="$W.toggle_rotation()"><i class="icon-white icon-repeat"></i> Rotate</a>
+    <% if params[:debug] %><a rel="tooltip" title="Change camera" class="btn btn-inverse" onClick="$W.chromeCameraSwitch()"><i class="icon-white icon-camera"></i> Change Cam</a><% end %>
+    <% if params[:debug] %><a rel="tooltip" title="List cameras" class="btn btn-inverse" onClick="alert(JSON.stringify($W.chrome_cameras))">Cameras</a><% end %>
 
   </p>
   <p style="padding-top:5px;">
-    <a href="/capture/legacy">Use legacy interface &raquo;</a>
+    Help <a href="http://publiclab.org/wiki/spectral-workbench-usage#Webcam+selection">selecting a camera</a> | <a href="/capture/legacy">Use legacy interface &raquo;</a>
   </p>
 
 </div>

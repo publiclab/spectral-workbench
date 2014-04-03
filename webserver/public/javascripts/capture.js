@@ -6,6 +6,8 @@ var $W
 
 $W = {
   data: null,
+  chrome_cameras: [],
+  chrome_current_camera: 0,
   baseline: null,
   full_data: [],
   unflipped_data: [],
@@ -74,6 +76,7 @@ $W = {
         video.onerror = function (e) {
         stream.stop();
       };
+      $W.chromeCameraSelect()
     } else {
       //flash context
       console.log('flash or something else')
@@ -146,6 +149,30 @@ $W = {
 
     },
     onLoad: function () {}
+  },
+
+  chromeCameraSwitch: function() {
+    $W.chrome_current_camera += 1
+    if ($W.chrome_current_camera > $W.chrome_cameras.length-1) $W.chrome_current_camera = 0 
+    var id = $W.chrome_cameras[$W.chrome_current_camera].id
+    $W.options.video = {optional: [{sourceId: id}]}
+    getUserMedia($W.options, $W.success, $W.deviceError);
+  },
+
+  chromeCameraSelect: function() {
+
+    var v = parseInt(navigator.userAgent.match(/Chrom(e|ium)\/([0-9]+)\./)[2], 10)
+    // if chrome v30+
+    if (navigator.webkitGetUserMedia && v >= 30) {
+      MediaStreamTrack.getSources(function(a){
+        $.each(a,function(i,source) {
+          if (source.kind == "video") $W.chrome_cameras.push(source)
+        })
+      });
+      
+    }
+
+
   },
 
   // Draws the appropriate pixels onto the top row of the waterfall. 
