@@ -151,25 +151,25 @@ $("#graph").bind("plothover",  function (event, pos, item) {
     $W.updateLegendTimeout = setTimeout($W.updateLegend, 50);
 });
 
-data = []
+$W.data = []
 <% @set.spectra.each do |spectrum| %>
 <% if spectrum.data == "" || spectrum.data.nil? %>
   spectrum = <%= spectrum.extract_data %>
 <% else %>
   spectrum = <%= spectrum.data.chomp(",") %>
 <% end %>
-  data.push({label: "<%= spectrum.title %> = 0% ",data:[]})
+  $W.data.push({label: "<%= spectrum.title %> = 0% ",data:[]})
   scaled = true
   $.each(spectrum.lines,function(index,line) {
     if (line.wavelength == null) {
 line.wavelength = index
 scaled = false
     }
-    data[data.length-1].data.push([line.wavelength,line.average/(2.55)])
+    $W.data[data.length-1].data.push([line.wavelength,line.average/(2.55)])
   })
 <% end %>
 flotoptions.xaxis.show = scaled
-$W.plot = $.plot($("#graph"),data,flotoptions);
+$W.plot = $.plot($("#graph"),$W.data,flotoptions);
   $('#embedcode').click(function() {
     this.focus()
     this.select()
@@ -187,7 +187,7 @@ $W.plot = $.plot($("#graph"),data,flotoptions);
 $('#wavenumber').click(function() {
   flotoptions.xaxis.tickFormatter = wavenumbers
   flotoptions.xaxis.tickSize = wavenumber_tickSize
-  $W.plot($("#graph"),data,flotoptions);
+  $W.plot($("#graph"),$W.data,flotoptions);
 })
 
 </script>
