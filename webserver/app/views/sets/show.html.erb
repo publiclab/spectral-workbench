@@ -1,3 +1,5 @@
+<script src="/javascripts/show.js"> </script>
+<script src="/javascripts/api.js"> </script>
 <script src="/javascripts/analyze.js"> </script>
 
 <div class="container-fluid" style="clear:both;">
@@ -165,7 +167,7 @@ $W.data = []
 line.wavelength = index
 scaled = false
     }
-    $W.data[data.length-1].data.push([line.wavelength,line.average/(2.55)])
+    $W.data[$W.data.length-1].data.push([line.wavelength,line.average/(2.55)])
   })
 <% end %>
 flotoptions.xaxis.show = scaled

@@ -1,5 +1,5 @@
 <script src="/javascripts/show.js"> </script>
-<script src="/javascripts/api.js?1"> </script>
+<script src="/javascripts/api.js"> </script>
 <script src="/javascripts/analyze.js"> </script>
 <%= render :partial => "clone" %>
 <%= render :partial => "set" %>
@@ -51,6 +51,8 @@
         <div class="btn-group dropup pull-right"> 
           <a data-toggle="dropdown" class="btn btn-inverse"><i class="icon icon-white icon-briefcase"></i><span class="hidden-phone"> More tools</span></a>
           <ul class="dropdown-menu">
+            <li><a onClick="$W.run_macro('warren','equalize_area')">Equalize area</a></li>
+            <li><a onClick="$W.run_macro('warren','smooth_nosave')">Smooth data</a></li>
             <li><a onClick="$W.units()">Toggle units</a></li>
             <li><a onClick="$W.toggle_mode()">Toggle RGB</a></li>
             <li><a onClick="$W.extract()"><i class="icon icon-refresh"></i> Re-extract from photo</a></li>
