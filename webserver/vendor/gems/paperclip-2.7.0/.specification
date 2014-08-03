@@ -1,0 +1,316 @@
+--- !ruby/object:Gem::Specification 
+name: paperclip
+version: !ruby/object:Gem::Version 
+  hash: 19
+  segments: 
+  - 2
+  - 7
+  - 0
+  version: 2.7.0
+platform: ruby
+authors: 
+- Jon Yurek
+autorequire: 
+bindir: bin
+cert_chain: []
+
+date: 2014-08-03 00:00:00 Z
+dependencies: 
+- !ruby/object:Gem::Dependency 
+  name: activerecord
+  prerelease: false
+  requirement: &id001 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 2
+        - 3
+        - 0
+        version: 2.3.0
+  type: :runtime
+  version_requirements: *id001
+- !ruby/object:Gem::Dependency 
+  name: activesupport
+  prerelease: false
+  requirement: &id002 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 7
+        segments: 
+        - 2
+        - 3
+        - 2
+        version: 2.3.2
+  type: :runtime
+  version_requirements: *id002
+- !ruby/object:Gem::Dependency 
+  name: cocaine
+  prerelease: false
+  requirement: &id003 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 27
+        segments: 
+        - 0
+        - 0
+        - 2
+        version: 0.0.2
+  type: :runtime
+  version_requirements: *id003
+- !ruby/object:Gem::Dependency 
+  name: mime-types
+  prerelease: false
+  requirement: &id004 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 0
+        version: "0"
+  type: :runtime
+  version_requirements: *id004
+- !ruby/object:Gem::Dependency 
+  name: shoulda
+  prerelease: false
+  requirement: &id005 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 0
+        version: "0"
+  type: :development
+  version_requirements: *id005
+- !ruby/object:Gem::Dependency 
+  name: appraisal
+  prerelease: false
+  requirement: &id006 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ~>
+      - !ruby/object:Gem::Version 
+        hash: 15
+        segments: 
+        - 0
+        - 4
+        - 0
+        version: 0.4.0
+  type: :development
+  version_requirements: *id006
+- !ruby/object:Gem::Dependency 
+  name: mocha
+  prerelease: false
+  requirement: &id007 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 0
+        version: "0"
+  type: :development
+  version_requirements: *id007
+- !ruby/object:Gem::Dependency 
+  name: aws-sdk
+  prerelease: false
+  requirement: &id008 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 0
+        version: "0"
+  type: :development
+  version_requirements: *id008
+- !ruby/object:Gem::Dependency 
+  name: sqlite3
+  prerelease: false
+  requirement: &id009 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ~>
+      - !ruby/object:Gem::Version 
+        hash: 19
+        segments: 
+        - 1
+        - 3
+        - 4
+        version: 1.3.4
+  type: :development
+  version_requirements: *id009
+- !ruby/object:Gem::Dependency 
+  name: cucumber
+  prerelease: false
+  requirement: &id010 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ~>
+      - !ruby/object:Gem::Version 
+        hash: 19
+        segments: 
+        - 1
+        - 1
+        - 0
+        version: 1.1.0
+  type: :development
+  version_requirements: *id010
+- !ruby/object:Gem::Dependency 
+  name: aruba
+  prerelease: false
+  requirement: &id011 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 0
+        version: "0"
+  type: :development
+  version_requirements: *id011
+- !ruby/object:Gem::Dependency 
+  name: capybara
+  prerelease: false
+  requirement: &id012 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 0
+        version: "0"
+  type: :development
+  version_requirements: *id012
+- !ruby/object:Gem::Dependency 
+  name: bundler
+  prerelease: false
+  requirement: &id013 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 0
+        version: "0"
+  type: :development
+  version_requirements: *id013
+- !ruby/object:Gem::Dependency 
+  name: cocaine
+  prerelease: false
+  requirement: &id014 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ~>
+      - !ruby/object:Gem::Version 
+        hash: 15
+        segments: 
+        - 0
+        - 2
+        version: "0.2"
+  type: :development
+  version_requirements: *id014
+- !ruby/object:Gem::Dependency 
+  name: fog
+  prerelease: false
+  requirement: &id015 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 0
+        version: "0"
+  type: :development
+  version_requirements: *id015
+- !ruby/object:Gem::Dependency 
+  name: rake
+  prerelease: false
+  requirement: &id016 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 0
+        version: "0"
+  type: :development
+  version_requirements: *id016
+- !ruby/object:Gem::Dependency 
+  name: fakeweb
+  prerelease: false
+  requirement: &id017 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 0
+        version: "0"
+  type: :development
+  version_requirements: *id017
+description: Easy upload management for ActiveRecord
+email: 
+- jyurek@thoughtbot.com
+executables: []
+
+extensions: []
+
+extra_rdoc_files: []
+
+files: []
+
+homepage: https://github.com/thoughtbot/paperclip
+licenses: []
+
+post_install_message: 
+rdoc_options: []
+
+require_paths: 
+- lib
+required_ruby_version: !ruby/object:Gem::Requirement 
+  none: false
+  requirements: 
+  - - ">="
+    - !ruby/object:Gem::Version 
+      hash: 3
+      segments: 
+      - 0
+      version: "0"
+required_rubygems_version: !ruby/object:Gem::Requirement 
+  none: false
+  requirements: 
+  - - ">="
+    - !ruby/object:Gem::Version 
+      hash: 3
+      segments: 
+      - 0
+      version: "0"
+requirements: 
+- ImageMagick
+rubyforge_project: paperclip
+rubygems_version: 1.8.24
+signing_key: 
+specification_version: 3
+summary: File attachments as attributes for ActiveRecord
+test_files: []
+
+
