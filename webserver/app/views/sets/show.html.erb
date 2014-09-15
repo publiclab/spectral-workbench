@@ -18,6 +18,9 @@
         <a href="#embedmodal" class="btn btn-inverse hidden-phone" data-toggle="modal"><i class="icon icon-white icon-share"></i><span class="hidden-phone"> Embed</span></a>
         <%= render :partial => "embed" %>
 
+        <a class="btn btn-inverse hidden-phone" onClick="$W.run_macro('warren','equalize_area')">Equalize</a>
+        <a class="btn btn-inverse hidden-phone" onClick="$W.run_macro('warren','smooth_nosave')">Smooth</a>
+
         <b class="pull-right" style="padding-top:10px;margin-right:10px;"><span id="wavelength"></span> <span id="#unit_label">nm</span></b> 
 
       </div>
