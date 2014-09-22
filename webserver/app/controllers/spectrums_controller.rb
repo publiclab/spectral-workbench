@@ -219,6 +219,7 @@ class SpectrumsController < ApplicationController
     @spectrum = Spectrum.find(params[:id])
     if logged_in? && @spectrum.user_id == current_user.id
       @spectrum.data = params[:data]
+      @spectrum.tag(params[:tags],current_user.id) if params[:tags]
       render :text => @spectrum.save
     else
       flash[:error] = "You must be logged in and own the spectrum to edit it."
