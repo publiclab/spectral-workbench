@@ -1,6 +1,6 @@
 require 'will_paginate/array'
 class SpectrumsController < ApplicationController
-  protect_from_forgery :only => [:clone, :extract, :calibrate]
+  protect_from_forgery :only => [:clone, :extract, :calibrate, :save]
   # http://api.rubyonrails.org/classes/ActionController/RequestForgeryProtection/ClassMethods.html
   # create and update are protected by recaptcha
 
@@ -210,6 +210,19 @@ class SpectrumsController < ApplicationController
       # possibly, we don't have to redirect - we could prompt for login at the moment of save...
       flash[:notice] = "You must first log in to upload spectra."
       redirect_to "/login"
+    end
+  end
+
+  # used ONLY to overwrite numerical spectrum data with client-side extracted or processed data. 
+  # only ajax/POST accessible for now: 
+  def save
+    @spectrum = Spectrum.find(params[:id])
+    if logged_in? && @spectrum.user_id == current_user.id
+      @spectrum.data = params[:data]
+      render :text => @spectrum.save
+    else
+      flash[:error] = "You must be logged in and own the spectrum to edit it."
+      redirect_to "/analyze/spectrum/"+params[:id]
     end
   end
 
