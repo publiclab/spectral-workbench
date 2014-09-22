@@ -142,6 +142,7 @@
 
   $W.initialize({
     spectrum_id:<%= @spectrum.id %>,
+    sample_row:<%= @spectrum.sample_row %>,
     interface:"analyze",
     title: "<%= @spectrum.title.gsub('"',"'") %>",
     form_authenticity_token: "<%= form_authenticity_token %>",

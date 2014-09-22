@@ -1,3 +1,25 @@
+// create a modal dialog; buttons defined as a nested array of buttn names and code to be run: 
+// [["Save",function(){}],["Cancel",$('.modal').hide()]]
+$W.dialog = function(title,body,options) {
+
+  html = '<div class="modal"><div class="modal-header"><b>'+title
+  html += '</b></div><div class="modal-body"><p>'+body
+  html += '</p></div><div class="modal-footer">'
+
+  $.each(options,function(i,btn) {
+    html += '<a class="btn '
+    // last option is highlighted
+    if (i == options.length-1) {
+      html += 'btn-primary" '
+    }
+    html += 'onClick="'+btn[1]+'">'+btn[0]+'</a>'
+  })
+
+  html += '</div></div>'
+  $('body').append(html)
+}
+
+
 $W.calibrate = function(id,x1,w1,x2,w2) {
   if ($W.interface == "analyze") {
     window.location = "/spectra/calibrate/"+$W.spectrum_id+"?x1="+x1+"&w1="+w1+"&x2="+x2+"&w2="+w2

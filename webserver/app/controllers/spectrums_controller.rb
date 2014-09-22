@@ -118,6 +118,7 @@ class SpectrumsController < ApplicationController
   # POST /spectrums
   # POST /spectrums.xml
   # ?spectrum[title]=TITLE&spectrum[author]=anonymous&client=VERSION&uniq_id=UNIQID&startWavelength=STARTW&endWavelength=ENDW;
+  # replacing this with capture/save
   def create
     if params[:client] || logged_in?
       client = params[:client] || "0"
