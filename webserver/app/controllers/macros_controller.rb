@@ -71,4 +71,44 @@ class MacrosController < ApplicationController
     end
   end
 
+  def edit
+    @macro = Macro.find params[:id]
+    if logged_in?
+      if @macro.user_id == current_user.id
+        # render template
+      else
+        flash[:error] = "You must be the author to edit this macro. If it's open source, you may copy the Gist and attribute it to make your own variant"
+        redirect_to "/macro/"+@macro.user.login+"/"+@macro.title
+      end
+    else
+      flash[:error] = "You must be logged in to create a macro."
+      redirect_to "/login"
+    end
+  end
+
+  def update
+    @macro = Macro.find params[:id]
+    if logged_in?
+      if @macro.user_id == current_user.id
+        @macro.title = params[:title]
+        @macro.description = params[:description]
+        @macro.code = params[:code]
+        @macro.macro_type = params[:macro_type]
+        @macro.url = params[:url]
+        if @macro.save
+          flash[:notice] = "Macro saved."
+          redirect_to "/macro/"+@macro.user.login+"/"+@macro.title
+        else
+          render :action => "new"
+        end
+      else
+        flash[:error] = "You must be the author to edit this macro. If it's open source, you may copy the Gist and attribute it to make your own variant"
+        redirect_to "/macro/"+@macro.user.login+"/"+@macro.title
+      end
+    else
+      flash[:error] = "You must be logged in to create a macro."
+      redirect_to "/login"
+    end
+  end
+
 end
