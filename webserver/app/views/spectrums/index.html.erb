@@ -25,6 +25,11 @@
 
     <%= render :partial => "search" %>
 
+
+  <div class="hidden-phone">
+    <iframe frameborder="0" height="420" scrolling="no" src="https://www.kickstarter.com/projects/publiclab/the-homebrew-oil-testing-kit/widget/card.html?v=2" width="100%"></iframe>
+  </div>
+
     <h3>Recent authors</h3>
     <ul class="nav">
     <% User.find_all_by_login(@spectrums.collect(&:author).uniq).each do |user| %>
