@@ -137,6 +137,7 @@
   $W.initialize({
   	calibrated:<%= !@calibration.nil? %>,
 	interface:"capture",
+	mode:"combined",
   	width:640
   }) 
   setInterval($W.getRow,100)

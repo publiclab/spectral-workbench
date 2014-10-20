@@ -13,7 +13,6 @@ $W = {
   unflipped_data: [],
   detect_flip: false,
   flipped: false,
-  mode: "average",
   rotated: false,
   pos: 0,
   sample_start_row: 240,
@@ -33,6 +32,8 @@ $W = {
     this.mobile = args['mobile'] || false
     this.flipped = args['flipped'] || false
     this.interface = args['interface'] || false
+    this.mode = args['mode'] || 'combined'
+    flotoptions.colors = [ "#ffffff", "rgba(255,0,0,0.3)", "rgba(0,255,0,0.3)", "rgba(0,0,255,0.3)", "#ffff00"]
     this.calibrated = args['calibrated'] || false
     this.width = args['width'] || this.width
     this.height = args['height'] || this.height
