@@ -131,31 +131,31 @@ class SpectrumsController < ApplicationController
 
       if params[:photo] # i think this is the java client? Lets try to get rid of it
         @spectrum = Spectrum.new({:title => params[:spectrum][:title],
-				  :author => author,
-				  :user_id => user_id,
-				  :notes => params[:spectrum][:notes],
-				  :photo => params[:photo]})
+          :author => author,
+          :user_id => user_id,
+          :notes => params[:spectrum][:notes],
+          :photo => params[:photo]})
         @spectrum.client_code = client_code if params[:client] || params[:uniq_id]
       elsif params[:dataurl] # mediastream webclient
         @spectrum = Spectrum.new({:title => params[:spectrum][:title],
-				  :author => author,
-				  :video_row => params[:spectrum][:video_row],
-				  :notes => params[:spectrum][:notes],
-				  :user_id => user_id})
-	@spectrum.image_from_dataurl(params[:dataurl])
+          :author => author,
+          :video_row => params[:spectrum][:video_row],
+          :notes => params[:spectrum][:notes],
+          :user_id => user_id})
+        @spectrum.image_from_dataurl(params[:dataurl])
       else # upload form at /upload
         @spectrum = Spectrum.new({:title => params[:spectrum][:title],
-				  :author => author,
-				  :user_id => user_id,
-				  :notes => params[:spectrum][:notes],
-				  :photo => params[:spectrum][:photo]})
+          :author => author,
+          :user_id => user_id,
+          :notes => params[:spectrum][:notes],
+          :photo => params[:spectrum][:photo]})
       end
 
       if @spectrum.save
         respond_to do |format|
           if (params[:client] || (APP_CONFIG["local"] || logged_in?))
             if (params[:client]) # java client
-	      if params[:photo]
+        if params[:photo]
                 @spectrum = Spectrum.find @spectrum.id
                 @spectrum.extract_data
                 @spectrum.scale_data(params[:endWavelength],params[:startWavelength]) if (params[:endWavelength] && params[:startWavelength])
@@ -173,7 +173,7 @@ class SpectrumsController < ApplicationController
                 @spectrum = Spectrum.find @spectrum.id
                 @spectrum.rotate if params[:vertical] == "on"
                 @spectrum.sample_row = @spectrum.find_brightest_row
-                @spectrum.tag("mobile",current_user.id)
+                #@spectrum.tag("mobile",current_user.id)
               end
               @spectrum.tag("iOS",current_user.id) if ios?
               @spectrum.tag(params[:tags],current_user.id) if params[:tags]
@@ -191,8 +191,8 @@ class SpectrumsController < ApplicationController
               if @spectrum.save!
                 flash[:notice] = 'Spectrum was successfully created.'
                 format.html { 
-	          redirect_to :controller => :analyze, :action => :spectrum, :id => @spectrum.id
-	        }
+            redirect_to :controller => :analyze, :action => :spectrum, :id => @spectrum.id
+          }
                 format.xml  { render :xml => @spectrum, :status => :created, :location => @spectrum }
               else
                 render "spectrums/new-errors"
@@ -213,17 +213,36 @@ class SpectrumsController < ApplicationController
     end
   end
 
-  # used ONLY to overwrite numerical spectrum data with client-side extracted or processed data. 
+  # used to upload numerical spectrum data
+  def upload
+    if logged_in?
+      @spectrum = Spectrum.new({:title => params[:spectrum][:title],
+        :author => author,
+        :user_id => user_id,
+        :notes => params[:spectrum][:notes],
+        :data => params[:data],
+        :photo => params[:photo]})
+      if @spectrum.save!
+        @spectrum.tag(params[:tags],current_user.id) if params[:tags]
+        redirect_to "/analyze/spectrum/"+@spectrum.id.to_s
+      else
+        flash[:error] = "There was a problem uploading."
+        redirect_to "/spectrum/upload/"
+      end
+    else
+      render :text => "You must be logged in and own the spectrum to edit it."
+    end
+  end
+
   # only ajax/POST accessible for now: 
   def save
     @spectrum = Spectrum.find(params[:id])
-    if logged_in? && @spectrum.user_id == current_user.id
+    if logged_in? && (@spectrum.user_id == current_user.id || current_user.role == "admin")
       @spectrum.data = params[:data]
       @spectrum.tag(params[:tags],current_user.id) if params[:tags]
       render :text => @spectrum.save
     else
-      flash[:error] = "You must be logged in and own the spectrum to edit it."
-      redirect_to "/analyze/spectrum/"+params[:id]
+      render :text => "You must be logged in and own the spectrum to edit it."
     end
   end
 
