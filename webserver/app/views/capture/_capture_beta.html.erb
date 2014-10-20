@@ -1,8 +1,12 @@
 <div id="capture" class="tab-pane">
 
-  <div class="span2" style="margin-left:0;margin-bottom:20px;">
+  <div id="sidebar" class="span2" style="margin-left:0;margin-bottom:20px;">
 
     <div class="hidden-phone">
+
+      <div id="heightIndicatorPrev" style="position:absolute;margin:0;z-index:999;border-right:0px solid #ff4;border-bottom:2px solid #ff4;height:1px;margin-top:50px;width:100%;"></div> 
+      <a href="#settings" onClick="$('#capture-btn').removeClass('active');$('#settings-btn').addClass('active');" data-toggle="tab"><canvas style="width:100%;height:100px;" id="preview"></canvas>
+
       <a class="btn btn-primary btn-large" style="margin-bottom:4px;width:80%;" data-toggle="tab" href="#save" onClick="$W.saveSpectrum();"><i class="icon-white icon-save"></i> Save</a>
       <a class="btn btn-inverse btn-large" style="margin-bottom:8px;width:80%;" onClick="window.open($W.canvas.toDataURL(),'_newtab').focus()"><i class="icon-white icon-download"></i> Download</a>
     </div>

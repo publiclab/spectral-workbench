@@ -53,6 +53,11 @@ $W = {
     this.ctx = this.canvas.getContext("2d")
     this.image = this.ctx.getImageData(0, 0, this.width, this.height);
 
+    // create canvas for the sidebar preview if there's a "preview" canvas element:
+    if ($('#preview').length > 0) {
+      this.preview_ctx = $('#preview')[0].getContext('2d')
+    }
+
     setInterval($W.alert_overexposure,3000)
     $W.data = [{label: "webcam",data:[]}]
     if ($('video')[0]) {
@@ -246,6 +251,16 @@ $W = {
       console.log('No context was supplied to getSnapshot()');
     }
 
+    // populate the sidebar preview if there's a "preview" element:
+    if ($('#preview').length > 0) {
+      $W.preview_ctx.canvas.width = $('#preview').width()
+      $W.preview_ctx.canvas.height = $('#preview').width()*0.75
+      $('#preview').height($('#preview').width()*0.75)
+      $W.preview_ctx.drawImage($('video')[0],0,0,$('#preview').width(),$('#preview').width()*0.75)
+      $("#heightIndicatorPrev").width($('#sidebar').width())
+      $W.resetHeightIndicators(false)
+    }
+
     // get the slice of data
     img = $W.ctx.getImageData(0,0,$W.canvas.width,$W.sample_height)
 
@@ -403,12 +418,17 @@ $W = {
     $W.sample_end_row = end
     localStorage.setItem('sw:samplestartrow',$W.sample_start_row)
     localStorage.setItem('sw:sampleendrow',$W.sample_end_row)
+    $W.width_percent = start/$W.width
+    $W.height_percent = start/$W.height
+    $W.resetHeightIndicators(legacy)
+  },
+  resetHeightIndicators: function(legacy) {
     if ($W.rotated) {
-      percent = start/$W.width
-      if (legacy != true) $('#heightIndicator')[0].style.marginLeft = parseInt(percent*320)+'px';
+      if (legacy != true) $('#heightIndicator')[0].style.marginLeft = parseInt($W.width_percent*320)+'px';
+      if (legacy != true) $('#heightIndicatorPrev')[0].style.marginLeft = parseInt($W.width_percent*$('#preview').width())+'px';
     } else {
-      percent = start/$W.height
-      if (legacy != true) $('#heightIndicator')[0].style.marginTop = parseInt(percent*240)+'px';
+      if (legacy != true) $('#heightIndicator')[0].style.marginTop = parseInt($W.height_percent*240)+'px';
+      if (legacy != true) $('#heightIndicatorPrev')[0].style.marginTop = parseInt($W.height_percent*$('#preview').height())+'px';
     }
   },
 
@@ -487,18 +507,29 @@ $W = {
   toggle_rotation: function() {
     $W.rotated = !$W.rotated
     var style = $('#heightIndicator')[0].style
+    var stylePrev = $('#heightIndicatorPrev')[0].style
     if ($W.rotated) {
       style.marginTop = '0px';
       style.borderBottomWidth = "0px"
       style.borderRightWidth = "2px"
       style.height = "240px"
       style.width = "0px"
+      stylePrev.marginTop = '0px';
+      stylePrev.borderBottomWidth = "0px"
+      stylePrev.borderRightWidth = "2px"
+      stylePrev.height = "100px"
+      stylePrev.width = "0px"
     } else {
       style.marginLeft = '0px';
       style.borderBottomWidth = "2px"
       style.borderRightWidth = "0px"
       style.width = "320px"
       style.height = "0px"
+      stylePrev.marginLeft = '0px';
+      stylePrev.borderBottomWidth = "2px"
+      stylePrev.borderRightWidth = "0px"
+      stylePrev.width = "100%"
+      stylePrev.height = "0px"
     } 
     // reset the indicator to the correct sample row:
     $W.setSampleRows($W.sample_start_row,$W.sample_start_row)
