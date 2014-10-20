@@ -7,12 +7,12 @@ $W.dialog = function(title,body,options) {
   html += '</p></div><div class="modal-footer">'
 
   $.each(options,function(i,btn) {
-    html += '<a class="btn '
+    html += '<a class="btn'
     // last option is highlighted
     if (i == options.length-1) {
-      html += 'btn-primary" '
+      html += ' btn-primary'
     }
-    html += 'onClick="'+btn[1]+'">'+btn[0]+'</a>'
+    html += '" onClick="'+btn[1]+'">'+btn[0]+'</a>'
   })
 
   html += '</div></div>'
