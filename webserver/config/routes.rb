@@ -23,6 +23,8 @@ ActionController::Routing::Routes.draw do |map|
   # Registered user pages:
   map.profile '/profile', :controller => 'users', :action => 'profile'
   map.profile '/profile/:id', :controller => 'users', :action => 'profile'
+  map.profile '/macro/edit/:id', :controller => 'macros', :action => 'edit'
+  map.profile '/macro/update/:id', :controller => 'macros', :action => 'update'
   map.profile '/macro/:author/:id', :controller => 'macros', :action => 'show'
   map.profile '/macro/:author/:id.:format', :controller => 'macros', :action => 'show'
   map.dashboard '/dashboard', :controller => 'users', :action => 'dashboard'

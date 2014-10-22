@@ -10,6 +10,8 @@ $W = {
   mode: "combined",
   initialize: function(args) {
     this.spectrum_id = args['spectrum_id']
+    this.sample_row = args['sample_row']
+    this.calibrated = args['calibrated']
     this.form_authenticity_token = args['form_authenticity_token']
     this.interface = args['interface'] || false
     this.title = args['title']
