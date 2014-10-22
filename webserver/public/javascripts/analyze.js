@@ -18,7 +18,7 @@ flotoptions = {
 		markers: []
 	},
 	// Palette "i eat the rainbow" by svartedauden on Colourlovers: http://www.colourlovers.com/palette/1630898/i_eat_the_rainbow, CC-BY-NC
-	colors: [ "#ccc", "#E02130", "#FAB243", "#429867", "#2B51BB" ]//, "#482344" ]
+	colors: [ "#ccc", "#E02130", "#FAB243", "#429867", "#2B51BB", "#f50", "#f08" ]
 }
 
 flotoptions_minimal = {
