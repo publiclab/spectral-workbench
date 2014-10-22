@@ -148,9 +148,10 @@
 
   $W.initialize({
     spectrum_id:<%= @spectrum.id %>,
-    sample_row:<%= @spectrum.sample_row %>,
+    sample_row:<%= @spectrum.sample_row %>, // this is not the same as capture row! 
     calibrated:<%= @spectrum.calibrated == true %>,
     interface:"analyze",
+    mode:"combined",
     title: "<%= @spectrum.title.gsub('"',"'") %>",
     form_authenticity_token: "<%= form_authenticity_token %>",
     spectrum_data: <%= @spectrum.data.gsub('"',"'") %>

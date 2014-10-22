@@ -15,8 +15,6 @@ $W = {
   flipped: false,
   rotated: false,
   pos: 0,
-  sample_start_row: 240,
-  sample_end_row: 241,
   sample_height: 1,
   // height and width of the output stream container
   width: 640,
@@ -41,8 +39,8 @@ $W = {
       this.options.height = args['height'] 
       this.options.width = args['width']
     }
-    this.sample_start_row = this.width/2
-    this.sample_end_row = this.width/2 + 1
+    this.sample_start_row = localStorage.getItem('sw:samplestartrow') || this.width/2 // this is camera sample row, not saved image sample row!
+    this.setSampleRow(this.sample_start_row)
 
     getUserMedia(this.options, this.success, this.deviceError)
 
@@ -267,17 +265,17 @@ $W = {
 
     // use it to generate a graph
     if ($W.mode == "average") {
-      $W.data[0] = {label: "webcam",data:[]}
+      $W.data[0] = {label: "Webcam",data:[]}
     } else if ($W.mode == "rgb") {
-      $W.data[0] = {label: "r",data:[]}
-      $W.data[1] = {label: "g",data:[]}
-      $W.data[2] = {label: "b",data:[]}
+      $W.data[0] = {label: "R",data:[]}
+      $W.data[1] = {label: "G",data:[]}
+      $W.data[2] = {label: "B",data:[]}
     } else if ($W.mode == "combined") {
-      $W.data[0] = {label: "webcam",data:[]}
-      $W.data[1] = {label: "r",data:[]}
-      $W.data[2] = {label: "g",data:[]}
-      $W.data[3] = {label: "b",data:[]}
-      $W.data[4] = {label: "overexposed",data:[]}
+      $W.data[0] = {label: "Combined",data:[]}
+      $W.data[1] = {label: "R",data:[]}
+      $W.data[2] = {label: "G",data:[]}
+      $W.data[3] = {label: "B",data:[]}
+      $W.data[4] = {label: "Overexposed",data:[]}
     }
 
     // store it in the "raw" data store too
@@ -409,10 +407,9 @@ $W = {
   auto_detect_sample_row: function() {
     
   },
+  // deprecate in favor of setSampleRows, or wrap it with a +1
   setSampleRow: function(row) {
-    $W.sample_start_row = parseInt(row)
-    $('#samplerow-slider').val( $W.sample_start_row );
-    localStorage.setItem('sw:samplestartrow',$W.sample_start_row)
+    $W.setSampleRows(parseInt(row),parseInt(row)+1,false) 
   },
   setSampleRows: function(start,end,legacy) {
     $W.sample_start_row = start

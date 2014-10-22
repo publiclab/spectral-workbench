@@ -35,8 +35,17 @@
       <div class="btn-group toolbar" data-toggle="buttons-radio">
         <a rel="tooltip" title="Default mode" class="btn btn-inverse" onClick="$W.toggle_mode()"><i class="icon-white icon-circle-blank"></i></a>
         <a rel="tooltip" title="RGB mode" class="btn btn-inverse" onClick="$W.toggle_mode()"><i class="icon-white icon-adjust"></i></a>
-        <a rel="tooltip" title="Combined readout (beta)" class="btn btn-inverse" onClick="$W.show_combined()"><i class="icon-white icon-list-ul"></i></a>
+        <a rel="tooltip" title="Combined readout" class="btn btn-inverse" onClick="$W.show_combined()"><i class="icon-white icon-list-ul"></i></a>
+        <a rel="tooltip" id="cfl-detect" title="Detected fluorescent light" class="btn btn-inverse" onClick=""><i class="icon-white icon-lightbulb"></i></a>
       </div>
+
+<script>
+
+(function() {
+  $W.observe_contrast(false,function(){$('#cfl-detect i').css('color','red')},function(){$('#cfl-detect i').css('color','white')})
+})()
+
+</script>
 
     </div>
 
