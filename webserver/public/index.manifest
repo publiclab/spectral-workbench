@@ -1,7 +1,7 @@
 CACHE MANIFEST
-# v211 - 2014-10-20
+# v220 - 2014-10-21
 /capture
-/capture/beta
+#/capture/beta
 /capture/legacy
 /offline
 #/stylesheets/*

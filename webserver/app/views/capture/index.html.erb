@@ -135,18 +135,21 @@
   flotoptions.colors = [ "#ccc", "#E02130", "#FAB243", "#429867", "#2B5166" ]//, "#482344" ]
 
   $W.initialize({
-  	calibrated:<%= !@calibration.nil? %>,
-	interface:"capture",
-	mode:"combined",
-  	width:640
+    calibrated:<%= !@calibration.nil? %>,
+    interface:"capture",
+    mode:"combined",
+    <% if @calibration %>
+      sample_row:<%= @calibration.sample_row %>,
+    <% end %>
+    width:640
   }) 
   setInterval($W.getRow,100)
   <% if @calibration %>
-  	$W.calibrated = true
-  	$W.calibration_id = <%= @calibration.id %>
-  	$W.start_wavelength = <%= @start_wavelength %>
-  	$W.end_wavelength = <%= @end_wavelength %>
-      	flotoptions.xaxis.show = true
+    $W.calibrated = true
+    $W.calibration_id = <%= @calibration.id %>
+    $W.start_wavelength = <%= @start_wavelength %>
+    $W.end_wavelength = <%= @end_wavelength %>
+    flotoptions.xaxis.show = true
   <% else %>
   	$W.calibrated = false
   <% end %>

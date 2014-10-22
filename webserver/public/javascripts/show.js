@@ -7,7 +7,7 @@ $W = {
   latestPosition: null,
   updateLegendTimeout: null,
   data: [],
-  mode: "average",
+  mode: "combined",
   initialize: function(args) {
     this.spectrum_id = args['spectrum_id']
     this.form_authenticity_token = args['form_authenticity_token']
@@ -196,6 +196,17 @@ $W = {
         $('#notify_'+id).remove()
       },3000)
     }
+  },
+
+  show_combined: function() {
+    this.mode = "combined"
+    $W.data[0] = {label: "webcam",data:[]}
+    $W.data[1] = {label: "r",data:[]}
+    $W.data[2] = {label: "g",data:[]}
+    $W.data[3] = {label: "b",data:[]}
+    //$W.data[4] = {label: "overexposed",data:[]}
+
+    flotoptions.colors = [ "#ffffff", "rgba(255,0,0,0.3)", "rgba(0,255,0,0.3)", "rgba(0,0,255,0.3)", "#ffff00"]
   },
 
   show_rgb: function() {
