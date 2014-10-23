@@ -150,7 +150,7 @@ $W = {
   overexposure_recurse: function(data,i,count,color) {
     if (count > $W.overexposure_threshold) return [true,i]
     else {
-      if (data[i][color] >= 255) {
+      if (data[i][color] >= 250) {
         return $W.overexposure_recurse(data,i+2,count+2,color)
       } else return [false,i]
     }
@@ -176,23 +176,23 @@ $W = {
   // checks overexposure and displays an alert if it is so, and what channel
   alert_overexposure: function() {
     var oe = $W.detect_overexposure()
-    if (oe.r || oe.g || oe.b) {
-      var msg = "Light source is too strong; overexposure in channels: "
+    if (oe['r'] || oe['g'] || oe['b']) {
+      var msg = "Light source is too strong or camera is too sensitive; overexposure in channels: "
       var channels = []
       if (oe.r) channels.push("red")
       if (oe.g) channels.push("green")
       if (oe.b) channels.push("blue")
-      $W.notify(msg+channels.join(','),"warning")
+      $W.notify(msg+channels.join(', ')+". <a href='http://publiclab.org/wiki/spectral-workbench-usage#Overexposure'>Learn how to fix this</a>.","warning",false)
     } 
   },
 
   //setTimeout(5000,$W.alert_overexposure)
   notify: function(msg,type,expire) {
-    expire = expire || true
+    if (expire == null) expire = true
     var id = parseInt(Math.random()*100000)
-    $('#notify').html($('#notify').html()+"<div id='notify_"+id+"' class='notify'></div>")
-    if (type == "warning") $('#notify_'+id).html("<b>Warning:</b> "+msg).addClass('warning')
-    if (type == "error") $('#notify_'+id).html("<b>Error:</b> "+msg).addClass('error')
+    $('#alerts').html($('#alerts').html()+"<div id='notify_"+id+"' class='notify'></div>")
+    if (type == "warning") $('#notify_'+id).html("<b>Warning:</b> "+msg).addClass('alert warning')
+    if (type == "error") $('#notify_'+id).html("<b>Error:</b> "+msg).addClass('alert error')
     if (expire) {
       setTimeout(function() {
         $('#notify_'+id).remove()

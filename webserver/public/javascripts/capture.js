@@ -616,7 +616,7 @@ $W = {
   overexposure_recurse: function(data,i,count,color) {
     if (count > $W.overexposure_threshold) return [true,i]
     else {
-      if (data[i][({r:0,g:1,b:2})[color]] >= 255) {
+      if (data[i][({r:0,g:1,b:2})[color]] >= 250) {
         return $W.overexposure_recurse(data,i+2,count+2,color)
       } else return [false,i]
     }
@@ -653,7 +653,7 @@ $W = {
 
   //setTimeout($W.alert_overexposure,3000)
   notify: function(msg,type,expire) {
-    expire = expire || true
+    if (expire == null) expire = true
     var id = parseInt(Math.random()*100000)
     $('#notify').html($('#notify').html()+"<div id='notify_"+id+"' class='notify'></div>")
     if (type == "warning") $('#notify_'+id).html("<b>Warning:</b> "+msg).addClass('warning')
