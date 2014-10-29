@@ -2,6 +2,7 @@ source 'https://rubygems.org'
 
 #gem 'rails', '3.2.11'
 gem 'rails', '2.3.15'
+gem 'rdoc-data'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
@@ -29,7 +30,7 @@ end
 gem 'rmagick'#, :require => "RMagick"
 gem 'mime-types', '1.18'
 ##gem 'jquery-rails'
-gem 'passenger'
+#gem 'passenger'
 gem 'recaptcha', :require => "recaptcha/rails"
 ##gem 'cocaine', '~>0.5.3'
 gem 'cocaine', '~>0.2.1'
