@@ -1,30 +1,32 @@
-<div data-role="page" id="macros" data-theme="a">
-	<div data-theme="a" data-role="header">
-		<h3 style="text-align:left;margin-left:15px;">Macros</h3>
-	</div>
-	<div data-role="content" class="content" style="padding: 15px">
-		<p>Experiment with writing macros based on the still-evolving <a href="http://publiclab.org/wiki/spectral-workbench-api">Spectral Workbench API</a>:</p>	
+<h3 style="text-align:left;margin-left:15px;">Macros</h3>
+  <p>Experiment with writing macros based on the still-evolving <a href="http://publiclab.org/wiki/spectral-workbench-api">Spectral Workbench API</a>.</p>  
+  <p><a target="_blank" href="/macros" Browse macros &raquo;</a></p>  
 
-		<textarea style="font-size:11px;font-family:courier,sans-serif;" id="code">setup: function() {
-  // code to run on startup
-  window.open($W.canvas.toDataURL(),'_newtab').focus() // this may not work if popups are blocked
+  <p>
+  <textarea style="font-size:11px;font-family:courier,sans-serif;" class="span10" rows="10" id="code">setup: function() {
+// code to run on startup
+window.open($W.canvas.toDataURL(),'_newtab').focus() // this may not work if popups are blocked
 },
 draw: function() {
-  // code to run every frame
+// code to run every frame
 }</textarea>
-		<a data-inline="true" style="width:200px;" id="run" data-role="button" data-theme="b">Run</a>
-		<a data-inline="true" style="width:200px;" data-role="button" data-transition="fade" data-theme="d" href="#capture" data-panel="main">&laquo; Back</a>
+  </p>
 
-		<code id="output">
-		</code>
+  <p>
+    <a id="run" class="btn-primary btn-large">Run</a> <a href="#capture" data-toggle="tab" class="btn btn-large">&laquo; Back</a>
+  </p>
 
-		<p>As you create macros, please share them by <a href="http://publiclab.org/post">posting research notes</a> at PublicLab.org. Tag them with "macro".</p>
+  <p>
+  <code id="output" class="span10" style="height:120px;">
+  </code>
+  </p>
 
-		<script> 
-			$('#run').click(function() {
-				eval("$W.macro = {"+$('#code').val()+"}")
-				$W.macro.setup()
-			})
-		</script>
-	</div>
+  <p>As you create macros, please share them by <a href="http://publiclab.org/post">posting research notes</a> at PublicLab.org. Tag them with "macro".</p>
+
+  <script> 
+    $('#run').click(function() {
+      eval("$W.macro = {"+$('#code').val()+"}")
+      $W.macro.setup()
+    })
+  </script>
 </div>

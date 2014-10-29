@@ -64,11 +64,7 @@ class SpectrumsController < ApplicationController
     @spectrums = Spectrum.find(:all, :conditions => ['title LIKE ? OR notes LIKE ?',"%"+params[:id]+"%", "%"+params[:id]+"%"],:limit => 100, :order => "id DESC")
     @spectrums = @spectrums.paginate :page => params[:page], :per_page => 24
     if params[:capture]
-      if params[:beta]
-        render :partial => "capture/results_beta.html.erb", :layout => false  
-      else
-        render :partial => "capture/results.html.erb", :layout => false
-      end
+      render :partial => "capture/results.html.erb", :layout => false
     else 
       @sets = SpectraSet.find(:all, :conditions => ['title LIKE ? OR notes LIKE ?',"%"+params[:id]+"%", "%"+params[:id]+"%"],:limit => 100, :order => "id DESC")
     end

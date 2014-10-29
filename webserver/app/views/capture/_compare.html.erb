@@ -18,16 +18,16 @@
   <div id="results">
     <h3>Recent spectra (<a href="javascript:void()" id="refresh_recent">refresh</a>)</h3>
     <div class="container-fluid">
-    <%= render :partial => "results_beta" %>  
+      <%= render :partial => "results" %>  
     </div>
   </div>
 
   <script> 
     $('#search_form').submit(function() {
-      $('#results').load("/spectra/search/"+$('#search_term').val()+"?capture=true&beta=true")
+      $('#results').load("/spectra/search/"+$('#search_term').val()+"?capture=true")
     })
     $('#refresh_recent').click(function() {
-      $('#results').load("/spectra/recent/?capture=true&beta=true")
+      $('#results').load("/spectra/recent/?capture=true")
     })
   </script>
 

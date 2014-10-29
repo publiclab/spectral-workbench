@@ -16,15 +16,7 @@ class CaptureController < ApplicationController
       @offline = "flush"
     end
     @spectrums = Spectrum.find(:all, :limit => 12, :order => "id DESC")
-    if params[:legacy] == "true"
-      if params[:m]
-        render :template => "capture/index-mobile.html.erb", :layout => "mobile"
-      else
-        render :template => "capture/index-legacy.html.erb", :layout => "capture"
-      end
-    else
-      render :template => "capture/index.html.erb", :layout => "application"
-    end
+    render :template => "capture/index.html.erb", :layout => "application"
   end
 
   # designed to replace the spectrums_controller method "create" with a 

@@ -1,48 +1,71 @@
-<div data-role="page" id="capture" data-theme="a">
-<div data-theme="a" data-role="header">
-  <style>
-    .topbar {
-      float:right;
-      padding:14px;
-      font-size:14px;
-      font-weight:normal;
-    }
-  </style>
-  <% if logged_in? && current_user.calibrations.length == 0 %><span class="topbar">To calibrate, <a href="http://publiclab.org/wiki/spectral-workbench-calibration" target="_blank">save a CFL spectrum</a>.</span><% end %>
-  <span style="color:#aaa;" class="topbar" id="readout"></span>
-  <h3 class="header" style="text-align:left;margin-left:15px;">
-    <img src="/images/spectralworkbench.png" /> 
-    <a style="margin-left:3px;color:white;text-decoration:none;" id="home" data-theme="b" href="/" target="_blank">SpectralWorkbench</a>
-  <% if params[:action] == "match" %>- <span style="font-weight:normal;">Matching in set "<i><%= @set.title %></i>"</span><% end %>
-  </h3>
-</div>
+<div id="capture" class="tab-pane">
 
-<div data-role="content" class="content" style="padding: 15px">
+  <div id="sidebar" class="span2" style="margin-left:0;margin-bottom:20px;">
 
-  <div id="graph" style="width:100%;height:200px;"></div>
-  <br />
-  <canvas style="width:100%;height:100px;" id="canvas"></canvas> 
+    <div class="hidden-phone">
 
-  <span id="match"></span>
+      <div id="heightIndicatorPrev" style="position:absolute;margin:0;z-index:999;border-right:0px solid #ff4;border-bottom:2px solid #ff4;height:1px;margin-top:50px;width:100%;"></div> 
+      <a href="#settings" onClick="$('#capture-btn').removeClass('active');$('#settings-btn').addClass('active');" data-toggle="tab"><canvas style="width:100%;height:100px;" id="preview"></canvas>
 
-  <% if params[:action] == "match" %>
-    <a data-role="button" data-theme="a" href="javascript:void()" onClick="$W.match();">Match</a>
-    <a id="saveSpectrum" data-role="button" data-transition="fade" data-theme="d" href="#save" data-panel="main" onClick="$W.saveSpectrum();">Save</a>
-  <% else %>
-    <% if logged_in? %>
-    <a id="saveSpectrum" data-role="button" data-transition="fade" data-theme="a" href="#save" data-panel="main">Save</a>
-    <script>$('#saveSpectrum').bind("click",function() {$W.saveSpectrum()})</script>
-    <% else %>
-    <p>You must be <a href='/login'>logged in</a> to save spectra.</p>
-    <% end %>
-    <a data-role="button" data-theme="a" href="javascript:void()" onClick="window.open($W.canvas.toDataURL(),'_newtab').focus()">Download</a>
-  <% end %>
+      <a class="btn btn-primary btn-large" style="margin-bottom:4px;width:80%;" data-toggle="tab" href="#save" onClick="$W.saveSpectrum();"><i class="icon-white icon-save"></i> Save</a>
+      <a class="btn btn-inverse btn-large" style="margin-bottom:8px;width:80%;" onClick="window.open($W.canvas.toDataURL(),'_newtab').focus()"><i class="icon-white icon-download"></i> Download</a>
+    </div>
 
-    <% if logged_in? %>
-      <div class="alert error"><b>Warning:</b> due to an error in the printed instructions, the webcam of your Desktop Spectrometry Kit may need to be refocused. <a href="http://publiclab.org/wiki/spectral-workbench-help#the-spectrum-image-is-blurry-no-sharp-peaks">Read more &raquo;</a></div>
-  <% else %><p><a href="#login">Log in</a> to use a recent calibration</p><% end %>
+    <div class="tool-pane" id="tool-pane">
+ 
+      <p><small><b>ADJUSTMENTS</b></small></p>
+      <div class="btn-group toolbar" data-toggle="buttons-checkbox" style="margin-bottom:5px;">
 
-  <p>By uploading your data, you agree to release it under the <a href="http://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Zero license</a></p>
+        <a id="geotag-btn" rel="tooltip" title="Geocode" class="btn btn-inverse active" onClick="$('#geotag-btn').button('toggle');$('#geotag').val('true'!=$('#geotag').val());$W.geolocate()"><i class="icon-white icon-map-marker"></i></a>
 
-</div>
+        <a rel="tooltip" title="Rotate video" class="btn btn-inverse" onClick="$W.toggle_rotation()"><i class="icon-white icon-repeat"></i></a>
+        <a rel="tooltip" title="Flip video horizontally" class="btn btn-inverse" onClick="$W.flip_horizontal()"><i class="icon-white icon-resize-horizontal"></i></a>
+        <a rel="tooltip" title="Scale video" class="btn btn-inverse" onClick="$W.scale_h = parseFloat(prompt('Enter a horizontal scaling factor (default is 1):'))"><i class="icon-white icon-fullscreen"></i></a>
+      </div>
+ 
+      <p><small><b>TOOLS</b></small></p>
+      <div class="btn-group toolbar" style="margin-bottom:5px;">
+        <a rel="tooltip" title="Scripting" class="btn btn-inverse" href="#macros" data-toggle="tab"><i class="icon-white icon-file-alt"></i></a>
+        <a href="#compare" data-toggle="tab" rel="tooltip" title="Compare" class="btn btn-inverse"><i class="icon-white icon-columns"></i></a>
+        <a rel="tooltip" title="Find matches" class="disabled btn btn-inverse"><i class="icon-white icon-magnet"></i></a>
+        <a rel="tooltip" title="Find centroid" class="btn btn-inverse" onClick="$W.run_macro('warren','centroidish_continuous')"><i class="icon-white icon-bar-chart"></i></a>
+      </div>
+ 
+      <p><small><b>DISPLAY</b></small></p>
+      <div class="btn-group toolbar" data-toggle="buttons-radio">
+        <a rel="tooltip" title="Default mode" class="btn btn-inverse" onClick="$W.toggle_mode()"><i class="icon-white icon-circle-blank"></i></a>
+        <a rel="tooltip" title="RGB mode" class="btn btn-inverse" onClick="$W.toggle_mode()"><i class="icon-white icon-adjust"></i></a>
+        <a rel="tooltip" title="Combined readout" class="btn btn-inverse" onClick="$W.show_combined()"><i class="icon-white icon-list-ul"></i></a>
+        <a rel="tooltip" id="cfl-detect" title="Detected fluorescent light" class="btn btn-inverse" onClick=""><i class="icon-white icon-lightbulb"></i></a>
+      </div>
+
+<script>
+
+(function() {
+  $W.observe_contrast(false,function(){$('#cfl-detect i').css('color','red')},function(){$('#cfl-detect i').css('color','white')})
+})()
+
+</script>
+
+    </div>
+
+  </div>
+
+  <div class="span10">
+
+    <div id="graph" style="width:100%;height:200px;margin:10px 0;"></div>
+    <canvas style="width:100%;height:100px;" id="canvas"></canvas> 
+ 
+    <div id="message-area" style="display:none;margin-left:6px;" class="alert alert-warning"><p><b>Message!</b> Testing.</p></div>
+
+    <% unless logged_in? %><a style="margin-left:10px;" href="/login">Log in</a> to use a recent calibration<% end %>
+
+    <div class="btn-group visible-phone">
+      <a class="btn btn-primary btn-large" data-toggle="tab" href="#save" onClick="$W.saveSpectrum();"><i class="icon-white icon-save"></i> Save</a>
+      <a class="btn btn-inverse btn-large" onClick="window.open($W.canvas.toDataURL(),'_newtab').focus()"><i class="icon-white icon-download"></i> Download</a>
+    </div>
+
+ 
+  </div>
+
 </div>
