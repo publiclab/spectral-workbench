@@ -4,14 +4,9 @@ Copyright 2011-2013 Public Laboratory
 publiclaboratory.org | spectralworkbench.org
 ==========================
 
-Spectral Workbench is a set of open-source tools to perform low-cost spectral analysis and to share those results online. The suite is provided in several folders, each corresponding to a separate tool:
+Spectral Workbench is an open-source tool to perform low-cost spectral analysis and to share those results online. It consists of a Ruby on Rails web application for publishing, archiving, discussing, and analyzing spectra online -- running at http://spectralworkbench.org
 
-/webserver - A Ruby on Rails web application for publishing, archiving, discussing, and analyzing spectra online.
-	- running at http://spectralworkbench.org; the primary way to use Spectral Workbench
-/ios - A PhoneGap-based native iOS app currently under development in the 'ios' branch
-/spectrometry_kit - A (deprecated) Processing.org-based desktop environment for collecting spectral readings from a connected USB webcam-based spectrometer.
-
-Read about how to build and use your own spectrometer with this software here: http://publiclaboratory.org/tool/spectrometer
+Read about how to build and use your own spectrometer with this software here: http://publiclab.org/wiki/spectrometer
 
 ==========================
 LICENSE
@@ -36,15 +31,22 @@ INSTALLATION
 
 These instructions are for the webapp in /webserver/ only:
 
-The app requires Ruby 1.8.7 and Rails 2.3.15.
+The app requires Ruby 1.8.7 and Rails 2.3.15, and uses Bundler for gem management. By default it is set up to use sqlite3.
 
-Thanks to YvesAD, there is a rough but detailed installation guide here: https://gist.github.com/YvesAD/5520784
+Prerequisites:
 
-However, instead of individually installing gems with "sudo gem install blablabla", you should be able to run "rake gems:install". 
+* If needed: `apt-get install sqlite3`
+* RMagick dependencies are required: `apt-get install libmagickwand-devlibmagick++-dev`
+  * or on centOs: `yum install ImageMagick-devel`
+  * On mac, you can use Homebrew: `brew install imagemagick`
+* Recommended -- use RVM: http://rvm.io
+* `rvm install 1.8.7`
 
-This was based on his work in the Github issue here: https://github.com/jywarren/spectral-workbench/issues/206
+Installation steps:
 
-Installation is not very straightforward, but we hope to improve it soon.
+* `bundle install`
+* `rake db:migrate`
+* `passenger start`
 
 ==========================
 BUGS AND SUPPORT
