@@ -27,7 +27,7 @@ group :assets do
 end
 
 gem 'rmagick'#, :require => "RMagick"
-gem 'mime-types', '1.18'
+gem 'mime-types'#, '1.18'
 gem 'jquery-rails'
 gem 'passenger'
 gem 'recaptcha', :require => "recaptcha/rails"
@@ -40,9 +40,9 @@ gem 'will_paginate'
 gem "paperclip", ">= 4.1.1"
 
 gem "ruby-openid"#, :require => "openid"
-#gem "rack-openid"
+gem "rack-openid"
 # switch to:
-gem 'open_id_authentication'
+#gem 'open_id_authentication'
 
 group :development, :test do
   #gem 'rspec-rails'

@@ -1,114 +1,132 @@
-ActionController::Routing::Routes.draw do |map|
-  map.offline '/offline', :controller => 'users', :action => 'offline'
-  map.local '/local/:login', :controller => 'sessions', :action => 'local'
-  map.logout '/logout', :controller => 'sessions', :action => 'destroy'
-  map.login '/login', :controller => 'sessions', :action => 'new'
-  map.register '/register', :controller => 'users', :action => 'create'
-  map.signup '/signup', :controller => 'users', :action => 'new'
-  map.users '/users', :controller => 'users', :action => 'list'
-  map.users '/contributors', :controller => 'users', :action => 'contributors'
-  map.resources :users
-  map.resource :session
-
-  # countertop spectrometer and device paths
-  map.connect '/key/:id', :controller => 'device', :action => 'create_key'
-  map.connect '/lookup', :controller => 'device', :action => 'lookup'
-  map.connect '/device/claim', :controller => 'device', :action => 'claim'
-
-  map.capture '/capture', :controller => 'capture', :action => 'index'
-  map.connect '/upload', :controller => "spectrums", :action => "new"
-  map.connect '/capture/beta', :controller => "capture", :action => "index", :alt => "true"
-  map.connect '/capture/legacy', :controller => "capture", :action => "index", :legacy => "true"
-
-  # Registered user pages:
-  map.profile '/profile', :controller => 'users', :action => 'profile'
-  map.profile '/profile/:id', :controller => 'users', :action => 'profile'
-  map.profile '/macro/edit/:id', :controller => 'macros', :action => 'edit'
-  map.profile '/macro/update/:id', :controller => 'macros', :action => 'update'
-  map.profile '/macro/:author/:id', :controller => 'macros', :action => 'show'
-  map.profile '/macro/:author/:id.:format', :controller => 'macros', :action => 'show'
-  map.dashboard '/dashboard', :controller => 'users', :action => 'dashboard'
-  map.popular '/popular', :controller => 'likes', :action => 'index'
-  map.popular '/popular/recent', :controller => 'likes', :action => 'recent'
-  map.comments '/comments', :controller => 'comments', :action => 'index'
-  map.comment '/comment/create/:id', :controller => 'comments', :action => 'create'
-
-  map.open_id_complete '/session', :controller => "session", :action => "create", :conditions => { :method => :get }
-  #map.open_id_complete 'session', :controller => "session", :action => "create", :requirements => { :method => :get }
-
-  map.resources :videos
-  map.assign '/spectra/assign', :controller => 'spectrums', :action => 'assign'
-  map.tags '/tag/create', :controller => 'tag', :action => 'create'
-  map.tags '/tag/:id', :controller => 'tag', :action => 'show'
-  map.connect '/tag/:id.:format', :controller => "tag", :action => "show"
-  map.tags '/tags', :controller => 'tag', :action => 'index'
-  map.resources :spectrums
-#  map.resources :spectrums, :collection=>{
-#  :doSomething= > :get,
-#  :doSomethingAgain => :post }
-  map.resources :spectra_sets
-  map.resources :comments, :belongs_to => :spectrums
-
-  map.connect 'message', :controller => "users", :action => "message"
-
-  map.connect 'stats', :controller => "spectrums", :action => "stats"
-  map.connect 'spectra/feed', :controller => "spectrums", :action => "rss"
-  map.connect 'spectra/search', :controller => "spectrums", :action => "search"
-  map.connect 'spectra/anonymous', :controller => "spectrums", :action => "anonymous"
-  map.connect 'spectra/search/:id', :controller => "spectrums", :action => "search"
-  map.connect 'search/:id', :controller => "spectrums", :action => "search"
-  map.connect 'spectra/plotsfeed', :controller => "spectrums", :action => "plots_rss"
-  map.connect 'spectra/feed/:author', :controller => "spectrums", :action => "rss"
-  map.connect 'spectra/:id', :controller => "spectrums", :action => "show"
-  map.connect 'spectra/:action/:id', :controller => "spectrums"
-  map.connect 'spectra/show/:id.:format', :controller => "analyze", :action => "spectrum"
-
-  map.connect 'analyze/:action/:id', :controller => "analyze"
-
-  # Here comes the matching controller
-  map.connect '/match/livesearch', :controller => "match", :action => "livesearch"
-  map.connect 'match/:id', :controller => "match", :action => "index"
-
-  # The priority is based upon order of creation: first created -> highest priority.
+SpectralWorkbench::Application.routes.draw do
+  # The priority is based upon order of creation:
+  # first created -> highest priority.
 
   # Sample of regular route:
-  #   map.connect 'products/:id', :controller => 'catalog', :action => 'view'
+  #   match 'products/:id' => 'catalog#view'
   # Keep in mind you can assign values other than :controller and :action
 
   # Sample of named route:
-  #   map.purchase 'products/:id/purchase', :controller => 'catalog', :action => 'purchase'
+  #   match 'products/:id/purchase' => 'catalog#purchase', :as => :purchase
   # This route can be invoked with purchase_url(:id => product.id)
 
-  # Sample resource route (maps HTTP verbs to controller actions automatically):
-  #   map.resources :products
+  # Sample resource route (gets HTTP verbs to controller actions automatically):
+  #   resources :products
 
   # Sample resource route with options:
-  #   map.resources :products, :member => { :short => :get, :toggle => :post }, :collection => { :sold => :get }
+  #   resources :products do
+  #     member do
+  #       get 'short'
+  #       post 'toggle'
+  #     end
+  #
+  #     collection do
+  #       get 'sold'
+  #     end
+  #   end
 
   # Sample resource route with sub-resources:
-  #   map.resources :products, :has_many => [ :comments, :sales ], :has_one => :seller
-  
+  #   resources :products do
+  #     resources :comments, :sales
+  #     resource :seller
+  #   end
+
   # Sample resource route with more complex sub-resources
-  #   map.resources :products do |products|
-  #     products.resources :comments
-  #     products.resources :sales, :collection => { :recent => :get }
+  #   resources :products do
+  #     resources :comments
+  #     resources :sales do
+  #       get 'recent', :on => :collection
+  #     end
   #   end
 
   # Sample resource route within a namespace:
-  #   map.namespace :admin do |admin|
-  #     # Directs /admin/products/* to Admin::ProductsController (app/controllers/admin/products_controller.rb)
-  #     admin.resources :products
+  #   namespace :admin do
+  #     # Directs /admin/products/* to Admin::ProductsController
+  #     # (app/controllers/admin/products_controller.rb)
+  #     resources :products
   #   end
 
-  # You can have the root of your site routed with map.root -- just remember to delete public/index.html.
-  map.root :controller => "spectrums"
+  # You can have the root of your site routed with 'root'
+  # just remember to delete public/index.html.
+  # root :to => 'welcome#index'
 
-  # See how all your routes lay out with "rake routes"
+  # See how all your routes lay out with 'rake routes'
 
-  # Install the default routes as the lowest priority.
-  # Note: These default routes make all actions in every controller accessible via GET requests. You should
-  # consider removing or commenting them out if you're using named routes and resources.
-  map.connect ':controller/:action'
-  map.connect ':controller/:action/:id'
-  map.connect ':controller/:action/:id.:format'
+  get '/offline' => 'users#offline'
+  get '/local/:login' => 'sessions#local'
+  get '/logout' => 'sessions#destroy'
+  get '/login' => 'sessions#new'
+  get '/register' => 'users#create'
+  get '/signup' => 'users#new'
+  get '/users' => 'users#list'
+  get '/contributors' => 'users#contributors'
+  resources :users
+  resources :session
+
+  # countertop spectrometer and device paths
+  get '/key/:id' => 'device#create_key'
+  get '/lookup' => 'device#lookup'
+  get '/device/claim' => 'device#claim'
+
+  get '/capture' => 'capture#index'
+  get '/upload' => 'spectrums#new'
+  get '/capture/beta' => 'capture#index', :alt => 'true'
+  get '/capture/legacy' => 'capture#index', :legacy => 'true'
+
+  # Registered user pages:
+  get '/profile' => 'users#profile'
+  get '/profile/:id' => 'users#profile'
+  get '/macro/edit/:id' => 'macros#edit'
+  get '/macro/update/:id' => 'macros#update'
+  get '/macro/:author/:id' => 'macros#show'
+  get '/macro/:author/:id.:format' => 'macros#show'
+  get '/dashboard' => 'users#dashboard'
+  get '/popular' => 'likes#index'
+  get '/popular/recent' => 'likes#recent'
+  get '/comments' => 'comments#index'
+  get '/comment/create/:id' => 'comments#create'
+
+  get '/session' => 'session#create', :conditions => { :method => :get }
+
+  resources :videos
+  get '/spectra/assign' => 'spectrums#assign'
+  get '/tag/create' => 'tag#create'
+  get '/tag/:id' => 'tag#show'
+  get '/tag/:id.:format' => 'tag#show'
+  get '/tags' => 'tag#index'
+  resources :spectrums
+  resources :spectra_sets
+  resources :comments, :belongs_to => :spectrums
+
+  get '/message' => 'users#message'
+
+  get '/stats' => 'spectrums#stats'
+  get '/spectra/feed' => 'spectrums#rss'
+  get '/spectra/search' => 'spectrums#search'
+  get '/spectra/anonymous' => 'spectrums#anonymous'
+  get '/spectra/search/:id' => 'spectrums#search'
+  get '/search/:id' => 'spectrums#search'
+  get '/spectra/plotsfeed' => 'spectrums#plots_rss'
+  get '/spectra/feed/:author' => 'spectrums#rss'
+  get '/spectra/:id' => 'spectrums#show'
+  get '/spectra/:action/:id' => 'spectrums'
+  get '/spectra/show/:id.:format' => 'analyze#spectrum'
+
+  get '/analyze/:action/:id' => 'analyze'
+
+  # Here comes the matching controller
+  get '/match/livesearch' => 'match#livesearch'
+  get '/match/:id' => 'match#index'
+
+  root to: 'spectrums#index'
+
+  # This is a legacy wild controller route that's not recommended for RESTful applications.
+  # Note: This route will make all actions in every controller accessible via GET requests.
+  # match ':controller(/:action(/:id))(.:format)'
+
+  # See how all your routes lay out with 'rake routes'
+  match ':controller/:action'
+  match ':controller/:action/:id'
+  match ':controller/:action/:id.:format'
+
 end
