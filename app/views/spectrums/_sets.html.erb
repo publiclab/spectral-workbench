@@ -17,9 +17,9 @@
 
   <% set.spectra.each do |spectrum| %>
   <% if spectrum.data == "" || spectrum.data.nil? %>
-    spectrum = <%= spectrum.extract_data %>
+    spectrum = <%=raw spectrum.extract_data %>
   <% else %>
-    spectrum = <%= spectrum.data.chomp(",") %>
+    spectrum = <%=raw spectrum.data.chomp(",") %>
   <% end %>
     data_set_<%= set.id %>.push({data:[]})
     //data_set_<%= set.id %>.push({label: "<%= spectrum.title %>",data:[]})

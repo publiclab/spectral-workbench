@@ -142,7 +142,7 @@ class Spectrum < ActiveRecord::Base
 
   # {wavelength:null,average:0,r:0,g:0,b:0}
   def scale_data(start_w,end_w)
-    d = ActiveSupport::JSON.decode(self.data)
+    d = ActiveSupport::JSON.decode(self.clean_json)
     i = 0 
     d['lines'].each do |line|
       line['wavelength'] = (start_w.to_f + i*((end_w.to_f-start_w.to_f)*1.00/d['lines'].length))
@@ -154,7 +154,7 @@ class Spectrum < ActiveRecord::Base
 
   def calibrated
     begin
-      d = ActiveSupport::JSON.decode(self.data)
+      d = ActiveSupport::JSON.decode(self.clean_json)
       !d.nil? && !d['lines'].nil? && !d['lines'].first['wavelength'].nil?
     rescue
       return false
@@ -163,7 +163,7 @@ class Spectrum < ActiveRecord::Base
   
   def calibrate(x1,wavelength1,x2,wavelength2)
     self.extract_data
-    d = ActiveSupport::JSON.decode(self.data)
+    d = ActiveSupport::JSON.decode(self.clean_json)
     i = 0 
     stepsize = ((wavelength2.to_f-wavelength1.to_f)*1.00/(x2.to_f-x1.to_f))
     startwavelength = wavelength1.to_f-(stepsize*x1.to_f)
@@ -176,11 +176,16 @@ class Spectrum < ActiveRecord::Base
     self
   end
 
+  # turns ' into " and puts "" around key names, to produce valid json
+  def clean_json
+    self.data.gsub("'",'"').gsub(/([a-z]+):/,'"\\1":')
+  end
+
   # clones calibration from another spectrum (preferably taken from the same device)
   def clone(clone_id)
     clone_source = Spectrum.find clone_id 
-    d = ActiveSupport::JSON.decode(self.data)
-    cd = ActiveSupport::JSON.decode(clone_source.data)
+    d = ActiveSupport::JSON.decode(self.clean_json)
+    cd = ActiveSupport::JSON.decode(self.clean_json)
     i = 0 
     # assume linear:
     stepsize = (cd['lines'][10]['wavelength'].to_f-cd['lines'][0]['wavelength'].to_f)/10.00
@@ -260,7 +265,7 @@ puts "reversing"
 
 
   def data_as_hash
-    ActiveSupport::JSON.decode(self.data)['lines']
+    ActiveSupport::JSON.decode(self.clean_json)['lines']
   end
 
   def bin_data(binsize)
@@ -322,7 +327,7 @@ puts "reversing"
   end
 
   def wavelength_range
-    d = ActiveSupport::JSON.decode(self.data)
+    d = ActiveSupport::JSON.decode(self.clean_json)
     range = [d['lines'][0]['wavelength'],d['lines'][d['lines'].length-1]['wavelength']]
     range.reverse! if range.first && (range.first > range.last)
     range
@@ -348,7 +353,7 @@ puts "reversing"
   # if it has horizontally flipped input image: red is at left
   # here, we have made an assumption of ascending pixel values. Deprecate this. 
   def is_flipped
-    d = ActiveSupport::JSON.decode(self.data)
+    d = ActiveSupport::JSON.decode(self.clean_json)
     !d['lines'].nil? && !d['lines'][0].nil? && !d['lines'][0]['wavelength'].nil? && !d['lines'][d['lines'].length-1]['wavelength'].nil? && d['lines'][0]['wavelength'] > d['lines'][d['lines'].length-1]['wavelength']
   end
 
@@ -392,7 +397,7 @@ puts "reversing"
   # Generate the values hash for the processed spectrum
   def generate_hashed_values
     
-    decoded = ActiveSupport::JSON.decode(self.data)
+    decoded = ActiveSupport::JSON.decode(self.clean_json)
 
     lines = decoded['lines']
     

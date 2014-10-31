@@ -101,9 +101,12 @@ SpectralWorkbench::Application.routes.draw do
 
   get '/message' => 'users#message'
 
+  get '/sets' => 'sets#index'
+
   get '/stats' => 'spectrums#stats'
   get '/spectra/feed' => 'spectrums#rss'
   get '/spectra/search' => 'spectrums#search'
+  post '/spectra/calibrate/:id' => 'spectrums#calibrate'
   get '/spectra/anonymous' => 'spectrums#anonymous'
   get '/spectra/search/:id' => 'spectrums#search'
   get '/search/:id' => 'spectrums#search'

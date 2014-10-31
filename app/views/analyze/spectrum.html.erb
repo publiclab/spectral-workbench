@@ -133,7 +133,7 @@
 
       <h3>Notes</h3>
 
-      <p><% if @spectrum.notes %><%= RDiscount.new(@spectrum.notes).to_html %><% end %></p>
+      <p><% if @spectrum.notes %><%=raw RDiscount.new(@spectrum.notes).to_html %><% end %></p>
 
       <%= render :partial => "commenting" %>
 
