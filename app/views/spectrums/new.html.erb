@@ -6,9 +6,9 @@
   <p>By uploading your data, you agree to release it under the <a href="http://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Zero license</a></p>
 
 
-<form id="upload" action="/spectrums?m=true" class="form well" enctype="multipart/form-data" method="post">
+<form id="upload" action="/spectrums/create" class="form well" enctype="multipart/form-data" method="post">
 
-  <div class="alert alert-error"><%= error_messages_for :spectrum %></div>
+  <div class="alert alert-error"><%= errors_for @spectrum, "Oops, we were unable to save your spectrum." %></div>
 
   <div class="control-group" id="title">
     <input name="spectrum[title]" type="text" id="inputTitle" placeholder="Title">

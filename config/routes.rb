@@ -55,7 +55,8 @@ SpectralWorkbench::Application.routes.draw do
   get '/offline' => 'users#offline'
   get '/local/:login' => 'sessions#local'
   get '/logout' => 'sessions#destroy'
-  get '/login' => 'sessions#new'
+  get '/login' => 'sessions#login'
+  get '/session/new' => 'sessions#new'
   get '/register' => 'users#create'
   get '/signup' => 'users#new'
   get '/users' => 'users#list'
@@ -88,7 +89,6 @@ SpectralWorkbench::Application.routes.draw do
 
   get '/session' => 'session#create', :conditions => { :method => :get }
 
-  resources :videos
   get '/spectra/assign' => 'spectrums#assign'
   get '/tag/create' => 'tag#create'
   get '/tag/:id' => 'tag#show'
@@ -97,6 +97,7 @@ SpectralWorkbench::Application.routes.draw do
   resources :spectrums
   resources :spectra_sets
   resources :comments, :belongs_to => :spectrums
+  post '/spectrums/create' => 'spectrums#create'
 
   get '/message' => 'users#message'
 
