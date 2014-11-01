@@ -9,11 +9,15 @@ class Spectrum < ActiveRecord::Base
   
   # Paperclip
   has_attached_file :photo,
+    :path => ":rails_root/public/system/:attachment/:id/:style/:filename",
+    :url => "/system/:attachment/:id/:style/:filename",
     :styles => {
       :thumb=> "300x100!",
       :large =>   "800x200!" }
 
   has_attached_file :baseline,
+    :path => ":rails_root/public/system/:attachment/:id/:style/:filename",
+    :url => "/system/:attachment/:id/:style/:filename",
     :styles => {
       :thumb=> "300x100!",
       :large =>   "800x200!" }
