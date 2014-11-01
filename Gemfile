@@ -7,12 +7,13 @@ gem 'rails', '~>3.2'
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
 # Database handling
-group :sqlite do
-  gem 'sqlite3'
-end
-#group :mysql do
-#  gem 'mysql2'
+#group :sqlite do
+#  gem 'sqlite3'
 #end
+group :mysql do
+  gem 'mysql2'
+  gem 'activerecord-mysql-adapter'
+end
 
 # Gems used only for assets and not required
 # in production environments by default.
