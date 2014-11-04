@@ -25,6 +25,31 @@ class SessionsController < ApplicationController
     openid_authentication(url, back_to)
   end
 
+  def failed_login(message = "Authentication failed.")
+    flash[:danger] = message
+    redirect_to '/'
+  end
+
+  def successful_login(back_to, id)
+    session[:user_id] = @current_user.id
+    flash[:success] = "You have successfully logged in."
+    if id
+      redirect_to '/sites/' + id.to_s + '/upload'
+    else
+      if back_to 
+        redirect_to back_to 
+      else
+        redirect_to '/sites'
+      end
+    end
+  end
+
+  def logout
+    session[:user_id] = nil 
+    flash[:success] = "You have successfully logged out."
+    redirect_to '/'
+  end
+
 #  protected
 
   def openid_authentication(openid_url, back_to)
@@ -37,7 +62,6 @@ class SessionsController < ApplicationController
           @user.login = registration['nickname']
           @user.email = registration['email']
           @user.identity_url = identity_url
-puts "about to save"
           begin 
             @user.save!
           rescue ActiveRecord::RecordInvalid => invalid
@@ -68,31 +92,6 @@ puts "about to save"
         return false
       end
     end
-  end
-
-  def failed_login(message = "Authentication failed.")
-    flash[:danger] = message
-    redirect_to '/'
-  end
-
-  def successful_login(back_to, id)
-    session[:user_id] = @current_user.id
-    flash[:success] = "You have successfully logged in."
-    if id
-      redirect_to '/sites/' + id.to_s + '/upload'
-    else
-      if back_to 
-        redirect_to back_to 
-      else
-        redirect_to '/sites'
-      end
-    end
-  end
-
-  def logout
-    session[:user_id] = nil 
-    flash[:success] = "You have successfully logged out."
-    redirect_to '/'
   end
 
 end
