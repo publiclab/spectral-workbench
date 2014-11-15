@@ -2,8 +2,7 @@ class SetsController < ApplicationController
   # create and update are protected by recaptcha
 
   def index
-    @sets = SpectraSet.find(:all, :order => "created_at DESC", :limit => 100)
-    @sets = @sets.paginate :page => params[:page], :per_page => 24
+    @sets = SpectraSet.paginate(:order => "created_at DESC", :limit => 100, :page => params[:page])
   end
 
   def show
@@ -108,8 +107,7 @@ class SetsController < ApplicationController
   # non REST
   def search
     params[:id] = params[:q].to_s if params[:id].nil?
-    @sets = SpectraSet.find(:all, :conditions => ['title LIKE ? OR notes LIKE ?',"%"+params[:id]+"%", "%"+params[:id]+"%"],:limit => 100, :order => "id DESC")
-    @sets = @sets.paginate :page => params[:page], :per_page => 24
+    @sets = SpectraSet.paginate(:conditions => ['title LIKE ? OR notes LIKE ?',"%"+params[:id]+"%", "%"+params[:id]+"%"],:limit => 100, :order => "id DESC", :page => params[:page])
     render :partial => "capture/results_sets.html.erb", :layout => false if params[:capture]
   end
 

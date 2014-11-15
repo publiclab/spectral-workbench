@@ -64,7 +64,7 @@
       <% if logged_in? && current_user.login == @set.author %>
         <div class="btn-group pull-right" style="margin-top:10px;">
           <a class="btn btn-small" href="/sets/edit/<%= @set.id %>"><i class="icon icon-pencil"></i> Edit</a>
-          <%= link_to '<i class="icon icon-remove-sign"></i> Delete', "/sets/delete/"+@set.id.to_s, :confirm => 'Are you sure?', :class => "btn btn-small" %>
+          <%= link_to '<i class="icon icon-remove-sign"></i> Delete'.html_safe, "/sets/delete/"+@set.id.to_s, :confirm => 'Are you sure?', :class => "btn btn-small" %>
         </div>
       <% end %>
 
@@ -170,9 +170,9 @@ $("#graph").bind("plothover",  function (event, pos, item) {
 $W.data = []
 <% @set.spectra.each do |spectrum| %>
 <% if spectrum.data == "" || spectrum.data.nil? %>
-  spectrum = <%= spectrum.extract_data %>
+  spectrum = <%=raw spectrum.extract_data %>
 <% else %>
-  spectrum = <%= spectrum.data.chomp(",") %>
+  spectrum = <%=raw spectrum.data.chomp(",") %>
 <% end %>
   $W.data.push({label: "<%= spectrum.title %> = 0% ",data:[]})
   scaled = true

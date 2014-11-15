@@ -4,11 +4,11 @@
   <div class="set pull-left">
     <a class="graph_set" id="graph_set_<%= set.id %>" style="width:300px;height:100px;display:block;"></a>
     <div class="text" style="width:300px;">
-      <h3><a href="/sets/show/<%= set.id %>"><%= truncate(set.title,30) %></a></h3>
+      <h3><a href="/sets/show/<%= set.id %>"><%= set.title.truncate(30) %></a></h3>
       <p><a href="/profile/<%= set.author %>"><%= set.author %></a> | <%= set.spectra.length %> spectra | 
         <a href="/sets/show/<%= set.id %>#comments"><i class="icon icon-comment"></i> <%= set.comments.length %></a> 
       </p>
-      <p class="notes"><%= truncate(set.notes,:length => 200) %></p>
+      <p class="notes"><%= set.notes.truncate(200) %></p>
     </div>
 
 <script type="text/javascript">
@@ -17,9 +17,9 @@
 
   <% set.spectra.each do |spectrum| %>
   <% if spectrum.data == "" || spectrum.data.nil? %>
-    spectrum = <%= spectrum.extract_data %>
+    spectrum = <%=raw spectrum.extract_data %>
   <% else %>
-    spectrum = <%= spectrum.data.chomp(",") %>
+    spectrum = <%=raw spectrum.data.chomp(",") %>
   <% end %>
     data_set_<%= set.id %>.push({data:[]})
     //data_set_<%= set.id %>.push({label: "<%= spectrum.title %>",data:[]})

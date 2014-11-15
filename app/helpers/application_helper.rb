@@ -1,19 +1,4 @@
-# Methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
-
-  def markdown(text)
-    if APP_CONFIG["redcarpet_version"] == 1
-      options = [:hard_wrap, :filter_html, :autolink, :no_intraemphasis, :fenced_code, :gh_blockcode]
-      Redcarpet.new(text, *options).to_html
-    else
-      markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML, :autolink => true, :space_after_headers => true)
-      raw markdown.render(text)
-    end
-  end
-
-  def admin
-    APP_CONFIG["password"] == params[:password]
-  end
 
   def ios?
     request.env['HTTP_USER_AGENT'] && (request.env['HTTP_USER_AGENT'].match("iPad") || request.env['HTTP_USER_AGENT'].match("iPhone") || params[:ios] == "true")
@@ -34,5 +19,43 @@ module ApplicationHelper
   def mobile?
     request.env['HTTP_USER_AGENT'] && request.env['HTTP_USER_AGENT'].match("Mobi")
   end
+
+  def current_user
+    user_id = session[:user_id] 
+    if user_id
+      begin
+        @user = User.find(user_id)
+      rescue
+        @user = nil
+      end
+    else
+      @user = nil
+    end
+  end
+
+  # add this to app/helpers/application_helper.rb
+  # http://www.emersonlackey.com/article/rails3-error-messages-for-replacemen
+  def errors_for(object, message=nil)
+    html = ""
+    unless object.nil? || object.errors.blank?
+      html << "<div class='alert alert-error #{object.class.name.humanize.downcase}Errors'>\n"
+      if message.blank?
+        if object.new_record?
+          html << "\t\t<h5>There was a problem creating the #{object.class.name.humanize.downcase}</h5>\n"
+        else
+          html << "\t\t<h5>There was a problem updating the #{object.class.name.humanize.downcase}</h5>\n"
+        end    
+      else
+        html << "<h5>#{message}</h5>"
+      end  
+      html << "\t\t<ul>\n"
+      object.errors.full_messages.each do |error|
+        html << "\t\t\t<li>#{error}</li>\n"
+      end
+      html << "\t\t</ul>\n"
+      html << "\t</div>\n"
+    end
+    html
+  end  
 
 end

@@ -13,8 +13,7 @@ class SpectrumsController < ApplicationController
     if logged_in?
       redirect_to "/dashboard"
     else
-      @spectrums = Spectrum.find(:all,:order => "created_at DESC", :conditions => ["author != 'anonymous'"], :limit => 100)
-      @spectrums = @spectrums.paginate :page => params[:page], :per_page => 24
+      @spectrums = Spectrum.paginate(:order => "created_at DESC", :conditions => ["author != 'anonymous'"], :page => params[:page])
 
 #      @anon_spectrums = Spectrum.find(:all,:order => "created_at DESC", :conditions => {:author => "anonymous"})
 #      @anon_spectrums = @anon_spectrums.paginate :page => params[:page], :per_page => 4
@@ -31,8 +30,7 @@ class SpectrumsController < ApplicationController
   end
 
   def anonymous
-    @spectrums = Spectrum.find(:all,:order => "created_at DESC", :conditions => {:author => "anonymous"})
-    @spectrums = @spectrums.paginate :page => params[:page], :per_page => 24
+    @spectrums = Spectrum.paginate(:order => "created_at DESC", :conditions => {:author => "anonymous"}, :page => params[:page])
     render :template => "spectrums/search.html.erb"
   end
 
@@ -297,7 +295,7 @@ class SpectrumsController < ApplicationController
         @spectrum.save
         tag = @spectrum.tag('calibration',current_user.id)
       end
-      flash[:notice] = "Great, calibrated! <b>Next steps:</b> sign up on <a href='http://publiclaboratory.org/tool/spectrometer'>the mailing list</a>, or browse/contribute to <a href='http://publiclaboratory.org'>Public Lab website</a>"
+      flash[:notice] = "Great, calibrated! <b>Next steps:</b> sign up on <a href='http://publiclab.org/wiki/spectrometer'>the mailing list</a>, or browse/contribute to <a href='http://publiclab.org'>Public Lab website</a>"
       redirect_to "/analyze/spectrum/"+@spectrum.id.to_s
     else
       flash[:error] = "You must be logged in and own this spectrum to calibrate."

@@ -1,7 +1,7 @@
 ==========================
 Spectral Workbench
-Copyright 2011-2013 Public Laboratory
-publiclaboratory.org | spectralworkbench.org
+Copyright 2011-2014 Public Lab
+publiclab.org | spectralworkbench.org
 ==========================
 
 Spectral Workbench is an open-source tool to perform low-cost spectral analysis and to share those results online. It consists of a Ruby on Rails web application for publishing, archiving, discussing, and analyzing spectra online -- running at http://spectralworkbench.org
@@ -29,18 +29,15 @@ along with Spectral Workbench.  If not, see <http://www.gnu.org/licenses/>.
 INSTALLATION
 ==========================
 
-These instructions are for the webapp in /webserver/ only:
-
-The app requires Ruby 1.8.7 and Rails 2.3.15, and uses Bundler for gem management. By default it is set up to use sqlite3.
+The app now runs on Ruby 1.9.3 up to Ruby 2.1.2, and Rails 3.2.x, and uses Bundler for gem management. 
 
 Prerequisites:
 
-* If needed: `apt-get install sqlite3`
 * RMagick dependencies are required: `apt-get install libmagickwand-devlibmagick++-dev`
   * or on centOs: `yum install ImageMagick-devel`
   * On mac, you can use Homebrew: `brew install imagemagick`
 * Recommended -- use RVM: http://rvm.io
-* `rvm install 1.8.7`
+* `rvm install 1.9.3`
 
 Installation steps:
 
@@ -52,15 +49,19 @@ Installation steps:
 BUGS AND SUPPORT
 ==========================
 
-To report bugs and request features, please use the GitHub issue tracker provided at http://github.com/jywarren/spectral-workbench/issues 
+To report bugs and request features, please use the GitHub issue tracker provided at http://github.com/publiclab/spectral-workbench/issues 
 
-For additional support, join the Public Laboratory website and mailing list at http://publiclaboratory.org or for urgent requests, email web@publiclaboratory.org
+For additional support, join the Public Laboratory website and mailing list at http://publiclab.org/lists or for urgent requests, email web@publiclab.org
+
+For questions related to the use of this software and your open source spectrometer, the same page links to the "plots-spectrometry" group. 
 
 ==========================
 DEVELOPERS
 ==========================
 
-Development is occurring at https://github.com/jywarren/spectral-workbench/; please fork and submit pull requests.
+Development is occurring at https://github.com/publiclab/spectral-workbench/; please fork and submit pull requests.
+
+If you're a developer, consider joining the Public Lab developer list, also at http://publiclab.org/lists 
 
 
 

@@ -1,146 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>SpectralWorkbench</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="The Public Laboratory for Open Technology and Science (PLOTS) collaborative
-ly develops and publicizes accessible technologies for investigating and reporting on local environmental health 
-and justice issues. PLOTS provides an online research space for citizens, linking them to scientists, social scientists, and technologists. PLOTS is an expansion of Grassroots Mapping, where citizens use helium-filled balloons and digital cameras to generate high resolution “satellite” maps.">
-    <meta name="author" content="">
+<html>
+<head>
+  <title>We're sorry, but something went wrong (500)</title>
+  <style type="text/css">
+    body { background-color: #fff; color: #666; text-align: center; font-family: arial, sans-serif; }
+    div.dialog {
+      width: 25em;
+      padding: 0 4em;
+      margin: 4em auto 0 auto;
+      border: 1px solid #ccc;
+      border-right-color: #999;
+      border-bottom-color: #999;
+    }
+    h1 { font-size: 100%; color: #f00; line-height: 1.5em; }
+  </style>
+</head>
 
-    <!-- Le styles -->
-    <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
-    <link href="/stylesheets/bootstrap.css?1359217150" media="all" rel="stylesheet" type="text/css" />
-    <link href="/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
-
-    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
-    <!--[if lt IE 9]>
-      <script src="/bootstraptp://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-
-    <!-- Le fav and touch icons -->
-    <link rel="shortcut icon" href="/bootstrap/ico/favicon.ico">
-    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/bootstrap/ico/apple-touch-icon-144-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/bootstrap/ico/apple-touch-icon-114-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/bootstrap/ico/apple-touch-icon-72-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" href="/bootstrap/ico/apple-touch-icon-57-precomposed.png">
-
-    <script src="/javascripts/application.js?1359217147" type="text/javascript"></script>
-    <script src="/javascripts/jquery.min.js"></script>
-<!--    <script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.js"></script> -->
-    <script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.flot.js"></script> 
-    <script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.flot.crosshair.js"></script>
-
-  </head>
-
-  <body>
-    <div id="fb-root"></div>
-    <script>(function(d, s, id) {
-      var js, fjs = d.getElementsByTagName(s)[0];
-      if (d.getElementById(id)) return;
-      js = d.createElement(s); js.id = id;
-      js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
-      fjs.parentNode.insertBefore(js, fjs);
-    }(document, 'script', 'facebook-jssdk'));</script>
-
-    
-    <div id="header">
-      <a id="logo" href="/"><img src="/images/logo.png" /></a>
-      <h3 class="hidden-desktop visible-phone pull-left"><a class="title" href="/">SW</a></h3>
-      <h3 class="hidden-phone visible-desktop pull-left"><a class="title" href="/">Spectral Workbench</a><small> by <a href="http://publiclaboratory.org">Public Lab</a></small></h3>
-      <script> if ($('body').width() < 767) { $('#logo').addClass('mobile'); setTimeout(function() {$('#headerBtns').addClass('mobile'); },250) } </script>
-
-      <div id="headerBtns" class="btn-group pull-right">
-        <a rel="tooltip" title="Connect to a webcam-based DIY spectrometer" data-placement="bottom" class="btn btn-primary btn-large" href="/capture"><i class="icon icon-camera icon-white"></i><span class="hidden-phone"> Capture spectra</span></a>
-        
-        <a class="btn btn-primary btn-large dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
-          <ul class="dropdown-menu">
-            <li><a href="/upload" class="button"><i class="icon icon-upload"></i> Upload image</a></li>
-            <li><a href="/capture" class="button"><i class="icon icon-camera"></i> Live-capture spectra</a></li>
-            <li><a href="/capture/beta" class="button"><i class="icon icon-camera"></i> Live-capture beta interface</a></li>
-            <li><a href="http://publiclaboratory.org/wiki/spectral-workbench-usage" class="button"><i class="icon icon-question-sign"></i> Learn how</a></li>
-            <li><a href="/logout" class="button"><i class="icon icon-user"></i> Log out</a></li>
-      </div>
-      <div id="headerBtns" class="btn-group pull-right hidden-desktop" style="padding-right:0;">
-        <a class="btn btn-large" href="http://publiclaboratory.org/wiki/spectral-workbench-help"><i class="icon icon-question-sign" /></i></a>
-      </div>
-      <ul class="hidden-phone nav nav-pills pull-right">
-        <li><a class="btn btn-link" href="/"><i class="icon icon-home"></i></a></li> 
-        <li class="dropdown">
-          <a class="btn btn-link dropdown-toggle" data-toggle="dropdown">Browse <b class="caret"></b></a> 
-          <ul class="dropdown-menu">
-            <li><a href="/contributors">Contributors</a></li>
-            <li><a href="/tags">Tags</a></li>
-          </ul>
-        </li>
-        <li class="dropdown">
-          <a class="btn btn-link dropdown-toggle" data-toggle="dropdown">Learn <b class="caret"></b></a> 
-          <ul class="dropdown-menu">
-            <li><a href="http://publiclaboratory.org/wiki/spectral-workbench-usage">Using Spectral Workbench</a></li>
-            <li><a href="http://publiclaboratory.org/wiki/spectrometer-construction">Build a spectrometer</a></li>
-            <li><a href="http://store.publiclaboratory.org/">Buy a spectrometer kit</a></li>
-            <li><a href="http://publiclaboratory.org/tool/spectrometer">Open source spectrometry</a></li>
-            <li><a href="http://publiclaboratory.org/wiki/spectral-analysis">Applications</a></li>
-            <li class="divider"></li>
-            <li><a href="http://publiclaboratory.org/wiki/spectral-workbench">About Spectral Workbench</a></li>
-          </ul>
-        </li>
-
-        <li><a class="btn btn-link" href="http://publiclaboratory.org/wiki/spectral-workbench-help">Help</a></li> 
-
-      </ul>
-    </div>
-
-    <br style="margin-top:30px;">
-
-    <div class="container well">
-      <h2>We're sorry, but something went wrong.</h2>
-
-      <p>Please <a href="https://github.com/jywarren/spectral-workbench/issues/new">report a bug on Github</a> or <a href="mailto:web@publiclaboratory.org">email web@publiclaboratory.org</a> and thoroughly describe what happened. Thank you for helping to improve open source software!.</p>
-    </div>
-
-    <br style="margin-top:30px;">
-
-    <footer style="margin-bottom:200px;">
-
-      <hr />
-      <div class="span4">
-        <p><b>Spectral Workbench</b> is <a href="https://github.com/jywarren/spectral-workbench">open source software</a></p>
-        <p>Report bugs and help improve this software <a href="https://github.com/jywarren/spectral-workbench/issues/new">on Github</a></p>
-      </div>
-
-      <div class="span4">
-        <p>Follow <b>SpectralWB</b> on Twitter to see code updates: <a href="https://twitter.com/SpectralWB" class="twitter-follow-button" data-show-count="false">Follow @SpectralWB</a></p>
-        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
-      </div>
-
-    </footer>
-
-    <!-- Le javascript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="/bootstrap/js/bootstrap.min.js"></script>
-    <script src="/bootstrap/js/bootstrap.typeahead.js"></script>
-    <script>
-      (function() {
-        $("[rel=tooltip]").tooltip()
-        $("[rel=popover]").popover()
-      })()
-    </script>
-    <script type="text/javascript">
-
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-7636025-2']);
-  _gaq.push(['_setDomainName', 'publiclaboratory.org']);
-  _gaq.push(['_trackPageview']);
-
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-
-    </script>
-  </body>
+<body>
+  <!-- This file lives in public/500.html -->
+  <div class="dialog">
+    <h1>We're sorry, but something went wrong.</h1>
+  </div>
+</body>
 </html>

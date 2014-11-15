@@ -4,6 +4,7 @@ development:
 
 production:
   adapter: sqlite3
+  #adapter: mysql2
   database: production.db
 
 test:

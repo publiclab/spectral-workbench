@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# v222 - 2014-10-29
+# v223 - 2014-11-7
 /capture
 #/capture/beta
 /capture/legacy
@@ -38,7 +38,7 @@ CACHE MANIFEST
 /javascripts/flot/jquery.flot.threshold.min.js
 # app
 /javascripts/application.js?1359217147
-#/javascripts/capture.js
+/javascripts/capture.js
 /javascripts/capture.js?2
 /javascripts/analyze.js
 /javascripts/api.js
