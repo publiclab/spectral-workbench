@@ -15,8 +15,7 @@ class UsersController < ApplicationController
   def dashboard
     @offline = "flush"
     if logged_in?
-      @spectrums = Spectrum.find(:all,:order => "created_at DESC", :conditions => ["author != 'anonymous'"], :limit => 100)
-      @spectrums = @spectrums.paginate :page => params[:page], :per_page => 24
+      @spectrums = Spectrum.paginate(:order => "created_at DESC", :conditions => ["author != 'anonymous'"], :limit => 100, :page => params[:page], :per_page => 24)
       @sets = SpectraSet.find(:all,:limit => 8,:order => "created_at DESC")
       @comments = Comment.find(:all,:limit => 12,:order => "created_at DESC")
     else

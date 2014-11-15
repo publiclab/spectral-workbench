@@ -1,15 +1,17 @@
 source 'https://rubygems.org'
 source 'https://rails-assets.org'
 
+gem 'ruby', '2.1.2'
 gem 'rails', '~>3.2'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
 # Database handling
-#group :sqlite do
-#  gem 'sqlite3'
-#end
+group :sqlite do
+  gem 'sqlite3'
+end
+
 group :mysql do
   gem 'mysql2'
   gem 'activerecord-mysql-adapter'

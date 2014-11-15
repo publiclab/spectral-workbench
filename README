@@ -29,7 +29,7 @@ along with Spectral Workbench.  If not, see <http://www.gnu.org/licenses/>.
 INSTALLATION
 ==========================
 
-The app now runs on Ruby 1.9.3 and Rails 3.2.x, and uses Bundler for gem management. 
+The app now runs on Ruby 1.9.3 up to Ruby 2.1.2, and Rails 3.2.x, and uses Bundler for gem management. 
 
 Prerequisites:
 
