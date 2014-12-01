@@ -110,7 +110,7 @@
       <% if logged_in? && current_user.login == @spectrum.author %>
         <div class="btn-group pull-right" style="margin-top:10px;margin-left:10px;">
           <a class="btn btn-small" href="/spectrums/<%= @spectrum.id %>/edit"><i class="icon icon-pencil"></i> Edit</a>
-          <%= link_to '<i class="icon icon-remove-sign"></i> Delete', "/spectrums/destroy/"+@spectrum.id.to_s, :confirm => 'Are you sure?', :class => "btn btn-small" %>
+          <%= link_to '<i class="icon icon-remove-sign"></i> Delete'.html_safe, "/spectrums/destroy/"+@spectrum.id.to_s, :confirm => 'Are you sure?', :class => "btn btn-small" %>
         </div>
       <% end %>
 

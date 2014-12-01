@@ -1,6 +1,6 @@
 class Spectrum < ActiveRecord::Base
 
-  attr_accessible :title, :author, :user_id, :notes, :photo
+  attr_accessible :title, :author, :user_id, :notes, :photo, :video_row
 
   has_many :comments, :dependent => :destroy
   has_many :likes, :dependent => :destroy
@@ -25,7 +25,7 @@ class Spectrum < ActiveRecord::Base
   validates_presence_of :title, :on => :create, :message => "can't be blank"
   validates_presence_of :author, :on => :create, :message => "can't be blank"
   validates_presence_of :photo, :on => :create, :message => "can't be blank"
-  validates_length_of :title, :maximum=>60
+  validates_length_of :title, :maximum => 60
   validates_format_of :title, :with => /\A[a-zA-Z0-9\ -_]+\z/, :message => "Only letters, numbers, and spaces allowed" 
   validates_format_of :author, :with => /\A\w[\w\.\-_@]+\z/, :message => "Only letters, numbers, hyphens and periods allowed"
   validates_attachment_content_type :photo, :content_type => ["image/jpg", "image/jpeg", "image/png", "image/gif"]
@@ -249,10 +249,6 @@ puts "reversing"
 
     self.photo = Paperclip::string_to_file('capture.png', 'image/png', data)
     self.save
-  end
-
-  def tags
-    Tag.find_all_by_spectrum_id self.id
   end
 
   # a string of either a single tag name or a series of comma-delimited tags

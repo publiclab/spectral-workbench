@@ -1,5 +1,6 @@
 class Comment < ActiveRecord::Base
 
+  attr_accessible :spectrum_id, :body, :author, :email
   validates_presence_of :author, :email, :body
 
   def set

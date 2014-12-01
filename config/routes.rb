@@ -54,7 +54,7 @@ SpectralWorkbench::Application.routes.draw do
 
   get '/offline' => 'users#offline'
   get '/local/:login' => 'sessions#local'
-  get '/logout' => 'sessions#destroy'
+  get '/logout' => 'sessions#logout'
   get '/login' => 'sessions#login'
   get '/session/new' => 'sessions#new'
   get '/register' => 'users#create'
@@ -85,7 +85,7 @@ SpectralWorkbench::Application.routes.draw do
   get '/popular' => 'likes#index'
   get '/popular/recent' => 'likes#recent'
   get '/comments' => 'comments#index'
-  get '/comment/create/:id' => 'comments#create'
+  post '/comment/create/:id' => 'comments#create'
 
   get '/session' => 'session#create', :conditions => { :method => :get }
 

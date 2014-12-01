@@ -1,4 +1,5 @@
-<h1>Editing spectrum</h1>
+<div class="container-fluid" style="clear:both;">
+<h1>Edit spectrum</h1>
 
 <p>
 <img src="<%= @spectrum.photo.url(:large) %>" />
@@ -6,31 +7,33 @@
 
 <% if params[:login] && !logged_in? %>
 <div class="notice" id="login_prompt">
-<h3>You must be logged in to save spectra</h3>
-<p>Please log in first:</p>
-<p><a href="/login?return_to=/spectra/edit/<%= @spectrum.id %>" class="button">Log in</a></p>
+  <h3>You must be logged in to save spectra</h3>
+  <p>Please log in first:</p>
+  <p><a href="/login?return_to=/spectra/edit/<%= @spectrum.id %>" class="button">Log in</a></p>
 </div>
 <% end %>
 
-<% if logged_in? %>
-<% form_for(@spectrum,:html => { :multipart => true }) do |f| %>
-  <%= f.error_messages %>
+<%= form_for(@spectrum,:html => { :multipart => true }) do |f| %>
+
+  <div class="alert alert-error"><%= errors_for @spectrum %></div>
 
   <p>
-    <%= f.label :title %><br />
-    <%= f.text_field :title %>
+    <label for="title">Title</label>
+    <input id="title" name="spectrum[title]" type="text" class="span9" /> 
+  </p>
+
+  <p>
+    <label for="notes">Notes</label>
+    <textarea cols="80" id="notes" name="spectrum[notes]" type="text" class="span9"></textarea> 
   </p>
   <p>
-    <%= f.label :notes %><br />
-    <%= f.text_area :notes %>
+    <input class="btn-primary btn" type="submit" value="Submit" />
+    <% if current_user.role == 'admin' %>
+      <%= link_to '<i class="icon icon-remove-sign"></i> Delete'.html_safe, { :action => "destroy", :id => @spectrum.id },
+         :confirm => "Are you sure?", :method => :delete, :class => "btn btn-medium" %>
+    <% end %>
+    &nbsp; <%= link_to 'Back', spectrums_path %>
   </p>
-  <p>
-    <%= f.submit 'Update' %>
-    <% if admin %><%= button_to "Delete", { :action => "destroy", :id => @spectrum.id },
-          :confirm => "Are you sure?", :method => :delete %><% end %>
-  </p>
-<% end %>
 <% end %>
 
-<%= link_to 'Show', @spectrum %> |
-<%= link_to 'Back', spectrums_path %>
+</div>

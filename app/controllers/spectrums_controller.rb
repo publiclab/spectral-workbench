@@ -125,17 +125,17 @@ class SpectrumsController < ApplicationController
 
       if params[:photo] # i think this is the java client? Lets try to get rid of it
         @spectrum = Spectrum.new({:title => params[:spectrum][:title],
-          :author => author,
-          :user_id => user_id,
           :notes => params[:spectrum][:notes],
           :photo => params[:photo]})
+        @spectrum.author = author
+        @spectrum.user_id = user_id
         @spectrum.client_code = client_code if params[:client] || params[:uniq_id]
       elsif params[:dataurl] # mediastream webclient
         @spectrum = Spectrum.new({:title => params[:spectrum][:title],
           :author => author,
           :video_row => params[:spectrum][:video_row],
-          :notes => params[:spectrum][:notes],
-          :user_id => user_id})
+          :notes => params[:spectrum][:notes]})
+        @spectrum.user_id = user_id
         @spectrum.image_from_dataurl(params[:dataurl])
       else # upload form at /upload
         @spectrum = Spectrum.new({:title => params[:spectrum][:title],
@@ -245,23 +245,23 @@ class SpectrumsController < ApplicationController
   def update
     @spectrum = Spectrum.find(params[:id])
     if logged_in? && (@spectrum.user_id == current_user.id || @spectrum.author == "anonymous")#(current_user.role == "admin")
-    if @spectrum.author == "anonymous"
-      @spectrum.author = current_user.login
-      @spectrum.user_id = current_user.id
-    end
-    @spectrum.title = params[:spectrum][:title]
-    @spectrum.notes = params[:spectrum][:notes]
-
-    respond_to do |format|
-      if @spectrum.save
-        flash[:notice] = 'Spectrum was successfully updated.'
-        format.html { redirect_to(@spectrum) }
-        format.xml  { head :ok }
-      else
-        format.html { render :action => "edit" }
-        format.xml  { render :xml => @spectrum.errors, :status => :unprocessable_entity }
+      if @spectrum.author == "anonymous"
+        @spectrum.author = current_user.login
+        @spectrum.user_id = current_user.id
       end
-    end
+      @spectrum.title = params[:spectrum][:title]
+      @spectrum.notes = params[:spectrum][:notes]
+ 
+      respond_to do |format|
+        if @spectrum.save
+          flash[:notice] = 'Spectrum was successfully updated.'
+          format.html { redirect_to(@spectrum) }
+          format.xml  { head :ok }
+        else
+          format.html { render :action => "edit" }
+          format.xml  { render :xml => @spectrum.errors, :status => :unprocessable_entity }
+        end
+      end
     else
       flash[:error] = "You must be logged in to edit a spectrum."
       redirect_to "/login"
@@ -274,11 +274,12 @@ class SpectrumsController < ApplicationController
     @spectrum = Spectrum.find(params[:id])
     if logged_in? && (current_user.role == "admin" || current_user.id == @spectrum.user_id)
       @spectrum.destroy
+      flash[:notice] = "Spectrum deleted."
 
-    respond_to do |format|
-      format.html { redirect_to('/') }
-      format.xml  { head :ok }
-    end
+      respond_to do |format|
+        format.html { redirect_to('/') }
+        format.xml  { head :ok }
+      end
     else
       flash[:error] = "You must be an admin to destroy comments."
       redirect_to "/login"
