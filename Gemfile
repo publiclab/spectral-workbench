@@ -1,14 +1,8 @@
 source 'https://rubygems.org'
 source 'https://rails-assets.org'
 
-<<<<<<< HEAD
-#gem 'rails', '3.2.11'
-gem 'rails', '2.3.15'
-gem 'rdoc-data'
-=======
-gem 'ruby', '2.1.2'
+ruby '2.1.2'
 gem 'rails', '~>3.2'
->>>>>>> rails3
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
@@ -36,15 +30,9 @@ group :assets do
 end
 
 gem 'rmagick'#, :require => "RMagick"
-<<<<<<< HEAD
-gem 'mime-types', '1.18'
-##gem 'jquery-rails'
-#gem 'passenger'
-=======
 gem 'mime-types'#, '1.18'
 gem 'jquery-rails'
 gem 'passenger'
->>>>>>> rails3
 gem 'recaptcha', :require => "recaptcha/rails"
 gem 'cocaine', '~>0.5.3'
 gem 'redcarpet', '2.1.1'
