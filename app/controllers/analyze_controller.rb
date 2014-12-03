@@ -1,4 +1,5 @@
 class AnalyzeController < ApplicationController
+  respond_to :html, :xml, :js, :csv
 
   skip_before_filter :verify_authenticity_token
 
@@ -18,7 +19,8 @@ class AnalyzeController < ApplicationController
     @macros = Macro.find :all, :conditions => {:macro_type => "analyze"}
     @calibrations = current_user.calibrations if logged_in?
     @comment = Comment.new
-    respond_to do |format|
+    #respond_with(@spectrum) do |format| 
+    respond_with(@spectrum) do |format| 
       format.html {}
       format.xml  { render :xml => @spectrum }
       format.csv  { 
@@ -28,7 +30,9 @@ class AnalyzeController < ApplicationController
           render :template => "spectrums/show.csv.erb" # formatted for SpectraOnline.com 
         end
       }
-      format.json  { render :json => @spectrum }
+      format.json  { 
+        render :json => @spectrum 
+      }
     end
   end
 

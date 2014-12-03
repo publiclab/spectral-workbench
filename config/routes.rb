@@ -94,6 +94,9 @@ SpectralWorkbench::Application.routes.draw do
   get '/tag/:id' => 'tag#show'
   get '/tag/:id.:format' => 'tag#show'
   get '/tags' => 'tag#index'
+
+  get '/spectra/show/:id.:format' => 'analyze#spectrum'
+  get '/spectra/show/:id(.:format)' => 'analyze#spectrum'
   resources :spectrums
   resources :spectra_sets
   resources :comments, :belongs_to => :spectrums
@@ -114,7 +117,6 @@ SpectralWorkbench::Application.routes.draw do
   get '/spectra/feed/:author' => 'spectrums#rss'
   get '/spectra/:id' => 'spectrums#show'
   get '/spectra/:action/:id' => 'spectrums'
-  get '/spectra/show/:id.:format' => 'analyze#spectrum'
 
   get '/analyze/:action/:id' => 'analyze'
 
