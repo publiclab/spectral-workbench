@@ -1,5 +1,6 @@
 require 'will_paginate/array'
 class SpectrumsController < ApplicationController
+  respond_to :html, :xml, :js, :csv
   protect_from_forgery :only => [:clone, :extract, :calibrate, :save]
   # http://api.rubyonrails.org/classes/ActionController/RequestForgeryProtection/ClassMethods.html
   # create and update are protected by recaptcha
@@ -20,7 +21,7 @@ class SpectrumsController < ApplicationController
       @sets = SpectraSet.find(:all,:limit => 4,:order => "created_at DESC")
       @comments = Comment.all :limit => 12, :order => "id DESC"
 
-      respond_to do |format|
+      respond_with(@spectrums) do |format| 
         format.html { 
           render :template => "spectrums/index.html.erb"
         } # show.html.erb
@@ -78,7 +79,7 @@ class SpectrumsController < ApplicationController
   def detail
     @spectrum = Spectrum.find(params[:id])
 
-    respond_to do |format|
+    respond_with(@spectrum) do |format| 
       format.html # details.html.erb
     end
   end
@@ -89,7 +90,7 @@ class SpectrumsController < ApplicationController
     if logged_in?
     @spectrum = Spectrum.new
 
-    respond_to do |format|
+    respond_with(@spectrum) do |format| 
       format.html {}
       format.xml  { render :xml => @spectrum }
     end
@@ -146,7 +147,7 @@ class SpectrumsController < ApplicationController
       end
 
       if @spectrum.save
-        respond_to do |format|
+        respond_with(@spectrum) do |format| 
           if (params[:client] || (APP_CONFIG["local"] || logged_in?))
             if (params[:client]) # java client
         if params[:photo]
@@ -252,7 +253,7 @@ class SpectrumsController < ApplicationController
       @spectrum.title = params[:spectrum][:title]
       @spectrum.notes = params[:spectrum][:notes]
  
-      respond_to do |format|
+      respond_with(@spectrum) do |format| 
         if @spectrum.save
           flash[:notice] = 'Spectrum was successfully updated.'
           format.html { redirect_to(@spectrum) }
@@ -276,7 +277,7 @@ class SpectrumsController < ApplicationController
       @spectrum.destroy
       flash[:notice] = "Spectrum deleted."
 
-      respond_to do |format|
+      respond_with(@spectrum) do |format| 
         format.html { redirect_to('/') }
         format.xml  { head :ok }
       end
@@ -336,7 +337,7 @@ class SpectrumsController < ApplicationController
 
   def all
     @spectrums = Spectrum.find(:all)
-    respond_to do |format|
+    respond_with(@spectrums) do |format| 
       format.xml  { render :xml => @spectrums }
       format.json  { render :json => @spectrums }
     end
@@ -370,8 +371,11 @@ class SpectrumsController < ApplicationController
     else
       @spectrums = Spectrum.find(:all,:order => "created_at DESC",:limit => 12)
     end
-    render :layout => false
-    response.headers["Content-Type"] = "application/xml; charset=utf-8"
+    respond_to do |format|
+      format.xml
+    end
+    #render :layout => false
+    #response.headers["Content-Type"] = "application/xml; charset=utf-8"
   end
 
   def plots_rss

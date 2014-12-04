@@ -107,14 +107,14 @@ SpectralWorkbench::Application.routes.draw do
   get '/sets' => 'sets#index'
 
   get '/stats' => 'spectrums#stats'
-  get '/spectra/feed' => 'spectrums#rss'
+  get '/spectra/feed' => 'spectrums#rss', defaults: { format: 'xml' }
   get '/spectra/search' => 'spectrums#search'
   post '/spectra/calibrate/:id' => 'spectrums#calibrate'
   get '/spectra/anonymous' => 'spectrums#anonymous'
   get '/spectra/search/:id' => 'spectrums#search'
   get '/search/:id' => 'spectrums#search'
-  get '/spectra/plotsfeed' => 'spectrums#plots_rss'
-  get '/spectra/feed/:author' => 'spectrums#rss'
+  get '/spectra/plotsfeed' => 'spectrums#plots_rss', defaults: { format: 'xml' }
+  get '/spectra/feed/:author' => 'spectrums#rss', defaults: { format: 'xml' }
   get '/spectra/:id' => 'spectrums#show'
   get '/spectra/:action/:id' => 'spectrums'
 

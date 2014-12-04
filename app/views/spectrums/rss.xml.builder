@@ -19,7 +19,7 @@ xml.rss "version" => "2.0", "xmlns:dc" => "http://purl.org/dc/elements/1.1/" do
        xml.category    "spectrum"
        xml.link        url_for :only_path => false, :controller => 'spectrums', :action => 'show', :id => spectrum.id
        xml.image "http://spectralworkbench.org"+spectrum.photo.url(:large)
-       xml.description "<iframe width='500px' height='400px' border='0' src='http://spectralworkbench.org/spectra/embed/"+spectrum.id.to_s+"'></iframe><br />"+markdown(spectrum.notes.to_s)+"<br />See original post: http://spectralworkbench.org/spectra/"+spectrum.id.to_s
+       xml.description "<iframe width='500px' height='400px' border='0' src='http://spectralworkbench.org/spectra/embed/"+spectrum.id.to_s+"'></iframe><br />"+RDiscount.new(spectrum.notes).to_s+"<br />See original post: http://spectralworkbench.org/spectra/"+spectrum.id.to_s
        xml.guid        url_for :only_path => false, :controller => 'spectrums', :action => 'show', :id => spectrum.id
      end
    end
