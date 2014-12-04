@@ -8,7 +8,7 @@ class SpectraSet < ActiveRecord::Base
   has_many :comments, :dependent => :destroy
   
   def spectra
-    Spectrum.find(self.spectra_string.split(','))
+    Spectrum.where('id IN (?)',self.spectra_string.split(','))
   end
   
   def match(spectrum)
