@@ -33,7 +33,7 @@ The app now runs on Ruby 1.9.3 up to Ruby 2.1.2, and Rails 3.2.x, and uses Bundl
 
 Prerequisites:
 
-* RMagick dependencies are required: `apt-get install libmagickwand-devlibmagick++-dev`
+* RMagick dependencies are required: `apt-get install imagemagick ruby-rmagick libmagickwand-dev libmagick++-dev`
   * or on centOs: `yum install ImageMagick-devel`
   * On mac, you can use Homebrew: `brew install imagemagick`
 * Recommended -- use RVM: http://rvm.io
