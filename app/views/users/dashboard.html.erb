@@ -5,7 +5,6 @@
 <div class="container">
   <% if logged_in? && !flash[:notice] && !flash[:error] && !flash[:warning] && !mobile? %>
     <% spectrum_count = current_user.spectra(4).length %>
-      <div class="alert error"><button type="button" class="close" data-dismiss="alert">×</button><b>Warning:</b> Spectral Workbench is undergoing major infrastructural upgrades; please report any issues you encounter <a href="https://github.com/publiclab/spectral-workbench/issues">on Github</a> or to <a href="web@publiclab.org">web@publiclab.org</a></div>
     <% if spectrum_count < 3 %>
     <% elsif spectrum_count >= 3 %>
     <% end %>
@@ -42,8 +41,6 @@
           <li><a href="http://publiclab.org/wiki/spectral-analysis">Applications and ideas</a></li>
         </ul>
 
-        <hr />
-        <a href="http://spectralchallenge.org"><img src="/images/spectral-challenge.jpg"/></a>
         <hr />
 
         <a href="http://store.publiclab.org/products/smartphone-spectrometer"><img src="/images/smart-spec.jpg"/></a>
