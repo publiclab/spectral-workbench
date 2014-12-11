@@ -9,6 +9,7 @@
     <li><a onClick="$W.toggle_mode()">Toggle RGB</a></li>
     <li><a onClick="$W.extract()"><i class="icon icon-refresh"></i> Re-extract from photo</a></li>
     <li><a href="#selectrowmodal" data-toggle="modal">Set sample row</a></li>
+    <li><a onClick="$W.set_sample_row()" data-toggle="modal">Enter percentage sample height</a></li>
     <li><a href="/spectra/rotate/<%= @spectrum.id %>">Rotate image</a></li>
     <li><a href="/spectra/reverse/<%= @spectrum.id %>"><i class="icon icon-resize-horizontal"></i> Flip image horizontally</a></li>
     <li><a href="/spectra/find_brightest_row/<%= @spectrum.id %>">Auto-detect brightest spectrum</a></li>

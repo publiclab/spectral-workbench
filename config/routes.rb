@@ -81,6 +81,7 @@ SpectralWorkbench::Application.routes.draw do
   get '/macro/update/:id' => 'macros#update'
   get '/macro/:author/:id' => 'macros#show'
   get '/macro/:author/:id.:format' => 'macros#show'
+  get '/macros' => 'macros#index'
   get '/dashboard' => 'users#dashboard'
   get '/popular' => 'likes#index'
   get '/popular/recent' => 'likes#recent'
