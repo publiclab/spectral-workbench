@@ -21,7 +21,7 @@ $('#clone_btn_<%= spectrum.id %>').click(function() {
     f.submit();
 })
 
-spectrum_<%= spectrum.id %> = <%= spectrum.data %>
+spectrum_<%= spectrum.id %> = <%=raw spectrum.data %>
 
 spectrum_<%= spectrum.id %>_data = []
 scaled = true

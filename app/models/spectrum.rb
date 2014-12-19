@@ -189,7 +189,7 @@ class Spectrum < ActiveRecord::Base
   def clone(clone_id)
     clone_source = Spectrum.find clone_id 
     d = ActiveSupport::JSON.decode(self.clean_json)
-    cd = ActiveSupport::JSON.decode(self.clean_json)
+    cd = ActiveSupport::JSON.decode(clone_source.clean_json)
     i = 0 
     # assume linear:
     stepsize = (cd['lines'][10]['wavelength'].to_f-cd['lines'][0]['wavelength'].to_f)/10.00
