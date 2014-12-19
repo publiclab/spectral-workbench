@@ -1,7 +1,7 @@
 
 <form id="upload" action="/spectrums" class="form well" enctype="multipart/form-data" method="post">
 
-  <div class="alert alert-error"><%= errors_for @spectrum %></div>
+  <%= (errors_for @spectrum).html_safe %>
 
   <p><img src="<%= params[:dataurl] %>" /></p>
 

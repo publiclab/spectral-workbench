@@ -8,7 +8,7 @@
 
 <form id="upload" action="/spectrums/create" class="form well" enctype="multipart/form-data" method="post">
 
-  <div class="alert alert-error"><%= errors_for @spectrum, "Oops, we were unable to save your spectrum." %></div>
+  <%= (errors_for @spectrum, "Oops, we were unable to save your spectrum.").html_safe %>
 
   <div class="control-group" id="title">
     <input name="spectrum[title]" type="text" id="inputTitle" placeholder="Title">

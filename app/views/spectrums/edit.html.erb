@@ -15,7 +15,7 @@
 
 <%= form_for(@spectrum,:html => { :multipart => true }) do |f| %>
 
-  <div class="alert alert-error"><%= errors_for @spectrum %></div>
+  <%= (errors_for @spectrum).html_safe %>
 
   <p>
     <label for="title">Title</label>

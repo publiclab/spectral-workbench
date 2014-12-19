@@ -112,10 +112,10 @@ class SpectrumsController < ApplicationController
 
   # POST /spectrums
   # POST /spectrums.xml
-  # ?spectrum[title]=TITLE&spectrum[author]=anonymous&client=VERSION&uniq_id=UNIQID&startWavelength=STARTW&endWavelength=ENDW;
+  # ?spectrum[title]=TITLE&spectrum[author]=anonymous&startWavelength=STARTW&endWavelength=ENDW;
   # replacing this with capture/save
   def create
-    if params[:client] || logged_in?
+    if logged_in?
       client = params[:client] || "0"
       uniq_id = params[:uniq_id] || "0"
       client_code = client+"::"+uniq_id
@@ -124,14 +124,7 @@ class SpectrumsController < ApplicationController
       author = current_user.login if logged_in?
       author ||= "anonymous"
 
-      if params[:photo] # i think this is the java client? Lets try to get rid of it
-        @spectrum = Spectrum.new({:title => params[:spectrum][:title],
-          :notes => params[:spectrum][:notes],
-          :photo => params[:photo]})
-        @spectrum.author = author
-        @spectrum.user_id = user_id
-        @spectrum.client_code = client_code if params[:client] || params[:uniq_id]
-      elsif params[:dataurl] # mediastream webclient
+      if params[:dataurl] # mediastream webclient
         @spectrum = Spectrum.new({:title => params[:spectrum][:title],
           :author => author,
           :video_row => params[:spectrum][:video_row],
@@ -148,50 +141,35 @@ class SpectrumsController < ApplicationController
 
       if @spectrum.save
         respond_with(@spectrum) do |format| 
-          if (params[:client] || (APP_CONFIG["local"] || logged_in?))
-            if (params[:client]) # java client
-        if params[:photo]
-                @spectrum = Spectrum.find @spectrum.id
-                @spectrum.extract_data
-                @spectrum.scale_data(params[:endWavelength],params[:startWavelength]) if (params[:endWavelength] && params[:startWavelength])
-                @spectrum.save!
-              end
-              if logged_in?
-                format.html { render :text => @spectrum.id }
-              else
-                format.html { render :text => @spectrum.id.to_s+"?login=true&client_code="+client+"::"+uniq_id} # <== here, also offer a unique code or pass client_id so that we can persist login
-              end
-            else # not java client
-           
-              if mobile? || ios?
-                @spectrum.save
-                @spectrum = Spectrum.find @spectrum.id
-                @spectrum.rotate if params[:vertical] == "on"
-                @spectrum.sample_row = @spectrum.find_brightest_row
-                #@spectrum.tag("mobile",current_user.id)
-              end
-              @spectrum.tag("iOS",current_user.id) if ios?
-              @spectrum.tag(params[:tags],current_user.id) if params[:tags]
-              @spectrum.tag("upload",current_user.id) if params[:upload]
-              @spectrum.tag(params[:device],current_user.id) if params[:device] && params[:device] != "none"
-              if params[:spectrum][:calibration_id] && !params[:is_calibration] && params[:spectrum][:calibration_id] != "calibration" && params[:spectrum][:calibration_id] != "undefined"
-                @spectrum.extract_data
-                @spectrum.clone(params[:spectrum][:calibration_id]) 
-              end
-              if params[:geotag]
-                @spectrum.lat = params[:lat]
-                @spectrum.lon = params[:lon]
-              end
-              @spectrum.reversed = true if params[:spectrum][:reversed] == "true"
-              if @spectrum.save!
-                flash[:notice] = 'Spectrum was successfully created.'
-                format.html { 
-            redirect_to :controller => :analyze, :action => :spectrum, :id => @spectrum.id
-          }
-                format.xml  { render :xml => @spectrum, :status => :created, :location => @spectrum }
-              else
-                render "spectrums/new-errors"
-              end
+          if (APP_CONFIG["local"] || logged_in?)
+            if mobile? || ios?
+              @spectrum.save
+              @spectrum = Spectrum.find @spectrum.id
+              @spectrum.rotate if params[:vertical] == "on"
+              @spectrum.sample_row = @spectrum.find_brightest_row
+              #@spectrum.tag("mobile",current_user.id)
+            end
+            @spectrum.tag("iOS",current_user.id) if ios?
+            @spectrum.tag(params[:tags],current_user.id) if params[:tags]
+            @spectrum.tag("upload",current_user.id) if params[:upload]
+            @spectrum.tag(params[:device],current_user.id) if params[:device] && params[:device] != "none"
+            if params[:spectrum][:calibration_id] && !params[:is_calibration] && params[:spectrum][:calibration_id] != "calibration" && params[:spectrum][:calibration_id] != "undefined"
+              @spectrum.extract_data
+              @spectrum.clone(params[:spectrum][:calibration_id]) 
+            end
+            if params[:geotag]
+              @spectrum.lat = params[:lat]
+              @spectrum.lon = params[:lon]
+            end
+            @spectrum.reversed = true if params[:spectrum][:reversed] == "true"
+            if @spectrum.save!
+              flash[:notice] = 'Spectrum was successfully created.'
+              format.html { 
+                redirect_to :controller => :analyze, :action => :spectrum, :id => @spectrum.id
+              }
+              format.xml  { render :xml => @spectrum, :status => :created, :location => @spectrum }
+            else
+              render "spectrums/new-errors"
             end
           else
             format.html { render :action => "new" }
