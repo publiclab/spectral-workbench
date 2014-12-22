@@ -1,7 +1,7 @@
-<script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.flot.js"></script> 
+<script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.flot.js"></script>
 <script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.flot.crosshair.js"></script>
-<script src="/javascripts/analyze.js"> </script>
-
+<script type="text/javascript" src="/javascripts/analyze.js"></script>
+<script type="text/javascript" src="/javascripts/dashboard.js"></script>
 <div class="container">
   <% if logged_in? && !flash[:notice] && !flash[:error] && !flash[:warning] && !mobile? %>
     <% spectrum_count = current_user.spectra(4).length %>
@@ -28,7 +28,7 @@
 
         <ul class="nav nav-list">
           <li class="nav-header">Support</li>
-          <li><a href="http://publiclab.org/wiki/spectral-workbench-help">Troubleshooting/Help</a></li> 
+          <li><a href="http://publiclab.org/wiki/spectral-workbench-help">Troubleshooting/Help</a></li>
           <li><a href="http://publiclab.org/wiki/spectral-workbench-usage">Using Spectral Workbench</a></li>
           <li><a href="http://publiclab.org/wiki/spectrometer-construction">Build a spectrometer</a></li>
           <li><a href="http://publiclab.org/notes/warren/10-28-2013/spectral-workbench-offline">Offline use</a></li>
@@ -47,7 +47,7 @@
         <hr />
         <a href="http://store.publiclab.org/products/desktop-spectrometry-kit"><img src="/images/dsk.jpg"/></a>
         <hr />
-       
+
         <hr />
 
       </div>
@@ -61,7 +61,7 @@
         <h3>Recent community research <small>| <a href="http://publiclab.org/post">Share your own work &raquo;</a></small></h3>
         <iframe style="margin-bottom:20px;height:400px;width:100%;border:none;" src="http://publiclab.org/widget/spectrometer"></iframe>
       </div>
- 
+
       <ul class="nav nav-tabs">
         <li class="active"><a data-toggle="tab" href="#spectra"><i class="icon icon-signal"></i><span class="hidden-phone"> Spectra</span></a></li>
         <li><a data-toggle="tab" href="#comments"><i class="icon icon-comment"></i><span class="hidden-phone"> Comments</span></a></li>
@@ -74,25 +74,27 @@
 
         <div class="tab-pane active" id="spectra">
           <h3 style="padding-top:0;">
-            <a name="spectra"></a>Recent spectra 
+            <a name="spectra"></a>Recent spectra
             <small class="hidden-phone">
-              by contributors like you | 
-              <a href="/profile/<%= current_user.login %>">Your spectra</a> | 
-              <a href="/popular">Popular</a> | 
-              <a href="/popular/recent">Recently liked</a> 
+              by contributors like you |
+              <a href="/profile/<%= current_user.login %>">Your spectra</a> |
+              <a href="/popular">Popular</a> |
+              <a href="/popular/recent">Recently liked</a>
           </small></h3>
           <%= render :partial => 'spectrums/list' %>
-          <%= will_paginate @spectrums %>
+          <%= will_paginate @spectrums, :param_name => 'spectrums_page', :params => {:anchor => "spectrums"} %>
         </div>
-       
+
         <div class="tab-pane" id="comments">
           <%= render :partial => 'users/comments' %>
+          <%= will_paginate @comments, :param_name => 'comments_page', :params => {:anchor => "comments"} %>
           <hr />
         </div>
-       
+
         <div class="tab-pane" id="sets">
           <h3><a name="sets"></a>Recent sets <small class="hidden-phone">by contributors like you</small></h3>
           <%= render :partial => 'spectrums/sets', :locals => {:row => 2} %>
+          <%= will_paginate @sets, :param_name => 'sets_page', :params => {:anchor => "sets"} %>
           <hr />
         </div>
 
@@ -103,7 +105,7 @@
             <li><a href="/profile/<%= user.login %>"><i class="icon icon-user"></i> <%= user.login %></a></li>
           <% end %>
           </ul>
- 
+
           <hr />
         </div>
 
