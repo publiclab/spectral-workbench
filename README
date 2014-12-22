@@ -45,6 +45,12 @@ Installation steps:
 * `rake db:migrate`
 * `passenger start`
 
+Sign in instructions:
+
+*  Create a account at PublicLab.org and use that username to log in.
+*  Then you will be redirected to publiclab.org to "approve" a use of the openid identity.
+*  Note that this applies for development environment as well. 
+
 ==========================
 BUGS AND SUPPORT
 ==========================
