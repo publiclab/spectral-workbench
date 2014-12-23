@@ -1,8 +1,6 @@
 CACHE MANIFEST
-# v223 - 2014-11-7
-#/capture
-#/capture/beta
-/capture/legacy
+# v224 - 2014-12-23
+/capture
 /offline
 #/stylesheets/*
 /stylesheets/jquery.mobile.splitview-compiled.css

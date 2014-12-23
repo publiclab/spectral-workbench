@@ -1,8 +1,7 @@
 class SetsController < ApplicationController
-  # create and update are protected by recaptcha
 
   def index
-    @sets = SpectraSet.paginate(:order => "created_at DESC", :limit => 100, :page => params[:page])
+    @sets = SpectraSet.paginate(:order => "created_at DESC", :page => params[:page])
   end
 
   def show

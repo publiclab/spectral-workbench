@@ -19,12 +19,12 @@
 
   <p>
     <label for="title">Title</label>
-    <input id="title" name="spectrum[title]" type="text" class="span9" /> 
+    <input id="title" name="spectrum[title]" type="text" class="span9" value="<%= @spectrum.title %>" /> 
   </p>
 
   <p>
     <label for="notes">Notes</label>
-    <textarea cols="80" id="notes" name="spectrum[notes]" type="text" class="span9"></textarea> 
+    <textarea cols="80" id="notes" name="spectrum[notes]" type="text" class="span9"><%= @spectrum.notes %></textarea> 
   </p>
   <p>
     <input class="btn-primary btn" type="submit" value="Submit" />

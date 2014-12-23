@@ -2,27 +2,18 @@
 <script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.flot.crosshair.js"></script>
 <script language="javascript" type="text/javascript" src="/javascripts/analyze.js"></script> 
   
-<div class="container-fluid" style="clear:both;">
-  
-<div id="spectra" class="row-fluid">
+<div class="container-fluid">
 
   <div class="span4">
-
     <%= render :partial => "spectrums/search" %>
-
     <hr />
   </div>
 
-  <style>._row { clear:left;} </style>
-
   <div class="span8">
     <h2>Recent sets <small class="hidden-phone">by contributors like you</small></h2>
-
-    <%= render :partial => 'spectrums/sets', :locals => {:row => 2} %>
-
+    <%= render :partial => 'spectrums/sets', :locals => {:row => 3} %>
     <hr />
     <%= will_paginate @sets %>
   </div>
 
 </div>
-

@@ -15,9 +15,9 @@ class UsersController < ApplicationController
   def dashboard
     @offline = "flush"
     if logged_in?
-      @spectrums = Spectrum.paginate(:order => "created_at DESC", :conditions => ["author != 'anonymous'"], :page => params[:spectrums_page], :per_page => 100)
-      @sets = SpectraSet.paginate(:page => params[:sets_page], :limit => 30,:order => "created_at DESC")
-      @comments = Comment.paginate(:page => params[:comments_page], :limit => 12,:order => "created_at DESC")
+      @spectrums = Spectrum.paginate(:order => "created_at DESC", :conditions => ["author != 'anonymous'"], :page => params[:spectrums_page], :per_page => 50)
+      @sets = SpectraSet.paginate(:page => params[:sets_page], :order => "created_at DESC")
+      @comments = Comment.paginate(:page => params[:comments_page], :order => "created_at DESC")
     else
       flash[:error] = "You must be logged in to view your dashboard."
       redirect_to "/login"

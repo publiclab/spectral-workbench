@@ -8,9 +8,9 @@ gem 'rails', '~>3.2'
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
 # Database handling
-#group :sqlite do
-#  gem 'sqlite3'
-#end
+group :sqlite do
+  gem 'sqlite3'
+end
 
 group :mysql do
   gem 'mysql2'

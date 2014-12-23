@@ -1,9 +1,9 @@
 <% row = 1 if row.nil? %>
-<div id="sets" class="list">
+<div id="sets" class="row-fluid">
 <% @sets.each_with_index do |set,index| %>
-  <div class="set pull-left">
-    <a class="graph_set" id="graph_set_<%= set.id %>" style="width:300px;height:100px;display:block;"></a>
-    <div class="text" style="width:300px;">
+<div class="span<%= 12/row %>">
+    <a class="graph_set" id="graph_set_<%= set.id %>" style="height:100px;width:250px;display:block;"></a>
+    <div class="text">
       <h3><a href="/sets/show/<%= set.id %>"><%= set.title.truncate(30) %></a></h3>
       <p><a href="/profile/<%= set.author %>"><%= set.author %></a> | <%= set.spectra.length %> spectra | 
         <a href="/sets/show/<%= set.id %>#comments"><i class="icon icon-comment"></i> <%= set.comments.length %></a> 
@@ -22,12 +22,11 @@
     spectrum = <%=raw spectrum.data.chomp(",") %>
   <% end %>
     data_set_<%= set.id %>.push({data:[]})
-    //data_set_<%= set.id %>.push({label: "<%= spectrum.title %>",data:[]})
     scaled = true
     $.each(spectrum.lines,function(index,line) {
       if (line.wavelength == null) {
-  line.wavelength = index
-  scaled = false
+        line.wavelength = index
+        scaled = false
       }
       data_set_<%= set.id %>[data_set_<%= set.id %>.length-1].data.push([line.wavelength,line.average/2.55])
     })
@@ -35,7 +34,12 @@
   $.plot($("#graph_set_<%= set.id %>"),data_set_<%= set.id %>,flotoptions_minimal);
   })()
 </script>
-  </div>
-  <% if ((index+1.00)/row).to_i == ((index+1.00)/row) %><hr style="clear:both;" /><% end %>
+
+</div>
+<% if ((index+1.00)/row).to_i == ((index+1.00)/row) %>
+</div>
+<hr />
+<div class="row-fluid"> 
+<% end %>
 <% end %>
 </div>

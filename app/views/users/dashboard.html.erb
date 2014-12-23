@@ -82,20 +82,21 @@
               <a href="/popular/recent">Recently liked</a>
           </small></h3>
           <%= render :partial => 'spectrums/list' %>
+          <hr style="clear:both;" />
           <%= will_paginate @spectrums, :param_name => 'spectrums_page', :params => {:anchor => "spectrums"} %>
         </div>
 
         <div class="tab-pane" id="comments">
           <%= render :partial => 'users/comments' %>
+          <hr style="clear:both;" />
           <%= will_paginate @comments, :param_name => 'comments_page', :params => {:anchor => "comments"} %>
-          <hr />
         </div>
 
         <div class="tab-pane" id="sets">
           <h3><a name="sets"></a>Recent sets <small class="hidden-phone">by contributors like you</small></h3>
           <%= render :partial => 'spectrums/sets', :locals => {:row => 2} %>
+          <hr style="clear:both;" />
           <%= will_paginate @sets, :param_name => 'sets_page', :params => {:anchor => "sets"} %>
-          <hr />
         </div>
 
         <div class="tab-pane" id="authors">

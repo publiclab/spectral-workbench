@@ -1,24 +1,24 @@
 <div data-role="page" id="login" data-theme="a">
-	<div data-theme="a" data-role="header">
-		<h3 style="text-align:left;margin-left:15px;">Log in</h3>
-	</div>
-	<div data-role="content" class="content" style="padding: 15px">
-		<p><i>Use your <a data-ajax="false" href="http://publiclaboratory.org" target="_blank">PublicLaboratory.org</a> username to log in. If you do not yet have one, sign up there first!</i></p>
-	
-		<% form_tag session_path do -%>
-		<p><%= label_tag 'login' %>
-		<%= text_field_tag 'login', @login %></p>
-	
-		<input type="hidden" name="return_to" value="/capture" />
-	
-		<!--<p><%= label_tag 'remember_me', 'Remember me' %>
-		<%= check_box_tag 'remember_me', '1', @remember_me %></p>
-		-->
-	
-		<p>
-			<input data-theme="b" data-ajax="false" name="commit" type="submit" value="Log in" />
-			<a data-role="button" data-transition="fade" data-theme="d" href="#capture" data-panel="main">&laquo; Back</a>
-		</p>
-		<% end -%>
-	</div>
+  <div data-theme="a" data-role="header">
+    <h3 style="text-align:left;margin-left:15px;">Log in</h3>
+  </div>
+  <div data-role="content" class="content" style="padding: 15px">
+    <p><i>Use your <a data-ajax="false" href="http://publiclaboratory.org" target="_blank">PublicLaboratory.org</a> username to log in. If you do not yet have one, sign up there first!</i></p>
+  
+    <%= form_tag session_path do -%>
+    <p><%= label_tag 'login' %>
+    <%= text_field_tag 'login', @login %></p>
+  
+    <input type="hidden" name="return_to" value="/capture" />
+  
+    <!--<p><%= label_tag 'remember_me', 'Remember me' %>
+    <%= check_box_tag 'remember_me', '1', @remember_me %></p>
+    -->
+  
+    <p>
+      <input data-theme="b" data-ajax="false" name="commit" type="submit" value="Log in" />
+      <a data-role="button" data-transition="fade" data-theme="d" href="#capture" data-panel="main">&laquo; Back</a>
+    </p>
+    <% end -%>
+  </div>
 </div>
