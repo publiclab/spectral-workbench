@@ -69,11 +69,13 @@ SpectralWorkbench::Application.routes.draw do
   get '/lookup' => 'device#lookup'
   get '/device/claim' => 'device#claim'
 
+  get '/upload' => 'spectrums#new'
+
   get '/capture' => 'capture#index'
   get '/capture/recent_calibrations' => 'capture#recent_calibrations'
-  get '/upload' => 'spectrums#new'
   get '/capture/beta' => 'capture#index', :alt => 'true'
   get '/capture/legacy' => 'capture#index', :legacy => 'true'
+
 
   # Registered user pages:
   get '/profile' => 'users#profile'
