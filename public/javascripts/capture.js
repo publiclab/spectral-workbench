@@ -381,18 +381,17 @@ $W = {
     $('#video_row').val($W.sample_start_row)
     if ($('#geotag-toggle').length > 0) $('#geotag').val($('#geotag-toggle')[0].checked)
     setTimeout(function() { if ($('#geotag').val() == "true") $W.geolocate() },500)
-    setInterval(function() { this_.getRecentCalibrations() }, 10000)
+    this_.getRecentCalibrations()
   },
   getRecentCalibrations: function() {
     $.ajax({
       url: "/capture/recent_calibrations",
       type: "GET",
       success: function(data) {
-        var html = ""
+        var html = "<option value='calibration'>[+] New calibration/uncalibrated</option>"
         $.each(data, function(index, spectrum) {
           html += "<option value="+spectrum.id+">"+spectrum.title+" ("+spectrum.created_at_in_words+" ago)</option>"
         });
-        html += "<option value='calibration'>[+] New calibration</option>"
         $("#calibration_id").html(html);
       }
     })

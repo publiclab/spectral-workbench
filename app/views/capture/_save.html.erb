@@ -53,10 +53,10 @@
   <% if logged_in? %>
   <p><small>Choose a recent reference calibration, or use this as a new calibration.</small></p>
   <select name="spectrum[calibration_id]" id="calibration_id">
+    <option value="calibration">[+] New calibration/uncalibrated</option>
     <% current_user.tag('calibration',20).each do |spectrum| %>
     <option value="<%= spectrum.id %>"><%= spectrum.title %> (<%= time_ago_in_words(spectrum.created_at) %> ago)</option>
     <% end %>
-    <option value="calibration">[+] New calibration</option>
   </select>
   <% end %>
 </form>
