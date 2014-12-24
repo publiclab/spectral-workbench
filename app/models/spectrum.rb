@@ -1,4 +1,5 @@
 class Spectrum < ActiveRecord::Base
+  include ActionView::Helpers::DateHelper
 
   attr_accessible :title, :author, :user_id, :notes, :photo, :video_row
 
@@ -6,7 +7,7 @@ class Spectrum < ActiveRecord::Base
   has_many :likes, :dependent => :destroy
   has_many :tags, :dependent => :destroy
   has_one :processed_spectrum, :dependent => :destroy
-  
+
   # Paperclip
   has_attached_file :photo,
     :path => ":rails_root/public/system/:attachment/:id/:style/:filename",
@@ -26,7 +27,7 @@ class Spectrum < ActiveRecord::Base
   validates_presence_of :author, :on => :create, :message => "can't be blank"
   validates_presence_of :photo, :on => :create, :message => "can't be blank"
   validates_length_of :title, :maximum => 60
-  validates_format_of :title, :with => /\A[a-zA-Z0-9\ -_]+\z/, :message => "Only letters, numbers, and spaces allowed" 
+  validates_format_of :title, :with => /\A[a-zA-Z0-9\ -_]+\z/, :message => "Only letters, numbers, and spaces allowed"
   validates_format_of :author, :with => /\A\w[\w\.\-_@]+\z/, :message => "Only letters, numbers, hyphens and periods allowed"
   validates_attachment_content_type :photo, :content_type => ["image/jpg", "image/jpeg", "image/png", "image/gif"]
 
@@ -45,7 +46,7 @@ class Spectrum < ActiveRecord::Base
        spectra_ids = set.spectra_string.split(',').each do |id|
          ids << id if id.to_i != self.id
        end
-       if ids.length > 0 
+       if ids.length > 0
          set.spectra_string = ids.join(',')
          set.save
        else
@@ -84,7 +85,7 @@ class Spectrum < ActiveRecord::Base
         brightness += (r+g+b) # overall brightness
       end
       if brightness > brightest
-        brightest_row = row 
+        brightest_row = row
         brightest = brightness
       end
     end
@@ -124,7 +125,7 @@ class Spectrum < ActiveRecord::Base
     pixels = []
 
     image   = Magick::ImageList.new("public"+(self.photo.url.split('?')[0]).gsub('%20',' '))
-    # saved sample_row may be greater than image height, so temporarily compensate, 
+    # saved sample_row may be greater than image height, so temporarily compensate,
     # but preserve sample_row in case we rotate back or something
     self.sample_row = image.rows-2 if self.sample_row > image.rows
     row = image.export_pixels(0, self.sample_row, image.columns, 1, "RGB");
@@ -147,7 +148,7 @@ class Spectrum < ActiveRecord::Base
   # {wavelength:null,average:0,r:0,g:0,b:0}
   def scale_data(start_w,end_w)
     d = ActiveSupport::JSON.decode(self.clean_json)
-    i = 0 
+    i = 0
     d['lines'].each do |line|
       line['wavelength'] = (start_w.to_f + i*((end_w.to_f-start_w.to_f)*1.00/d['lines'].length))
       i += 1
@@ -164,11 +165,11 @@ class Spectrum < ActiveRecord::Base
       return false
     end
   end
-  
+
   def calibrate(x1,wavelength1,x2,wavelength2)
     self.extract_data
     d = ActiveSupport::JSON.decode(self.clean_json)
-    i = 0 
+    i = 0
     stepsize = ((wavelength2.to_f-wavelength1.to_f)*1.00/(x2.to_f-x1.to_f))
     startwavelength = wavelength1.to_f-(stepsize*x1.to_f)
     d['lines'].each do |line|
@@ -187,15 +188,15 @@ class Spectrum < ActiveRecord::Base
 
   # clones calibration from another spectrum (preferably taken from the same device)
   def clone(clone_id)
-    clone_source = Spectrum.find clone_id 
+    clone_source = Spectrum.find clone_id
     d = ActiveSupport::JSON.decode(self.clean_json)
     cd = ActiveSupport::JSON.decode(clone_source.clean_json)
-    i = 0 
+    i = 0
     # assume linear:
     stepsize = (cd['lines'][10]['wavelength'].to_f-cd['lines'][0]['wavelength'].to_f)/10.00
     d['lines'].each do |line|
       if cd['lines'][i]
-        line['wavelength'] = cd['lines'][i]['wavelength'] 
+        line['wavelength'] = cd['lines'][i]['wavelength']
       else
         line['wavelength'] = cd['lines'][0]['wavelength'].to_f+(i*stepsize)
       end
@@ -233,7 +234,7 @@ puts "reversing"
     self.photo.reprocess!
   end
 
-  # this is embarassing 
+  # this is embarassing
   # someday rewrite with a join table
   def sets
     s = SpectraSet.find(:all, :conditions => ["spectra_string = '?' OR spectra_string LIKE '%,?,%' OR spectra_string LIKE '%,?' OR spectra_string LIKE '?,%'",self.id,self.id,self.id,self.id])
@@ -252,7 +253,7 @@ puts "reversing"
   end
 
   # a string of either a single tag name or a series of comma-delimited tags
-  def tag(tags,user_id) 
+  def tag(tags,user_id)
     tags.split(',').each do |name|
       tag = Tag.new({
         :spectrum_id => self.id,
@@ -263,6 +264,9 @@ puts "reversing"
     end
   end
 
+  def created_at_in_words
+    time_ago_in_words(self.created_at)
+  end
 
   def data_as_hash
     ActiveSupport::JSON.decode(self.clean_json)['lines']
@@ -277,7 +281,7 @@ puts "reversing"
       bins[bin] = 0 if bins[bin].nil?
       bins[bin] += datum['average'].to_i
       count[bin] = 0 if count[bin].nil?
-      count[bin] += 1 
+      count[bin] += 1
     end
     result = {}
     bins.each_with_index do |bin,i|
@@ -351,17 +355,17 @@ puts "reversing"
   end
 
   # if it has horizontally flipped input image: red is at left
-  # here, we have made an assumption of ascending pixel values. Deprecate this. 
+  # here, we have made an assumption of ascending pixel values. Deprecate this.
   def is_flipped
     d = ActiveSupport::JSON.decode(self.clean_json)
     !d['lines'].nil? && !d['lines'][0].nil? && !d['lines'][0]['wavelength'].nil? && !d['lines'][d['lines'].length-1]['wavelength'].nil? && d['lines'][0]['wavelength'] > d['lines'][d['lines'].length-1]['wavelength']
   end
 
   def liked_by(user_id)
-    Like.find_by_user_id(user_id,:conditions => {:spectrum_id => self.id}) 
+    Like.find_by_user_id(user_id,:conditions => {:spectrum_id => self.id})
   end
 
-  # notify each commenter about a new comment 
+  # notify each commenter about a new comment
   def notify_commenters(new_comment,current_user)
     emails = []
     self.comments.each do |comment|
@@ -379,7 +383,7 @@ puts "reversing"
       end
     end
   end
-  
+
   # Process the spectrum for the "Closest Match Module"
   def generate_processed_spectrum
     id = self.id
@@ -393,18 +397,18 @@ puts "reversing"
       end
     end
   end
-  
+
   # Generate the values hash for the processed spectrum
   def generate_hashed_values
-    
+
     decoded = ActiveSupport::JSON.decode(self.clean_json)
 
     lines = decoded['lines']
-    
+
     values = {}
     counts = {}
     types = ['a', 'r', 'g', 'b']
-    
+
     labels = {}
     labels['a'] = 'average'
     labels['r'] = 'r'
@@ -412,7 +416,7 @@ puts "reversing"
     labels['b'] = 'b'
 
     bins = (10...1500).step(10)
-  
+
     values['spectrum_id'] = id
 
     bins.each do |bin|
@@ -426,12 +430,12 @@ puts "reversing"
       wlength = line['wavelength']
 
       if !wlength.nil? && wlength.class != String
-      
+
       # Some spectrums have "NaN" as wavelength and a, r, g, b values
       # Also, this protects from the condition where the wlength is nil
-      
+
         bins_to_consider = get_bins(line['wavelength'].round)
-     
+
         bins_to_consider.each do |bin|
           types.each do |type|
             values["#{type}#{bin}"] += line[labels[type]].round
@@ -440,7 +444,7 @@ puts "reversing"
         end
       end
     end
-    
+
     # Time to average the values and return
 
     bins.each do |bin|
@@ -449,7 +453,7 @@ puts "reversing"
           values["#{type}#{bin}"] /= counts[bin]
         end
       end
-    end 
+    end
 
     return values
   end
@@ -458,12 +462,12 @@ puts "reversing"
   def get_bins(wavelength)
     base = (wavelength/10) * 10
     diff = wavelength - base
-   
+
     if base < 10 || base > 1490
       return [] # Skipping it off
     end
 
-    
+
     if diff > 6 # This is in the next bin
       if base + 10 > 1490
         return [] # Falls into 1500. So, Skip
@@ -472,7 +476,7 @@ puts "reversing"
       end
     elsif diff < 4 # This is in this bin
       return [base]
-    else 
+    else
       # This is in both the present and next bin
       if base + 10 > 1490
         return [base] # 1500 again. Skip
@@ -482,6 +486,6 @@ puts "reversing"
     end
 
   end
-  
+
 
 end

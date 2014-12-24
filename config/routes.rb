@@ -70,6 +70,7 @@ SpectralWorkbench::Application.routes.draw do
   get '/device/claim' => 'device#claim'
 
   get '/capture' => 'capture#index'
+  get '/capture/recent_calibrations' => 'capture#recent_calibrations'
   get '/upload' => 'spectrums#new'
   get '/capture/beta' => 'capture#index', :alt => 'true'
   get '/capture/legacy' => 'capture#index', :legacy => 'true'

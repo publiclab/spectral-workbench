@@ -19,12 +19,12 @@ class CaptureController < ApplicationController
     render :template => "capture/index.html.erb", :layout => "application"
   end
 
-  # designed to replace the spectrums_controller method "create" with a 
+  # designed to replace the spectrums_controller method "create" with a
   # unified, simplified version which integrates
   # rotation/flip, cross section, smoothing, equalizing, and comparison, and maybe calibration?
-  # geocoding? 
+  # geocoding?
   def save
-    # be sure there's a "login" field here too, so users don't lose data when they're required to log in. 
+    # be sure there's a "login" field here too, so users don't lose data when they're required to log in.
     @spectrum = Spectrum.new({
       :title => params[:title],
       :author => current_user.login,
@@ -49,11 +49,11 @@ class CaptureController < ApplicationController
         @spectrum.scale_data(params[:endWavelength],params[:startWavelength]) if (params[:endWavelength] && params[:startWavelength])
       end
 
-      # clone calibration? Do it based on a tag. 
+      # clone calibration? Do it based on a tag.
       # But can we clone all tags, and normalization, and sample row?
       @spectrum.clone(params[:spectrum][:calibration_id]) if params[:clone]
 
-      # process all metadata based on tags: 
+      # process all metadata based on tags:
       # @spectrum.tag("rotated:90",current_user.id)
       # @spectrum.tag("flipped:horizontal",current_user.id)
       # @spectrum.tag("normalized:area",current_user.id)
@@ -68,13 +68,27 @@ class CaptureController < ApplicationController
       end
 
       flash[:notice] = 'Spectrum was successfully created.'
-      format.html { 
+      format.html {
         redirect_to :controller => :analyze, :action => :spectrum, :id => @spectrum.id
       }
       format.xml  { render :xml => @spectrum, :status => :created, :location => @spectrum }
     else
       # this isn't quite right. Also let's do ajax errors.
       render "spectrums/new-errors"
+    end
+  end
+
+  def recent_calibrations
+    if logged_in?
+      #@offline = true
+      @spectrums = current_user.tag('calibration',20)
+      respond_to do |format|
+        format.json { render :json => @spectrums.to_json(:methods => :created_at_in_words) }
+      end
+    else
+      respond_to do |format|
+        format.json { render :json => { :errors => "You must be logged in to get recent calibrations."}, :status => 422 }
+      end
     end
   end
 

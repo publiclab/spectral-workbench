@@ -1,5 +1,5 @@
 // window.webcam.getCameraList()
-//$.ajaxSetup ({ cache: false }); 
+//$.ajaxSetup ({ cache: false });
 var ajax_load = "<img src='/images/spinner-small.gif' alt='loading...' />";
 
 var $W
@@ -36,7 +36,7 @@ $W = {
     this.width = args['width'] || this.width
     this.height = args['height'] || this.height
     if (args['height']) {
-      this.options.height = args['height'] 
+      this.options.height = args['height']
       this.options.width = args['width']
     }
     this.sample_start_row = localStorage.getItem('sw:samplestartrow') || this.width/2 // this is camera sample row, not saved image sample row!
@@ -141,8 +141,8 @@ $W = {
         tmp = null,
         w = this.width,
         h = this.height;
- 
-      for (var i = 0; i < w; i++) { 
+
+      for (var i = 0; i < w; i++) {
         tmp = parseInt(col[i], 10);
         img.data[$W.pos + 0] = (tmp >> 16) & 0xff;
         img.data[$W.pos + 1] = (tmp >> 8) & 0xff;
@@ -150,8 +150,8 @@ $W = {
         img.data[$W.pos + 3] = 0xff;
         $W.pos += 4;
       }
-      
-      if ($W.pos >= 4 * w * $W.sample_height) { 
+
+      if ($W.pos >= 4 * w * $W.sample_height) {
         $W.canvas.getContext('2d').putImageData(img, 0, 0);
         $W.ctx.drawImage(img, 0, 0);
         $W.pos = 0;
@@ -163,7 +163,7 @@ $W = {
 
   chromeCameraSwitch: function() {
     $W.chrome_current_camera += 1
-    if ($W.chrome_current_camera > $W.chrome_cameras.length-1) $W.chrome_current_camera = 0 
+    if ($W.chrome_current_camera > $W.chrome_cameras.length-1) $W.chrome_current_camera = 0
     var id = $W.chrome_cameras[$W.chrome_current_camera].id
     var options = {
       el: $W.options.el,
@@ -187,20 +187,20 @@ $W = {
           if (source.kind == "video") $W.chrome_cameras.push(source)
         })
       });
-      
+
     }
 
 
   },
 
-  // Draws the appropriate pixels onto the top row of the waterfall. 
+  // Draws the appropriate pixels onto the top row of the waterfall.
   // Override this if you want a non-linear cross section or somethine
   // else special! <video> is the video element
   getCrossSection: function(video) {
     // draw the new data on the top row of pixels of the canvas, overwriting what's there now
-    if ($W.mobile) { 
+    if ($W.mobile) {
       // this is only for the deprecated mobile version
-      $W.ctx.scale(3,1) 
+      $W.ctx.scale(3,1)
       $W.ctx.translate($('video').height()/2,0)
       if (!$W.rotated) $W.ctx.rotate(Math.PI/2)
       $W.ctx.drawImage(video, -$W.sample_start_row/4, -$W.height/2);
@@ -212,8 +212,8 @@ $W = {
       $W.ctx.scale($W.scale_h,$W.scale_w)
       if ($W.rotated) {
 
-        // these lines may not be working properly for high-resolution cameras on mobile devices? 
-        // or maybe odd aspect ratios. Do we need to be accounting for the incoming video size? 
+        // these lines may not be working properly for high-resolution cameras on mobile devices?
+        // or maybe odd aspect ratios. Do we need to be accounting for the incoming video size?
         $W.ctx.scale($W.width/$W.height,$W.width/$('#canvas').height())
         $W.ctx.translate($W.height,-$W.sample_start_row)
 
@@ -231,7 +231,7 @@ $W = {
   getRow: function(y) {
     $W.frame += 1
     if ($W.options.context === 'webrtc') {
-      var video = $('video')[0]; 
+      var video = $('video')[0];
       // Grab the existing canvas:
       var saved = $W.excerptCanvas(0,0,$W.width,$W.height,$W.ctx).getImageData(0,0,$W.width,$W.height)
       // check for flipped spectrum every 10th frame... deprecated
@@ -372,6 +372,7 @@ $W = {
     }
   },
   saveSpectrum: function() {
+    var this_ = this;
     $('#dataurl').val($W.canvas.toDataURL())
     if ($('#spectrum-preview')) {
       $('#spectrum-preview')[0].src = $('#dataurl').val()
@@ -380,6 +381,21 @@ $W = {
     $('#video_row').val($W.sample_start_row)
     if ($('#geotag-toggle').length > 0) $('#geotag').val($('#geotag-toggle')[0].checked)
     setTimeout(function() { if ($('#geotag').val() == "true") $W.geolocate() },500)
+    setInterval(function() { this_.getRecentCalibrations() }, 10000)
+  },
+  getRecentCalibrations: function() {
+    $.ajax({
+      url: "/capture/recent_calibrations",
+      type: "GET",
+      success: function(data) {
+        var html = ""
+        $.each(data, function(index, spectrum) {
+          html += "<option value="+spectrum.id+">"+spectrum.title+" ("+spectrum.created_at_in_words+" ago)</option>"
+        });
+        html += "<option value='calibration'>[+] New calibration</option>"
+        $("#calibration_id").html(html);
+      }
+    })
   },
   cancelSave: function() {
     $('#geotag').val('false')
@@ -405,11 +421,11 @@ $W = {
   },
 
   auto_detect_sample_row: function() {
-    
+
   },
   // deprecate in favor of setSampleRows, or wrap it with a +1
   setSampleRow: function(row) {
-    $W.setSampleRows(parseInt(row),parseInt(row)+1,false) 
+    $W.setSampleRows(parseInt(row),parseInt(row)+1,false)
   },
   setSampleRows: function(start,end,legacy) {
     $W.sample_start_row = start
@@ -430,7 +446,7 @@ $W = {
     }
   },
 
-  setSampleRowClickListener: function() { 
+  setSampleRowClickListener: function() {
     $('#webcam').click(function(e){
       var offX, offY;
       if (!(e.offsetX || e.offsetY)) {
@@ -440,7 +456,7 @@ $W = {
         offX = e.offsetX;
         offY = e.offsetY;
       }
-      var percent, row 
+      var percent, row
       if ($W.rotated) {
         percent = offX/$('#webcam').width()
         if ($W.flipped) {
@@ -499,7 +515,7 @@ $W = {
       style.transform = "scaleX(1)"
       style.filter = "none"
       style.msFilter = "none"
-    } 
+    }
   },
 
   toggle_rotation: function() {
@@ -528,7 +544,7 @@ $W = {
       stylePrev.borderRightWidth = "0px"
       stylePrev.width = "100%"
       stylePrev.height = "0px"
-    } 
+    }
     // reset the indicator to the correct sample row:
     $W.setSampleRows($W.sample_start_row,$W.sample_start_row)
   },
@@ -569,7 +585,7 @@ $W = {
     if (!flotoptions.grid.markings) flotoptions.grid.markings = []
     flotoptions.grid.markings.push({ color: '#ccc', lineWidth: 1, xaxis: { from: nm, to: nm } })
     $W.plot = $.plot($("#graph"),$W.data,flotoptions);
-    
+
     $W.markers.push([label,nm,o.left])
   },
 
@@ -602,16 +618,16 @@ $W = {
   },
 
   overexposure_threshold: 15, // how many pixels of consecutive 100% triggers an overexposure warning
-  /* Inspects a given color channel recursively for sequential 
+  /* Inspects a given color channel recursively for sequential
    * pixels of 100%, which would indicate overexposure. Returns
-   * whether it passed the threshold and the last inspected index. 
+   * whether it passed the threshold and the last inspected index.
 
   },
 
   overexposure_threshold: 20, // how many pixels of consecutive 100% triggers an overexposure warning
-  /* Inspects a given color channel recursively for sequential 
+  /* Inspects a given color channel recursively for sequential
    * pixels of 100%, which would indicate overexposure. Returns
-   * whether it passed the threshold and the last inspected index. 
+   * whether it passed the threshold and the last inspected index.
    */
   overexposure_recurse: function(data,i,count,color) {
     if (count > $W.overexposure_threshold) return [true,i]
@@ -624,7 +640,7 @@ $W = {
   detect_overexposure: function() {
     var overexposed = {r: false, g: false, b: false}
     var colors = ["r","g","b"]
-    // check each channel for plateaus at 100%:  
+    // check each channel for plateaus at 100%:
     $.each(colors,function(index,color) {
       var i = 0;
       while (i < $W.full_data.length) {
@@ -648,7 +664,7 @@ $W = {
       if (oe.g) channels.push("green")
       if (oe.b) channels.push("blue")
       $W.notify(msg+channels.join(','),"warning")
-    } 
+    }
   },
 
   //setTimeout($W.alert_overexposure,3000)
@@ -667,12 +683,12 @@ $W = {
 
   getIntensity: function(data,x) {
     var i, j
-  
+
     // find the nearest points, x-wise
     for (j = 0; j < data.length; ++j)
       if (data[j][0] > x)
         break;
-              
+
     // now interpolate
     var y, p1 = data[j - 1], p2 = data[j];
     if (p1 == null)
