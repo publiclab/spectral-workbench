@@ -594,7 +594,7 @@ $W = {
       type: "GET",
       //context: document.body
       success: function(result) {
-        var spectrum = JSON.parse(result.spectrum.data) // probably need to convert from JSON
+        var spectrum = JSON.parse(result.data) // probably need to convert from JSON
         if ($('#baseline-toggle')[0].checked) { // use for subtracting baseline
           //$('#spectrum_tags').val($('#spectrum_tags').val()+",absorption")
           $W.baseline = []
