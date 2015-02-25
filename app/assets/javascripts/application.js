@@ -12,6 +12,7 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require bootstrap-css/js/bootstrap.min.js
 //= require getusermedia.js/dist/getUserMedia.min.js
 //= require graph.js
 //= require analyze.js
