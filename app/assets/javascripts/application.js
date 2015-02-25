@@ -12,4 +12,10 @@
 //
 //= require jquery
 //= require jquery_ujs
-//= require_tree .
+//= require getusermedia.js/dist/getUserMedia.min.js
+//= require graph.js
+//= require capture.js
+//= require api.js
+//= require flot/jquery.flot.js
+//= require flot/jquery.flot.crosshair.js
+//= require flot/jquery.flot.threshold.js

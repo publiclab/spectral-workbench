@@ -33,4 +33,5 @@ config/initializers/recaptcha.rb
 config/initializers/site_keys.rb
 config/initializers/secret_token.rb
 Gemfile.lock
-
+public/lib
+public/assets
