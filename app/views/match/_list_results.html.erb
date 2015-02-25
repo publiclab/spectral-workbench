@@ -1,9 +1,9 @@
 <table class="table">
   <% @spectra.each do |spectrum| %>
     <tr id="spectrum_<%= spectrum.id %>">
-      <td width="240px;"><a href="/analyze/spectrum/<%= spectrum.id %>" ><b><%= spectrum.title %></b></a><% if @spectrum.id == spectrum.id %>  <br />(You searched for this)<% end %><br /> by <a href="/profile/<%= spectrum.author %>"><%= spectrum.author %></a> <%= time_ago_in_words(spectrum.created_at) %> ago | <b>Tags:</b> <% spectrum.tags.each do |tag| %><a class="label label-info" href="/tag/<%= tag.name %>"><%= tag.name %></a> <% end %></td>
+      <td width="240px;"><a href="/analyze/spectrum/<%= spectrum.id %>" ><b><%= spectrum.title %></b></a><% if @spectrum.id == spectrum.id %>  <br />(You searched for this)<% end %><br /> by <a href="<%= user_path(spectrum.author) %>"><%= spectrum.author %></a> <%= time_ago_in_words(spectrum.created_at) %> ago | <b>Tags:</b> <% spectrum.tags.each do |tag| %><a class="label label-info" href="/tag/<%= tag.name %>"><%= tag.name %></a> <% end %></td>
     <!--<a class="" id="spectrum_btn_<%= spectrum.id %>" href="javascript:void(0);">Add +</a> <span id="scaledFlag_<%= spectrum.id %>"></span>-->
-      <% if @c %><td><a data-dismiss="modal" class="btn btn-primary" id="spectrum_btn_<%= spectrum.id %>" href="javascript:void(0)">Compare</a></td><% end %> 
+      <% if @c %><td><a data-dismiss="modal" class="btn btn-primary" id="spectrum_btn_<%= spectrum.id %>" href="javascript:void(0)">Compare</a></td><% end %>
     </tr>
   <% end %>
 </table>
@@ -17,7 +17,7 @@
     form_authenticity_token: "<%= form_authenticity_token %>",
     spectrum_data: <%= @spectrum.data.gsub('"',"'") %>
   })
-  spectra = [] // So that whenever we submit new fit value, spectra needs to be emptied, 
+  spectra = [] // So that whenever we submit new fit value, spectra needs to be emptied,
       //so that only new spectra can be saved as a set.
 
   spectra.push(<%= @spectrum.id %>) // As we consider other spectra separately
@@ -28,7 +28,7 @@
       $W.data.push({id: <%= spectrum.id %>, label:"<%= spectrum.title.gsub('"',"'") %> = 0% (<a href='javascript:void(0);' onClick='remove_spectrum(\"<%= spectrum.id %>\")'>remove</a>)", data: spectrum_<%= spectrum.id %>_data})
     }
   <% end %>
-  
+
   plot = $.plot($("#graph"),$W.data,flotoptions);
   init_hovers();
 
@@ -38,15 +38,16 @@
         $W.data.splice(index,1)
       }
     })
-      
+
     $.each(spectra,function(index,s) {
       if (s == id) {
         spectra.splice(index,1)
       }
     })
-    
+
     plot = $.plot($("#graph"),$W.data,flotoptions);
     init_hovers();
   }
 })()
+
 </script>

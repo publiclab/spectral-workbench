@@ -17,7 +17,7 @@
         <a class="btn btn-inverse hidden-phone" onClick="$W.run_macro('warren','equalize_area')">Equalize area</a>
         <a class="btn btn-inverse hidden-phone" onClick="$W.run_macro('warren','equalize-height')">Equalize height</a>
         <a class="btn btn-inverse hidden-phone" onClick="$W.run_macro('warren','subset')">Crop view</a>
-        <div class="btn-group dropup pull-right"> 
+        <div class="btn-group dropup pull-right">
           <a data-toggle="dropdown" class="btn btn-inverse"><i class="icon icon-white icon-briefcase"></i><span class="hidden-phone"> More tools</span></a>
           <ul class="dropdown-menu">
             <li><a onClick="$W.run_macro('warren','equalize_area')">Equalize area</a></li>
@@ -28,7 +28,7 @@
           </ul>
         </div>
 
-        <b class="pull-right" style="padding-top:10px;margin-right:10px;"><span id="wavelength"></span> <span id="#unit_label">nm</span></b> 
+        <b class="pull-right" style="padding-top:10px;margin-right:10px;"><span id="wavelength"></span> <span id="#unit_label">nm</span></b>
 
       </div>
     </div>
@@ -38,7 +38,7 @@
   <div class="row-fluid">
     <div class="span3">
       <h3 style="margin-bottom:0px;"><%= @set.title %></h3>
-      <p>uploaded by <a href="/profile/<%= @set.author %>"><%= @set.author %></a></p>
+      <p>uploaded by <a href="<%= user_path(@set.author) %>"><%= @set.author %></a></p>
 
       <hr />
       <h4>Spectra in this set</h4>
@@ -65,7 +65,7 @@
         </div>
       <% end %>
 
-      <div id="share" class="pull-right" style="margin-top:14px;"> 
+      <div id="share" class="pull-right" style="margin-top:14px;">
         <div class="fb-like" data-send="false" data-layout="button_count" data-width="50" data-show-faces="false" style="vertical-align:top;zoom:1;*display:inline"></div>
         <a href="https://twitter.com/share" class="twitter-share-button">Tweet</a>
         <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
@@ -83,7 +83,7 @@
       <% @set.comments.each do |comment| %>
       <div class="comment">
         <a name="comment_<%= comment.id %>"></a>
-        <b><%= time_ago_in_words(comment.created_at) %> ago, 
+        <b><%= time_ago_in_words(comment.created_at) %> ago,
         <% if User.find_by_login(comment.author) %><a href="/spectra/author/<%= comment.author %>"><%= comment.author %></a> wrote:</b>
         <% else %><%=h comment.author %> wrote:</b>
         <% end %>
@@ -120,7 +120,7 @@
 </div>
 <script type="text/javascript">
 
-(function () { 
+(function () {
 
 $W = {
   updateLegend: function() {
@@ -150,7 +150,7 @@ $W = {
         y = p1[1];
       else
         y = p1[1] + (p2[1] - p1[1]) * (pos.x - p1[0]) / (p2[0] - p1[0]);
-  
+
       $('#wavelength').html(parseInt(pos.x))
       legends = $("#graph .legendLabel");
       legends.eq(i).html(series.label.replace(/=.*%/, "= " + parseInt(y) + "%"));

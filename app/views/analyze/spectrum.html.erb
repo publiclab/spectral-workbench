@@ -10,20 +10,20 @@
   <% if logged_in? %>
     <% if @spectrum.author == current_user.login %>
       <% if !@spectrum.calibrated %>
-        <div class="alert alert-warning"><button type="button" class="close" data-dismiss="alert">×</button> 
-          This spectrum is not yet calibrated. <a class="btn btn-primary btn-small" data-toggle="modal" href="#calibratemodal1" onClick="$('calibrate-begin').focus()">Calibrate</a> 
+        <div class="alert alert-warning"><button type="button" class="close" data-dismiss="alert">×</button>
+          This spectrum is not yet calibrated. <a class="btn btn-primary btn-small" data-toggle="modal" href="#calibratemodal1" onClick="$('calibrate-begin').focus()">Calibrate</a>
           <a class="btn btn-small" href="http://publiclab.org/wiki/spectral-workbench-calibration">Learn more</a>
         </div>
       <% elsif @spectrum.tags.length == 0 %>
-        <div class="alert"><button type="button" class="close" data-dismiss="alert">×</button> 
-          This spectrum is not tagged. <a onClick="$('#tagform .input-prepend').addClass('control-group info');$('#taginput').css('background','#eff')" href="#tags">Add descriptive tags</a> to help categorize your data and build a comprehensive open source library of spectra. 
+        <div class="alert"><button type="button" class="close" data-dismiss="alert">×</button>
+          This spectrum is not tagged. <a onClick="$('#tagform .input-prepend').addClass('control-group info');$('#taginput').css('background','#eff')" href="#tags">Add descriptive tags</a> to help categorize your data and build a comprehensive open source library of spectra.
         </div>
       <% end %>
     <% end %>
   <% end %>
 
   <% if mobile? && !@spectrum.calibrated %>
-    <div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">×</button> 
+    <div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">×</button>
       <i class="icon icon-exclamation-sign"></i> Calibration is easiest <b>from a computer</b>, after which you can use it from your phone.
     </div>
   <% end %>
@@ -46,7 +46,7 @@
         <% if logged_in? && current_user.id == 1 && @spectrum.calibrated %><a href="/key/<%= @spectrum.id %>" class="btn btn-inverse">Make key</a><% end %>
 
         <%= render :partial => "analyze/tools" %>
-        <b class="pull-right" style="padding-top:10px;margin-right:10px;color:#ffffff;"><span id="wavelength"></span> <span id="#unit_label">nm</span></b> 
+        <b class="pull-right" style="padding-top:10px;margin-right:10px;color:#ffffff;"><span id="wavelength"></span> <span id="#unit_label">nm</span></b>
 
       </div>
     </div>
@@ -55,7 +55,7 @@
   <div class="row-fluid">
     <div class="span4">
       <h3 style="margin-bottom:0px;"><%= @spectrum.title %></h3>
-      <p>uploaded by <a href="/profile/<%= @spectrum.author %>"><%= @spectrum.author %></a> | <%= @spectrum.created_at.to_s(:long) %></p>
+      <p>uploaded by <a href="<%= user_path(@spectrum.author) %>"><%= @spectrum.author %></a> | <%= @spectrum.created_at.to_s(:long) %></p>
       <% if @spectrum.lat != 0 && @spectrum.lon != 0 %><p>Collected at: Lat: <%= @spectrum.lat %>, Lon: <%= @spectrum.lon %> (<a href="http://www.openstreetmap.org/?lat=<%= @spectrum.lat %>&lon=<%= @spectrum.lon %>&zoom=10&layers=M">View in OpenStreetMap</a>)</p><% end %>
 
       <%= render :partial => "tag/tagging" %>
@@ -66,7 +66,7 @@
         <a class="btn btn-small" href="/spectra/show/<%= @spectrum.id %>.csv"><b>CSV</b></a>
         <a class="btn btn-small" href="/spectra/show/<%= @spectrum.id %>.csv?raw=true"><b>CSV (raw)</b></a>
         <a class="btn btn-small" href="/spectra/show/<%= @spectrum.id %>.xml"><b>XML</b></a>
-        <a rel="tooltip" class="btn btn-small" href="http://publiclab.org/wiki/spectral-workbench-exporting" title="About export formats"><i class="icon icon-question-sign"></i></a> 
+        <a rel="tooltip" class="btn btn-small" href="http://publiclab.org/wiki/spectral-workbench-exporting" title="About export formats"><i class="icon icon-question-sign"></i></a>
       </div>
 
       <div class="hidden-phone">
@@ -105,10 +105,10 @@
         </div>
       <% end %>
 
-        <div style="margin-top:10px;margin-left:10px;" class="pull-right btn-group"> 
+        <div style="margin-top:10px;margin-left:10px;" class="pull-right btn-group">
           <a <% if !logged_in? %>rel="tooltip" title="Log in first!" <% end %>class="btn btn-small"><i class="icon icon-star"></i> <span id="liked"><%= @spectrum.like_count %></span> like<% if @spectrum.like_count != 1 %>s<% end %></a>
           <% if logged_in? && current_user.login != @spectrum.author %>
-          <a id="likebtn" class="btn btn-small" href="#" onClick="$W.toggle_like(<%= @spectrum.id %>)"><i class="icon icon-star-empty"></i> 
+          <a id="likebtn" class="btn btn-small" href="#" onClick="$W.toggle_like(<%= @spectrum.id %>)"><i class="icon icon-star-empty"></i>
             <span id="likeaction">
             <% if @spectrum.liked_by(current_user.id) %>Unlike<% else %> Like<% end %>
             </span>
@@ -116,7 +116,7 @@
           <% end %>
         </div>
 
-      <div id="share" class="pull-right" style="margin-top:14px;"> 
+      <div id="share" class="pull-right" style="margin-top:14px;">
         <div class="fb-like" data-send="false" data-layout="button_count" data-width="50" data-show-faces="false" style="vertical-align:top;zoom:1;*display:inline"></div>
         <a href="https://twitter.com/share" class="twitter-share-button">Tweet</a>
       </div>
@@ -135,10 +135,9 @@
 <script type="text/javascript">
 
 jQuery(document).ready(function() {
-
   $W.initialize({
     spectrum_id:<%= @spectrum.id %>,
-    sample_row:<%= @spectrum.sample_row %>, // this is not the same as capture row! 
+    sample_row:<%= @spectrum.sample_row %>, // this is not the same as capture row!
     calibrated:<%= @spectrum.calibrated == true %>,
     interface:"analyze",
     mode:"combined",
@@ -146,7 +145,6 @@ jQuery(document).ready(function() {
     form_authenticity_token: "<%= form_authenticity_token %>",
     spectrum_data: <%=raw @spectrum.data.gsub('"',"'") %>
   })
-
 })
 
 </script>
