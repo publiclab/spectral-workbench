@@ -242,6 +242,7 @@ $W = {
       $W.data[0].data.push([line.wavelength,line.average/(2.55)])
     })
     flotoptions.xaxis.show = scaled
+console.log(flotoptions)
     this.plot = $.plot($("#graph"),$W.data,flotoptions);
   },
 
