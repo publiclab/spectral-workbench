@@ -65,7 +65,7 @@ class UsersController < ApplicationController
     end
   end
 
-  def profile
+  def show
     #params[:id] ||= current_user.login if logged_in?
     @user = User.find_by_login(params[:id])
     @spectrums = @user.spectra(100)

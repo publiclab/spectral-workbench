@@ -35,7 +35,7 @@
     <script src="/javascripts/application.js"></script>
     <script src="/javascripts/jquery.min.js"></script>
 <!--    <script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.js"></script> -->
-    <script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.flot.js"></script> 
+    <script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.flot.js"></script>
     <script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.flot.crosshair.js"></script>
 
   </head>
@@ -78,10 +78,10 @@
         <a class="btn btn-large btn-link" onClick="$('#searchbar').toggle()"><i class="icon icon-search" /></i></a>
       </div>
       <ul class="hidden-phone nav nav-pills pull-right">
-        <li><a class="btn btn-link" href="/"><i class="icon icon-home"></i></a></li> 
-        <li><a class="btn btn-link" onClick="$('#searchbar').toggle()"><i class="icon icon-search"></i></a></li> 
+        <li><a class="btn btn-link" href="/"><i class="icon icon-home"></i></a></li>
+        <li><a class="btn btn-link" onClick="$('#searchbar').toggle()"><i class="icon icon-search"></i></a></li>
         <li class="dropdown">
-          <a class="btn btn-link dropdown-toggle" data-toggle="dropdown">Browse <b class="caret"></b></a> 
+          <a class="btn btn-link dropdown-toggle" data-toggle="dropdown">Browse <b class="caret"></b></a>
           <ul class="dropdown-menu">
             <li><a href="/popular">Popular</a></li>
             <li><a href="/sets">Sets</a></li>
@@ -90,9 +90,9 @@
           </ul>
         </li>
         <li class="dropdown">
-          <a class="btn btn-link dropdown-toggle" data-toggle="dropdown">Learn <b class="caret"></b></a> 
+          <a class="btn btn-link dropdown-toggle" data-toggle="dropdown">Learn <b class="caret"></b></a>
           <ul class="dropdown-menu">
-            <li><a href="http://publiclab.org/wiki/spectral-workbench-help">Help</a></li> 
+            <li><a href="http://publiclab.org/wiki/spectral-workbench-help">Help</a></li>
             <li><a href="http://publiclab.org/wiki/spectral-workbench-usage">Using Spectral Workbench</a></li>
             <li><a href="http://publiclab.org/wiki/spectrometer-construction">Build a spectrometer</a></li>
             <li><a href="http://store.publiclab.org/">Buy a spectrometer kit</a></li>
@@ -105,10 +105,10 @@
 
         <% if logged_in? %>
         <li class="dropdown">
-          <a class="btn btn-link dropdown-toggle" data-toggle="dropdown" href="/profile/<%=h current_user.login %>"><i class="icon icon-user"></i> <%=h current_user.login %> <b class="caret"></b></a>
+          <a class="btn btn-link dropdown-toggle" data-toggle="dropdown" href="<%=h user_path(current_user.login) %>"><i class="icon icon-user"></i> <%=h current_user.login %> <b class="caret"></b></a>
           <ul class="dropdown-menu">
-            <li><a href="/dashboard">Dashboard</a></li> 
-            <li><a href="/profile/<%=h current_user.login %>">Profile</a></li> 
+            <li><a href="/dashboard">Dashboard</a></li>
+            <li><a href="<%=h user_path(current_user.login) %>">Profile</a></li>
             <li><%= link_to 'Log out', logout_path %></li>
           </ul>
         </li>
@@ -191,6 +191,6 @@
     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
   })();
 
-</script>  
+</script>
 </body>
 </html>

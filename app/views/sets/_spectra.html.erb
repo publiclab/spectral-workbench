@@ -4,7 +4,7 @@
 <p>
   <b><a href="/analyze/spectrum/<%= spectrum.id %>"><%= spectrum.title %></a></b>
   <br />
-  by <a href="/profile/<%= spectrum.author %>"><%= spectrum.author %></a>, <%= spectrum.created_at.to_s(:short) %>
+  by <a href="<%= user_path(spectrum.author) %>"><%= spectrum.author %></a>, <%= spectrum.created_at.to_s(:short) %>
 </p>
 <% if logged_in? && current_user.login == @set.author %>
   <div class="btn-group pull-right" style="margin:10px 0;">

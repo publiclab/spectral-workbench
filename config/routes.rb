@@ -52,16 +52,22 @@ SpectralWorkbench::Application.routes.draw do
 
   # See how all your routes lay out with 'rake routes'
 
-  get '/offline' => 'users#offline'
   get '/local/:login' => 'sessions#local'
   get '/logout' => 'sessions#logout'
   get '/login' => 'sessions#login'
   get '/session/new' => 'sessions#new'
+
   get '/register' => 'users#create'
   get '/signup' => 'users#new'
   get '/users' => 'users#list'
   get '/contributors' => 'users#contributors'
-  resources :users
+  get '/offline' => 'users#offline'
+
+  resources :users do
+    member do
+      get :profile
+    end
+  end
   resources :session
 
   # countertop spectrometer and device paths
