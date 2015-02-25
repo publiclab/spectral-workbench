@@ -40,12 +40,12 @@ gem 'redcarpet', '2.1.1'
 gem 'rdiscount', '1.6.8'
 gem 'will_paginate'
 #gem 'will_paginate-bootstrap'
-gem "paperclip", ">= 4.1.1"
+gem 'paperclip', '>= 4.1.1'
 
-gem "ruby-openid"#, :require => "openid"
-#gem "rack-openid"
-# switch to:
+gem 'ruby-openid'
 gem 'open_id_authentication'
+
+gem 'rack-offline', '>=0.6.4'
 
 group :development, :test do
   #gem 'rspec-rails'
