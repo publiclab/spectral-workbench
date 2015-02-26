@@ -39,13 +39,21 @@
         <a rel="tooltip" id="cfl-detect" title="Detected fluorescent light" class="btn btn-inverse" onClick=""><i class="icon-white icon-lightbulb"></i></a>
       </div>
 
-<script>
-
-(function() {
-  $W.observe_contrast(false,function(){$('#cfl-detect i').css('color','red')},function(){$('#cfl-detect i').css('color','white')})
-})()
-
-</script>
+      <script>
+  
+        jQuery(document).ready(function() {
+          $W.observe_contrast(
+            false,
+            function() {
+              $('#cfl-detect i').css('color','red');
+            },
+            function() {
+              $('#cfl-detect i').css('color','white');
+            }
+          )
+        })
+ 
+      </script>
 
     </div>
 

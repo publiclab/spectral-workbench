@@ -135,7 +135,7 @@
 </div>
 <script type="text/javascript">
 
-(function () { 
+jQuery(document).ready(function() {
 
   $W.initialize({
     spectrum_id:<%= @spectrum.id %>,
@@ -148,6 +148,6 @@
     spectrum_data: <%=raw @spectrum.data.gsub('"',"'") %>
   })
 
-})()
+})
 
 </script>

@@ -1,5 +1,9 @@
-// create a modal dialog; buttons defined as a nested array of buttn names and code to be run: 
-// [["Save",function(){}],["Cancel",$('.modal').hide()]]
+jQuery(document).ready(function() {
+
+/* create a modal dialog; buttons defined as a 
+ * nested array of buttn names and code to be run: 
+ *   [["Save",function(){}],["Cancel",$('.modal').hide()]]
+ */
 $W.dialog = function(title,body,options) {
 
   html = '<div class="modal"><div class="modal-header"><b>'+title
@@ -227,4 +231,4 @@ $W.macros = {
     }
   }
 }
-
+})

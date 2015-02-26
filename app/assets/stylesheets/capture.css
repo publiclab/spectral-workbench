@@ -1,0 +1,35 @@
+.navbar-fixed-top .nav li {
+  padding-top:3px;
+  font-family:junction,sans-serif;
+}
+#webcam-msg {
+  position:absolute;
+  z-index:2;
+  background:#777;
+  color:#aaa;
+  text-align:center;
+  height:240px;
+  width:320px;
+  font-size:14px;
+}
+a {
+  color:#0af;
+}
+#webcam-msg p {
+  padding:80px 20px; 
+}
+#webcam {
+  position:absolute;
+  z-index:1;
+}
+#header.navbar-inner {
+  margin-right:-40px;
+}
+
+body {
+  background:#444;
+  color:#ccc;
+}
+hr {
+  border-color:#666;
+}

@@ -22,7 +22,7 @@ SpectralWorkbench::Application.configure do
 
   # this shouldn't be necessary but may be for web fonts:
   #config.assets.precompile << /\.(?:svg|eot|woff|ttf)\z/
-  config.assets.precompile += ['capture.js']
+  config.assets.precompile += ['capture.js','analyze.js']
 
   # Defaults to nil and saved in location specified by config.assets.prefix
   # config.assets.manifest = YOUR_PATH
