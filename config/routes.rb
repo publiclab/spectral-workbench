@@ -132,11 +132,12 @@ SpectralWorkbench::Application.routes.draw do
     offline = Rack::Offline.configure :cache_interval => 120 do      
       cache ActionController::Base.helpers.asset_path("application.css")
       cache ActionController::Base.helpers.asset_path("application.js")
+      cache ActionController::Base.helpers.asset_path("capture.css")
       cache ActionController::Base.helpers.asset_path("capture.js")
       cache ActionController::Base.helpers.asset_path("show.js")
 
       cache "/capture"
-      cache "/capture/offline"
+      #cache "/capture/offline"
       cache "/offline"
 
       cache "/images/spectralworkbench.png"
