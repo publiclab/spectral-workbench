@@ -50,7 +50,17 @@ class SessionsController < ApplicationController
     redirect_to '/'
   end
 
-#  protected
+  # only on local installations and during testing, to bypass OpenID; add "local: true" to config/config.yml
+  def local
+    if APP_CONFIG["local"] == true && @current_user = User.find_by_login(params[:login])
+      successful_login '', nil
+    else
+      flash[:error] = "Forbidden"
+      redirect_to "/"
+    end
+  end
+
+  protected
 
   def openid_authentication(openid_url, back_to)
     #puts openid_url

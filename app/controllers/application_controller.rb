@@ -30,28 +30,26 @@ class ApplicationController < ActionController::Base
   end
 
   private
-    def require_login
-      unless logged_in?
-        path_info = request.env['PATH_INFO']
-        flash[:warning] = "You must be logged in to access this section"
-        redirect_to '/login?back_to=' + URI.encode(path_info) # halts request cycle
-      end
+
+  def require_login
+    unless logged_in?
+      path_info = request.env['PATH_INFO']
+      flash[:warning] = "You must be logged in to access this section"
+      redirect_to '/login?back_to=' + URI.encode(path_info) # halts request cycle
     end
+  end
 
-    def logged_in?
-      user_id = session[:user_id]
-
-      begin
-        if user_id and User.find(user_id)
-          return true
-        else
-          return false
-        end
-      rescue
+  def logged_in?
+    user_id = session[:user_id]
+    begin
+      if user_id and User.find(user_id)
+        return true
+      else
         return false
       end
+    rescue
+      return false
     end
-
-
+  end
 
 end

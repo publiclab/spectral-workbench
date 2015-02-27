@@ -1,4 +1,5 @@
 class UserMailer < ActionMailer::Base
+  default from: "do-not-reply@spectralworkbench.org"
 
   def welcome_email(user)
     recipients  user.email
