@@ -4,6 +4,14 @@
   $("[rel=popover]").popover()
 })()
 
+/* this sucks, fix it :-) */
+if ($('body').width() < 767) {
+  $('#logo').addClass('mobile');
+  setTimeout(function() {
+    $('#headerBtns').addClass('mobile'); 
+  },250);
+}
+
 /* Prompt to load newly updated offline cache files */
 window.addEventListener('load', function(e) {
   if (window.applicationCache) {
@@ -41,3 +49,6 @@ _gaq.push(['_trackPageview']);
   js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
   fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));
+
+/* Twitter button crap */
+!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");

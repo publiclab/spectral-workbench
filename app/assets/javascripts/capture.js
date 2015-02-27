@@ -1,9 +1,5 @@
+//= require graph.js
 // window.webcam.getCameraList()
-//$.ajaxSetup ({ cache: false });
-var ajax_load = "<img src='/images/spinner-small.gif' alt='loading...' />";
-
-var $W
-
 $W = {
   data: null,
   chrome_cameras: [],

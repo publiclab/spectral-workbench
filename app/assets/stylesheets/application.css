@@ -9,7 +9,7 @@
  * compiled file, but it's generally better to create a new file per style scope.
  *
  *= require bootstrap-css/css/bootstrap.min.css
-//= require bootstrap-css/css/bootstrap-responsive.min.css
+ *= require bootstrap-css/css/bootstrap-responsive.min.css
  *= require style
  *
  *= require_self

@@ -13,15 +13,15 @@
     <meta name="description" content="An open source spectral library and DIY spectrometry community developing environmental testing techniques.">
     <meta name="author" content="Public Lab contributors">
 
-    <link rel="stylesheet" href="/lib/fontawesome/css/font-awesome.min.css"/>
 
     <%= stylesheet_link_tag    "application", :media => "all" %>
+    <link rel="stylesheet" href="/lib/fontawesome/css/font-awesome.min.css"/>
 
     <% if params[:controller] == "capture" %>
       <%= javascript_include_tag "capture" %>
       <%= stylesheet_link_tag    "capture", :media => "all" %>
-    <% elsif params[:controller] == "analyze" %>
-      <%= javascript_include_tag "show" %>
+    <% else %>
+      <%= javascript_include_tag "analyze" %>
     <% end %>
 
     <%= javascript_include_tag "application" %>
@@ -60,7 +60,6 @@
      
         <div class="span4">
           <p>Follow <b>SpectralWB</b> on Twitter to see code updates: <a href="https://twitter.com/SpectralWB" class="twitter-follow-button" data-show-count="false">Follow @SpectralWB</a></p>
-          <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
         </div>
      
       </footer>

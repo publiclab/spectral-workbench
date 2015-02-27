@@ -8,12 +8,12 @@
     <a class="brand" href="/"><img style="padding:-2px;width:20px;" src="/images/logo.png" /></a>
     <div class="pull-right">
       <% unless logged_in? %><a href="/login" class="btn">Log in</a><% end %>
-      <a class="btn btn-inverse" href="http://publiclab.org/wiki/spectral-workbench"><i class="icon icon-white icon-question-sign"></i></a>
-      <span class="tool-toggle"><a class="btn btn-inverse" onClick="$('#tool-pane').toggle()"><i class="icon-white icon-wrench"></i></a></span>
+      <a class="btn btn-inverse" href="http://publiclab.org/wiki/spectral-workbench"><i class="icon icon-question-sign"></i></a>
+      <span class="tool-toggle"><a class="btn btn-inverse" onClick="$('#tool-pane').toggle()"><i class="icon-wrench"></i></a></span>
     </div>
     <ul class="nav" style="margin:0">
-      <li id="capture-btn"><a href="#capture" data-toggle="tab"><i class="icon-white icon-camera"></i><span class="hidden-phone"> Capture</a></a></li>
-      <li id="settings-btn" class="active"><a href="#settings" data-toggle="tab"><i class="icon-white icon-cog"></i><span class="hidden-phone"> Settings</span></a></li>
+      <li id="capture-btn"><a href="#capture" data-toggle="tab"><i class="icon-camera"></i><span class="hidden-phone"> Capture</a></a></li>
+      <li id="settings-btn" class="active"><a href="#settings" data-toggle="tab"><i class="icon-cog"></i><span class="hidden-phone"> Settings</span></a></li>
     </ul>
   </div>
 </div>
@@ -49,9 +49,9 @@
 
   <a class="btn btn-large btn-primary" href="#capture" onClick="$('#capture-btn').addClass('active');$('#settings-btn').removeClass('active');" data-toggle="tab">Begin capturing &raquo;</a>
   <p style="padding-top:5px;">
-    <a rel="tooltip" title="Flip video horizontally" class="btn btn-inverse" onClick="$W.flip_horizontal()"><i class="icon-white icon-resize-horizontal"></i> Flip</a>
-    <a rel="tooltip" title="Rotate video 90 &deg;" class="btn btn-inverse" onClick="$W.toggle_rotation()"><i class="icon-white icon-repeat"></i> Rotate</a>
-    <% if params[:debug] || chrome? %><a rel="tooltip" title="Change camera" class="btn btn-inverse" onClick="$W.chromeCameraSwitch()"><i class="icon-white icon-camera"></i> Change Camera</a><% end %>
+    <a rel="tooltip" title="Flip video horizontally" class="btn btn-inverse" onClick="$W.flip_horizontal()"><i class="icon-resize-horizontal"></i> Flip</a>
+    <a rel="tooltip" title="Rotate video 90 &deg;" class="btn btn-inverse" onClick="$W.toggle_rotation()"><i class="icon-repeat"></i> Rotate</a>
+    <% if params[:debug] || chrome? %><a rel="tooltip" title="Change camera" class="btn btn-inverse" onClick="$W.chromeCameraSwitch()"><i class="icon-camera"></i> Change Camera</a><% end %>
 
   </p>
   <p style="padding-top:5px;">

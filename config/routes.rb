@@ -128,35 +128,36 @@ SpectralWorkbench::Application.routes.draw do
   get '/match/livesearch' => 'match#livesearch'
   get '/match/:id' => 'match#index'
 
-  #if Rails.env.production?
-    offline = Rack::Offline.configure :cache_interval => 120 do      
-      cache ActionController::Base.helpers.asset_path("application.css")
-      cache ActionController::Base.helpers.asset_path("application.js")
-      cache ActionController::Base.helpers.asset_path("capture.css")
-      cache ActionController::Base.helpers.asset_path("capture.js")
-      cache ActionController::Base.helpers.asset_path("show.js")
+  # cache_interval is how often the cache is recalculated
+  # but if nothing changes, the checksum will not change
+  # and the manifest will not trigger a re-download
+  offline = Rack::Offline.configure :cache_interval => 120 do      
+    cache ActionController::Base.helpers.asset_path("application.css")
+    cache ActionController::Base.helpers.asset_path("application.js")
+    cache ActionController::Base.helpers.asset_path("capture.css")
+    cache ActionController::Base.helpers.asset_path("capture.js")
+    cache ActionController::Base.helpers.asset_path("analyze.js")
 
-      cache "/capture"
-      #cache "/capture/offline"
-      cache "/offline"
+    cache "/capture"
+    #cache "/capture/offline"
+    cache "/offline"
 
-      cache "/images/spectralworkbench.png"
-      cache "/images/example-sky.jpg"
-      cache "/images/example-cfl.jpg"
-      cache "/images/calibration-example.png"
-      cache "/images/logo.png"
-      cache "/lib/junction/webfonts/junction-regular.eot"
-      cache "/lib/junction/webfonts/junction-regular.woff"
-      cache "/lib/junction/webfonts/junction-regular.ttf"
-      cache "/lib/junction/webfonts/junction-regular.svg"
-      cache "/lib/fontawesome/css/font-awesome.min.css"
+    cache "/images/spectralworkbench.png"
+    cache "/images/example-sky.jpg"
+    cache "/images/example-cfl.jpg"
+    cache "/images/calibration-example.png"
+    cache "/images/logo.png"
+    cache "/lib/junction/webfonts/junction-regular.eot"
+    cache "/lib/junction/webfonts/junction-regular.woff"
+    cache "/lib/junction/webfonts/junction-regular.ttf"
+    cache "/lib/junction/webfonts/junction-regular.svg"
+    cache "/lib/fontawesome/css/font-awesome.min.css"
 
-      network "/"
-      fallback "/" => "/offline"
-      fallback "/dashboard" => "/offline"
-    end
-    match "/index.manifest" => offline  
-  #end
+    network "/"
+    fallback "/" => "/offline"
+    fallback "/dashboard" => "/offline"
+  end
+  match "/index.manifest" => offline  
 
   root to: 'spectrums#index'
 

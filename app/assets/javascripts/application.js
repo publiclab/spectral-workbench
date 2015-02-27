@@ -15,8 +15,6 @@
 //= require bootstrap-css/js/bootstrap.min.js
 //= require getusermedia.js/dist/getUserMedia.min.js
 //= require basics.js
-//= require graph.js
-//= require analyze.js
 //= require api.js
 //= require flot/jquery.flot.js
 //= require flot/jquery.flot.crosshair.js
