@@ -57,9 +57,9 @@
   <% @spectrums.each do |spectrum| %>
     <% if spectrum.calibrated %>
       <% if spectrum.data == "" || spectrum.data.nil? %>
-        spectrum = <%= spectrum.extract_data %>
+        spectrum = <%= raw spectrum.extract_data %>
       <% else %>
-        spectrum = <%= spectrum.data.chomp(",") %>
+        spectrum = <%= raw spectrum.data.chomp(",") %>
       <% end %>
         data.push({data:[]})
         scaled = true

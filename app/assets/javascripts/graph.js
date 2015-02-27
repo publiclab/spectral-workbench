@@ -45,8 +45,8 @@ flotoptions_minimal = {
     clickable: true,
     hoverable:true,
     borderWidth: 0,
-          backgroundColor: "#222",
-          color: "#444",
+    backgroundColor: "#222",
+    color: "#444",
     markers: []
   },
   // Palette "i eat the rainbow" by svartedauden on Colourlovers: http://www.colourlovers.com/palette/1630898/i_eat_the_rainbow, CC-BY-NC
