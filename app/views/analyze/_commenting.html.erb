@@ -7,8 +7,8 @@
   <% @spectrum.comments.each do |comment| %>
   <div class="comment">
     <a name="comment_<%= comment.id %>"></a>
-    <b><%= time_ago_in_words(comment.created_at) %> ago, 
-    <% if User.find_by_login(comment.author) %><a href="/profile/<%= comment.author %>"><%= comment.author %></a> wrote:</b>
+    <b><%= time_ago_in_words(comment.created_at) %> ago,
+    <% if User.find_by_login(comment.author) %><a href="<%= user_path(comment.author) %>"><%= comment.author %></a> wrote:</b>
     <% else %><%=h comment.author %> wrote:</b>
     <% end %>
     <p><%= RDiscount.new(comment.body).to_html %></p>
@@ -49,7 +49,7 @@
           $("#commentsubmit").prop('disabled',true)
         },
         success: function(response) {
-          $('#commentlist').append('<div class="comment"><a name="comment_'+response+'"></a><b>Just now, <a href="/profile/<%= current_user.login %>"><%= current_user.login %></a> wrote:</b><p>'+$('#commentbody').val()+'</p><p><small><a href="/comments/delete/'+response+'" onclick="return confirm(\'Are you sure?\');"><i class="icon icon-remove-sign"></i> Delete</a></small></p></div>')
+          $('#commentlist').append('<div class="comment"><a name="comment_'+response+'"></a><b>Just now, <a href="/users/<%= current_user.login %>"><%= current_user.login %></a> wrote:</b><p>'+$('#commentbody').val()+'</p><p><small><a href="/comments/delete/'+response+'" onclick="return confirm(\'Are you sure?\');"><i class="icon icon-remove-sign"></i> Delete</a></small></p></div>')
           $('#commentbody').prop('disabled',false)
           $('#commentbody').val('')
           $("#commentsubmit").prop('disabled',false)

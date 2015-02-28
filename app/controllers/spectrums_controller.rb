@@ -3,7 +3,6 @@ class SpectrumsController < ApplicationController
   respond_to :html, :xml, :js, :csv
   protect_from_forgery :only => [:clone, :extract, :calibrate, :save]
   # http://api.rubyonrails.org/classes/ActionController/RequestForgeryProtection/ClassMethods.html
-  # create and update are protected by recaptcha
 
   def stats
   end
@@ -228,8 +227,8 @@ class SpectrumsController < ApplicationController
         @spectrum.author = current_user.login
         @spectrum.user_id = current_user.id
       end
-      @spectrum.title = params[:spectrum][:title]
-      @spectrum.notes = params[:spectrum][:notes]
+      @spectrum.title = params[:spectrum][:title] unless params[:spectrum][:title].nil?
+      @spectrum.notes = params[:spectrum][:notes] unless params[:spectrum][:notes].nil?
  
       respond_with(@spectrum) do |format| 
         if @spectrum.save

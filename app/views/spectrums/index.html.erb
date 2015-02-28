@@ -1,9 +1,5 @@
-<script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.flot.js"></script> 
-<script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.flot.crosshair.js"></script>
-<script src="/javascripts/analyze.js"> </script>
-
 <div class="container-fluid" style="clear:both;">
-  
+
   <div class="row-fluid">
     <iframe class="span4" height="240px;" src="http://www.youtube.com/embed/idg10MiceEI" frameborder="0" allowfullscreen></iframe>
     <div class="span8">
@@ -28,7 +24,7 @@
     <h3>Recent authors</h3>
     <ul class="nav">
     <% User.find_all_by_login(@spectrums.collect(&:author).uniq).each do |user| %>
-      <li><a href="/profile/<%= user.login %>"><i class="icon icon-user"></i> <%= user.login %></a></li>
+      <li><a href="<%= user_path(user.login) %>"><i class="icon icon-user"></i> <%= user.login %></a></li>
     <% end %>
     </ul>
 
@@ -82,4 +78,3 @@
   </div>
 
 </div>
-

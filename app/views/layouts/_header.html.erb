@@ -1,0 +1,72 @@
+<div id="header">
+  <a id="logo" href="/"><img src="/images/logo.png" /></a>
+  <h3 class="hidden-desktop visible-phone pull-left"><a class="title" href="/">SW</a></h3>
+  <h3 class="hidden-phone visible-desktop pull-left"><a class="title" href="/">Spectral Workbench</a><small> by <a href="http://publiclab.org">Public Lab</a></small></h3>
+
+  <div id="headerBtns" class="btn-group pull-right">
+    <% if (webrtc?) %>
+      <a class="btn btn-primary btn-large" href="/capture"><i class="icon icon-camera icon-white"></i><span class="hidden-phone"> Capture spectra</span></a>
+    <% else %>
+      <a class="btn btn-primary btn-large" href="/upload"><i class="icon icon-camera icon-white"></i><span class="hidden-phone"> Capture spectra</span></a>
+    <% end %>
+    <a class="btn btn-primary btn-large dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+    <ul class="dropdown-menu">
+      <li><a href="/capture" class="button"><i class="icon icon-camera"></i> <b>Live-capture spectra (default)</b></a></li>
+      <li><a href="/upload" class="button"><i class="icon icon-upload"></i> Upload image</a></li>
+      <li class="divider"></li>
+      <li><a href="http://publiclab.org/wiki/spectral-workbench-usage" class="button"><i class="icon icon-question-sign"></i> Learn how</a></li>
+      <% if logged_in? %><li><a href="/logout" class="button"><i class="icon icon-user"></i> Log out</a></li><% else %>
+      <li><a href="/login" class="button"><i class="icon icon-user"></i> Log in</a></li><% end %>
+    </ul>
+  </div>
+  <div id="headerBtns" class="btn-group pull-right hidden-desktop" style="padding-right:0;">
+    <a class="btn btn-large btn-link" href="http://publiclab.org/wiki/spectral-workbench-help"><i class="icon icon-question-sign" /></i></a>
+    <a class="btn btn-large btn-link" onClick="$('#searchbar').toggle()"><i class="icon icon-search" /></i></a>
+  </div>
+  <ul class="hidden-phone nav nav-pills pull-right">
+    <li><a class="btn btn-link" href="/"><i class="icon icon-home"></i></a></li> 
+    <li><a class="btn btn-link" onClick="$('#searchbar').toggle()"><i class="icon icon-search"></i></a></li> 
+    <li class="dropdown">
+      <a class="btn btn-link dropdown-toggle" data-toggle="dropdown">Browse <b class="caret"></b></a> 
+      <ul class="dropdown-menu">
+        <li><a href="/popular">Popular</a></li>
+        <li><a href="/sets">Sets</a></li>
+        <li><a href="/contributors">Contributors</a></li>
+        <li><a href="/tags">Tags</a></li>
+      </ul>
+    </li>
+    <li class="dropdown">
+      <a class="btn btn-link dropdown-toggle" data-toggle="dropdown">Learn <b class="caret"></b></a> 
+      <ul class="dropdown-menu">
+        <li><a href="http://publiclab.org/wiki/spectral-workbench-help">Help</a></li> 
+        <li><a href="http://publiclab.org/wiki/spectral-workbench-usage">Using Spectral Workbench</a></li>
+        <li><a href="http://publiclab.org/wiki/spectrometer-construction">Build a spectrometer</a></li>
+        <li><a href="http://store.publiclab.org/">Buy a spectrometer kit</a></li>
+        <li><a href="http://publiclab.org/tool/spectrometer">Open source spectrometry</a></li>
+        <li><a href="http://publiclab.org/wiki/spectral-analysis">Applications</a></li>
+        <li class="divider"></li>
+        <li><a href="http://publiclab.org/wiki/spectral-workbench">About Spectral Workbench</a></li>
+      </ul>
+    </li>
+
+    <% if logged_in? %>
+    <li class="dropdown">
+      <a class="btn btn-link dropdown-toggle" data-toggle="dropdown" href="/profile/<%=h current_user.login %>"><i class="icon icon-user"></i> <%=h current_user.login %> <b class="caret"></b></a>
+      <ul class="dropdown-menu">
+        <li><a href="/dashboard">Dashboard</a></li> 
+        <li><a href="/profile/<%=h current_user.login %>">Profile</a></li> 
+        <li><%= link_to 'Log out', logout_path %></li>
+      </ul>
+    </li>
+    <% else %>
+    <li><a href="/login"><i class="icon icon-user"></i> Log in</a></li>
+    <% end %>
+
+  </ul>
+</div>
+
+<div class="container-fluid" id="alerts">
+  <% if flash[:notice] %><div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">×</button><%=raw flash[:notice] %></div><% end %>
+  <% if flash[:error] %><div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">×</button><%=raw flash[:error] %></div><% end %>
+  <% if flash[:warning] %><div class="alert alert"><button type="button" class="close" data-dismiss="alert">×</button><%=raw flash[:warning] %></div><% end %>
+</div>

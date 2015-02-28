@@ -17,7 +17,7 @@ class DeviceController < ApplicationController
         :user_id => 0,
         :calibration_id => params[:id]
       })
-      if @device.save! 
+      if @device.save!
         @device.key = @device.id.to_s + [*'A'..'Z'].sample + [*'A'..'Z'].sample
         @device.save!
         flash[:notice] = "Key saved: "+@device.key
@@ -45,7 +45,7 @@ class DeviceController < ApplicationController
       @spectrum.user_id = current_user.id
       @spectrum.save!
       flash[:notice] = "Successfully fetched precalibration; your device is now calibrated and ready to use."
-      redirect_to "/profile/"+current_user.login
+      redirect_to user_path(current_user.login)
     else
       flash[:error] = "You must be logged in to view that page."
       redirect_to "/login"

@@ -1,25 +1,26 @@
-<script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.js"></script> 
-<script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.flot.js"></script> 
-<script language="javascript" type="text/javascript" src="/javascripts/application.js"></script> 
-
+<%= javascript_include_tag "analyze" %>
+<%= javascript_include_tag "application" %>
 <img width="<%= @width.to_i-20 %>px" height="<%= (@height/2).to_i-50 %>" src="<%= @spectrum.photo.url(:large) %>" />
 <div id="graph" style="width:<%= @width.to_i-20 %>px;height:<%= (@height/2).to_i %>px;"></div>
 <script type="text/javascript">
   <% if @spectrum.data == "" || @spectrum.data.nil? %>
-    spectrum = <%= @spectrum.extract_data %>
+    spectrum = <%= raw @spectrum.extract_data %>
   <% else %>
-    spectrum = <%= @spectrum.data.chomp(",") %>
+    spectrum = <%= raw @spectrum.data.chomp(",") %>
   <% end %>
     data = [{label: "<%= @spectrum.title %> = 0% ",data:[]}]
     scaled = true
     $.each(spectrum.lines,function(index,line) {
       if (line.wavelength == null) {
-	line.wavelength = index
-	scaled = false
+  line.wavelength = index
+  scaled = false
       }
       data[0].data.push([line.wavelength,line.average/(2.55)])
     })
     flotoptions.xaxis.show = scaled
+    flotoptions.grid.backgroundColor = "#eee"
+    flotoptions.grid.color = "#444"
+    flotoptions.colors[0] = "#666"
     plot = $.plot($("#graph"),data,flotoptions);
 </script>
 
@@ -28,17 +29,18 @@
 <span style="text-align:right;">on <img src="/images/spectralworkbench.png" /> <a target="_blank" href="http://spectralworkbench.org">SpectralWorkbench.org</a></span>
 <style>
 html {
-	font-family: lucida grande, lucida console, arial, sans-serif;
-	font-size:11px;
+  font-family: lucida grande, lucida console, arial, sans-serif;
+  font-size:11px;
 }
 body {
-	margin:0;
+  margin:0;
 }
 b {
-	padding:3px;
-	font-size:13px;
+  padding:3px;
+  font-size:13px;
 }
 #graph {
-	margin-top:8px;
+  color:#444;
+  margin-top:8px;
 }
 </style>

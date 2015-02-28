@@ -1,0 +1,12 @@
+{
+  "name": "Spectral Workbench",
+  "version": "1.0.0",
+  "dependencies": {
+    "fontawesome":      "~3.2.1",
+    "bootstrap-css":    "~2.3.2",
+    "jquery":           "~1.11",
+    "flot":             "~0.7",
+    "getusermedia.js":  "addyosmani/getUserMedia.js#v1.0rc2",
+    "junction":         "theleagueof/junction"
+  }
+}

@@ -5,15 +5,16 @@
 #   git config --global core.excludesfile ~/.gitignore_global
 
 # Ignore bundler config
-/.bundle
+.bundle
 
 # Ignore the default SQLite database.
-/db/*.sqlite3
+db/*.sqlite3
+db/*.db*
 
 # Ignore all logfiles and tempfiles.
-/log/*.log
-/log/*.tmp
-/tmp
+log/*.log
+log/*.tmp
+tmp
 
 *.swp
 *.swo
@@ -33,4 +34,5 @@ config/initializers/recaptcha.rb
 config/initializers/site_keys.rb
 config/initializers/secret_token.rb
 Gemfile.lock
-
+public/lib
+public/assets

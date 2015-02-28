@@ -5,6 +5,7 @@ one:
   author: MyString
   data: MyText
   notes: MyText
+  user_id: 1
   version: 1
 
 two:

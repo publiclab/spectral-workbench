@@ -12,120 +12,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="An open source spectral library and DIY spectrometry community developing environmental testing techniques.">
     <meta name="author" content="Public Lab contributors">
-    <%= csrf_meta_tag %>
 
-    <!-- Le styles -->
-    <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
-    <link href="/stylesheets/bootstrap.css" rel="stylesheet">
-    <link href="/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
-    <link href="/fontawesome/css/font-awesome.min.css" rel="stylesheet">
+
+    <%= stylesheet_link_tag    "application", :media => "all" %>
+    <link rel="stylesheet" href="/lib/fontawesome/css/font-awesome.min.css"/>
+
+    <% if params[:controller] == "capture" %>
+      <%= javascript_include_tag "capture" %>
+      <%= stylesheet_link_tag    "capture", :media => "all" %>
+    <% else %>
+      <%= javascript_include_tag "analyze" %>
+    <% end %>
+
+    <%= javascript_include_tag "application" %>
+    <%= csrf_meta_tag %>
 
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
 
-    <!-- Le fav and touch icons -->
-    <link rel="shortcut icon" href="/bootstrap/ico/favicon.ico">
-    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/bootstrap/ico/apple-touch-icon-144-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/bootstrap/ico/apple-touch-icon-114-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/bootstrap/ico/apple-touch-icon-72-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" href="/bootstrap/ico/apple-touch-icon-57-precomposed.png">
-
-    <script src="/javascripts/application.js"></script>
-    <script src="/javascripts/jquery.min.js"></script>
-<!--    <script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.js"></script> -->
-    <script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.flot.js"></script> 
-    <script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.flot.crosshair.js"></script>
-
   </head>
 
   <body>
+    <!-- Facebook button needs this :-( -->
     <div id="fb-root"></div>
-    <script>(function(d, s, id) {
-      var js, fjs = d.getElementsByTagName(s)[0];
-      if (d.getElementById(id)) return;
-      js = d.createElement(s); js.id = id;
-      js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
-      fjs.parentNode.insertBefore(js, fjs);
-    }(document, 'script', 'facebook-jssdk'));</script>
 
     <% if params[:controller] != "capture" %>
-    <div id="header">
-      <a id="logo" href="/"><img src="/images/logo.png" /></a>
-      <h3 class="hidden-desktop visible-phone pull-left"><a class="title" href="/">SW</a></h3>
-      <h3 class="hidden-phone visible-desktop pull-left"><a class="title" href="/">Spectral Workbench</a><small> by <a href="http://publiclab.org">Public Lab</a></small></h3>
-      <script> if ($('body').width() < 767) { $('#logo').addClass('mobile'); setTimeout(function() {$('#headerBtns').addClass('mobile'); },250) } </script>
-
-      <div id="headerBtns" class="btn-group pull-right">
-        <% if (webrtc?) %>
-          <a class="btn btn-primary btn-large" href="/capture"><i class="icon icon-camera icon-white"></i><span class="hidden-phone"> Capture spectra</span></a>
-        <% else %>
-          <a class="btn btn-primary btn-large" href="/upload"><i class="icon icon-camera icon-white"></i><span class="hidden-phone"> Capture spectra</span></a>
-        <% end %>
-        <a class="btn btn-primary btn-large dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
-        <ul class="dropdown-menu">
-          <li><a href="/capture" class="button"><i class="icon icon-camera"></i> <b>Live-capture spectra (default)</b></a></li>
-          <li><a href="/upload" class="button"><i class="icon icon-upload"></i> Upload image</a></li>
-          <li class="divider"></li>
-          <li><a href="http://publiclab.org/wiki/spectral-workbench-usage" class="button"><i class="icon icon-question-sign"></i> Learn how</a></li>
-          <% if logged_in? %><li><a href="/logout" class="button"><i class="icon icon-user"></i> Log out</a></li><% else %>
-          <li><a href="/login" class="button"><i class="icon icon-user"></i> Log in</a></li><% end %>
-        </ul>
-      </div>
-      <div id="headerBtns" class="btn-group pull-right hidden-desktop" style="padding-right:0;">
-        <a class="btn btn-large btn-link" href="http://publiclab.org/wiki/spectral-workbench-help"><i class="icon icon-question-sign" /></i></a>
-        <a class="btn btn-large btn-link" onClick="$('#searchbar').toggle()"><i class="icon icon-search" /></i></a>
-      </div>
-      <ul class="hidden-phone nav nav-pills pull-right">
-        <li><a class="btn btn-link" href="/"><i class="icon icon-home"></i></a></li> 
-        <li><a class="btn btn-link" onClick="$('#searchbar').toggle()"><i class="icon icon-search"></i></a></li> 
-        <li class="dropdown">
-          <a class="btn btn-link dropdown-toggle" data-toggle="dropdown">Browse <b class="caret"></b></a> 
-          <ul class="dropdown-menu">
-            <li><a href="/popular">Popular</a></li>
-            <li><a href="/sets">Sets</a></li>
-            <li><a href="/contributors">Contributors</a></li>
-            <li><a href="/tags">Tags</a></li>
-          </ul>
-        </li>
-        <li class="dropdown">
-          <a class="btn btn-link dropdown-toggle" data-toggle="dropdown">Learn <b class="caret"></b></a> 
-          <ul class="dropdown-menu">
-            <li><a href="http://publiclab.org/wiki/spectral-workbench-help">Help</a></li> 
-            <li><a href="http://publiclab.org/wiki/spectral-workbench-usage">Using Spectral Workbench</a></li>
-            <li><a href="http://publiclab.org/wiki/spectrometer-construction">Build a spectrometer</a></li>
-            <li><a href="http://store.publiclab.org/">Buy a spectrometer kit</a></li>
-            <li><a href="http://publiclab.org/tool/spectrometer">Open source spectrometry</a></li>
-            <li><a href="http://publiclab.org/wiki/spectral-analysis">Applications</a></li>
-            <li class="divider"></li>
-            <li><a href="http://publiclab.org/wiki/spectral-workbench">About Spectral Workbench</a></li>
-          </ul>
-        </li>
-
-        <% if logged_in? %>
-        <li class="dropdown">
-          <a class="btn btn-link dropdown-toggle" data-toggle="dropdown" href="/profile/<%=h current_user.login %>"><i class="icon icon-user"></i> <%=h current_user.login %> <b class="caret"></b></a>
-          <ul class="dropdown-menu">
-            <li><a href="/dashboard">Dashboard</a></li> 
-            <li><a href="/profile/<%=h current_user.login %>">Profile</a></li> 
-            <li><%= link_to 'Log out', logout_path %></li>
-          </ul>
-        </li>
-        <% else %>
-        <li><a href="/login"><i class="icon icon-user"></i> Log in</a></li>
-        <% end %>
-
-      </ul>
-    </div>
-    <% end %>
-
-    <% if params[:controller] != "capture" %>
-    <div class="container-fluid" id="alerts">
-      <% if flash[:notice] %><div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">×</button><%=raw flash[:notice] %></div><% end %>
-      <% if flash[:error] %><div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">×</button><%=raw flash[:error] %></div><% end %>
-      <% if flash[:warning] %><div class="alert alert"><button type="button" class="close" data-dismiss="alert">×</button><%=raw flash[:warning] %></div><% end %>
-    </div>
+      <%= render :partial => 'layouts/header' %>
     <% end %>
 
     <div class="container" id="searchbar" style="display:none;">
@@ -135,62 +49,21 @@
     <%= yield %>
 
     <% if params[:controller] != "capture" %>
-    <footer style="margin-bottom:200px;" class="visible-desktop">
+      <footer style="margin-bottom:200px;" class="visible-desktop">
 
-      <hr />
-      <div class="span4">
-        <p><b>Spectral Workbench</b> is <a href="https://github.com/publiclab/spectral-workbench">open source software</a></p>
-        <p>Report bugs and help improve this software <a href="https://github.com/publiclab/spectral-workbench/issues/new">on Github</a></p>
-      </div>
+        <hr />
 
-      <div class="span4">
-        <p>Follow <b>SpectralWB</b> on Twitter to see code updates: <a href="https://twitter.com/SpectralWB" class="twitter-follow-button" data-show-count="false">Follow @SpectralWB</a></p>
-        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
-      </div>
+        <div class="span4">
+          <p><b>Spectral Workbench</b> is <a href="https://github.com/publiclab/spectral-workbench">open source software</a></p>
+          <p>Report bugs and help improve this software <a href="https://github.com/publiclab/spectral-workbench/issues/new">on Github</a></p>
+        </div>
 
-    </footer>
+        <div class="span4">
+          <p>Follow <b>SpectralWB</b> on Twitter to see code updates: <a href="https://twitter.com/SpectralWB" class="twitter-follow-button" data-show-count="false">Follow @SpectralWB</a></p>
+        </div>
+
+      </footer>
     <% end %>
 
-    <!-- Le javascript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="/bootstrap/js/bootstrap.min.js"></script>
-    <script src="/bootstrap/js/bootstrap.typeahead.js"></script>
-    <script>
-      (function() {
-        $("[rel=tooltip]").tooltip()
-        $("[rel=popover]").popover()
-      })()
-
-      window.addEventListener('load', function(e) {
-        if (window.applicationCache) {
-          window.applicationCache.addEventListener('updateready', function(e) {
-              if (window.applicationCache.status == window.applicationCache.UPDATEREADY) {
-                // Browser downloaded a new app cache.
-                // Swap it in and reload the page to get the new hotness.
-                window.applicationCache.swapCache();
-                if (confirm('A new version of this site is available. Load it?')) {
-                  window.location.reload();
-                }
-              } else {
-                // Manifest didn't changed. Nothing new to server.
-              }
-          }, false);
-        }
-      }, false);
-    </script>
-<script type="text/javascript">
-
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-30020531-1']);
-  _gaq.push(['_trackPageview']);
-
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-
-</script>  
 </body>
 </html>
