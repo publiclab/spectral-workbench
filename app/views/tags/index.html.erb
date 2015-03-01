@@ -39,7 +39,7 @@
     <% if tag = Tag.find_by_name(name, :order => "id DESC") %>
       <% if tag.spectrum %>
         <div class="span3">
-        <a href="/tag/<%= name %>">
+        <a href="<%= tag_path(tag.name) %>">
         <div class="tag">
           <img width="100%" class="img" src="<%= tag.spectrum.photo.url(:thumb) %>" />
           <h1 style="font-size:4em;"><%= count %></h1>

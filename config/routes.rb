@@ -98,10 +98,8 @@ SpectralWorkbench::Application.routes.draw do
   get '/session' => 'session#create', :conditions => { :method => :get }
 
   get '/spectra/assign' => 'spectrums#assign'
-  get '/tag/create' => 'tag#create'
-  get '/tag/:id' => 'tag#show'
-  get '/tag/:id.:format' => 'tag#show'
-  get '/tags' => 'tag#index'
+
+  resources :tags
 
   resources :spectrums do
     member do
