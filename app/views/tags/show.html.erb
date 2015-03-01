@@ -35,8 +35,8 @@
 <div style="padding:10px;">
 
   <div class="btn-group hidden-phone pull-right" style="padding-top:10px;">
-    <a class="btn btn-small" href="/tag/<%=h params[:id] %>.json"><b>JSON</b></a>
-    <a class="btn btn-small" href="/tag/<%=h params[:id] %>.xml"><b>XML</b></a>
+    <a class="btn btn-small" href="<%=h tag_path(params[:id]) %>.json"><b>JSON</b></a>
+    <a class="btn btn-small" href="<%=h tag_path(params[:id]) %>.xml"><b>XML</b></a>
     <a rel="tooltip" class="btn btn-small" href="http://publiclab.org/wiki/spectral-workbench-exporting" title="About export formats"><i class="icon icon-question-sign"></i></a>
   </div>
 
