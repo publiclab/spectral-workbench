@@ -17,7 +17,7 @@ class LikesController < ApplicationController
   def toggle
     @spectrum = Spectrum.find params[:id]
     if logged_in? && @spectrum.author != current_user.login
-      if @spectrum.liked_by(current_user.id) 
+      if @spectrum.liked_by(current_user.id)
         Like.find_by_user_id(current_user.id,:conditions => {:spectrum_id => @spectrum.id}).delete
         render :text => "unliked"
       else
@@ -27,11 +27,11 @@ class LikesController < ApplicationController
         })
         if @like.save
           render :text => @spectrum.likes.length
-        else 
+        else
           render :text => "error"
-        end 
-      end 
-    else 
+        end
+      end
+    else
       render :text => "You must be logged in to like, you cannot like your own, and you cannot double-like."
     end
   end
@@ -41,7 +41,7 @@ class LikesController < ApplicationController
     if @like.user_id == current_user.id || params[:password].to_i == APP_CONFIG["password"] || current_user.role == "admin"
       @like.delete
     end
-    redirect_to "/analyze/spectrum/"+@like.spectrum_id.to_s if params[:index] != "true"
+    redirect_to spectrum_path(@like.spectrum_id.to_s) if params[:index] != "true"
   end
 
 end

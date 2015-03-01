@@ -72,7 +72,7 @@ class CaptureController < ApplicationController
 
       flash[:notice] = 'Spectrum was successfully created.'
       format.html {
-        redirect_to :controller => :analyze, :action => :spectrum, :id => @spectrum.id
+        redirect_to spectrum_path(@spectrum)
       }
       format.xml  { render :xml => @spectrum, :status => :created, :location => @spectrum }
     else

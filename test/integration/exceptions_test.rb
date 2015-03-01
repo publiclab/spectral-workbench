@@ -12,7 +12,7 @@ class ExceptionsTest < ActionController::IntegrationTest
   #  post "/products", "commit"=>"Submit", "product"=>{"name"=>"Headphones", "price"=>"-2"}
   #  assert_response :success
   #end
-  
+
   test "GET /sets" do
     #product = Product.first
     #get "/products/#{product.id}/edit"
@@ -30,9 +30,9 @@ class ExceptionsTest < ActionController::IntegrationTest
     assert_response :success
   end
 
-  test "GET /analyze/spectrum/#" do
+  test "GET /spectrums/#" do
     spectrum = Spectrum.find :first
-    get "/analyze/spectrum/#{spectrum.id}"
+    get "/spectrums/#{spectrum.id}"
     assert_response :success
   end
 
@@ -47,12 +47,4 @@ class ExceptionsTest < ActionController::IntegrationTest
     assert_response :success
   end
 
-  test "GET /profile/#" do
-    get "/local/tester"
-    assert_response :redirect
-    assert_redirected_to "/"
-#    get "/dashboard"
-#    assert_tag (:content => /Recent sets/)
-#    assert_template "users/dashboard"
-  end
 end
