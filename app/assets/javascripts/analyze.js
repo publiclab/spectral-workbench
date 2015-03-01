@@ -1,4 +1,5 @@
 //= require graph.js
+var ajax_load = "<img src='/images/spinner-small.gif' alt='loading...' />";
 spectrum = "";
 var legends;
 $W = {
@@ -56,7 +57,7 @@ $W = {
         $W.second_calibration($W.getPixelFromWavelength(pos.x),435.833)
         // axis coordinates for other axes, if present, are in pos.x2, pos.x3, ...
       });
-    })    
+    })
     $('#embedcode').click(function() {
       this.focus()
       this.select()
@@ -87,23 +88,23 @@ $W = {
   // must update to function during RGB mode
   updateLegend: function() {
     $W.updateLegendTimeout = null;
-  
+
     var pos = $W.latestPosition;
-  
+
     var axes = $W.plot.getAxes();
     if (pos.x < axes.xaxis.min || pos.x > axes.xaxis.max ||
       pos.y < axes.yaxis.min || pos.y > axes.yaxis.max)
       return;
-  
+
     var i, j, dataset = $W.plot.getData();
     for (i = 0; i < dataset.length; ++i) {
       var series = dataset[i];
-  
+
       // find the nearest points, x-wise
       for (j = 0; j < series.data.length; ++j)
         if (series.data[j][0] > pos.x)
         break;
-  
+
       // now interpolate
       var y, p1 = series.data[j - 1], p2 = series.data[j];
       if (p1 == null)
@@ -112,7 +113,7 @@ $W = {
         y = p1[1];
       else
         y = p1[1] + (p2[1] - p1[1]) * (pos.x - p1[0]) / (p2[0] - p1[0]);
-    
+
       $('#wavelength').html(parseInt(pos.x))
       legends.eq(i).html(series.label.replace(/=.*%/, "= " + parseInt(y) + "%"));
     }
@@ -142,9 +143,9 @@ $W = {
   },
 
   overexposure_threshold: 20, // how many pixels of consecutive 100% triggers an overexposure warning
-  /* Inspects a given color channel recursively for sequential 
+  /* Inspects a given color channel recursively for sequential
    * pixels of 100%, which would indicate overexposure. Returns
-   * whether it passed the threshold and the last inspected index. 
+   * whether it passed the threshold and the last inspected index.
    */
   overexposure_recurse: function(data,i,count,color) {
     if (count > $W.overexposure_threshold) return [true,i]
@@ -158,7 +159,7 @@ $W = {
   detect_overexposure: function() {
     var overexposed = {r: false, g: false, b: false}
     var colors = ["r","g","b"]
-    // check each channel for plateaus at 100%:  
+    // check each channel for plateaus at 100%:
     $.each(colors,function(index,color) {
       var i = 0;
       while (i < $W.spectrum.lines.length) {
@@ -182,7 +183,7 @@ $W = {
       if (oe.g) channels.push("green")
       if (oe.b) channels.push("blue")
       $W.notify(msg+channels.join(', ')+". <a href='http://publiclab.org/wiki/spectral-workbench-usage#Overexposure'>Learn how to fix this</a>.","warning",false)
-    } 
+    }
   },
 
   //setTimeout(5000,$W.alert_overexposure)
