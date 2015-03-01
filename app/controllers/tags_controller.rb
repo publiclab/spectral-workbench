@@ -1,4 +1,4 @@
-class TagController < ApplicationController
+class TagsController < ApplicationController
 
   def create
     if logged_in?
@@ -47,7 +47,7 @@ class TagController < ApplicationController
     end
   end
 
-  def delete
+  def destroy
     @tag = Tag.find(params[:id])
     if logged_in?
       if @tag.user_id == current_user.id || @tag.spectrum.author == current_user.login || current_user.role == "admin"
