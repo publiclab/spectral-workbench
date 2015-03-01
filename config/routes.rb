@@ -65,7 +65,7 @@ SpectralWorkbench::Application.routes.draw do
 
   resources :users do
     member do
-      get :profile
+
     end
   end
   resources :session
@@ -84,8 +84,6 @@ SpectralWorkbench::Application.routes.draw do
 
 
   # Registered user pages:
-  get '/profile' => 'users#profile'
-  get '/profile/:id' => 'users#profile'
   get '/macro/edit/:id' => 'macros#edit'
   get '/macro/update/:id' => 'macros#update'
   get '/macro/:author/:id' => 'macros#show'
@@ -105,9 +103,13 @@ SpectralWorkbench::Application.routes.draw do
   get '/tag/:id.:format' => 'tag#show'
   get '/tags' => 'tag#index'
 
-  get '/spectra/show/:id.:format' => 'analyze#spectrum'
-  get '/spectra/show/:id(.:format)' => 'analyze#spectrum'
-  resources :spectrums
+  resources :spectrums do
+    member do
+      get :clone_search
+      get :set_search
+    end
+  end
+
   resources :spectra_sets
   resources :comments, :belongs_to => :spectrums
   post '/spectrums/create' => 'spectrums#create'
@@ -128,8 +130,6 @@ SpectralWorkbench::Application.routes.draw do
   get '/spectra/:id' => 'spectrums#show'
   get '/spectra/:action/:id' => 'spectrums'
 
-  get '/analyze/:action/:id' => 'analyze'
-
   # Here comes the matching controller
   get '/match/livesearch' => 'match#livesearch'
   get '/match/:id' => 'match#index'
@@ -137,7 +137,7 @@ SpectralWorkbench::Application.routes.draw do
   # cache_interval is how often the cache is recalculated
   # but if nothing changes, the checksum will not change
   # and the manifest will not trigger a re-download
-  offline = Rack::Offline.configure :cache_interval => 120 do      
+  offline = Rack::Offline.configure :cache_interval => 120 do
     cache ActionController::Base.helpers.asset_path("application.css")
     cache ActionController::Base.helpers.asset_path("application.js")
     cache ActionController::Base.helpers.asset_path("capture.css")
@@ -163,7 +163,7 @@ SpectralWorkbench::Application.routes.draw do
     fallback "/" => "/offline"
     fallback "/dashboard" => "/offline"
   end
-  match "/index.manifest" => offline  
+  match "/index.manifest" => offline
 
   root to: 'spectrums#index'
 

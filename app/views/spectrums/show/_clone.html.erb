@@ -18,13 +18,13 @@
 
     <script>
     $("#cloneSearchForm").submit(function(){
-      var url = "/analyze/clone_search/"+$W.spectrum_id+"?q="+$("#clonesearchinput").val()
+      var url = "<%= set_search_spectrum_path(@spectrum) %>?q="+$("#clonesearchinput").val()
       $("#clone_search_result").html(ajax_load).load(url)
     });
     </script>
 
     <div id="clone_search_result">
-      <%= render :partial => "clone_results" %>
+      <%= render :partial => "spectrums/show/clone_results" %>
     </div>
 
     <% end %>
@@ -33,4 +33,4 @@
   <div class="modal-footer">
     <a data-dismiss="modal" class="btn" href="javascript:void();">Cancel</a>
   </div>
-</div> 
+</div>

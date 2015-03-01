@@ -15,16 +15,16 @@
           <input placeholder="Search sets" class='search-query input-medium' id='setsearchinput' type='text' name='q' value=''/>
           <button class="btn btn-primary" type='submit'><i class="icon icon-search icon-white"></i></button>
         </form>
-  
+
         <script>
         $("#setSearchForm").submit(function(){
-          var url = "/analyze/set_search/<%= @spectrum.id %>?q="+$("#setsearchinput").val()
+          var url = "<%= set_search_spectrum_path(@spectrum) %>?q="+$("#setsearchinput").val()
           $("#set_search_result").html(ajax_load).load(url)
         });
         </script>
-  
+
         <div id="set_search_result">
-          <%= render :partial => "set_results" %>
+          <%= render :partial => "spectrums/show/set_results" %>
         </div>
 
       <% end %>
@@ -34,4 +34,4 @@
   <div class="modal-footer">
     <a data-dismiss="modal" class="btn" href="javascript:void();">Cancel</a>
   </div>
-</div> 
+</div>

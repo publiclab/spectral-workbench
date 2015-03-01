@@ -24,7 +24,7 @@ class SetsController < ApplicationController
     @set = SpectraSet.find params[:id]
     @width = (params[:width] || 500).to_i
     @height = (params[:height] || 200).to_i
-    render :layout => false 
+    render :layout => false
   end
 
   def add
@@ -39,7 +39,7 @@ class SetsController < ApplicationController
       redirect_to "/sets/show/"+@set.id.to_s
     else
       flash[:error] = "You must be logged in and own that set to add to it."
-      redirect_to "/analyze/spectrum/"+@spectrum.id.to_s
+      redirect_to spectrum_path(@spectrum)
     end
   end
 
@@ -47,7 +47,7 @@ class SetsController < ApplicationController
     if logged_in?
       @set = SpectraSet.new
       respond_to do |format|
-        format.html {} # new.html.erb 
+        format.html {} # new.html.erb
         format.xml  { render :xml => @set }
       end
     else
@@ -111,7 +111,7 @@ class SetsController < ApplicationController
   end
 
   def remove
-    @set = SpectraSet.find params[:id] 
+    @set = SpectraSet.find params[:id]
     if logged_in? && (@set.author == current_user.login || current_user.role == "admin")
       if @set.spectra_string.split(',').length > 1
         @set.remove(params[:s])

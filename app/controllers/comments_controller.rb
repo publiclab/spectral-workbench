@@ -25,12 +25,12 @@ class CommentsController < ApplicationController
             render :text => @comment.id
           else
             flash[:notice] = "Comment saved."
-            redirect_to "/analyze/spectrum/"+params[:id]+"#comment_"+@comment.id.to_s
+            redirect_to spectrum_path(params[:id])+"#comment_"+@comment.id.to_s
           end
         end
       end
     else
-      render :controller => "analyze", :action => "spectrum", :id => params[:id]
+      redirect_to spectrum_path(params[:id])
     end
   end
 

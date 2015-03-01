@@ -1,8 +1,8 @@
 <% @set.spectra.each do |spectrum| %>
 <div id="spectrum_<%= spectrum.id %>">
-<a href="/analyze/spectrum/<%= spectrum.id %>"><img style="height:50px;width:100%" class="img" src="<%= spectrum.photo.url(:thumb) %>" /></a>
+<a href="<%= spectrum_path(spectrum.id) %>"><img style="height:50px;width:100%" class="img" src="<%= spectrum.photo.url(:thumb) %>" /></a>
 <p>
-  <b><a href="/analyze/spectrum/<%= spectrum.id %>"><%= spectrum.title %></a></b>
+  <b><a href="<%= spectrum_path(spectrum.id) %>"><%= spectrum.title %></a></b>
   <br />
   by <a href="<%= user_path(spectrum.author) %>"><%= spectrum.author %></a>, <%= spectrum.created_at.to_s(:short) %>
 </p>
