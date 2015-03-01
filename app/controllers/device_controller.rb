@@ -24,7 +24,7 @@ class DeviceController < ApplicationController
       else
         flash[:error] = "Device key generation failed."
       end
-      redirect_to "/analyze/spectrum/"+params[:id]
+      redirect_to spectrum_path(params[:id])
     else
       flash[:error] = "You must be logged in to view that page."
       redirect_to "/login"
