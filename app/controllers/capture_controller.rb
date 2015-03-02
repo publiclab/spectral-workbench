@@ -1,10 +1,13 @@
+# get rid of this with better ActiveRecord 3 calls:
 require 'will_paginate/array'
+
 class CaptureController < ApplicationController
   #protect_from_forgery :only => [:clone, :extract, :calibrate]
   # http://api.rubyonrails.org/classes/ActionController/RequestForgeryProtection/ClassMethods.html
-  # create and update are protected by recaptcha
-
+  # we no longer use recaptcha; start requiring auth token: 
   skip_before_filter :verify_authenticity_token
+
+  before_filter :require_login, :except => [:index, :recent_calibrations]
 
   def index
     if logged_in?

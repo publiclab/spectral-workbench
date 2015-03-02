@@ -16,7 +16,7 @@
       <li class="divider"></li>
       <li><a href="http://publiclab.org/wiki/spectral-workbench-usage" class="button"><i class="icon icon-question-sign"></i> Learn how</a></li>
       <% if logged_in? %><li><a href="/logout" class="button"><i class="icon icon-user"></i> Log out</a></li><% else %>
-      <li><a href="/login" class="button"><i class="icon icon-user"></i> Log in</a></li><% end %>
+      <li><a href="/login?back_to=<%= request.path %>" class="button"><i class="icon icon-user"></i> Log in</a></li><% end %>
     </ul>
   </div>
   <div id="headerBtns" class="btn-group pull-right hidden-desktop" style="padding-right:0;">
@@ -59,7 +59,7 @@
       </ul>
     </li>
     <% else %>
-    <li><a href="/login"><i class="icon icon-user"></i> Log in</a></li>
+    <li><a href="/login?back_to=<%= request.path %>"><i class="icon icon-user"></i> Log in</a></li>
     <% end %>
 
   </ul>

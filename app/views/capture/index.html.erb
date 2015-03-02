@@ -7,7 +7,7 @@
     </a>
     <a class="brand" href="/"><img style="padding:-2px;width:20px;" src="/images/logo.png" /></a>
     <div class="pull-right">
-      <% unless logged_in? %><a href="/login" class="btn">Log in</a><% end %>
+      <% unless logged_in? %><a href="/login?back_to=/capture" class="btn">Log in</a><% end %>
       <a class="btn btn-inverse" href="http://publiclab.org/wiki/spectral-workbench"><i class="icon icon-question-sign"></i></a>
       <span class="tool-toggle"><a class="btn btn-inverse" onClick="$('#tool-pane').toggle()"><i class="icon-wrench"></i></a></span>
     </div>

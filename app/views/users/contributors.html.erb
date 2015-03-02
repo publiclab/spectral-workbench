@@ -1,6 +1,6 @@
 <div class="container">
 
-<h2>Spectral Workbench contributors</h2>
+<h2>Contributors (<%= User.count %>)</h2>
 
   <table class="table">
     <tr>
@@ -11,16 +11,17 @@
       <th>Activity</th>
     </tr>
     <% @users.each do |user| %>
-    <% if user.spectrum_count > 0 %>
     <tr>
-      <td><img width="120px" class="img" src="<%= user.spectra(1).first.photo.url(:thumb) %>" /></td>
-      <td><a href="<%= profile_path(user.login) %>"><%= user.login %></a> | <a href="http://publiclab.org/users/<%= user.login %>">Public Lab profile</a></td>
+      <td><% if user.spectrum_count > 0 %><img width="120px" class="img" src="<%= user.spectrums.order('id DESC').limit(1).last.photo.url(:thumb) %>" /><% end %></td>
+      <td><a href="<%= profile_path(user.login) %>"><%= user.login %></a> 
+        | <a href="http://publiclab.org/profile/<%= user.login %>">Public Lab profile</a></td>
       <td><%= user.spectrum_count %> spectra</td>
       <td><%= user.comments.length %> comments</td>
-      <td>Last uploaded <%= time_ago_in_words(user.spectra(1).first.created_at) %> ago</td>
+      <td><% if user.spectrum_count > 0 %>Last uploaded <%= time_ago_in_words(user.spectrums.order('id DESC').limit(1).last.created_at) %> ago<% end %></td>
     </tr>
     <% end %>
-    <% end %>
   </table>
+
+  <%= will_paginate @users, renderer: BootstrapPagination::Rails %>
 
 </div>
