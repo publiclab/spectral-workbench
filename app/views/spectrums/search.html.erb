@@ -16,10 +16,12 @@
     <hr />
     <h3>Related sets</h3>
     <%= render :partial => 'sets' %>
+    <%= will_paginate @sets, :param_name => :set_page, renderer: BootstrapPagination::Rails %>
   </div>
 
   <div class="span8">
     <%= render :partial => 'list' %>
+    <%= will_paginate @spectrums, renderer: BootstrapPagination::Rails %>
   </div>
 </div>
 </div>
