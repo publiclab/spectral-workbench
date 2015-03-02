@@ -16,8 +16,10 @@ class UsersController < ApplicationController
     @offline = "flush"
     if logged_in?
       @spectrums = Spectrum.paginate(:order => "created_at DESC", :conditions => ["author != 'anonymous'"], :page => params[:spectrums_page], :per_page => 50)
-      @sets = SpectraSet.paginate(:page => params[:sets_page], :order => "created_at DESC")
-      @comments = Comment.paginate(:page => params[:comments_page], :order => "created_at DESC")
+      @sets = SpectraSet.paginate(:page => params[:sets_page], :order => "created_at DESC", :per_page => 25)
+      @comments = Comment.paginate(:page => params[:comments_page], :order => "created_at DESC", :per_page => 40)
+      @users = User.paginate(:page => params[:users_page], :order => "created_at DESC", :per_page => 100)
+      @tags = Tag.paginate(:page => params[:tags_page], :order => "created_at DESC", :per_page => 100)
     else
       flash[:error] = "You must be logged in to view your dashboard."
       redirect_to "/login"
@@ -33,7 +35,7 @@ class UsersController < ApplicationController
     @users = User.find :all, :order => "id DESC", :limit => 50
   end
 
-  def list
+  def index
     if (logged_in? && current_user.role == "admin")
       @users = User.find :all
     else

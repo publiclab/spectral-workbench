@@ -65,7 +65,7 @@
         <li><a data-toggle="tab" href="#comments"><i class="icon icon-comment"></i><span class="hidden-phone"> Comments</span></a></li>
         <li><a data-toggle="tab" href="#sets"><i class="icon icon-list"></i><span class="hidden-phone"> Sets</span></a></li>
         <li><a data-toggle="tab" href="#authors"><i class="icon icon-user"></i><span class="hidden-phone"> Authors</span></a></li>
-        <li><a data-toggle="tab" href="/tags"><i class="icon icon-tag"></i><span class="hidden-phone"> Popular Tags</span></a></li>
+        <li><a data-toggle="tab" href="#tags"><i class="icon icon-tag"></i><span class="hidden-phone"> Tags</span></a></li>
       </ul>
 
       <div class="tab-content">
@@ -85,7 +85,8 @@
         </div>
 
         <div class="tab-pane" id="comments">
-          <%= render :partial => 'users/comments' %>
+        <h3><a name="authors"></a>Recent comments</h3>
+          <%= render :partial => 'comments/list' %>
           <hr style="clear:both;" />
           <%= will_paginate @comments, :param_name => 'comments_page', :params => {:anchor => "comments"} %>
         </div>
@@ -99,13 +100,16 @@
 
         <div class="tab-pane" id="authors">
           <h3><a name="authors"></a>Recent authors</h3>
-          <ul class="nav">
-          <% User.find_all_by_login(@spectrums.collect(&:author).uniq).each do |user| %>
-            <li><a href="<%= user_path(user.login) %>"><i class="icon icon-user"></i> <%= user.login %></a></li>
-          <% end %>
-          </ul>
+           <%= render :partial => 'users/list', :locals => {:row => 2} %>
+          <hr style="clear:both;" />
+          <%= will_paginate @users, :param_name => 'users_page', :params => {:anchor => "users"} %>
+        </div>
 
-          <hr />
+        <div class="tab-pane" id="tags">
+          <h3><a name="tags"></a>Recent tags</h3>
+          <%= render :partial => 'tags/list', :locals => {:row => 2} %>
+          <hr style="clear:both;" />
+          <%= will_paginate @sets, :param_name => 'tags_page', :params => {:anchor => "tags"} %>
         </div>
 
       </div>
