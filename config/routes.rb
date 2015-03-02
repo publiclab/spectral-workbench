@@ -56,6 +56,7 @@ SpectralWorkbench::Application.routes.draw do
   get '/logout' => 'sessions#logout'
   get '/login' => 'sessions#login'
   get '/session/new' => 'sessions#new'
+  get '/session' => 'session#create', :conditions => { :method => :get }
 
   get '/register' => 'users#create'
   get '/signup' => 'users#new'
@@ -71,7 +72,7 @@ SpectralWorkbench::Application.routes.draw do
   get '/lookup' => 'device#lookup'
   get '/device/claim' => 'device#claim'
 
-  get '/upload' => 'spectrums#new'
+
 
   get '/capture' => 'capture#index'
   get '/capture/recent_calibrations' => 'capture#recent_calibrations'
@@ -91,15 +92,13 @@ SpectralWorkbench::Application.routes.draw do
   get '/dashboard' => 'users#dashboard'
   get '/popular' => 'likes#index'
   get '/popular/recent' => 'likes#recent'
-  get '/comments' => 'comments#index'
-  post '/comment/create/:id' => 'comments#create'
-
-  get '/session' => 'session#create', :conditions => { :method => :get }
-
-  get '/spectra/assign' => 'spectrums#assign'
 
   resources :tags
+  resources :comments, :belongs_to => :spectrums
 
+  get '/spectra/show/:id.:format' => 'spectrums#show'
+  get '/spectra/show/:id(.:format)' => 'spectrums#show'
+  get '/upload' => 'spectrums#new'
   resources :spectrums do
     member do
       get :clone_search
@@ -107,15 +106,13 @@ SpectralWorkbench::Application.routes.draw do
     end
   end
 
-  resources :spectra_sets
-  resources :comments, :belongs_to => :spectrums
-  post '/spectrums/create' => 'spectrums#create'
+  resources :sets
 
   get '/message' => 'users#message'
 
-  get '/sets' => 'sets#index'
-
   get '/stats' => 'spectrums#stats'
+
+  get '/spectra/assign' => 'spectrums#assign'
   get '/spectra/feed' => 'spectrums#rss', defaults: { format: 'xml' }
   get '/spectra/search' => 'spectrums#search'
   post '/spectra/calibrate/:id' => 'spectrums#calibrate'
