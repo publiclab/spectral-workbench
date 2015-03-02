@@ -1,26 +1,106 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <title>The change you wanted was rejected (422)</title>
-  <style type="text/css">
-    body { background-color: #fff; color: #666; text-align: center; font-family: arial, sans-serif; }
-    div.dialog {
-      width: 25em;
-      padding: 0 4em;
-      margin: 4em auto 0 auto;
-      border: 1px solid #ccc;
-      border-right-color: #999;
-      border-bottom-color: #999;
-    }
-    h1 { font-size: 100%; color: #f00; line-height: 1.5em; }
-  </style>
-</head>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>The change you wanted was rejected (422)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="An open source spectral library and DIY spectrometry community developing environmental testing techniques.">
+    <meta name="author" content="Public Lab contributors">
 
-<body>
-  <!-- This file lives in public/422.html -->
-  <div class="dialog">
-    <h1>The change you wanted was rejected.</h1>
-    <p>Maybe you tried to change something you didn't have access to.</p>
-  </div>
-</body>
+    <link href="/assets/application.css" media="all" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="/lib/fontawesome/css/font-awesome.min.css"/>
+    <script src="/assets/application.js"></script>
+  </head>
+
+  <body>
+    <div id="header">
+      <a id="logo" href="/"><img src="/images/logo.png" /></a>
+      <h3 class="hidden-desktop visible-phone pull-left"><a class="title" href="/">SW</a></h3>
+      <h3 class="hidden-phone visible-desktop pull-left"><a class="title" href="/">Spectral Workbench</a><small> by <a href="http://publiclab.org">Public Lab</a></small></h3>
+  
+      <div id="headerBtns" class="btn-group pull-right">
+          <a class="btn btn-primary btn-large" href="/capture"><i class="icon icon-camera icon-white"></i><span class="hidden-phone"> Capture spectra</span></a>
+        <a class="btn btn-primary btn-large dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+        <ul class="dropdown-menu">
+          <li><a href="/capture" class="button"><i class="icon icon-camera"></i> <b>Live-capture spectra</b></a></li>
+          <li><a href="/upload" class="button"><i class="icon icon-upload"></i> Upload image</a></li>
+          <li class="divider"></li>
+          <li><a href="http://publiclab.org/wiki/spectral-workbench-usage" class="button"><i class="icon icon-question-sign"></i> Learn how</a></li>
+          
+        </ul>
+      </div>
+      <div id="headerBtns" class="btn-group pull-right hidden-desktop" style="padding-right:0;">
+        <a class="btn btn-large btn-link" href="http://publiclab.org/wiki/spectral-workbench-help"><i class="icon icon-question-sign" /></i></a>
+      </div>
+      <ul class="hidden-phone nav nav-pills pull-right">
+        <li><a class="btn btn-link" href="/"><i class="icon icon-home"></i></a></li> 
+        <li class="dropdown">
+          <a class="btn btn-link dropdown-toggle" data-toggle="dropdown">Browse <b class="caret"></b></a> 
+          <ul class="dropdown-menu">
+            <li><a href="/popular">Popular</a></li>
+            <li><a href="/sets">Sets</a></li>
+            <li><a href="/contributors">Contributors</a></li>
+            <li><a href="/tags">Tags</a></li>
+          </ul>
+        </li>
+        <li class="dropdown">
+          <a class="btn btn-link dropdown-toggle" data-toggle="dropdown">Learn <b class="caret"></b></a> 
+          <ul class="dropdown-menu">
+            <li><a href="http://publiclab.org/wiki/spectral-workbench-help">Help</a></li> 
+            <li><a href="http://publiclab.org/wiki/spectral-workbench-usage">Using Spectral Workbench</a></li>
+            <li><a href="http://publiclab.org/wiki/spectrometer-construction">Build a spectrometer</a></li>
+            <li><a href="http://store.publiclab.org/">Buy a spectrometer kit</a></li>
+            <li><a href="http://publiclab.org/tool/spectrometer">Open source spectrometry</a></li>
+            <li><a href="http://publiclab.org/wiki/spectral-analysis">Applications</a></li>
+            <li class="divider"></li>
+            <li><a href="http://publiclab.org/wiki/spectral-workbench">About Spectral Workbench</a></li>
+          </ul>
+        </li>
+  
+      </ul>
+    </div>
+
+    <div class="container">
+
+      <br />
+      <h2>The change you wanted was rejected.</h2>
+      <p>Maybe you tried to change something you didn't have access to.</p>
+
+      <br />
+      <form id="searchform" action="/spectra/search" method='get' class="form-search">
+  <input id="searchform_input" class='search-query input-medium' type='text' name='q' placeholder="Search spectra" value=''/>
+  <button class="btn btn-primary" type='submit'><i class="icon icon-search icon-white"></i></button>
+      </form>
+      <br />
+
+      <h4>Troubleshooting</h4>
+      <p>If you believe there is a bug in the software, please <a href="https://github.com/publiclab/spectral-workbench">report it on Github</a> or <a href="mailto:web@publiclab.org">send a note to the Web Working Group</a> with a description of the bug, your username and browser version.</p>
+
+      <br style="clear:both;" />
+
+      </div>
+
+      <footer class="container-fluid">
+
+        <hr />
+
+        <div class="span4">
+          <p><b>Spectral Workbench</b> is <a href="https://github.com/publiclab/spectral-workbench">open source software</a>, created by <a href="http://publiclab.org">Public Lab</a> and hosted by the Public Lab non-profit. Please consider <a href="http://publiclab.org/donate">donating to help keep it running</a>!</p>
+        </div>
+
+        <div class="span4">
+          <p><b>Support and troubleshooting</b></p>
+          <p>Report bugs and help improve this software <a href="https://github.com/publiclab/spectral-workbench/issues/new">on Github</a></p>
+          <p>For help using the software, see the <a href="http://publiclab.org/wiki/spectral-workbench-usage">wiki documentation</a>, <a href="http://publiclab.org/post?tags=question:spectral-workbench&template=question">ask a question on the Public Lab website</a>, or <a href="http://publiclab.org/lists">post to the discussion lists</a>.
+        </div>
+
+        <div class="span4">
+          <p><b>Get involved</b></p>
+          <p>Public Lab is a community! <a href="http://publiclab.org/lists">Join discussion lists</a> for various topics and regions to give and get help with other members.</p>
+          <p>Follow <b>SpectralWB</b> on Twitter to see code updates: <a href="https://twitter.com/SpectralWB" class="twitter-follow-button" data-show-count="false">Follow @SpectralWB</a></p>
+        </div>
+
+      </footer>
+
+  </body>
 </html>

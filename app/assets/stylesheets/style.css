@@ -84,3 +84,12 @@ h1,h2,h3,h4,.lead {
 .label a {
   color:white;
 }
+
+footer {
+  padding-bottom:200px;
+  color:#777;
+}
+
+footer b {
+  color:#444;
+}
