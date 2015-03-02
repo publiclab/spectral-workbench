@@ -55,7 +55,7 @@
   <div class="row-fluid">
     <div class="span4">
       <h3 style="margin-bottom:0px;"><%= @spectrum.title %></h3>
-      <p>uploaded by <a href="<%= user_path(@spectrum.author) %>"><%= @spectrum.author %></a> | <%= @spectrum.created_at.to_s(:long) %></p>
+      <p>uploaded by <a href="<%= profile_path(@spectrum.author) %>"><%= @spectrum.author %></a> | <%= @spectrum.created_at.to_s(:long) %></p>
       <% if @spectrum.lat != 0 && @spectrum.lon != 0 %><p>Collected at: Lat: <%= @spectrum.lat %>, Lon: <%= @spectrum.lon %> (<a href="http://www.openstreetmap.org/?lat=<%= @spectrum.lat %>&lon=<%= @spectrum.lon %>&zoom=10&layers=M">View in OpenStreetMap</a>)</p><% end %>
 
       <%= render :partial => "tag/tagging" %>

@@ -1,5 +1,8 @@
 class UsersController < ApplicationController
 
+  # refactor this to use:
+  # before_filter :require_login, :only => [:edit, :update, :destroy]
+
   def message
     @user = User.find params[:user_id]
     if logged_in? && @user
@@ -66,11 +69,9 @@ class UsersController < ApplicationController
   end
 
   def show
-    #params[:id] ||= current_user.login if logged_in?
     @user = User.find_by_login(params[:id])
-    @spectrums = @user.spectra(100)
-    @spectrums = @spectrums.paginate :page => params[:page], :per_page => 24
-    @sets = @user.sets
+    @spectrums = @user.spectrums.order("created_at DESC").paginate(:page => params[:page])
+    @sets = @user.sets.order("created_at DESC").paginate(:page => params[:set_page], :per_page => 2)
   end
 
   def delete

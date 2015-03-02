@@ -5,4 +5,4 @@
 <%= render :partial => 'comments' %>
 
 <br style="clear:both;" />
-<%= will_paginate @comments %>
+<%= will_paginate @comments, renderer: BootstrapPagination::Rails %>

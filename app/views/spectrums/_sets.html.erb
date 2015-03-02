@@ -5,7 +5,7 @@
     <a class="graph_set" id="graph_set_<%= set.id %>" style="height:100px;width:250px;display:block;"></a>
     <div class="text">
       <h3><a href="/sets/show/<%= set.id %>"><%= set.title.truncate(30) %></a></h3>
-      <p><a href="<%= user_path(set.author) %>"><%= set.author %></a> | <%= set.spectra.length %> spectra |
+      <p><a href="<%= profile_path(set.author) %>"><%= set.author %></a> | <%= set.spectra.length %> spectra |
         <a href="/sets/show/<%= set.id %>#comments"><i class="icon icon-comment"></i> <%= set.comments.length %></a>
       </p>
       <p class="notes"><%= set.notes.truncate(200) %></p>

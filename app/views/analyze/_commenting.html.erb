@@ -8,7 +8,7 @@
   <div class="comment">
     <a name="comment_<%= comment.id %>"></a>
     <b><%= time_ago_in_words(comment.created_at) %> ago,
-    <% if User.find_by_login(comment.author) %><a href="<%= user_path(comment.author) %>"><%= comment.author %></a> wrote:</b>
+    <% if User.find_by_login(comment.author) %><a href="<%= profile_path(comment.author) %>"><%= comment.author %></a> wrote:</b>
     <% else %><%=h comment.author %> wrote:</b>
     <% end %>
     <p><%= RDiscount.new(comment.body).to_html %></p>

@@ -1,6 +1,6 @@
 <div class="container">
   <% if logged_in? && !flash[:notice] && !flash[:error] && !flash[:warning] && !mobile? %>
-    <% spectrum_count = current_user.spectra(4).length %>
+    <% spectrum_count = current_user.spectrum_count %>
     <% if spectrum_count < 3 %>
     <% elsif spectrum_count >= 3 %>
     <% end %>
@@ -75,33 +75,33 @@
             <a name="spectra"></a>Recent spectra
             <small class="hidden-phone">
               by contributors like you |
-              <a href="<%= user_path(current_user.login) %>">Your spectra</a> |
+              <a href="<%= profile_path(current_user.login) %>">Your spectra</a> |
               <a href="/popular">Popular</a> |
               <a href="/popular/recent">Recently liked</a>
           </small></h3>
           <%= render :partial => 'spectrums/list' %>
           <hr style="clear:both;" />
-          <%= will_paginate @spectrums, :param_name => 'spectrums_page', :params => {:anchor => "spectrums"} %>
+          <%= will_paginate @spectrums, :param_name => 'spectrums_page', :params => {:anchor => "spectrums"}, renderer: BootstrapPagination::Rails %>
         </div>
 
         <div class="tab-pane" id="comments">
           <%= render :partial => 'users/comments' %>
           <hr style="clear:both;" />
-          <%= will_paginate @comments, :param_name => 'comments_page', :params => {:anchor => "comments"} %>
+          <%= will_paginate @comments, :param_name => 'comments_page', :params => {:anchor => "comments"}, renderer: BootstrapPagination::Rails %>
         </div>
 
         <div class="tab-pane" id="sets">
           <h3><a name="sets"></a>Recent sets <small class="hidden-phone">by contributors like you</small></h3>
           <%= render :partial => 'spectrums/sets', :locals => {:row => 2} %>
           <hr style="clear:both;" />
-          <%= will_paginate @sets, :param_name => 'sets_page', :params => {:anchor => "sets"} %>
+          <%= will_paginate @sets, :param_name => 'sets_page', :params => {:anchor => "sets"}, renderer: BootstrapPagination::Rails %>
         </div>
 
         <div class="tab-pane" id="authors">
           <h3><a name="authors"></a>Recent authors</h3>
           <ul class="nav">
           <% User.find_all_by_login(@spectrums.collect(&:author).uniq).each do |user| %>
-            <li><a href="<%= user_path(user.login) %>"><i class="icon icon-user"></i> <%= user.login %></a></li>
+            <li><a href="<%= profile_path(user.login) %>"><i class="icon icon-user"></i> <%= user.login %></a></li>
           <% end %>
           </ul>
 

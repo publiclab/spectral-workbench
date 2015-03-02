@@ -39,7 +39,7 @@ gem 'redcarpet', '2.1.1'
 
 gem 'rdiscount', '1.6.8'
 gem 'will_paginate'
-#gem 'will_paginate-bootstrap'
+gem 'will_paginate-bootstrap', '0.2.5'
 gem 'paperclip', '>= 4.1.1'
 
 gem 'ruby-openid'

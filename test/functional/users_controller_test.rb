@@ -8,4 +8,19 @@ class UsersControllerTest < ActionController::TestCase
 
   fixtures :users
 
+  test "should get profile" do
+    session[:user_id] = users(:quentin).id # log in
+    get :show, :id => users(:quentin).login
+    assert_response :success
+  end
+
+  test "should get dashboard" do
+    session[:user_id] = users(:quentin).id # log in
+    get :dashboard, :id => users(:quentin).login
+    assert_response :success
+    assert_not_nil :spectrums
+    assert_not_nil :sets
+    assert_not_nil :comments
+  end
+
 end

@@ -12,7 +12,7 @@
   <style>._row { clear:left;} </style>
 
   <%= render :partial => 'spectrums/list' %>
-  <%= will_paginate @spectrums %>
+  <%= will_paginate @spectrums, renderer: BootstrapPagination::Rails %>
 </div>
 </div>
 

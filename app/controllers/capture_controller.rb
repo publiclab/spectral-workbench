@@ -16,7 +16,7 @@ class CaptureController < ApplicationController
       @offline = "flush"
     end
     @spectrums = Spectrum.find(:all, :limit => 12, :order => "id DESC")
-    render :template => "capture/index.html.erb", :layout => "application"
+    render :template => "capture/index", :layout => "application"
   end
 
   # designed to replace the spectrums_controller method "create" with a

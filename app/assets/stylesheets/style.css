@@ -32,18 +32,6 @@ h1,h2,h3,h4,.lead {
   color:white;
 }
 
-.pagination a, .pagination span {
-  padding:8px;
-  -moz-border-radius: 3px;
-  -webkit-border-radius: 3px;
-}
-.pagination a {
-  border:1px solid #ccc;
-}
-.pagination a:hover {
-  background:#eee;
-}
-
 #header {
   padding:8px 0 3px 0;
   height:60px;
@@ -83,6 +71,11 @@ h1,h2,h3,h4,.lead {
 
 .label a {
   color:white;
+}
+
+.pagination {
+  clear:both;
+  padding-top:10px;
 }
 
 footer {

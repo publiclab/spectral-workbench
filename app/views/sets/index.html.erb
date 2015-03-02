@@ -8,6 +8,6 @@
     <h2>Recent sets <small class="hidden-phone">by contributors like you</small></h2>
     <%= render :partial => 'spectrums/sets', :locals => {:row => 3} %>
     <hr />
-    <%= will_paginate @sets %>
+    <%= will_paginate @sets, renderer: BootstrapPagination::Rails %>
   </div>
 </div>

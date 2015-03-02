@@ -5,7 +5,7 @@
     <h4><%= spectrum.title %></h4>
   </a>
   <small style="color:#888;">
-    By <a href="<%= user_path(spectrum.author) %>" target="_blank"><%= spectrum.author %></a><br />
+    By <a href="<%= profile_path(spectrum.author) %>" target="_blank"><%= spectrum.author %></a><br />
     <i><%= time_ago_in_words(spectrum.created_at) %> ago</i>
   </small>
 </div>

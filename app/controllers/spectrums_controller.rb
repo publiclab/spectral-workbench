@@ -22,7 +22,7 @@ class SpectrumsController < ApplicationController
 
       respond_with(@spectrums) do |format| 
         format.html { 
-          render :template => "spectrums/index.html.erb"
+          render :template => "spectrums/index"
         } # show.html.erb
         format.xml  { render :xml => @spectrums }
       end
@@ -31,7 +31,7 @@ class SpectrumsController < ApplicationController
 
   def anonymous
     @spectrums = Spectrum.paginate(:order => "created_at DESC", :conditions => {:author => "anonymous"}, :page => params[:page])
-    render :template => "spectrums/search.html.erb"
+    render :template => "spectrums/search"
   end
 
   # non REST
@@ -62,7 +62,7 @@ class SpectrumsController < ApplicationController
     @spectrums = Spectrum.find(:all, :conditions => ['title LIKE ? OR notes LIKE ?',"%"+params[:id]+"%", "%"+params[:id]+"%"],:limit => 100, :order => "id DESC")
     @spectrums = @spectrums.paginate :page => params[:page], :per_page => 24
     if params[:capture]
-      render :partial => "capture/results.html.erb", :layout => false
+      render :partial => "capture/results", :layout => false
     else 
       @sets = SpectraSet.find(:all, :conditions => ['title LIKE ? OR notes LIKE ?',"%"+params[:id]+"%", "%"+params[:id]+"%"],:limit => 100, :order => "id DESC")
     end
@@ -71,7 +71,7 @@ class SpectrumsController < ApplicationController
   # non REST
   def recent
     @spectrums = Spectrum.find(:all, :limit => 10, :order => "id DESC")
-    render :partial => "capture/results.html.erb", :layout => false if params[:capture]
+    render :partial => "capture/results", :layout => false if params[:capture]
   end
 
   # non REST
@@ -361,21 +361,6 @@ class SpectrumsController < ApplicationController
     response.headers["Content-Type"] = "application/xml; charset=utf-8"
   end
 
-  def capture
-    if logged_in?
-      @calibration = current_user.last_calibration
-      @calibration = Spectrum.find(params[:calibration_id]) if params[:calibration_id]
-      @start_wavelength,@end_wavelength = @calibration.wavelength_range 
-    end
-    if params[:old]
-      render :template => "spectrums/capture-old.html.erb"
-    elsif mobile?
-      render :template => "spectrums/capture-mobile.html.erb", :layout => "mobile"
-    else
-      render :template => "spectrums/capture.html.erb", :layout => "capture"
-    end
-  end
-
   def match
     @spectrum = Spectrum.find params[:id]
     render :text => @spectrum.find_match_in_set(params[:set]).to_json
@@ -394,11 +379,6 @@ class SpectrumsController < ApplicationController
       flash[:error] = "You must be logged in and own this spectrum to set the sample row."
     end
     redirect_to "/analyze/spectrum/"+@spectrum.id.to_s
-  end
-
-  def print
-    @spectrum = Spectrum.find params[:id]
-    render :layout => false
   end
 
   def find_brightest_row

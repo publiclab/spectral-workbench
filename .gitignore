@@ -25,7 +25,6 @@ tmp
 *.sql
 backup.sh
 todo
-db/schema.rb
 config/database.yml
 config/config.yml
 config/amazon_s3.yml

@@ -12,7 +12,7 @@
     <% end %>
     <div class="text">
       <h3><a href="/spectra/show/<%= spectrum.id %>"><%=h truncate(spectrum.title,:length => 24) %></a></h3>
-      <p><a href="<%=h user_path(spectrum.author) %>"><%=h spectrum.author %></a> | <%= time_ago_in_words(spectrum.created_at) %> ago</p>
+      <p><a href="<%=h profile_path(spectrum.author) %>"><%=h spectrum.author %></a> | <%= time_ago_in_words(spectrum.created_at) %> ago</p>
       <p class="notes"><%=h truncate(spectrum.notes,:length => 200) %></p>
       <p>
 	<a href="/spectra/<%= spectrum.id %>">View</a> |

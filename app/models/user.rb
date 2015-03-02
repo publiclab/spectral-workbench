@@ -11,7 +11,9 @@ class User < ActiveRecord::Base
   validates_length_of       :email,    :within => 6..100 #r@a.wk
   validates_uniqueness_of   :email
 
-  has_many :macros  
+  has_many :macros, :dependent => :destroy
+  has_many :spectrums, :dependent => :destroy
+  #has_many :spectra_sets, :dependent => :destroy
 
   # HACK HACK HACK -- how to do attr_accessible from here?
   # prevents a user from submitting a crafted form that bypasses activation
@@ -32,23 +34,20 @@ class User < ActiveRecord::Base
     weeks
   end
 
-  def spectra(count)
-    count ||= 20
-    Spectrum.find_all_by_user_id(self.id,:order => "created_at DESC",:limit => count)
+  # we need to transition this to user.id based lookup
+  def sets
+    SpectraSet.where(author: self.login)
   end
 
   def spectrum_count
     Spectrum.count(:all, :conditions => {:user_id => self.id})
   end
 
-  def sets
-    SpectraSet.find_all_by_author(self.login)
-  end
-
   def set_count
     SpectraSet.count(:all, :conditions => {:author => self.login})
   end
 
+  # we need to transition this to user.id based lookup
   def comments
     Comment.find_all_by_author(self.login)
   end

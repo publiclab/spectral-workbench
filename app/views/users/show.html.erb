@@ -38,12 +38,13 @@
     <hr />
 
     <%= render :partial => 'spectrums/sets' %>
+    <%= will_paginate @sets, :param_name => :set_page, renderer: BootstrapPagination::Rails %>
 
   </div>
 
   <div class="span8">
     <%= render :partial => 'spectrums/list' %>
-    <%= will_paginate @spectrums %>
+    <%= will_paginate @spectrums, renderer: BootstrapPagination::Rails %>
   </div>
 </div>
 </div>

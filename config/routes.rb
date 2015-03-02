@@ -84,8 +84,8 @@ SpectralWorkbench::Application.routes.draw do
 
 
   # Registered user pages:
-  get '/profile' => 'users#profile'
-  get '/profile/:id' => 'users#profile'
+  get '/profile', to: 'users#show', :as => 'profile'
+  get '/profile/:id', to: 'users#show', :as => 'profile'
   get '/macro/edit/:id' => 'macros#edit'
   get '/macro/update/:id' => 'macros#update'
   get '/macro/:author/:id' => 'macros#show'

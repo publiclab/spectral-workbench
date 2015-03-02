@@ -24,7 +24,7 @@
     <h3>Recent authors</h3>
     <ul class="nav">
     <% User.find_all_by_login(@spectrums.collect(&:author).uniq).each do |user| %>
-      <li><a href="<%= user_path(user.login) %>"><i class="icon icon-user"></i> <%= user.login %></a></li>
+      <li><a href="<%= profile_path(user.login) %>"><i class="icon icon-user"></i> <%= user.login %></a></li>
     <% end %>
     </ul>
 
@@ -74,7 +74,7 @@
     <h2>Recently uploaded spectra <small class="hidden-phone">by contributors like you</small></h2>
 
     <%= render :partial => 'spectrums/list' %>
-    <%= will_paginate @spectrums %>
+    <%= will_paginate @spectrums, renderer: BootstrapPagination::Rails %>
   </div>
 
 </div>
