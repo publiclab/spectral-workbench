@@ -5,7 +5,7 @@
 <% else %>
 <h2>Spectra for <%= params[:id] %> 
 <% if User.find_by_login(params[:id]) %>
-  (<%= User.find_by_login(params[:id]).spectra.length %>)
+  (<%= User.find_by_login(params[:id]).spectrum_count %>)
 <% end %>
 </h2>
 <% end %>
