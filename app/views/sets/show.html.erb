@@ -86,8 +86,8 @@
         <% if User.find_by_login(comment.author) %><a href="/spectra/author/<%= comment.author %>"><%= comment.author %></a> wrote:</b>
         <% else %><%=h comment.author %> wrote:</b>
         <% end %>
-        <p><%= RDiscount.new(comment.body).to_html %></p>
-        <% if logged_in? && comment.can_delete(current_user) %><p><a href="/comments/delete/<%= comment.id %>">Delete</a></p><% end %>
+        <p><%=raw RDiscount.new(comment.body).to_html %></p>
+        <% if logged_in? && comment.can_delete(current_user) %><p><a href="/comments/delete/<%= comment.id %>"><i class="icon icon-remove-sign"></i> Delete</a></p><% end %>
       </div>
       <% end %>
 
