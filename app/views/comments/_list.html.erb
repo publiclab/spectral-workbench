@@ -1,0 +1,16 @@
+<div class="row-fluid">
+  <% @comments.each_with_index do |comment,i| %>
+    <div class="span4 %> clearfix">
+      <div class="comment">
+	    <small><b><%= time_ago_in_words(comment.created_at) %> ago, <a href="<%= user_path(comment.author) %>"><%= comment.author %></a> wrote:</b></small>
+	    <p><%= comment.body %>
+	    <small><a href="/spectra/<%= comment.spectrum_id %>">Read more &raquo;</a></small></p>
+	  </div>
+    </div>
+    <% if ((i+1)/3.0).to_i == ((i+1)/3.0) %>
+    </div>
+    <hr style="clear:both;"/>
+    <div class="row-fluid">
+    <% end %>
+  <% end %>
+</div>
