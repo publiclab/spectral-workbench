@@ -21,6 +21,13 @@ class SpectrumsControllerTest < ActionController::TestCase
     assert_response :redirect # to /analyze/spectrums/#, lets update this
   end
 
+  test "should show search" do
+    get :search, :id => "cfl"
+    assert_response :success
+    assert_not_nil :spectrums
+    assert_not_nil :sets
+  end
+
   test "should get edit" do
     session[:user_id] = User.first.id # log in
     get :edit, :id => spectrums(:one).id
