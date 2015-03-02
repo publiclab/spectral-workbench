@@ -59,15 +59,11 @@ SpectralWorkbench::Application.routes.draw do
 
   get '/register' => 'users#create'
   get '/signup' => 'users#new'
-  get '/users' => 'users#list'
   get '/contributors' => 'users#contributors'
   get '/offline' => 'users#offline'
 
-  resources :users do
-    member do
+  resources :users
 
-    end
-  end
   resources :session
 
   # countertop spectrometer and device paths
