@@ -1,4 +1,4 @@
-class TagController < ApplicationController
+class TagsController < ApplicationController
 
   def create
     if logged_in?
@@ -49,7 +49,7 @@ class TagController < ApplicationController
     end
   end
 
-  def delete
+  def destroy
     @tag = Tag.find(params[:id])
     if logged_in?
       if @tag.user_id == current_user.id || @tag.spectrum.author == current_user.login || current_user.role == "admin"
@@ -60,13 +60,13 @@ class TagController < ApplicationController
               render :text => "success"
             else
               flash[:notice] = "Tag '"+@tag.name+"' deleted."
-              redirect_to "/analyze/spectrum/"+@tag.spectrum_id.to_s
+              redirect_to spectrum_path(@tag.spectrum_id.to_s)
             end
           end
         end
       else
         flash[:error] = "You must have authored a tag or own its spectrum to delete it."
-        redirect_to "/analyze/spectrum/"+@tag.spectrum_id.to_s
+        redirect_to spectrum_path(@tag.spectrum_id.to_s)
       end
     else
       flash[:error] = "You must be logged in to delete tags."

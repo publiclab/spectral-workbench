@@ -20,7 +20,7 @@
     L.tileLayer("http://a.tiles.mapbox.com/v3/jywarren.map-lmrwb2em/{z}/{x}/{y}.png").addTo(map)
 
     <% geolocated = 0 %>
-    <% @spectrums.each do |spectrum| %><% if spectrum.lat != 0 %>L.marker([<%= spectrum.lat %>, <%= spectrum.lon %>]).addTo(map).bindPopup("<a href='/analyze/spectrum/<%= spectrum.id %>'><%= spectrum.title %></a>");<% geolocated += 1 %><% end %><% end %>
+    <% @spectrums.each do |spectrum| %><% if spectrum.lat != 0 %>L.marker([<%= spectrum.lat %>, <%= spectrum.lon %>]).addTo(map).bindPopup("<a href='<%= spectrum_path(spectrum.id) %>'><%= spectrum.title %></a>");<% geolocated += 1 %><% end %><% end %>
     }
     $('#mapcount').html("<%= geolocated.to_s %>")
   </script>
@@ -35,9 +35,9 @@
 <div style="padding:10px;">
 
   <div class="btn-group hidden-phone pull-right" style="padding-top:10px;">
-    <a class="btn btn-small" href="/tag/<%=h params[:id] %>.json"><b>JSON</b></a>
-    <a class="btn btn-small" href="/tag/<%=h params[:id] %>.xml"><b>XML</b></a>
-    <a rel="tooltip" class="btn btn-small" href="http://publiclab.org/wiki/spectral-workbench-exporting" title="About export formats"><i class="icon icon-question-sign"></i></a> 
+    <a class="btn btn-small" href="<%=h tag_path(params[:id]) %>.json"><b>JSON</b></a>
+    <a class="btn btn-small" href="<%=h tag_path(params[:id]) %>.xml"><b>XML</b></a>
+    <a rel="tooltip" class="btn btn-small" href="http://publiclab.org/wiki/spectral-workbench-exporting" title="About export formats"><i class="icon icon-question-sign"></i></a>
   </div>
 
   <h2 style="margin-left:10px;">Spectra tagged with "<%=h params[:id] %>"<% if @tag %> (<%= @count %>)<% end %></h2>

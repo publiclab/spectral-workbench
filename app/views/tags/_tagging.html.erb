@@ -1,6 +1,6 @@
-<p id="tags"><b>Tags:</b> <span><% @spectrum.tags.each do |tag| %> <span id="tag_<%= tag.id %>" class="label label-info"> <a href="/tag/<%= tag.name %>"><%= tag.name %></a> <% if logged_in? && (tag.user_id == current_user.id || tag.spectrum.author == current_user.login || current_user.role == "admin") %><a class='tagdelete' data-remote='true' href='/tag/delete/<%= tag.id %>'>x</a><% end %></span><% end %></span></p>
+<p id="tags"><b>Tags:</b> <span><% @spectrum.tags.each do |tag| %> <span id="tag_<%= tag.id %>" class="label label-info"> <a href="<%= tag_path(tag.name) %>"><%= tag.name %></a> <% if logged_in? && (tag.user_id == current_user.id || tag.spectrum.author == current_user.login || current_user.role == "admin") %><a class='tagdelete' data-method='delete' href='<%= tag_path(tag) %>'>x</a><% end %></span><% end %></span></p>
 
-<form id="tagform" class="form" action="/tag/create">
+<form id="tagform" class="form" action="/tag">
   <input type="hidden" name="tag[spectrum_id]" value="<%= @spectrum.id %>" />
   <div class="input-prepend">
     <span class="add-on"><i class="icon-tags"></i></span>
@@ -13,7 +13,7 @@
     $('#tagform').bind('submit', function(e){
       e.preventDefault()
       $.ajax({
-        url: "/tag/create",
+        url: "/tags",
         type: "POST",
         data: {
           authenticity_token: "<%= form_authenticity_token %>",
@@ -27,7 +27,7 @@
           $.each(response['saved'],function(i,tag) {
             var tag_name = tag[0]
             var tag_id = tag[1]
-            $('#tags').append(" <span id='tag_"+tag_id+"' class='label label-info'><a href='/tag/"+tag_name+"'>"+tag_name+"</a> <a class='tagdelete' data-remote='true' href='/tag/delete/"+tag_id+"'>x</a></span> ")
+            $('#tags').append(" <span id='tag_"+tag_id+"' class='label label-info'><a href='/tags/"+tag_name+"'>"+tag_name+"</a> <a class='tagdelete' data-method='delete' href='/tags/"+tag_id+"'>x</a></span> ")
             $('#taginput').val("")
             $('#tagform .control-group').removeClass('error')
             $('#tagform .control-group .help-inline').remove()

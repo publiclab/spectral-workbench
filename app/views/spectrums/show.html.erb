@@ -1,9 +1,9 @@
-<%= render :partial => "clone" %>
-<%= render :partial => "set" %>
-<%= render :partial => "macros" %>
-<%= render :partial => "calibrate" %>
-<%= render :partial => "select_row" %>
-<%= render :partial => "compare" %>
+<%= render :partial => "spectrums/show/clone" %>
+<%= render :partial => "spectrums/show/set" %>
+<%= render :partial => "spectrums/show/macros" %>
+<%= render :partial => "spectrums/show/calibrate" %>
+<%= render :partial => "spectrums/show/select_row" %>
+<%= render :partial => "spectrums/show/compare" %>
 
 <div class="container-fluid" style="clear:both;">
 
@@ -38,14 +38,14 @@
         <a id="$('#calibrate-begin').focus()" data-toggle="modal" href="#calibratemodal1" class="btn btn-primary"><i class="icon icon-white icon-screenshot"></i><span class="hidden-phone"> Calibrate</span></a>
 
         <a href="#embedmodal" class="btn btn-inverse hidden-phone" data-toggle="modal"><i class="icon icon-white icon-share"></i><span class="hidden-phone"> Embed</span></a>
-        <%= render :partial => "embed" %>
+        <%= render :partial => "spectrums/show/embed" %>
         <a class="btn btn-inverse" data-toggle="modal" href="#setmodal"><i class="icon icon-white icon-plus-sign"></i><span class="hidden-phone"> Add to set</span></a>
         <a class="btn btn-inverse hidden-phone" id="createSet" href="javascript:void(0);"><i class="icon icon-white icon-list"></i><span class="hidden-phone"> Save as set</span></a>
         <a data-toggle="modal" class="btn btn-inverse" href="#comparemodal"><i class="icon icon-white icon-align-left"></i><span class="hidden-phone"> Compare</span></a>
         <a class="btn btn-inverse" href="/match/search/<%= @spectrum.id %>">Find similar</a>
         <% if logged_in? && current_user.id == 1 && @spectrum.calibrated %><a href="/key/<%= @spectrum.id %>" class="btn btn-inverse">Make key</a><% end %>
 
-        <%= render :partial => "analyze/tools" %>
+        <%= render :partial => "spectrums/show/tools" %>
         <b class="pull-right" style="padding-top:10px;margin-right:10px;color:#ffffff;"><span id="wavelength"></span> <span id="#unit_label">nm</span></b>
 
       </div>
@@ -58,7 +58,7 @@
       <p>uploaded by <a href="<%= user_path(@spectrum.author) %>"><%= @spectrum.author %></a> | <%= @spectrum.created_at.to_s(:long) %></p>
       <% if @spectrum.lat != 0 && @spectrum.lon != 0 %><p>Collected at: Lat: <%= @spectrum.lat %>, Lon: <%= @spectrum.lon %> (<a href="http://www.openstreetmap.org/?lat=<%= @spectrum.lat %>&lon=<%= @spectrum.lon %>&zoom=10&layers=M">View in OpenStreetMap</a>)</p><% end %>
 
-      <%= render :partial => "tag/tagging" %>
+      <%= render :partial => "tags/tagging" %>
 
       <div class="btn-group hidden-phone">
         <hr />
@@ -125,7 +125,7 @@
 
       <p><% if @spectrum.notes %><%=raw RDiscount.new(@spectrum.notes).to_html %><% end %></p>
 
-      <%= render :partial => "commenting" %>
+      <%= render :partial => "spectrums/show/commenting" %>
 
       </div>
     </div>

@@ -18,7 +18,7 @@ class SpectrumsControllerTest < ActionController::TestCase
 
   test "should show spectrum" do
     get :show, :id => spectrums(:one).id
-    assert_response :redirect # to /analyze/spectrums/#, lets update this
+    assert_response :success # to /analyze/spectrums/#, lets update this
   end
 
   test "should get edit" do

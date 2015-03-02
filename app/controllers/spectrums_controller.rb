@@ -20,12 +20,45 @@ class SpectrumsController < ApplicationController
       @sets = SpectraSet.find(:all,:limit => 4,:order => "created_at DESC")
       @comments = Comment.all :limit => 12, :order => "id DESC"
 
-      respond_with(@spectrums) do |format| 
-        format.html { 
+      respond_with(@spectrums) do |format|
+        format.html {
           render :template => "spectrums/index.html.erb"
         } # show.html.erb
         format.xml  { render :xml => @spectrums }
       end
+    end
+  end
+
+  def show
+    @spectrum = Spectrum.find(params[:id])
+    if @spectrum.data == "" || @spectrum.data.nil?
+      @spectrum.extract_data
+      @spectrum.save
+    end
+    if logged_in?
+      @spectra = Spectrum.find(:all, :limit => 12, :order => "created_at DESC", :conditions => ["id != ? AND author = ?",@spectrum.id,current_user.login])
+    else
+      @spectra = Spectrum.find(:all, :limit => 12, :order => "created_at DESC", :conditions => ["id != ?",@spectrum.id])
+    end
+    @sets = @spectrum.sets
+    @user_sets = current_user.sets if logged_in?
+    @macros = Macro.find :all, :conditions => {:macro_type => "analyze"}
+    @calibrations = current_user.calibrations if logged_in?
+    @comment = Comment.new
+    #respond_with(@spectrum) do |format|
+    respond_with(@spectrum) do |format|
+      format.html {}
+      format.xml  { render :xml => @spectrum }
+      format.csv  {
+        if params[:raw]
+          render :template => "spectrums/raw.csv.erb"
+        else
+          render :template => "spectrums/show.csv.erb" # formatted for SpectraOnline.com
+        end
+      }
+      format.json  {
+        render :json => @spectrum
+      }
     end
   end
 
@@ -39,7 +72,7 @@ class SpectrumsController < ApplicationController
     @spectrum = Spectrum.find(params[:id])
     @width = (params[:width] || 500).to_i
     @height = (params[:height] || 300).to_i
-    render :layout => false 
+    render :layout => false
   end
 
   # non REST
@@ -53,7 +86,7 @@ class SpectrumsController < ApplicationController
   def compare
     @spectrum = Spectrum.find(params[:id])
     @spectra = Spectrum.find(:all, :conditions => ['id != ? AND (title LIKE ? OR notes LIKE ? OR author LIKE ?)',@spectrum.id,"%"+params[:q]+"%", "%"+params[:q]+"%","%"+params[:q]+"%"],:limit => 20,:order => "created_at DESC")
-    render :partial => "analyze/compare_search", :layout => false
+    render :partial => "spectrums/show/compare_search", :layout => false
   end
 
   # non REST
@@ -63,7 +96,7 @@ class SpectrumsController < ApplicationController
     @spectrums = @spectrums.paginate :page => params[:page], :per_page => 24
     if params[:capture]
       render :partial => "capture/results.html.erb", :layout => false
-    else 
+    else
       @sets = SpectraSet.find(:all, :conditions => ['title LIKE ? OR notes LIKE ?',"%"+params[:id]+"%", "%"+params[:id]+"%"],:limit => 100, :order => "id DESC")
     end
   end
@@ -78,7 +111,7 @@ class SpectrumsController < ApplicationController
   def detail
     @spectrum = Spectrum.find(params[:id])
 
-    respond_with(@spectrum) do |format| 
+    respond_with(@spectrum) do |format|
       format.html # details.html.erb
     end
   end
@@ -89,7 +122,7 @@ class SpectrumsController < ApplicationController
     if logged_in?
     @spectrum = Spectrum.new
 
-    respond_with(@spectrum) do |format| 
+    respond_with(@spectrum) do |format|
       format.html {}
       format.xml  { render :xml => @spectrum }
     end
@@ -139,7 +172,7 @@ class SpectrumsController < ApplicationController
       end
 
       if @spectrum.save
-        respond_with(@spectrum) do |format| 
+        respond_with(@spectrum) do |format|
           if (APP_CONFIG["local"] || logged_in?)
             if mobile? || ios?
               @spectrum.save
@@ -154,7 +187,7 @@ class SpectrumsController < ApplicationController
             @spectrum.tag(params[:device],current_user.id) if params[:device] && params[:device] != "none"
             if params[:spectrum][:calibration_id] && !params[:is_calibration] && params[:spectrum][:calibration_id] != "calibration" && params[:spectrum][:calibration_id] != "undefined"
               @spectrum.extract_data
-              @spectrum.clone(params[:spectrum][:calibration_id]) 
+              @spectrum.clone(params[:spectrum][:calibration_id])
             end
             if params[:geotag]
               @spectrum.lat = params[:lat]
@@ -163,8 +196,8 @@ class SpectrumsController < ApplicationController
             @spectrum.reversed = true if params[:spectrum][:reversed] == "true"
             if @spectrum.save!
               flash[:notice] = 'Spectrum was successfully created.'
-              format.html { 
-                redirect_to :controller => :analyze, :action => :spectrum, :id => @spectrum.id
+              format.html {
+                redirect_to spectrum_path(@spectrum)
               }
               format.xml  { render :xml => @spectrum, :status => :created, :location => @spectrum }
             else
@@ -196,7 +229,7 @@ class SpectrumsController < ApplicationController
         :photo => params[:photo]})
       if @spectrum.save!
         @spectrum.tag(params[:tags],current_user.id) if params[:tags]
-        redirect_to "/analyze/spectrum/"+@spectrum.id.to_s
+        redirect_to spectrum_path(@spectrum)
       else
         flash[:error] = "There was a problem uploading."
         redirect_to "/spectrum/upload/"
@@ -206,7 +239,7 @@ class SpectrumsController < ApplicationController
     end
   end
 
-  # only ajax/POST accessible for now: 
+  # only ajax/POST accessible for now:
   def save
     @spectrum = Spectrum.find(params[:id])
     if logged_in? && (@spectrum.user_id == current_user.id || current_user.role == "admin")
@@ -229,8 +262,8 @@ class SpectrumsController < ApplicationController
       end
       @spectrum.title = params[:spectrum][:title] unless params[:spectrum][:title].nil?
       @spectrum.notes = params[:spectrum][:notes] unless params[:spectrum][:notes].nil?
- 
-      respond_with(@spectrum) do |format| 
+
+      respond_with(@spectrum) do |format|
         if @spectrum.save
           flash[:notice] = 'Spectrum was successfully updated.'
           format.html { redirect_to(@spectrum) }
@@ -254,7 +287,7 @@ class SpectrumsController < ApplicationController
       @spectrum.destroy
       flash[:notice] = "Spectrum deleted."
 
-      respond_with(@spectrum) do |format| 
+      respond_with(@spectrum) do |format|
         format.html { redirect_to('/') }
         format.xml  { head :ok }
       end
@@ -275,10 +308,10 @@ class SpectrumsController < ApplicationController
         tag = @spectrum.tag('calibration',current_user.id)
       end
       flash[:notice] = "Great, calibrated! <b>Next steps:</b> sign up on <a href='http://publiclab.org/wiki/spectrometer'>the mailing list</a>, or browse/contribute to <a href='http://publiclab.org'>Public Lab website</a>"
-      redirect_to "/analyze/spectrum/"+@spectrum.id.to_s
+      redirect_to spectrum_path(@spectrum)
     else
       flash[:error] = "You must be logged in and own this spectrum to calibrate."
-      redirect_to "/analyze/spectrum/"+@spectrum.id.to_s
+      redirect_to spectrum_path(@spectrum)
     end
   end
 
@@ -290,10 +323,10 @@ class SpectrumsController < ApplicationController
       @spectrum.extract_data
       @spectrum.save
     end
-    redirect_to "/analyze/spectrum/"+@spectrum.id.to_s
+    redirect_to spectrum_path(@spectrum)
     else
       flash[:error] = "You must be logged in and own this spectrum to re-extract values."
-      redirect_to "/analyze/spectrum/"+@spectrum.id.to_s
+      redirect_to spectrum_path(@spectrum)
     end
   end
 
@@ -305,7 +338,7 @@ class SpectrumsController < ApplicationController
         @spectrum.clone(params[:clone_id])
         @spectrum.save
       end
-      redirect_to "/analyze/spectrum/"+@spectrum.id.to_s
+      redirect_to spectrum_path(@spectrum)
     else
       flash[:error] = "You must be logged in and own this spectrum to clone calibrations."
       redirect_to "/login"
@@ -314,7 +347,7 @@ class SpectrumsController < ApplicationController
 
   def all
     @spectrums = Spectrum.find(:all)
-    respond_with(@spectrums) do |format| 
+    respond_with(@spectrums) do |format|
       format.xml  { render :xml => @spectrums }
       format.json  { render :json => @spectrums }
     end
@@ -365,7 +398,7 @@ class SpectrumsController < ApplicationController
     if logged_in?
       @calibration = current_user.last_calibration
       @calibration = Spectrum.find(params[:calibration_id]) if params[:calibration_id]
-      @start_wavelength,@end_wavelength = @calibration.wavelength_range 
+      @start_wavelength,@end_wavelength = @calibration.wavelength_range
     end
     if params[:old]
       render :template => "spectrums/capture-old.html.erb"
@@ -393,7 +426,7 @@ class SpectrumsController < ApplicationController
     else
       flash[:error] = "You must be logged in and own this spectrum to set the sample row."
     end
-    redirect_to "/analyze/spectrum/"+@spectrum.id.to_s
+    redirect_to spectrum_path(@spectrum)
   end
 
   def print
@@ -411,7 +444,7 @@ class SpectrumsController < ApplicationController
     else
       flash[:error] = "You must be logged in and own this spectrum to do this."
     end
-    redirect_to "/analyze/spectrum/"+@spectrum.id.to_s
+    redirect_to spectrum_path(@spectrum)
   end
 
   def rotate
@@ -424,7 +457,7 @@ class SpectrumsController < ApplicationController
     else
       flash[:error] = "You must be logged in and own this spectrum to do this."
     end
-    redirect_to "/analyze/spectrum/"+@spectrum.id.to_s
+    redirect_to spectrum_path(@spectrum)
   end
 
   # Just reverses the image, not the data.
@@ -436,11 +469,19 @@ class SpectrumsController < ApplicationController
     else
       flash[:error] = "You must be logged in and own this spectrum to do this."
     end
-    redirect_to "/analyze/spectrum/"+@spectrum.id.to_s
+    redirect_to spectrum_path(@spectrum)
   end
 
-  def show
-    redirect_to "/analyze/spectrum/"+params[:id]
+  def clone_search
+    @spectrum = Spectrum.find(params[:id])
+    @spectra = Spectrum.find(:all, :conditions => ['id != ? AND (title LIKE ? OR notes LIKE ? OR author LIKE ?)',@spectrum.id,"%#{params[:q]}%", "%#{params[:q]}%","%#{params[:q]}%"],:limit => 20,:order => "created_at DESC")
+    render :partial => "spectrums/show/clone_results", :layout => false
+  end
+
+  def set_search
+    @spectrum = Spectrum.find(params[:id])
+    @user_sets = SpectraSet.find(:all, :conditions => ['author = ? AND (title LIKE ? OR notes LIKE ?)',current_user.login,"%#{params[:q]}%", "%#{params[:q]}%"],:limit => 20,:order => "created_at DESC")
+    render :partial => "spectrums/show/set_results", :layout => false
   end
 
 end

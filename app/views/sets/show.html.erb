@@ -103,7 +103,9 @@
             <input name="comment[author]" id="author" type="text" placeholder="Your name"><br />
           </div>
         <% end %>
-        <% if !logged_in? && !APP_CONFIG["local"] %><p><%= recaptcha_tags :display => {:theme => "white"} %></p><% end %>
+        <% if !logged_in? && !APP_CONFIG["local"] %>
+          <p><%= recaptcha_tags :display => {:theme => "white"} %></p>
+        <% end %>
 
         <br />
         <input type='hidden' name='authenticity_token' value="<%= form_authenticity_token %>"/>
