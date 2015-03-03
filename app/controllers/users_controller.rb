@@ -12,8 +12,10 @@ class UsersController < ApplicationController
   def dashboard
     @offline = "flush"
     @spectrums = Spectrum.paginate(:order => "created_at DESC", :conditions => ["author != 'anonymous'"], :page => params[:spectrums_page], :per_page => 50)
-    @sets = SpectraSet.paginate(:page => params[:sets_page], :order => "created_at DESC")
-    @comments = Comment.paginate(:page => params[:comments_page], :order => "created_at DESC")
+    @sets = SpectraSet.paginate(:page => params[:sets_page], :order => "created_at DESC", :per_page => 25)
+    @comments = Comment.paginate(:page => params[:comments_page], :order => "created_at DESC", :per_page => 40)
+    @users = User.paginate(:page => params[:users_page], :order => "created_at DESC", :per_page => 100)
+    @tags = Tag.paginate(:page => params[:tags_page], :order => "created_at DESC", :per_page => 100)
   end
 
   def contributors
@@ -32,11 +34,8 @@ class UsersController < ApplicationController
 
   def show
     @user = User.find_by_login(params[:id])
-    @spectrums = Spectrum.paginate(:order => "created_at DESC", :conditions => ["author != 'anonymous'"], :page => params[:spectrums_page], :per_page => 50)
-    @sets = SpectraSet.paginate(:page => params[:sets_page], :order => "created_at DESC", :per_page => 25)
-    @comments = Comment.paginate(:page => params[:comments_page], :order => "created_at DESC", :per_page => 40)
-    @users = User.paginate(:page => params[:users_page], :order => "created_at DESC", :per_page => 100)
-    @tags = Tag.paginate(:page => params[:tags_page], :order => "created_at DESC", :per_page => 100)
+    @spectrums = @user.spectrums.order("created_at DESC").paginate(:page => params[:page])
+    @sets = @user.sets.order("created_at DESC").paginate(:page => params[:set_page], :per_page => 2)
   end
 
   ##### Admin only: #####
