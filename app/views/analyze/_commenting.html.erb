@@ -11,7 +11,7 @@
     <% if User.find_by_login(comment.author) %><a href="<%= profile_path(comment.author) %>"><%= comment.author %></a> wrote:</b>
     <% else %><%=h comment.author %> wrote:</b>
     <% end %>
-    <p><%= RDiscount.new(comment.body).to_html %></p>
+    <p><%= raw RDiscount.new(comment.body).to_html %></p>
     <% if logged_in? && (current_user.role == "admin" || current_user.login == comment.author) %><p><small><%= link_to '<i class="icon icon-remove-sign"></i> Delete'.html_safe, "/comments/delete/"+comment.id.to_s, :confirm => 'Are you sure?' %></small></p><% end %>
   </div>
   <% end %>

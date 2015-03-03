@@ -3,7 +3,7 @@
   <div class="comment">
 
     <small><b><%= time_ago_in_words(comment.created_at) %> ago, <a href="<%= profile_path(comment.author) %>"><%= comment.author %></a> wrote:</b></small>
-    <p>"<%= comment.body %>"
+    <p>"<%= raw comment.body %>"
     <a href="/spectra/<%= comment.spectrum_id %>">Read more &raquo;</a></p>
 
   </div>
