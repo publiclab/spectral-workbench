@@ -5,14 +5,14 @@ class CommentsController < ApplicationController
   end
 
   def create
-    @spectrum = Spectrum.find(params[:id])
+    @spectrum = Spectrum.find(params[:spectrum_id])
     @spectrums = Spectrum.find(:all, :limit => 4, :order => "created_at DESC", :conditions => ["id != ?",@spectrum.id])
     @jump_to_comment = true
-    @comment = Comment.new({
-	:spectrum_id => @spectrum.id,
-	:body => params[:comment][:body],
-	:author => params[:comment][:author],
-	:email => params[:comment][:email]})
+    @comment = @spectrum.comments.new({
+	    :body => params[:comment][:body],
+	    :author => params[:comment][:author],
+	    :email => params[:comment][:email]
+    })
     @comment.author = current_user.login if logged_in?
     @comment.email = current_user.email if logged_in?
     if (logged_in? || APP_CONFIG["local"]) && @comment.save
@@ -20,17 +20,16 @@ class CommentsController < ApplicationController
       @spectrum.notify_commenters(@comment,current_user) if logged_in?
       @spectrum.notify_commenters(@comment,false) unless logged_in?
       respond_to do |format|
-        format.html do
-          if request.xhr?
-            render :text => @comment.id
-          else
-            flash[:notice] = "Comment saved."
-            redirect_to spectrum_path(params[:id])+"#comment_"+@comment.id.to_s
-          end
-        end
+        format.html {
+          flash[:notice] = "Comment saved."
+          redirect_to spectrum_path(params[:spectrum_id])
+        }
+        format.json  {
+          render :json => @comment.id
+        }
       end
     else
-      redirect_to spectrum_path(params[:id])
+      redirect_to spectrum_path(params[:spectrum_id])
     end
   end
 
