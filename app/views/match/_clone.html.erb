@@ -33,7 +33,7 @@
 	f.submit();
     })
 
-    spectrum_<%= spectrum.id %> = <%= spectrum.data %>
+    spectrum_<%= spectrum.id %> = <%= raw spectrum.data %>
 
     spectrum_<%= spectrum.id %>_data = []
     scaled = true
@@ -54,7 +54,7 @@
       $("#createSet").show()
       $W.data.push({id: <%= spectrum.id %>, label:"<%= spectrum.title.gsub('"',"'") %> = 0% (<a href='javascript:void(0);' onClick='remove(\"<%= spectrum.id %>\")'>remove</a>)", data: spectrum_<%= spectrum.id %>_data})
       plot = $.plot($("#graph"),$W.data,flotoptions);
-      init_hovers();
+      $W.init_hovers();
       $("#spectrum_<%= spectrum.id %>").remove()
     })
     function remove(id) {
@@ -69,7 +69,7 @@
         }
       })
       plot = $.plot($("#graph"),$W.data,flotoptions);
-      init_hovers();
+      $W.init_hovers();
     }
 
     </script>

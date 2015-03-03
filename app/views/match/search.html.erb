@@ -22,7 +22,7 @@
           spectra.push(<%= @spectrum.id %>)
           $W.data.push({id: <%= @spectrum.id %>, label:"<%= @spectrum.title.gsub('"',"'") %> = 0%", data: spectrum_<%= @spectrum.id %>_data})
           plot = $.plot($("#graph"),$W.data,flotoptions);
-          init_hovers();
+          $W.init_hovers();
         })
     </script>
         <% if logged_in? && current_user.id == 1 && @spectrum.calibrated %><a href="/key/<%= @spectrum.id %>" class="btn btn-inverse">Make key</a><% end %>

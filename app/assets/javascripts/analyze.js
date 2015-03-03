@@ -2,6 +2,7 @@
 spectrum = "";
 var legends;
 $W = {
+  ajaxLoading: "<i class='fa fa-spinner fa-spin'></i>",
   latestPosition: null,
   updateLegendTimeout: null,
   data: [],
@@ -21,12 +22,12 @@ $W = {
     this.alert_overexposure()
     $("#compareForm").submit(function(){
       var url = "/spectrums/compare/"+$W.spectrum_id+"?q="+$("#searchinput").val()
-      $("#result").html(ajax_load).load(url)
+      $("#result").html($W.ajaxLoading).load(url)
     });
     $("#fitAdjustForm").submit(function(){
       var url = "/match/"+$W.spectrum_id+"?fit="+$("#fitinput").val()
-      $("#result").html(ajax_load).load(url+"&c=1")
-      $("#results").html(ajax_load).load(url)
+      $("#result").html($W.ajaxLoading).load(url+"&c=1")
+      $("#results").html($W.ajaxLoading).load(url)
     });
     $('#units').click($W.units)
     $('#createSet').click(function() {

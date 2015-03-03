@@ -7,7 +7,7 @@
 
     <script>
 
-    spectrum_<%= spectrum.id %> = <%= spectrum.data || "{lines:[]}" %>
+    spectrum_<%= spectrum.id %> = <%= raw spectrum.data || "{lines:[]}" %>
 
     spectrum_<%= spectrum.id %>_data = []
     scaled = true
@@ -27,7 +27,7 @@
       $("#createSet").show()
       $W.data.push({id: <%= spectrum.id %>, label:"<%= spectrum.title.gsub('"',"'") %> = 0% (<a href='javascript:void(0);' onClick='remove_spectrum(\"<%= spectrum.id %>\")'>remove</a>)", data: spectrum_<%= spectrum.id %>_data})
       plot = $.plot($("#graph"),$W.data,flotoptions);
-      init_hovers();
+      $W.init_hovers();
     })
 
     </script>

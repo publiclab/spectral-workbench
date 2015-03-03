@@ -43,13 +43,6 @@ class SpectrumsController < ApplicationController
   end
 
   # non REST
-  def author
-    @spectrums = Spectrum.find_all_by_author(params[:id])
-    @spectrums = @spectrums.paginate :page => params[:page], :per_page => 24
-    render "spectrums/search"
-  end
-
-  # non REST
   def compare
     @spectrum = Spectrum.find(params[:id])
     @spectra = Spectrum.find(:all, :conditions => ['id != ? AND (title LIKE ? OR notes LIKE ? OR author LIKE ?)',@spectrum.id,"%"+params[:q]+"%", "%"+params[:q]+"%","%"+params[:q]+"%"],:limit => 20,:order => "created_at DESC")

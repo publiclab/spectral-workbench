@@ -15,7 +15,7 @@
     interface:"analyze",
     title: "<%= @spectrum.title.gsub('"',"'") %>",
     form_authenticity_token: "<%= form_authenticity_token %>",
-    spectrum_data: <%= @spectrum.data.gsub('"',"'") %>
+    spectrum_data: <%= raw @spectrum.data.gsub('"',"'") %>
   })
   spectra = [] // So that whenever we submit new fit value, spectra needs to be emptied,
       //so that only new spectra can be saved as a set.
@@ -30,7 +30,7 @@
   <% end %>
 
   plot = $.plot($("#graph"),$W.data,flotoptions);
-  init_hovers();
+  $W.init_hovers();
 
   function remove_spectrum(id) {
     $.each($W.data, function(index,s) {
@@ -46,7 +46,7 @@
     })
 
     plot = $.plot($("#graph"),$W.data,flotoptions);
-    init_hovers();
+    $W.init_hovers();
   }
 })()
 
