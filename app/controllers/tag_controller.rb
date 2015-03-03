@@ -36,9 +36,7 @@ class TagController < ApplicationController
   def show
     @tag = Tag.find_by_name(params[:id], :order => "id DESC")
     if @tag
-      @spectrums = @tag.spectra
-      @count = @spectrums.length
-      @spectrums = @spectrums.paginate :page => params[:page], :per_page => 24
+      @spectrums = @tag.spectra.paginate(:page => params[:page], :per_page => 24)
     end
     @spectrums = [] if @spectrums.nil?
     @comments = Comment.all :limit => 12, :order => "id DESC"

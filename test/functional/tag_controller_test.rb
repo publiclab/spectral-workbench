@@ -1,8 +1,10 @@
 require 'test_helper'
 
 class TagControllerTest < ActionController::TestCase
-  # Replace this with your real tests.
-  test "the truth" do
-    assert true
+
+  test "should show tag" do
+    get :show, :id => 'cfl'
+    assert_response :success
   end
+
 end
