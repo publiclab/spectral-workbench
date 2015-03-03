@@ -63,22 +63,13 @@ SpectralWorkbench::Application.routes.draw do
   get '/contributors' => 'users#contributors'
   get '/offline' => 'users#offline'
 
-  resources :users
-
-  resources :session
-
   # countertop spectrometer and device paths
   get '/key/:id' => 'device#create_key'
   get '/lookup' => 'device#lookup'
   get '/device/claim' => 'device#claim'
 
-
-
   get '/capture' => 'capture#index'
   get '/capture/recent_calibrations' => 'capture#recent_calibrations'
-  get '/capture/beta' => 'capture#index', :alt => 'true'
-  get '/capture/legacy' => 'capture#index', :legacy => 'true'
-
 
   # Registered user pages:
   get '/profile', to: 'users#show', :as => 'profile'
@@ -89,16 +80,18 @@ SpectralWorkbench::Application.routes.draw do
   get '/macro/:author/:id' => 'macros#show'
   get '/macro/:author/:id.:format' => 'macros#show'
   get '/macros' => 'macros#index'
+
   get '/dashboard' => 'users#dashboard'
   get '/popular' => 'likes#index'
   get '/popular/recent' => 'likes#recent'
 
-  resources :tags
-  resources :comments, :belongs_to => :spectrums
-
-  get '/spectra/show/:id.:format' => 'spectrums#show'
-  get '/spectra/show/:id(.:format)' => 'spectrums#show'
   get '/upload' => 'spectrums#new'
+
+  resources :users
+  resources :session
+  resources :tags
+  resources :sets
+  resources :comments, :belongs_to => :spectrums
   resources :spectrums do
     resources :comments
     member do
@@ -107,11 +100,14 @@ SpectralWorkbench::Application.routes.draw do
     end
   end
 
-  resources :sets
-
   get '/message' => 'users#message'
-
   get '/stats' => 'spectrums#stats'
+
+  # legacy; permanent redirect:
+  get '/analyze/spectrum/:id', to: redirect('/spectrums/%{id}')
+  get '/analyze/spectrum/:id.:format', to: redirect('/spectrums/%{id}.%{format}')
+  get '/spectra/show/:id', to: redirect('/spectrums/%{id}')
+  get '/spectra/show/:id.:format', to: redirect('/spectrums/%{id}.%{format}')
 
   get '/spectra/assign' => 'spectrums#assign'
   get '/spectra/feed' => 'spectrums#rss', defaults: { format: 'xml' }

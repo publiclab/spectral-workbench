@@ -61,5 +61,11 @@ module SpectralWorkbench
     config.assets.paths << Rails.root.join("public","lib")
     config.assets.precompile += ['capture.js','analyze.js']
 
+    # pluralization options, but unneccessary due to:
+    # http://dictionary.reference.com/browse/spectrum
+    #ActiveSupport::Inflector.inflections do |inflect|
+    #  inflect.irregular 'spectrum', 'spectra'
+    #end
+
   end
 end
