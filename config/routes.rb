@@ -100,6 +100,7 @@ SpectralWorkbench::Application.routes.draw do
   get '/spectra/show/:id(.:format)' => 'spectrums#show'
   get '/upload' => 'spectrums#new'
   resources :spectrums do
+    resources :comments
     member do
       get :clone_search
       get :set_search

@@ -8,7 +8,7 @@
   <div class="comment">
     <a name="comment_<%= comment.id %>"></a>
     <b><%= time_ago_in_words(comment.created_at) %> ago,
-    <% if User.find_by_login(comment.author) %><a href="<%= user_path(comment.author) %>"><%= comment.author %></a> wrote:</b>
+    <% if User.find_by_login(comment.author) %><a href="<%= profile_path(comment.author) %>"><%= comment.author %></a> wrote:</b>
     <% else %><%=h comment.author %> wrote:</b>
     <% end %>
     <p><%= raw RDiscount.new(comment.body).to_html %></p>
@@ -20,30 +20,26 @@
 <br />
 
 <% if logged_in? %>
-<form action="/comment/create/<%= @spectrum.id %>" class="well form" id="commentform" method="post">
-
+<%= form_for [@spectrum, @spectrum.comments.build], :html => { :class => "well form", :id => "commentform" }  do |f| %>
   <h3 style="margin-top:0;">Post a comment</h3>
-  <textarea name="comment[body]" id="commentbody" cols="8" rows="6"></textarea>
 
+  <textarea name="comment[body]" id="commentbody" cols="8" rows="6"></textarea>
   <br />
   <input type='hidden' name='authenticity_token' value="<%= form_authenticity_token %>"/>
-  <input type='hidden' name='goto' value="analyze"/>
   <input id="commentsubmit" class="btn btn-primary" type="submit" value="Post" />
-
-</form>
+<% end %>
 <script>
   jQuery(document).ready(function() {
     $('#commentform').bind('submit', function(e){
       e.preventDefault()
+      var post_data = $(this).serializeArray();
+      var form_url = $(this).attr("action");
+
       $.ajax({
-        url: "/comment/create/<%= @spectrum.id %>",
+        url: form_url,
         type: "POST",
-        data: {
-          authenticity_token: "<%= form_authenticity_token %>",
-          comment: {
-            body:$('#commentbody').val()
-          }
-        },
+        data: post_data,
+        dataType: "json",
         beforeSend: function() {
           $("#commentbody").prop('disabled',true)
           $("#commentsubmit").prop('disabled',true)
