@@ -17,7 +17,7 @@ class UsersController < ApplicationController
   end
 
   def contributors
-    @users = User.order("id DESC").paginate(:page => params[:page], :per_page => 5)
+    @users = User.order("id DESC").paginate(:page => params[:page])
   end
 
   # for dashboard

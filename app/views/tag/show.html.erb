@@ -43,9 +43,10 @@
   <h2 style="margin-left:10px;">Spectra tagged with "<%=h params[:id] %>"</h2>
 
   <% if @tag %>
-  <%= render :partial => 'spectrums/list' %>
+    <%= render :partial => 'spectrums/list' %>
+    <%= will_paginate @spectrums, renderer: BootstrapPagination::Rails %>
   <% else %>
-  <p>No results for tag "<%=h params[:id] %></p>
+    <p>No results for tag "<%=h params[:id] %></p>
   <% end %>
 
   <hr style="clear:both;" />
