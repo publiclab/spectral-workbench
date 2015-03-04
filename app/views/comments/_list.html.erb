@@ -3,7 +3,7 @@
     <div class="span4 %> clearfix">
       <div class="comment">
 	    <small><b><%= time_ago_in_words(comment.created_at) %> ago, <a href="<%= user_path(comment.author) %>"><%= comment.author %></a> wrote:</b></small>
-	    <p><%= comment.body %>
+	    <p><%= RDiscount.new(comment.body).to_html %>
 	    <small><a href="/spectra/<%= comment.spectrum_id %>">Read more &raquo;</a></small></p>
 	  </div>
     </div>

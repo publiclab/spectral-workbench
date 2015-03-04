@@ -25,7 +25,8 @@ class CommentsController < ApplicationController
           redirect_to spectrum_path(params[:spectrum_id])
         }
         format.json  {
-          render :json => @comment.id
+          @comment.body = RDiscount.new(@comment.body).to_html
+          render :json => @comment
         }
       end
     else

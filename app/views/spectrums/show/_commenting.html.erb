@@ -45,7 +45,7 @@
           $("#commentsubmit").prop('disabled',true)
         },
         success: function(response) {
-          $('#commentlist').append('<div class="comment"><a name="comment_'+response+'"></a><b>Just now, <a href="/users/<%= current_user.login %>"><%= current_user.login %></a> wrote:</b><p>'+$('#commentbody').val()+'</p><p><small><a href="/comments/delete/'+response+'" onclick="return confirm(\'Are you sure?\');"><i class="icon icon-remove-sign"></i> Delete</a></small></p></div>')
+          $('#commentlist').append('<div class="comment"><a name="comment_'+response.id+'"></a><b>Just now, <a href="/users/<%= current_user.login %>"><%= current_user.login %></a> wrote:</b><p>'+response.body+'</p><p><small><a href="/comments/delete/'+response.id+'" onclick="return confirm(\'Are you sure?\');"><i class="icon icon-remove-sign"></i> Delete</a></small></p></div>')
           $('#commentbody').prop('disabled',false)
           $('#commentbody').val('')
           $("#commentsubmit").prop('disabled',false)
