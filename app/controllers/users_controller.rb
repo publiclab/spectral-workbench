@@ -4,7 +4,7 @@ class UsersController < ApplicationController
 
   def message
     @user = User.find params[:user_id]
-    UserMailer.deliver_direct_message(@user,current_user,params[:title],params[:body])
+    UserMailer.direct_message(@user,current_user,params[:title],params[:body])
     flash[:notice] = "Sent successfully."
     redirect_to "/dashboard"
   end

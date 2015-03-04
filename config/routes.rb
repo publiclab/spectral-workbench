@@ -100,7 +100,7 @@ SpectralWorkbench::Application.routes.draw do
     end
   end
 
-  get '/message' => 'users#message'
+  post '/message' => 'users#message'
   get '/stats' => 'spectrums#stats'
 
   # legacy; permanent redirect:

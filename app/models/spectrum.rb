@@ -377,9 +377,9 @@ puts "reversing"
     emails.uniq.each do |email|
       registered_commenter = User.find_by_email(email)
       if (registered_commenter)
-        UserMailer.deliver_commenter_notification(self,new_comment,registered_commenter)
+        UserMailer.commenter_notification(self,new_comment,registered_commenter)
       else
-        UserMailer.deliver_unregistered_commenter_notification(self,new_comment,email)
+        UserMailer.unregistered_commenter_notification(self,new_comment,email)
       end
     end
   end

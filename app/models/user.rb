@@ -21,8 +21,8 @@ class User < ActiveRecord::Base
   attr_accessible :login, :email, :name, :password, :password_confirmation
 
   def after_create
-    UserMailer.deliver_google_groups_email(self)
-    UserMailer.deliver_welcome_email(self)
+    UserMailer.google_groups_email(self)
+    UserMailer.welcome_email(self)
   end
 
   def self.weekly_tallies

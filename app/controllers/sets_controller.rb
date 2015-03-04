@@ -93,7 +93,7 @@ class SetsController < ApplicationController
     @comment.author = current_user.login if logged_in?
     @comment.email = current_user.email if logged_in?
     if (logged_in? || APP_CONFIG["local"]) && @comment.save
-      UserMailer.deliver_set_comment_notification(@set,@comment,User.find_by_login(@set.author)) if (!logged_in? || current_user.login != @set.author)
+      UserMailer.set_comment_notification(@set,@comment,User.find_by_login(@set.author)) if (!logged_in? || current_user.login != @set.author)
       @set.notify_commenters(@comment,current_user) if logged_in?
       @set.notify_commenters(@comment,false) unless logged_in?
       flash[:notice] = "Comment saved."

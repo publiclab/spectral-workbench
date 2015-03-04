@@ -64,7 +64,4 @@ end
 # Deploy with Capistrano
 # gem 'capistrano'
 
-# To use debugger
-# gem 'debugger'
-
 #gem "mocha", :group => :test
