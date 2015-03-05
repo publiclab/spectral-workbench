@@ -19,7 +19,7 @@
     <script>
     $("#cloneSearchForm").submit(function(){
       var url = "<%= set_search_spectrum_path(@spectrum) %>?q="+$("#clonesearchinput").val()
-      $("#clone_search_result").html(ajax_load).load(url)
+      $("#clone_search_result").html($W.ajaxLoading).load(url)
     });
     </script>
 

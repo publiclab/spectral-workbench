@@ -19,7 +19,7 @@
         <script>
         $("#setSearchForm").submit(function(){
           var url = "<%= set_search_spectrum_path(@spectrum) %>?q="+$("#setsearchinput").val()
-          $("#set_search_result").html(ajax_load).load(url)
+          $("#set_search_result").html($W.ajaxLoading).load(url)
         });
         </script>
 
