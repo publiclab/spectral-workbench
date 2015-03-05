@@ -22,7 +22,7 @@ $W = {
     this.init_hovers()
     this.alert_overexposure()
     $("#compareForm").submit(function(){
-      var url = "/spectrums/compare/"+$W.spectrum_id+"?q="+$("#searchinput").val()
+      var url = "/spectrums/"+$W.spectrum_id+"/compare_search?q="+$("#searchinput").val()
       $("#result").html($W.ajaxLoading).load(url)
     });
     $("#fitAdjustForm").submit(function(){

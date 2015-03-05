@@ -76,13 +76,6 @@ class SpectrumsController < ApplicationController
   end
 
   # non REST
-  def compare
-    @spectrum = Spectrum.find(params[:id])
-    @spectra = Spectrum.find(:all, :conditions => ['id != ? AND (title LIKE ? OR notes LIKE ? OR author LIKE ?)',@spectrum.id,"%"+params[:q]+"%", "%"+params[:q]+"%","%"+params[:q]+"%"],:limit => 20,:order => "created_at DESC")
-    render :partial => "spectrums/show/compare_search", :layout => false
-  end
-
-  # non REST
   def search
     params[:id] = params[:q].to_s if params[:id].nil?
     @spectrums = Spectrum.where('title LIKE ? OR notes LIKE ?',"%"+params[:id]+"%", "%"+params[:id]+"%").order("id DESC").paginate(:page => params[:page], :per_page => 24)
@@ -448,6 +441,12 @@ class SpectrumsController < ApplicationController
     @spectrum = Spectrum.find(params[:id])
     @spectra = Spectrum.find(:all, :conditions => ['id != ? AND (title LIKE ? OR notes LIKE ? OR author LIKE ?)',@spectrum.id,"%#{params[:q]}%", "%#{params[:q]}%","%#{params[:q]}%"],:limit => 20,:order => "created_at DESC")
     render :partial => "spectrums/show/clone_results", :layout => false
+  end
+
+  def compare_search
+    @spectrum = Spectrum.find(params[:id])
+    @spectra = Spectrum.find(:all, :conditions => ['id != ? AND (title LIKE ? OR notes LIKE ? OR author LIKE ?)',@spectrum.id,"%"+params[:q]+"%", "%"+params[:q]+"%","%"+params[:q]+"%"],:limit => 20,:order => "created_at DESC")
+    render :partial => "spectrums/show/compare_search", :layout => false
   end
 
   def set_search

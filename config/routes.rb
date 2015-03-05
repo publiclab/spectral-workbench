@@ -96,6 +96,7 @@ SpectralWorkbench::Application.routes.draw do
     resources :comments
     member do
       get :clone_search
+      get :compare_search
       get :set_search
     end
   end
