@@ -22,4 +22,10 @@ class UsersControllerTest < ActionController::TestCase
     assert_not_nil :comments
   end
 
+  test "should get contributors" do
+    get :contributors
+    assert_response :success
+    assert_not_nil :users
+  end
+
 end

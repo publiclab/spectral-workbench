@@ -439,7 +439,7 @@ class SpectrumsController < ApplicationController
 
   def clone_search
     @spectrum = Spectrum.find(params[:id])
-    @spectra = Spectrum.find(:all, :conditions => ['id != ? AND (title LIKE ? OR notes LIKE ? OR author LIKE ?)',@spectrum.id,"%#{params[:q]}%", "%#{params[:q]}%","%#{params[:q]}%"],:limit => 20,:order => "created_at DESC")
+    @calibrations = Spectrum.find(:all, :conditions => ['id != ? AND (title LIKE ? OR notes LIKE ? OR author LIKE ?)',@spectrum.id,"%#{params[:q]}%", "%#{params[:q]}%","%#{params[:q]}%"],:limit => 20,:order => "created_at DESC")
     render :partial => "spectrums/show/clone_results", :layout => false
   end
 
