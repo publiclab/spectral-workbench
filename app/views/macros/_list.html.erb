@@ -12,7 +12,7 @@
     <td style="width:40%;"><small><%=h macro.description %></small></td>
     <td><a href="/macros/author/<%= macro.user.login %>"><%= macro.user.login %></a></td>
     <td style="width:20%;"><a href="<%= macro.url %>"><%= truncate(macro.url,:length => 20, :omission => "...") %></a></td>
-    <td><% if params[:action] == "spectrum" %><a class="btn btn-primary" onClick="$W.run_macro('<%= macro.user.login+'\',\''+macro.title %>')" href="javascript:void();">Run</a><% end %></td>
+    <td><% if params[:controller] == "spectrums" && params[:action] == "show" %><a class="btn btn-primary" onClick="$W.run_macro('<%= macro.user.login+'\',\''+macro.title %>')" href="javascript:void();">Run</a><% end %></td>
   </tr>
   <% end %>
 </table>
