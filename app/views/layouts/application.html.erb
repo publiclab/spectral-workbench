@@ -35,6 +35,19 @@
   </head>
 
   <body>
+
+    <% unless logged_in? %>
+    <div class="modal hide fade" id="loginmodal">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <b>Log in</b>
+      </div>
+      <div class="modal-body">
+        <%= render :partial => 'sessions/login' %>
+      </div>
+    </div>
+    <% end %>
+
     <!-- Facebook button needs this :-( -->
     <div id="fb-root"></div>
 

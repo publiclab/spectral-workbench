@@ -1,8 +1,14 @@
 /* Bootstrap behaviors */
-(function() {
+jQuery(document).ready(function($) {
   $("[rel=tooltip]").tooltip()
   $("[rel=popover]").popover()
-})()
+
+  /* This won't do anything unless the modal is present,
+   * i.e. if you're not logged in.
+   **/
+  $('#login-prompt-modal').modal('show');
+
+})
 
 /* this sucks, fix it :-) */
 if ($('body').width() < 767) {

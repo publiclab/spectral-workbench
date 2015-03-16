@@ -22,10 +22,6 @@ class UsersController < ApplicationController
     @users = User.order("id DESC").paginate(:page => params[:page])
   end
 
-  def contributors
-    @users = User.find :all, :order => "id DESC", :limit => 50
-  end
-
   # for dashboard
   def comments
     @comments = current_user.received_comments

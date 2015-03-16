@@ -1,3 +1,26 @@
+<% unless logged_in? %>
+<div class="modal fade hide" id="login-prompt-modal">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <b>Log in for full functionality</b>
+  </div>
+  <div class="modal-body">
+    <p>You can use this with some limitations without logging in, but once you set up an account, you'll be able to:</p>
+    <ul>
+      <li>save and share data</li>
+      <li>compare live scans to stored spectra</li>
+      <li>calibrate and process your data</li>
+      <li>use this interface offline -- <a href="http://publiclab.org/wiki/spectral-workbench-usage#Offline">without an internet connection</a></li>
+      <li>contribute to a growing open source database</li>
+    </ul>
+  </div>
+  <div class="modal-footer">
+    <a onClick="$('#login-prompt-modal').modal('hide');$('#loginmodal').modal('show');" class="btn btn-large btn-primary">Log in</a>
+    <a data-dismiss="modal" onClick="$('#login-prompt-modal').modal('hide');" class="btn btn-large">No thanks</a>
+  </div>
+</div>
+<% end %>
+
 <div id="header" class="navbar navbar-inverse navbar-static-top" style="padding-top:0;">
   <div class="navbar-inner" style="padding:0 10px;">
     <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
@@ -7,8 +30,8 @@
     </a>
     <a class="brand" href="/"><img style="padding:-2px;width:20px;" src="/images/logo.png" /></a>
     <div class="pull-right">
-      <% unless logged_in? %><a href="/login?back_to=/capture" class="btn">Log in</a><% end %>
-      <a class="btn btn-inverse" href="http://publiclab.org/wiki/spectral-workbench"><i class="icon icon-question-sign"></i></a>
+      <% unless logged_in? %><a onClick="$('#loginmodal').modal('show');" class="btn">Log in</a><% end %>
+      <a class="btn btn-inverse" href="http://publiclab.org/wiki/spectral-workbench"><i class="icon icon-white icon-question-sign"></i></a>
       <span class="tool-toggle"><a class="btn btn-inverse" onClick="$('#tool-pane').toggle()"><i class="icon-wrench"></i></a></span>
     </div>
     <ul class="nav" style="margin:0">
