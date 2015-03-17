@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
 
-  before_filter :require_login, :except => [:show, :contributors]
+  before_filter :require_login, :except => [:show, :contributors, :top_contributors]
 
   def message
     @user = User.find params[:user_id]
@@ -20,6 +20,11 @@ class UsersController < ApplicationController
 
   def contributors
     @users = User.order("id DESC").paginate(:page => params[:page])
+  end
+
+  def top_contributors
+    @users = User.joins(:spectrums).select("users.*, count(users.id) as spectrums_count").group("spectrums.user_id").order("spectrums_count DESC").paginate(:page => params[:page])
+    render 'users/contributors'
   end
 
   # for dashboard

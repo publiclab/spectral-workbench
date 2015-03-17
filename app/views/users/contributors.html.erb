@@ -1,6 +1,16 @@
-<div class="container">
+<div class="container-fluid">
 
 <h2>Contributors (<%= User.count %>)</h2>
+
+  <p>
+    <% if params[:action] == "contributors" %>
+      <span style="color:grey;">All</span> | 
+      <a href="/contributors/top">Most prolific</a>
+    <% else %>
+      <a href="/contributors">All</a> | 
+      <span style="color:grey;">Most active</span>
+    <% end %>
+  </p>
 
   <table class="table">
     <tr>

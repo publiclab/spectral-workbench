@@ -28,4 +28,10 @@ class UsersControllerTest < ActionController::TestCase
     assert_not_nil :users
   end
 
+  test "should get top contributors" do
+    get :contributors
+    assert_response :success
+    assert_not_nil :users
+  end
+
 end
