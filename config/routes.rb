@@ -108,8 +108,8 @@ SpectralWorkbench::Application.routes.draw do
   # legacy; permanent redirect:
   get '/analyze/spectrum/:id', to: redirect('/spectrums/%{id}')
   get '/analyze/spectrum/:id.:format', to: redirect('/spectrums/%{id}.%{format}')
-  get '/spectra/show/:id', to: redirect('/spectrums/%{id}')
   get '/spectra/show/:id.:format', to: redirect('/spectrums/%{id}.%{format}')
+  get '/spectra/show/:id', to: redirect('/spectrums/%{id}')
 
   get '/spectra/assign' => 'spectrums#assign'
   get '/spectra/feed' => 'spectrums#rss', defaults: { format: 'xml' }
