@@ -72,6 +72,7 @@
 
   <a class="btn btn-large btn-primary" href="#capture" onClick="$('#capture-btn').addClass('active');$('#settings-btn').removeClass('active');" data-toggle="tab">Begin capturing &raquo;</a>
   <p style="padding-top:5px;">
+    <a rel="tooltip" title="" class="btn btn-inverse" onclick="$W.auto_detect_sample_row()" data-original-title="Auto detect sample row"><i class="icon-white icon-resize-horizontal"></i> Auto-detect Sample Row</a>
     <a rel="tooltip" title="Flip video horizontally" class="btn btn-inverse" onClick="$W.flip_horizontal()"><i class="icon-resize-horizontal"></i> Flip</a>
     <a rel="tooltip" title="Rotate video 90 &deg;" class="btn btn-inverse" onClick="$W.toggle_rotation()"><i class="icon-repeat"></i> Rotate</a>
     <% if params[:debug] || chrome? %><a rel="tooltip" title="Change camera" class="btn btn-inverse" onClick="$W.chromeCameraSwitch()"><i class="icon-camera"></i> Change Camera</a><% end %>
