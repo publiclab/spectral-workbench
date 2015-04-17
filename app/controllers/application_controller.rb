@@ -5,8 +5,14 @@ class ApplicationController < ActionController::Base
 
   helper :all # include all helpers, all the time
 
-  before_filter :current_user
+  before_filter :current_user, :check_subdomain
   helper_method :logged_in?
+
+  def check_subdomain
+    if request.subdomain.present?
+      redirect_to request.fullpath, subdomain: false
+    end
+  end
 
   def mobile?
     (request.env['HTTP_USER_AGENT'].match("Mobi") || params[:format] == "mobile") && params[:format] != "html" && params[:m] != "false" || params[:m] == "true"
