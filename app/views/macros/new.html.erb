@@ -6,7 +6,7 @@
 
 <p>Use the <a href="http://publiclab.org/wiki/spectral-workbench-api">Spectral Workbench API</a> to create, save, and share macros to manipulate your spectra. Also share your macros on <a href="http://gist.github.com">gist.github.com</a>.</p>
 
-<div class="alert alert-error"><%= errors_for @macro %></div>
+<%=raw errors_for @macro %>
 
 <form action="/macros/create/" class="form" method="post">
 
