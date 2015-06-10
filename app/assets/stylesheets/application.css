@@ -10,6 +10,7 @@
  *
  *= require bootstrap-css/css/bootstrap.min.css
  *= require bootstrap-css/css/bootstrap-responsive.min.css
+ *= require nvd3/build/nv.d3.css
  *= require style
  *
  *= require_self

@@ -2,6 +2,8 @@
   "name": "Spectral Workbench",
   "version": "1.0.0",
   "dependencies": {
+    "d3":               "~3.3.13",
+    "nvd3":             "~1.7.1",
     "fontawesome":      "~3.2.1",
     "bootstrap-css":    "~2.3.2",
     "jquery":           "~1.11",

@@ -9,8 +9,19 @@
     font-style: normal;
 }
 
+@font-face {
+    font-family: 'Junction Light';
+    src: url('/lib/junction/webfonts/junction-light.eot');
+    src: url('/lib/junction/webfonts/junction-light.eot?#iefix') format('embedded-opentype'),
+         url('/lib/junction/webfonts/junction-light.woff') format('woff'),
+         url('/lib/junction/webfonts/junction-light.ttf') format('truetype'),
+         url('/lib/junction/webfonts/junction-light.svg#junctionregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
 h1,h2,h3,h4,.lead {
-  font-family:junctionregular, lucida grande,lucida sans console,sans-serif;
+  font-family:Junction Light, lucida grande,lucida sans console,sans-serif;
   font-weight:normal;
 }
 

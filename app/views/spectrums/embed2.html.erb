@@ -1,0 +1,26 @@
+<%= javascript_include_tag "analyze" %>
+<%= javascript_include_tag "application" %>
+<%= javascript_include_tag "graph2" %>
+
+<%= stylesheet_link_tag    "application", :media => "all" %>
+<%= stylesheet_link_tag    "embed", :media => "all" %>
+
+<img class="spectrum" src="<%= @spectrum.photo.url(:large) %>" />
+
+<div id="graph"></div>
+
+<script type="text/javascript">
+  spectrum_id = <%= @spectrum.id %>
+</script>
+
+<div class="container-fluid">
+  <div class="col span12">
+
+    <h2><a target="_blank" href="/spectrums/<%= @spectrum.id %>"><%= @spectrum.title %></a></h2>
+
+    <p style="text-align:center;">
+      by <a target="_blank" href="/profile/"><%= @spectrum.author %></a> on <img src="/images/spectralworkbench.png" /> <a target="_blank" href="/">SpectralWorkbench.org</a>
+    </p>
+
+  </div>
+</div>

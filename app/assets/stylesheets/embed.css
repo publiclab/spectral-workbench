@@ -1,0 +1,35 @@
+body {
+  padding: 0;
+}
+
+h2 {
+  text-align:center;
+}
+h2 a {
+  color:#444;
+}
+
+.col {
+  padding:10px;
+}
+
+.axis text {
+  fill: #666;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #666;
+  shape-rendering: crispEdges;
+}
+
+.x.axis path {
+  display: none;
+}
+
+.line {
+  fill: none;
+  stroke: green;
+  stroke-width: 1.5px;
+}

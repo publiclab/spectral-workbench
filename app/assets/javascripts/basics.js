@@ -18,6 +18,19 @@ if ($('body').width() < 767) {
   },250);
 }
 
+function getUrlParameter(sParam) {
+  var sPageURL = window.location.search.substring(1);
+  var sURLVariables = sPageURL.split('&');
+  for (var i = 0; i < sURLVariables.length; i++) 
+  {
+    var sParameterName = sURLVariables[i].split('=');
+    if (sParameterName[0] == sParam) 
+    {
+      return sParameterName[1];
+    }
+  }
+}
+
 /* Prompt to load newly updated offline cache files */
 window.addEventListener('load', function(e) {
   if (window.applicationCache) {

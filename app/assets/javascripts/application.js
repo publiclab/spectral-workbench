@@ -19,3 +19,5 @@
 //= require flot/jquery.flot.js
 //= require flot/jquery.flot.crosshair.js
 //= require flot/jquery.flot.threshold.js
+//= require d3/d3.js
+//= require nvd3/build/nv.d3.js
