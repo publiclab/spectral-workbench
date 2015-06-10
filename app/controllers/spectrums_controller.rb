@@ -57,7 +57,9 @@ class SpectrumsController < ApplicationController
         end
       }
       format.json  {
-        render :json => @spectrum
+        json = @spectrum.as_json(:except => [:data])
+        json[:data] = JSON.parse(@spectrum.data)
+        render :json => json
       }
     end
   end
