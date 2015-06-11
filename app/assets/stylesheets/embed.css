@@ -13,8 +13,13 @@ h2 a {
   padding:10px;
 }
 
-.axis text {
-  fill: #666;
+.axis text, .nv-axis {
+  fill: #888;
+}
+
+.nvtooltip table {
+  font-size:11px;
+  padding:8px;
 }
 
 .axis path,
