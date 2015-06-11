@@ -127,7 +127,7 @@ class Spectrum < ActiveRecord::Base
       r = row[p*3]/255
       g = row[p*3+1]/255
       b = row[p*3+2]/255
-      pixels << '{"wavelength":null,"average":'+((r+g+b)/3).to_s+',"r":'+r.to_s+',"g":'+g.to_s+',"b":'+b.to_s+'}'
+      pixels << '{"pixel":'+p.to_s+',"wavelength":null,"average":'+((r+g+b)/3).to_s+',"r":'+r.to_s+',"g":'+g.to_s+',"b":'+b.to_s+'}'
     end
 
     t = self.title.gsub("'","").gsub('"',"")

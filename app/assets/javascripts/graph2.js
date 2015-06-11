@@ -1,7 +1,7 @@
 jQuery(document).ready(function($) {
 
   var width  = getUrlParameter('width')  || $(window).width() || 600;
-      height = getUrlParameter('height') || 200;
+      height = getUrlParameter('height') || 300;
 
   var margin = {top: 20, right: 80, bottom: 30, left: 50}
 
@@ -18,31 +18,66 @@ jQuery(document).ready(function($) {
 
   nv.addGraph(function() {
     var chart = nv.models.lineChart()
+                  .height(height)  //Adjust chart margins to give the x-axis some breathing room.
                   .margin(margin)  //Adjust chart margins to give the x-axis some breathing room.
                   .useInteractiveGuideline(true)  //We want nice looking tooltips and a guideline!
 //                  .transitionDuration(350)  //how fast do you want the lines to transition?
-                  .showLegend(true)       //Show the legend, allowing users to turn on/off line series.
+                  .showLegend(false)       //Show the legend, allowing users to turn on/off line series.
                   .showYAxis(true)        //Show the y-axis
                   .showXAxis(true)        //Show the x-axis
     ;
  
     chart.xAxis     //Chart x-axis settings
         .axisLabel('Wavelength (nanometer)')
-        .tickFormat(d3.format(',r'));
+        .tickFormat(d3.format('1d'));
  
     chart.yAxis     //Chart y-axis settings
         .axisLabel('Intensity (%)')
-        .tickFormat(d3.format('.02f'));
+        .tickFormat(d3.format('%'));
  
     d3.json("/spectrums/"+spectrum_id+".json", function(error, data) {
       console.log('json loaded');
+
+      var average = []
+          red     = [];
+          green   = [];
+          blue    = [];
+
+      // Present x and y properties like data.x and data.y
+      $.each(data.data.lines,function(i,data) {
+        if (data.wavelength == null) {
+          var x = data.pixel
+          // change graph labels
+        } else var x = data.wavelength
+
+        average.push({y:data.average/255,x:x})
+        red.push(    {y:data.r/255,      x:x})
+        green.push(  {y:data.g/255,      x:x})
+        blue.push(   {y:data.b/255,      x:x})
+      });
+
       d3.select('#graph svg')    //Select the <svg> element you want to render the chart in.   
-          .datum({ 
-// MUST PRESENT x and y properties like data.x and data.y! Ugh.  
-            values: data.data.lines,
-            key: data.title,
-            color: 'red'
-          })         //Populate the <svg> element with chart data...
+          .datum([{ 
+              values: average,
+              key: data.title+" (average)",
+              color: '#444'
+            },
+            {
+              values: red,
+              key: data.title+" (R)",
+              color: 'rgba(255,0,0,0.2)'
+            },
+            {
+              values: green,
+              key: data.title+" (G)",
+              color: 'rgba(0,255,0,0.2)'
+            },
+            {
+              values: blue,
+              key: data.title+" (B)",
+              color: 'rgba(0,0,255,0.2)'
+            }
+          ])         //Populate the <svg> element with chart data...
           .call(chart);          //Finally, render the chart!
     })
  
