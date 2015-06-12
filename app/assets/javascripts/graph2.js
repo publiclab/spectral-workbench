@@ -1,75 +1,79 @@
-var updateWidth;
+var SpectralWorkbench = {
 
-jQuery(document).ready(function($) {
+  height: 300,
+  width: 600,
+  margin: { top: 20, right: 30, bottom: 10, left: 70 },
 
-  var width, height, margin;
+  graphData: [],
 
-  updateWidth = function() {
+  initialize: function(args) {
 
-    width  = getUrlParameter('width')  || $(window).width() || 600;
-    height = getUrlParameter('height') || 300;
+    this.args = args;
+    if (this.args.hasOwnProperty('spectrum_id')) this.dataType = "spectrum" 
+    if (this.args.hasOwnProperty('set_id'))      this.dataType = "set" 
+
+    // update size 
+    SpectralWorkbench.height = SpectralWorkbench.height - SpectralWorkbench.margin.top  - SpectralWorkbench.margin.bottom;
+    this.update(); // height only gets updated once, above, but width can change
  
-    margin = {top: 20, right: 30, bottom: 10, left: 70}
+    var svg = d3.select("#graph").append("svg")
+      .attr("width",  this.width  + this.margin.left + this.margin.right)
+      .attr("height", this.height + this.margin.top  + this.margin.bottom)
  
-    width = width - margin.left - margin.right,
-    height = height - margin.top - margin.bottom;
+    nv.addGraph(function() {
 
-    $('#graph').height(height)
-    $('img.spectrum').width(width)
-                     .height(100)
-                     .css('margin-left',margin.left);
-
-  }
-  updateWidth();
-
-  var svg = d3.select("#graph").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-
-  nv.addGraph(function() {
-    chart = nv.models.lineChart()
-                     .height(height-margin.top-margin.bottom)
-                     .margin(margin)
-                     .useInteractiveGuideline(true)  //We want nice looking tooltips and a guideline!
+      SpectralWorkbench.chart = nv.models.lineChart()
+                       .height(SpectralWorkbench.height-SpectralWorkbench.margin.top-SpectralWorkbench.margin.bottom)
+                       .margin(SpectralWorkbench.margin)
+                       .useInteractiveGuideline(true)  //We want nice looking tooltips and a guideline!
 //                     .transitionDuration(350)  //how fast do you want the lines to transition?
-                     .showLegend(false)       //Show the legend, allowing users to turn on/off line series.
-                     .showYAxis(true)        //Show the y-axis
-                     .showXAxis(true)        //Show the x-axis
-    ;
+                       .showLegend(false)       //Show the legend, allowing users to turn on/off line series.
+                       .showYAxis(true)        //Show the y-axis
+                       .showXAxis(true)        //Show the x-axis
+      ;
+  
+      SpectralWorkbench.chart.xAxis     //Chart x-axis settings
+                .axisLabel('Wavelength (nanometers)')
+                .tickFormat(d3.format('1d'));
+  
+      SpectralWorkbench.chart.yAxis     //Chart y-axis settings
+                .axisLabel('Intensity (%)')
+                .tickFormat(d3.format('%'));
  
-    chart.xAxis     //Chart x-axis settings
-        .axisLabel('Wavelength (nanometers)')
-        .tickFormat(d3.format('1d'));
- 
-    chart.yAxis     //Chart y-axis settings
-        .axisLabel('Intensity (%)')
-        .tickFormat(d3.format('%'));
+      var dataUrl;
+      if      ( SpectralWorkbench.dataType == "spectrum" ) dataUrl = "/spectrums/" + SpectralWorkbench.args.spectrum_id + ".json"
+      else if ( SpectralWorkbench.dataType == "set" )      dataUrl = "/sets/"      + SpectralWorkbench.args.set_id      + ".json"
+      
+      /* Fetch data */ 
+      d3.json(dataUrl, function(error, data) {
 
+        if (SpectralWorkbench.dataType == "spectrum") {
 
-    /* Fetch data */ 
-    d3.json("/spectrums/"+spectrum_id+".json", function(error, data) {
+          var lines   = data.data.lines,
+              average = [],
+              red     = [],
+              green   = [],
+              blue    = [];
 
-      var average = []
-          red     = [];
-          green   = [];
-          blue    = [];
+          // Set up x and y properties like data.x and data.y
+          $.each(lines,function(i,data) {
 
-      // Set up x and y properties like data.x and data.y
-      $.each(data.data.lines,function(i,data) {
-        if (data.wavelength == null) {
-          var x = data.pixel
-          // change graph labels
-        } else var x = data.wavelength
+            if (data.wavelength == null) {
 
-        average.push({y:data.average/255,x:x})
-        red.push(    {y:data.r/255,      x:x})
-        green.push(  {y:data.g/255,      x:x})
-        blue.push(   {y:data.b/255,      x:x})
-      });
+              var x = data.pixel;
+              // change graph labels
 
-      /* Enter data into the graph */
-      d3.select('#graph svg')    //Select the <svg> element you want to render the chart in.   
-          .datum([{ 
+            } else var x = data.wavelength;
+         
+            average.push({ y: data.average / 255, x: x })
+            red.push(    { y: data.r / 255,       x: x })
+            green.push(  { y: data.g / 255,       x: x })
+            blue.push(   { y: data.b / 255,       x: x })
+
+          });
+
+          SpectralWorkbench.graphData = SpectralWorkbench.graphData.concat([
+            {
               values: average,
               key: data.title+" (average)",
               color: '#444'
@@ -89,17 +93,76 @@ jQuery(document).ready(function($) {
               key: data.title+" (B)",
               color: 'rgba(0,0,255,0.2)'
             }
-          ])         //Populate the <svg> element with chart data...
-          .call(chart);          //Finally, render the chart!
-    })
- 
-    //Update the chart when window updates.
-    nv.utils.windowResize(function() {
-      updateWidth();
-      chart.update();
-    });
-    return chart;
-  });
+          ]);
 
-});
+        } else if (SpectralWorkbench.dataType == "set") {
+
+          var spectra = data.spectra,
+              average = [];
+
+          $.each(spectra, function(i,spectrum) {
+
+            // Set up x and y properties like data.x and data.y
+            $.each(spectrum.data.lines, function(i,data) {
+              if (data.wavelength == null) {
+ 
+                var x = data.pixel;
+                // change graph labels
+ 
+              } else var x = data.wavelength;
+           
+              average.push({ y: data.average / 255, x: x })
+ 
+            });
+
+          });
+
+          SpectralWorkbench.graphData = SpectralWorkbench.graphData.concat([
+            {
+              values: average,
+              key: data.title,
+              color: 'rgba(200,0,0,0.5)' // use d3 color generator here
+            }
+          ]);
+
+        }
+
+        /* Enter data into the graph */
+        d3.select('#graph svg')    //Select the <svg> element you want to render the chart in.   
+            .datum(SpectralWorkbench.graphData)     //Populate the <svg> element with chart data...
+            .call(SpectralWorkbench.chart)          //Finally, render the chart!
+  //          .on("mouseover",this.onmouseover)
+ 
+        })
+  
+      //Update the chart when window updates.
+      //nv.utils.windowResize(function() {
+      $(window).on('resize',function() {
+        SpectralWorkbench.update();
+        SpectralWorkbench.chart.update();
+      });
+      return this.chart;
+    });
+  },
+
+  update: function() {
+ 
+    SpectralWorkbench.width  = getUrlParameter('width')  || $(window).width() || SpectralWorkbench.width;
+    SpectralWorkbench.height = getUrlParameter('height') || SpectralWorkbench.height;
+ 
+    SpectralWorkbench.width  = SpectralWorkbench.width  - SpectralWorkbench.margin.left - SpectralWorkbench.margin.right,
+ 
+    $('#graph').height(SpectralWorkbench.height)
+    $('img.spectrum').width(SpectralWorkbench.width)
+                     .height(100)
+                     .css('margin-left',SpectralWorkbench.margin.left);
+ 
+  },
+
+  /* for lines */
+  onmouseover: function() {
+    // highlight this datum in the list
+  }
+ 
+}
 

@@ -1,4 +1,5 @@
 class SetsController < ApplicationController
+  respond_to :html, :xml, :js #, :csv # not yet
 
   def index
     @sets = SpectraSet.paginate(:order => "created_at DESC", :page => params[:page])
@@ -8,6 +9,22 @@ class SetsController < ApplicationController
     @set = SpectraSet.find params[:id]
     @spectrums = Spectrum.find(:all, :limit => 4, :order => "created_at DESC")
     @comment = Comment.new
+    
+    respond_with(@set) do |format|
+      format.html {}
+      format.xml  { render :xml => @set }
+      format.json  {
+        json = @set.as_json
+# this won't work: can't set arbitrary properties
+        json = json.merge({spectra: []})
+        @set.spectra.each do |spectrum|
+          spectrum_json = spectrum.as_json(:except => [:data])
+          spectrum_json[:data] = JSON.parse(spectrum.data)
+          json[:spectra] << spectrum_json
+        end
+        render :json => json
+      }
+    end
   end
 
   def find_match
@@ -25,6 +42,11 @@ class SetsController < ApplicationController
     @width = (params[:width] || 500).to_i
     @height = (params[:height] || 200).to_i
     render :layout => false
+  end
+
+  def embed2
+    @set = SpectraSet.find params[:id]
+    render :layout => 'embed'
   end
 
   def add

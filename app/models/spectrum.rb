@@ -144,7 +144,7 @@ class Spectrum < ActiveRecord::Base
     d = ActiveSupport::JSON.decode(self.clean_json)
     i = 0
     d['lines'].each do |line|
-      line['wavelength'] = (start_w.to_f + i*((end_w.to_f-start_w.to_f)*1.00/d['lines'].length))
+      line['wavelength'] = (start_w.to_f + i*((end_w.to_f-start_w.to_f)*1.00/d['lines'].length)).round(2)
       i += 1
     end
     self.data = ActiveSupport::JSON.encode(d)
@@ -167,7 +167,7 @@ class Spectrum < ActiveRecord::Base
     stepsize = ((wavelength2.to_f-wavelength1.to_f)*1.00/(x2.to_f-x1.to_f))
     startwavelength = wavelength1.to_f-(stepsize*x1.to_f)
     d['lines'].each do |line|
-      line['wavelength'] = startwavelength + i*stepsize
+      line['wavelength'] = (startwavelength + i*stepsize).round(2)
       i += 1
     end
     self.reverse if (wavelength1 < wavelength2 && x1 > x2) || (wavelength1 > wavelength2 && x1 < x2)
@@ -192,7 +192,7 @@ class Spectrum < ActiveRecord::Base
       if cd['lines'][i]
         line['wavelength'] = cd['lines'][i]['wavelength']
       else
-        line['wavelength'] = cd['lines'][0]['wavelength'].to_f+(i*stepsize)
+        line['wavelength'] = (cd['lines'][0]['wavelength'].to_f+(i*stepsize)).round(2)
       end
       i += 1
     end

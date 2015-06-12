@@ -1,0 +1,33 @@
+<div id="graph"></div>
+
+<script type="text/javascript">
+  jQuery(document).ready(function($) {
+    SpectralWorkbench.initialize({ set_id: <%= @set.id %> });
+  })
+</script>
+
+<div class="container-fluid">
+  <div class="col span12">
+
+    <h2><a target="_blank" href="/sets/<%= @set.id %>"><%= @set.title %></a></h2>
+
+    <p style="text-align:center;">
+      by <a target="_blank" href="/profile/"><%= @set.author %></a> on <img src="/images/spectralworkbench.png" /> <a target="_blank" href="/">SpectralWorkbench.org</a>
+    </p>
+
+    <table class="table">
+      <tr>
+        <th>Spectrum</th>
+        <th>Author</th>
+      </tr>
+      <% @set.spectra.each do |spectrum| %>
+        <tr>
+          <td><a href="/spectums/<%= spectrum.id %>"><%= spectrum.title %></a></td>
+          <td><a href="/profile/<%= spectrum.author %>"><%= spectrum.author %></a></td>
+          <td><a class="btn btn-link"><i class="icon icon-pencil"></a></td>
+        </tr>
+      <% end %>
+    </table>
+
+  </div>
+</div>
