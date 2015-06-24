@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150506174705) do
+ActiveRecord::Schema.define(:version => 20150624185446) do
 
   create_table "comments", :force => true do |t|
     t.string   "author"
@@ -24,6 +24,7 @@ ActiveRecord::Schema.define(:version => 20150506174705) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "spectra_set_id", :default => 0, :null => false
+    t.integer  "user_id",        :default => 0
   end
 
   create_table "devices", :force => true do |t|
@@ -669,6 +670,7 @@ ActiveRecord::Schema.define(:version => 20150506174705) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "notes",          :default => "", :null => false
+    t.integer  "user_id",        :default => 0
   end
 
   create_table "spectrum_links", :force => true do |t|

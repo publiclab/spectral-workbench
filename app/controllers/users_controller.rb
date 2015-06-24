@@ -11,7 +11,7 @@ class UsersController < ApplicationController
 
   def dashboard
     @offline = "flush"
-    @spectrums = Spectrum.paginate(:order => "created_at DESC", :conditions => ["author != 'anonymous'"], :page => params[:spectrums_page], :per_page => 50)
+    @spectrums = Spectrum.order('created_at DESC').where('user_id != 0').paginate(:page => params[:page],:per_page => 24)
     @sets = SpectraSet.paginate(:page => params[:sets_page], :order => "created_at DESC", :per_page => 25)
     @comments = Comment.paginate(:page => params[:comments_page], :order => "created_at DESC", :per_page => 40)
     @users = User.paginate(:page => params[:users_page], :order => "created_at DESC", :per_page => 100)

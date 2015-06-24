@@ -1,14 +1,12 @@
 class LikesController < ApplicationController
 
   def index
-    @spectrums = Spectrum.find :all, :limit => 100, :order => "like_count DESC"
-    @spectrums = @spectrums.paginate :page => params[:page], :per_page => 24
+    @spectrums = Spectrum.order('like_count DESC').where('user_id != 0').paginate(:page => params[:page], :per_page => 24)
   end
 
   # recently liked
   def recent
-    @spectrums = Spectrum.find(:all,:order => "created_at DESC", :conditions => ["author != 'anonymous'"], :limit => 100, :joins => :likes)
-    @spectrums = @spectrums.paginate :page => params[:page], :per_page => 24
+    @spectrums = Spectrum.order('created_at DESC').where('user_id != 0').page(params[:page])
     render :template => "likes/index"
   end
 
