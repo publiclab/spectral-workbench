@@ -13,7 +13,7 @@ class SpectrumsController < ApplicationController
     if logged_in?
       redirect_to "/dashboard"
     else
-      @spectrums = Spectrum.order('created_at DESC').where('user_id != 0').paginate(:page => params[:page],:per_page => 24)
+      @spectrums = Spectrum.select("title, created_at, id, user_id, author, photo_file_name, like_count, photo_content_type").order('created_at DESC').where('user_id != 0').paginate(:page => params[:page],:per_page => 24)
 
       @sets = SpectraSet.find(:all,:limit => 4,:order => "created_at DESC")
       @comments = Comment.all :limit => 12, :order => "id DESC"
