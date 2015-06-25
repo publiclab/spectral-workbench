@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150624185446) do
+ActiveRecord::Schema.define(:version => 20150625194647) do
 
   create_table "comments", :force => true do |t|
     t.string   "author"
@@ -713,6 +713,7 @@ ActiveRecord::Schema.define(:version => 20150624185446) do
     t.boolean  "reversed",                                    :default => false,   :null => false
   end
 
+  add_index "spectrums", ["title"], :name => "index_spectrums_on_title"
   add_index "spectrums", ["user_id"], :name => "index_spectrums_on_user_id"
 
   create_table "tags", :force => true do |t|

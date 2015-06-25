@@ -78,7 +78,7 @@ class SpectrumsController < ApplicationController
   # non REST
   def search
     params[:id] = params[:q].to_s if params[:id].nil?
-    @spectrums = Spectrum.where('title LIKE ? OR notes LIKE ?',"%"+params[:id]+"%", "%"+params[:id]+"%").order("id DESC").paginate(:page => params[:page], :per_page => 24)
+    @spectrums = Spectrum.where('title LIKE ?',"%"+params[:id]+"%").order("id DESC").paginate(:page => params[:page], :per_page => 24)
     if params[:capture]
       render :partial => "capture/results", :layout => false
     else
