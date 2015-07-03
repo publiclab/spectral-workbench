@@ -26,19 +26,14 @@ class Spectrum < ActiveRecord::Base
   validates_presence_of :title, :on => :create, :message => "can't be blank"
   validates_presence_of :author, :on => :create, :message => "can't be blank"
   validates_presence_of :photo, :on => :create, :message => "can't be blank"
-  validates_length_of :title, :maximum => 60
-  validates_format_of :title, :with => /\A[a-zA-Z0-9\ -_]+\z/, :message => "Only letters, numbers, and spaces allowed"
-  validates_format_of :author, :with => /\A\w[\w\.\-_@]+\z/, :message => "Only letters, numbers, hyphens and periods allowed"
+
+  validates :title, :length => { maximum: 60 }
+
+  validates :title, :format => { with: /\A[\w\ -\'\"]+\z/, message: "can contain only letters, numbers, and spaces." }
+  validates :author, :format => { with: /\A\w[\w\.\-_@]+\z/, message: "can contain only letters, numbers, hyphens, underscores and periods." }
   validates_attachment_content_type :photo, :content_type => ["image/jpg", "image/jpeg", "image/png", "image/gif"]
 
-  def before_save
-    self.title.gsub('"',"'")
-  end
-
-  def after_save
-    #self.correct_reversed_image
-    self.generate_processed_spectrum
-  end
+  after_save :generate_processed_spectrum
 
   def before_destroy
      self.sets.each do |set|
@@ -137,8 +132,9 @@ class Spectrum < ActiveRecord::Base
       pixels << '{"wavelength":null,"average":'+((r+g+b)/3).to_s+',"r":'+r.to_s+',"g":'+g.to_s+',"b":'+b.to_s+'}'
     end
 
+    t = self.title.gsub("'","").gsub('"',"")
     # save it internally
-    s = '{"name":"'+self.title.gsub("'","")+'","lines": ['
+    s = '{"name":"'+t+'","lines": ['
     s += pixels.join(',')
     s += "]}"
     self.data = s
