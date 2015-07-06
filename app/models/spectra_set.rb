@@ -2,10 +2,13 @@ class SpectraSet < ActiveRecord::Base
 
   attr_accessible :title, :notes, :spectra_string, :author
 
-
-  validates_presence_of :title, :author#, :spectra_string
-  validates_length_of :title, :maximum => 60
+  validates_presence_of :title, :author
+  validates :title, length: { maximum: 60 }
   has_many :comments, :dependent => :destroy
+
+  validates :title, :format => { with: /\A[\w\ -\'\"]+\z/, message: "can contain only letters, numbers, and spaces." }
+  validates :author, :format => { with: /\A\w[\w\.\-_@]+\z/, message: "can contain only letters, numbers, hyphens, underscores and periods." }
+
   
   def spectra
     Spectrum.where('id IN (?)',self.spectra_string.split(','))

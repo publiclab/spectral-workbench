@@ -5,7 +5,7 @@ class SpectrumTest < ActiveSupport::TestCase
   test "spectrum title length short enough" do
     s = Spectrum.last
     s.title = "A short title"
-    assert s.save
+    assert s.save!
   end
 
   test "spectrum title length too long" do
@@ -17,13 +17,13 @@ class SpectrumTest < ActiveSupport::TestCase
   test "spectrum title with single quotations" do
     s = Spectrum.last
     s.title = "A 'title' with single quotes"
-    assert s.save
+    assert s.save!
   end
 
   test "spectrum title with double quotations" do
     s = Spectrum.last
     s.title = 'A "title" with double quotes'
-    assert s.save
+    assert s.save!
   end
 
   test "spectrum author with single quotations" do
