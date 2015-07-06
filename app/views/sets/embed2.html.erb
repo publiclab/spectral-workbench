@@ -1,9 +1,13 @@
+<div id="embed">
 <div id="graph"></div>
 
 <script type="text/javascript">
+
+  var sw;
   jQuery(document).ready(function($) {
-    SpectralWorkbench.initialize({ set_id: <%= @set.id %> });
+    sw = new SpectralWorkbench({ set_id: <%= @set.id %> });
   })
+
 </script>
 
 <div class="container-fluid">
@@ -11,14 +15,19 @@
 
     <h2><a target="_blank" href="/sets/<%= @set.id %>"><%= @set.title %></a></h2>
 
-    <p style="text-align:center;">
+    <p class="credit">
       by <a target="_blank" href="/profile/"><%= @set.author %></a> on <img src="/images/spectralworkbench.png" /> <a target="_blank" href="/">SpectralWorkbench.org</a>
+    </p>
+    <p class="social">
+      <a href=""><i class="icon icon-twitter"></i></a>
+      <a href=""><i class="icon icon-facebook"></i></a>
     </p>
 
     <table class="table">
       <tr>
         <th>Spectrum</th>
         <th>Author</th>
+        <th>Tools</th>
       </tr>
       <% @set.spectra.each do |spectrum| %>
         <tr>
@@ -31,3 +40,5 @@
 
   </div>
 </div>
+</div>
+

@@ -1,12 +1,15 @@
+<div id="embed">
 <img class="spectrum" src="<%= @spectrum.photo.url(:large) %>" />
 
 <div id="graph"></div>
 
 <script type="text/javascript">
+
+  var sw;
   jQuery(document).ready(function($) {
-//    SpectralWorkbench.initialize({ spectrum_id: <%= @spectrum.id %> });
       sw = new SpectralWorkbench({ spectrum_id: <%= @spectrum.id %> });
   })
+
 </script>
 
 <div class="container-fluid">
@@ -14,9 +17,14 @@
 
     <h2><a target="_blank" href="/spectrums/<%= @spectrum.id %>"><%= @spectrum.title %></a></h2>
 
-    <p style="text-align:center;">
+    <p class="credit">
       by <a target="_blank" href="/profile/"><%= @spectrum.author %></a> on <img src="/images/spectralworkbench.png" /> <a target="_blank" href="/">SpectralWorkbench.org</a>
+    </p>
+    <p class="social">
+      <a href=""><i class="icon icon-twitter"></i></a>
+      <a href=""><i class="icon icon-facebook"></i></a>
     </p>
 
   </div>
+</div>
 </div>

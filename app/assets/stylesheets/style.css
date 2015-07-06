@@ -89,6 +89,39 @@ h1,h2,h3,h4,.lead {
   padding-top:10px;
 }
 
+#embed {
+  font-size:12px;
+  border:1px solid #ddd;
+  -webkit-border-radius: 10px;
+  -moz-border-radius:    10px;
+  border-radius:         10px;
+  padding:10px;
+}
+
+#embed .credit {
+  float:right;
+  padding-top:10px;
+  padding-right:10px;
+}
+
+#embed .social {
+  padding-top:10px;
+  padding-right:10px;
+  font-size:14px;
+}
+
+#embed .social a {
+  padding:0 5px;
+}
+
+#embed .social a:hover {
+  text-decoration:none;
+}
+
+#embed .social a:hover .icon {
+  color:#88f;
+}
+
 footer {
   padding-bottom:200px;
   color:#777;
