@@ -46,7 +46,7 @@ class SetsController < ApplicationController
 
   def embed2
     @set = SpectraSet.find params[:id]
-    render :layout => 'embed'
+    render :template => 'embed/set', :layout => 'embed'
   end
 
   def add

@@ -1,0 +1,44 @@
+<div class="container-fluid">
+  <div class="col span12">
+
+    <h2><a target="_blank" href="/<%= type %>/<%= datum.id %>"><%= datum.title %></a></h2>
+
+    <h3 class="compact"><%= datum.title %></h3>
+
+    <% if type == :set %>
+      <div class="table-scroll-container">
+        <table class="table spectra">
+          <tr>
+            <th>Spectrum</th>
+            <th>Author</th>
+            <th>Tools</th>
+          </tr>
+          <% datum.spectra.each do |spectrum| %>
+            <tr>
+              <td><a href="/spectrums/<%= spectrum.id %>"><%= spectrum.title %></a></td>
+              <td><a href="/profile/<%= spectrum.author %>"><%= spectrum.author %></a></td>
+              <td><a class="btn btn-link"><i class="icon icon-pencil"></a></td>
+            </tr>
+          <% end %>
+        </table>
+      </div>
+    <% end %>
+
+    <p class="credit">
+      by <a target="_blank" href="/profile/"><%= datum.author %></a> 
+      on 
+      <span class="spectral-workbench">
+        <img src="/images/spectralworkbench.png" /> 
+        <a class="normal" target="_blank" href="/">SpectralWorkbench.org</a>
+        <a class="super-tiny" target="_blank" href="/">SW</a>
+      </span>
+    </p>
+    <div class="tools">
+      <a href=""><i class="icon icon-twitter"></i></a>
+      <a href=""><i class="icon icon-facebook"></i></a>
+      <%= render :partial => 'embed/tools' %>
+    </div>
+
+  </div>
+</div>
+</div>

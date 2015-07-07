@@ -76,7 +76,7 @@ class SpectrumsController < ApplicationController
 
   def embed2
     @spectrum = Spectrum.find(params[:id])
-    render :layout => 'embed'
+    render :template => 'embed/spectrum', :layout => 'embed'
   end
 
   def search

@@ -63,10 +63,10 @@ $W = {
       this.select()
     })
     $('#embed').click(function() {
-      var size = prompt("What size, in WIDTHxHEIGHT?","500x300")
+      var size = prompt("What size, in WIDTHxHEIGHT?","500x550")
       var width = size.split('x')[0]
       var height = size.split('x')[1]
-      $('#embedcode').val("<iframe width='"+width+"px' height='"+height+"px' border='0' src='http://spectralworkbench.org/spectra/embed/"+$W.spectrum_id+"?width="+width+"&height="+height+"'></iframe>")
+      $('#embedcode').val("<iframe width='"+width+"px' height='"+height+"px' border='0' src='http://spectralworkbench.org/spectrums/embed2/"+$W.spectrum_id+"?width="+width+"&height="+height+"'></iframe>")
       $('#embedcode').focus()
       $('#embedcode').select()
     })

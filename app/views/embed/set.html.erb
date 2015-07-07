@@ -1,0 +1,15 @@
+<div id="embed" class="sets">
+<div id="graph"></div>
+
+<script type="text/javascript">
+
+  var sw;
+  jQuery(document).ready(function($) {
+    sw = new SpectralWorkbench({ set_id: <%= @set.id %> });
+  })
+
+</script>
+
+<%= render :partial => "embed/body", :locals => {:type => :set, :datum => @set } %>
+</div>
+

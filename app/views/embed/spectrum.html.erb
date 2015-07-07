@@ -1,0 +1,15 @@
+<div id="embed">
+<img class="spectrum" src="<%= @spectrum.photo.url(:large) %>" />
+
+<div id="graph"></div>
+
+<script type="text/javascript">
+
+  var sw;
+  jQuery(document).ready(function($) {
+      sw = new SpectralWorkbench({ spectrum_id: <%= @spectrum.id %> });
+  })
+
+</script>
+<%= render :partial => "embed/body", :locals => {:type => :spectrum, :datum => @spectrum } %>
+</div>

@@ -1,24 +1,10 @@
-/* Generic class inheritance methods */
-Class = function(methods) {   
-  var klass = function() {    
-    this.initialize.apply(this, arguments);          
-  };  
-  
-  for (var property in methods) { 
-    klass.prototype[property] = methods[property];
-  }
-        
-  if (!klass.prototype.initialize) klass.prototype.initialize = function(){};      
-  
-  return klass;    
-};
-
+//= require core/Class.js 
 
 SpectralWorkbench = Class({
 
-  height: 300,
   width: 600,
-  margin: { top: 20, right: 30, bottom: 10, left: 70 },
+  embedmargin: 10,
+  margin: { top: 10, right: 30, bottom: 20, left: 70 },
   graphData: [],
 
   initialize: function(args) {
@@ -28,8 +14,7 @@ SpectralWorkbench = Class({
     if (this.args.hasOwnProperty('set_id'))      this.dataType = "set" 
 
     // update size 
-    this.height = this.height - this.margin.top  - this.margin.bottom;
-    this.update(); // height only gets updated once, above, but width can change
+    this.updateSize()(); // height only gets updated once, above, but width can change
  
     var svg = d3.select("#graph").append("svg")
       .attr("width",  this.width  + this.margin.left + this.margin.right)
@@ -37,8 +22,11 @@ SpectralWorkbench = Class({
  
     nv.addGraph(this.graphSetup());
 
+    // toolbars etc
+//    $('.dropdown-menu').dropdown();
+
     // Update the chart when window updates.
-    $(window).on('resize', this.update.apply(this));
+    $(window).on('resize', this.updateSize.apply(this));
   },
 
   graphSetup: function() {
@@ -166,18 +154,38 @@ SpectralWorkbench = Class({
     return chart;
   },
 
-  update: function() {
+  updateSize: function() {
     var that = this;
+
     return (function() { 
       that.width  = getUrlParameter('width')  || $(window).width() || that.width;
-      that.height = getUrlParameter('height') || that.height;
+      if (getUrlParameter('height')) {
+        that.height = getUrlParameter('height');
+      } else {
+
+        if (($(window).height() < 450 && that.dataType == 'set') || 
+            ($(window).height() < 350 && that.dataType == 'spectrum')) {
+          // compact
+          that.height = 180;
+          $('#embed').addClass('compact');
+        } else {
+          // full size
+          that.height = 200;
+          $('#embed').removeClass('compact');
+        }
+        that.height = that.height - that.margin.top  - that.margin.bottom;
+      }
   
-      that.width  = that.width  - that.margin.left - that.margin.right;
-  
+      that.width  = that.width  
+                  - that.margin.left 
+                  - that.margin.right 
+                  - (that.embedmargin * 2);
+
       $('#graph').height(that.height)
       $('img.spectrum').width(that.width)
                        .height(100)
-                       .css('margin-left',that.margin.left);
+                       .css('margin-left',that.margin.left)
+                       .css('margin-right',that.margin.right);
  
       // update only if we're past initialization
       if (that.chart) {
