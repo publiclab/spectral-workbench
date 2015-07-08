@@ -105,11 +105,7 @@ class MatchController < ApplicationController
       format.html {}
       format.xml  { render :xml => @spectrum }
       format.csv  {
-        if params[:raw]
-          render :template => "spectrums/raw.csv.erb"
-        else
-          render :template => "spectrums/show.csv.erb" # formatted for SpectraOnline.com
-        end
+        render :text => SpectrumsHelper.show_csv(@spectrum)
       }
       format.json  { render :json => @spectrum }
     end
