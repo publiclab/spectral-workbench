@@ -5,6 +5,7 @@ development:
   local: false
 
 test:
+  local: true
 
 production:
   password: "xxx"
