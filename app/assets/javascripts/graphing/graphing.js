@@ -5,7 +5,6 @@ SpectralWorkbench = Class({
   width: 600,
   embedmargin: 10,
   margin: { top: 10, right: 30, bottom: 20, left: 70 },
-  graphData: [],
 
   initialize: function(args) {
 
@@ -24,6 +23,29 @@ SpectralWorkbench = Class({
 
     // toolbars etc
 //    $('.dropdown-menu').dropdown();
+
+    // break this up into two subclasses, set and spectrum, with their own init sequences 
+    if (this.dataType == "set") {
+      // setup sets list of spectra
+      var that = this;
+      $('table.spectra input.visible').change(function(e) {
+        var id      = $(this).attr('data-id'),
+            checked = $(this).is(':checked');
+        if (checked) {
+          // actually, don't do all this. 
+          // use d3.select and just hide it in css
+/*
+          for (var i = 0; i < that.data.length; i++) {
+            // remove it, but store it!
+            if (that.data[i].id == id) that.data.splice(i,1);
+          }
+          that.chart.update();
+*/
+        } else {
+ 
+        }
+      })
+    }
 
     // Update the chart when window updates.
     $(window).on('resize', this.updateSize.apply(this));
@@ -48,16 +70,46 @@ SpectralWorkbench = Class({
               .axisLabel('Intensity (%)')
               .tickFormat(d3.format('%'));
 
-    var dataUrl;
+      /* for lines */
+      var onmouseover = function() {
+        // highlight this datum in the list
+        console.log('mouseover',this);
+      }
 
-    if      ( this.dataType == "spectrum" ) dataUrl = "/spectrums/" + this.args.spectrum_id + ".json"
-    else if ( this.dataType == "set" )      dataUrl = "/sets/"      + this.args.set_id      + ".json"
+    var onImport = function(data,chart) {
 
+      /* Enter data into the graph */
+      d3.select('#graph svg')    //Select the <svg> element you want to render the chart in.   
+          .datum(data) //Populate the <svg> element with chart data...
+          .call(chart)           //Finally, render the chart!
+          .on("mouseover", onmouseover);
+    }
+
+    if (this.dataType == "spectrum") {
+      this.importData( "/spectrums/" 
+                      + this.args.spectrum_id 
+                      + ".json", 
+                        chart, 
+                        onImport);
+    } else if (this.dataType == "set") {
+      this.importData( "/sets/" 
+                      + this.args.set_id 
+                      + ".json", 
+                        chart, 
+                        onImport);
+    }
+
+    return chart;
+  },
+
+  importData: function(url, chart, callback) {
     // preserve scope
-    var that = this;
+    var that = this, _chart = chart;
  
     /* Fetch data */ 
-    d3.json(dataUrl, function(error, data) {
+    d3.json(url, function(error, data) {
+
+      var processedData = [];
 
       if (that.dataType == "spectrum") {
 
@@ -84,11 +136,12 @@ SpectralWorkbench = Class({
 
         });
 
-        that.graphData = that.graphData.concat([
+        processedData = processedData.concat([
           {
             values: average,
             key: data.title+" (average)",
-            color: '#444'
+            color: '#444',
+            id: data.id
           },
           {
             values: red,
@@ -128,10 +181,11 @@ SpectralWorkbench = Class({
 
           });
 
-          that.graphData = that.graphData.concat([
+          processedData = processedData.concat([
             {
               values: average,
-              key: spectrum.title
+              key: spectrum.title,
+              id: spectrum.id
             }
           ]);
 
@@ -139,19 +193,9 @@ SpectralWorkbench = Class({
 
       }
 
-      /* Enter data into the graph */
-      d3.select('#graph svg')    //Select the <svg> element you want to render the chart in.   
-          .datum(that.graphData) //Populate the <svg> element with chart data...
-          .call(chart)           //Finally, render the chart!
-//        .on("mouseover",this.onmouseover)
+      callback(processedData, chart);
 
     });
-
-    // is this necessary? we immediately add it 
-    // with nv.addGraph(...)
-    this.chart = chart;
-
-    return chart;
   },
 
   updateSize: function() {
@@ -191,12 +235,8 @@ SpectralWorkbench = Class({
       if (that.chart) {
         that.chart.update();
       }
-    })
-  },
 
-  /* for lines */
-  onmouseover: function() {
-    // highlight this datum in the list
+    })
   }
  
 });
