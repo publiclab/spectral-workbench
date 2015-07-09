@@ -9,6 +9,7 @@ SpectralWorkbench = Class({
   initialize: function(args) {
 
     this.args = args;
+
     if (this.args.hasOwnProperty('spectrum_id')) this.dataType = "spectrum" 
     if (this.args.hasOwnProperty('set_id'))      this.dataType = "set" 
 
@@ -32,17 +33,11 @@ SpectralWorkbench = Class({
         var id      = $(this).attr('data-id'),
             checked = $(this).is(':checked');
         if (checked) {
-          // actually, don't do all this. 
-          // use d3.select and just hide it in css
-/*
-          for (var i = 0; i < that.data.length; i++) {
-            // remove it, but store it!
-            if (that.data[i].id == id) that.data.splice(i,1);
-          }
-          that.chart.update();
-*/
+          // ok, use key, not raw ID, as that's 
+          // not how this actually works;
+          d3.selectAll('g.nv-series-'+id).style('display','none');
         } else {
- 
+          d3.selectAll('g.nv-series-'+id).style('display','block');
         }
       })
     }
@@ -70,19 +65,33 @@ SpectralWorkbench = Class({
               .axisLabel('Intensity (%)')
               .tickFormat(d3.format('%'));
 
-      /* for lines */
-      var onmouseover = function() {
-        // highlight this datum in the list
-        console.log('mouseover',this);
-      }
+    /* for lines */
+    var onmouseover = function() {
+console.log('mouseover',this)
+      // highlight this datum in the list
+      // but use a class, not a style
+      d3.selectAll('g.nv-group').classed('highlight',true);
+    }
+    var onmouseout = function() {
+console.log('mouseout',this)
+      // highlight this datum in the list
+      d3.selectAll('g.nv-group').classed('highlight',false);
+    }
 
+    /* key function for d3 data binding */
+    var idKey = function(d) {
+      return d.id;
+    }
+
+    var that = this;
     var onImport = function(data,chart) {
-
       /* Enter data into the graph */
-      d3.select('#graph svg')    //Select the <svg> element you want to render the chart in.   
-          .datum(data) //Populate the <svg> element with chart data...
-          .call(chart)           //Finally, render the chart!
-          .on("mouseover", onmouseover);
+      that.data = d3.select('#graph svg')  //Select the <svg> element you want to render the chart in.   
+          .datum(data,idKey)   //Populate the <svg> element with chart data and provide a binding key
+          .call(chart)         //Finally, render the chart!
+          .attr('data-id',idKey)
+          .on("mouseover", onmouseover)
+          .on("mouseout", onmouseout);
     }
 
     if (this.dataType == "spectrum") {
@@ -192,7 +201,6 @@ SpectralWorkbench = Class({
         });
 
       }
-
       callback(processedData, chart);
 
     });

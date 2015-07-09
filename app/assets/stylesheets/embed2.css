@@ -148,3 +148,16 @@
   overflow-x: hidden;
   display: block;
 }
+
+#embed .spectrum-tools-container {
+  position:absolute;
+}
+
+svg g.nv-group.highlight {
+  stroke:red !important;
+}
+
+#embed .spectrum-tools {
+  text-align:center;
+  position:absolute;
+}

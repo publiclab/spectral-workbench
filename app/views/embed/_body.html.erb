@@ -10,18 +10,18 @@
         <table class="table spectra">
           <tr>
             <th style="width:14px;">Visible</th>
-            <th>Spectrum</th>
+            <th style="width:14px;">Tools</th>
+            <th>Spectrum (<%= datum.spectra.length %>)</th>
             <th>Author</th>
-            <th>Tools</th>
           </tr>
           <% datum.spectra.each do |spectrum| %>
             <tr class="spectrum spectrum-<%= spectrum.id %>">
               <td style="text-align:center;">
                 <input data-id="<%= spectrum.id %>" class="visible" type="checkbox" checked="true" />
               </td>
+              <td><%= render :partial => 'embed/spectrumTools', :locals => {:spectrum => spectrum} %></td>
               <td><a href="/spectrums/<%= spectrum.id %>"><%= spectrum.title %></a></td>
               <td><a href="/profile/<%= spectrum.author %>"><%= spectrum.author %></a></td>
-              <td><a class="btn btn-link"><i class="icon icon-pencil"></a></td>
             </tr>
           <% end %>
         </table>
