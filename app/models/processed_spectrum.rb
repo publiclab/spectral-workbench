@@ -1,5 +1,10 @@
 class ProcessedSpectrum < ActiveRecord::Base
-  
+
+  # we allow this here due to line 389 of spectrum.rb
+  columns.each do |column|
+    attr_accessible column.name.to_sym
+  end 
+
   def closest_match(range,limit)
     bins = (10...1500).step(10)
     types = ['a', 'r', 'g', 'b']

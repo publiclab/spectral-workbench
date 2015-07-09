@@ -2,6 +2,18 @@ require 'test_helper'
 
 class SpectrumTest < ActiveSupport::TestCase
 
+  test "spectrum creation" do 
+    s = Spectrum.new({
+      title:     "A new spectrum",
+      author:    "warren",
+      video_row: 1, # the vertical cross section of the video feed
+      notes:     "This was nice, wasn't it.",
+      user_id:   1,
+    })
+    s.image_from_dataurl("data:image/gif;base64,R0lGODdhMAAwAPAAAAAAAP///ywAAAAAMAAwAAAC8IyPqcvt3wCcDkiLc7C0qwyGHhSWpjQu5yqmCYsapyuvUUlvONmOZtfzgFzByTB10QgxOR0TqBQejhRNzOfkVJ+5YiUqrXF5Y5lKh/DeuNcP5yLWGsEbtLiOSpa/TPg7JpJHxyendzWTBfX0cxOnKPjgBzi4diinWGdkF8kjdfnycQZXZeYGejmJlZeGl9i2icVqaNVailT6F5iJ90m6mvuTS4OK05M0vDk0Q4XUtwvKOzrcd3iq9uisF81M1OIcR7lEewwcLp7tuNNkM3uNna3F2JQFo97Vriy/Xl4/f1cf5VWzXyym7PHhhx4dbgYKAAA7")
+    assert s.save!
+  end
+
   test "spectrum title length short enough" do
     s = Spectrum.last
     s.title = "A short title"
