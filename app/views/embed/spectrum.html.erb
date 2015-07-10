@@ -5,9 +5,9 @@
 
 <script type="text/javascript">
 
-  var sw;
+  var graph;
   jQuery(document).ready(function($) {
-      sw = new SpectralWorkbench({ spectrum_id: <%= @spectrum.id %> });
+      graph = new SpectralWorkbench.Graph({ spectrum_id: <%= @spectrum.id %> });
   })
 
 </script>
