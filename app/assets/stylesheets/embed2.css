@@ -7,6 +7,17 @@
   padding: 30px 10px 10px;
 }
 
+#embed #graph {
+  background:#eee;
+  text-align:center;
+}
+
+#embed #graph .icon-spinner {
+  font-size:20px;
+  color:#aaa;
+  margin-top:30px;
+}
+
 #embed a.btn-link {
   text-decoration:none;
 }

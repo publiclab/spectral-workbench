@@ -122,5 +122,8 @@ SpectralWorkbench.Graph.prototype.updateSize = function() {
       that.chart.update();
     }
 
+    $('#graph').css('background','white');
+    $('#embed #graph .icon-spinner').hide();
+
   });
 }
