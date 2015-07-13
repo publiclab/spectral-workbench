@@ -31,9 +31,9 @@ class ExceptionsTest < ActionController::IntegrationTest
     assert_response :success
   end
 
-  test "GET /sets/show/#" do
+  test "GET /sets/#" do
     set = SpectraSet.find :first
-    get "/sets/show/#{set.id}"
+    get "/sets/#{set.id}"
     assert_response :success
   end
 

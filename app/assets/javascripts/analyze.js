@@ -62,8 +62,8 @@ $W = {
       this.focus()
       this.select()
     })
-    $('#embed').click(function() {
-      var size = prompt("What size, in WIDTHxHEIGHT?","500x550")
+    $('.btn-embed').click(function() {
+      var size = prompt("What size, in WIDTHxHEIGHT, in pixels?","500x550")
       var width = size.split('x')[0]
       var height = size.split('x')[1]
       $('#embedcode').val("<iframe width='"+width+"px' height='"+height+"px' border='0' src='http://spectralworkbench.org/spectrums/embed2/"+$W.spectrum_id+"?width="+width+"&height="+height+"'></iframe>")

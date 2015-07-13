@@ -58,7 +58,7 @@ class SetsController < ApplicationController
       else
         flash[:error] = "Failed to add to that set."
       end
-      redirect_to "/sets/show/"+@set.id.to_s
+      redirect_to "/sets/"+@set.id.to_s
     else
       flash[:error] = "You must be logged in and own that set to add to it."
       redirect_to spectrum_path(@spectrum)
@@ -92,7 +92,7 @@ class SetsController < ApplicationController
         :author => current_user.login
       })
       if @set.save
-        redirect_to "/sets/show/"+@set.id.to_s
+        redirect_to "/sets/"+@set.id.to_s
       else
         flash[:error] = "Failed to save set."
         render :action => "new", :id => params[:id]
@@ -119,7 +119,7 @@ class SetsController < ApplicationController
       @set.notify_commenters(@comment,current_user) if logged_in?
       @set.notify_commenters(@comment,false) unless logged_in?
       flash[:notice] = "Comment saved."
-      redirect_to "/sets/show/"+params[:id]+"#comment_"+@comment.id.to_s
+      redirect_to "/sets/"+params[:id]+"#comment_"+@comment.id.to_s
     else
       render :action => "show", :id => params[:id]
     end
@@ -141,7 +141,7 @@ class SetsController < ApplicationController
       else
         flash[:error] = "A set must have at least one spectrum."
       end
-      redirect_to "/sets/show/"+@set.id.to_s
+      redirect_to "/sets/"+@set.id.to_s
     else
       flash[:error] = "You must be logged in and own the set to edit it."
       redirect_to "/login"
@@ -180,7 +180,7 @@ class SetsController < ApplicationController
       @set.notes = params[:notes]
       @set.title = params[:title]
       if @set.save!
-        redirect_to "/sets/show/"+@set.id.to_s
+        redirect_to "/sets/"+@set.id.to_s
       else
         flash[:error] = "Failed to save set."
         redirect_to "/sets/edit/"+@set.id.to_s

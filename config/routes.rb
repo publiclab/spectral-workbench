@@ -110,6 +110,8 @@ SpectralWorkbench::Application.routes.draw do
   get '/analyze/spectrum/:id.:format', to: redirect('/spectrums/%{id}.%{format}')
   get '/spectra/show/:id.:format', to: redirect('/spectrums/%{id}.%{format}')
   get '/spectra/show/:id', to: redirect('/spectrums/%{id}')
+  get '/sets/show/:id.:format', to: redirect('/sets/%{id}.%{format}')
+  get '/sets/show/:id', to: redirect('/sets/%{id}')
 
   get '/spectra/assign' => 'spectrums#assign'
   get '/spectra/feed' => 'spectrums#rss', defaults: { format: 'xml' }
