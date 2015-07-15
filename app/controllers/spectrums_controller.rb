@@ -39,7 +39,7 @@ class SpectrumsController < ApplicationController
       @spectra = Spectrum.find(:all, :limit => 12, :order => "created_at DESC", :conditions => ["id != ?",@spectrum.id])
     end
     @sets = @spectrum.sets
-    @user_sets = current_user.sets if logged_in?
+    @user_sets = SpectraSet.where(author:current_user.login).limit(20).order("created_at DESC")
     @macros = Macro.find :all, :conditions => {:macro_type => "analyze"}
     @calibrations = current_user.calibrations if logged_in?
     @comment = Comment.new
@@ -445,6 +445,7 @@ class SpectrumsController < ApplicationController
   def set_search
     @spectrum = Spectrum.find(params[:id])
     @user_sets = SpectraSet.find(:all, :conditions => ['author = ? AND (title LIKE ? OR notes LIKE ?)',current_user.login,"%#{params[:q]}%", "%#{params[:q]}%"],:limit => 20,:order => "created_at DESC")
+    @user_sets = current_user.sets if logged_in?
     render :partial => "spectrums/show/set_results", :layout => false
   end
 

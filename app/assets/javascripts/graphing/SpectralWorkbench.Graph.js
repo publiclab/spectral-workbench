@@ -5,6 +5,8 @@ SpectralWorkbench.Graph = Class.extend({
     this.width = 600;
     this.embedmargin = 10;
     this.margin = { top: 10, right: 30, bottom: 20, left: 70 };
+    if (this.args.calibrated) this.xUnit = 'nanometers';
+    else this.xUnit = "uncalibrated pixels";
 
     // set/spectrum breakout
     if (this.args.hasOwnProperty('spectrum_id')) {

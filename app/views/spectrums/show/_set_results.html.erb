@@ -1,8 +1,10 @@
 <table class="table">
 <% @user_sets.each do |set| %>
-<tr id="set_<%= set.id %>">
-  <td width="160px;"><b><%= set.title %></b><br /> <%= time_ago_in_words(set.created_at) %> ago</td>
-  <td><a class="btn btn-primary" target="_blank" href="/sets/add/<%= set.id %>?spectrum_id=<%= @spectrum.id %>">Add spectrum to this set</a></td> 
-</tr>
+  <% unless set.contains(@spectrum) %>
+    <tr id="set_<%= set.id %>">
+      <td width="160px;"><b><%= set.title %></b><br /> <%= time_ago_in_words(set.created_at) %> ago</td>
+      <td><a class="btn btn-primary" target="_blank" href="/sets/add/<%= set.id %>?spectrum_id=<%= @spectrum.id %>">Add spectrum to this set</a></td> 
+    </tr>
+  <% end %>
 <% end %>
 </table>

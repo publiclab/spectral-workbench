@@ -90,7 +90,8 @@
 
 }
 
-@media (max-height: 300px) and (max-width:500px) {
+/*@media (max-height: 300px) and (max-width:500px) {*/
+@media (max-width:500px) {
 
   #embed .credit {
     float: right;

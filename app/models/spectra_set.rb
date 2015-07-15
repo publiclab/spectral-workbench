@@ -13,6 +13,10 @@ class SpectraSet < ActiveRecord::Base
   def spectra
     Spectrum.where('id IN (?)',self.spectra_string.split(','))
   end
+
+  def contains(spectrum)
+    self.spectra.include?(spectrum)
+  end
   
   def match(spectrum)
     set = self.sort_set(spectrum)

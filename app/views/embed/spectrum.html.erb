@@ -7,7 +7,10 @@
 
   var graph;
   jQuery(document).ready(function($) {
-      graph = new SpectralWorkbench.Graph({ spectrum_id: <%= @spectrum.id %> });
+      graph = new SpectralWorkbench.Graph({
+        spectrum_id: <%= @spectrum.id %>,
+        calibrated: <%= @spectrum.calibrated %>
+      });
   })
 
 </script>

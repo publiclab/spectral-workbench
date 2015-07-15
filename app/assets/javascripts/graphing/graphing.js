@@ -11,7 +11,7 @@ SpectralWorkbench.Graph.prototype.graphSetup = function() {
   ;
 
   chart.xAxis     //Chart x-axis settings
-            .axisLabel('Wavelength (nanometers)')
+            .axisLabel('Wavelength ('+this.xUnit+')')
             .tickFormat(d3.format('1d'));
 
   chart.yAxis     //Chart y-axis settings

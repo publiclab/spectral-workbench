@@ -1,9 +1,9 @@
-<div class="container-fluid">
+<div class="row-fluid">
   <div class="col span12">
 
     <h2><a target="_blank" href="/<%= type %>/<%= datum.id %>"><%= datum.title %></a></h2>
 
-    <h3 class="compact"><%= datum.title %></h3>
+    <h3 class="compact"><%= if (datum.title.length < 15) then datum.title else datum.title[0..12]+'...' end %></h3>
 
     <% if type == :set %>
       <div class="table-scroll-container">
