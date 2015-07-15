@@ -122,6 +122,10 @@
 
       <h3>Notes</h3>
 
+      <% if @spectrum.has_powertag('calibration') %>
+        <p>This spectrum used the calibration from <a href="/spectrums/<%= @spectrum.powertag('calibration') %>"><%= @spectrum.calibration.title %></a>.</p>
+      <% end %>
+
       <p><% if @spectrum.notes %><%=raw RDiscount.new(@spectrum.notes).to_html %><% end %></p>
 
       <%= render :partial => "spectrums/show/commenting" %>

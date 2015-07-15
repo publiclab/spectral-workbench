@@ -39,9 +39,9 @@ class SpectrumsController < ApplicationController
       @spectra = Spectrum.find(:all, :limit => 12, :order => "created_at DESC", :conditions => ["id != ?",@spectrum.id])
     end
     @sets = @spectrum.sets
-    @user_sets = SpectraSet.where(author:current_user.login).limit(20).order("created_at DESC")
+    @user_sets = SpectraSet.where(author: current_user.login).limit(20).order("created_at DESC") if logged_in?
     @macros = Macro.find :all, :conditions => {:macro_type => "analyze"}
-    @calibrations = current_user.calibrations if logged_in?
+    @calibrations = current_user.calibrations.select { |s| s.id != @spectrum.id } if logged_in?
     @comment = Comment.new
     #respond_with(@spectrum) do |format|
     respond_with(@spectrum) do |format|
@@ -313,8 +313,11 @@ class SpectrumsController < ApplicationController
     @spectrum = Spectrum.find(params[:id])
     if logged_in? && @spectrum.user_id == current_user.id || current_user.role == "admin"
       if request.post?
-        @spectrum.clone(params[:clone_id])
+        id = params[:clone_id].to_i
+        @spectrum.clone(id)
         @spectrum.save
+        @spectrum.remove_tags('calibration:')
+        @spectrum.tag("calibration:"+id.to_s,current_user.id)
       end
       redirect_to spectrum_path(@spectrum)
     else
@@ -328,28 +331,6 @@ class SpectrumsController < ApplicationController
     respond_with(@spectrums) do |format|
       format.xml  { render :xml => @spectrums }
       format.json  { render :json => @spectrums }
-    end
-  end
-
-  def assign
-    if current_user.role == "admin"
-      if params[:claim] == "true"
-        # assign each spectrum the current user's id
-        @user = User.find_by_login(params[:id])
-        @spectrums = Spectrum.find_all_by_author(params[:author])
-        @spectrums.each do |spectrum|
-          spectrum.user_id = @user.id
-          spectrum.author = @user.login
-          spectrum.save
-        end
-        flash[:notice] = "Assigned "+@spectrums.length.to_s+" spectra to "+@user.login
-        redirect_to "/"
-      else
-        @spectrums = Spectrum.find_all_by_author(params[:author])
-      end
-    else
-      flash[:error] = "You must be logged in and be an admin to assign spectra."
-      redirect_to "/login"
     end
   end
 
@@ -432,19 +413,29 @@ class SpectrumsController < ApplicationController
 
   def clone_search
     @spectrum = Spectrum.find(params[:id])
-    @calibrations = Spectrum.find(:all, :conditions => ['id != ? AND (title LIKE ? OR notes LIKE ? OR author LIKE ?)',@spectrum.id,"%#{params[:q]}%", "%#{params[:q]}%","%#{params[:q]}%"],:limit => 20,:order => "created_at DESC")
+    @calibrations = Spectrum.where(calibrated: true)
+                            .where('id != ?',@spectrum.id)
+                            .where('title LIKE ? OR notes LIKE ? OR author LIKE ?)',"%#{params[:q]}%", "%#{params[:q]}%","%#{params[:q]}%")
+                            .limit(20)
+                            .order("created_at DESC")
     render :partial => "spectrums/show/clone_results", :layout => false
   end
 
   def compare_search
     @spectrum = Spectrum.find(params[:id])
-    @spectra = Spectrum.find(:all, :conditions => ['id != ? AND (title LIKE ? OR notes LIKE ? OR author LIKE ?)',@spectrum.id,"%"+params[:q]+"%", "%"+params[:q]+"%","%"+params[:q]+"%"],:limit => 20,:order => "created_at DESC")
+    @spectra = Spectrum.where(calibrated: true)
+                            .where('id != ?',@spectrum.id)
+                            .where('title LIKE ? OR notes LIKE ? OR author LIKE ?)',"%#{params[:q]}%", "%#{params[:q]}%","%#{params[:q]}%")
+                            .limit(20)
+                            .order("created_at DESC")
     render :partial => "spectrums/show/compare_search", :layout => false
   end
 
   def set_search
     @spectrum = Spectrum.find(params[:id])
-    @user_sets = SpectraSet.find(:all, :conditions => ['author = ? AND (title LIKE ? OR notes LIKE ?)',current_user.login,"%#{params[:q]}%", "%#{params[:q]}%"],:limit => 20,:order => "created_at DESC")
+    @user_sets = SpectraSet.where('author = ? AND (title LIKE ? OR notes LIKE ?)',current_user.login,"%#{params[:q]}%", "%#{params[:q]}%")
+                           .limit(20)
+                           .order('created_at DESC')
     @user_sets = current_user.sets if logged_in?
     render :partial => "spectrums/show/set_results", :layout => false
   end

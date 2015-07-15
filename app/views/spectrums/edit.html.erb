@@ -13,9 +13,18 @@
 </div>
 <% end %>
 
-<%= form_for(@spectrum,:html => { :multipart => true }) do |f| %>
+<%= form_for(@spectrum, :html => { :multipart => true }) do |f| %>
 
-  <%= (errors_for @spectrum).html_safe %>
+  <% if @spectrum.errors.any? %>
+    <div class="alert alert-error">
+      <h3>There were errors with your data.</h3>
+      <ul>
+        <% @spectrum.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
 
   <p>
     <label for="title">Title</label>

@@ -8,7 +8,16 @@
 
 <form id="upload" action="/spectrums/create" class="form well" enctype="multipart/form-data" method="post">
 
-  <%= (errors_for @spectrum, "Oops, we were unable to save your spectrum.").html_safe %>
+  <% if @spectrum.errors.any? %>
+    <div class="alert alert-error">
+      <h3>There were errors with your data.</h3>
+      <ul>
+        <% @spectrum.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
 
   <div class="control-group" id="title">
     <input name="spectrum[title]" type="text" id="inputTitle" placeholder="Title">

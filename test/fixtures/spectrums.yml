@@ -3,7 +3,7 @@
 one:
   title: MyString
   author: MyString
-  data: MyText
+  data: "{\"lines\":[1,2,3]}"
   notes: MyText
   user_id: 1
   version: 1
@@ -11,6 +11,6 @@ one:
 two:
   title: MyString
   author: MyString
-  data: MyText
+  data: "{\"lines\":[1,2,3]}"
   notes: MyText
   version: 1

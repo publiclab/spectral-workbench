@@ -1,3 +1,6 @@
+require 'rubygems'
+require 'rmagick'
+
 class Spectrum < ActiveRecord::Base
   include ActionView::Helpers::DateHelper
 
@@ -30,10 +33,13 @@ class Spectrum < ActiveRecord::Base
   validates :title, :format => { with: /\A[\w\ -\'\"]+\z/, message: "can contain only letters, numbers, and spaces." }
   validates :author, :format => { with: /\A\w[\w\.\-_@]+\z/, message: "can contain only letters, numbers, hyphens, underscores and periods." }
   validates_attachment_content_type :photo, :content_type => ["image/jpg", "image/jpeg", "image/png", "image/gif"]
+  validate :validate_json
 
   after_save :generate_processed_spectrum
+  before_save :update_calibrated
+  before_destroy :remove_from_sets
 
-  def before_destroy
+  def remove_from_sets
      self.sets.each do |set|
        ids = []
        spectra_ids = set.spectra_string.split(',').each do |id|
@@ -48,6 +54,24 @@ class Spectrum < ActiveRecord::Base
     end
   end
 
+  def validate_json
+    if self.data.nil?
+      true
+    else
+      begin
+        !!ActiveSupport::JSON.decode(self.data)
+      rescue
+        errors[:base] << "data not in valid JSON format"
+        false
+      end
+    end
+  end
+
+  def update_calibrated
+    self.calibrated = self.is_calibrated?
+    true
+  end
+
   def self.weekly_tallies
     # past 52 weeks of data
     weeks = {}
@@ -59,8 +83,6 @@ class Spectrum < ActiveRecord::Base
 
   # finds the brightest row of the image and uses that as its sample row
   def find_brightest_row
-    require 'rubygems'
-    require 'RMagick'
     pixels = []
 
     image = Magick::ImageList.new("public"+(self.photo.url.split('?')[0]).gsub('%20',' '))
@@ -86,8 +108,6 @@ class Spectrum < ActiveRecord::Base
   end
 
   def correct_reversed_image
-    require 'rubygems'
-    require 'RMagick'
     pixels = []
 
     image   = Magick::ImageList.new("public"+(self.photo.url.split('?')[0]).gsub('%20',' '))
@@ -113,11 +133,9 @@ class Spectrum < ActiveRecord::Base
 
   # extracts serialized data from the top row of the stored image
   def extract_data
-    require 'rubygems'
-    require 'RMagick'
     pixels = []
 
-    image   = Magick::ImageList.new("public"+(self.photo.url.split('?')[0]).gsub('%20',' '))
+    image = Magick::ImageList.new("public"+(self.photo.url.split('?')[0]).gsub('%20',' '))
     # saved sample_row may be greater than image height, so temporarily compensate,
     # but preserve sample_row in case we rotate back or something
     self.sample_row = image.rows-2 if self.sample_row > image.rows
@@ -151,12 +169,20 @@ class Spectrum < ActiveRecord::Base
     self
   end
 
-  def calibrated
-    begin
-      d = ActiveSupport::JSON.decode(self.clean_json)
-      !d.nil? && !d['lines'].nil? && !d['lines'].first['wavelength'].nil?
-    rescue
-      return false
+  def calibration
+    Spectrum.find self.powertag('calibration')
+  end
+
+  def is_calibrated?
+    if self.data.nil?
+      false
+    else
+      begin
+        d = ActiveSupport::JSON.decode(self.clean_json)
+        !d.nil? && !d['lines'].nil? && !d['lines'].first['wavelength'].nil?
+      rescue
+        false
+      end
     end
   end
 
@@ -200,15 +226,11 @@ class Spectrum < ActiveRecord::Base
     #self.reverse if (wavelength1 < wavelength2 && x1 > x2) || (wavelength1 > wavelength2 && x1 < x2)
     self.data = ActiveSupport::JSON.encode(d)
     self.reversed = clone_source.reversed
-    self.notes = self.notes.to_s+" -- (Cloned calibration from <a href='/spectra/show/"+clone_id.to_s+"'>"+clone_source.title+"</a>)"
     self
   end
 
   # rotate clockwise
   def rotate
-    require 'rubygems'
-    require 'RMagick'
-
     image   = Magick::ImageList.new("public"+(self.photo.url.split('?')[0]).gsub('%20',' '))
     image.rotate!(90)
     image.write("public"+self.photo.url)
@@ -217,9 +239,6 @@ class Spectrum < ActiveRecord::Base
 
   # horizontally flips image to match reversed spectrum, toggles 'reversed' flag
   def reverse
-    require 'rubygems'
-    require 'RMagick'
-
     image   = Magick::ImageList.new("public"+(self.photo.url.split('?')[0]).gsub('%20',' '))
 puts "reversing"
     image.flop!
@@ -243,7 +262,6 @@ puts "reversing"
     data = Base64.decode64(data)
 
     self.photo = Paperclip::string_to_file('capture.png', 'image/png', data)
-    self.save
   end
 
   # a string of either a single tag name or a series of comma-delimited tags
@@ -255,6 +273,12 @@ puts "reversing"
         :user_id => user_id,
       })
       tag.save! unless self.has_tag(tag.name)
+    end
+  end
+
+  def remove_tags(tagPrefix)
+    self.tags.each do |tag|
+      tag.delete if tag[0..11] == tagPrefix
     end
   end
 
@@ -345,7 +369,22 @@ puts "reversing"
   end
 
   def has_tag(name)
-    !Tag.find_by_name(name,:conditions => {:spectrum_id => self.id}).nil?
+    Tag.where(name: name).where(spectrum_id: self.id).length > 0
+  end
+
+  # no colon required
+  def has_powertag(name)
+    Tag.where('name LIKE (?)',name+':%').where(spectrum_id: self.id).length > 0
+  end
+
+  # no colon required
+  def powertags(name)
+    Tag.where('name LIKE (?)',name+':%').where(spectrum_id: self.id)
+  end
+
+  # if we can safely assume there's only one - no colon required
+  def powertag(name)
+    self.powertags(name).limit(1).first.name.split(name+':').last
   end
 
   # if it has horizontally flipped input image: red is at left

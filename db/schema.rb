@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150625194647) do
+ActiveRecord::Schema.define(:version => 20150715184613) do
 
   create_table "comments", :force => true do |t|
     t.string   "author"
@@ -711,6 +711,7 @@ ActiveRecord::Schema.define(:version => 20150625194647) do
     t.integer  "like_count",                                  :default => 0,       :null => false
     t.integer  "video_row",                                   :default => 0
     t.boolean  "reversed",                                    :default => false,   :null => false
+    t.boolean  "calibrated",                                  :default => false,   :null => false
   end
 
   add_index "spectrums", ["title"], :name => "index_spectrums_on_title"
