@@ -73,7 +73,7 @@ SpectralWorkbench.Graph.prototype.graphSetup = function() {
                       chart, 
                       onImport);
   } else if (this.dataType == "set") {
-    this.importData( "/sets/" 
+    this.importData( "/sets/calibrated/" 
                     + this.args.set_id 
                     + ".json", 
                       chart, 

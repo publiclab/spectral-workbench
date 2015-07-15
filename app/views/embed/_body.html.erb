@@ -1,9 +1,9 @@
 <div class="row-fluid">
   <div class="col span12">
 
-    <h2><a target="_blank" href="/<%= type %>/<%= datum.id %>"><%= datum.title %></a></h2>
+    <h2><a target="_blank" href="/<%= type %>s/<%= datum.id %>"><%= datum.title %></a></h2>
 
-    <h3 class="compact"><%= if (datum.title.length < 15) then datum.title else datum.title[0..12]+'...' end %></h3>
+    <h3 class="compact"><a target="_blank" href="/<%= type %>s/<%= datum.id %>"><%= if (datum.title.length < 15) then datum.title else datum.title[0..12]+'...' end %></a></h3>
 
     <% if type == :set %>
       <div class="table-scroll-container">
@@ -12,7 +12,7 @@
             <th style="width:14px;">Visible</th>
             <th style="width:14px;"></th>
             <th style="width:14px;">Tools</th>
-            <th>Spectrum (<%= datum.spectra.length %>)</th>
+            <th>Spectra (<%= datum.spectra.length %>)</th>
             <th>Author</th>
           </tr>
           <% datum.spectra.each do |spectrum| %>
@@ -24,7 +24,10 @@
                 <div class="key"></div>
               </td>
               <td><%= render :partial => 'embed/spectrumTools', :locals => {:spectrum => spectrum} %></td>
-              <td><a href="/spectrums/<%= spectrum.id %>"><%= spectrum.title %></a></td>
+              <td>
+                <a href="/spectrums/<%= spectrum.id %>"><%= spectrum.title %></a>
+                <% unless spectrum.calibrated %> <span style="color:#888;">(calibrate to display)</span><% end %>
+              </td>
               <td><a href="/profile/<%= spectrum.author %>"><%= spectrum.author %></a></td>
             </tr>
           <% end %>

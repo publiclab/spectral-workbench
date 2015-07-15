@@ -5,11 +5,13 @@
 
   var graph;
   jQuery(document).ready(function($) {
-    graph = new SpectralWorkbench.Graph({ set_id: <%= @set.id %> });
+    graph = new SpectralWorkbench.Graph({
+      set_id: <%= @set.id %>,
+      calibrated: <%= @set.some_calibrated %>
+    });
   })
 
 </script>
 
 <%= render :partial => "embed/body", :locals => {:type => :set, :datum => @set } %>
 </div>
-

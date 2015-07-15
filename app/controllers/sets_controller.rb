@@ -16,8 +16,30 @@ class SetsController < ApplicationController
       format.json  {
         json = @set.as_json
 # this won't work: can't set arbitrary properties
+# later comment: ? huh?
         json = json.merge({spectra: []})
         @set.spectra.each do |spectrum|
+          spectrum_json = spectrum.as_json(:except => [:data])
+          spectrum_json[:data] = JSON.parse(spectrum.data)
+          json[:spectra] << spectrum_json
+        end
+        render :json => json
+      }
+    end
+  end
+
+  # API call for only calibrated spectra
+  def calibrated
+    @set = SpectraSet.find params[:id]
+    respond_with(@set) do |format|
+      # format.html {}
+      format.xml  { render :xml => @set }
+      format.json  {
+        json = @set.as_json
+# this won't work: can't set arbitrary properties
+# later comment: ? huh?
+        json = json.merge({spectra: []})
+        @set.calibrated_spectra.each do |spectrum|
           spectrum_json = spectrum.as_json(:except => [:data])
           spectrum_json[:data] = JSON.parse(spectrum.data)
           json[:spectra] << spectrum_json

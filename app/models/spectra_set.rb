@@ -14,6 +14,19 @@ class SpectraSet < ActiveRecord::Base
     Spectrum.where('id IN (?)',self.spectra_string.split(','))
   end
 
+  # this is only getting calibrations, not calibrated spectra!
+  def calibrated_spectra
+    Spectrum.where('spectrums.id IN (?)',self.spectra_string.split(',')).includes(:tags).where('tags.name = ?','calibration')
+  end
+
+  def all_calibrated
+    !self.spectra.collect(&:calibrated).include?(false)
+  end
+
+  def some_calibrated
+    self.spectra.collect(&:calibrated).include?(true)
+  end
+
   def contains(spectrum)
     self.spectra.include?(spectrum)
   end
