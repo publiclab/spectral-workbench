@@ -5,7 +5,7 @@ module SpectrumsHelper
     CSV.generate do |csv|
       csv << %w(Wavelength Average Red Green Blue)
       data.each do |datum|
-        w = datum['wavelenth'].to_s[0..6]
+        w = datum['wavelength'].to_s[0..6]
         w = 0 if w == ""
         a = datum['average'].to_s[0..3]
         r = datum['r']
