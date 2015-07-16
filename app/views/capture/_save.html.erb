@@ -24,7 +24,7 @@
   <p>Recent tags:<span id="recent-tags"> 
     <% if @calibration %>
       (<a onClick="tag('<%= @calibration.tags.collect(&:name).join(',') %>')">all</a>)
-      <% @calibration.tags.each do |tag| %>
+      <% @calibration.normaltags.each do |tag| %>
         <a class="label label-info" onClick="tag(this.innerHTML);this.remove()"><%= tag.name %></a> 
       <% end %>
     <% end %>

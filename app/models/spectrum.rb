@@ -258,6 +258,10 @@ puts "reversing"
     end
   end
 
+  def normaltags
+    self.tags.select { |tag| tag.name.match(':').nil? }
+  end
+
   def remove_tags(tagPrefix)
     self.tags.each do |tag|
       tag.delete if tag[0..11] == tagPrefix
