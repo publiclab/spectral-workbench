@@ -21,12 +21,13 @@ SpectralWorkbench.Graph.prototype.graphSetup = function() {
   /* Line event handlers */
   var onmouseover = function() {
     var id = d3.select(this).data()[0].id;
-    $('.spectrum-'+id).addClass('highlight');
+console.log('highlight',id)
+    $('tr.spectrum-'+id).addClass('highlight');
     d3.select(this).classed('highlight',true);
   }
   var onmouseout = function() {
     var id = d3.select(this).data()[0].id;
-    $('.spectrum-'+id).removeClass('highlight');
+    $('tr.spectrum-'+id).removeClass('highlight');
     d3.select(this).classed('highlight',false);
   }
 
@@ -43,21 +44,27 @@ SpectralWorkbench.Graph.prototype.graphSetup = function() {
         .call(chart)         //Finally, render the chart!
         .attr('id',idKey)
 
-    d3.selectAll('g.nv-group')
+    d3.selectAll('g.nv-scatterWrap g.nv-groups g') // ONLY the lines, not the scatterplot-based hover circles
         .on("mouseover", onmouseover)
         .on("mouseout", onmouseout)
+
+    d3.selectAll('g.nv-line > g > g.nv-groups g') // ONLY the lines, not the scatterplot-based hover circles
         .attr("id", function() {
-          var sel = d3.select(this)
+          var sel = d3.select(this),
               data  = sel.data()[0];
+
           // color corresponding table entry
-          console.log(sel,'spectrum-'+data.id+' .key','background',sel.style('stroke'))
-          $('.spectrum-'+data.id+' div.key').css('background',sel.style('stroke'));
-          // highlight corresponding line
-          $('.spectrum-'+data.id).mouseover(function() {
-            d3.selectAll('#spectrum-line-'+data.id).classed('highlight',true);
+          $('tr.spectrum-'+data.id+' div.key').css('background',sel.style('stroke'));
+
+          // highlight corresponding line when hovering on table row
+          $('tr.spectrum-'+data.id).mouseover(function() {
+            d3.selectAll('g.nv-line > g > g.nv-groups > g').classed('dimmed', true );
+            d3.selectAll('g#spectrum-line-'+data.id).classed(       'dimmed', false);
+            d3.selectAll('g#spectrum-line-'+data.id).classed(    'highlight', true );
           });
-          $('.spectrum-'+data.id).mouseout(function() {
-            d3.selectAll('#spectrum-line-'+data.id).classed('highlight',false);
+          $('tr.spectrum-'+data.id).mouseout(function() {
+            d3.selectAll('g.nv-line > g > .nv-groups *').classed( 'dimmed', false);
+            d3.selectAll('g#spectrum-line-'+data.id).classed(  'highlight', false);
           });
           // apparently HTML id has to begin with a string? 
           // http://stackoverflow.com/questions/70579/what-are-valid-values-for-the-id-attribute-in-html

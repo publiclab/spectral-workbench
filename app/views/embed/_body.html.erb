@@ -9,7 +9,9 @@
       <div class="table-scroll-container">
         <table class="table spectra">
           <tr>
-            <th style="width:14px;">Visible</th>
+            <th style="width:14px;">
+              <input class="visible-all" type="checkbox" checked="true" />
+            </th>
             <th style="width:14px;"></th>
             <th style="width:14px;">Tools</th>
             <th>Spectra (<%= datum.spectrums.length %>)</th>
@@ -45,8 +47,8 @@
       </span>
     </p>
     <div class="tools">
-      <a href=""><i class="icon icon-twitter"></i></a>
-      <a href=""><i class="icon icon-facebook"></i></a>
+      <a target="_blank" href="http://twitter.com/share?text=<%= datum.title %> on @PublicLab's Spectral Workbench&url=http://spectralworkbench.org/<%= type%>/<%= datum.id %>"><i class="icon icon-twitter"></i></a>
+      <a target="_blank" href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fspectralworkbench.org%2F<%= type%>s%2F<%= datum.id %>"><i class="icon icon-facebook"></i></a>
       <%= render :partial => 'embed/tools', :locals => {:type => type, :datum => datum} %>
     </div>
 

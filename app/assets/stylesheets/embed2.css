@@ -180,7 +180,11 @@
 }
 
 svg .highlight {
-  stroke:red !important;
+  stroke: red !important;
+}
+
+svg .dimmed {
+  stroke-opacity: 0.3 !important;
 }
 
 #embed .spectrum-tools {

@@ -35,6 +35,18 @@ SpectralWorkbench.Graph = Class.extend({
           d3.selectAll('#spectrum-line-'+id).style('display','block');
         } else {
           d3.selectAll('#spectrum-line-'+id).style('display','none');
+          $('table.spectra input.visible-all').attr('checked',false);
+        }
+      })
+      $('table.spectra input.visible-all').change(function(e) {
+        var checked = $(this).is(':checked');
+        if (checked) {
+          $('table.spectra input.visible').prop('checked',true);
+          $('table.spectra input.visible').trigger('change');
+          $('table.spectra input.visible-all').prop('checked',true);
+        } else {
+          $('table.spectra input.visible').prop('checked',false);
+          $('table.spectra input.visible').trigger('change');
         }
       })
     }
