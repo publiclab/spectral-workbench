@@ -18,7 +18,7 @@
             <th>Author</th>
           </tr>
           <% datum.spectrums.each do |spectrum| %>
-            <tr class="spectrum spectrum-<%= spectrum.id %>">
+            <tr class="spectrum spectrum-<%= spectrum.id %>" id="spectrum-<%= spectrum.id %>">
               <td style="text-align:center;">
                 <input data-id="<%= spectrum.id %>" class="visible" type="checkbox" checked="true" />
               </td>

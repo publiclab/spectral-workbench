@@ -21,9 +21,10 @@ SpectralWorkbench.Graph.prototype.graphSetup = function() {
   /* Line event handlers */
   var onmouseover = function() {
     var id = d3.select(this).data()[0].id;
-console.log('highlight',id)
     $('tr.spectrum-'+id).addClass('highlight');
     d3.select(this).classed('highlight',true);
+    // scroll to the spectrum in the table below:
+    window.location = (window.location+'').split('#')[0]+'#spectrum-'+id;
   }
   var onmouseout = function() {
     var id = d3.select(this).data()[0].id;
