@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150715184613) do
+ActiveRecord::Schema.define(:version => 20150715224222) do
 
   create_table "comments", :force => true do |t|
     t.string   "author"
@@ -664,14 +664,21 @@ ActiveRecord::Schema.define(:version => 20150715184613) do
   add_index "processed_spectrums", ["spectrum_id"], :name => "index_processed_spectrums_on_spectrum_id", :unique => true
 
   create_table "spectra_sets", :force => true do |t|
-    t.string   "title",          :default => "", :null => false
-    t.string   "author",         :default => "", :null => false
-    t.string   "spectra_string", :default => "", :null => false
+    t.string   "title",      :default => "", :null => false
+    t.string   "author",     :default => "", :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.text     "notes",          :default => "", :null => false
-    t.integer  "user_id",        :default => 0
+    t.text     "notes",      :default => "", :null => false
+    t.integer  "user_id",    :default => 0
   end
+
+  create_table "spectra_sets_spectrums", :id => false, :force => true do |t|
+    t.integer "spectrum_id"
+    t.integer "spectra_set_id"
+  end
+
+  add_index "spectra_sets_spectrums", ["spectra_set_id"], :name => "index_spectra_sets_spectrums_on_spectra_set_id"
+  add_index "spectra_sets_spectrums", ["spectrum_id"], :name => "index_spectra_sets_spectrums_on_spectrum_id"
 
   create_table "spectrum_links", :force => true do |t|
     t.string   "author"

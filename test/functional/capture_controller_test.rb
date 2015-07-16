@@ -20,6 +20,7 @@ class CaptureControllerTest < ActionController::TestCase
     assert_response :success
     assert_not_nil :spectrums
     assert_not_nil :calibration
+    assert_not_nil :calibrations
   end
 
 end

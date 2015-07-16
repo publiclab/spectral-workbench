@@ -1,4 +1,4 @@
-<% @set.spectra.each do |spectrum| %>
+<% @set.spectrums.each do |spectrum| %>
 <div id="spectrum_<%= spectrum.id %>">
 <a href="<%= spectrum_path(spectrum.id) %>"><img style="height:50px;width:100%" class="img" src="<%= spectrum.photo.url(:thumb) %>" /></a>
 <p>

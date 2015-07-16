@@ -18,7 +18,7 @@ class SetsController < ApplicationController
 # this won't work: can't set arbitrary properties
 # later comment: ? huh?
         json = json.merge({spectra: []})
-        @set.spectra.each do |spectrum|
+        @set.spectrums.each do |spectrum|
           spectrum_json = spectrum.as_json(:except => [:data])
           spectrum_json[:data] = JSON.parse(spectrum.data)
           json[:spectra] << spectrum_json
@@ -39,7 +39,7 @@ class SetsController < ApplicationController
 # this won't work: can't set arbitrary properties
 # later comment: ? huh?
         json = json.merge({spectra: []})
-        @set.calibrated_spectra.each do |spectrum|
+        @set.calibrated_spectrums.each do |spectrum|
           spectrum_json = spectrum.as_json(:except => [:data])
           spectrum_json[:data] = JSON.parse(spectrum.data)
           json[:spectra] << spectrum_json
@@ -110,10 +110,10 @@ class SetsController < ApplicationController
       end
       @set = SpectraSet.new({:title => params[:spectra_set][:title],
         :notes => params[:spectra_set][:notes],
-        :spectra_string => spectra.join(','),
         :author => current_user.login
       })
       if @set.save
+        @set.spectrums << spectra
         redirect_to "/sets/"+@set.id.to_s
       else
         flash[:error] = "Failed to save set."
@@ -157,8 +157,8 @@ class SetsController < ApplicationController
   def remove
     @set = SpectraSet.find params[:id]
     if logged_in? && (@set.author == current_user.login || current_user.role == "admin")
-      if @set.spectra_string.split(',').length > 1
-        @set.remove(params[:s])
+      if @set.spectrums.length > 1
+        @set.delete(params[:s])
         flash[:notice] = "Spectrum removed."
       else
         flash[:error] = "A set must have at least one spectrum."
@@ -199,9 +199,10 @@ class SetsController < ApplicationController
   def update
     @set = SpectraSet.find params[:id]
     if logged_in? && (@set.author == current_user.login || current_user.role == "admin")
-      @set.notes = params[:notes]
-      @set.title = params[:title]
+      @set.notes = params[:notes] if params[:notes]
+      @set.title = params[:title] if params[:title]
       if @set.save!
+        flash[:notice] = 'Set was successfully updated.'
         redirect_to "/sets/"+@set.id.to_s
       else
         flash[:error] = "Failed to save set."

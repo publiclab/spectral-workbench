@@ -1,33 +1,29 @@
 class SpectraSet < ActiveRecord::Base
 
-  attr_accessible :title, :notes, :spectra_string, :author
+  attr_accessible :title, :notes, :spectrums_string, :author
 
   validates_presence_of :title, :author
   validates :title, length: { maximum: 60 }
   has_many :comments, :dependent => :destroy
+  has_and_belongs_to_many :spectrums
 
   validates :title, :format => { with: /\A[\w\ -\'\"]+\z/, message: "can contain only letters, numbers, and spaces." }
   validates :author, :format => { with: /\A\w[\w\.\-_@]+\z/, message: "can contain only letters, numbers, hyphens, underscores and periods." }
 
-  
-  def spectra
-    Spectrum.where('id IN (?)',self.spectra_string.split(','))
-  end
-
-  def calibrated_spectra
-    Spectrum.where('spectrums.id IN (?)',self.spectra_string.split(',')).includes(:tags).where(calibrated: true)
+  def calibrated_spectrums
+    self.spectrums.where(calibrated: true)
   end
 
   def all_calibrated
-    !self.spectra.collect(&:calibrated).include?(false)
+    !self.spectrums.collect(&:calibrated).include?(false)
   end
 
   def some_calibrated
-    self.spectra.collect(&:calibrated).include?(true)
+    self.spectrums.collect(&:calibrated).include?(true)
   end
 
   def contains(spectrum)
-    self.spectra.include?(spectrum)
+    self.spectrums.include?(spectrum)
   end
   
   def match(spectrum)
@@ -39,30 +35,25 @@ class SpectraSet < ActiveRecord::Base
 
   def sort_set(spectrum)
     scored = {}
-    self.spectra_string.split(',').each do |id|
+    self.spectrums.collect(&:id).each do |id|
       scored[id] = spectrum.compare(id) if id != self.id
     end
     scored
   end
 
+  # deprecate in favor of simply <<
   def add(spectrum_id)
-    if Spectrum.find(spectrum_id.to_i)
-      self.spectra_string = [self.spectra_string,spectrum_id].uniq.join(',') 
-      self.save
+    if spectrum = Spectrum.where(id: spectrum_id.to_i)
+      self.spectrums << spectrum.first
     else
       false
     end
   end
 
+  # deprecate in favor of delete
   def remove(spectrum_id)
-    if Spectrum.find(spectrum_id.to_i)
-      set = self.spectra_string.split(',')
-      newset = []
-      set.each do |s|
-        newset << s if s != spectrum_id
-      end
-      self.spectra_string = newset.uniq.join(',') 
-      self.save
+    if spectrum = Spectrum.where(id: spectrum_id.to_i)
+      self.spectrums.delete(spectrum)
     else
       false
     end

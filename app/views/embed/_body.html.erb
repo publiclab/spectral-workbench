@@ -12,10 +12,10 @@
             <th style="width:14px;">Visible</th>
             <th style="width:14px;"></th>
             <th style="width:14px;">Tools</th>
-            <th>Spectra (<%= datum.spectra.length %>)</th>
+            <th>Spectra (<%= datum.spectrums.length %>)</th>
             <th>Author</th>
           </tr>
-          <% datum.spectra.each do |spectrum| %>
+          <% datum.spectrums.each do |spectrum| %>
             <tr class="spectrum spectrum-<%= spectrum.id %>">
               <td style="text-align:center;">
                 <input data-id="<%= spectrum.id %>" class="visible" type="checkbox" checked="true" />

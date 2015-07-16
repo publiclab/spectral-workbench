@@ -14,6 +14,7 @@ class CaptureController < ApplicationController
       @offline = true
       @calibration = current_user.last_calibration
       @calibration = Spectrum.find(params[:calibration_id]) if params[:calibration_id]
+      @calibrations = Spectrum.where(calibrated: true, user_id: current_user.id)
       @start_wavelength,@end_wavelength = @calibration.wavelength_range if @calibration
     else
       @offline = "flush"

@@ -10,6 +10,7 @@ class Spectrum < ActiveRecord::Base
   has_many :likes, :dependent => :destroy
   has_many :tags, :dependent => :destroy
   has_one :processed_spectrum, :dependent => :destroy
+  has_and_belongs_to_many :spectra_sets
 
   # Paperclip
   has_attached_file :photo,
@@ -37,21 +38,9 @@ class Spectrum < ActiveRecord::Base
 
   after_save :generate_processed_spectrum
   before_save :update_calibrated
-  before_destroy :remove_from_sets
 
-  def remove_from_sets
-     self.sets.each do |set|
-       ids = []
-       spectra_ids = set.spectra_string.split(',').each do |id|
-         ids << id if id.to_i != self.id
-       end
-       if ids.length > 0
-         set.spectra_string = ids.join(',')
-         set.save
-       else
-         set.delete
-       end
-    end
+  def sets
+    self.spectra_sets
   end
 
   def validate_json
@@ -247,13 +236,6 @@ puts "reversing"
     self.photo.reprocess!
   end
 
-  # this is embarassing
-  # someday rewrite with a join table
-  def sets
-    s = SpectraSet.find(:all, :conditions => ["spectra_string = '?' OR spectra_string LIKE '%,?,%' OR spectra_string LIKE '%,?' OR spectra_string LIKE '?,%'",self.id,self.id,self.id,self.id])
-    s = s || []
-  end
-
   def image_from_dataurl(data)
     # remove image/png:base,
     data = data.split(',').pop
@@ -342,7 +324,7 @@ puts "reversing"
     set = SpectraSet.find set_id
     scored = {}
 
-    set.spectra_string.split(',').each do |id|
+    set.spectra.collect(&:id).each do |id|
       scored[id] = self.compare(id) if id.to_i != self.id
     end
     scored
