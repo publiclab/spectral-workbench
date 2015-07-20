@@ -1,10 +1,12 @@
 SpectralWorkbench.Graph = Class.extend({
 
   init: function(args) {
+
     this.args = args;
     this.width = 600;
     this.embedmargin = 10;
     this.margin = { top: 10, right: 30, bottom: 20, left: 70 };
+
     if (this.args.calibrated) this.xUnit = 'nanometers';
     else this.xUnit = "uncalibrated pixels";
 
@@ -21,10 +23,10 @@ SpectralWorkbench.Graph = Class.extend({
       .attr("width",  this.width  + this.margin.left + this.margin.right)
       .attr("height", this.height + this.margin.top  + this.margin.bottom)
 
-    this.chart = this.graphSetup(); // need this for updating
-    nv.addGraph(this.chart);
+    this.graphSetup();
 
-    // break this up into two subclasses, 
+    // Set up graph/table mouse events.
+    // ...break this up into two subclasses, 
     // set and spectrum, with their own init sequences 
     if (this.dataType == "set") {
       // setup sets list of spectra
@@ -54,6 +56,8 @@ SpectralWorkbench.Graph = Class.extend({
 
     // Update the chart when window updates.
     $(window).on('resize', this.updateSize.apply(this));
+    // nv.utils.windowResize( this.updateSize.apply(this)); // this one didn't work - maybe it's only on resize of the svg element?
+
   }
 
 });

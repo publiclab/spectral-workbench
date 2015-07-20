@@ -39,6 +39,7 @@ SpectralWorkbench.Graph.prototype.graphSetup = function() {
 
   var that = this;
   var onImport = function(data,chart) {
+
     /* Enter data into the graph */
     that.data = d3.select('#graph svg')  //Select the <svg> element you want to render the chart in.   
         .datum(data,idKey)   //Populate the <svg> element with chart data and provide a binding key
@@ -72,6 +73,9 @@ SpectralWorkbench.Graph.prototype.graphSetup = function() {
           return 'spectrum-line-'+data.id;
         });
 
+    // actually add it to the display
+    nv.addGraph(chart);
+
   }
 
   if (this.dataType == "spectrum") {
@@ -87,8 +91,6 @@ SpectralWorkbench.Graph.prototype.graphSetup = function() {
                       chart, 
                       onImport);
   }
-
-  return chart;
 }
 
 SpectralWorkbench.Graph.prototype.updateSize = function() {
@@ -106,8 +108,7 @@ SpectralWorkbench.Graph.prototype.updateSize = function() {
     } else {
 
       if (($(window).height() < 450 && that.dataType == 'set') || 
-          ($(window).height() < 350 && that.dataType == 'spectrum')) {
-
+          ($(window).height() < 350 && that.dataType == 'spectrum')) { 
         // compact
         that.height = 180;
         $('#embed').addClass('compact');
@@ -140,6 +141,7 @@ SpectralWorkbench.Graph.prototype.updateSize = function() {
       that.chart.update();
     }
 
+    // hide loading grey background
     $('#graph').css('background','white');
     $('#embed #graph .icon-spinner').hide();
 
