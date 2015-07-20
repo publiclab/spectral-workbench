@@ -7,12 +7,12 @@
   padding: 30px 10px 10px;
 }
 
-#embed #graph {
+#graph {
   background:#eee;
   text-align:center;
 }
 
-#embed #graph .icon-spinner {
+#graph .icon-spinner {
   font-size:20px;
   color:#aaa;
   margin-top:30px;
@@ -47,6 +47,10 @@
 
 /* flip to image button */
 #embed.compact .tools.compact {
+}
+
+#embed tr.spectrum-tools {
+  border-top:none;
 }
 
 #embed .credit {
@@ -175,19 +179,10 @@
   display: block;
 }
 
-#embed .spectrum-tools-container {
-  position:absolute;
-}
-
 svg .highlight {
   stroke: red !important;
 }
 
 svg .dimmed {
   stroke-opacity: 0.3 !important;
-}
-
-#embed .spectrum-tools {
-  text-align:center;
-  position:absolute;
 }

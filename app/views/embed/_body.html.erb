@@ -5,36 +5,9 @@
 
     <h3 class="compact"><a target="_blank" href="/<%= type %>s/<%= datum.id %>"><%= if (datum.title.length < 15) then datum.title else datum.title[0..12]+'...' end %></a></h3>
 
+    <!-- TABLE -->
     <% if type == :set %>
-      <div class="table-scroll-container">
-        <table class="table spectra">
-          <tr>
-            <th style="width:14px;">
-              <input class="visible-all" type="checkbox" checked="true" />
-            </th>
-            <th style="width:14px;"></th>
-            <th style="width:14px;">Tools</th>
-            <th>Spectra (<%= datum.spectrums.length %>)</th>
-            <th>Author</th>
-          </tr>
-          <% datum.spectrums.each do |spectrum| %>
-            <tr class="spectrum spectrum-<%= spectrum.id %>" id="spectrum-<%= spectrum.id %>">
-              <td style="text-align:center;">
-                <input data-id="<%= spectrum.id %>" class="visible" type="checkbox" checked="true" />
-              </td>
-              <td>
-                <div class="key"></div>
-              </td>
-              <td><%= render :partial => 'embed/spectrumTools', :locals => {:spectrum => spectrum} %></td>
-              <td>
-                <a href="/spectrums/<%= spectrum.id %>"><%= spectrum.title %></a>
-                <% unless spectrum.calibrated %> <span style="color:#888;">(calibrate to display)</span><% end %>
-              </td>
-              <td><a href="/profile/<%= spectrum.author %>"><%= spectrum.author %></a></td>
-            </tr>
-          <% end %>
-        </table>
-      </div>
+      <%= render :partial => 'graph/set', :locals => { datum: datum } %>
     <% end %>
 
     <p class="credit">
@@ -46,6 +19,7 @@
         <a class="super-tiny" target="_blank" href="/">SW</a>
       </span>
     </p>
+
     <div class="tools">
       <a target="_blank" href="http://twitter.com/share?text=<%= datum.title %> on @PublicLab's Spectral Workbench&url=http://spectralworkbench.org/<%= type%>/<%= datum.id %>"><i class="icon icon-twitter"></i></a>
       <a target="_blank" href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fspectralworkbench.org%2F<%= type%>s%2F<%= datum.id %>"><i class="icon icon-facebook"></i></a>

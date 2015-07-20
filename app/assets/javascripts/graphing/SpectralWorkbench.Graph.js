@@ -20,8 +20,9 @@ SpectralWorkbench.Graph = Class.extend({
     var svg = d3.select("#graph").append("svg")
       .attr("width",  this.width  + this.margin.left + this.margin.right)
       .attr("height", this.height + this.margin.top  + this.margin.bottom)
- 
-    nv.addGraph(this.graphSetup());
+
+    this.chart = this.graphSetup(); // need this for updating
+    nv.addGraph(this.chart);
 
     // break this up into two subclasses, 
     // set and spectrum, with their own init sequences 

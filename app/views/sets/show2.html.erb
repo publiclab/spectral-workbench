@@ -1,0 +1,17 @@
+<div class="sets">
+<div id="graph"><i class="icon icon-spinner icon-spin"></i></div>
+
+<script type="text/javascript">
+
+  var graph;
+  jQuery(document).ready(function($) {
+    graph = new SpectralWorkbench.Graph({
+      set_id: <%= @set.id %>,
+      calibrated: <%= @set.some_calibrated %>
+    });
+  })
+
+</script>
+
+<%= render :partial => "embed/body", :locals => {:type => :set, :datum => @set } %>
+</div>

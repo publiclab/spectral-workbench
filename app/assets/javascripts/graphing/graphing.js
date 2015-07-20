@@ -24,7 +24,7 @@ SpectralWorkbench.Graph.prototype.graphSetup = function() {
     $('tr.spectrum-'+id).addClass('highlight');
     d3.select(this).classed('highlight',true);
     // scroll to the spectrum in the table below:
-    window.location = (window.location+'').split('#')[0]+'#spectrum-'+id;
+    window.location = (window.location+'').split('#')[0]+'#s'+id;
   }
   var onmouseout = function() {
     var id = d3.select(this).data()[0].id;
@@ -96,22 +96,32 @@ SpectralWorkbench.Graph.prototype.updateSize = function() {
   var that = this;
 
   return (function() { 
+
     that.width  = getUrlParameter('width')  || $(window).width() || that.width;
+
     if (getUrlParameter('height')) {
+
       that.height = getUrlParameter('height');
+
     } else {
 
       if (($(window).height() < 450 && that.dataType == 'set') || 
           ($(window).height() < 350 && that.dataType == 'spectrum')) {
+
         // compact
         that.height = 180;
         $('#embed').addClass('compact');
+
       } else {
+
         // full size
         that.height = 200;
         $('#embed').removeClass('compact');
+
       }
+
       that.height = that.height - that.margin.top  - that.margin.bottom;
+
     }
 
     that.width  = that.width  
