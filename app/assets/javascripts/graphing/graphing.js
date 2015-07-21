@@ -142,8 +142,8 @@ SpectralWorkbench.Graph.prototype.updateSize = function() {
     }
 
     // hide loading grey background
-    $('#graph').css('background','white');
-    $('#embed #graph .icon-spinner').hide();
+    $('#graphing #graph').css('background','white');
+    $('#graphing #graph .icon-spinner').hide();
 
   });
 }

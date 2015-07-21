@@ -1,21 +1,7 @@
 <a name="comments"></a>
 <h3>Comments (<%= @spectrum.comments.length %>)</h3>
 
-<% if @spectrum.comments.length == 0 %><p><i>No comments</i></p><% end %>
-
-<div id="commentlist">
-  <% @spectrum.comments.each do |comment| %>
-  <div class="comment">
-    <a name="comment_<%= comment.id %>"></a>
-    <b><%= time_ago_in_words(comment.created_at) %> ago,
-    <% if User.find_by_login(comment.author) %><a href="<%= profile_path(comment.author) %>"><%= comment.author %></a> wrote:</b>
-    <% else %><%=h comment.author %> wrote:</b>
-    <% end %>
-    <p><%= raw RDiscount.new(comment.body).to_html %></p>
-    <% if logged_in? && (current_user.role == "admin" || current_user.login == comment.author) %><p><small><%= link_to '<i class="icon icon-remove-sign"></i> Delete'.html_safe, "/comments/delete/"+comment.id.to_s, :confirm => 'Are you sure?' %></small></p><% end %>
-  </div>
-  <% end %>
-</div>
+<%= render :partial => "comments/list", :locals => { :comments => @spectrum.comments } %>
 
 <br />
 

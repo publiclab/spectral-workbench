@@ -1,4 +1,4 @@
-<div id="embed">
+<div id="graphing" class="embed">
 <img class="spectrum" src="<%= @spectrum.photo.url(:large) %>" />
 
 <div id="graph"><i class="icon icon-spinner icon-spin"></i></div>
@@ -14,5 +14,5 @@
   })
 
 </script>
-<%= render :partial => "embed/body", :locals => {:type => :spectrum, :datum => @spectrum } %>
+<%= render :partial => "graph/body", :locals => {:type => :spectrum, :datum => @spectrum } %>
 </div>

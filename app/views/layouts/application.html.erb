@@ -27,8 +27,10 @@
     <% else %>
       <%= javascript_include_tag "analyze" %>
     <% end %>
+    <%= stylesheet_link_tag    "embed", :media => "all" %>
 
     <%= javascript_include_tag "application" %>
+    <%= javascript_include_tag "graphing/SpectralWorkbench" %>
     <%= csrf_meta_tag %>
 
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->

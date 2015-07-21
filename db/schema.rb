@@ -11,20 +11,21 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150715224222) do
+ActiveRecord::Schema.define(:version => 20150721201749) do
 
   create_table "comments", :force => true do |t|
     t.string   "author"
     t.string   "email"
     t.text     "body"
-    t.float    "wavelength"
     t.integer  "x"
     t.integer  "y"
     t.integer  "spectrum_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "spectra_set_id", :default => 0, :null => false
+    t.integer  "spectra_set_id", :default => 0
     t.integer  "user_id",        :default => 0
+    t.integer  "wavelength"
+    t.integer  "intensity"
   end
 
   create_table "devices", :force => true do |t|

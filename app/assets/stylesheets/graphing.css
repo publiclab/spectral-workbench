@@ -1,0 +1,188 @@
+#graphing #graph {
+  background:#eee;
+  text-align:center;
+}
+
+#graphing #graph .icon-spinner {
+  font-size:20px;
+  color:#aaa;
+  margin-top:30px;
+}
+
+#graphing a.btn-link {
+  text-decoration:none;
+}
+
+#graphing tr.spectrum-tools {
+  border-top:none;
+}
+
+#graphing .credit {
+  float: right;
+  padding: 20px 10px 0 0;
+}
+
+#graphing .credit .spectral-workbench a {
+  color: #444;
+  font-size: 15px;
+  font-family: Junction Light;
+}
+#graphing .credit .spectral-workbench a:hover {
+  color: #888;
+}
+
+#graphing .credit img {
+  height: 16px;
+  display: inline-block;
+  padding-bottom: 4px;
+}
+
+#graphing .credit .super-tiny {
+  display: none;
+}
+
+@media (max-width: 400px) {
+
+  #graphing .credit {
+    float: none;
+  }
+
+  #graphing .credit .spectral-workbench {
+    display: block;
+  }
+
+  #graphing .tools {
+    clear: both;
+    width: 100%;
+  }
+
+}
+
+/*@media (max-height: 300px) and (max-width:500px) {*/
+@media (max-width:500px) {
+
+  #graphing .credit {
+    float: right;
+  }
+
+  #graphing .credit .spectral-workbench .super-tiny {
+    display: inline;
+  }
+
+  #graphing .credit .spectral-workbench .normal {
+    display: none;
+  }
+
+  #graphing .credit .spectral-workbench {
+    display: inline;
+  }
+
+}
+
+#graphing .tools {
+  padding: 20px 10px 0 0;
+  font-size: 14px;
+}
+
+#graphing .tools a {
+  padding: 0 5px;
+}
+
+#graphing .tools a {
+  text-decoration: none;
+}
+
+#graphing .tools a:hover .icon {
+  color: #88f;
+}
+
+#graphing .tools div.dropup {
+  display: inline;
+}
+
+#graphing table th {
+  border-top: 0;
+}
+
+#graphing table div.key {
+  width: 10px;
+  height: 10px;
+  margin-top: 5px;
+  background: #ddd;
+  -webkit-border-radius: 10px;
+  -moz-border-radius:    10px;
+  border-radius:         10px;
+}
+
+#graphing table tr.highlight {
+  background: #fff8dd;
+}
+
+#graphing table a.btn-link {
+  font-size: 12px;
+  padding: 0 4px;
+}
+
+#graphing table a.btn-link:hover .icon {
+  color: #888;
+}
+
+#graphing .table-scroll-container {
+  width: 100%;
+  height: 200px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  display: block;
+}
+
+#graphing svg .highlight {
+  stroke: red !important;
+}
+
+#graphing svg .dimmed {
+  stroke-opacity: 0.3 !important;
+}
+
+/* Embed styles */
+
+#graphing.embed {
+  font-size: 12px;
+  border: 1px solid #ddd;
+  -webkit-border-radius: 10px;
+  -moz-border-radius:    10px;
+  border-radius:         10px;
+  padding: 30px 10px 10px;
+}
+
+/* Hide the embed-only compact title for all 
+   displays, not just the embed */
+#graphing h3.compact {
+  display: none;
+}
+
+#graphing.embed.compact img {
+  display: none;
+}
+
+#graphing.embed.compact h2 {
+  display: none;
+}
+
+#graphing.embed.compact h3.compact {
+  display: block;
+  float: left;
+  margin-top: 12px;
+  padding-right: 12px;
+}
+
+#graphing.embed.compact .table-scroll-container {
+  display: none;
+}
+
+#graphing.embed .settings {
+  margin-left: 4px;
+}
+
+#graphing.embed .settings .icon {
+  color: #aaa;
+}

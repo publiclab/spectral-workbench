@@ -159,7 +159,7 @@ class Spectrum < ActiveRecord::Base
   end
 
   def calibration
-    Spectrum.find self.powertag('calibration')
+    Spectrum.find self.powertag('calibration').to_i
   end
 
   def is_calibrated?
@@ -370,7 +370,7 @@ puts "reversing"
 
   # if we can safely assume there's only one - no colon required
   def powertag(name)
-    self.powertags(name).limit(1).first.name.split(name+':').last
+    self.powertags(name).first.name.split(':').last
   end
 
   # if it has horizontally flipped input image: red is at left

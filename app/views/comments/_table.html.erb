@@ -1,0 +1,41 @@
+<% if comments.length == 0 %><p><i>No comments</i></p><% end %>
+
+<table class="table">
+  <tr>
+    <th>Spectrum</th>
+    <th>Author</th>
+    <th>Date</th>
+    <th>Comment</th>
+    <th></th>
+  </tr>
+  <% comments.each do |comment| %>
+  <tr class="comment">
+    <td>
+      <% if comment.has_set? %>
+        <a href="/sets/<%= comment.set.id %>"><%= comment.set.title %></a>
+      <% elsif comment.has_spectrum? %>
+        <a href="/spectrums/<%= comment.spectrum_id %>"><%= comment.spectrum.title %></a>
+      <% end %>
+    </td>
+    <td>
+      <a name="comment_<%= comment.id %>"></a>
+      <% if comment.has_user? %>
+        <a href="/profile/<%= comment.user.login %>"><%= comment.user.login %></a>
+      <% else %>
+        <%= comment.author %>
+      <% end %>
+    </td>
+    <td>
+      <%= time_ago_in_words(comment.created_at) %> ago
+    </td>
+    <td>
+      <%=raw RDiscount.new(comment.body).to_html %>
+    </td>
+    <td>
+      <% if logged_in? && comment.can_delete(current_user) %>
+        <a href="/comments/delete/<%= comment.id %>"><i class="icon icon-remove-sign"></i> Delete</a>
+      <% end %>
+    </td>
+  </tr>
+  <% end %>
+</table>

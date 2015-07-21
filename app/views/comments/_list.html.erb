@@ -1,16 +1,15 @@
-<div class="row-fluid">
-  <% @comments.each_with_index do |comment,i| %>
-    <div class="span4 %> clearfix">
-      <div class="comment">
-	    <small><b><%= time_ago_in_words(comment.created_at) %> ago, <a href="<%= user_path(comment.author) %>"><%= comment.author %></a> wrote:</b></small>
-	    <p><%= RDiscount.new(comment.body).to_html %>
-	    <small><a href="/spectra/<%= comment.spectrum_id %>">Read more &raquo;</a></small></p>
-	  </div>
-    </div>
-    <% if ((i+1)/3.0).to_i == ((i+1)/3.0) %>
-    </div>
-    <hr style="clear:both;"/>
-    <div class="row-fluid">
+<% if comments.length == 0 %><p><i>No comments</i></p><% end %>
+
+<div id="commentlist">
+  <% comments.each do |comment| %>
+  <div class="comment">
+    <a name="comment_<%= comment.id %>"></a>
+    <b><%= time_ago_in_words(comment.created_at) %> ago,
+    <% if User.find_by_login(comment.author) %><a href="<%= profile_path(comment.author) %>"><%= comment.author %></a> wrote:</b>
+    <% else %><%=h comment.author %> wrote:</b>
     <% end %>
+    <p><%= raw RDiscount.new(comment.body).to_html %></p>
+    <% if logged_in? && (current_user.role == "admin" || current_user.login == comment.author) %><p><small><%= link_to '<i class="icon icon-remove-sign"></i> Delete'.html_safe, "/comments/delete/"+comment.id.to_s, :confirm => 'Are you sure?' %></small></p><% end %>
+  </div>
   <% end %>
 </div>

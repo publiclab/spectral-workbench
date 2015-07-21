@@ -1,5 +1,7 @@
 class CommentsController < ApplicationController
 
+  before_filter :require_login, :only => [:create, :delete]
+
   def index
     @comments = Comment.find :all, :order => "id DESC"
   end
@@ -10,15 +12,18 @@ class CommentsController < ApplicationController
     @jump_to_comment = true
     @comment = @spectrum.comments.new({
 	    :body => params[:comment][:body],
-	    :author => params[:comment][:author],
-	    :email => params[:comment][:email]
+	    :user_id => current_user.id
     })
-    @comment.author = current_user.login if logged_in?
-    @comment.email = current_user.email if logged_in?
-    if (logged_in? || APP_CONFIG["local"]) && @comment.save
-      UserMailer.comment_notification(@spectrum,@comment,User.find(@spectrum.user_id)) if (!logged_in? || current_user.id != @spectrum.user_id)
-      @spectrum.notify_commenters(@comment,current_user) if logged_in?
-      @spectrum.notify_commenters(@comment,false) unless logged_in?
+
+    if @comment.save
+      UserMailer.comment_notification( @spectrum,
+                                       @comment,
+                                       User.find(@spectrum.user_id)
+      ) if current_user.id != @spectrum.user_id
+      @spectrum.notify_commenters(@comment,current_user)
+
+      flash[:notice] == "Your comment was saved." unless params[:format] == 'json'
+
       respond_to do |format|
         format.html {
           flash[:notice] = "Comment saved."
@@ -29,7 +34,9 @@ class CommentsController < ApplicationController
           render :json => @comment
         }
       end
+
     else
+      flash[:error] == "There was an error creating your comment."
       redirect_to spectrum_path(params[:spectrum_id])
     end
   end

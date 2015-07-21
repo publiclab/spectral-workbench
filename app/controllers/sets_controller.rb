@@ -5,6 +5,10 @@ class SetsController < ApplicationController
     @sets = SpectraSet.paginate(:order => "created_at DESC", :page => params[:page])
   end
 
+  def show2
+    show
+  end
+
   def show
     @set = SpectraSet.find params[:id]
     @spectrums = Spectrum.find(:all, :limit => 4, :order => "created_at DESC")

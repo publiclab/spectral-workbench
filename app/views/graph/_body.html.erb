@@ -19,7 +19,7 @@
         </div>
 
         <div class="tab-pane" id="tab-comments">       
-          <%= render :partial => 'graph/comments', :locals => { datum: datum } %>
+          <%= render :partial => 'comments/list', :locals => { :comments => datum.comments } %>
         </div>
 
       </div>

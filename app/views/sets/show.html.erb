@@ -77,32 +77,20 @@
       <a name="comments"></a>
       <h3>Comments (<%= @set.comments.length %>)</h3>
 
-      <% if @set.comments.length == 0 %><p><i>No comments</i></p><% end %>
-
-      <% @set.comments.each do |comment| %>
-      <div class="comment">
-        <a name="comment_<%= comment.id %>"></a>
-        <b><%= time_ago_in_words(comment.created_at) %> ago,
-        <% if User.find_by_login(comment.author) %><a href="/spectra/author/<%= comment.author %>"><%= comment.author %></a> wrote:</b>
-        <% else %><%=h comment.author %> wrote:</b>
-        <% end %>
-        <p><%=raw RDiscount.new(comment.body).to_html %></p>
-        <% if logged_in? && comment.can_delete(current_user) %><p><a href="/comments/delete/<%= comment.id %>"><i class="icon icon-remove-sign"></i> Delete</a></p><% end %>
-      </div>
-      <% end %>
+      <%= render :partial => "comments/list", :locals => { :comments => @set.comments } %>
 
       <br />
-      <% if !logged_in? %>
-      <form action="/sets/comment/<%= @set.id %>" class="well form" id="new_comment" method="post">
-
-        <h3 style="margin-top:0;">Post a comment</h3>
-        <textarea name="comment[body]" id="body" cols="8" rows="6"></textarea>
-        <br />
-        <input type='hidden' name='authenticity_token' value="<%= form_authenticity_token %>"/>
-        <input type='hidden' name='goto' value="analyze"/>
-        <input class="btn btn-primary" type="submit" value="Post" />
-
-      </form>
+      <% if logged_in? %>
+        <form action="/sets/comment/<%= @set.id %>" class="well form" id="new_comment" method="post">
+ 
+          <h3 style="margin-top:0;">Post a comment</h3>
+          <textarea name="comment[body]" id="body" cols="8" rows="6"></textarea>
+          <br />
+          <input type='hidden' name='authenticity_token' value="<%= form_authenticity_token %>"/>
+          <input type='hidden' name='goto' value="analyze"/>
+          <input class="btn btn-primary" type="submit" value="Post" />
+ 
+        </form>
       <% else %>
         <p><i>You must be logged in to comment.</i></p>
       <% end %>
