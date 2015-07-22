@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150721201749) do
+ActiveRecord::Schema.define(:version => 20150722210253) do
 
   create_table "comments", :force => true do |t|
     t.string   "author"
@@ -680,16 +680,6 @@ ActiveRecord::Schema.define(:version => 20150721201749) do
 
   add_index "spectra_sets_spectrums", ["spectra_set_id"], :name => "index_spectra_sets_spectrums_on_spectra_set_id"
   add_index "spectra_sets_spectrums", ["spectrum_id"], :name => "index_spectra_sets_spectrums_on_spectrum_id"
-
-  create_table "spectrum_links", :force => true do |t|
-    t.string   "author"
-    t.string   "name"
-    t.string   "type"
-    t.integer  "spectrum_id"
-    t.integer  "spectrum_2_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
 
   create_table "spectrums", :force => true do |t|
     t.string   "title"

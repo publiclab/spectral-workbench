@@ -30,8 +30,8 @@ class SetsControllerTest < ActionController::TestCase
     session[:user_id] = User.first.id # log in
     get :edit, :id => spectra_sets(:one).id
     assert_response :redirect
-    assert_redirected_to '/login'
-    assert_equal "You must be logged in and own the set to edit it.", flash[:error]
+    assert_redirected_to set_path(assigns(:set))
+    assert_equal "You must own the set to edit it.", flash[:error]
   end
 
   test "should update user's spectra_set" do
@@ -46,8 +46,8 @@ class SetsControllerTest < ActionController::TestCase
     session[:user_id] = User.first.id # log in
     put :update, :id => spectra_sets(:one).id, :spectra_set => {:title => "New title"}
     assert_response :redirect
-    assert_equal "You must be logged in and own the set to edit it.", flash[:error]
-    assert_redirected_to '/login'
+    assert_equal "You must own the set to edit it.", flash[:error]
+    assert_redirected_to set_path(assigns(:set))
   end
 
 end

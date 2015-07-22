@@ -26,24 +26,10 @@ class SpectraSetTest < ActiveSupport::TestCase
     assert s.save!
   end
 
-  test "set author with single quotations" do
-    s = SpectraSet.last
-    s.author = "jeff 'the iceman' warren"
-    assert !s.save
-  end
-
   test "set without title" do
     s = SpectraSet.last
     s.title = ""
     assert !s.save
   end
-
-  test "set without author" do
-    s = SpectraSet.last
-    s.author = ""
-    assert !s.save
-  end
-
-
 
 end
