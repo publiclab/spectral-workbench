@@ -1,0 +1,7 @@
+<% if logged_in? %>
+  var current_user = {
+    login: '<%= current_user.login %>',
+    id:    <%= current_user.id %>
+  }
+<% end %>
+

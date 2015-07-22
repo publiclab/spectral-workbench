@@ -27,53 +27,52 @@ class UserMailer < ActionMailer::Base
 
   # we can change spectrum_author when we get rid of the "author" field in @spectrums
   def comment_notification(spectrum,comment,spectrum_author)
-    @user = spectrum.author
+    @user = spectrum.user.login
     @comment = comment
     @spectrum = spectrum
     mail(:to => spectrum_author.email, 
-         :subject => "[SpectralWorkbench] "+comment.author+" commented on your Spectrum #"+spectrum.id.to_s+': "'+spectrum.title+'"'
+         :subject => "[SpectralWorkbench] "+comment.user.login+" commented on your Spectrum #"+spectrum.id.to_s+': "'+spectrum.title+'"'
     )
   end
 
-  # we can change spectrum_author when we get rid of the "author" field in @spectrums
   def commenter_notification(spectrum,comment,old_commenter)
     @user = old_commenter.login
     @comment = comment
     mail(:to => old_commenter.email, 
-         :subject => "[SpectralWorkbench] "+comment.author+" commented on Spectrum #"+spectrum.id.to_s+': "'+spectrum.title+'"'
+         :subject => "[SpectralWorkbench] "+comment.user.login+" commented on Spectrum #"+spectrum.id.to_s+': "'+spectrum.title+'"'
     )
   end
 
-  # we can change spectrum_author when we get rid of the "author" field in @spectrums
   def unregistered_commenter_notification(spectrum,comment,email)
     @comment = comment
     mail(:to => email, 
-         :subject => "[SpectralWorkbench] "+comment.author+" commented on Spectrum #"+spectrum.id.to_s+': "'+spectrum.title+'"'
+         :subject => "[SpectralWorkbench] "+comment.user.login+" commented on Spectrum #"+spectrum.id.to_s+': "'+spectrum.title+'"'
     )
   end
 
   def set_comment_notification(set,comment,set_author)
-    @user = set.author
+    @user = set.user.login
     @comment = comment
     @set = set
     mail(:to => set_author.email, 
-         :subject => "[SpectralWorkbench] "+comment.author+" commented on your Set #"+set.id.to_s+': "'+set.title+'"'
+         :subject => "[SpectralWorkbench] "+comment.user.login+" commented on your Set #"+set.id.to_s+': "'+set.title+'"'
     )
   end
 
   def set_commenter_notification(set,comment,old_commenter)
     @user = old_commenter.login
     @comment = comment
+    @set = set
     mail(:to => old_commenter.email, 
-         :subject => "[SpectralWorkbench] "+comment.author+" commented on Set #"+set.id.to_s+': "'+set.title+'"'
+         :subject => "[SpectralWorkbench] "+comment.user.login+" commented on Set #"+set.id.to_s+': "'+set.title+'"'
     )
   end
 
-  # we can change set_author when we get rid of the "author" field in @spectrums
   def unregistered_set_commenter_notification(set,comment,email)
     @comment = comment
+    @set = set
     mail(:to => email, 
-         :subject => "[SpectralWorkbench] "+comment.author+" commented on Set #"+set.id.to_s+': "'+set.title+'"'
+         :subject => "[SpectralWorkbench] "+comment.user.login+" commented on Set #"+set.id.to_s+': "'+set.title+'"'
     )
   end
 

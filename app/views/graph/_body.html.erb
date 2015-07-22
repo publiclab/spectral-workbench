@@ -5,6 +5,12 @@
 
     <h3 class="compact"><a target="_blank" href="/<%= type %>s/<%= datum.id %>"><%= if (datum.title.length < 15) then datum.title else datum.title[0..12]+'...' end %></a></h3>
 
+    <% unless params[:action] == 'embed2' %>
+      <div class="toolbar toolbar-top">
+        <%= render :partial => 'graph/tools', :locals => { type: type, datum: datum } %>
+      </div>
+    <% end %>
+
     <% if type == :set %>
       <ul class="nav nav-tabs">
         <li class="active"><a href="#tab-spectra"  data-toggle="tab"><i  class="icon icon-list"></i>     Spectra</a></li>
@@ -19,27 +25,26 @@
         </div>
 
         <div class="tab-pane" id="tab-comments">       
-          <%= render :partial => 'comments/list', :locals => { :comments => datum.comments } %>
+          <div class="row-fluid">
+          
+            <div class="span2">
+            </div>
+          
+            <div class="span8">
+              <%= render partial: 'comments/list', locals: { datum: datum, :comments => datum.comments } %>
+            </div>
+    
+          </div>
         </div>
 
       </div>
     <% end %>
 
-    <p class="credit">
-      by <a target="_blank" href="/profile/"><%= datum.author %></a> 
-      on 
-      <span class="spectral-workbench">
-        <img src="/images/spectralworkbench.png" /> 
-        <a class="normal" target="_blank" href="/">SpectralWorkbench.org</a>
-        <a class="super-tiny" target="_blank" href="/">SW</a>
-      </span>
-    </p>
-
-    <div class="tools">
-      <a target="_blank" href="http://twitter.com/share?text=<%= datum.title %> on @PublicLab's Spectral Workbench&url=http://spectralworkbench.org/<%= type%>/<%= datum.id %>"><i class="icon icon-twitter"></i></a>
-      <a target="_blank" href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fspectralworkbench.org%2F<%= type%>s%2F<%= datum.id %>"><i class="icon icon-facebook"></i></a>
-      <%= render :partial => 'embed/tools', :locals => {:type => type, :datum => datum} %>
-    </div>
+    <% if params[:action] == 'embed2' %>
+      <div class="toolbar toolbar-bottom">
+        <%= render :partial => 'graph/tools', :locals => { type: type, datum: datum } %>
+      </div>
+    <% end %>
 
   </div>
 </div>

@@ -1,0 +1,14 @@
+<% if logged_in? %>
+  <form action="/comments/<%= datum.class.name.downcase %>/<%= datum.id %>" class="form comment-form" method="post">
+
+    <textarea name="comment[body]" id="comment-body" rows="6"></textarea>
+    <br />
+    <input type='hidden' name='authenticity_token' value="<%= form_authenticity_token %>"/>
+    <input type='hidden' name='goto' value="analyze"/>
+    <input class="btn btn-primary" id="comment-submit" type="submit" value="Post" />
+    <span style="display:none;" class="icon icon-spinner icon-spin"></span>
+
+  </form>
+<% else %>
+  <p><i>You must be logged in to comment.</i></p>
+<% end %>

@@ -1,15 +1,37 @@
-<% if comments.length == 0 %><p><i>No comments</i></p><% end %>
+<div id="comments">
+  <% if comments.length == 0 %><p><i>No comments</i></p><% end %>
 
-<div id="commentlist">
-  <% comments.each do |comment| %>
-  <div class="comment">
-    <a name="comment_<%= comment.id %>"></a>
-    <b><%= time_ago_in_words(comment.created_at) %> ago,
-    <% if User.find_by_login(comment.author) %><a href="<%= profile_path(comment.author) %>"><%= comment.author %></a> wrote:</b>
-    <% else %><%=h comment.author %> wrote:</b>
+  <div id="comment-list">
+    <% comments.each do |comment| %>
+    <div class="comment">
+      <a name="c<%= comment.id %>"></a>
+      <div class="header">
+        <% if logged_in? && (current_user.role == "admin" || current_user.id == comment.user_id) %>
+          <p class="pull-right"><small><%= link_to '<i class="icon icon-remove-sign"></i>'.html_safe, "/comments/delete/"+comment.id.to_s, :confirm => 'Are you sure?' %></small></p>
+        <% end %>
+          <%= time_ago_in_words(comment.created_at) %> ago,
+          <% if comment.has_user? %><a href="<%= profile_path(comment.user) %>"><%= comment.user.login %></a> <a class="anchor" href="#c<%= comment.id %>">wrote</a>:</b>
+          <% else %><%=h comment.author %> wrote:</b>
+          <% end %>
+      </div>
+      <div class="body">
+        <%= raw RDiscount.new(comment.body).to_html %>
+      </div>
+    </div>
     <% end %>
-    <p><%= raw RDiscount.new(comment.body).to_html %></p>
-    <% if logged_in? && (current_user.role == "admin" || current_user.login == comment.author) %><p><small><%= link_to '<i class="icon icon-remove-sign"></i> Delete'.html_safe, "/comments/delete/"+comment.id.to_s, :confirm => 'Are you sure?' %></small></p><% end %>
   </div>
-  <% end %>
+
+  <div class="comment">
+    <a name="new-comment"></a>
+    <div class="header">
+      <b>Leave a comment</b>
+    </div>
+    <div class="body">
+
+      <%= render partial: 'comments/form', locals: { datum: datum } %>
+      
+    </div>
+  </div>
+
 </div>
+

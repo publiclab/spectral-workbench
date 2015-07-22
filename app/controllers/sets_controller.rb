@@ -129,28 +129,6 @@ class SetsController < ApplicationController
     end
   end
 
-  def comment
-    @set = SpectraSet.find(params[:id])
-    @spectrums = Spectrum.find(:all, :limit => 4, :order => "created_at DESC")
-    @jump_to_comment = true
-    @comment = Comment.new({
-	:spectra_set_id => @set.id,
-	:body => params[:comment][:body],
-	:author => params[:comment][:author],
-	:email => params[:comment][:email]})
-    @comment.author = current_user.login if logged_in?
-    @comment.email = current_user.email if logged_in?
-    if (logged_in? || APP_CONFIG["local"]) && @comment.save
-      UserMailer.set_comment_notification(@set,@comment,User.find_by_login(@set.author)) if (!logged_in? || current_user.login != @set.author)
-      @set.notify_commenters(@comment,current_user) if logged_in?
-      @set.notify_commenters(@comment,false) unless logged_in?
-      flash[:notice] = "Comment saved."
-      redirect_to "/sets/"+params[:id]+"#comment_"+@comment.id.to_s
-    else
-      render :action => "show", :id => params[:id]
-    end
-  end
-
   # non REST
   def search
     params[:id] = params[:q].to_s if params[:id].nil?

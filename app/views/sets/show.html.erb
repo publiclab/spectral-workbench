@@ -77,23 +77,13 @@
       <a name="comments"></a>
       <h3>Comments (<%= @set.comments.length %>)</h3>
 
-      <%= render :partial => "comments/list", :locals => { :comments => @set.comments } %>
-
-      <br />
-      <% if logged_in? %>
-        <form action="/sets/comment/<%= @set.id %>" class="well form" id="new_comment" method="post">
- 
-          <h3 style="margin-top:0;">Post a comment</h3>
-          <textarea name="comment[body]" id="body" cols="8" rows="6"></textarea>
-          <br />
-          <input type='hidden' name='authenticity_token' value="<%= form_authenticity_token %>"/>
-          <input type='hidden' name='goto' value="analyze"/>
-          <input class="btn btn-primary" type="submit" value="Post" />
- 
-        </form>
-      <% else %>
-        <p><i>You must be logged in to comment.</i></p>
-      <% end %>
+      <div class="row-fluid">
+  
+        <div class="span8">
+          <%= render partial: 'comments/list', locals: { datum: @set, comments: @set.comments } %>
+        </div>
+  
+      </div>
 
       </div>
     </div>

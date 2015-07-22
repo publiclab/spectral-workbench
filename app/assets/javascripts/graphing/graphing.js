@@ -18,13 +18,15 @@ SpectralWorkbench.Graph.prototype.graphSetup = function() {
             .axisLabel('Intensity (%)')
             .tickFormat(d3.format('%'));
 
+  var that = this
+
   /* Line event handlers */
   var onmouseover = function() {
     var id = d3.select(this).data()[0].id;
     $('tr.spectrum-'+id).addClass('highlight');
     d3.select(this).classed('highlight',true);
     // scroll to the spectrum in the table below:
-    window.location = (window.location+'').split('#')[0]+'#s'+id;
+    if (that.embed) window.location = (window.location+'').split('#')[0]+'#s'+id;
   }
   var onmouseout = function() {
     var id = d3.select(this).data()[0].id;
@@ -37,7 +39,6 @@ SpectralWorkbench.Graph.prototype.graphSetup = function() {
     return d.id;
   }
 
-  var that = this;
   var onImport = function(data,chart) {
 
     /* Enter data into the graph */

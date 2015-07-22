@@ -1,11 +1,11 @@
 <%= @user %>, <%= @comment.author %> left a comment on your data. Do NOT reply by email; use the following link to reply by comment: 
 
-http://spectralworkbench.org/sets/show/<%= @set.id %>
+http://spectralworkbench.org/sets/<%= @set.id %>#c<%= @comment.id %>
 
 ------------------------------------
 
 <%= @comment.body %> 
 
 ------------------------------------
-Please report spam or abuse to web@publiclaboratory.org
+Please report spam or abuse to web@publiclab.org
 

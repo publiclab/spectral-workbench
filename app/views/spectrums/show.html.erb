@@ -115,20 +115,29 @@
           <% end %>
         </div>
 
-      <div id="share" class="pull-right" style="margin-top:14px;">
-        <div class="fb-like" data-send="false" data-layout="button_count" data-width="50" data-show-faces="false" style="vertical-align:top;zoom:1;*display:inline"></div>
-        <a href="https://twitter.com/share" class="twitter-share-button">Tweet</a>
-      </div>
-
-      <h3>Notes</h3>
-
-      <% if @spectrum.has_powertag('calibration') %>
-        <p>This spectrum used the calibration from <a href="/spectrums/<%= @spectrum.powertag('calibration') %>"><%= @spectrum.calibration.title %></a>.</p>
-      <% end %>
-
-      <p><% if @spectrum.notes %><%=raw RDiscount.new(@spectrum.notes).to_html %><% end %></p>
-
-      <%= render :partial => "spectrums/show/commenting" %>
+        <div id="share" class="pull-right" style="margin-top:14px;">
+          <div class="fb-like" data-send="false" data-layout="button_count" data-width="50" data-show-faces="false" style="vertical-align:top;zoom:1;*display:inline"></div>
+          <a href="https://twitter.com/share" class="twitter-share-button">Tweet</a>
+        </div>
+       
+        <h3>Notes</h3>
+       
+        <% if @spectrum.has_powertag('calibration') %>
+          <p>This spectrum used the calibration from <a href="/spectrums/<%= @spectrum.powertag('calibration') %>"><%= @spectrum.calibration.title %></a>.</p>
+        <% end %>
+       
+        <p><% if @spectrum.notes %><%=raw RDiscount.new(@spectrum.notes).to_html %><% end %></p>
+       
+        <a name="comments"></a>
+        <h3>Comments (<%= @spectrum.comments.length %>)</h3>
+       
+        <div class="row-fluid">
+       
+          <div class="span8">
+            <%= render partial: 'comments/list', locals: { datum: @spectrum, comments: @spectrum.comments } %>
+          </div>
+       
+        </div>
 
       </div>
     </div>

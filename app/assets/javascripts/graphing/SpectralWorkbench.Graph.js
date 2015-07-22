@@ -4,6 +4,7 @@ SpectralWorkbench.Graph = Class.extend({
 
     this.args = args;
     this.width = 600;
+    this.embed = args['embed'] || false;
     this.embedmargin = 10;
     this.margin = { top: 10, right: 30, bottom: 20, left: 70 };
 
