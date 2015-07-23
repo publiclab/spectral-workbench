@@ -39,22 +39,8 @@ class UsersController < ApplicationController
     @sets = @user.sets.order("created_at DESC").paginate(:page => params[:set_page], :per_page => 2)
   end
 
-  ##### Admin only: #####
-
-  def delete
-    if current_user.role == "admin"
-      @user = User.find(params[:id])
-      @user.delete
-      flash[:notice] = "User "+@user.name+" deleted."
-      redirect_to "/"
-    else
-      flash[:error] = "You must be an admin to delete users."
-      redirect_to "/login"
-    end
-  end
-
   def index
-    if current_user.role == "admin"
+    if logged_in? && current_user.role == "admin"
       @users = User.find :all
     else
       flash[:error] = "You must be an admin to view the users listing."

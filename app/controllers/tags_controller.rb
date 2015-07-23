@@ -1,5 +1,7 @@
 class TagsController < ApplicationController
 
+  before_filter :require_login, :only => [ :create, :destroy ]
+
   def create
     if logged_in?
       response = { :errors => [],
@@ -73,7 +75,7 @@ class TagsController < ApplicationController
   end
 
   def index
-    @tags = Tag.find :all, :order => "id DESC", :conditions => {:created_at => Time.now-1.month..Time.now}
+    @tags = Tag.order("id DESC").where(created_at: Time.now-1.month..Time.now).limit(100)
     count = {}
     @tagnames = @tags.collect(&:name).each do |tag|
       if count[tag]
