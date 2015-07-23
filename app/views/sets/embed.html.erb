@@ -4,7 +4,7 @@
 
 <script type="text/javascript">
   data = []
-  <% @set.spectra.each do |spectrum| %>
+  <% @set.spectrums.each do |spectrum| %>
   <% if spectrum.data == "" || spectrum.data.nil? %>
     spectrum_<%= spectrum.id %> = <%= raw spectrum.extract_data %>
   <% else %>
