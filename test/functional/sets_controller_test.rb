@@ -20,6 +20,18 @@ class SetsControllerTest < ActionController::TestCase
     assert_not_nil assigns(:set)
   end
 
+  test "should show spectra_set embed" do
+    get :embed, :id => spectra_sets(:one).id
+    assert_response :success
+    assert_not_nil assigns(:set)
+  end
+
+  test "should show spectra_set new embed" do
+    get :embed2, :id => spectra_sets(:one).id
+    assert_response :success
+    assert_not_nil assigns(:set)
+  end
+
   test "should get edit spectra_set" do
     session[:user_id] = User.first.id # log in
     get :edit, :id => spectra_sets(:three).id

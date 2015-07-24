@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150722210253) do
+ActiveRecord::Schema.define(:version => 20150723220742) do
 
   create_table "comments", :force => true do |t|
     t.string   "author"
@@ -716,7 +716,7 @@ ActiveRecord::Schema.define(:version => 20150722210253) do
   add_index "spectrums", ["user_id"], :name => "index_spectrums_on_user_id"
 
   create_table "tags", :force => true do |t|
-    t.string   "user_id"
+    t.integer  "user_id",     :limit => 255
     t.string   "name"
     t.integer  "spectrum_id"
     t.integer  "set_id"

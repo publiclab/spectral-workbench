@@ -3,35 +3,30 @@ class TagsController < ApplicationController
   before_filter :require_login, :only => [ :create, :destroy ]
 
   def create
-    if logged_in?
-      response = { :errors => [],
-        :saved => [],
-      }
-      params[:tag][:name].split(',').uniq.each do |name|
-        tag = Tag.new({
-          :name => name.strip,
-          :spectrum_id => params[:tag][:spectrum_id],
-          :user_id => current_user.id
-        })
-        if tag.save
-          response[:saved] << [tag.name,tag.id]
+    response = { :errors => [],
+      :saved => [],
+    }
+    params[:tag][:name].split(',').uniq.each do |name|
+      tag = Tag.new({
+        :name => name.strip,
+        :spectrum_id => params[:tag][:spectrum_id],
+        :user_id => current_user.id
+      })
+      if tag.save
+        response[:saved] << [tag.name,tag.id]
+      else
+        response[:errors] << "Error: tags "+tag.errors[:name].first
+      end
+    end
+    respond_to do |format|
+      format.html do
+        if request.xhr?
+          render :json => response
         else
-          response[:errors] << "Error: tags "+tag.errors[:name].first
+          flash[:notice] = "Tag(s) added."
+          redirect_to "/spectrums/"+params[:tag][:spectrum_id]
         end
       end
-      respond_to do |format|
-        format.html do
-          if request.xhr?
-            render :json => response
-          else
-            flash[:notice] = "Tag(s) added."
-            redirect_to "/spectra/show/"+params[:tag][:spectrum_id]
-          end
-        end
-      end
-    else
-      flash[:error] = "You must be logged in to add tags."
-      redirect_to "/login"
     end
   end
 
@@ -51,8 +46,8 @@ class TagsController < ApplicationController
 
   def destroy
     @tag = Tag.find(params[:id])
-    if logged_in?
-      if @tag.user_id == current_user.id || @tag.spectrum.author == current_user.login || current_user.role == "admin"
+    if @tag
+      if @tag.user_id == current_user.id || current_user.role == "admin"
         @tag.delete
         respond_to do |format|
           format.html do
@@ -60,17 +55,17 @@ class TagsController < ApplicationController
               render :text => "success"
             else
               flash[:notice] = "Tag '"+@tag.name+"' deleted."
-              redirect_to spectrum_path(@tag.spectrum_id.to_s)
+              redirect_to spectrum_path(@tag.spectrum_id)
             end
           end
         end
       else
         flash[:error] = "You must have authored a tag or own its spectrum to delete it."
-        redirect_to spectrum_path(@tag.spectrum_id.to_s)
+        redirect_to spectrum_path(@tag.spectrum_id)
       end
     else
-      flash[:error] = "You must be logged in to delete tags."
-      redirect_to "/login"
+        flash[:error] = "That tag didn't exist."
+        redirect_to "/dashboard"
     end
   end
 
