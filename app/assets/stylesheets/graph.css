@@ -1,3 +1,15 @@
+#graphing {
+  padding:10px;
+}
+
+#graphing h2 {
+  text-align:center;
+}
+
+#graphing h2 a {
+  color:#444;
+}
+
 #graphing #graph {
   background:#eee;
   text-align:center;
@@ -210,4 +222,13 @@
 
 #graphing.embed .settings .icon {
   color: #aaa;
+}
+
+#embed-modal {
+  position: fixed;
+  top: 50px;
+  right: 50px;
+  left: 50px;
+  width: auto;
+  margin: 0;
 }
