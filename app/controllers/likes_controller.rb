@@ -1,5 +1,7 @@
 class LikesController < ApplicationController
 
+  before_filter :require_login, :only => [ :toggle, :delete ]
+
   def index
     @spectrums = Spectrum.order('like_count DESC').where('user_id != 0').paginate(:page => params[:page], :per_page => 24)
   end
@@ -14,7 +16,7 @@ class LikesController < ApplicationController
   # as: /likes/toggle/:id where params[:id] is spectrum_id
   def toggle
     @spectrum = Spectrum.find params[:id]
-    if logged_in? && @spectrum.author != current_user.login
+    unless @spectrum.user_id == current_user.id
       if @spectrum.liked_by(current_user.id)
         Like.find_by_user_id(current_user.id,:conditions => {:spectrum_id => @spectrum.id}).delete
         render :text => "unliked"
@@ -30,13 +32,13 @@ class LikesController < ApplicationController
         end
       end
     else
-      render :text => "You must be logged in to like, you cannot like your own, and you cannot double-like."
+      render :text => "You cannot like your own."
     end
   end
 
   def delete
     @like = Like.find(params[:id])
-    if @like.user_id == current_user.id || params[:password].to_i == APP_CONFIG["password"] || current_user.role == "admin"
+    if @like.user_id == current_user.id || current_user.role == "admin"
       @like.delete
     end
     redirect_to spectrum_path(@like.spectrum_id.to_s) if params[:index] != "true"

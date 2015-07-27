@@ -1,8 +1,35 @@
 require 'test_helper'
 
 class TagTest < ActiveSupport::TestCase
-  # Replace this with your real tests.
-  test "the truth" do
-    assert true
+
+  test "tag creation" do 
+    tag = Tag.new({
+      name:        'cfl',
+      spectrum_id: spectrums(:one).id,
+      user_id:     users(:quentin).id
+    })
+    assert tag.save!
+    assert_not_nil tag.spectrum
   end
+
+  test "tag deletion" do 
+    assert tags(:one).destroy
+  end
+
+  test "tag creation w/out user" do 
+    tag = Tag.new({
+      spectrum_id: spectrums(:one).id,
+      name:        'cfl'
+    })
+    assert !tag.save
+  end
+
+  test "like creation w/out spectrum" do 
+    tag = Tag.new({
+      user_id:     users(:quentin).id,
+      name:        'cfl'
+    })
+    assert !tag.save
+  end
+
 end

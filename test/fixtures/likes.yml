@@ -1,0 +1,7 @@
+one:
+  user_id: 1
+  spectrum_id: 1
+
+two:
+  user_id: 2
+  spectrum_id: 2
