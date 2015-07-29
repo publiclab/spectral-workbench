@@ -20,18 +20,11 @@ class Spectrum < ActiveRecord::Base
       :thumb=> "300x100!",
       :large =>   "800x200!" }
 
-  has_attached_file :baseline,
-    :path => ":rails_root/public/system/:attachment/:id/:style/:filename",
-    :url => "/system/:attachment/:id/:style/:filename",
-    :styles => {
-      :thumb=> "300x100!",
-      :large =>   "800x200!" }
-
   validates_presence_of :title, :on => :create, :message => "can't be blank"
   validates_presence_of :author, :on => :create, :message => "can't be blank"
   validates_presence_of :photo, :on => :create, :message => "can't be blank"
-  validates :title, :length => { maximum: 60 }
-  validates :title, :format => { with: /\A[\w\ -\'\"]+\z/, message: "can contain only letters, numbers, and spaces." }
+  validates :title, length: { maximum: 60 }
+  validates :title, format: { with: /\A[\w\ -\'\"]+\z/, message: "can contain only letters, numbers, and spaces." }
   validates :author, :format => { with: /\A\w[\w\.\-_@]+\z/, message: "can contain only letters, numbers, hyphens, underscores and periods." }
   validates_attachment_content_type :photo, :content_type => ["image/jpg", "image/jpeg", "image/png", "image/gif"]
   validate :validate_json
@@ -246,15 +239,38 @@ puts "reversing"
     self.photo = Paperclip::string_to_file('capture.png', 'image/png', data)
   end
 
+  # really delete extra data? why not just hide it
+  def set_range(low,high)
+    json = ActiveSupport::JSON.decode(self.clean_json)
+    json['range'] = {
+      low:  low,
+      high: high
+    }
+    self.data = ActiveSupport::JSON.encode(json)
+  end
+
+  def clear_range
+    json = ActiveSupport::JSON.decode(self.clean_json)
+    json.delete_if {|key, value| key == 'range' }
+    self.data = ActiveSupport::JSON.encode(json)
+    self
+  end
+
   # a string of either a single tag name or a series of comma-delimited tags
   def tag(tags,user_id)
-    tags.split(',').each do |name|
+    if tag.match(',').nil?
       tag = Tag.new({
         :spectrum_id => self.id,
         :name => name.strip,
         :user_id => user_id,
       })
-      tag.save! unless self.has_tag(tag.name)
+      unless self.has_tag(tag.name) # duplicate
+        tag.save!
+      end     
+    else
+      tags.split(',').each do |name|
+        self.tag(name,user_id)
+      end
     end
   end
 
@@ -262,9 +278,9 @@ puts "reversing"
     self.tags.select { |tag| tag.name.match(':').nil? }
   end
 
-  def remove_tags(tagPrefix)
+  def remove_powertags(tagPrefix)
     self.tags.each do |tag|
-      tag.delete if tag[0..11] == tagPrefix
+      tag.delete if tag.name.split(':').first == tagPrefix
     end
   end
 
@@ -503,8 +519,6 @@ puts "reversing"
         return [base, base + 10]
       end
     end
-
   end
-
 
 end

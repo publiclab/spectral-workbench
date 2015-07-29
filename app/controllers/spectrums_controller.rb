@@ -316,7 +316,7 @@ class SpectrumsController < ApplicationController
         id = params[:clone_id].to_i
         @spectrum.clone(id)
         @spectrum.save
-        @spectrum.remove_tags('calibration:')
+        @spectrum.remove_powertags('calibration')
         @spectrum.tag("calibration:"+id.to_s,current_user.id)
       end
       redirect_to spectrum_path(@spectrum)

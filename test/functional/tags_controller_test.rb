@@ -50,7 +50,7 @@ class TagsControllerTest < ActionController::TestCase
   end
 
   test "should delete tag if admin" do
-    session[:user_id] = users(:admin).id
+    session[:user_id] = users(:admin).id # log in as admin
     tag = Tag.find_by_name('cfl')
     get :destroy, :id => tag.id
     assert_response :redirect
@@ -58,5 +58,31 @@ class TagsControllerTest < ActionController::TestCase
     assert_redirected_to spectrum_path(tag.spectrum_id)
   end
 
+  test "powertag creation if you're not the owner" do 
+    session[:user_id] = users(:aaron).id # log in
+    tag = Tag.new({
+      user_id:     users(:aaron).id,
+      spectrum_id: spectrums(:one).id, # user_id should be 1, where quentin is 2
+      name:        'range:100-500'
+    })
+    assert_not_equal tag.user_id, tag.spectrum.user_id
+    assert !tag.save
+    assert_equal tag.errors[:base].last, "spectrum owned by another user"
+    assert_response :success
+  end
+
+  test "powertag creation if you're not the owner but you are an admin" do 
+    session[:user_id] = users(:admin).id # log in
+    tag = Tag.new({
+      user_id:     users(:quentin).id,
+      spectrum_id: spectrums(:one).id,
+      name:        'range:100-500'
+    })
+    assert tag.save!
+    json = ActiveSupport::JSON.decode(tag.spectrum.clean_json)
+    assert json['range']['low'] == 100
+    assert json['range']['high'] == 500
+    assert_response :success
+  end
 
 end
