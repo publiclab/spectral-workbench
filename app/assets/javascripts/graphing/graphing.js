@@ -43,7 +43,7 @@ SpectralWorkbench.Graph.prototype.graphSetup = function() {
 
     /* Enter data into the graph */
     that.data = d3.select('#graph svg')  //Select the <svg> element you want to render the chart in.   
-        .datum(data,idKey)   //Populate the <svg> element with chart data and provide a binding key
+        .datum(data.d3,idKey)   //Populate the <svg> element with chart data and provide a binding key
         .call(chart)         //Finally, render the chart!
         .attr('id',idKey)
 
@@ -80,16 +80,18 @@ SpectralWorkbench.Graph.prototype.graphSetup = function() {
   }
 
   if (this.dataType == "spectrum") {
-    this.importData( "/spectrums/" 
+    new SpectralWorkbench.Importer( "/spectrums/" 
                     + this.args.spectrum_id 
                     + ".json", 
                       chart, 
+                      this.dataType, 
                       onImport);
   } else if (this.dataType == "set") {
-    this.importData( "/sets/calibrated/" 
+    new SpectralWorkbench.Importer( "/sets/calibrated/" 
                     + this.args.set_id 
                     + ".json", 
                       chart, 
+                      this.dataType, 
                       onImport);
   }
 }
