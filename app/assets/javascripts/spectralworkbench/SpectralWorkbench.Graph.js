@@ -46,8 +46,6 @@ SpectralWorkbench.Graph = Class.extend({
           .call(chart)         //Finally, render the chart!
           .attr('id',idKey)
 
-console.log('rendered!'); 
-
       d3.selectAll('g.nv-scatterWrap g.nv-groups g') // ONLY the lines, not the scatterplot-based hover circles
           .on("mouseover", onmouseover)
           .on("mouseout", onmouseout)

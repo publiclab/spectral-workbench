@@ -11,15 +11,25 @@ SpectralWorkbench.API = Class.extend({
       // do this differently for sets and spectra
       if (graph.dataType == 'set') {
 
-        // we have to re-load each .data into each datum.spectrum.data
+        // we have to re-load each .data into each datum.spectra
         $.each(graph.datum.spectra,function(i,spectrum) {
-          spectrum.data = [];
+          spectrum.json.data.lines = [];
+          spectrum.average = [];
+          
           $.each(data[i].data,function(i,line) {
-            spectrum.data.push({
+            var average = line[1];
+            if (average < 1) average *= 100; // if it's too low, auto-recognize that it's a percentage?
+            spectrum.json.data.lines.push({
               wavelength: line[0],
-              average:    line[1]
+              average: average 
             });
+
           });
+
+          // and then reload that into its native data store, too, 
+          // in spectrum.average = {y: 0, x: 0}
+          spectrum.load(spectrum.json.data.lines);
+
         });
 
         // then display it in d3:

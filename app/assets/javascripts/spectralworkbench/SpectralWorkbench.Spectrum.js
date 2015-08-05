@@ -11,7 +11,6 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
     }
   
     this.json  = data;
-    this.lines = data.data.lines;
     this.title = data.title;
     this.id    = data.id;
 
@@ -22,27 +21,31 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
 
     var spectrum = this;
 
-    // Set up x and y properties like data.x and data.y
-    $.each(this.lines,function(i,line) {
+    this.load = function(lines) {
+      // Set up x and y properties like data.x and data.y for d3
+      $.each(lines,function(i,line) {
+     
+        if (line.wavelength == null) {
+     
+          var x = line.pixel;
+          // change graph labels
+     
+        } else var x = line.wavelength;
 
-      if (line.wavelength == null) {
+        // only parse in data if it's in a given range, if there's a range directive
+        if (!spectrum.json.data.hasOwnProperty('range') || x > spectrum.json.data.range.low && x < spectrum.json.data.range.high) { 
+    
+          spectrum.average.push({ y: parseInt(line.average / 2.55)/100, x: x })
+          if (line.r) spectrum.red.push(    { y: parseInt(line.r       / 2.55)/100,       x: x })
+          if (line.g) spectrum.green.push(  { y: parseInt(line.g       / 2.55)/100,       x: x })
+          if (line.b) spectrum.blue.push(   { y: parseInt(line.b       / 2.55)/100,       x: x })
+     
+        }
+     
+      });
+    }
 
-        var x = line.pixel;
-        // change graph labels
-
-      } else var x = line.wavelength;
-
-      // only parse in data if it's in a given range, if there's a range directive
-      if (!spectrum.json.data.hasOwnProperty('range') || x > spectrum.json.data.range.low && x < spectrum.json.data.range.high) { 
-   
-        spectrum.average.push({ y: parseInt(line.average / 2.55)/100, x: x })
-        spectrum.red.push(    { y: parseInt(line.r       / 2.55)/100,       x: x })
-        spectrum.green.push(  { y: parseInt(line.g       / 2.55)/100,       x: x })
-        spectrum.blue.push(   { y: parseInt(line.b       / 2.55)/100,       x: x })
-
-      }
-
-    });
+    this.load(spectrum.json.data.lines);
 
     this.d3 = function() {
       return [
