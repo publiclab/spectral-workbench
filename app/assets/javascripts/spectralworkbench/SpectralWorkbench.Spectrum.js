@@ -1,7 +1,14 @@
-SpectralWorkbench.Set = SpectralWorkbench.Datum.extend({
+SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
 
-  // data as it arrives from server-side JSON
+  /* <data> is a JSON object as it arrives from the server
+   */
   init: function(data) {
+
+    // provide backward compatability for API v1, but 
+    // don't overwrite if a Set has already done so
+    if ($W && $W.data && $W.data == []) {
+      $W.data = data;
+    }
   
     this.json  = data;
     this.lines = data.data.lines;
@@ -12,6 +19,8 @@ SpectralWorkbench.Set = SpectralWorkbench.Datum.extend({
     this.red     = [];
     this.green   = [];
     this.blue    = [];
+
+    var spectrum = this;
 
     // Set up x and y properties like data.x and data.y
     $.each(this.lines,function(i,line) {
@@ -24,42 +33,42 @@ SpectralWorkbench.Set = SpectralWorkbench.Datum.extend({
       } else var x = line.wavelength;
 
       // only parse in data if it's in a given range, if there's a range directive
-      if (!this.data.data.hasOwnProperty('range') || x > data.data.range.low && x < data.data.range.high) { 
+      if (!spectrum.json.data.hasOwnProperty('range') || x > spectrum.json.data.range.low && x < spectrum.json.data.range.high) { 
    
-        average.push({ y: parseInt(line.average / 2.55)/100, x: x })
-        red.push(    { y: parseInt(line.r       / 2.55)/100,       x: x })
-        green.push(  { y: parseInt(line.g       / 2.55)/100,       x: x })
-        blue.push(   { y: parseInt(line.b       / 2.55)/100,       x: x })
+        spectrum.average.push({ y: parseInt(line.average / 2.55)/100, x: x })
+        spectrum.red.push(    { y: parseInt(line.r       / 2.55)/100,       x: x })
+        spectrum.green.push(  { y: parseInt(line.g       / 2.55)/100,       x: x })
+        spectrum.blue.push(   { y: parseInt(line.b       / 2.55)/100,       x: x })
 
       }
 
     });
-  },
 
-  d3: function() {
-    return [
-      {
-        values: this.average,
-        key:    this.title+" (average)",
-        color:  '#444',
-        id:     this.id
-      },
-      {
-        values: this.red,
-        key:    this.title+" (R)",
-        color:  'rgba(255,0,0,0.2)'
-      },
-      {
-        values: this.green,
-        key:    this.title+" (G)",
-        color:  'rgba(0,255,0,0.2)'
-      },
-      {
-        values: this.blue,
-        key:    this.title+" (B)",
-        color:  'rgba(0,0,255,0.2)'
-      }
-    ];
+    this.d3 = function() {
+      return [
+        {
+          values: spectrum.average,
+          key:    spectrum.title+" (average)",
+          color:  '#444',
+          id:     spectrum.id
+        },
+        {
+          values: spectrum.red,
+          key:    spectrum.title+" (R)",
+          color:  'rgba(255,0,0,0.2)'
+        },
+        {
+          values: spectrum.green,
+          key:    spectrum.title+" (G)",
+          color:  'rgba(0,255,0,0.2)'
+        },
+        {
+          values: spectrum.blue,
+          key:    spectrum.title+" (B)",
+          color:  'rgba(0,0,255,0.2)'
+        }
+      ];
+    }
   }
 
 });
