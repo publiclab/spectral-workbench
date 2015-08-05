@@ -6,6 +6,7 @@ class TagsController < ApplicationController
     response = { :errors => [],
       :saved => [],
     }
+    # we do it this way to handle JSON error generation
     params[:tag][:name].split(',').uniq.each do |name|
       tag = Tag.new({
         :name => name.strip,
@@ -48,7 +49,7 @@ class TagsController < ApplicationController
     @tag = Tag.find(params[:id])
     if @tag
       if @tag.user_id == current_user.id || current_user.role == "admin"
-        @tag.delete
+        @tag.destroy
         respond_to do |format|
           format.html do
             if request.xhr?
