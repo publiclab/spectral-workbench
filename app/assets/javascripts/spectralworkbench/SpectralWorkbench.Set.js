@@ -1,7 +1,7 @@
 SpectralWorkbench.Set = SpectralWorkbench.Datum.extend({
 
   // data as it arrives from server-side JSON
-  init: function(data,graph) {
+  init: function(data) {
 
     this.json    = data; 
     this.spectra = []; 
