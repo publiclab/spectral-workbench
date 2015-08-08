@@ -2,7 +2,7 @@ SpectralWorkbench.Graph = Class.extend({
 
   init: function(args) {
 
-    var graph = this;
+    var _graph = this;
 
     this.args = args;
     this.width = 600;
@@ -28,21 +28,25 @@ SpectralWorkbench.Graph = Class.extend({
       .attr("width",  this.width  + this.margin.left + this.margin.right)
       .attr("height", this.height + this.margin.top  + this.margin.bottom)
  
-    /* key function for d3 data binding, used in graph.load */
+    /* key function for d3 data binding, used in _graph.load */
     var idKey = function(d) {
       return d.id;
     }
 
     /* once actual JSON is available and processed, 
-     * <data> is is created; either SW.Set or SW.Spectrum
+     * <datum> is created; either SW.Set or SW.Spectrum
+     * <chart> is the nvd3 chart
+     * <data> is the raw JSON data from the server
      */
-    this.load = function(data,chart) {
+    this.load = function(datum, chart, data) {
 
-      graph.datum = data;
+      _graph.datum = datum;
+      // APIv1 backwards-compatibility
+      _graph.API.Legacy.load(datum.json, _graph.dataType);
 
       /* Enter data into the graph */
-      graph.data = d3.select('#graph svg')  //Select the <svg> element you want to render the chart in.   
-          .datum(data.d3,idKey)   //Populate the <svg> element with chart data and provide a binding key
+      _graph.data = d3.select('#graph svg')  //Select the <svg> element you want to render the chart in.   
+          .datum(datum.d3,idKey)   //Populate the <svg> element with chart data and provide a binding key
           .call(chart)         //Finally, render the chart!
           .attr('id',idKey)
 
@@ -56,21 +60,21 @@ SpectralWorkbench.Graph = Class.extend({
                 data  = sel.data()[0];
  
             // color corresponding table entry
-            $('tr.spectrum-'+data.id+' div.key').css('background',sel.style('stroke'));
+            $('tr.spectrum-'+datum.id+' div.key').css('background',sel.style('stroke'));
  
             // highlight corresponding line when hovering on table row
-            $('tr.spectrum-'+data.id).mouseover(function() {
+            $('tr.spectrum-'+datum.id).mouseover(function() {
               d3.selectAll('g.nv-line > g > g.nv-groups > g').classed('dimmed', true );
-              d3.selectAll('g#spectrum-line-'+data.id).classed(       'dimmed', false);
-              d3.selectAll('g#spectrum-line-'+data.id).classed(    'highlight', true );
+              d3.selectAll('g#spectrum-line-'+datum.id).classed(       'dimmed', false);
+              d3.selectAll('g#spectrum-line-'+datum.id).classed(    'highlight', true );
             });
-            $('tr.spectrum-'+data.id).mouseout(function() {
+            $('tr.spectrum-'+datum.id).mouseout(function() {
               d3.selectAll('g.nv-line > g > .nv-groups *').classed( 'dimmed', false);
-              d3.selectAll('g#spectrum-line-'+data.id).classed(  'highlight', false);
+              d3.selectAll('g#spectrum-line-'+datum.id).classed(  'highlight', false);
             });
             // apparently HTML id has to begin with a string? 
             // http://stackoverflow.com/questions/70579/what-are-valid-values-for-the-id-attribute-in-html
-            return 'spectrum-line-'+data.id;
+            return 'spectrum-line-'+datum.id;
           });
  
       // actually add it to the display
@@ -82,17 +86,17 @@ SpectralWorkbench.Graph = Class.extend({
     this.eventSetup();
 
     // Update the chart when window updates.
-    $(window).on('resize', graph.updateSize.bind(graph));
+    $(window).on('resize', _graph.updateSize.bind(_graph));
     // nv.utils.windowResize( this.updateSize.apply(this)); // this one didn't work - maybe it's only on resize of the svg element?
 
   },
 
   graphSetup: function() {
  
-    var graph = this;
-    graph.chart = nv.models.lineChart()
-                     .height(graph.height-graph.margin.top-graph.margin.bottom)
-                     .margin(graph.margin)
+    var _graph = this;
+    _graph.chart = nv.models.lineChart()
+                     .height(_graph.height-_graph.margin.top-_graph.margin.bottom)
+                     .margin(_graph.margin)
                      .useInteractiveGuideline(true)  //We want nice looking tooltips and a guideline!
 //                   .transitionDuration(350)  //how fast do you want the lines to transition?
                      .showLegend(false)       //Show the legend, allowing users to turn on/off line series.
@@ -100,11 +104,11 @@ SpectralWorkbench.Graph = Class.extend({
                      .showXAxis(true)        //Show the x-axis
     ;
  
-    graph.chart.xAxis     //Chart x-axis settings
-              .axisLabel('Wavelength ('+graph.xUnit+')')
+    _graph.chart.xAxis     //Chart x-axis settings
+              .axisLabel('Wavelength ('+_graph.xUnit+')')
               .tickFormat(d3.format('1d'));
  
-    graph.chart.yAxis     //Chart y-axis settings
+    _graph.chart.yAxis     //Chart y-axis settings
               .axisLabel('Intensity (%)')
               .tickFormat(d3.format('%'));
  
@@ -116,7 +120,7 @@ SpectralWorkbench.Graph = Class.extend({
       $('tr.spectrum-'+id).addClass('highlight');
       d3.select(el).classed('highlight',true);
       // scroll to the spectrum in the table below:
-      if (graph.embed) window.location = (window.location+'').split('#')[0]+'#s'+id;
+      if (_graph.embed) window.location = (window.location+'').split('#')[0]+'#s'+id;
     }
     var onmouseout = function() {
       var el = this;
@@ -125,31 +129,31 @@ SpectralWorkbench.Graph = Class.extend({
       d3.select(el).classed('highlight',false);
     }
  
-    if (graph.dataType == "spectrum") {
+    if (_graph.dataType == "spectrum") {
       new SpectralWorkbench.Importer( "/spectrums/" 
-                      + graph.args.spectrum_id 
+                      + _graph.args.spectrum_id 
                       + ".json", 
-                        graph.chart, 
-                        graph.dataType, 
-                        graph.load);
-    } else if (graph.dataType == "set") {
+                        _graph.chart, 
+                        _graph.dataType, 
+                        _graph.load);
+    } else if (_graph.dataType == "set") {
       new SpectralWorkbench.Importer( "/sets/calibrated/" 
-                      + graph.args.set_id 
+                      + _graph.args.set_id 
                       + ".json", 
-                        graph.chart, 
-                        graph.dataType, 
-                        graph.load);
+                        _graph.chart, 
+                        _graph.dataType, 
+                        _graph.load);
     }
   },
 
   eventSetup: function() {
 
-    var graph = this;
+    var _graph = this;
 
     // Set up graph/table mouse events.
     // ...break this up into two subclasses, 
     // set and spectrum, with their own init sequences 
-    if (graph.dataType == "set") {
+    if (_graph.dataType == "set") {
 
       // setup sets list of spectra
       $('table.spectra input.visible').change(function(e) {
@@ -181,50 +185,50 @@ SpectralWorkbench.Graph = Class.extend({
 
   updateSize: function() {
 
-    var graph = this;
+    var _graph = this;
  
     return (function() { 
  
-      graph.width  = getUrlParameter('width')  || $(window).width() || graph.width;
+      _graph.width  = getUrlParameter('width')  || $(window).width() || _graph.width;
  
       if (getUrlParameter('height')) {
  
-        graph.height = getUrlParameter('height');
+        _graph.height = getUrlParameter('height');
  
       } else {
  
-        if (($(window).height() < 450 && graph.dataType == 'set') || 
-            ($(window).height() < 350 && graph.dataType == 'spectrum')) { 
+        if (($(window).height() < 450 && _graph.dataType == 'set') || 
+            ($(window).height() < 350 && _graph.dataType == 'spectrum')) { 
           // compact
-          graph.height = 180;
+          _graph.height = 180;
           $('#embed').addClass('compact');
  
         } else {
  
           // full size
-          graph.height = 200;
+          _graph.height = 200;
           $('#embed').removeClass('compact');
  
         }
  
-        graph.height = graph.height - graph.margin.top  - graph.margin.bottom;
+        _graph.height = _graph.height - _graph.margin.top  - _graph.margin.bottom;
  
       }
  
-      graph.width  = graph.width  
-                  - graph.margin.left 
-                  - graph.margin.right 
-                  - (graph.embedmargin * 2);
+      _graph.width  = _graph.width  
+                  - _graph.margin.left 
+                  - _graph.margin.right 
+                  - (_graph.embedmargin * 2);
  
-      $('#graph').height(graph.height)
-      $('img.spectrum').width(graph.width)
+      $('#graph').height(_graph.height)
+      $('img.spectrum').width(_graph.width)
                        .height(100)
-                       .css('margin-left', graph.margin.left)
-                       .css('margin-right',graph.margin.right);
+                       .css('margin-left', _graph.margin.left)
+                       .css('margin-right',_graph.margin.right);
  
       // update only if we're past initialization
-      if (graph.chart) {
-        graph.chart.update();
+      if (_graph.chart) {
+        _graph.chart.update();
       }
  
       // hide loading grey background

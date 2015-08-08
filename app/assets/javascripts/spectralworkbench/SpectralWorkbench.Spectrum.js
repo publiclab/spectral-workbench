@@ -3,12 +3,6 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
   /* <data> is a JSON object as it arrives from the server
    */
   init: function(data) {
-
-    // provide backward compatability for API v1, but 
-    // don't overwrite if a Set has already done so
-    if ($W && $W.data && $W.data == []) {
-      $W.data = data;
-    }
   
     this.json  = data;
     this.title = data.title;

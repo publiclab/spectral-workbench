@@ -1,7 +1,7 @@
 SpectralWorkbench.API = Class.extend({
 
   version: '2.0',
-  init: function(graph) {
+  init: function(_graph) {
 
     var api = this;
 
@@ -9,10 +9,11 @@ SpectralWorkbench.API = Class.extend({
     $.plot = function(el,data,options) {
 
       // do this differently for sets and spectra
-      if (graph.dataType == 'set') {
+      if (_graph.dataType == 'set') {
 
         // we have to re-load each .data into each datum.spectra
-        $.each(graph.datum.spectra,function(i,spectrum) {
+        // -- we could/should do this via a spectrum.load call?
+        $.each(_graph.datum.spectra,function(i,spectrum) {
           spectrum.json.data.lines = [];
           spectrum.average = [];
           
@@ -33,9 +34,44 @@ SpectralWorkbench.API = Class.extend({
         });
 
         // then display it in d3:
-        graph.load(graph.datum,graph.chart);
+        _graph.load(_graph.datum, _graph.chart);
 
       }
+    }
+
+  },
+
+  Legacy: {
+
+    load: function(json, dataType) {
+      // provide backward compatability for API v1
+      if ($W && $W.data) {
+ 
+        // formatting of $W.data in API v1 is not same as vanilla JSON
+        $W.data = [];
+
+        if (dataType == "set") { 
+
+          $.each(json.spectra,function(i,spectrum) {
+
+            var lines = [];
+
+            $.each(spectrum.data.lines,function(i,line) {
+              lines.push([line.wavelength,line.average]);
+            });
+
+            $W.data.push({data: lines});
+
+          });
+
+        } else if (dataType == "spectrum") {
+
+          $W.data = data;
+
+        }
+ 
+      }
+
     }
 
   }

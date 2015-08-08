@@ -1,28 +1,11 @@
 SpectralWorkbench.Set = SpectralWorkbench.Datum.extend({
 
   // data as it arrives from server-side JSON
-  init: function(data) {
+  init: function(data,graph) {
 
     this.json    = data; 
     this.spectra = []; 
     var set = this;
-
-    // provide backward compatability for API v1
-    if ($W && $W.data) {
-
-      // formatting of $W.data in API v1 is not same as vanilla JSON... have to research
-      // write this into graph.API.Legacy.import()
-      $W.data = [];
-
-      $.each(set.json.spectra,function(i,spectrum) {
-        var lines = [];
-        $.each(spectrum.data.lines,function(i,line) {
-          lines.push([line.wavelength,line.average]);
-        });
-        $W.data.push({data: lines});
-      });
-
-    }
 
     this.load = function(spectra) {
 
