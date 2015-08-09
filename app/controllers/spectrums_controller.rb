@@ -58,6 +58,10 @@ class SpectrumsController < ApplicationController
     end
   end
 
+  def show2
+    show
+  end
+
   def anonymous
     @spectrums = Spectrum.paginate(:order => "created_at DESC", :conditions => {:author => "anonymous"}, :page => params[:page])
     render :template => "spectrums/search"

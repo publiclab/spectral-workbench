@@ -18,8 +18,10 @@ SpectralWorkbench.API = Class.extend({
           spectrum.average = [];
           
           $.each(data[i].data,function(i,line) {
+
             var average = line[1];
             if (average <= 1) average *= 100; // if it's too low, auto-recognize that it's a percentage? This is not great. 
+
             spectrum.json.data.lines.push({
               wavelength: line[0],
               average: average 
@@ -35,6 +37,10 @@ SpectralWorkbench.API = Class.extend({
 
         // then display it in d3:
         _graph.load(_graph.datum, _graph.chart);
+
+      } else if (_graph.dataType == 'set') {
+
+        
 
       }
     }
@@ -66,7 +72,7 @@ SpectralWorkbench.API = Class.extend({
 
         } else if (dataType == "spectrum") {
 
-          $W.data = data;
+          $W.data = json;
 
         }
  

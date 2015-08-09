@@ -1,0 +1,18 @@
+<%= render :partial => "embed/modal", :locals => { datum: @spectrum, type: :set } %>
+
+<div id="graphing" class="spectrums">
+<div id="graph"><i class="icon icon-spinner icon-spin"></i></div>
+
+<script type="text/javascript">
+
+  var graph;
+  jQuery(document).ready(function($) {
+    graph = new SpectralWorkbench.Graph({
+      spectrum_id: <%= @spectrum.id %>,
+      calibrated: <%= @spectrum.calibrated %>
+    });
+  })
+
+</script>
+<%= render :partial => "graph/body", :locals => {type: :spectrum, datum: @spectrum } %>
+</div>

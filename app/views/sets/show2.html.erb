@@ -1,4 +1,4 @@
-<%= render :partial => "embed", :locals => { set: @set } %>
+<%= render :partial => "embed/modal", :locals => { datum: @set, type: :set } %>
 
 <div id="graphing" class="sets">
 <div id="graph"><i class="icon icon-spinner icon-spin"></i></div>
@@ -14,5 +14,5 @@
   })
 
 </script>
-<%= render :partial => "graph/body", :locals => {:type => :set, :datum => @set } %>
+<%= render :partial => "graph/body", :locals => {type: :set, datum: @set } %>
 </div>
