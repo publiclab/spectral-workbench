@@ -75,4 +75,8 @@ class SpectrumTest < ActiveSupport::TestCase
     assert json['range'] == nil
   end
 
+  test "spectrum clone calibration" do
+    assert true
+  end
+
 end

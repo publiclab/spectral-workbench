@@ -323,6 +323,7 @@ class SpectrumsController < ApplicationController
         @spectrum.remove_powertags('calibration')
         @spectrum.tag("calibration:"+id.to_s,current_user.id)
       end
+      flash[:notice] = 'Spectrum was successfully calibrated.'
       redirect_to spectrum_path(@spectrum)
     else
       flash[:error] = "You must be logged in and own this spectrum to clone calibrations."
