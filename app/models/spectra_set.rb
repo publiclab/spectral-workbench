@@ -6,6 +6,7 @@ class SpectraSet < ActiveRecord::Base
   validates :title, length: { maximum: 60 }
   has_many :comments, :dependent => :destroy
   has_and_belongs_to_many :spectrums
+  belongs_to :user
 
   validates :title, :format => { with: /\A[\w\ -\'\"]+\z/, message: "can contain only letters, numbers, and spaces." }
 

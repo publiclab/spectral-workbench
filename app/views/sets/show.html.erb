@@ -12,7 +12,7 @@
     <div class="navbar navbar-inverse navbar-static-bottom" style="margin:0;">
       <div class="navbar-inner">
         <a href="#embed-modal" class="btn btn-inverse hidden-phone" data-toggle="modal"><i class="icon icon-white icon-share"></i><span class="hidden-phone"> Embed</span></a>
-        <%= render :partial => "embed", :locals => { set: @set } %>
+        <%= render :partial => "embed/modal", :locals => { datum: @set, type: :set } %>
 
         <a class="btn btn-inverse hidden-phone" onClick="$W.run_macro('warren','equalize_area')">Equalize area</a>
         <a class="btn btn-inverse hidden-phone" onClick="$W.run_macro('warren','equalize-height')">Equalize height</a>

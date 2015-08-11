@@ -4,4 +4,6 @@
 //= require spectralworkbench/SpectralWorkbench.Spectrum.js 
 //= require spectralworkbench/SpectralWorkbench.Set.js 
 //= require spectralworkbench/SpectralWorkbench.API.js 
+//= require spectralworkbench/SpectralWorkbench.API.Legacy.js 
+//= require spectralworkbench/SpectralWorkbench.API.Core.js 
 //= require spectralworkbench/SpectralWorkbench.Graph.js 

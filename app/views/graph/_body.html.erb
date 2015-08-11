@@ -7,22 +7,52 @@
 
     <% unless params[:action] == 'embed2' %>
       <div class="toolbar toolbar-top">
-        <%= render :partial => 'graph/tools', :locals => { type: type, datum: datum } %>
+        <%= render partial: 'graph/tools', locals: { type: type, datum: datum } %>
       </div>
     <% end %>
 
-    <% if type == :set %>
       <ul class="nav nav-tabs">
+        <% if type == :set %>
         <li class="active"><a href="#tab-spectra"  data-toggle="tab"><i  class="icon icon-list"></i>     Spectra</a></li>
+        <% elsif type == :spectrum %>
+        <li class="active"><a href="#tab-tools"    data-toggle="tab"><i class="icon icon-cog"></i>         Tools</a></li>
+        <li>               <a href="#tab-sets"     data-toggle="tab"><i class="icon icon-list"></i>         Sets</a></li>
+        <% end %>
         <li>               <a href="#tab-comments" data-toggle="tab"><i class="icon icon-comments"></i> Comments</a></li>
       </ul>
       <!-- TABLE -->
      
       <div class="tab-content">
 
-        <div class="tab-pane active" id="tab-spectra">       
-          <%= render :partial => 'graph/spectra', :locals => { datum: datum } %>
-        </div>
+        <% if type == :set %>
+          <div class="tab-pane active" id="tab-spectra">       
+            <%= render partial: 'graph/spectra', locals: { datum: datum } %>
+          </div>
+        <% elsif type == :spectrum %>
+          <div class="tab-pane active" id="tab-tools">       
+            <div class="row-fluid">
+            
+              <div class="span6">
+                <%= render partial: 'tags/tagging' %>
+                <h3>Tips</h3>
+                <div class="tips">
+                  <p class="alert alert-warning">Your spectrum looks overexposed. <a href="">Learn how to prevent this &raquo;</a></p>
+                  <p class="alert alert-warning">Your spectrum needs to be calibrated. <a href="">Learn how &raquo;</a></p>
+                </div>
+
+              </div>
+            
+              <div class="span6">
+                <%= render partial: 'spectrums/tools', locals: { datum: datum, type: type } %>
+              </div>
+           
+            </div>
+          </div>
+
+          <div class="tab-pane" id="tab-sets">
+            <%= render partial: 'graph/sets', locals: { sets: @spectrum.sets } %>
+          </div>
+        <% end %>
 
         <div class="tab-pane" id="tab-comments">       
           <div class="row-fluid">
@@ -31,14 +61,13 @@
             </div>
           
             <div class="span8">
-              <%= render partial: 'comments/list', locals: { datum: datum, :comments => datum.comments } %>
+              <%= render partial: 'comments/list', locals: { datum: datum, comments: datum.comments } %>
             </div>
     
           </div>
         </div>
 
       </div>
-    <% end %>
 
     <% if params[:action] == 'embed2' %>
       <div class="toolbar toolbar-bottom">

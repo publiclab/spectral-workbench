@@ -1,0 +1,14 @@
+<table class="table">
+  <tr>
+    <th>Title</th>
+    <th>Author</th>
+    <th>Spectra</th>
+  </tr>
+<% @spectrum.sets.each do |set| %>
+  <tr>
+    <td><a href="/sets/<%= set.id %>"><%= set.title %></a></td>
+    <td><a href="/profile/<%= set.user.login %>"><%= set.user.login %></a></td>
+    <td><%= set.spectrums.count %></td>
+  </tr>
+<% end %>
+</table>

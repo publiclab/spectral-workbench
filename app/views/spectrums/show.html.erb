@@ -38,7 +38,7 @@
         <a id="$('#calibrate-begin').focus()" data-toggle="modal" href="#calibratemodal1" class="btn btn-primary"><i class="icon icon-white icon-screenshot"></i><span class="hidden-phone"> Calibrate</span></a>
 
         <a href="#embed-modal" class="btn btn-inverse hidden-phone" data-toggle="modal"><i class="icon icon-white icon-share"></i><span class="hidden-phone"> Embed</span></a>
-        <%= render partial: "spectrums/show/embed", locals: { spectrum: @spectrum } %>
+        <%= render partial: "embed/modal", locals: { datum: @spectrum, type: :spectrum } %>
         <a class="btn btn-inverse" data-toggle="modal" href="#setmodal"><i class="icon icon-white icon-plus-sign"></i><span class="hidden-phone"> Add to set</span></a>
         <a class="btn btn-inverse hidden-phone" id="createSet" href="javascript:void(0);"><i class="icon icon-white icon-list"></i><span class="hidden-phone"> Save as set</span></a>
         <a data-toggle="modal" class="btn btn-inverse" href="#comparemodal"><i class="icon icon-white icon-align-left"></i><span class="hidden-phone"> Compare</span></a>

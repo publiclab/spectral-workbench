@@ -42,7 +42,7 @@ SpectralWorkbench.Graph = Class.extend({
 
       _graph.datum = datum;
       // APIv1 backwards-compatibility
-      _graph.API.Legacy.load(datum.json, _graph.dataType);
+      SpectralWorkbench.API.Legacy.load(datum.json, _graph.dataType);
 
       /* Enter data into the graph */
       _graph.data = d3.select('#graph svg')  //Select the <svg> element you want to render the chart in.   
