@@ -1,0 +1,823 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Research tagged 'spectrometer'</title>
+    <description>Open source environmental science research at Public Lab</description>
+    <link>/feed/tag/spectrometer.rss</link>
+    <item>
+      <title>Musings: Spectrometer Stability</title>
+      <author>stoft</author>
+      <pubDate>Fri, 17 Jul 2015 05:46:55 +0000</pubDate>
+      <image>http://localhost:3000/images/logo.png</image>
+      <link>http://publiclab.org//notes/stoft/07-17-2015/musings-spectrometer-stability</link>
+      <description>&lt;p&gt;My experiments with the PLab 3.0 spectrometer and PLab oil-test kit prototypes demonstrated the requirement to build mechanically stable devices. While it can be educational to observe a working webcam+DVD spectrometer and recover colorful plots, performing real measurements requires repeatability which means stability.&lt;/p&gt;
+
+&lt;p&gt;I'd like to propose some design guidelines for these PLab kits:&lt;/p&gt;
+
+&lt;p&gt;1 - The optical path from slit to DVD to camera must be a) rigid and b) allow for precise alignment.&lt;/p&gt;
+
+&lt;p&gt;2 - Black paper is good for low reflections and can provide a low cost light-tight volume space, but is useless in terms of mechanical rigidity.&lt;/p&gt;
+
+&lt;p&gt;3 - Given the slit-camera distance, with a narrow photo-image slit, the slit material must be held fixed relative to the DVD/Camera to reduce spectral noise (for better resolution).&lt;/p&gt;
+
+&lt;p&gt;4 - Any "add-on", such as the oil-test-kit module, must be mechanically tied to the spectrometer "frame" (which provides the spectrometer optical path stability) -- a paper interface is not enough.&lt;/p&gt;
+
+&lt;p&gt;5 - The UV laser illumination of an oil sample (to be viewed by the spectrometer) must also be rigid so as to eliminate amplitude variations in the spectral signal. (Remember, if you are comparing signatures of samples where the major difference is amplitude of a broad peak, amplitude variations can easily create measurement noise that is a large fraction of the signal you want to measure.&lt;/p&gt;
+
+&lt;p&gt;6 - Mounting of oil-test-kit components must be rigid, relative to each other and relative to the spectrometer because any variation or vibration can cause poor measurement repeatability and sample-to-sample repeatability.&lt;/p&gt;
+
+&lt;p&gt;7 - Reflections. Light from the UV laser can easily reflect off the black paper and cause intensity variations. Black paper is good, but reflections from it, and from distortions in the cuvettes, can cause significant variations.&lt;/p&gt;
+
+&lt;p&gt;8 - At such "close range", the alignment (and alignment stability) of the spectrometer optical path through the slit becomes critical.&lt;/p&gt;
+
+&lt;p&gt;A measure of stability of such a system could be verified by repeat set-up, calibration and measurement of multiple samples and comparing the resulting data to calculate the measurement noise error.&lt;/p&gt;
+
+&lt;p&gt;Comments are welcome.&lt;/p&gt;
+</description>
+      <guid>http://publiclab.org/notes/show/12074</guid>
+    </item>
+    <item>
+      <title>447nm Oops!</title>
+      <author>scottvr</author>
+      <pubDate>Wed, 15 Jul 2015 07:41:41 +0000</pubDate>
+      <link>http://publiclab.org//notes/scottvr/07-15-2015/447nm-oops</link>
+      <description>&lt;p&gt;Careful with even the backscatter from 1000+mW&lt;/p&gt;
+
+&lt;p&gt;Watching my laptop screen, smelling something burning. Oops.&lt;/p&gt;
+
+&lt;p&gt;Ok, I'm an idiot.&lt;/p&gt;
+</description>
+      <guid>http://publiclab.org/notes/show/12069</guid>
+    </item>
+    <item>
+      <title>Testing the Oil Testing Kit: identifying a "somewhat unknown" sample</title>
+      <author>warren</author>
+      <pubDate>Tue, 14 Jul 2015 19:37:56 +0000</pubDate>
+      <link>http://publiclab.org//notes/warren/07-14-2015/testing-the-oil-testing-kit-identifying-a-somewhat-unknown-sample</link>
+      <description>&lt;p&gt;I finally made time to test &lt;a href="/profile/mathew"&gt;@mathew&lt;/a&gt;'s &lt;a href="/notes/mathew/04-07-2015/designing-an-oil-testing-kit-cuvette-frame"&gt;prototype Oil Testing Kit attachment&lt;/a&gt; for the &lt;a href="https://store.publiclab.org/products/desktop-spectrometry-kit-3-0"&gt;Public Lab Spectrometer v3.0&lt;/a&gt;, and here are my results.&lt;/p&gt;
+
+&lt;p&gt;The basic procedure I followed was:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;prepare all provided samples&lt;/li&gt;
+&lt;li&gt;scan each one&lt;/li&gt;
+&lt;li&gt;choose an "unknown" from them, prepare in the same way&lt;/li&gt;
+&lt;li&gt;compare to known samples to try to figure out what the unknown is&lt;/li&gt;
+&lt;/ul&gt;
+
+
+&lt;p&gt;This went well, although not perfectly. We'd expected that we'd be able to tell crude oil from diesel and various motor oils, but that distinguishing motor oils might be difficult. But our eventual goal is to distinguish crude oil from other petroleum types as well as from other kinds of false positives.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://i.publiclab.org/system/images/photos/000/010/686/original/IMG_20150702_151735-2.jpg"&gt;&lt;img src="http://i.publiclab.org/system/images/photos/000/010/686/medium/IMG_20150702_151735-2.jpg" alt="IMG_20150702_151735-2.jpg" /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id="The+knowns"&gt;The knowns&lt;/h2&gt;
+
+&lt;p&gt;I generally followed the steps outlined in &lt;a href="/profile/mathew"&gt;@mathew&lt;/a&gt;'s &lt;a href="/notes/mathew/09-19-2014/grading-oils-with-uv-fluorescence"&gt;original test&lt;/a&gt;, which predates the new OTK attachment. The attachment made this test much much easier, but there were still a few hiccups. I began by scanning each of the provided samples, pictured above. They are, in order of "weight":&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Diesel fuel&lt;/li&gt;
+&lt;li&gt;5W30 oil&lt;/li&gt;
+&lt;li&gt;20W50 oil&lt;/li&gt;
+&lt;li&gt;80W90 oil&lt;/li&gt;
+&lt;li&gt;North Dakota crude oil (from &lt;a href="/notes/warren/05-03-2013/crude-oil-samples-for-purchase-online"&gt;ONTA&lt;/a&gt;)&lt;/li&gt;
+&lt;/ul&gt;
+
+
+&lt;p&gt;&lt;a href="http://i.publiclab.org/system/images/photos/000/010/682/original/IMG_20150713_172253.jpg"&gt;&lt;img src="http://i.publiclab.org/system/images/photos/000/010/682/medium/IMG_20150713_172253.jpg" alt="IMG_20150713_172253.jpg" /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;This went well, although I noted that it took quite a while for the oils to evenly distribute into the ~10ml of mineral oil in the PMMA/acrylic cuvettes. (These and many other supplies are included in the Oil Testing Kit.) I also had only one eyedropper, which I kept clean (mineral oil only) and I used cut-in-half cotton swabs to transfer drops of sample into the cuvettes. I used the plastic tube end, not the cotton end, and some samples were more viscous than others and easier to get drops of -- the diesel was hard, for example. And of course, I used a fresh swab for each oil!&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://i.publiclab.org/system/images/photos/000/010/685/original/IMG_20150713_173035.jpg"&gt;&lt;img src="http://i.publiclab.org/system/images/photos/000/010/685/medium/IMG_20150713_173035.jpg" alt="IMG_20150713_173035.jpg" /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id="Quantities"&gt;Quantities&lt;/h3&gt;
+
+&lt;p&gt;When I first tried to scan them in using the new OTK frame (pictured), some of the samples didn't fluoresce strongly enough to get an overall brightness between 25-75%, as we recommend in the &lt;a href="/wiki/oil-testing-kit#Illuminate+the+sample"&gt;Oil Testing Kit docs&lt;/a&gt;. However, I just added more drops until they were bright enough. I didn't actually have to use the &lt;a href="/wiki/oil-testing-kit#Tuning+brightness"&gt;attenuator strip provided&lt;/a&gt;, but it's nice to know it's available for fine-tuning the exposure. I had to add:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;one tiny drop (1/4 of a drop?) of the crude (or it'd have been too dark -- this fluoresces like crazy, so it was fine)&lt;/li&gt;
+&lt;li&gt;3 drops of 5w30 and 20W50 oil&lt;/li&gt;
+&lt;li&gt;4 drops of 80W90&lt;/li&gt;
+&lt;li&gt;8 drops of diesel&lt;/li&gt;
+&lt;/ul&gt;
+
+
+&lt;p&gt;Note that the amounts don't seem to correlate with the weight of the samples -- or if they do, 80W90 bucks the trend as presumably the heaviest motor oil, but needing more than the lighter 5W30 and 20W50.&lt;/p&gt;
+
+&lt;iframe width='100%' height='700px' style='border:none;' src='http://spectralworkbench.org/sets/embed2/2446'&gt;&lt;/iframe&gt;
+
+
+&lt;p&gt;Here's what they look like, raw. (&lt;a href="http://spectralworkbench.org/sets/2446"&gt;link to set here&lt;/a&gt;) I calibrated them all, smoothed them with the "auto-smooth 10 pixels" feature in the More Tools menu, and added them to a set. I did choose cross sections that did not have very bright laser peaks at ~400nm, although there are still some in the motor oils (5W30,20W50, and 80W90).&lt;/p&gt;
+
+&lt;p&gt;The differing amounts of sample could be a concern in the differences between our data, but they don't correlate with anything in particular. I don't think, for example, that we're just seeing a trend due to the concentration, as the spectra with the most drops are still the ones with the weakest spectra, despite the fact that adding drops increases brightness.&lt;/p&gt;
+
+&lt;p&gt;What we do see is that generally, the crude is out to the right, with longer wavelengths, and that as the oils are lighter, they have a less pronounced "hump" at around 470 nanometers. The humps themselves, or rather the dip preceding the hump at about 450nm, may be an artifact of the blue and green curves meeting in a kind of "saddle" between peaks -- each is detected in different cells of the Bayer filter -- but generally a larger hump indicates that the data skews right.&lt;/p&gt;
+
+&lt;h2 id="The+unknown"&gt;The unknown&lt;/h2&gt;
+
+&lt;p&gt;It was impractical (nobody's here to help!) to completely blindly choose a sample, so I turned the bottles around and chose one of the orangish ones, which look pretty much the same unlabeled. I can clearly tell the diesel and crude, but those are supposed to be the easist to distinguish anyhow, so my narrower "blind" test is a harder challenge.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://i.publiclab.org/system/images/photos/000/010/683/original/IMG_20150713_180706.jpg"&gt;&lt;img src="http://i.publiclab.org/system/images/photos/000/010/683/medium/IMG_20150713_180706.jpg" alt="IMG_20150713_180706.jpg" /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;I picked one, prepared it (five drops, since that's what 2/3 of the middle-weight oils needed, so it's a reasonable guess) and &lt;a href="http://spectralworkbench.org/spectrums/55077"&gt;scanned it in&lt;/a&gt;. In the set embedded above, you can see the unknown alongisde the other samples, but as we found &lt;a href="/notes/warren/07-30-2014/equalizing-area-of-spectral-graphs-for-comparison"&gt;in our work last summer&lt;/a&gt; and &lt;a href="/notes/warren/09-23-2014/better-smoothing-and-equalizing-graph-height-for-comparison-of-oil-spectra"&gt;improved on last fall&lt;/a&gt;, it's very helpful to equalize either the maximum height OR the area under each curve, for comparison. This is complicated by the spike from the laser light, but when you equalize area, this is what you see:&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://i.publiclab.org/system/images/photos/000/010/687/original/Screenshot_2015-07-13_at_6.11.22_PM.png"&gt;&lt;img src="http://i.publiclab.org/system/images/photos/000/010/687/large/Screenshot_2015-07-13_at_6.11.22_PM.png" alt="Screenshot_2015-07-13_at_6.11.22_PM.png" /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;From looking at both graphs, a few things are apparent.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;the new embed graphs are WAY more readable, so I look forward to finishing my work on that so the analysis page is easier to read and use&lt;/li&gt;
+&lt;li&gt;on the raw, unequalized graph, the unknown fell between 20W50 and 80W90&lt;/li&gt;
+&lt;li&gt;on the equal area graph, from visual examination, it seems to be most similar to 80W90&lt;/li&gt;
+&lt;li&gt;in both graphs, it was clearly quite different from diesel and crude&lt;/li&gt;
+&lt;/ul&gt;
+
+
+&lt;p&gt;The laser spike was a big problem -- it throws off the height equalization and likely the equalize area adjustments too. I realized that we should have a means to equalize area &lt;strong&gt;only&lt;/strong&gt; between 410-700 nanometers, just the way we created the "find graph center" in our work last fall. I'll see about making a macro to do that, soon. For a look at some published research &lt;a href="/profile/mathew"&gt;@mathew&lt;/a&gt; and I looked at while developing this comparative method, and about a technique we found for grading by graph center, &lt;a href="/notes/mathew/09-23-2014/graded-oils-using-uv-fluorescence"&gt;read this note&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Still, my best guess was that it was 80W90, with 20W50 as a second guess. I turned the bottle around, and it was 20W50 -- so my guess wasn't perfect, but it was easy to tell that it wasn't crude.&lt;/p&gt;
+
+&lt;h2 id="Next+steps"&gt;Next steps&lt;/h2&gt;
+
+&lt;p&gt;So, pretty good, but there are some clear things we can do next to improve:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;bracket the equalize-height and equalize-area tools to 410-700nm to avoid the effects of the laser peak on these adjustments&lt;/li&gt;
+&lt;li&gt;complete my work on the new graphing interface and display to improve readability&lt;/li&gt;
+&lt;li&gt;possibly standardize our guidelines for how much sample to add to a cuvette full of mineral oil&lt;/li&gt;
+&lt;/ul&gt;
+
+
+&lt;p&gt;Thanks, any comments/critiques welcome -- esp. noting things I've overlooked!&lt;/p&gt;
+</description>
+      <guid>http://publiclab.org/notes/show/12063</guid>
+    </item>
+    <item>
+      <title>Announcing the Oil Testing Kit Public Beta Program</title>
+      <author>ygzstc</author>
+      <pubDate>Tue, 14 Jul 2015 16:00:30 +0000</pubDate>
+      <link>http://publiclab.org//notes/ygzstc/07-14-2015/oil-testing-kit-beta-program</link>
+      <description>&lt;p&gt;You may have seen hints of this across the site in recent weeks, but today, Public Lab is &lt;strong&gt;formally launching the new &lt;a href="/wiki/oil-testing-kit"&gt;Oil Testing Kit Public Beta Program&lt;/a&gt;&lt;/strong&gt;. This is an exciting opportunity to help improve our prototype DIY methods for classifying unknown petroleum samples by weight. Our eventual goal is for this kit to be usable to test and compare oil spill residues, and &lt;strong&gt;we need your help!&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Public Lab is offering the &lt;a href="http://store.publiclab.org/products/desktop-spectrometry-kit-3-0"&gt;new 3.0 version of our Desktop Spectrometry Kit&lt;/a&gt;, plus a prototype version of the &lt;a href="http://publiclab.org/wiki/oil-testing-kit-construction"&gt;new Oil Testing Kit attachment&lt;/a&gt;, &lt;strong&gt;free of charge&lt;/strong&gt; for 20 people who can commit to test and offer feedback on the kit.&lt;/p&gt;
+
+&lt;p&gt;In exchange for the free kits, Beta Program members will be required to:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Post ‘unboxing’ and ‘finished assembly’ photos on Twitter.&lt;/li&gt;
+&lt;li&gt;Post feedback on the kit and sample preparation methods in one or more research notes at PublicLab.org&lt;/li&gt;
+&lt;li&gt;Create and post a set of spectra from the samples sent with the kit (&lt;a href="http://publiclab.org/wiki/oil-testing-kit-beta#Procedure"&gt;see more detail here&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;Share and discuss input and suggestions on ways to improve the kit on Public Lab’s “plots-spectrometry” mailing list&lt;/li&gt;
+&lt;li&gt;Attend two meetups with other Beta Kit Participants online (to be announced soon)&lt;/li&gt;
+&lt;/ul&gt;
+
+
+&lt;p&gt;The Beta Program will be run by Public Lab Fellow Yagiz Sutcu, leave a comment below with your questions!&lt;/p&gt;
+
+&lt;p&gt;Learn more about the Beta Program and apply &lt;a href="http://publiclab.org/wiki/oil-testing-kit-beta"&gt;here&lt;/a&gt;!&lt;/p&gt;
+
+&lt;p&gt;&lt;img src="http://i.publiclab.org/system/images/photos/000/010/499/large/otk-perpendicular.jpg" alt="otk" /&gt;&lt;/p&gt;
+</description>
+      <guid>http://publiclab.org/notes/show/12060</guid>
+    </item>
+    <item>
+      <title>Testing if light leaks through the walls of the PL Spectrometer v3</title>
+      <author>warren</author>
+      <pubDate>Mon, 13 Jul 2015 20:55:27 +0000</pubDate>
+      <link>http://publiclab.org//notes/warren/07-13-2015/testing-if-light-leaks-through-the-walls-of-the-pl-spectrometer-v3</link>
+      <description>&lt;p&gt;Following up on &lt;a href="/notes/lukebrown/07-11-2015/desktop-spectrometry-kit-v3-for-vnir-field-spectroscopy"&gt;a note on possible light going through the black cardstock walls of the v3 spectrometer&lt;/a&gt; by &lt;a href="/profile/lukebrown"&gt;@lukebrown&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Luke said it mostly happened in bright sunlight, but also indoors. I just did a test in (admittedly cloudy) sunlight vs. closing the blinds, and covering the device with a thick blanket, and didn't see a big difference. It doesn't seem likely to me that light is leaking in through this big dark folded-over blanket. How does this compare to your noise, &lt;a href="/profile/lukebrown"&gt;@lukebrown&lt;/a&gt;? Is it possible you have a small light leak as opposed to it going through the paper itself? I'm just trying to reproduce the issue first.&lt;/p&gt;
+
+&lt;p&gt;This has had 10 pixel rows of data smoothed to try to reduce noise:&lt;/p&gt;
+
+&lt;iframe width='100%' height='700px' style='border:none;' src='http://spectralworkbench.org/sets/embed2/2445'&gt;&lt;/iframe&gt;
+
+
+&lt;p&gt;&lt;a href="http://spectralworkbench.org/sets/2445"&gt;http://spectralworkbench.org/sets/2445&lt;/a&gt;&lt;/p&gt;
+</description>
+      <guid>http://publiclab.org/notes/show/12056</guid>
+    </item>
+    <item>
+      <title>Oil Testing Kit -- mixing 5W30 20W30</title>
+      <author>gretchengehrke</author>
+      <pubDate>Sat, 11 Jul 2015 20:04:34 +0000</pubDate>
+      <link>http://publiclab.org//notes/gretchengehrke/07-11-2015/oil-testing-kit-mixing-5w30-20w30</link>
+      <description>&lt;h3 id="What+I+want+to+do"&gt;What I want to do&lt;/h3&gt;
+
+&lt;p&gt;Since the oils in the Oil Testing Kit 5W30 and 20W50 are distinguishable by their fluorescence spectra (see Research Note: &lt;a href="http://publiclab.org/notes/gretchengehrke/07-10-2015/oil-testing-kit-discerning-5w30-20w30"&gt;http://publiclab.org/notes/gretchengehrke/07-10-2015/oil-testing-kit-discerning-5w30-20w30&lt;/a&gt;), I wanted to see if a 1:1 mixture of the two oils would have a fluorescence spectra with bimodal lambda-max values that would align with the lambda-max value of each neat oil.&lt;/p&gt;
+
+&lt;h3 id="My+attempt+and+results"&gt;My attempt and results&lt;/h3&gt;
+
+&lt;p&gt;I used the gradation on the eye droppers to mix equal parts 5W30 and 20W50 in an independent glass container (a shot glass, empty of course) and then used a new eye dropper to agitate the oils into a homogeneous mixture and transfer the mixture into a new cuvette.&lt;/p&gt;
+
+&lt;p&gt;I took a new white light spectra for this session's calibration, and then took the spectra of the mixture, neat 20W50, and neat 5W30.  I used the new white light spectra to calibrate the sample spectra, smoothed each spectra, and equalized the peak heights.
+&lt;a href="http://spectralworkbench.org/sets/show/2439"&gt;http://spectralworkbench.org/sets/show/2439&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;The mixture does indeed have bimodal lambda-max values, and they do align with the lambda-max values of each neat oil.  Awesome!&lt;/p&gt;
+
+&lt;p&gt;I do wonder whether or not we would be able to discern the end-members of the mixture without direct comparison to neat products in this same analytical session.  I doubt it, simply because of peak overlap.  I will try comparing spectra across days and different ambient conditions.&lt;/p&gt;
+
+&lt;h3 id="Questions+and+next+steps"&gt;Questions and next steps&lt;/h3&gt;
+
+&lt;p&gt;The next step is to do triplicate analyses to observe replication/precision.  I also want to compare spectra of the same samples across days and using different calibrations.&lt;/p&gt;
+
+&lt;h3 id="Why+I'm+interested"&gt;Why I'm interested&lt;/h3&gt;
+
+&lt;p&gt;Oil Testing Kit -- we want to know the precision and the ability to discern oils and mixtures of oils.  Also, we need to know how fluorescence intensity of different samples impacts their mixtures' spectra (i.e. if you have a 1:1 v:v mixture of oils, but one has a much stronger intensity than the other, how could you tell from the resultant mixture spectra what the mixture ratio is?)&lt;/p&gt;
+</description>
+      <guid>http://publiclab.org/notes/show/12050</guid>
+    </item>
+    <item>
+      <title>Achieving a high quality spectrum</title>
+      <author>Ankur_Bodhe</author>
+      <pubDate>Sat, 11 Jul 2015 12:56:06 +0000</pubDate>
+      <link>http://publiclab.org//notes/Ankur_Bodhe/07-11-2015/achieving-a-high-quality-spectrum</link>
+      <description>&lt;p&gt;Hey Guys,
+So I wanted to use the spectrometer to Characterize Carbon Nanotubes.
+I used a 50 W halogen lamp and follwed the procedure as given in the manual of the DIY spectrometer by Public Labs.
+However, I am not able to achieve a sharp spectrum.
+I have tried:
+1) Changing the angle of inclination of the gumstick camera
+2) changing the diffraction grating
+3) changing the distance between the grating and the slit
+4) changing the focus of the gumstick camera
+Despite changing the bove mentioned parameters, I havent achieved satisfactory results.
+I have attached a picture of the spectrum I've got so far.
+Would like to know where is the problem and how to rectify it.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://i.publiclab.org/system/images/photos/000/010/632/original/Halogen_lamp_spectrum.png"&gt;&lt;img src="http://i.publiclab.org/system/images/photos/000/010/632/medium/Halogen_lamp_spectrum.png" alt="Halogen_lamp_spectrum.png" /&gt;&lt;/a&gt;&lt;/p&gt;
+</description>
+      <guid>http://publiclab.org/notes/show/12048</guid>
+    </item>
+    <item>
+      <title>Desktop Spectrometry Kit (V3) for VNIR Field Spectroscopy</title>
+      <author>lukebrown</author>
+      <pubDate>Sat, 11 Jul 2015 11:29:32 +0000</pubDate>
+      <link>http://publiclab.org//notes/lukebrown/07-11-2015/desktop-spectrometry-kit-v3-for-vnir-field-spectroscopy</link>
+      <description>&lt;h3 id="Introduction"&gt;Introduction&lt;/h3&gt;
+
+&lt;p&gt;I was interested in whether the Desktop Spectrometry Kit (V3) could be successfully used for VNIR field spectroscopy, in the context of vegetation analysis.  I conducted a quick experiment outside using a bamboo leaf and a sheet of white paper to act as a reference target.  It should be noted the IR filter was removed from the webcam before this experiment was carried out.&lt;/p&gt;
+
+&lt;h3 id="Suitability+of+the+card+enclosure"&gt;Suitability of the card enclosure&lt;/h3&gt;
+
+&lt;p&gt;Having taken the spectrometer outside, I suspected there may be substantial transmittance through the enclosure, as the spectra displayed on screen varied considerably depending on how I held the unit.  I fashioned an external sleeve out of thicker cardboard and recorded two spectra, holding the spectrometer to my body to prevent light entering through the slit.  The degree of recorded background noise was greatly reduced using the sleeve (Figure 1).&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://i.publiclab.org/system/images/photos/000/010/631/original/noise.png"&gt;&lt;img src="http://i.publiclab.org/system/images/photos/000/010/631/medium/noise.png" alt="noise.png" /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Figure 1: Background noise recorded with and without the use of an external cardboard sleeve.&lt;/p&gt;
+
+&lt;h3 id="Spectral+'reflectance'+of+a+bamboo+leaf"&gt;Spectral 'reflectance' of a bamboo leaf&lt;/h3&gt;
+
+&lt;p&gt;At each wavelength, the ratio between the DN associated with the bamboo leaf and the sheet of white paper was calculated.  It is important to note the resulting values are not true reflectance factors because no radiometric calibration was carried out prior to this calculation.  Additionally, the sheet of paper is by no means a well characterised reference target!&lt;/p&gt;
+
+&lt;p&gt;Nevertheless, some key features can be easily identified, including the chlorophyll absorption features and the red edge (Figure 2).  The magnitude of values is greater than would be expected, particularly at visible wavelengths.  This perhaps highlights the need for radiometric calibration.  The spectral reflectance of a bamboo leaf obtained using an ASD FieldSpec 3 is provided for some context.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://i.publiclab.org/system/images/photos/000/010/628/original/bamboo.png"&gt;&lt;img src="http://i.publiclab.org/system/images/photos/000/010/628/medium/bamboo.png" alt="bamboo.png" /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Figure 2: Reflectance spectra for a bamboo leaf obtained using the Desktop Spectrometry Kit (V3) and an ASD FieldSpec 3.&lt;/p&gt;
+
+&lt;h3 id="Next+steps"&gt;Next steps&lt;/h3&gt;
+
+&lt;p&gt;To reduce background noise, I believe the design of the enclosure needs to be revised.  The results presented here suggest that thicker cardboard may be advantageous.&lt;/p&gt;
+
+&lt;p&gt;To be of real use for VNIR field spectroscopy, a means of radiometric calibration is required, enabling measurements of radiance to be obtained.  True reflectance factors could then be calculated, enabling recorded spectra to be directly compared to measurements from other instruments.&lt;/p&gt;
+</description>
+      <guid>http://publiclab.org/notes/show/12047</guid>
+    </item>
+    <item>
+      <title>Oil Testing Kit -- discerning 5W30 20W30</title>
+      <author>gretchengehrke</author>
+      <pubDate>Fri, 10 Jul 2015 15:59:07 +0000</pubDate>
+      <link>http://publiclab.org//notes/gretchengehrke/07-10-2015/oil-testing-kit-discerning-5w30-20w30</link>
+      <description>&lt;h3 id="What+I+want+to+do"&gt;What I want to do&lt;/h3&gt;
+
+&lt;p&gt;I am taking spectra of the five oils in the Oil Testing Kit, and I forgot to label one of the cuvettes.  Based on color, I could not determine if it was 5W30 or 20W50, so I compared the fluorescence spectra with hopes that they would have different lambda-max values.&lt;/p&gt;
+
+&lt;h3 id="My+attempt+and+results"&gt;My attempt and results&lt;/h3&gt;
+
+&lt;p&gt;All three of these spectra were taken using a Blue Ray 405nm light for excitation, moderate light attenuation, and calibration based on the spectra of my white front bike light.  The spectra have been smoothed and the peak heights have been equalized.&lt;/p&gt;
+
+&lt;p&gt;The spectra between the known 5W30 and 20W50 are sufficiently distinct, and the unknown aligns with 20W50.&lt;/p&gt;
+
+&lt;h3 id="Questions+and+next+steps"&gt;Questions and next steps&lt;/h3&gt;
+
+&lt;p&gt;How repeatable is this resolution?  How comparable will the spectra be if I calibrate using a different white light?  How will they compare if I dilute them?  Will I be able to observe two peaks at the appropriate lambda-max values if I create a mixture of the two oils?&lt;/p&gt;
+
+&lt;h3 id="Why+I'm+interested"&gt;Why I'm interested&lt;/h3&gt;
+
+&lt;p&gt;We want to know the precision of the spectrometer and our ability to discern different grades of oils in the real world.  We're starting with neat samples and moving to mixtures and real environmental samples.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://spectralworkbench.org/sets/show/2436"&gt;http://spectralworkbench.org/sets/show/2436&lt;/a&gt;&lt;/p&gt;
+
+&lt;iframe width='100%' height='700px' border='0' src='http://spectralworkbench.org/sets/embed2/2436'&gt;&lt;/iframe&gt;
+
+</description>
+      <guid>http://publiclab.org/notes/show/12046</guid>
+    </item>
+    <item>
+      <title>Mid stream Urine analysis: Check whether you need to drink more water or not</title>
+      <author>chongyukwai</author>
+      <pubDate>Sat, 23 May 2015 14:56:59 +0000</pubDate>
+      <link>http://publiclab.org//notes/chongyukwai/05-23-2015/mid-stream-urine-analysis-check-whether-you-need-to-drink-more-water-or-not</link>
+      <description>&lt;p&gt;Background: This is an experiential application of using spectro as a measurement of the concentration of the urine. So people are unaware that they drink insufficient water. This experiment helps us to generate information and provide evidence whether they have drink sufficient H2O and provide advice to them.&lt;/p&gt;
+
+&lt;p&gt;Method
+The method has been published in this research note under the incandescent light.
+&lt;a href="http://publiclab.org/notes/chongyukwai/05-23-2015/heat-con-spectro-photometer"&gt;http://publiclab.org/notes/chongyukwai/05-23-2015/heat-con-spectro-photometer&lt;/a&gt;
+After taking the spectro image of all three in 0 degree, the image is analysed using spectrobench and auto detect the highest peak
+Result and discussion:
+Data was published in this page.
+&lt;a href="http://spectralworkbench.org/sets/show/2219"&gt;http://spectralworkbench.org/sets/show/2219&lt;/a&gt;
+It showed that in the H2O, all the light can pass through.
+However, even when there was slightly color difference in the urine. The spectro still can detect and give a unbalanced index compare to different wave length.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://i.publiclab.org/system/images/photos/000/009/994/original/11354948_812515285511222_2112397807_n.jpg"&gt;&lt;img src="http://i.publiclab.org/system/images/photos/000/009/994/medium/11354948_812515285511222_2112397807_n.jpg" alt="11354948_812515285511222_2112397807_n.jpg" /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Left is light urine and the right is normal tape water&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://i.publiclab.org/system/images/photos/000/009/995/original/graph.png"&gt;&lt;img src="http://i.publiclab.org/system/images/photos/000/009/995/medium/graph.png" alt="graph.png" /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Compare with light urine and H2O, all light can be transmitted in H2O but in light urine red and purple light were being absorbed which can be deviated between the two. In high concentrated urine, a significant high peak value was found in the yellow spectrum.
+Discussion: Further research is needed in order to more quantitative identify the concentration of urine and whether it has reached certain level (pathogenic level).&lt;/p&gt;
+</description>
+      <guid>http://publiclab.org/notes/show/11834</guid>
+    </item>
+    <item>
+      <title>Internal Image of Desktop Spectrometer with "Gum Stick" Camera</title>
+      <author>kbollhorst</author>
+      <pubDate>Thu, 30 Apr 2015 11:57:50 +0000</pubDate>
+      <link>http://publiclab.org//notes/kbollhorst/04-30-2015/internal-image-of-desktop-spectrometer-with-gum-stick-camera</link>
+      <description>&lt;p&gt;I have posted an image of the "gum stick" camera version of the desktop spectrometer. I wish to add 2 additional notes regarding assembly of the camera.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;I spray painted the front half of the housing with flat black paint in order to reduce stray light reflections.&lt;/li&gt;
+&lt;li&gt;Regarding the fabrication of a diffraction grating from a DVD-R, I have the following comments:
+
+&lt;ul&gt;
+&lt;li&gt;The DVD-R included in the kit could not be used for it had scratches over 90% of the DVD-R surface. In addition, said DVD was covered in dirt and adhesive.  I used on my own DVDs.&lt;/li&gt;
+&lt;li&gt;One cannot reliably remove the dye on the delaminated DVD bottom layer using water or dishsoap + warm water with agitation. I worked for 2 hours on one DVD-R with no results.&lt;/li&gt;
+&lt;li&gt;The best method for removing the dye from the DVD bottom layer is via the use of reagent grade isopropanol with a clean room wipe. Wet the clean room wipe with the isopropanol and gently swipe the diffraction layer surface with the wipe. DO NOT APPLY PRESSURE! This method will enable you to remove the dye in less than 5 minutes.&lt;/li&gt;
+&lt;li&gt;Regarding the aluminum layer, I found that HP DVD-R's and Verbatim DVD-Rs will not leave the aluminum layer on the diffraction grating layer when splitting/delaminating the DVD-R.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+
+</description>
+      <guid>http://publiclab.org/notes/show/11775</guid>
+    </item>
+    <item>
+      <title>The accidental raspberry pi spectrometer: first light</title>
+      <author>khufkens</author>
+      <pubDate>Wed, 29 Apr 2015 02:28:26 +0000</pubDate>
+      <link>http://publiclab.org//notes/khufkens/04-29-2015/the-accidental-raspberry-pi-spectrometer-first-light</link>
+      <description>&lt;p&gt;I put my design together today. The design used is shown below, but has some issues still. General layout: slit on the left, baffle and grating  / sensor array on the right.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src="https://farm8.staticflickr.com/7694/16686565663_fd9ee13a2f_z_d.jpg" alt="" /&gt;&lt;/p&gt;
+
+&lt;p&gt;A first spectrum can be found below.&lt;/p&gt;
+
+&lt;iframe width='500px' height='300px' border='0' src='http://spectralworkbench.org/spectra/embed/48767'&gt;&lt;/iframe&gt;
+
+
+&lt;h4 id="Accomplished:"&gt;Accomplished:&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Seems like the incident angle was pretty much perfect, aligning the red part of the spectrum to the center of the image&lt;/li&gt;
+&lt;li&gt;the sensor array setup works nicely (compact unit)&lt;/li&gt;
+&lt;/ul&gt;
+
+
+&lt;h4 id="Issues:"&gt;Issues:&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;focus, had to mess with the raspberry pi camera lens&lt;/li&gt;
+&lt;li&gt;I didn't calculate the needed distance between the grating and the sensor as to maximize the used pixels (I admit, I was lazy). The small exit angles of the 300l/mm grating require a large distance from the grating to expose the whole image sensor. The peak at 0 nm is the 0th order peak, the little peaks &gt; 1000nm are the second and third order peaks which also make it onto the sensor.&lt;/li&gt;
+&lt;/ul&gt;
+
+
+&lt;p&gt;Lessons learned: do the math before making a design.&lt;/p&gt;
+
+&lt;p&gt;Back to the drawing board, more later...&lt;/p&gt;
+</description>
+      <guid>http://publiclab.org/notes/show/11774</guid>
+    </item>
+    <item>
+      <title>can a surface sheen be collected for oil testing?</title>
+      <author>mathew</author>
+      <pubDate>Tue, 07 Apr 2015 23:54:18 +0000</pubDate>
+      <link>http://publiclab.org//notes/mathew/04-07-2015/can-a-surface-sheen-be-collected-for-oil-testing</link>
+      <description>&lt;p&gt;image by by &lt;a href="https://www.flickr.com/photos/worldworldworld/4809200807/in/set-72157624236184769"&gt;Cesar Harada CC-BY-NC-SA&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Can an oil slick be picked up off the surface and concentrated in to just oil?  I did a suggestive early experiment using &lt;a href="http://www.newpig.com/pig/US/pig-oil-only-absorbent-mat-pack-mat750?cm_cat=shop_by_product"&gt;PIG Mats&lt;/a&gt;, a cheap oil-only absorbent mat for industrial usage.  They are made of non-woven polypropylene.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://i.publiclab.org/system/images/photos/000/009/626/original/IMG_20150402_121850.jpg"&gt;&lt;img src="http://i.publiclab.org/system/images/photos/000/009/626/medium/IMG_20150402_121850.jpg" alt="IMG_20150402_121850.jpg" /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;I poured a little vegetable oil on top of a small container of water, and then swished a piece of the PIG Mat around. It picked up the oil but not the water, as advertised.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://i.publiclab.org/system/images/photos/000/009/627/original/IMG_20150402_121506.jpg"&gt;&lt;img src="http://i.publiclab.org/system/images/photos/000/009/627/medium/IMG_20150402_121506.jpg" alt="IMG_20150402_121506.jpg" /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;I was able to wring the oil back out of the mat.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://i.publiclab.org/system/images/photos/000/009/628/original/IMG_20150402_121409.jpg"&gt;&lt;img src="http://i.publiclab.org/system/images/photos/000/009/628/medium/IMG_20150402_121409.jpg" alt="IMG_20150402_121409.jpg" /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Will this work with crude on an ocean surface? Maybe!  Any thoughts on how to run a test ethically are much appreciated!&lt;/p&gt;
+</description>
+      <guid>http://publiclab.org/notes/show/11752</guid>
+    </item>
+    <item>
+      <title>curved grating</title>
+      <author>DarkGreen</author>
+      <pubDate>Sun, 29 Mar 2015 03:33:26 +0000</pubDate>
+      <link>http://publiclab.org//notes/DarkGreen/03-29-2015/curved-grating</link>
+      <description>&lt;p&gt;so... I use a blank DVD-R, and ofcause that makes the grating curved.&lt;/p&gt;
+
+&lt;p&gt;Are there any software for correcting that?&lt;/p&gt;
+
+&lt;p&gt;Another thing. Does it mattitr if the grooved side of the DVD is towards the incident light or not?&lt;/p&gt;
+
+&lt;p&gt;Cheers&lt;/p&gt;
+</description>
+      <guid>http://publiclab.org/notes/show/11730</guid>
+    </item>
+    <item>
+      <title>a history of crediting contributions</title>
+      <author>mathew</author>
+      <pubDate>Thu, 26 Mar 2015 00:04:26 +0000</pubDate>
+      <link>http://publiclab.org//notes/mathew/03-26-2015/a-history-of-crediting-contributions</link>
+      <description>&lt;p&gt;photo credit &lt;a href="/profile/Stevie"&gt;@Stevie&lt;/a&gt;, &lt;a href="/notes/stevie/09-12-2014/washington-university-visits-the-gulf-coast-and-maps"&gt;Washington University students build camera rigs.&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Giving proper credit for Public Lab's collaborative hardware development is a challenge. For open source software this challenge has been mastered by version control systems and code annotations.  Its pretty clear who wrote what in a software package.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://i.publiclab.org/system/images/photos/000/009/418/original/Screen_shot_2015-03-25_at_4.39.19_PM.png"&gt;&lt;img src="http://i.publiclab.org/system/images/photos/000/009/418/medium/Screen_shot_2015-03-25_at_4.39.19_PM.png" alt="Screen_shot_2015-03-25_at_4.39.19_PM.png" /&gt;&lt;/a&gt;
+&lt;a href="https://github.com/publiclab/mapmill/graphs/contributors"&gt;Mapmill contributions&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Some open hardware is easily trackable like software because each component is a digital file that can be tracked using software-derived systems, and the collaboration centers around digital repositories.&lt;br/&gt;
+Public Lab tracks our &lt;a href="https://github.com/publiclab"&gt;kits production through Github&lt;/a&gt;, but our development is a a mixture of practices where documentation difficult.  Our hardware development cycle includes word-of-mouth skill building between practitioners, in-person workshops, private blogs, private and public e-mail lists, research notes and wiki edits, and Github contributions.  Full credit would include who participated in the designs, what they did, and the size of the contribution.  Over time we've tried a mixture of qualitative and quantitative strategies for attribution that have been both very specific in places and deliberately vague.  As we continue to explore new strategies, the only thing we're settled on is that somewhere there should be a list of every contributor's name.&lt;/p&gt;
+
+&lt;h3 id="Balloon+Mapping+Kit"&gt;Balloon Mapping Kit&lt;/h3&gt;
+
+&lt;p&gt;At first, we only had an e-mail list &lt;a href="/lists"&gt;(Grassroots Mapping)&lt;/a&gt; and volunteers.  For a period of 2010 Jeff &lt;a href="/profile/Warren"&gt;@Warren&lt;/a&gt; was working on balloon mapping full time in completion of his graduate thesis, and was able to put together a first edition balloon mapping guide that he signed.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://i.publiclab.org/system/images/photos/000/009/419/original/Screen_shot_2015-03-25_at_4.46.32_PM.png"&gt;&lt;img src="http://i.publiclab.org/system/images/photos/000/009/419/medium/Screen_shot_2015-03-25_at_4.46.32_PM.png" alt="Screen_shot_2015-03-25_at_4.46.32_PM.png" /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;After a full revision the 2.2 guide included so many contributions from the community, Jeff took his name off, even though it is almost entirely his illustration and layout.  We've left instructions unsigned since then. As a staff we ask, when one is recording the ideas of others, where does authorship lie?&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://i.publiclab.org/system/images/photos/000/009/420/original/Screen_shot_2015-03-25_at_4.48.22_PM.png"&gt;&lt;img src="http://i.publiclab.org/system/images/photos/000/009/420/medium/Screen_shot_2015-03-25_at_4.48.22_PM.png" alt="Screen_shot_2015-03-25_at_4.48.22_PM.png" /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;As we developed kits, authorship seemed more urgent-- I was running a kickstarter, but the kit parts were just a list of best practices I put together. This list is of usernames contributing to the grassrootsmapping blog or public lab site. I put the original gulf mapping team and volunteer group up top because I think they did the most work on the parts in this first kit.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://i.publiclab.org/system/images/photos/000/009/421/original/Screen_shot_2015-03-25_at_4.49.49_PM.png"&gt;&lt;img src="http://i.publiclab.org/system/images/photos/000/009/421/medium/Screen_shot_2015-03-25_at_4.49.49_PM.png" alt="Screen_shot_2015-03-25_at_4.49.49_PM.png" /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;This made sense at the time but we wanted a less subjective and arbitrary process.
+Since our first balloon kit we've gone through an average of three revisions of each kit part. In that time we've also used two quantitative strategies for attribution.  First we tried quantifying total wiki edits and research notes.  That produced extremely skewed numbers.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://i.publiclab.org/system/images/photos/000/009/422/original/Screen_shot_2015-03-25_at_4.50.54_PM.png"&gt;&lt;img src="http://i.publiclab.org/system/images/photos/000/009/422/medium/Screen_shot_2015-03-25_at_4.50.54_PM.png" alt="Screen_shot_2015-03-25_at_4.50.54_PM.png" /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt; For instance, Cesar Harada is a significant technical contributor, and Hagit Keysar one of our most prolific mappers, but I help maintain the wiki pages and am therefore credited with one hundred times Hagit's contribution and two thousand times Cesars.  We used to have these numbers online but stopped, in favor of our second strategy.&lt;/p&gt;
+
+&lt;p&gt;Our second attribution strategy was less specific and we've stuck with it-- &lt;a href="http://publiclab.org/contributors/balloon-mapping"&gt;we list people by most recent contribution.&lt;/a&gt; The reason we like this strategy is that it points to people working on the tool right now, giving those reading the list a place to start contributing. It also suggests something about credit on an active open hardware project--the most important function of attributions is to help tool users become tool contributors by helping them find current contributors.&lt;/p&gt;
+
+&lt;p&gt;We have this message running in every research note and wiki page:
+&lt;a href="http://i.publiclab.org/system/images/photos/000/009/423/original/balloonmappng_recent_contributors.png"&gt;&lt;img src="http://i.publiclab.org/system/images/photos/000/009/423/medium/balloonmappng_recent_contributors.png" alt="balloonmappng_recent_contributors.png" /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id="Spectrometer"&gt;Spectrometer&lt;/h3&gt;
+
+&lt;p&gt;The spectrometry project started out with the 'authorless' strategy, and moved quickly to a list by most recent contribution, which is how we've credited people in the instructions for the past three years.&lt;/p&gt;
+
+&lt;p&gt;March 2011
+&lt;a href="http://i.publiclab.org/system/images/photos/000/009/425/original/Screen_shot_2015-03-25_at_4.55.02_PM.png"&gt;&lt;img src="http://i.publiclab.org/system/images/photos/000/009/425/medium/Screen_shot_2015-03-25_at_4.55.02_PM.png" alt="Screen_shot_2015-03-25_at_4.55.02_PM.png" /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;December 2012
+&lt;a href="http://i.publiclab.org/system/images/photos/000/009/426/original/Screen_shot_2015-03-25_at_4.55.32_PM.png"&gt;&lt;img src="http://i.publiclab.org/system/images/photos/000/009/426/medium/Screen_shot_2015-03-25_at_4.55.32_PM.png" alt="Screen_shot_2015-03-25_at_4.55.32_PM.png" /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;February 2015
+&lt;a href="http://i.publiclab.org/system/images/photos/000/009/427/original/Screen_shot_2015-03-25_at_4.56.29_PM.png"&gt;&lt;img src="http://i.publiclab.org/system/images/photos/000/009/427/medium/Screen_shot_2015-03-25_at_4.56.29_PM.png" alt="Screen_shot_2015-03-25_at_4.56.29_PM.png" /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Starting in January 2015 we've added a new strategy to the spectrometry kit 3.0-- &lt;a href="http://publiclab.org/notes/mathew/01-17-2015/shortlinks-putting-contributors-directly-on-a-kit"&gt;we're putting shortened web links to research notes and wiki pages directly on the tool itself&lt;/a&gt;.  This leads potential contributors straight to the research and researchers working on a specific component.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://i.publiclab.org/system/images/photos/000/009/429/original/Screen_shot_2015-03-25_at_5.02.04_PM.png"&gt;&lt;img src="http://i.publiclab.org/system/images/photos/000/009/429/medium/Screen_shot_2015-03-25_at_5.02.04_PM.png" alt="Screen_shot_2015-03-25_at_5.02.04_PM.png" /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Combined with &lt;a href="http://publiclab.org/notes/liz/01-13-2015/diy-kit-design-strategies-for-participation"&gt;new design strategies centering around paper&lt;/a&gt;
+&lt;a href="http://publiclab.org/notes/stoft/03-02-2015/plab-3-spectrometer-upgrade-prototype"&gt;substantial contributions&lt;/a&gt; have come more quickly and &lt;a href="(/notes/ke4rjg/03-17-2015/baffle-for-spectrometer-3-0"&gt;been easier to integrate&lt;/a&gt;) back into the kit than with &lt;a href="/wiki/spectrometer-history"&gt;our previous spectrometer design&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Printing directly on the kit itself works well for paper kits, but for kits that are an assemblage of manufactured parts like the balloon kit, we'll use fliers to call out recent contributions.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://i.publiclab.org/system/images/photos/000/009/428/original/Screen_shot_2015-03-25_at_5.01.17_PM.png"&gt;&lt;img src="http://i.publiclab.org/system/images/photos/000/009/428/medium/Screen_shot_2015-03-25_at_5.01.17_PM.png" alt="Screen_shot_2015-03-25_at_5.01.17_PM.png" /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Authorship is a window into development process that should invite new contributors in and show them where they can help.&lt;/p&gt;
+
+&lt;p&gt;Assigning credit is an historical project with narrative elements that will always be qualitative.  We have moved away from trying to quantify "absolute" credit, some percentage of authorship, focusing instead on an instrumental definition:  authorship should be an invitation.  Authorship should provide new contributors with a map of current development and developers, so they can find a place to work and people to work with.&lt;/p&gt;
+</description>
+      <guid>http://publiclab.org/notes/show/11724</guid>
+    </item>
+    <item>
+      <title>Link to: An introduction to the use of fluorescence spectroscopy in inorganic analysis </title>
+      <author>Frikkie</author>
+      <pubDate>Thu, 19 Mar 2015 12:28:03 +0000</pubDate>
+      <link>http://publiclab.org//notes/Frikkie/03-19-2015/link-to-an-introduction-to-the-use-of-fluorescence-spectroscopy-in-inorganic-analysis</link>
+      <description>&lt;p&gt;This is some very useful info: &lt;a href="http://www.perkinelmer.co.kr/files/fluorescence_inorganic.pdf"&gt;www.perkinelmer.co.kr/files/fluorescence_inorganic.pdf&lt;/a&gt;&lt;/p&gt;
+</description>
+      <guid>http://publiclab.org/notes/show/11690</guid>
+    </item>
+    <item>
+      <title>Baffle for Spectrometer 3.0</title>
+      <author>ke4rjg</author>
+      <pubDate>Tue, 17 Mar 2015 16:24:24 +0000</pubDate>
+      <link>http://publiclab.org//notes/ke4rjg/03-17-2015/baffle-for-spectrometer-3-0</link>
+      <description>&lt;p&gt;Sometimes, scattered light can degrade the contrast of the spectrum, particularly if you are observing a very bright source.&lt;/p&gt;
+
+&lt;p&gt;To minimize this, I made a papercraft baffle for Spectrometer 3.0. Just print out the attached pdf file. Cut it out, assemble it, then attach it to the bench with the leftover Velcro.&lt;/p&gt;
+
+&lt;p&gt;I think this should be added to the spectrometer kit.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://i.publiclab.org/system/images/photos/000/009/290/original/Baffle_for_Spectrometer_3.0.pdf"&gt;&lt;i class="icon icon-file"&gt;&lt;/i&gt; Baffle_for_Spectrometer_3.0.pdf&lt;/a&gt;&lt;/p&gt;
+</description>
+      <guid>http://publiclab.org/notes/show/11685</guid>
+    </item>
+    <item>
+      <title>PLab 3 Gain Correction</title>
+      <author>stoft</author>
+      <pubDate>Fri, 06 Mar 2015 07:19:47 +0000</pubDate>
+      <link>http://publiclab.org//notes/stoft/03-06-2015/plab-3-gain-correction</link>
+      <description>&lt;p&gt; In a previous note ( &lt;a href="http://publiclab.org/notes/stoft/02-25-2015/plab-spectrometer-gain-correction"&gt;http://publiclab.org/notes/stoft/02-25-2015/plab-spectrometer-gain-correction&lt;/a&gt; ) I used a very common light source (the Sun) as a broad-spectrum source for correcting the PLab spectrometer's gain un-flatness. While that source is free and available to nearly anyone, it does suffer from some variability of environmental conditions like winter, time of day and humidity so it's not always so easy. Still the technique does function well with clear mid-day sun.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;A Better Reference:&lt;/strong&gt;
+As an alternative, with finding an inexpensive reference standard in mind, I performed the same test procedure using a 4700K 12V halogen from Solux. The raw plot data has some averaging because 'finer' measurement detail, when using a broadband source, is just noise. The results are below:&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://i.publiclab.org/system/images/photos/000/009/189/original/SoluxSANMGainFix.gif"&gt;&lt;img src="http://i.publiclab.org/system/images/photos/000/009/189/medium/SoluxSANMGainFix.gif" alt="SoluxSANMGainFix.gif" /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;While not deliberately wanting to specify a brand, Solux does manufacture smooth response, broadband, halogen sources (one specifically at 4700 deg-K) and, more importantly, they publish their detailed measurement data. While it is not a true calibrated standard, it is the closest option I've found.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Uncertainty, Not Error:&lt;/strong&gt;
+While spectrometer measurements certainly have errors (values which are not accurate by some measure) those error values are not actually known. Instead, the potential magnitude of those errors, which is the uncertainty, can be specified.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Source Uncertainty:&lt;/strong&gt;
+Solux states that, for their 4700K halogen, they specify a CCT accuracy of +/- 200K for a 12.0V lamp with 3-5min warm-up which will not deviate by more than +/- 100K over its 4000 hour lifetime and output illumination intensity will remain within 5%. The Solux 4700K lamp has a similar shape to an ideal black-body curve though it has some extended output toward the infrared and the peak and its peak output is about 550nm whereas a 4700K ideal black-body curve peaks at about 625nm. The curve shape has been published so the only requirement is to calculate the accuracy uncertainty related to the potential difference in output color temperature. Since the worst case for a new lamp is +/- 200K (i.e. no aging effects at that point) then it is necessary to calculate the impact of shifting the color temp by +/- 200K.&lt;/p&gt;
+
+&lt;p&gt;To do this, I generated a black-body curve in Matlab and calculated this effect. The first plot (below) shows an ideal black-body curve variation for the range of 4500K - 4900K color temperature:&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://i.publiclab.org/system/images/photos/000/009/218/original/IdealBlackBodyDegKShift.gif"&gt;&lt;img src="http://i.publiclab.org/system/images/photos/000/009/218/medium/IdealBlackBodyDegKShift.gif" alt="IdealBlackBodyDegKShift.gif" /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Notice immediately that since the PLab spectrometer is limited to about 650nm, there is almost zero uncertainty there; the biggest difference is toward the UV. Below is a plot of both the difference and the percent uncertainty for this effect:&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://i.publiclab.org/system/images/photos/000/009/220/original/IdealBlackBodyDegKShiftError.gif"&gt;&lt;img src="http://i.publiclab.org/system/images/photos/000/009/220/medium/IdealBlackBodyDegKShiftError.gif" alt="IdealBlackBodyDegKShiftError.gif" /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Observe that while the uncertainty rises consistently toward 400nm, worst case is still only about 10%. Compare this to "completely unknown" for the PLab device without any form of gain compensation.&lt;/p&gt;
+
+&lt;p&gt;Also note that these curves are all normalized and have no absolute intensity values because the gain-correction is all relative. The Solex spec of 5% for intensity aging has no impact on gain-calibration. For this first-order gain-correction, there are only two uncertainties to include; the peak color temp uncertainty of a Solux 4700K lamp (+/- 200K) and aging shift of that color temperature over 4000 hours burn time. If a Solux 4700K 12V lamp is only used for gain-correction, it will never suffer long-term aging effects leaving the single +/- 200K uncertainty as the only significant factor.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Cautions:&lt;/strong&gt;
+Be aware of several factors with halogen lamps:
+- They get HOT !!!
+- The lamp must be warmed-up for 3-5 min to stabilize
+- The 12V lamp requires a 12V supply but that is good because it keeps the voltage regulated so the lamp intensity will not wander after warm-up
+- A Solux diffuser, which fits the 4700K 12V lamp, may reduce intensity variations at the spectrometer
+- The spectrometer should be positioned at least 6 feet from the lamp -- the lamp is VERY bright so the distance is necessary
+- A bulb housing which is designed to minimize the IR emitted from the back of the bulb could be beneficial -- though I've not tested or measured this effect&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Practical Gain-Correction:&lt;/strong&gt;
+First consider PLab spectrometer's un-corrected response to the halogen's light (Magenta) below. The Solux data is plotted in Black.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://i.publiclab.org/system/images/photos/000/009/184/original/SoluxSANMSensitivity.gif"&gt;&lt;img src="http://i.publiclab.org/system/images/photos/000/009/184/medium/SoluxSANMSensitivity.gif" alt="SoluxSANMSensitivity.gif" /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Next&lt;/strong&gt;, observe the correction process. In the graph below, the Black shows the smooth response of the halogen while the Magenta shows the irregular sensitivity of the Sanm webcam. The Green show a 20X magnified view of the correction function and the Red shows the result. Note that the usable measurement range of the PLab device is really 400nm - 650nm. Beyond that band measurement data uncertainty increases dramatically because there is so little sensitivity to those wavelengths.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://i.publiclab.org/system/images/photos/000/009/185/original/SoluxSANMGainCorrection.gif"&gt;&lt;img src="http://i.publiclab.org/system/images/photos/000/009/185/medium/SoluxSANMGainCorrection.gif" alt="SoluxSANMGainCorrection.gif" /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Now look closer&lt;/strong&gt;, in the plot below, to see the residual uncertainty after the gain correction is applied. The 400-650nm band becomes more obvious as the Black line show the after-correction uncertainty.&lt;/p&gt;
+
+&lt;p&gt;In this case, the in-band error is less than 12% of the peak signal level at 530nm.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://i.publiclab.org/system/images/photos/000/009/186/original/SoluxSANMGainCorrectionError.gif"&gt;&lt;img src="http://i.publiclab.org/system/images/photos/000/009/186/medium/SoluxSANMGainCorrectionError.gif" alt="SoluxSANMGainCorrectionError.gif" /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Finally&lt;/strong&gt;, as a test, CFL data was used to verify the process.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://i.publiclab.org/system/images/photos/000/009/187/original/SoluxSANMGainCorrectionCFL.gif"&gt;&lt;img src="http://i.publiclab.org/system/images/photos/000/009/187/medium/SoluxSANMGainCorrectionCFL.gif" alt="SoluxSANMGainCorrectionCFL.gif" /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Conclusions:&lt;/strong&gt;
+Because the 4700K halogen has such a smooth response, even beyond the 400-650nm band, and because there is detailed published output data, the 4700K Solux source is a viable option for PLab spectrometer gain-correction. In addition, Solux specs for this 12.0V halogen lamp include a +/-200K uncertainty (on the exact peak color temperature of any single lamp of that type) which means the primary gain-correction uncertainty is about +/- 10% worst case at 400nm (which decreases to a minimum near 650nm); a substantial improvement over the previous PLab quality of "unknown".&lt;/p&gt;
+</description>
+      <guid>http://publiclab.org/notes/show/11658</guid>
+    </item>
+    <item>
+      <title>Gulf Coast: Build your own spectrometer event! </title>
+      <author>stevie</author>
+      <pubDate>Thu, 05 Mar 2015 18:38:45 +0000</pubDate>
+      <link>http://publiclab.org//notes/stevie/03-05-2015/gulf-coast-build-your-own-spectrometer-event</link>
+      <description>&lt;h4 id="Public+Lab+and+IDIYA+are+hosting+a+“Build+your+own+spectrometer”+event!"&gt;Public Lab and IDIYA are hosting a “Build your own spectrometer” event!&lt;/h4&gt;
+
+&lt;p&gt;Colored light is given off from all materials and is often a blend of different colors. A spectrometer is a device which splits those colors apart, like a prism, and measures the strength of each color. Spectrometers can be useful in examining everything from the make up of your beer, to oil testing and food grade sampling. Spectrometers tend to have price tags in the thousands, far too expensive for most of us. However, at this event you will you will not only learn how to use a spectrometer, but make one yourself with a Public Lab Spectrometer Kit.&lt;/p&gt;
+
+&lt;p&gt;We are offering attendees a discount on the Public Lab Spectrometer Kit. Sold online for $45 (plus shipping), we will offer the new kit for $35. Kits and registration is limited. &lt;strong&gt;Register at &lt;a href="https://tms.ezfacility.com/OnlineRegistrations/Register.aspx?CompanyID=4471&amp;amp;GroupID=1268335"&gt;IDIYA and reserve your kit.&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;When:&lt;/strong&gt; Thursday, April 1st, 6:30-9pm&lt;/br&gt;
+&lt;strong&gt;Where:&lt;/strong&gt; IDIYA: 2705 S. Broad Street New Orleans &lt;/br&gt;
+&lt;strong&gt;What to Bring:&lt;/strong&gt; A computer!&lt;/br&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Event Includes:&lt;/strong&gt;&lt;/br&gt;
+- A workshop on kit assembly and uses,&lt;/br&gt;
+- Discount on Public Lab's new &lt;a href="http://store.publiclab.org/collections/spectrometry/products/desktop-spectrometry-kit-3-0"&gt;Spectrometer Kit&lt;/a&gt; and&lt;/br&gt;
+- Dinner.&lt;/p&gt;
+
+&lt;p&gt;For more information on: &lt;/br&gt;
+- &lt;a href="http://publiclab.org/wiki/spectrometer"&gt;What is a spectrometer? &lt;/a&gt;&lt;/br&gt;
+- &lt;a href="http://publiclab.org/wiki/desktop-spectrometry-kit-3-0"&gt;What is in the Spectrometer Kit and what are some examples of ways people use the spectrometer? &lt;/a&gt;&lt;/p&gt;
+</description>
+      <guid>http://publiclab.org/notes/show/11657</guid>
+    </item>
+    <item>
+      <title>Multi parameter analysis using a DIY Spectrometer</title>
+      <author>Frikkie</author>
+      <pubDate>Thu, 05 Mar 2015 11:30:32 +0000</pubDate>
+      <link>http://publiclab.org//notes/Frikkie/03-05-2015/multi-parameter-analysis-using-a-diy-spectrometer</link>
+      <description>&lt;p&gt;A colorimeter, flame photometer and conductivity meter all in one.&lt;/p&gt;
+
+
+
+
+&lt;p&gt;A few years back I got fascinated with aquaponic food production. After coming to realize the importance of being able to measure various chemical parameters frequently if one wish to successfully operate an aquaponic system, whether it be on small scale or commercial I started looking into ways of setting up my own water testing laboratory at home. I have a fair background in basic analytical chemistry and have been working in analytical laboratories most of my career. I am well aware of the technologies available to fulfill this need but from my point of view it was way too expensive. After finding this website and a few others I realized that a whole new world of opportunities have opened up to me. I am really thankful for the many contributions many people made over here. I hope that what I have to present here will be useful to others.&lt;/p&gt;
+
+
+
+
+&lt;p&gt;Details:&lt;/p&gt;
+
+
+
+
+&lt;p&gt;The spectrometer&lt;/p&gt;
+
+
+
+
+&lt;p&gt;I build my spectrometer using the very cheap Microsoft LiveCam VX800 with its IR filter removed. It really can’t compete with any of the HD cameras but it is fine for the applications that I will describe here.&lt;/p&gt;
+
+
+
+
+&lt;p&gt;Colorimetric Analysis&lt;/p&gt;
+
+
+
+
+&lt;p&gt;For colorimetric analysis the spectrometer is setup in the usual way. Light from a LED or other source of light is passed through the sample and the absorbance is measured. I have done some experimentation with the analysis of nitrites in water using the Griess reagent and the analysis of phosphate using the ascorbate- molybdate method. I found the following to be rather important: When developing your own colorimetric methods you must be able to control the intensity of the light source and you should preferably use video software that will give you control over camera’s setting such as gamma, intensity and gain. I power my LED’s from an adjustable power supply and use a simple pot to adjust the intensity. I have also been using Debut video software which is free for personal use.&lt;/p&gt;
+
+
+
+
+&lt;p&gt;Flame Emission&lt;/p&gt;
+
+
+
+
+&lt;p&gt;The analysis of potassium and sodium is achieved by combining the DIY spectrometer with a DIY nebulizer and gas burner build from mostly hardware store materials. The spectrometer is pointed to the flame and the intensities of spectral lines for potassium and sodium can be measured.&lt;/p&gt;
+
+
+
+
+&lt;p&gt;Nebulizer and Burner Design&lt;/p&gt;
+
+
+&lt;p&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://i.publiclab.org/system/images/photos/000/009/206/original/DIY_NEB___BURNER.jpg"&gt;&lt;img src="http://i.publiclab.org/system/images/photos/000/009/206/medium/DIY_NEB___BURNER.jpg" alt="DIY_NEB___BURNER.jpg" /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Electrical Conductivity&lt;/p&gt;
+
+
+
+
+&lt;p&gt;The DIY electrical conductivity meter is a simple 555 IC oscillator (6.8KHz, 53% cycle) The output pulse is connected in series with a DIY conductivity electrode and an LED. The brightness of the LED will depend on the electrical conductivity of the measured solution. The DIY spectrometer is then used to measure the brightness of the LED. By measuring multiple conductivity standards a calibration cure can be obtained. To obtain some flexibility in term of calibration range I will simply manipulate the supply voltage of the oscillator – for example on low conductivity sample I will supply a higher voltage to the oscillator thus getting the LED to be brighter and so forth.&lt;/p&gt;
+
+
+&lt;p&gt;&lt;/p&gt;
+
+&lt;p&gt;The Circuit&lt;/p&gt;
+
+
+&lt;p&gt;&lt;a href="http://i.publiclab.org/system/images/photos/000/009/209/original/OSCILLATOR.jpg"&gt;&lt;img src="http://i.publiclab.org/system/images/photos/000/009/209/medium/OSCILLATOR.jpg" alt="OSCILLATOR.jpg" /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Data Handling&lt;/p&gt;
+
+
+
+
+&lt;p&gt;To allow quick measurement I created an, excel based tool using some “very basic” visual basic programming (This was rather difficult as I am not a programmer) This tool allow me to quickly perform calibrations and direct measurement of standards and samples. I Hope I can pass this on to anyone who might be able to develop this further for the Public Lab community. It is far from perfect and full of bugs but I believe it can serve as a blueprint of the type of “software” that is needed for DIY analysis. I will explain how to use this tool a video.&lt;/p&gt;
+
+
+
+
+&lt;p&gt;The Excel Tool (Don't rename this file, if you do the macro's wont work)
+&lt;/p&gt;
+
+
+&lt;p&gt;&lt;a href="http://i.publiclab.org/system/images/photos/000/009/157/original/SPECTRA_MEASURE_1.0.xlsm"&gt;&lt;i class="icon icon-file"&gt;&lt;/i&gt; SPECTRA_MEASURE_1.0.xlsm&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Example Video's&lt;/p&gt;
+
+
+&lt;p&gt;I apologize for the large file size, I don’t have tool to compress my video’s&lt;/p&gt;
+
+
+&lt;p&gt;&lt;a href="http://i.publiclab.org/system/images/photos/000/009/158/original/(Video1)_Nitrate_calibration_and_analysis.wmv"&gt;&lt;i class="icon icon-file"&gt;&lt;/i&gt; (Video1)_Nitrate_calibration_and_analysis.wmv&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://i.publiclab.org/system/images/photos/000/009/159/original/(Video2)Electrical_conductivity.wmv"&gt;&lt;i class="icon icon-file"&gt;&lt;/i&gt; (Video2)Electrical_conductivity.wmv&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://i.publiclab.org/system/images/photos/000/009/160/original/(Video3)_Flame_emmision.wmv"&gt;&lt;i class="icon icon-file"&gt;&lt;/i&gt; (Video3)_Flame_emmision.wmv&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;General Notes&lt;/p&gt;
+
+
+&lt;p&gt;&lt;/p&gt;
+
+&lt;p&gt;Linearity of the colorimetric methods is exceptional. With conductivity and flame emission measurements I tend to work with non-linear calibration cures that still display good coloration between standards.&lt;/p&gt;
+
+
+&lt;p&gt;&lt;/p&gt;
+
+&lt;p&gt;NOTE: IF YOU EVER ATTEMPT TO INVESTIGATE FLAME EMISSION TECHNIQUES YOU DO SO AT YOUR OWN RISK. THIS IS DANGEROUS. I HAVE HAD FLASHBACKS ON MORE THAN ONE OCCASION. ONE RESULTED IN A BROKEN WINDOW. THERE ARE SPECIAL TECHNIQUES IN IGNITING AND ADJUSTING THE FLAME AND I WILL NOT BE DISCUSSING THIS HERE. IF YOU EVER ATTEMPT THIS FIND AN OLD ATOMIC ABSORPTION OR FLAME PHOTOMETER MANUAL AND READ UP ON THIS. ALWAYS HAVE SOME SORT OF A SHIELD BETWEEN THE BURNER AND YOUR SELF.&lt;/p&gt;
+
+
+&lt;p&gt;&lt;/p&gt;
+
+&lt;p&gt;The inside of my DIY spectrometer&lt;/p&gt;
+
+
+&lt;p&gt;&lt;a href="http://i.publiclab.org/system/images/photos/000/009/161/original/DIY_SPECTROMETER_TOP_VIEW.png"&gt;&lt;img src="http://i.publiclab.org/system/images/photos/000/009/161/medium/DIY_SPECTROMETER_TOP_VIEW.png" alt="DIY_SPECTROMETER_TOP_VIEW.png" /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Spectrum of a white LED light. The red dot indicate the “Sweet spot” for nitrite analysis. The pink colour developed in the sample absorbs strongly at this position. This is around 530nm.&lt;/p&gt;
+
+
+&lt;p&gt;&lt;a href="http://i.publiclab.org/system/images/photos/000/009/162/original/WHITE_LED_SPECTRA.png"&gt;&lt;img src="http://i.publiclab.org/system/images/photos/000/009/162/medium/WHITE_LED_SPECTRA.png" alt="WHITE_LED_SPECTRA.png" /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;White LED on a LEGO block. Piece of plastic glued into position in front of the LED to act as a diffuser. LEGO block are great to fix component that must be interchangeable.&lt;/p&gt;
+
+
+&lt;p&gt;&lt;a href="http://i.publiclab.org/system/images/photos/000/009/163/original/WHITE_LED.png"&gt;&lt;img src="http://i.publiclab.org/system/images/photos/000/009/163/medium/WHITE_LED.png" alt="WHITE_LED.png" /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Calibration data for Nitrite Standards&lt;/p&gt;
+
+
+&lt;p&gt;&lt;a href="http://i.publiclab.org/system/images/photos/000/009/164/original/NITRITE_CALIBRATION_DATA.png"&gt;&lt;img src="http://i.publiclab.org/system/images/photos/000/009/164/medium/NITRITE_CALIBRATION_DATA.png" alt="NITRITE_CALIBRATION_DATA.png" /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Analysis of potassium and sodium in progress.&lt;/p&gt;
+
+
+&lt;p&gt;&lt;a href="http://i.publiclab.org/system/images/photos/000/009/165/original/FLAME_EMISION_SETUP.png"&gt;&lt;img src="http://i.publiclab.org/system/images/photos/000/009/165/medium/FLAME_EMISION_SETUP.png" alt="FLAME_EMISION_SETUP.png" /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Spectral lines for sodium and potassium&lt;/p&gt;
+
+
+&lt;p&gt;&lt;a href="http://i.publiclab.org/system/images/photos/000/009/166/original/Na___K_EMISION.png"&gt;&lt;img src="http://i.publiclab.org/system/images/photos/000/009/166/medium/Na___K_EMISION.png" alt="Na___K_EMISION.png" /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;The Nebulizer.&lt;/p&gt;
+
+
+
+
+&lt;p&gt;Air flow is supplied from a compressor from a small medical nebulizer. This is a cross flow type, made from a 50ml plastic sample vial. The cross flow tips are 2 disposable 1ml pipette tips. The airflow from the horizontal tip passing over the vertical tip (Sample entry) provides suction on this tip and therefor no sample pump is needed. A small size tubing for sample introduction is glued in to the vertical tip&lt;/p&gt;
+
+
+&lt;p&gt;&lt;a href="http://i.publiclab.org/system/images/photos/000/009/167/original/DIY_NEBULIZER.png"&gt;&lt;img src="http://i.publiclab.org/system/images/photos/000/009/167/medium/DIY_NEBULIZER.png" alt="DIY_NEBULIZER.png" /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Nebulizer producing a fine mist.&lt;/p&gt;
+
+
+&lt;p&gt;&lt;a href="http://i.publiclab.org/system/images/photos/000/009/168/original/NEBULIZER.png"&gt;&lt;img src="http://i.publiclab.org/system/images/photos/000/009/168/medium/NEBULIZER.png" alt="NEBULIZER.png" /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;The burner was made from standard pluming fittings and a thick walled aluminium tube.&lt;/p&gt;
+
+
+&lt;p&gt;&lt;a href="http://i.publiclab.org/system/images/photos/000/009/169/original/BURNER.png"&gt;&lt;img src="http://i.publiclab.org/system/images/photos/000/009/169/medium/BURNER.png" alt="BURNER.png" /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Burner Flame&lt;/p&gt;
+
+
+&lt;p&gt;&lt;a href="http://i.publiclab.org/system/images/photos/000/009/170/original/ADJUSTED_FLAME.png"&gt;&lt;img src="http://i.publiclab.org/system/images/photos/000/009/170/medium/ADJUSTED_FLAME.png" alt="ADJUSTED_FLAME.png" /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Analysis data of sodium in my tap water. Non-linear curve&lt;/p&gt;
+
+
+&lt;p&gt;&lt;a href="http://i.publiclab.org/system/images/photos/000/009/171/original/SODIUM_IN_TAP_WATER_DATA.png"&gt;&lt;img src="http://i.publiclab.org/system/images/photos/000/009/171/medium/SODIUM_IN_TAP_WATER_DATA.png" alt="SODIUM_IN_TAP_WATER_DATA.png" /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Oscillator circuit for conductivity measurements&lt;/p&gt;
+
+
+&lt;p&gt;&lt;a href="http://i.publiclab.org/system/images/photos/000/009/172/original/OSCILLATOR_CIRCUIT.png"&gt;&lt;img src="http://i.publiclab.org/system/images/photos/000/009/172/medium/OSCILLATOR_CIRCUIT.png" alt="OSCILLATOR_CIRCUIT.png" /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Improvised conductivity electrode&lt;/p&gt;
+
+
+&lt;p&gt;&lt;a href="http://i.publiclab.org/system/images/photos/000/009/173/original/DIY_EC_ELECTRODE.png"&gt;&lt;img src="http://i.publiclab.org/system/images/photos/000/009/173/medium/DIY_EC_ELECTRODE.png" alt="DIY_EC_ELECTRODE.png" /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://i.publiclab.org/system/images/photos/000/009/174/original/Untitled.png"&gt;&lt;img src="http://i.publiclab.org/system/images/photos/000/009/174/medium/Untitled.png" alt="Untitled.png" /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;In Future I will be experimenting on the colorimetric analysis of Ammonia, Nitrate and Turbidimetric methods for Sulphate, Chloride and Calcium.&lt;/p&gt;
+
+
+
+</description>
+      <guid>http://publiclab.org/notes/show/11655</guid>
+    </item>
+  </channel>
+</rss>
