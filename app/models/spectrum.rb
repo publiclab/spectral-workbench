@@ -54,6 +54,10 @@ class Spectrum < ActiveRecord::Base
     true
   end
 
+  def user
+    User.find self.user_id
+  end
+
   def self.weekly_tallies
     # past 52 weeks of data
     weeks = {}

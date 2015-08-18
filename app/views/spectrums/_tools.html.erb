@@ -1,8 +1,31 @@
-<h3>Tools</h3>
-<p>
-  <a class="btn">Set range</a>
-  <a class="btn">Choose cross-section</a>
-  <a class="btn">Smooth</a>
-  <a class="btn">Find similar</a>
-  
-</p>
+<h3>
+  Tools 
+  <small><a class="macros">Macros/scripting</a></small>
+</h3>
+<div class="row-fluid">
+
+  <div class="span4">
+    <h5>Data extraction</h5>
+    <p><a class="btn btn-small disabled">Re-extract data from image</a></p>
+    <p><a class="btn btn-small" href="/spectra/reverse/<%= datum.id %>">Flip image horizontally</a></p>
+    <p><a class="btn btn-small disabled">Set new cross-section</a></p>
+    <p><a class="btn btn-small" href="/spectra/find_brightest_row/<%= datum.id %>">Set new cross-section by percentage</a></p>
+    <p><a class="btn btn-small disabled">Auto-detect brightest cross-section</a></p>
+  </div>
+
+  <div class="span4">
+    <h5>Data processing and display</h5>
+    <p><a class="btn btn-small disabled">Set wavelength range</a></p>
+    <p><a class="btn btn-small disabled">Smooth</a></p>
+    <p><a class="btn btn-small disabled">Change units</a></p>
+  </div>
+
+  <div class="span4">
+    <h5>Comparison &amp; Sets</h5>
+    <p><a class="btn btn-small disabled">Compare with another spectrum</a></p>
+    <p><a class="btn btn-small" href="/match/search/<%= datum.id %>">Find similar</a></p>
+    <p><a class="btn btn-small disabled">Add to a set</a></p>
+    <p><a class="btn btn-small disabled">Save as a set</a></p>
+  </div>
+
+</div>

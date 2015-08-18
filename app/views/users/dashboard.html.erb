@@ -72,7 +72,7 @@
           </small></h3>
           <%= render :partial => 'spectrums/list' %>
           <hr style="clear:both;" />
-          <%= will_paginate @spectrums, :param_name => 'spectrums_page', :params => {:anchor => "spectrums"}, renderer: BootstrapPagination::Rails %>
+          <%= will_paginate @spectrums, :param_name => 'page', :params => {:anchor => "spectrums"}, renderer: BootstrapPagination::Rails %>
         </div>
 
         <div class="tab-pane" id="comments">

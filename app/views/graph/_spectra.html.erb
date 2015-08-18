@@ -19,10 +19,29 @@
         </td>
         <td><a onClick="$('.spectrum-tools-<%= spectrum.id %>').toggle()"><i class="icon icon-cog"></i></a></td>
         <td>
-          <a href="/spectrums/<%= spectrum.id %>"><%= spectrum.title %></a>
-          <% unless spectrum.calibrated %> <span style="color:#888;">(calibrate to display)</span><% end %>
+
+          <% if spectrum.has_powertag('range') %>
+            <a href="//publiclab.org/wiki/spectral-workbench-usage#Wavelength+range">
+            <i rel="tooltip" 
+               title="This spectrum is range-limited." 
+               style="font-size:13px;vertical-align:middle;color:#c33;" 
+               class='icon icon-resize-horizontal'></i>
+            </a>
+          <% end %>
+
+          <% if spectrum.calibrated %>
+            <i rel="tooltip" 
+               title="This spectrum is wavelength calibrated!" 
+               style="font-size:13px;vertical-align:middle;color:#0c5;" 
+               class='icon icon-check-sign'></i>
+            <a href="/spectrums/<%= spectrum.id %>"><%= spectrum.title %></a>
+          <% else %>
+            <a href="/spectrums/<%= spectrum.id %>"><%= spectrum.title %></a>
+            <span style="color:#888;">(calibrate to display)</span>
+          <% end %>
+
         </td>
-        <td><a href="/profile/<%= spectrum.author %>"><%= spectrum.author %></a></td>
+        <td><a href="/profile/<%= spectrum.user.login %>"><%= spectrum.user.login %></a></td>
       </tr>
       <tr style="display:none;" class="spectrum-tools spectrum-tools-<%= spectrum.id %>"> 
         <td colspan="5">

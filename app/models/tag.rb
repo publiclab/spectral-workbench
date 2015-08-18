@@ -15,6 +15,10 @@ class Tag < ActiveRecord::Base
     Spectrum.joins(:tags).where('tags.name = (?)',self.name)
   end
 
+  def is_powertag
+    self.name.match(/[a-zA-Z-]+:(\d+)-(\d+)/)
+  end
+
   # before saving, see if there are any powertags
   def scan_powertags
     if match = self.name.match(/range:(\d+)-(\d+)/)
@@ -48,6 +52,14 @@ class Tag < ActiveRecord::Base
   def clear_powertags
     self.spectrum.clear_range.save if self.spectrum && self.spectrum.has_powertag('range')
     true
+  end
+
+  def colors
+    colors = ""
+
+    colors = " purple" if self.is_powertag
+
+    colors
   end
 
 end
