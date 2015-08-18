@@ -44,6 +44,7 @@
         <a data-toggle="modal" class="btn btn-inverse" href="#comparemodal"><i class="icon icon-white icon-align-left"></i><span class="hidden-phone"> Compare</span></a>
         <a class="btn btn-inverse" href="/match/search/<%= @spectrum.id %>">Find similar</a>
         <% if logged_in? && current_user.id == 1 && @spectrum.calibrated %><a href="/key/<%= @spectrum.id %>" class="btn btn-inverse">Make key</a><% end %>
+        <a href="/spectrums/show2/<%= @spectrum.id %>" class="btn btn-inverse">Preview 2.0 beta</a>
 
         <%= render :partial => "spectrums/show/tools" %>
         <b class="pull-right" style="padding-top:10px;margin-right:10px;color:#ffffff;"><span id="wavelength"></span> <span id="#unit_label">nm</span></b>
