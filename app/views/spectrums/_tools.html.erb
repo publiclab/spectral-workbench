@@ -1,31 +1,58 @@
-<h3>
-  Tools 
-  <small><a class="macros">Macros/scripting</a></small>
-</h3>
 <div class="row-fluid">
 
   <div class="span4">
+
     <h5>Data extraction</h5>
     <p><a class="btn btn-small disabled">Re-extract data from image</a></p>
     <p><a class="btn btn-small" href="/spectra/reverse/<%= datum.id %>">Flip image horizontally</a></p>
     <p><a class="btn btn-small disabled">Set new cross-section</a></p>
     <p><a class="btn btn-small" href="/spectra/find_brightest_row/<%= datum.id %>">Set new cross-section by percentage</a></p>
     <p><a class="btn btn-small disabled">Auto-detect brightest cross-section</a></p>
-  </div>
 
-  <div class="span4">
-    <h5>Data processing and display</h5>
-    <p><a class="btn btn-small disabled">Set wavelength range</a></p>
-    <p><a class="btn btn-small disabled">Smooth</a></p>
-    <p><a class="btn btn-small disabled">Change units</a></p>
-  </div>
-
-  <div class="span4">
     <h5>Comparison &amp; Sets</h5>
     <p><a class="btn btn-small disabled">Compare with another spectrum</a></p>
     <p><a class="btn btn-small" href="/match/search/<%= datum.id %>">Find similar</a></p>
     <p><a class="btn btn-small disabled">Add to a set</a></p>
     <p><a class="btn btn-small disabled">Save as a set</a></p>
+
+    <h5>Data processing and display</h5>
+    <p><a class="btn btn-small disabled">Set wavelength range</a></p>
+    <p><a class="btn btn-small disabled">Smooth</a></p>
+    <p><a class="btn btn-small disabled">Change units</a></p>
+
+  </div>
+
+  <div class="span8">
+
+    <h5>Macros &amp; Scripting</h5>
+
+    <p><a class="macros">Macros</a> are small scripts that allow you to manipulate or transform your data. Use those shared by others or <a href="//publiclab.org/wiki/spectral-workbench-api">write your own in JavaScript</a>.</p>
+
+    <form class="form-search">
+      <input type="text" class="input-medium search-query">
+      <button type="submit" class="btn"><i class="icon icon-search"></i></button>
+    </form>
+
+    <h5>Most popular</h5>
+
+
+
   </div>
 
 </div>
+
+<!--
+    <li><a onClick="$W.run_macro('warren','equalize_area')">Equalize area</a></li>
+    <li><a onClick="$W.run_macro('warren','equalize-height')">Equalize height</a></li>
+    <li><a onClick="$W.run_macro('warren','smooth_nosave')">Test smoothing data</a></li>
+    <li><a onClick="$W.run_macro('warren','smooth_save')">Auto-smooth 10 rows below</a></li>
+    <li><a onClick="$W.units()">Toggle units</a></li>
+    <li><a onClick="$W.toggle_mode()">Toggle RGB</a></li>
+    <li><a onClick="$W.extract()"><i class="icon icon-refresh"></i> Re-extract from photo</a></li>
+    <li><a href="#selectrowmodal" data-toggle="modal">Set sample row</a></li>
+    <li><a onClick="$W.set_sample_row()" data-toggle="modal">Enter percentage sample height</a></li>
+    <li><a href="/spectra/rotate/<%= @spectrum.id %>">Rotate image</a></li>
+    <li><a href="/spectra/reverse/<%= @spectrum.id %>"><i class="icon icon-resize-horizontal"></i> Flip image horizontally</a></li>
+    <li><a href="/spectra/find_brightest_row/<%= @spectrum.id %>">Auto-detect brightest spectrum</a></li>
+    <li><a href="#macrosmodal" data-toggle="modal"><i class="icon icon-forward"></i> Macros/scripting</a></li>
+-->

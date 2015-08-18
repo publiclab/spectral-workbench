@@ -49,32 +49,59 @@ SpectralWorkbench.Graph = Class.extend({
           .datum(datum.d3,idKey)   //Populate the <svg> element with chart data and provide a binding key
           .call(chart)         //Finally, render the chart!
           .attr('id',idKey)
+ 
+      /* Line event handlers */
+      /* ...move into SW.Graph.Event? */
+      var onmouseover = function() {
+     
+        var el = this;
+        var id = d3.select(el).data()[0].id;
+        $('tr.spectrum-'+id).addClass('highlight');
+        d3.select(el).classed('highlight',true);
+        // scroll to the spectrum in the table below:
+        if (_graph.embed) window.location = (window.location+'').split('#')[0]+'#s'+id;
+     
+      }
+     
+      var onmouseout = function() {
+     
+        var el = this;
+        var id = d3.select(el).data()[0].id;
+        $('tr.spectrum-'+id).removeClass('highlight');
+        d3.select(el).classed('highlight',false);
+     
+      }
 
       d3.selectAll('g.nv-scatterWrap g.nv-groups g') // ONLY the lines, not the scatterplot-based hover circles
           .on("mouseover", onmouseover)
           .on("mouseout", onmouseout)
  
       d3.selectAll('g.nv-line > g > g.nv-groups g') // ONLY the lines, not the scatterplot-based hover circles
-          .attr("id", function() {
+          .attr("id", function(datum) {
+
             var sel = d3.select(this),
                 data  = sel.data()[0];
- 
+
             // color corresponding table entry
             $('tr.spectrum-'+datum.id+' div.key').css('background',sel.style('stroke'));
  
             // highlight corresponding line when hovering on table row
             $('tr.spectrum-'+datum.id).mouseover(function() {
               d3.selectAll('g.nv-line > g > g.nv-groups > g').classed('dimmed', true );
-              d3.selectAll('g#spectrum-line-'+datum.id).classed(       'dimmed', false);
-              d3.selectAll('g#spectrum-line-'+datum.id).classed(    'highlight', true );
+              d3.selectAll('g#spectrum-line-'+datum.id).classed(      'dimmed', false);
+              d3.selectAll('g#spectrum-line-'+datum.id).classed(   'highlight', true );
             });
+
             $('tr.spectrum-'+datum.id).mouseout(function() {
               d3.selectAll('g.nv-line > g > .nv-groups *').classed( 'dimmed', false);
-              d3.selectAll('g#spectrum-line-'+datum.id).classed(  'highlight', false);
+              d3.selectAll('g#spectrum-line-'+datum.id).classed( 'highlight', false);
             });
+
             // apparently HTML id has to begin with a string? 
             // http://stackoverflow.com/questions/70579/what-are-valid-values-for-the-id-attribute-in-html
+
             return 'spectrum-line-'+datum.id;
+
           });
  
       // actually add it to the display
@@ -111,23 +138,6 @@ SpectralWorkbench.Graph = Class.extend({
     _graph.chart.yAxis     //Chart y-axis settings
               .axisLabel('Intensity (%)')
               .tickFormat(d3.format('%'));
- 
-    /* Line event handlers */
-    /* ...move into SW.Graph.Event? */
-    var onmouseover = function() {
-      var el = this;
-      var id = d3.select(el).data()[0].id;
-      $('tr.spectrum-'+id).addClass('highlight');
-      d3.select(el).classed('highlight',true);
-      // scroll to the spectrum in the table below:
-      if (_graph.embed) window.location = (window.location+'').split('#')[0]+'#s'+id;
-    }
-    var onmouseout = function() {
-      var el = this;
-      var id = d3.select(el).data()[0].id;
-      $('tr.spectrum-'+id).removeClass('highlight');
-      d3.select(el).classed('highlight',false);
-    }
  
     if (_graph.dataType == "spectrum") {
       new SpectralWorkbench.Importer( "/spectrums/" 

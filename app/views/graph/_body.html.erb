@@ -120,9 +120,10 @@
 
                   <%= render partial: 'tags/tagging' %>
 
+                  <h5>Notices</h5>
                   <div class="tips">
-                    <p class="alert alert-warning">Your spectrum looks overexposed. <a href="">Learn how to prevent this &raquo;</a></p>
-                    <p class="alert alert-warning">Your spectrum needs to be calibrated. <a href="">Learn how &raquo;</a></p>
+                    <p class="alert alert-warning">This spectrum looks overexposed. <a href="">Learn how to prevent this &raquo;</a></p>
+                    <% unless datum.calibrated %><p class="alert alert-warning">This spectrum needs to be calibrated. <a href="">Learn how &raquo;</a></p><% end %>
                   </div>
  
                 </div>
