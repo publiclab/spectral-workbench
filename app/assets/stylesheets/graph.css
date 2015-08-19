@@ -1,32 +1,36 @@
 #graphing {
-  padding:10px;
+  padding: 10px;
 }
 
 #graphing h2 {
-  text-align:center;
+  text-align: center;
 }
 
 #graphing h2 a {
-  color:#444;
+  color: #444;
 }
 
 #graphing #graph {
-  background:#eee;
-  text-align:center;
+  background: #eee;
+  text-align: center;
 }
 
 #graphing #graph .icon-spinner {
-  font-size:20px;
-  color:#aaa;
-  margin-top:30px;
+  font-size: 20px;
+  color: #aaa;
+  margin-top: 30px;
+}
+
+div.spectrum-img-container {
+  overflow: hidden;
 }
 
 #graphing a.btn-link {
-  text-decoration:none;
+  text-decoration: none;
 }
 
 #graphing tr.spectrum-tools {
-  border-top:none;
+  border-top: none;
 }
 
 @media (max-width: 400px) {

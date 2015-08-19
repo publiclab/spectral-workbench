@@ -260,6 +260,10 @@ puts "reversing"
     self
   end
 
+  def range
+    self.powertag('range').split('-').map { |s| s.to_i }
+  end
+
   # a string of either a single tag name or a series of comma-delimited tags
   def tag(tags,user_id)
     if tags.match(',').nil?
@@ -276,6 +280,11 @@ puts "reversing"
         self.tag(name,user_id)
       end
     end
+  end
+
+  # used in passing tags to javascript in form 'tag1,tag2,tag:3'
+  def tags_string
+    self.tags.collect(&:name).join(',')
   end
 
   def normaltags

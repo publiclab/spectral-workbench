@@ -9,6 +9,7 @@ SpectralWorkbench.Graph = Class.extend({
     this.embed = args['embed'] || false;
     this.embedmargin = 10;
     this.margin = { top: 10, right: 30, bottom: 20, left: 70 };
+    this.range = this.args.range || false;
 
     this.API = new SpectralWorkbench.API(this);
 
@@ -103,6 +104,9 @@ SpectralWorkbench.Graph = Class.extend({
             return 'spectrum-line-'+datum.id;
 
           });
+
+      // update graph size now that we have data and esp. range data
+      _graph.updateSize()();
  
       // actually add it to the display
       nv.addGraph(chart);
@@ -113,7 +117,7 @@ SpectralWorkbench.Graph = Class.extend({
     this.eventSetup();
 
     // Update the chart when window updates.
-    $(window).on('resize', _graph.updateSize.bind(_graph));
+    $(window).on('resize', _graph.updateSize());
     // nv.utils.windowResize( this.updateSize.apply(this)); // this one didn't work - maybe it's only on resize of the svg element?
 
   },
@@ -231,10 +235,34 @@ SpectralWorkbench.Graph = Class.extend({
                   - (_graph.embedmargin * 2);
  
       $('#graph').height(_graph.height)
-      $('img.spectrum').width(_graph.width)
-                       .height(100)
-                       .css('margin-left', _graph.margin.left)
-                       .css('margin-right',_graph.margin.right);
+      $('div.spectrum-img-container').width(_graph.width)
+                                     .height(100)
+                                     .css('margin-left', _graph.margin.left + 10) // not sure but there seems to be some extra margin in the chart
+                                     .css('margin-right',_graph.margin.right);
+
+      if (_graph.range && _graph.datum) {
+
+        // amount to mask out of image if there's a range tag
+        // this is measured in nanometers:
+        _graph.leftCrop =   _graph.range[0] - _graph.datum.json.data.lines[0].wavelength
+        _graph.rightCrop = -_graph.range[1] + _graph.datum.json.data.lines[_graph.datum.json.data.lines.length-1].wavelength
+
+        _graph.pxPerNm = _graph.width / (_graph.range[1]-_graph.range[0]);
+
+        _graph.leftCrop  *= _graph.pxPerNm;
+        _graph.rightCrop *= _graph.pxPerNm
+
+        $('div.spectrum-img-container img').width(_graph.width + _graph.leftCrop + _graph.rightCrop)
+                                           .height(100)
+                                           .css('max-width', 'none')
+                                           .css('margin-left', -_graph.leftCrop);
+
+      } else {
+
+        $('div.spectrum-img-container img').width(_graph.width)
+                                           .height(100)
+
+      }
  
       // update only if we're past initialization
       if (_graph.chart) {
