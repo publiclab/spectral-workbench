@@ -1,6 +1,9 @@
 <%= render partial: "embed/modal", locals: { datum: @spectrum, type: :spectrum } %>
 <div id="graphing" class="embed">
-<img class="spectrum" src="<%= @spectrum.photo.url(:large) %>" />
+
+<div class="spectrum-img-container">
+  <img class="spectrum" src="<%= @spectrum.photo.url(:large) %>" />
+</div>
 
 <div id="graph"><i class="icon icon-spinner icon-spin"></i></div>
 
@@ -11,7 +14,9 @@
       graph = new SpectralWorkbench.Graph({
         spectrum_id: <%= @spectrum.id %>,
         embed: true,
-        calibrated: <%= @spectrum.calibrated %>
+        calibrated: <%= @spectrum.calibrated %>,
+        tags: "<%= @spectrum.tags_string %>",
+        range: <%= @spectrum.has_powertag('range') ? @spectrum.range : false %>
       });
   })
 

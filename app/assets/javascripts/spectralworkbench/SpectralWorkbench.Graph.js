@@ -47,9 +47,9 @@ SpectralWorkbench.Graph = Class.extend({
 
       /* Enter data into the graph */
       _graph.data = d3.select('#graph svg')  //Select the <svg> element you want to render the chart in.   
-          .datum(datum.d3,idKey)   //Populate the <svg> element with chart data and provide a binding key
+          .datum(datum.d3, idKey)   //Populate the <svg> element with chart data and provide a binding key (removing idKey has no effect?)
           .call(chart)         //Finally, render the chart!
-          .attr('id',idKey)
+          .attr('id', idKey)
  
       /* Line event handlers */
       /* ...move into SW.Graph.Event? */
@@ -137,7 +137,7 @@ SpectralWorkbench.Graph = Class.extend({
  
     _graph.chart.xAxis     //Chart x-axis settings
               .axisLabel('Wavelength ('+_graph.xUnit+')')
-              .tickFormat(d3.format('1d'));
+              .tickFormat(d3.format('1r'));
  
     _graph.chart.yAxis     //Chart y-axis settings
               .axisLabel('Intensity (%)')
@@ -235,9 +235,12 @@ SpectralWorkbench.Graph = Class.extend({
                   - (_graph.embedmargin * 2);
  
       $('#graph').height(_graph.height)
+
+      var extra = 0;
+      if (!_graph.embed) extra = 10;
       $('div.spectrum-img-container').width(_graph.width)
                                      .height(100)
-                                     .css('margin-left', _graph.margin.left + 10) // not sure but there seems to be some extra margin in the chart
+                                     .css('margin-left', _graph.margin.left + extra) // not sure but there seems to be some extra margin in the chart
                                      .css('margin-right',_graph.margin.right);
 
       if (_graph.range && _graph.datum) {
