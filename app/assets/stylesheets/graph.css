@@ -25,6 +25,25 @@ div.spectrum-img-container {
   overflow: hidden;
 }
 
+div.spectrum-img-container .alert-zooming {
+  position: absolute;
+  left: 0;
+  height: 100px;
+  background: rgba(255,255,255,0.4);
+  width: 100%;
+  padding: 0;
+  text-align: center;
+}
+
+div.spectrum-img-container .alert-zooming div {
+  position: relative;
+  margin:20px 20%;
+}
+
+div.spectrum-img-container .alert-zooming div a {
+  font-weight: bold;
+}
+
 #graphing a.btn-link {
   text-decoration: none;
 }

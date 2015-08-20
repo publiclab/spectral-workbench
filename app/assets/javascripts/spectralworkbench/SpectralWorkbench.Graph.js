@@ -107,10 +107,46 @@ SpectralWorkbench.Graph = Class.extend({
 
       // update graph size now that we have data and esp. range data
       _graph.updateSize()();
+      _graph.zoomSetup();
  
       // actually add it to the display
       nv.addGraph(chart);
  
+    }
+
+    _graph.zoomSetup = function() {
+
+      zoomed = function() {
+
+        _graph.data.select('g g').attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+        d3.selectAll('#graphing path').style('stroke-width', 2/d3.event.scale);
+
+        if (!d3.select('.spectrum-img-container .alert-zooming')[0][0]) {
+
+          d3.select('div.spectrum-img-container').insert("div", ":first-child")
+                                                 .attr("class","alert-zooming")
+                                                 .append("div")
+                                                 .attr("class","alert alert-info")
+                                                 .html("You are zooming on the graph data. <a class='zoom-reset'>Click here</a> to reset the graph display.")
+          d3.select('a.zoom-reset').on("click",function() {
+
+            d3.select('div.alert-zooming').remove();
+            _graph.data.select('g g').attr("transform", "translate(0,0) scale(1)");
+            d3.selectAll('#graphing path').style('stroke-width', 2);
+
+          });
+
+      }
+
+      }
+
+      var zoom = d3.behavior.zoom()
+                            //.center([width / 2, height / 2]) can specify a zoom center if we like
+                            .scaleExtent([1, 10])
+                            .on("zoom", zoomed);
+
+      _graph.data.call(zoom);
+
     }
 
     _graph.toggleUnits = function() {
