@@ -30,7 +30,7 @@ SpectralWorkbench.Graph = Class.extend({
       .attr("height", this.height + this.margin.top  + this.margin.bottom)
  
     /* key function for d3 data binding, used in _graph.load */
-    var idKey = function(d) {
+    _graph.idKey = function(d) {
       return d.id;
     }
 
@@ -47,9 +47,9 @@ SpectralWorkbench.Graph = Class.extend({
 
       /* Enter data into the graph */
       _graph.data = d3.select('#graph svg')  //Select the <svg> element you want to render the chart in.   
-          .datum(datum.d3, idKey)   //Populate the <svg> element with chart data and provide a binding key (removing idKey has no effect?)
+          .datum(datum.d3, _graph.idKey)   //Populate the <svg> element with chart data and provide a binding key (removing idKey has no effect?)
           .call(chart)         //Finally, render the chart!
-          .attr('id', idKey)
+          .attr('id', _graph.idKey)
  
       /* Line event handlers */
       /* ...move into SW.Graph.Event? */
@@ -110,6 +110,45 @@ SpectralWorkbench.Graph = Class.extend({
  
       // actually add it to the display
       nv.addGraph(chart);
+ 
+    }
+
+    _graph.toggleUnits = function() {
+
+      if (_graph.dataType == "spectrum") {
+        var datasets = [ _graph.datum.average,
+                         _graph.datum.red,
+                         _graph.datum.green,
+                         _graph.datum.blue ];
+      } else {
+        var datasets = [];
+        _graph.datum.spectra.map(function(spectrum) {
+          datasets.push(spectrum.average);
+        });
+      }
+
+      if (d3.select('.nv-axislabel').html() == "Wavelength (eV)") {
+
+        _graph.chart.xAxis.axisLabel('Wavelength (nanometers)')
+        var unitChange = function(d) { d.x = 1239.82/d.x; return d; }
+
+      } else if (d3.select('.nv-axislabel').html() == "Wavelength (nanometers)") {
+
+        _graph.chart.xAxis.axisLabel('Wavelength (eV)')
+        var unitChange = function(d) { d.x = 1239.82/d.x; return d; }
+
+      }
+ 
+      datasets.map(function(dataset) { 
+     
+        dataset = dataset.map(unitChange);
+     
+      });
+      
+      _graph.data = d3.select('#graph svg')  //Select the <svg> element you want to render the chart in.   
+            .datum(_graph.datum.d3, _graph.idKey)   //Populate the <svg> element with chart data and provide a binding key (removing idKey has no effect?)
+
+      _graph.updateSize()();
  
     }
 
