@@ -9,6 +9,7 @@ SpectralWorkbench.Graph = Class.extend({
     this.embed = args['embed'] || false;
     this.embedmargin = 10;
     this.margin = { top: 10, right: 30, bottom: 20, left: 70 };
+    this.range = this.args.range || false;
 
     this.API = new SpectralWorkbench.API(this);
 
@@ -29,7 +30,7 @@ SpectralWorkbench.Graph = Class.extend({
       .attr("height", this.height + this.margin.top  + this.margin.bottom)
  
     /* key function for d3 data binding, used in _graph.load */
-    var idKey = function(d) {
+    _graph.idKey = function(d) {
       return d.id;
     }
 
@@ -46,39 +47,144 @@ SpectralWorkbench.Graph = Class.extend({
 
       /* Enter data into the graph */
       _graph.data = d3.select('#graph svg')  //Select the <svg> element you want to render the chart in.   
-          .datum(datum.d3,idKey)   //Populate the <svg> element with chart data and provide a binding key
+          .datum(datum.d3, _graph.idKey)   //Populate the <svg> element with chart data and provide a binding key (removing idKey has no effect?)
           .call(chart)         //Finally, render the chart!
-          .attr('id',idKey)
+          .attr('id', _graph.idKey)
+ 
+      /* Line event handlers */
+      /* ...move into SW.Graph.Event? */
+      var onmouseover = function() {
+     
+        var el = this;
+        var id = d3.select(el).data()[0].id;
+        $('tr.spectrum-'+id).addClass('highlight');
+        d3.select(el).classed('highlight',true);
+        // scroll to the spectrum in the table below:
+        if (_graph.embed) window.location = (window.location+'').split('#')[0]+'#s'+id;
+     
+      }
+     
+      var onmouseout = function() {
+     
+        var el = this;
+        var id = d3.select(el).data()[0].id;
+        $('tr.spectrum-'+id).removeClass('highlight');
+        d3.select(el).classed('highlight',false);
+     
+      }
 
       d3.selectAll('g.nv-scatterWrap g.nv-groups g') // ONLY the lines, not the scatterplot-based hover circles
           .on("mouseover", onmouseover)
           .on("mouseout", onmouseout)
  
       d3.selectAll('g.nv-line > g > g.nv-groups g') // ONLY the lines, not the scatterplot-based hover circles
-          .attr("id", function() {
+          .attr("id", function(datum) {
+
             var sel = d3.select(this),
                 data  = sel.data()[0];
- 
+
             // color corresponding table entry
             $('tr.spectrum-'+datum.id+' div.key').css('background',sel.style('stroke'));
  
             // highlight corresponding line when hovering on table row
             $('tr.spectrum-'+datum.id).mouseover(function() {
               d3.selectAll('g.nv-line > g > g.nv-groups > g').classed('dimmed', true );
-              d3.selectAll('g#spectrum-line-'+datum.id).classed(       'dimmed', false);
-              d3.selectAll('g#spectrum-line-'+datum.id).classed(    'highlight', true );
+              d3.selectAll('g#spectrum-line-'+datum.id).classed(      'dimmed', false);
+              d3.selectAll('g#spectrum-line-'+datum.id).classed(   'highlight', true );
             });
+
             $('tr.spectrum-'+datum.id).mouseout(function() {
               d3.selectAll('g.nv-line > g > .nv-groups *').classed( 'dimmed', false);
-              d3.selectAll('g#spectrum-line-'+datum.id).classed(  'highlight', false);
+              d3.selectAll('g#spectrum-line-'+datum.id).classed( 'highlight', false);
             });
+
             // apparently HTML id has to begin with a string? 
             // http://stackoverflow.com/questions/70579/what-are-valid-values-for-the-id-attribute-in-html
+
             return 'spectrum-line-'+datum.id;
+
           });
+
+      // update graph size now that we have data and esp. range data
+      _graph.updateSize()();
+      _graph.zoomSetup();
  
       // actually add it to the display
       nv.addGraph(chart);
+ 
+    }
+
+    _graph.zoomSetup = function() {
+
+      zoomed = function() {
+
+        _graph.data.select('g g').attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+        d3.selectAll('#graphing path').style('stroke-width', 2/d3.event.scale);
+
+        if (!d3.select('.spectrum-img-container .alert-zooming')[0][0]) {
+
+          d3.select('div.spectrum-img-container').insert("div", ":first-child")
+                                                 .attr("class","alert-zooming")
+                                                 .append("div")
+                                                 .attr("class","alert alert-info")
+                                                 .html("You are zooming on the graph data. <a class='zoom-reset'>Click here</a> to reset the graph display.")
+          d3.select('a.zoom-reset').on("click",function() {
+
+            d3.select('div.alert-zooming').remove();
+            _graph.data.select('g g').attr("transform", "translate(0,0) scale(1)");
+            d3.selectAll('#graphing path').style('stroke-width', 2);
+
+          });
+
+      }
+
+      }
+
+      var zoom = d3.behavior.zoom()
+                            //.center([width / 2, height / 2]) can specify a zoom center if we like
+                            .scaleExtent([1, 10])
+                            .on("zoom", zoomed);
+
+      _graph.data.call(zoom);
+
+    }
+
+    _graph.toggleUnits = function() {
+
+      if (_graph.dataType == "spectrum") {
+        var datasets = [ _graph.datum.average,
+                         _graph.datum.red,
+                         _graph.datum.green,
+                         _graph.datum.blue ];
+      } else {
+        var datasets = [];
+        _graph.datum.spectra.map(function(spectrum) {
+          datasets.push(spectrum.average);
+        });
+      }
+
+      if (d3.select('.nv-axislabel').html() == "Wavelength (eV)") {
+
+        _graph.chart.xAxis.axisLabel('Wavelength (nanometers)')
+        var unitChange = function(d) { d.x = 1239.82/d.x; return d; }
+
+      } else if (d3.select('.nv-axislabel').html() == "Wavelength (nanometers)") {
+
+        _graph.chart.xAxis.axisLabel('Wavelength (eV)')
+        var unitChange = function(d) { d.x = 1239.82/d.x; return d; }
+
+      }
+ 
+      datasets.map(function(dataset) { 
+     
+        dataset = dataset.map(unitChange);
+     
+      });
+      
+      _graph.data = d3.select('#graph svg')  //Select the <svg> element you want to render the chart in.   
+            .datum(_graph.datum.d3, _graph.idKey)   //Populate the <svg> element with chart data and provide a binding key (removing idKey has no effect?)
+
+      _graph.updateSize()();
  
     }
 
@@ -86,7 +192,7 @@ SpectralWorkbench.Graph = Class.extend({
     this.eventSetup();
 
     // Update the chart when window updates.
-    $(window).on('resize', _graph.updateSize.bind(_graph));
+    $(window).on('resize', _graph.updateSize());
     // nv.utils.windowResize( this.updateSize.apply(this)); // this one didn't work - maybe it's only on resize of the svg element?
 
   },
@@ -106,28 +212,11 @@ SpectralWorkbench.Graph = Class.extend({
  
     _graph.chart.xAxis     //Chart x-axis settings
               .axisLabel('Wavelength ('+_graph.xUnit+')')
-              .tickFormat(d3.format('1d'));
+              .tickFormat(d3.format('1r'));
  
     _graph.chart.yAxis     //Chart y-axis settings
               .axisLabel('Intensity (%)')
               .tickFormat(d3.format('%'));
- 
-    /* Line event handlers */
-    /* ...move into SW.Graph.Event? */
-    var onmouseover = function() {
-      var el = this;
-      var id = d3.select(el).data()[0].id;
-      $('tr.spectrum-'+id).addClass('highlight');
-      d3.select(el).classed('highlight',true);
-      // scroll to the spectrum in the table below:
-      if (_graph.embed) window.location = (window.location+'').split('#')[0]+'#s'+id;
-    }
-    var onmouseout = function() {
-      var el = this;
-      var id = d3.select(el).data()[0].id;
-      $('tr.spectrum-'+id).removeClass('highlight');
-      d3.select(el).classed('highlight',false);
-    }
  
     if (_graph.dataType == "spectrum") {
       new SpectralWorkbench.Importer( "/spectrums/" 
@@ -221,10 +310,37 @@ SpectralWorkbench.Graph = Class.extend({
                   - (_graph.embedmargin * 2);
  
       $('#graph').height(_graph.height)
-      $('img.spectrum').width(_graph.width)
-                       .height(100)
-                       .css('margin-left', _graph.margin.left)
-                       .css('margin-right',_graph.margin.right);
+
+      var extra = 0;
+      if (!_graph.embed) extra = 10;
+      $('div.spectrum-img-container').width(_graph.width)
+                                     .height(100)
+                                     .css('margin-left', _graph.margin.left + extra) // not sure but there seems to be some extra margin in the chart
+                                     .css('margin-right',_graph.margin.right);
+
+      if (_graph.range && _graph.datum) {
+
+        // amount to mask out of image if there's a range tag
+        // this is measured in nanometers:
+        _graph.leftCrop =   _graph.range[0] - _graph.datum.json.data.lines[0].wavelength
+        _graph.rightCrop = -_graph.range[1] + _graph.datum.json.data.lines[_graph.datum.json.data.lines.length-1].wavelength
+
+        _graph.pxPerNm = _graph.width / (_graph.range[1]-_graph.range[0]);
+
+        _graph.leftCrop  *= _graph.pxPerNm;
+        _graph.rightCrop *= _graph.pxPerNm
+
+        $('div.spectrum-img-container img').width(_graph.width + _graph.leftCrop + _graph.rightCrop)
+                                           .height(100)
+                                           .css('max-width', 'none')
+                                           .css('margin-left', -_graph.leftCrop);
+
+      } else {
+
+        $('div.spectrum-img-container img').width(_graph.width)
+                                           .height(100)
+
+      }
  
       // update only if we're past initialization
       if (_graph.chart) {

@@ -34,7 +34,10 @@ h1,h2,h3,h4,.lead {
   }
 }
 
-.tooltip {
+.tooltip,
+h3 small,
+h4 small,
+h5 small {
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 

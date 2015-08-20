@@ -1,32 +1,55 @@
 #graphing {
-  padding:10px;
+  padding: 10px;
 }
 
 #graphing h2 {
-  text-align:center;
+  text-align: center;
 }
 
 #graphing h2 a {
-  color:#444;
+  color: #444;
 }
 
 #graphing #graph {
-  background:#eee;
-  text-align:center;
+  background: #eee;
+  text-align: center;
 }
 
 #graphing #graph .icon-spinner {
-  font-size:20px;
-  color:#aaa;
-  margin-top:30px;
+  font-size: 20px;
+  color: #aaa;
+  margin-top: 30px;
+}
+
+div.spectrum-img-container {
+  overflow: hidden;
+}
+
+div.spectrum-img-container .alert-zooming {
+  position: absolute;
+  left: 0;
+  height: 100px;
+  background: rgba(255,255,255,0.4);
+  width: 100%;
+  padding: 0;
+  text-align: center;
+}
+
+div.spectrum-img-container .alert-zooming div {
+  position: relative;
+  margin:20px 20%;
+}
+
+div.spectrum-img-container .alert-zooming div a {
+  font-weight: bold;
 }
 
 #graphing a.btn-link {
-  text-decoration:none;
+  text-decoration: none;
 }
 
 #graphing tr.spectrum-tools {
-  border-top:none;
+  border-top: none;
 }
 
 @media (max-width: 400px) {
