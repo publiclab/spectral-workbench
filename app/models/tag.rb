@@ -6,6 +6,8 @@ class Tag < ActiveRecord::Base
   validates_presence_of :user_id, :on => :create, :message => "can't be blank"
   validates_presence_of :spectrum_id, :on => :create, :message => "can't be blank"
 
+  validates :name, :format => {:with => /^[\w\.:-]*$/, :message => "can only include letters, numbers, and dashes"}
+
   belongs_to :spectrum
   belongs_to :user
   before_save :scan_powertags
@@ -16,7 +18,7 @@ class Tag < ActiveRecord::Base
   end
 
   def is_powertag
-    self.name.match(/[a-zA-Z-]+:(\d+)-(\d+)/)
+    self.name.match(/[a-zA-Z-]+:[a-zA-Z0-9-]+/)
   end
 
   # before saving, see if there are any powertags
@@ -54,6 +56,7 @@ class Tag < ActiveRecord::Base
     true
   end
 
+  # supplies a string of CSS classnames for this type of tag
   def colors
     colors = ""
 

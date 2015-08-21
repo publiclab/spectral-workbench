@@ -411,6 +411,8 @@ class SpectrumsController < ApplicationController
   def reverse
     @spectrum = Spectrum.find params[:id]
     if logged_in? && (@spectrum.user_id == current_user.id || current_user.role == "admin")
+      @spectrum.reversed = !@spectrum.reversed
+      @spectrum.toggle_tag('reversed', current_user.id)
       @spectrum.reverse
       @spectrum.save
     else

@@ -83,9 +83,20 @@ class TagTest < ActiveSupport::TestCase
       name:        'range:100x400'
     })
     assert !tag.save
-    assert_equal tag.errors[:base].last, "range tag poorly formed; see <a href='//publiclab.org/wiki/spectral-workbench-tagging'>more about tagging</a>"
+    assert_equal "range tag poorly formed; see <a href='//publiclab.org/wiki/spectral-workbench-tagging'>more about tagging</a>", tag.errors[:base].last
     json = ActiveSupport::JSON.decode(tag.spectrum.clean_json)
     assert json['range'] == nil
+  end
+
+  test "tag creation with unallowed characters" do 
+    tag = Tag.new({
+      user_id:     users(:quentin).id,
+      spectrum_id: spectrums(:one).id,
+      name:        'range;400'
+    })
+    assert !tag.save
+    assert_equal "can only include letters, numbers, and dashes", tag.errors.messages[:name].last
+
   end
 
 end

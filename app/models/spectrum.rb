@@ -266,7 +266,7 @@ puts "reversing"
   end
 
   # a string of either a single tag name or a series of comma-delimited tags
-  def tag(tags,user_id)
+  def tag(tags, user_id)
     if tags.match(',').nil?
       tag = Tag.new({
         :spectrum_id => self.id,
@@ -278,7 +278,7 @@ puts "reversing"
       end     
     else
       tags.split(',').each do |name|
-        self.tag(name,user_id)
+        self.tag(name, user_id)
       end
     end
   end
@@ -386,6 +386,18 @@ puts "reversing"
 
   def has_tag(name)
     Tag.where(name: name).where(spectrum_id: self.id).length > 0
+  end
+
+  def remove_tag(name)
+    Tag.where(name: name).where(spectrum_id: self.id)[0].destroy
+  end
+
+  def toggle_tag(name, user_id)
+    if self.has_tag(name)
+      self.remove_tag(name)
+    else
+      self.tag(name, user_id)
+    end
   end
 
   # no colon required

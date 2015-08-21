@@ -53,7 +53,49 @@ SpectralWorkbench.API.Core = {
   },
 
   // add tag to current datum
-  setTag: function(name) {
+  addTag: function(spectrum_id, name, callback) {
+
+    $.ajax({
+      url: "/tags",
+      type: "POST",
+
+      data: {
+        authenticity_token: $('meta[name=csrf-token]').attr('content'),
+        tag: {
+          spectrum_id: spectrum_id,
+          name: name
+        }
+      },
+
+      success: function(response) {
+
+        response = JSON.parse(response);
+
+        $.each(response['saved'],function(i,tag) {
+
+          var tag_name = tag[0],
+              tag_id   = tag[1],
+              color    = "";
+
+          // we use CSS classnames to identify tag types
+          if (tag_name.match(/[a-zA-Z-]+:[a-zA-Z0-9-]+/)) color = " purple";
+
+          $('#tags').append(" <span id='tag_"+tag_id+"' rel='tooltip' title='This is a powertag.' class='label label-info" + color + "'><a href='/tags/"+tag_name+"'>"+tag_name+"</a> <a class='tagdelete' data-method='delete' href='/tags/"+tag_id+"'>x</a></span> ");
+
+          // deletion listener
+          $('#tag_'+tag_id).bind('ajax:success', function(e,tagid){
+            $('#tag_'+tagid).remove();
+          });
+
+        });
+
+        $('#taginput').prop('disabled',false);
+
+        callback(response);
+
+      },
+
+    });
 
   },
 
