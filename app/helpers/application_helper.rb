@@ -33,6 +33,11 @@ module ApplicationHelper
     end
   end
 
+  # for v2 embeds
+  def is_embed?
+    params[:action] == 'embed2'
+  end
+
   # add this to app/helpers/application_helper.rb
   # http://www.emersonlackey.com/article/rails3-error-messages-for-replacemen
   def errors_for(object, message=nil)

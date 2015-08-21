@@ -71,7 +71,7 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
       consecutive = consecutive || 20;
 
       // check each channel for plateaus at 100%:
-      _colors.forEach(function(index, color) {
+      _colors.forEach(function(color) {
 
         var spectrumIndex = 0;
 

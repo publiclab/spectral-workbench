@@ -51,9 +51,6 @@
 
   <div style="padding-bottom:10px;padding-top:250px;">
     <div class="visible-phone">
-
-      <p class="alert alert-warning">Due to a recent change in the system, you may need to reset your video cross-section line in the image above. A good way to do this is to click "Auto-detect" below while measuring a fluorescent light, then create a new calibration. (<a href="//publiclab.org/wiki/spectral-workbench-calibration#Cross+section">Learn more &raquo;</a>)</p>
-
       <p style="margin-top:4px;">Point your spectrometer at a light and click on the video above to choose a cross-section to sample. (<a href="http://publiclab.org/wiki/spectral-workbench-usage">Learn more &raquo;</a>)</p>
       <img class="img-rounded" src="/images/example-cfl.jpg" style="width:100px;height:80px" />
       <img class="img-rounded" src="/images/example-sky.jpg" style="width:100px;height:80px" />
@@ -62,6 +59,7 @@
       <p style="margin-top:4px;">Point your spectrometer at a light and click on the video above to choose a cross-section as shown below. (<a href="http://publiclab.org/wiki/spectral-workbench-usage">Learn more &raquo;</a>)</p>
       <img src="/images/calibration-example.png" />
     </div>
+
   </div>
 
   <script>
@@ -90,6 +88,10 @@
   <% end %>
 
   <a class="btn btn-large btn-primary" href="#capture" onClick="$('#capture-btn').addClass('active');$('#settings-btn').removeClass('active');" data-toggle="tab">Begin capturing &raquo;</a>
+
+  <hr />
+
+  <p><b>Offline use:</b> To use this interface offline, load the offline capture tool <a href="/capture/offline">by clicking here</a>. Once the page loads, you'll be able to access that page even without internet access; it will be stored in your browser.</p>
 
 </div>
 

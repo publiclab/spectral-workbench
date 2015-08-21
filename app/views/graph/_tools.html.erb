@@ -12,19 +12,36 @@
   </p>
 
   <div class="tools">
+
     <a target="_blank" href="http://twitter.com/share?text=<%= datum.title %> on @PublicLab's Spectral Workbench&url=http://spectralworkbench.org/<%= type %>/<%= datum.id %>"><i class="icon icon-twitter"></i></a>
     <a target="_blank" href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fspectralworkbench.org%2F<%= type %>s%2F<%= datum.id %>"><i class="icon icon-facebook"></i></a>
     <a href="#embed-modal" data-toggle="modal"><i class="icon icon-share"></i></a>
+
     <% if type == :spectrum %>
       <a target="_blank" href="/<%= type %>s/<%= datum.id %>"><i class="icon icon-comment"></i> <%= datum.comments.length %></a>
-
     <% end %>
+
+    <% unless is_embed? %>
+      <a rel="tooltip" 
+         title="There are notifications for this spectrum."  
+         class="notification-count-icon" 
+         href="#notifications" 
+         style="display:none;">
+        <i style="color:orange;" 
+           class="icon icon-exclamation-sign"></i>
+        <span id="notification-count"></span>
+      </a>
+    <% end %>
+
     <div class="dropup"> 
       <a data-toggle="dropdown" class="dropdown-toggle settings" href="#"><i class="icon icon-cog"></i></a>
       <ul class="dropdown-menu" role="menu">
         <li><a href="//publiclab.org/wiki/spectral-workbench-help">Help</a></li>
         <li class="divider"></li>
-        <li><a onClick="$W.run_macro('warren','equalize-height');">Equalize height</a></li>
+        <% if type == :set %>
+          <li><a onClick="$W.run_macro('warren','equalize-height');">Equalize height</a></li>
+          <li><a onClick="$W.run_macro('warren','equalize_area');">Equalize area</a></li>
+        <% end %>
         <li><a href="/<%= type %>/<%= datum.id %>">Comment</a></li>
       </ul>
     </div>

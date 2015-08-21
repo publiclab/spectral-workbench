@@ -1,4 +1,4 @@
-<div class="row-fluid">
+<div class="row-fluid datum-<%= type %>">
   <div class="col span12">
 
     <h2>
@@ -25,26 +25,26 @@
 
     <h3 class="compact"><a target="_blank" href="/<%= type %>s/<%= datum.id %>"><%= if (datum.title.length < 15) then datum.title else datum.title[0..12]+'...' end %></a></h3>
 
-    <% unless params[:action] == 'embed2' %>
+    <% unless is_embed? %>
       <div class="toolbar toolbar-top">
-        <%= render partial: 'embed/tools', locals: { type: type, datum: datum } %>
+        <%= render partial: 'graph/tools', locals: { type: type, datum: datum } %>
       </div>
     <% end %>
 
       <ul class="nav nav-tabs">
         <% if type == :set %>
         <li class="active"><a href="#tab-spectra"  data-toggle="tab"><i  class="icon icon-list"></i>     Spectra</a></li>
-        <% elsif type == :spectrum && params[:action] != 'embed2' %>
+        <% elsif type == :spectrum && !is_embed? %>
         <li class="active"><a href="#tab-tools"    data-toggle="tab"><i class="icon icon-cog"></i>         Tools</a></li>
         <li>               <a href="#tab-sets"     data-toggle="tab"><i class="icon icon-list"></i>         Sets</a></li>
         <% end %>
-        <% if params[:action] != 'embed2' %>
+        <% unless is_embed? %>
         <li>               <a href="#tab-comments" data-toggle="tab"><i class="icon icon-comments"></i> <%= datum.comments.length %> Comments</a></li>
         <% end %>
       </ul>
       <!-- TABLE -->
 
-      <% if type == :set || params[:action] != 'embed2' %>
+      <% if type == :set || !is_embed? %>
 
         <div class="tab-content">
  
@@ -53,18 +53,21 @@
             <div class="tab-pane active" id="tab-spectra">       
               <%= render partial: 'graph/spectra', locals: { datum: datum } %>
 
-              <% if params[:action] != "embed2" %>
+              <% unless is_embed? %>
 
                 <hr />
  
-                <div class="btn-group" style="width:100%;text-align:center;">
+                <div class="btn-group export" style="width:100%;text-align:center;">
  
+                  <a class="btn btn-small svg" onClick="SpectralWorkbench.API.Core.exportSVG('<%= type %>-<%= datum.id %>');"><b>SVG</b></a>
                   <a class="btn btn-small" href="/sets/<%= datum.id %>.json"><b>JSON</b></a>
                   <a class="btn btn-small disabled" href="/sets/<%= datum.id %>.csv"><b>CSV</b></a>
                   <a class="btn btn-small disabled" href="/sets/<%= datum.id %>.xml"><b>XML</b></a>
-                  <a rel="tooltip" class="btn btn-small" href="http://publiclab.org/wiki/spectral-workbench-exporting" title="About export formats"><i class="icon icon-question-sign"></i></a>
+                  <a rel="tooltip" class="btn btn-small" href="//publiclab.org/wiki/spectral-workbench-exporting" title="About export formats"><i class="icon icon-question-sign"></i></a>
  
                 </div>
+
+                <%= render partial: 'graph/notifications', locals: { type: type } %>
 
               <% end %>
 
@@ -107,12 +110,13 @@
 
                   <hr />
 
-                  <div class="btn-group">
+                  <div class="btn-group export">
 
+                    <a class="btn btn-small svg" onClick="SpectralWorkbench.API.Core.exportSVG('<%= type %>-<%= datum.id %>');"><b>SVG</b></a>
                     <a class="btn btn-small" href="/spectrums/<%= datum.id %>.json"><b>JSON</b></a>
                     <a class="btn btn-small" href="/spectrums/<%= datum.id %>.csv"><b>CSV</b></a>
                     <a class="btn btn-small" href="/spectrums/<%= datum.id %>.xml"><b>XML</b></a>
-                    <a rel="tooltip" class="btn btn-small" href="http://publiclab.org/wiki/spectral-workbench-exporting" title="About export formats"><i class="icon icon-question-sign"></i></a>
+                    <a rel="tooltip" class="btn btn-small" href="//publiclab.org/wiki/spectral-workbench-exporting" title="About export formats"><i class="icon icon-question-sign"></i></a>
 
                   </div>
 
@@ -120,24 +124,8 @@
 
                   <%= render partial: 'tags/tagging' %>
 
-                  <%# render partial: 'graphing/notices' %>
-                  <h5>Notices</h5>
-                  <div class="datum-alerts">
+                  <%= render partial: 'graph/notifications', locals: { type: type } %>
 
-                    <% unless @spectrum.calibrated %><p class="alert alert-warning">This spectrum needs to be calibrated. <a href="//publiclab.org/wiki/spectral-workbench-calibration">Learn how &raquo;</a></p><% end %>
-
-                    <% if @spectrum.tags.length == 0 && logged_in? %>
-                      <p class="alert">
-                        This spectrum is not tagged. 
-                        <a onClick="$('#tagform .input-prepend').addClass('control-group info');$('#taginput').css('background','#eff')" href="#tags">
-                          Add descriptive tags
-                        </a>
-                        to help categorize your data and build a comprehensive open source library of spectra.
-                      </div>
-                    <% end %>
-
-                  </div>
- 
                 </div>
               
                 <div class="span8">
@@ -168,9 +156,9 @@
         </div>
       <% end %>
  
-      <% if params[:action] == 'embed2' %>
+      <% if is_embed? %>
         <div class="toolbar toolbar-bottom">
-          <%= render :partial => 'embed/tools', :locals => { type: type, datum: datum } %>
+          <%= render :partial => 'graph/tools', :locals => { type: type, datum: datum } %>
         </div>
       <% end %>
  

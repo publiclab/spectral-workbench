@@ -1,0 +1,20 @@
+<h5 id="notifications">Notifications</h5>
+<div class="notifications-container">
+
+  <% if type == :spectrum %>
+
+    <% unless @spectrum.calibrated %><p class="alert alert-warning">This spectrum needs to be calibrated. <a href="//publiclab.org/wiki/spectral-workbench-calibration">Learn how &raquo;</a></p><% end %>
+ 
+    <% if @spectrum.tags.length == 0 && logged_in? %>
+      <p class="alert">
+        This spectrum is not tagged. 
+        <a onClick="$('#tagform .input-prepend').addClass('control-group info');$('#taginput').css('background','#eff')" href="#tags">
+          Add descriptive tags
+        </a>
+        to help categorize your data and build a comprehensive open source library of spectra.
+      </p>
+    <% end %>
+
+  <% end %>
+
+</div>

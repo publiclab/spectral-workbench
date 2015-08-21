@@ -45,6 +45,8 @@ SpectralWorkbench.Graph = Class.extend({
       // APIv1 backwards-compatibility
       SpectralWorkbench.API.Legacy.load(datum.json, _graph.dataType);
 
+      SpectralWorkbench.API.Core.alertOverexposure(_graph);
+
       /* Enter data into the graph */
       _graph.data = d3.select('#graph svg')  //Select the <svg> element you want to render the chart in.   
           .datum(datum.d3, _graph.idKey)   //Populate the <svg> element with chart data and provide a binding key (removing idKey has no effect?)
@@ -349,7 +351,7 @@ SpectralWorkbench.Graph = Class.extend({
  
       // hide loading grey background
       $('#graphing #graph').css('background','white');
-      $('#graphing #graph .icon-spinner').hide();
+      $('#graphing #graph .icon-spinner').remove();
  
     });
   }

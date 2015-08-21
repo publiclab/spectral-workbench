@@ -247,6 +247,16 @@ div.spectrum-img-container .alert-zooming div a {
   color: #aaa;
 }
 
+.datum-set h5#notifications {
+  width: 100%;
+  text-align: center;
+  margin-top:20px;
+}
+
+.datum-spectrum {
+
+}
+
 #embed-modal {
   position: fixed;
   top: 50px;
