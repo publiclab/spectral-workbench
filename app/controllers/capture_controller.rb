@@ -10,14 +10,24 @@ class CaptureController < ApplicationController
   before_filter :require_login, :except => [:index, :recent_calibrations]
 
   def index
+    @offline = "flush"
+    if logged_in?
+      @calibration = current_user.last_calibration
+      @calibration = Spectrum.find(params[:calibration_id]) if params[:calibration_id]
+      @calibrations = Spectrum.where(calibrated: true, user_id: current_user.id)
+      @start_wavelength,@end_wavelength = @calibration.wavelength_range if @calibration
+    end
+    @spectrums = Spectrum.find(:all, :limit => 12, :order => "id DESC")
+    render :template => "capture/index", :layout => "application"
+  end
+
+  def offline
     if logged_in?
       @offline = true
       @calibration = current_user.last_calibration
       @calibration = Spectrum.find(params[:calibration_id]) if params[:calibration_id]
       @calibrations = Spectrum.where(calibrated: true, user_id: current_user.id)
       @start_wavelength,@end_wavelength = @calibration.wavelength_range if @calibration
-    else
-      @offline = "flush"
     end
     @spectrums = Spectrum.find(:all, :limit => 12, :order => "id DESC")
     render :template => "capture/index", :layout => "application"
@@ -27,7 +37,10 @@ class CaptureController < ApplicationController
   # unified, simplified version which integrates
   # rotation/flip, cross section, smoothing, equalizing, and comparison, and maybe calibration?
   # geocoding?
+  # NOT ACTIVE YET
+
   def save
+
     # be sure there's a "login" field here too, so users don't lose data when they're required to log in.
     @spectrum = Spectrum.new({
       :title => params[:title],
@@ -56,6 +69,9 @@ class CaptureController < ApplicationController
       # clone calibration? Do it based on a tag.
       # But can we clone all tags, and normalization, and sample row?
       @spectrum.clone(params[:spectrum][:calibration_id]) if params[:clone]
+      @spectrum.tag("calibration:#{params[:spectrum][:calibration_id]}", current_user.id) if params[:clone]
+
+      @spectrum.tag("video_row:#{params[:video_row]}", current_user.id) if params[:video_row]
 
       # process all metadata based on tags:
       # @spectrum.tag("rotated:90",current_user.id)
@@ -66,20 +82,21 @@ class CaptureController < ApplicationController
       # @spectrum.tag("lat:xxx",current_user.id)
       # @spectrum.tag("lon:xxx",current_user.id)
 
-      # can we use: @spectrum.tag(params[:tags],current_user.id) if params[:tags]
-      params[:tags].split(',').each do |tag|
-        @spectrum.tag(tag,current_user.id)
-      end
+      @spectrum.tag(params[:tags], current_user.id) unless params[:tags] == ""
 
       flash[:notice] = 'Spectrum was successfully created.'
       format.html {
         redirect_to spectrum_path(@spectrum)
       }
       format.xml  { render :xml => @spectrum, :status => :created, :location => @spectrum }
+
     else
+
       # this isn't quite right. Also let's do ajax errors.
       render "spectrums/new-errors"
+
     end
+
   end
 
   def recent_calibrations

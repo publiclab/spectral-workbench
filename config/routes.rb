@@ -140,8 +140,8 @@ SpectralWorkbench::Application.routes.draw do
     cache ActionController::Base.helpers.asset_path("capture.js")
     cache ActionController::Base.helpers.asset_path("analyze.js")
 
-    cache "/capture"
-    #cache "/capture/offline"
+    #cache "/capture"
+    cache "/capture/offline"
     cache "/offline"
 
     cache "/images/spectralworkbench.png"

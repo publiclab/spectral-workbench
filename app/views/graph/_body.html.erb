@@ -27,7 +27,7 @@
 
     <% unless params[:action] == 'embed2' %>
       <div class="toolbar toolbar-top">
-        <%= render partial: 'graph/tools', locals: { type: type, datum: datum } %>
+        <%= render partial: 'embed/tools', locals: { type: type, datum: datum } %>
       </div>
     <% end %>
 
@@ -120,10 +120,22 @@
 
                   <%= render partial: 'tags/tagging' %>
 
+                  <%# render partial: 'graphing/notices' %>
                   <h5>Notices</h5>
-                  <div class="tips">
-                    <p class="alert alert-warning">This spectrum looks overexposed. <a href="">Learn how to prevent this &raquo;</a></p>
-                    <% unless datum.calibrated %><p class="alert alert-warning">This spectrum needs to be calibrated. <a href="">Learn how &raquo;</a></p><% end %>
+                  <div class="datum-alerts">
+
+                    <% unless @spectrum.calibrated %><p class="alert alert-warning">This spectrum needs to be calibrated. <a href="//publiclab.org/wiki/spectral-workbench-calibration">Learn how &raquo;</a></p><% end %>
+
+                    <% if @spectrum.tags.length == 0 && logged_in? %>
+                      <p class="alert">
+                        This spectrum is not tagged. 
+                        <a onClick="$('#tagform .input-prepend').addClass('control-group info');$('#taginput').css('background','#eff')" href="#tags">
+                          Add descriptive tags
+                        </a>
+                        to help categorize your data and build a comprehensive open source library of spectra.
+                      </div>
+                    <% end %>
+
                   </div>
  
                 </div>
@@ -158,7 +170,7 @@
  
       <% if params[:action] == 'embed2' %>
         <div class="toolbar toolbar-bottom">
-          <%= render :partial => 'graph/tools', :locals => { type: type, datum: datum } %>
+          <%= render :partial => 'embed/tools', :locals => { type: type, datum: datum } %>
         </div>
       <% end %>
  

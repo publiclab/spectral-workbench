@@ -182,6 +182,7 @@ class Spectrum < ActiveRecord::Base
       line['wavelength'] = (startwavelength + i*stepsize).round(2)
       i += 1
     end
+    # this may cause trouble:
     self.reverse if (wavelength1 < wavelength2 && x1 > x2) || (wavelength1 > wavelength2 && x1 < x2)
     self.data = ActiveSupport::JSON.encode(d)
     self
@@ -218,7 +219,7 @@ class Spectrum < ActiveRecord::Base
   # rotate clockwise
   def rotate
     image   = Magick::ImageList.new("public"+(self.photo.url.split('?')[0]).gsub('%20',' '))
-    image.rotate!(90)
+    image.rotate!(-90)
     image.write("public"+self.photo.url)
     self.photo.reprocess!
   end

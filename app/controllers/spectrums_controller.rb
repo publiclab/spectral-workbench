@@ -163,17 +163,20 @@ class SpectrumsController < ApplicationController
             if mobile? || ios?
               @spectrum.save
               @spectrum = Spectrum.find @spectrum.id
-              @spectrum.rotate if params[:vertical] == "on"
               @spectrum.sample_row = @spectrum.find_brightest_row
               #@spectrum.tag("mobile",current_user.id)
             end
+            @spectrum.rotate if params[:vertical] == "on"
             @spectrum.tag("iOS",current_user.id) if ios?
-            @spectrum.tag(params[:tags],current_user.id) if params[:tags]
+            @spectrum.tag(params[:tags],current_user.id) if params[:tags] && params[:tags] != ""
             @spectrum.tag("upload",current_user.id) if params[:upload]
             @spectrum.tag(params[:device],current_user.id) if params[:device] && params[:device] != "none"
+            @spectrum.tag("video_row:#{params[:video_row]}", current_user.id) if params[:video_row]
+            #@spectrum.tag("sample_row:#{params[:video_row]}", current_user.id) if params[:video_row]
             if params[:spectrum][:calibration_id] && !params[:is_calibration] && params[:spectrum][:calibration_id] != "calibration" && params[:spectrum][:calibration_id] != "undefined"
               @spectrum.extract_data
               @spectrum.clone(params[:spectrum][:calibration_id])
+              @spectrum.tag("calibration:#{params[:spectrum][:calibration_id]}", current_user.id)
             end
             if params[:geotag]
               @spectrum.lat = params[:lat]
@@ -187,7 +190,7 @@ class SpectrumsController < ApplicationController
               }
               format.xml  { render :xml => @spectrum, :status => :created, :location => @spectrum }
             else
-              render "spectrums/new-errors"
+              render "spectrums/new"
             end
           else
             format.html { render :action => "new" }
@@ -195,7 +198,7 @@ class SpectrumsController < ApplicationController
           end
         end
       else
-        render "spectrums/new-errors"
+        render "spectrums/new"
       end
     else
       # possibly, we don't have to redirect - we could prompt for login at the moment of save...

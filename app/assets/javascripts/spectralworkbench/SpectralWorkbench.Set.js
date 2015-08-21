@@ -39,6 +39,18 @@ SpectralWorkbench.Set = SpectralWorkbench.Datum.extend({
  
     }
 
+    this.getOverexposure = function() {
+
+      var overexposure = [];
+      set.spectra.map(function(spectrum) {
+
+        overexposure.push(spectrum.getOverexposure());
+
+      });
+
+      return overexposure;
+    }
+
     this.load(this.json.spectra);
 
   }

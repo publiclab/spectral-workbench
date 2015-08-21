@@ -35,7 +35,13 @@ $W = {
       this.options.height = args['height']
       this.options.width = args['width']
     }
-    this.sample_start_row = localStorage.getItem('sw:samplestartrow') || this.width/2 // this is camera sample row, not saved image sample row!
+
+    if (args.video_row) {
+      this.sample_start_row = args.video_row;
+    } else {
+      // this is camera sample row, not saved image sample row!
+      this.sample_start_row = localStorage.getItem('sw:samplestartrow') || this.width/2;
+    }
     this.setSampleRow(this.sample_start_row)
 
     getUserMedia(this.options, this.success, this.deviceError)
@@ -503,6 +509,7 @@ $W = {
     $W.width_percent = start/$W.width
     $W.height_percent = start/$W.height
     $W.resetHeightIndicators(legacy)
+    $('#video_row').val($W.sample_start_row);
   },
   resetHeightIndicators: function(legacy) {
     if ($W.rotated) {

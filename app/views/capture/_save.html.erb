@@ -47,6 +47,7 @@
   <br />
   <textarea placeholder="Describe your spectrum: light source? Sample preparation? What's your goal?" style="span8" rows="6" name="spectrum[notes]" id="spectrum_notes"></textarea><br />
   <input name="dataurl" type="hidden" id="dataurl" />
+  <input name="video_row" type="hidden" id="video_row" />
   <input name="geotag" type="hidden" id="geotag" />
   <input name="lat" type="hidden" id="lat" />
   <input name="lon" type="hidden" id="lon" />
@@ -60,8 +61,13 @@
   </select>
   <% end %>
 </form>
+
+<% if logged_in? %>
+  <a class="btn btn-primary btn-large" href="#capture" onClick="$('#saveForm').submit();$('#spectrum-preview').hide();$('#capture-btn').addClass('active');$('#settings-btn').removeClass('active');" data-toggle="tab">Save with selected calibration</a>
+  <a class="btn btn-large" href="#capture" onClick="$('#calibration_id').val('calibration');$('#saveForm').submit();$('#spectrum-preview').hide();$('#capture-btn').addClass('active');$('#settings-btn').removeClass('active');" data-toggle="tab">Save & calibrate later</a>
+<% end %>
+
 <a class="btn btn-large" href="#capture" onClick="$W.cancelSave();$('#capture-btn').addClass('active');$('#settings-btn').removeClass('active');" data-toggle="tab">&laquo; Back</a>
-<% if logged_in? %><a class="btn btn-primary btn-large" href="#capture" onClick="$('#saveForm').submit();$('#spectrum-preview').hide();$('#capture-btn').addClass('active');$('#settings-btn').removeClass('active');" data-toggle="tab">Save</a><% end %>
 
 <p>By uploading your data, you agree to release it under the <a href="http://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Zero license</a></p>
 </div>

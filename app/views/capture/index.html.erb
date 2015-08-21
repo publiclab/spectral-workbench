@@ -51,6 +51,9 @@
 
   <div style="padding-bottom:10px;padding-top:250px;">
     <div class="visible-phone">
+
+      <p class="alert alert-warning">Due to a recent change in the system, you may need to reset your video cross-section line in the image above. A good way to do this is to click "Auto-detect" below while measuring a fluorescent light, then create a new calibration. (<a href="//publiclab.org/wiki/spectral-workbench-calibration#Cross+section">Learn more &raquo;</a>)</p>
+
       <p style="margin-top:4px;">Point your spectrometer at a light and click on the video above to choose a cross-section to sample. (<a href="http://publiclab.org/wiki/spectral-workbench-usage">Learn more &raquo;</a>)</p>
       <img class="img-rounded" src="/images/example-cfl.jpg" style="width:100px;height:80px" />
       <img class="img-rounded" src="/images/example-sky.jpg" style="width:100px;height:80px" />
@@ -70,9 +73,8 @@
   <% if ios? || (mobile? && !opera?) %>
   <% end %>
 
-  <a class="btn btn-large btn-primary" href="#capture" onClick="$('#capture-btn').addClass('active');$('#settings-btn').removeClass('active');" data-toggle="tab">Begin capturing &raquo;</a>
   <p style="padding-top:5px;">
-    <a rel="tooltip" title="" class="btn btn-inverse" onclick="$W.auto_detect_sample_row()" data-original-title="Auto detect sample row"><i class="icon-white icon-resize-horizontal"></i> Auto-detect Sample Row</a>
+    <a rel="tooltip" title="" class="btn btn-inverse" onclick="$W.auto_detect_sample_row()" data-original-title="Auto select sample row"><i class="icon-white icon-resize-horizontal"></i> Auto-select Sample Row</a>
     <a rel="tooltip" title="Flip video horizontally" class="btn btn-inverse" onClick="$W.flip_horizontal()"><i class="icon-resize-horizontal"></i> Flip</a>
     <a rel="tooltip" title="Rotate video 90 &deg;" class="btn btn-inverse" onClick="$W.toggle_rotation()"><i class="icon-repeat"></i> Rotate</a>
     <% if params[:debug] || chrome? %><a rel="tooltip" title="Change camera" class="btn btn-inverse" onClick="$W.chromeCameraSwitch()"><i class="icon-camera"></i> Change Camera</a><% end %>
@@ -81,6 +83,13 @@
   <p style="padding-top:5px;">
     Help <a href="http://publiclab.org/wiki/spectral-workbench-usage#Webcam+selection">selecting a camera</a>
   </p>
+
+  <% if @calibration %>
+    <p class="calibration-used">Using spectrum "<a target="_blank" href="/spectrums/<%= @calibration.id %>"><%= @calibration.title %></a>" (captured <%= time_ago_in_words(@calibration.created_at) %> ago) as a calibration reference.</p>
+    <p>If this is incorrect, simply save your spectra uncalibrated and calibrate them later with the correct reference.</p>
+  <% end %>
+
+  <a class="btn btn-large btn-primary" href="#capture" onClick="$('#capture-btn').addClass('active');$('#settings-btn').removeClass('active');" data-toggle="tab">Begin capturing &raquo;</a>
 
 </div>
 
@@ -113,13 +122,13 @@
   flotoptions.colors = [ "#ccc", "#E02130", "#FAB243", "#429867", "#2B5166" ]//, "#482344" ]
 
   $W.initialize({
-    calibrated:<%= !@calibration.nil? %>,
+    calibrated: <%= !@calibration.nil? %>,
     interface:"capture",
     mode:"combined",
-    <% if @calibration %>
-      sample_row:<%= @calibration.sample_row %>,
+    <% if @calibration && @calibration.has_powertag('video_row') %>
+      video_row: <%= @calibration.powertag('video_row') %>,
     <% end %>
-    width:640
+    width: 640
   }) 
   setInterval($W.getRow,100)
   <% if @calibration %>
