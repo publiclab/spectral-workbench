@@ -17,7 +17,7 @@ class Tag < ActiveRecord::Base
     Spectrum.joins(:tags).where('tags.name = (?)',self.name)
   end
 
-  def is_powertag
+  def is_powertag?
     self.name.match(/[a-zA-Z-]+:[a-zA-Z0-9-]+/)
   end
 
@@ -60,7 +60,7 @@ class Tag < ActiveRecord::Base
   def colors
     colors = ""
 
-    colors = " purple" if self.is_powertag
+    colors = " purple" if self.is_powertag?
 
     colors
   end

@@ -1,0 +1,8 @@
+<% datum.tags.each do |tag| %> 
+  <span id="tag_<%= tag.id %>" class="label label-info<%= tag.colors %>"> 
+    <a href="<%= tag_path(tag.name) %>"><%= tag.name %></a> 
+    <% if logged_in? && (tag.user_id == current_user.id || tag.spectrum.author == current_user.login || current_user.role == "admin") %>
+      <a class='tagdelete'<% if tag.is_powertag? %> data-confirm='Are you sure? This tag contains functional data used in the display and analysis of the spectrum.'<% end %> data-id="<%= tag.id %>" data-remote='true' data-method='delete' href='<%= tag_path(tag) %>'>x</a>
+    <% end %>
+  </span>
+<% end %>

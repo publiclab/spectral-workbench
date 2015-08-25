@@ -24,6 +24,11 @@ SpectralWorkbench.Graph = Class.extend({
     } 
 
     this.updateSize()();
+
+    // deletion listeners
+    $('#tags .tagdelete').bind('ajax:success', function(){
+      $('#tag_' + $(this).attr('data-id')).remove();
+    });
  
     var svg = d3.select("#graph").append("svg")
       .attr("width",  this.width  + this.margin.left + this.margin.right)
@@ -46,6 +51,11 @@ SpectralWorkbench.Graph = Class.extend({
       SpectralWorkbench.API.Legacy.load(datum.json, _graph.dataType);
 
       SpectralWorkbench.API.Core.alertOverexposure(_graph);
+
+      _graph.tagForm = new SpectralWorkbench.UI.TagForm(_graph); 
+
+      // download tags
+      _graph.datum.fetchTags();
 
       /* Enter data into the graph */
       _graph.data = d3.select('#graph svg')  //Select the <svg> element you want to render the chart in.   
@@ -116,6 +126,11 @@ SpectralWorkbench.Graph = Class.extend({
  
     }
 
+    /*
+     * ======================================
+     * Scroll wheel zooming and drag panning;
+     * needs rewrite
+     */
     _graph.zoomSetup = function() {
 
       zoomed = function() {
@@ -151,6 +166,12 @@ SpectralWorkbench.Graph = Class.extend({
 
     }
 
+
+    /*
+     * ======================================
+     * Switch to eV as units (not well-implemented; should be 
+     * done as display, not actually overwriting data)
+     */
     _graph.toggleUnits = function() {
 
       if (_graph.dataType == "spectrum") {
@@ -189,6 +210,36 @@ SpectralWorkbench.Graph = Class.extend({
       _graph.updateSize()();
  
     }
+
+
+    /* 
+     * ======================================
+     * Gets a spectrum object by its <id> if it exists in this graph.
+     * Maybe we should have a fetchSpectrum which can get them remotely, too?
+     */
+    _graph.getSpectrumById = function(id) {
+
+      if (_graph.dataType == "spectrum") {
+
+        console.log('This only works on sets');
+
+      } else {
+
+        var response = false;
+
+        _graph.datum.spectra.forEach(function(spectrum) {
+
+          if (spectrum.id == id) response = spectrum;
+
+        });
+
+      }
+
+      return response;
+
+    }
+
+    _graph.UI = new SpectralWorkbench.UI.Util(_graph);
 
     this.graphSetup();
     this.eventSetup();

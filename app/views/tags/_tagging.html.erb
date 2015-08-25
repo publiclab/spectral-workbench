@@ -1,18 +1,15 @@
-<p id="tags">
+<p id="tags" class="tags">
   <b>Tags:</b> 
-  <span>
-  <% datum.tags.each do |tag| %> 
-    <span id="tag_<%= tag.id %>" class="label label-info<%= tag.colors %>"> 
-      <a href="<%= tag_path(tag.name) %>"><%= tag.name %></a> 
-      <% if logged_in? && (tag.user_id == current_user.id || tag.spectrum.author == current_user.login || current_user.role == "admin") %>
-        <a class='tagdelete' data-method='delete' href='<%= tag_path(tag) %>'>x</a>
-      <% end %>
-    </span>
-  <% end %>
+  <span class="list">
+    <% if legacy %>
+      <%= render partial: "tags/inlineList", locals: { datum: datum } %>
+    <% else %>
+      <span class="loading" style="color:#aaa">Loading...</span>
+    <% end %>
   </span>
 </p>
 
-<form id="tag-form-<%= datum.id %>" class="form" action="/tags">
+<form id="tag-form-<%= datum.id %>" class="form tag-form" action="/tags">
   <input type="hidden" name="tag[<%= datum.class.name.downcase %>_id]" value="<%= datum.id %>" />
   <div class="control-group">
     <div class="input-prepend">
@@ -22,11 +19,16 @@
   </div>
 </form>
 
+<% if legacy %>
+
 <script>
 
-  jQuery(document).ready(function() {
+  jQuery(document).ready(function($) {
 
-    SpectralWorkbench.UI.initTagForm('#tag-form-<%= datum.id %>', <%= datum.id %>);
+    new SpectralWorkbench.TagForm(graph); // this global ref is for legacy use only
 
   });
+
 </script>
+
+<% end %>

@@ -65,22 +65,45 @@ class TagsController < ApplicationController
         redirect_to spectrum_path(@tag.spectrum_id)
       end
     else
-        flash[:error] = "That tag didn't exist."
-        redirect_to "/dashboard"
+      flash[:error] = "That tag didn't exist."
+      redirect_to "/dashboard"
     end
   end
 
   def index
-    @tags = Tag.order("id DESC").where(created_at: Time.now-1.month..Time.now).limit(100)
-    count = {}
-    @tagnames = @tags.collect(&:name).each do |tag|
-      if count[tag]
-        count[tag] += 1
+
+    # resourceful request for a set's tag list:
+    if params[:set_id]
+
+      @set = Set.find params[:set_id]
+      render partial: 'tags/inlineList', locals: { datum: @set }, layout: false
+
+    # resourceful request for a spectrum's tag list:
+    elsif params[:spectrum_id]
+
+      @spectrum = Spectrum.find params[:spectrum_id]
+
+      if request.xhr?
+        render :json => @spectrum.tags
       else
-        count[tag] = 1
+        render partial: 'tags/inlineList', locals: { datum: @spectrum }, layout: false
       end
+
+    else
+
+      # this is dumb, get rid of it:
+      @tags = Tag.order("id DESC").where(created_at: Time.now-1.month..Time.now).limit(100)
+      count = {}
+      @tagnames = @tags.collect(&:name).each do |tag|
+        if count[tag]
+          count[tag] += 1
+        else
+          count[tag] = 1
+        end
+      end
+      @tagnames = count.sort_by {|k,v| v }.reverse
     end
-    @tagnames = count.sort_by {|k,v| v }.reverse
+
   end
 
 end

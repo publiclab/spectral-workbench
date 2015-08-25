@@ -265,3 +265,7 @@ div.spectrum-img-container .alert-zooming div a {
   width: auto;
   margin: 0;
 }
+
+#tags span.label {
+  margin-right:4px;
+}

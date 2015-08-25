@@ -52,61 +52,68 @@ SpectralWorkbench.API.Core = {
 
   },
 
-  // add tag to current datum
-  addTag: function(spectrum_id, name, callback) {
+
+  // programmatically set range for current datum
+  setRange: function(_graph) {
+
+    // we could set the tag, then re-fetch the spectrum data? Or do it ourselves, client-side? 
+    // graph.addTag: function(spectrum_id, name, callback) {
+
+    // >>>>>>>>>>>
+
+  },
+
+
+  // linear calibrate using pixel positions <x1> and <x2>, to known wavelengths <w1> <w2>
+  // and optional callback(response)
+  calibrate: function(id, x1, w1, x2, w2, callback) {
 
     $.ajax({
-      url: "/tags",
+      url: "/spectra/calibrate/0.json", // ugly
       type: "POST",
 
       data: {
         authenticity_token: $('meta[name=csrf-token]').attr('content'),
-        tag: {
-          spectrum_id: spectrum_id,
-          name: name
-        }
+        id: id,
+        x1: x1,
+        x2: x2,
+        w1: w1,
+        w2: x2
       },
 
       success: function(response) {
 
-        response = JSON.parse(response);
+        if (callback) callback(response);
 
-        $.each(response['saved'],function(i,tag) {
-
-          var tag_name = tag[0],
-              tag_id   = tag[1],
-              color    = "";
-
-          // we use CSS classnames to identify tag types
-          if (tag_name.match(/[a-zA-Z-]+:[a-zA-Z0-9-]+/)) color = " purple";
-
-          $('#tags').append(" <span id='tag_"+tag_id+"' rel='tooltip' title='This is a powertag.' class='label label-info" + color + "'><a href='/tags/"+tag_name+"'>"+tag_name+"</a> <a class='tagdelete' data-method='delete' href='/tags/"+tag_id+"'>x</a></span> ");
-
-          // deletion listener
-          $('#tag_'+tag_id).bind('ajax:success', function(e,tagid){
-            $('#tag_'+tagid).remove();
-          });
-
-        });
-
-        $('#taginput').prop('disabled',false);
-
-        callback(response);
-
-      },
+      }
 
     });
 
   },
 
-  // return given tags metadata of current datum
-  getTag: function(name) {
+  // clone calibration from spectrum of id <from_id> to spectrum of id <to_id>
+  copyCalibration: function(from_id, to_id, callback) {
 
-  },
+    callback = callback || function(response) { SpectralWorkbench.API.Core.notify('Calibration cloned from spectrum #' + from_id); }
 
-  // programmatically set range for current datum
-  setRange: function() {
-    
+    $.ajax({
+      url: "/spectrums/clone/" + to_id + ".json",
+      type: "POST",
+
+      data: {
+        authenticity_token: $('meta[name=csrf-token]').attr('content'),
+        clone_id: from_id
+      },
+
+      success: function(response) {
+
+        // calibrate client side
+        callback(response);
+
+      }
+
+    });
+
   },
 
   // checks overexposure and displays an alert if it is so

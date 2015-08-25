@@ -92,10 +92,13 @@ SpectralWorkbench::Application.routes.draw do
   resources :macros
   resources :session
   resources :tags
-  resources :sets
+  resources :sets do 
+    resources :comments
+  end
   resources :comments, :belongs_to => :spectrums
   resources :spectrums do
     resources :comments
+    resources :tags
     member do
       get :clone_search
       get :compare_search

@@ -37,10 +37,20 @@ class ApplicationController < ActionController::Base
 
   private
 
+  def require_ownership(datum)
+    dataType = (self.class.name == "SpectrumsController") ? :spectrum : :set
+
+    unless logged_in? && (current_user.role == "admin" || current_user.id == datum.user_id)
+      flash[:error] = "You must own this data to edit it."
+      redirect_to spectrum_path(datum) if dataType == :spectrum
+      redirect_to      set_path(datum) if dataType == :set
+    end
+  end
+
   def require_login
     unless logged_in?
       path_info = request.env['PATH_INFO']
-      flash[:warning] = "You must be logged in to access this section"
+      flash[:error] = "You must be logged in to access this function."
       redirect_to '/login?back_to=' + URI.encode(path_info) # halts request cycle
     end
   end

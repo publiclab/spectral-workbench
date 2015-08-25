@@ -5,6 +5,7 @@
         <input class="visible-all" type="checkbox" checked="true" />
       </th>
       <th style="width:14px;"></th>
+      <th style="width:14px;">ID</th>
       <th style="width:25px;">Tools</th>
       <th style="width:40px;"></th>
       <th>Spectra (<%= datum.spectrums.length %>)</th>
@@ -18,6 +19,7 @@
         <td>
           <div class="key"></div>
         </td>
+        <td><%= spectrum.id %></td>
         <td><a onClick="$('.spectrum-tools-<%= spectrum.id %>').toggle()"><i class="icon icon-cog"></i></a></td>
         <td>
 
@@ -38,7 +40,7 @@
 
         </td>
         <td>
-            <a href="/spectrums/<%= spectrum.id %>"><%= spectrum.title %></a>
+          <a href="/spectrums/<%= spectrum.id %>"><%= spectrum.title %></a>
 
           <% else %>
         </td>

@@ -1,8 +1,10 @@
 require 'will_paginate/array'
 class SpectrumsController < ApplicationController
   respond_to :html, :xml, :js, :csv
+  # expand this:
   protect_from_forgery :only => [:clone, :extract, :calibrate, :save]
   # http://api.rubyonrails.org/classes/ActionController/RequestForgeryProtection/ClassMethods.html
+  before_filter :require_login,     :only => [ :new, :edit, :create, :upload, :save, :update, :destroy, :calibrate, :extract, :clone, :setsamplerow, :find_brightest_row, :rotate, :reverse ]
 
   def stats
   end
@@ -43,7 +45,7 @@ class SpectrumsController < ApplicationController
     @macros = Macro.find :all, :conditions => {:macro_type => "analyze"}
     @calibrations = current_user.calibrations.select { |s| s.id != @spectrum.id } if logged_in?
     @comment = Comment.new
-    #respond_with(@spectrum) do |format|
+    
     respond_with(@spectrum) do |format|
       format.html {}
       format.xml  { render :xml => @spectrum }
@@ -94,177 +96,142 @@ class SpectrumsController < ApplicationController
     render :partial => "capture/results", :layout => false if params[:capture]
   end
 
-  def detail
-    @spectrum = Spectrum.find(params[:id])
-
-    respond_with(@spectrum) do |format|
-      format.html # details.html.erb
-    end
-  end
-
   # GET /spectrums/new
   # GET /spectrums/new.xml
   def new
-    if logged_in?
     @spectrum = Spectrum.new
-
+    require_ownership(@spectrum)
+ 
     respond_with(@spectrum) do |format|
       format.html {}
       format.xml  { render :xml => @spectrum }
-    end
-    else
-      flash[:error] = "You must be logged in to upload a new spectrum."
-      redirect_to "/login"
     end
   end
 
   # GET /spectrums/1/edit
   def edit
     @spectrum = Spectrum.find(params[:id])
-    if (params[:login] && params[:client_code]) || (logged_in? && (@spectrum.author == "anonymous" || @spectrum.user_id == current_user.id || current_user.role == "admin"))
-    else
-      flash[:error] = "You must be logged in and own this spectrum to edit."
-      redirect_to "/login"
-    end
+    require_ownership(@spectrum)
   end
 
   # POST /spectrums
   # POST /spectrums.xml
   # ?spectrum[title]=TITLE&spectrum[author]=anonymous&startWavelength=STARTW&endWavelength=ENDW;
-  # replacing this with capture/save
+  # replacing this with capture/save soon
   def create
-    if logged_in?
-      client = params[:client] || "0"
-      uniq_id = params[:uniq_id] || "0"
-      client_code = client+"::"+uniq_id
-      user_id = current_user.id if logged_in?
-      user_id ||= "0"
-      author = current_user.login if logged_in?
-      author ||= "anonymous"
 
-      if params[:dataurl] # mediastream webclient
-        @spectrum = Spectrum.new({:title => params[:spectrum][:title],
-          :author => author,
-          :video_row => params[:spectrum][:video_row],
-          :notes => params[:spectrum][:notes]})
-        @spectrum.user_id = user_id
-        @spectrum.image_from_dataurl(params[:dataurl])
-      else # upload form at /upload
-        @spectrum = Spectrum.new({:title => params[:spectrum][:title],
-          :author => author,
-          :user_id => user_id,
-          :notes => params[:spectrum][:notes],
-          :photo => params[:spectrum][:photo]})
-      end
+    if params[:dataurl] # mediastream webclient
+      @spectrum = Spectrum.new({:title => params[:spectrum][:title],
+        :author => current_user.login,
+        :video_row => params[:spectrum][:video_row],
+        :notes => params[:spectrum][:notes]})
+      @spectrum.user_id = current_user.id
+      @spectrum.image_from_dataurl(params[:dataurl])
+    else # upload form at /upload
+      @spectrum = Spectrum.new({:title => params[:spectrum][:title],
+        :author => current_user.login,
+        :user_id => current_user.id,
+        :notes => params[:spectrum][:notes],
+        :photo => params[:spectrum][:photo]})
+    end
 
-      if @spectrum.save
-        respond_with(@spectrum) do |format|
-          if (APP_CONFIG["local"] || logged_in?)
-            if mobile? || ios?
-              @spectrum.save
-              @spectrum = Spectrum.find @spectrum.id
-              @spectrum.sample_row = @spectrum.find_brightest_row
-              #@spectrum.tag("mobile",current_user.id)
-            end
-            @spectrum.rotate if params[:vertical] == "on"
-            @spectrum.tag("iOS",current_user.id) if ios?
-            @spectrum.tag(params[:tags],current_user.id) if params[:tags] && params[:tags] != ""
-            @spectrum.tag("upload",current_user.id) if params[:upload]
-            @spectrum.tag(params[:device],current_user.id) if params[:device] && params[:device] != "none"
-            @spectrum.tag("video_row:#{params[:video_row]}", current_user.id) if params[:video_row]
-            #@spectrum.tag("sample_row:#{params[:video_row]}", current_user.id) if params[:video_row]
-            if params[:spectrum][:calibration_id] && !params[:is_calibration] && params[:spectrum][:calibration_id] != "calibration" && params[:spectrum][:calibration_id] != "undefined"
-              @spectrum.extract_data
-              @spectrum.clone(params[:spectrum][:calibration_id])
-              @spectrum.tag("calibration:#{params[:spectrum][:calibration_id]}", current_user.id)
-            end
-            if params[:geotag]
-              @spectrum.lat = params[:lat]
-              @spectrum.lon = params[:lon]
-            end
-            @spectrum.reversed = true if params[:spectrum][:reversed] == "true"
-            if @spectrum.save!
-              flash[:notice] = 'Spectrum was successfully created.'
-              format.html {
-                redirect_to spectrum_path(@spectrum)
-              }
-              format.xml  { render :xml => @spectrum, :status => :created, :location => @spectrum }
-            else
-              render "spectrums/new"
-            end
-          else
-            format.html { render :action => "new" }
-            format.xml  { render :xml => @spectrum.errors, :status => :unprocessable_entity }
+    if @spectrum.save
+
+      respond_with(@spectrum) do |format|
+
+        if (APP_CONFIG["local"] || logged_in?)
+
+          if mobile? || ios?
+            @spectrum.save
+            @spectrum = Spectrum.find @spectrum.id
+            @spectrum.sample_row = @spectrum.find_brightest_row
+            #@spectrum.tag("mobile",current_user.id)
           end
+
+          @spectrum.rotate if params[:vertical] == "on"
+          @spectrum.tag("iOS",current_user.id) if ios?
+          @spectrum.tag(params[:tags],current_user.id) if params[:tags] && params[:tags] != ""
+          @spectrum.tag("upload",current_user.id) if params[:upload]
+          @spectrum.tag(params[:device],current_user.id) if params[:device] && params[:device] != "none"
+          @spectrum.tag("video_row:#{params[:video_row]}", current_user.id) if params[:video_row]
+          #@spectrum.tag("sample_row:#{params[:video_row]}", current_user.id) if params[:video_row]
+
+          if params[:spectrum][:calibration_id] && !params[:is_calibration] && params[:spectrum][:calibration_id] != "calibration" && params[:spectrum][:calibration_id] != "undefined"
+            @spectrum.extract_data
+            @spectrum.clone(params[:spectrum][:calibration_id])
+            @spectrum.tag("calibration:#{params[:spectrum][:calibration_id]}", current_user.id)
+          end
+
+          if params[:geotag]
+            @spectrum.lat = params[:lat]
+            @spectrum.lon = params[:lon]
+          end
+
+          @spectrum.reversed = true if params[:spectrum][:reversed] == "true"
+
+          if @spectrum.save!
+            flash[:notice] = 'Spectrum was successfully created.'
+            format.html {
+              redirect_to spectrum_path(@spectrum)
+            }
+            format.xml  { render :xml => @spectrum, :status => :created, :location => @spectrum }
+          else
+            render "spectrums/new"
+          end
+
+        else
+
+          format.html { render :action => "new" }
+          format.xml  { render :xml => @spectrum.errors, :status => :unprocessable_entity }
+
         end
-      else
-        render "spectrums/new"
+
       end
+
     else
-      # possibly, we don't have to redirect - we could prompt for login at the moment of save...
-      flash[:notice] = "You must first log in to upload spectra."
-      redirect_to "/login"
+      render "spectrums/new"
     end
   end
 
-  # used to upload numerical spectrum data
+  # used to upload numerical spectrum data as a new spectrum (untested, no image??)
   def upload
-    if logged_in?
-      @spectrum = Spectrum.new({:title => params[:spectrum][:title],
-        :author => author,
-        :user_id => user_id,
-        :notes => params[:spectrum][:notes],
-        :data => params[:data],
-        :photo => params[:photo]})
-      if @spectrum.save!
-        @spectrum.tag(params[:tags],current_user.id) if params[:tags]
-        redirect_to spectrum_path(@spectrum)
-      else
-        flash[:error] = "There was a problem uploading."
-        redirect_to "/spectrum/upload/"
-      end
-    else
-      render :text => "You must be logged in and own the spectrum to edit it."
-    end
+    @spectrum = Spectrum.new({:title => params[:spectrum][:title],
+      :author => author,
+      :user_id => user_id,
+      :notes => params[:spectrum][:notes],
+      :data => params[:data],
+      :photo => params[:photo]})
+    @spectrum.save!
+    @spectrum.tag(params[:tags], current_user.id) if params[:tags]
+    redirect_to spectrum_path(@spectrum)
   end
 
   # only ajax/POST accessible for now:
   def save
     @spectrum = Spectrum.find(params[:id])
-    if logged_in? && (@spectrum.user_id == current_user.id || current_user.role == "admin")
-      @spectrum.data = params[:data]
-      @spectrum.tag(params[:tags],current_user.id) if params[:tags]
-      render :text => @spectrum.save
-    else
-      render :text => "You must be logged in and own the spectrum to edit it."
-    end
+    require_ownership(@spectrum)
+    @spectrum.data = params[:data]
+    @spectrum.tag(params[:tags],current_user.id) if params[:tags]
+    render :text => @spectrum.save
   end
 
   # PUT /spectrums/1
   # PUT /spectrums/1.xml
   def update
     @spectrum = Spectrum.find(params[:id])
-    if logged_in? && (@spectrum.user_id == current_user.id || @spectrum.author == "anonymous")#(current_user.role == "admin")
-      if @spectrum.author == "anonymous"
-        @spectrum.author = current_user.login
-        @spectrum.user_id = current_user.id
-      end
-      @spectrum.title = params[:spectrum][:title] unless params[:spectrum][:title].nil?
-      @spectrum.notes = params[:spectrum][:notes] unless params[:spectrum][:notes].nil?
+    require_ownership(@spectrum)
+    @spectrum.title = params[:spectrum][:title] unless params[:spectrum][:title].nil?
+    @spectrum.notes = params[:spectrum][:notes] unless params[:spectrum][:notes].nil?
 
-      respond_with(@spectrum) do |format|
-        if @spectrum.save
-          flash[:notice] = 'Spectrum was successfully updated.'
-          format.html { redirect_to(@spectrum) }
-          format.xml  { head :ok }
-        else
-          format.html { render :action => "edit" }
-          format.xml  { render :xml => @spectrum.errors, :status => :unprocessable_entity }
-        end
+    respond_with(@spectrum) do |format|
+      if @spectrum.save
+        flash[:notice] = 'Spectrum was successfully updated.'
+        format.html { redirect_to(@spectrum) }
+        format.xml  { head :ok }
+      else
+        format.html { render :action => "edit" }
+        format.xml  { render :xml => @spectrum.errors, :status => :unprocessable_entity }
       end
-    else
-      flash[:error] = "You must be logged in to edit a spectrum."
-      redirect_to "/login"
     end
   end
 
@@ -272,65 +239,55 @@ class SpectrumsController < ApplicationController
   # DELETE /spectrums/1.xml
   def destroy
     @spectrum = Spectrum.find(params[:id])
-    if logged_in? && (current_user.role == "admin" || current_user.id == @spectrum.user_id)
-      @spectrum.destroy
-      flash[:notice] = "Spectrum deleted."
+    require_ownership(@spectrum)
+    @spectrum.destroy
 
-      respond_with(@spectrum) do |format|
-        format.html { redirect_to('/') }
-        format.xml  { head :ok }
-      end
-    else
-      flash[:error] = "You must be an admin to destroy comments."
-      redirect_to "/login"
+    flash[:notice] = "Spectrum deleted."
+    respond_with(@spectrum) do |format|
+      format.html { redirect_to('/') }
+      format.xml  { head :ok }
     end
   end
 
+  # Start doing this client side!
   def calibrate
     @spectrum = Spectrum.find(params[:id])
-    if logged_in? && @spectrum.user_id == current_user.id || current_user.role == "admin"
-      if true#request.post?
-        @spectrum.calibrate(params[:x1],params[:w1],params[:x2],params[:w2])
-        @spectrum.save
-        tag = @spectrum.tag('calibration',current_user.id)
-      end
-      flash[:notice] = "Great, calibrated! <b>Next steps:</b> sign up on <a href='http://publiclab.org/wiki/spectrometer'>the mailing list</a>, or browse/contribute to <a href='http://publiclab.org'>Public Lab website</a>"
-      redirect_to spectrum_path(@spectrum)
-    else
-      flash[:error] = "You must be logged in and own this spectrum to calibrate."
-      redirect_to spectrum_path(@spectrum)
-    end
+    require_ownership(@spectrum)
+    @spectrum.calibrate(params[:x1], params[:w1], params[:x2], params[:w2])
+    @spectrum.save
+    @spectrum.tag('calibration', current_user.id)
+
+    flash[:notice] = "Great, calibrated! <b>Next steps:</b> sign up on <a href='//publiclab.org/wiki/spectrometer'>the mailing list</a>, or browse/contribute to <a href='//publiclab.org'>Public Lab website</a>"
+    redirect_to spectrum_path(@spectrum)
   end
 
+  # Start doing this client side!
   def extract
     @spectrum = Spectrum.find(params[:id])
-    if logged_in? && @spectrum.user_id == current_user.id || current_user.role == "admin"
-    if request.post?
-      @spectrum.extract_data
-      @spectrum.save
-    end
+    require_ownership(@spectrum)
+    @spectrum.extract_data
+    @spectrum.save
+    flash[:warning] = "Now, recalibrate, since you've <a href='//publiclab.org/wiki/spectral-workbench-calibration#Cross+section'>set a new cross-section</a>."
     redirect_to spectrum_path(@spectrum)
-    else
-      flash[:error] = "You must be logged in and own this spectrum to re-extract values."
-      redirect_to spectrum_path(@spectrum)
-    end
   end
 
+  # Copy calibration from an existing calibrated spectrum.
+  # Start doing this client side!
   def clone
     @spectrum = Spectrum.find(params[:id])
-    if logged_in? && @spectrum.user_id == current_user.id || current_user.role == "admin"
-      if request.post?
-        id = params[:clone_id].to_i
-        @spectrum.clone(id)
-        @spectrum.save
-        @spectrum.remove_powertags('calibration')
-        @spectrum.tag("calibration:"+id.to_s,current_user.id)
-      end
-      flash[:notice] = 'Spectrum was successfully calibrated.'
-      redirect_to spectrum_path(@spectrum)
-    else
-      flash[:error] = "You must be logged in and own this spectrum to clone calibrations."
-      redirect_to "/login"
+    @cloneSpectrum = Spectrum.find(params[:clone_id])
+    require_ownership(@spectrum)
+    @spectrum.clone(@cloneSpectrum.id)
+    @spectrum.save
+    @spectrum.remove_powertags('calibration')
+    @spectrum.tag("calibration:#{@cloneSpectrum.id}", current_user.id)
+    
+    respond_with(@spectrums) do |format|
+      format.html {
+        flash[:notice] = 'Spectrum was successfully calibrated.'
+        redirect_to spectrum_path(@spectrum)
+      }
+      format.json  { render :json => @spectrum }
     end
   end
 
@@ -351,8 +308,6 @@ class SpectrumsController < ApplicationController
     respond_to do |format|
       format.xml
     end
-    #render :layout => false
-    #response.headers["Content-Type"] = "application/xml; charset=utf-8"
   end
 
   def plots_rss
@@ -366,58 +321,51 @@ class SpectrumsController < ApplicationController
     render :text => @spectrum.find_match_in_set(params[:set]).to_json
   end
 
+  # Start doing this client side!
   def setsamplerow
     require 'rubygems'
     require 'RMagick'
     @spectrum = Spectrum.find params[:id]
-    if logged_in? && (@spectrum.user_id == current_user.id || current_user.role == "admin")
-      image = Magick::ImageList.new("public"+(@spectrum.photo.url.split('?')[0]).gsub('%20',' '))
-      @spectrum.sample_row = (params[:row].to_f*image.rows)
-      @spectrum.extract_data
-      @spectrum.save
-    else
-      flash[:error] = "You must be logged in and own this spectrum to set the sample row."
-    end
+    require_ownership(@spectrum)
+    image = Magick::ImageList.new("public"+(@spectrum.photo.url.split('?')[0]).gsub('%20',' '))
+    @spectrum.sample_row = (params[:row].to_f*image.rows)
+    @spectrum.extract_data
+    @spectrum.save
+    flash[:warning] = "If this spectrum image is not perfectly vertical, you may need to recalibrate after <a href='//publiclab.org/wiki/spectral-workbench-calibration#Cross+section'>setting a new cross-section</a>."
     redirect_to spectrum_path(@spectrum)
   end
 
+  # Start doing this client side!
   def find_brightest_row
     @spectrum = Spectrum.find params[:id]
-    if logged_in? && (@spectrum.user_id == current_user.id || current_user.role == "admin")
-      @spectrum.sample_row = @spectrum.find_brightest_row
-      @spectrum.extract_data
-      @spectrum.clone(@spectrum.id) # recover calibration
-      @spectrum.save
-    else
-      flash[:error] = "You must be logged in and own this spectrum to do this."
-    end
+    require_ownership(@spectrum)
+    @spectrum.sample_row = @spectrum.find_brightest_row
+    @spectrum.extract_data
+    @spectrum.clone(@spectrum.id) # recover calibration
+    @spectrum.save
+    flash[:warning] = "If this spectrum image is not perfectly vertical, you may need to recalibrate after <a href='//publiclab.org/wiki/spectral-workbench-calibration#Cross+section'>setting a new cross-section</a>."
     redirect_to spectrum_path(@spectrum)
   end
 
+  # rotates the image and re-extracts it
   def rotate
     @spectrum = Spectrum.find params[:id]
-    if logged_in? && (@spectrum.user_id == current_user.id || current_user.role == "admin")
-      @spectrum.rotate
-      @spectrum.extract_data
-      @spectrum.clone(@spectrum.id)
-      @spectrum.save
-    else
-      flash[:error] = "You must be logged in and own this spectrum to do this."
-    end
+    require_ownership(@spectrum)
+    @spectrum.rotate
+    @spectrum.extract_data
+    @spectrum.clone(@spectrum.id)
+    @spectrum.save
     redirect_to spectrum_path(@spectrum)
   end
 
   # Just reverses the image, not the data.
   def reverse
     @spectrum = Spectrum.find params[:id]
-    if logged_in? && (@spectrum.user_id == current_user.id || current_user.role == "admin")
-      @spectrum.reversed = !@spectrum.reversed
-      @spectrum.toggle_tag('reversed', current_user.id)
-      @spectrum.reverse
-      @spectrum.save
-    else
-      flash[:error] = "You must be logged in and own this spectrum to do this."
-    end
+    require_ownership(@spectrum)
+    @spectrum.reversed = !@spectrum.reversed
+    @spectrum.toggle_tag('reversed', current_user.id)
+    @spectrum.reverse
+    @spectrum.save
     redirect_to spectrum_path(@spectrum)
   end
 

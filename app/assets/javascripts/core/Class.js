@@ -1,5 +1,6 @@
-var SpectralWorkbench = {};
-
+var SpectralWorkbench = {
+  UI: {}
+};
 /* From http://ejohn.org/blog/simple-javascript-inheritance/ */
 
 /* Simple JavaScript Inheritance
