@@ -20,7 +20,7 @@ class TagsControllerTest < ActionController::TestCase
     get :create, tag: { name: 'mytag',
                         spectrum_id: Spectrum.first.id }
     assert_response :redirect
-    assert_equal "You must be logged in to access this section", flash[:warning]
+    assert_equal "You must be logged in to access this function.", flash[:error]
     assert_redirected_to "/login?back_to=/tags"
   end
 
@@ -45,7 +45,7 @@ class TagsControllerTest < ActionController::TestCase
   test "should not delete tag if not logged in" do
     get :destroy, :id => 'cfl'
     assert_response :redirect
-    assert_equal "You must be logged in to access this section", flash[:warning]
+    assert_equal "You must be logged in to access this function.", flash[:error]
     assert_redirected_to "/login?back_to=/tags/cfl"
   end
 

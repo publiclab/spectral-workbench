@@ -3,7 +3,7 @@
 one:
   title: MyString
   author: MyString
-  data: "{\"lines\":[1,2,3]}"
+  data: '{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}'
   notes: MyText
   user_id: 1
   version: 1
@@ -11,7 +11,7 @@ one:
 two:
   title: MyString
   author: MyString
-  data: "{\"lines\":[1,2,3]}"
+  data: '{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}'
   notes: MyText
   version: 1
   user_id: 2

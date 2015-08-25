@@ -200,7 +200,7 @@ class Spectrum < ActiveRecord::Base
     cd = ActiveSupport::JSON.decode(clone_source.clean_json)
     i = 0
     # assume linear:
-    stepsize = (cd['lines'][10]['wavelength'].to_f-cd['lines'][0]['wavelength'].to_f)/10.00
+    stepsize = (cd['lines'][cd['lines'].length-1]['wavelength'].to_f-cd['lines'][0]['wavelength'].to_f)/10.00
     d['lines'].each do |line|
       if cd['lines'][i]
         line['wavelength'] = cd['lines'][i]['wavelength']
@@ -494,7 +494,6 @@ puts "reversing"
 
       # Some spectrums have "NaN" as wavelength and a, r, g, b values
       # Also, this protects from the condition where the wlength is nil
-
         bins_to_consider = get_bins(line['wavelength'].round)
 
         bins_to_consider.each do |bin|
