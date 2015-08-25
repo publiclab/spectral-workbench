@@ -20,6 +20,7 @@ SpectralWorkbench.Importer = Class.extend({
       callback(datum, chart);
  
     });
+
   }
 
 });

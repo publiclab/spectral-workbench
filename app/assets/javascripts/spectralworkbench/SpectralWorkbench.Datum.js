@@ -44,6 +44,8 @@ SpectralWorkbench.Datum = Class.extend({
 
             });
 
+            _datum.parseTags();
+
           }
 
         });
@@ -55,6 +57,33 @@ SpectralWorkbench.Datum = Class.extend({
       //}
 
     }
+
+
+    _datum.parseTags = function() {
+
+      _datum.tags.forEach(function(tag) {
+
+        _datum.parseTag(tag);
+
+      });
+
+    }
+
+
+    _datum.parseTag = function(tag) {
+
+      if (tag.powertag) {
+
+        if (tag.key == "subtract") {
+
+          SpectralWorkbench.API.Core.subtract(_datum, tag.value);
+
+        }
+
+      }
+
+    }
+
   }
 
 });

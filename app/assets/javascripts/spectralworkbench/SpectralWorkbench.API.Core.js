@@ -116,6 +116,38 @@ SpectralWorkbench.API.Core = {
 
   },
 
+
+  // fetch another spectrum, subtract it from this one
+  subtract: function(datum, spectrum_id, channel) {
+
+    channel = channel || "average";
+
+    channel = datum[channel];
+
+    var url = "/spectrums/" + spectrum_id + ".json",
+        subtractor;
+
+
+    /* Fetch data */ 
+    d3.json(url, function(error, data) {
+ 
+      subtractor = new SpectralWorkbench.Spectrum(data);
+
+      channel = channel.map(function(point) { 
+
+        point.y -= subtractor.getIntensity(point.x);
+
+      });
+
+      // refresh the graph:
+      datum.refresh();
+ 
+    });
+    
+
+  },
+
+
   // checks overexposure and displays an alert if it is so
   // we might just want a class of alert filters separate from the API, or
   // in a special zone

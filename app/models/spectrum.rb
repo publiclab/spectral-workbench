@@ -198,14 +198,18 @@ class Spectrum < ActiveRecord::Base
     clone_source = Spectrum.find clone_id
     d = ActiveSupport::JSON.decode(self.clean_json)
     cd = ActiveSupport::JSON.decode(clone_source.clean_json)
-    i = 0
     # assume linear:
-    stepsize = (cd['lines'][cd['lines'].length-1]['wavelength'].to_f-cd['lines'][0]['wavelength'].to_f)/10.00
+    lines = cd['lines']
+    length = lines.length
+    startWavelength = lines[0]['wavelength'].to_f
+    endWavelength = lines[length-1]['wavelength'].to_f
+    stepsize = (endWavelength - startWavelength) / d['lines'].length
+    i = 0
     d['lines'].each do |line|
-      if cd['lines'][i]
-        line['wavelength'] = cd['lines'][i]['wavelength']
+      if cd['lines'][i] && d['lines'].length == length # if they're the same size, exactly
+        line['wavelength'] = lines[i]['wavelength']
       else
-        line['wavelength'] = (cd['lines'][0]['wavelength'].to_f+(i*stepsize)).round(2)
+        line['wavelength'] = (startWavelength + (i * stepsize)).round(2)
       end
       i += 1
     end

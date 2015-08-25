@@ -17,7 +17,7 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
 
     var _spectrum = this;
 
-    this.load = function(lines) {
+    _spectrum.load = function(lines) {
 
       // Set up x and y properties like data.x and data.y for d3
       $.each(lines,function(i,line) {
@@ -43,6 +43,28 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
       });
 
     }
+
+
+    _spectrum.getIntensity = function(wavelength, channel) {
+
+      channel = channel || "average";
+
+      channel = _spectrum[channel];
+
+      var stepsize        = (channel[channel.length-1].x - channel[0].x) / channel.length,
+          startWavelength = channel[0].x,
+          wavelengthIndex = parseInt((wavelength - startWavelength) / stepsize);
+
+      // must consider data of different lengths!
+
+      if (wavelengthIndex > 0 && wavelengthIndex < channel.length) {
+
+        return channel[wavelengthIndex].y;
+
+      } else return 0;
+
+    }
+
 
     /* Inspects a given color channel recursively for sequential
      * pixels of 100%, which would indicate overexposure. Returns
@@ -97,9 +119,9 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
 
     }
 
-    this.load(_spectrum.json.data.lines);
+    _spectrum.load(_spectrum.json.data.lines);
 
-    this.d3 = function() {
+    _spectrum.d3 = function() {
       return [
         {
           values: _spectrum.average,
@@ -124,6 +146,7 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
         }
       ];
     }
+
   }
 
 });

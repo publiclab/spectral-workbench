@@ -80,7 +80,7 @@ SpectralWorkbench.Tag = Class.extend({
           $(formId + ' .control-group').removeClass('error');
           $(formId + ' .control-group .help-inline').remove();
          
-          if (response['errors'].length > 0) {
+          if (response['errors'] && response['errors'].length > 0) {
          
             $(formId + ' .control-group').addClass('error');
             $(formId + ' .control-group .help-inline').remove();
@@ -153,6 +153,7 @@ SpectralWorkbench.Tag = Class.extend({
       });
  
     }
+
 
     if (_tag.isNew) _tag.upload();
     else _tag.render();

@@ -39,14 +39,28 @@ SpectralWorkbench.Graph = Class.extend({
       return d.id;
     }
 
+    _graph.refresh = function() {
+
+      _graph.data.call(_graph.chart);
+
+    }
+
     /* once actual JSON is available and processed, 
      * <datum> is created; either SW.Set or SW.Spectrum
      * <chart> is the nvd3 chart
      * <data> is the raw JSON data from the server
      */
-    this.load = function(datum, chart, data) {
+    _graph.load = function(datum, chart, data) {
 
       _graph.datum = datum;
+
+      // use a closure to give graph access to refreshing:
+      _graph.datum.refresh = function() {
+
+        _graph.refresh();
+
+      }
+
       // APIv1 backwards-compatibility
       SpectralWorkbench.API.Legacy.load(datum.json, _graph.dataType);
 
@@ -241,8 +255,8 @@ SpectralWorkbench.Graph = Class.extend({
 
     _graph.UI = new SpectralWorkbench.UI.Util(_graph);
 
-    this.graphSetup();
-    this.eventSetup();
+    _graph.graphSetup();
+    _graph.eventSetup();
 
     // Update the chart when window updates.
     $(window).on('resize', _graph.updateSize());
