@@ -22,13 +22,9 @@
 <% if legacy %>
 
 <script>
-
-  jQuery(document).ready(function($) {
-
-    new SpectralWorkbench.UI.TagForm(graph); // this global ref is for legacy use only
-
+  jQuery(document).ready(function() {
+    SpectralWorkbench.UI.initTagForm('#tag-form-<%= datum.id %>', <%= datum.id %>);
   });
-
 </script>
 
 <% end %>
