@@ -22,16 +22,10 @@ SpectralWorkbench.Tag = Class.extend({
 
     if (_tag.name.match(/[a-zA-Z-]+:[a-zA-Z0-9-]+/)) {
       _tag.powertag = true;
+      _tag.key = _tag.name.split(':')[0];
+      _tag.value = _tag.name.split(':')[1];
     }
 
-
-    _tag.stopSpinner = function() {
-
-      $('#tag-form-' + _tag.datum.id + ' .add-on i').removeClass('icon-tag')
-                                                    .addClass('icon-spin')
-                                                    .addClass('icon-spinner');
-
-    }
 
     _tag.startSpinner = function() {
 
@@ -41,12 +35,20 @@ SpectralWorkbench.Tag = Class.extend({
 
     }
 
+    _tag.stopSpinner = function() {
+
+      $('#tag-form-' + _tag.datum.id + ' .add-on i').addClass('icon-tag')
+                                                    .removeClass('icon-spin')
+                                                    .removeClass('icon-spinner');
+
+    }
+
 
     // if new, send tag to server
     _tag.upload = function() {
 
       // this gets messy, but whatever
-      _tag.stopSpinner();
+      _tag.startSpinner();
 
       $.ajax({
         url: "/tags",
@@ -68,11 +70,11 @@ SpectralWorkbench.Tag = Class.extend({
           _tag.render();
 
           // from init() call
-          callback(response);
+          if (callback) callback(response);
 
           $('#taginput').prop('disabled',false);
  
-          var formId = "#tag-form-" + datum_id;
+          var formId = "#tag-form-" + _tag.datum.id;
          
           $(formId + ' input.name').val("");
           $(formId + ' .control-group').removeClass('error');
@@ -152,7 +154,8 @@ SpectralWorkbench.Tag = Class.extend({
  
     }
 
-    _tag.render();
+    if (_tag.isNew) _tag.upload();
+    else _tag.render();
  
   }
 
