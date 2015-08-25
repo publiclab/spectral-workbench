@@ -118,11 +118,9 @@ SpectralWorkbench.API.Core = {
 
 
   // fetch another spectrum, subtract it from this one
-  subtract: function(datum, spectrum_id, channel) {
+  subtract: function(datum, spectrum_id) {
 
-    channel = channel || "average";
-
-    channel = datum[channel];
+    channels = [datum.red, datum.blue, datum.green, datum.average];
 
     var url = "/spectrums/" + spectrum_id + ".json",
         subtractor;
@@ -133,10 +131,12 @@ SpectralWorkbench.API.Core = {
  
       subtractor = new SpectralWorkbench.Spectrum(data);
 
-      channel = channel.map(function(point) { 
-
-        point.y -= subtractor.getIntensity(point.x);
-
+      channels.forEach(function(_channel) {
+        _channel = _channel.map(function(point) { 
+ 
+          point.y -= subtractor.getIntensity(point.x);
+ 
+        });
       });
 
       // refresh the graph:
