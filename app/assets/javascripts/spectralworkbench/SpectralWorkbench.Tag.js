@@ -106,12 +106,31 @@ SpectralWorkbench.Tag = Class.extend({
         type: "POST",
         success: function(response) {
 
-          // do we need _tag.el = _tag.el.remove(); to preserve? 
-          _tag.el.remove();
+          _tag.cleanUp();
  
         }
       });
  
+    }
+
+
+    // scrubs local tag data; for use after deletion
+    _tag.cleanUp = function() {
+
+        _tag.el.remove();
+
+        // remove it from datum.tags:
+        var index = _tag.datum.tags.indexOf(_tag);
+        _tag.datum.tags.splice(index, 1);
+
+        // if it affected the datum display, reload it:
+        if (_tag.powertag) {
+          _tag.datum.load();
+          _tag.datum.parseTags();
+          _tag.datum.reloadGraph();
+          _tag.datum.refreshGraph();
+        }
+
     }
 
 
@@ -148,7 +167,7 @@ SpectralWorkbench.Tag = Class.extend({
       // deletion listener
       _tag.deleteEl.bind('ajax:success', function(){
 
-        _tag.el.remove();
+        _tag.cleanUp();
 
       });
  

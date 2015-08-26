@@ -132,15 +132,19 @@ SpectralWorkbench.API.Core = {
       subtractor = new SpectralWorkbench.Spectrum(data);
 
       channels.forEach(function(_channel) {
+
         _channel = _channel.map(function(point) { 
  
           point.y -= subtractor.getIntensity(point.x);
  
         });
+
       });
 
+      // reload the graph data:
+      datum.reloadGraph();
       // refresh the graph:
-      datum.refresh();
+      datum.refreshGraph();
  
     });
     

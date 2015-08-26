@@ -9,11 +9,9 @@ SpectralWorkbench.Set = SpectralWorkbench.Datum.extend({
     this.spectra = []; 
     var set = this;
 
-    this.load = function(spectra) {
+    this.load = function() {
 
-      set.json.spectra = spectra;
-
-      $.each(spectra, function(i,spectrum) {
+      $.each(set.json.spectra, function(i,spectrum) {
      
         set.spectra.push(new SpectralWorkbench.Spectrum(spectrum));
      
@@ -53,7 +51,7 @@ SpectralWorkbench.Set = SpectralWorkbench.Datum.extend({
       return overexposure;
     }
 
-    this.load(this.json.spectra);
+    this.load();
 
   }
 

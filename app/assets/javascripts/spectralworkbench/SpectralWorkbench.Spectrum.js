@@ -10,17 +10,17 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
     this.title = data.title;
     this.id    = data.id;
 
-    this.average = [];
-    this.red     = [];
-    this.green   = [];
-    this.blue    = [];
-
     var _spectrum = this;
 
-    _spectrum.load = function(lines) {
+    _spectrum.load = function() {
+
+      _spectrum.average = [];
+      _spectrum.red     = [];
+      _spectrum.green   = [];
+      _spectrum.blue    = [];
 
       // Set up x and y properties like data.x and data.y for d3
-      $.each(lines,function(i,line) {
+      $.each(_spectrum.json.data.lines,function(i,line) {
      
         if (line.wavelength == null) {
      
@@ -45,6 +45,11 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
     }
 
 
+    /* 
+     * ======================================
+     * Returns closest intensity for a given wavelength,
+     * from available wavelength/intensity pairs
+     */
     _spectrum.getIntensity = function(wavelength, channel) {
 
       channel = channel || "average";
@@ -119,7 +124,7 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
 
     }
 
-    _spectrum.load(_spectrum.json.data.lines);
+    _spectrum.load();
 
     _spectrum.d3 = function() {
       return [

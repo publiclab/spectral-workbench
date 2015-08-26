@@ -39,6 +39,14 @@ SpectralWorkbench.Graph = Class.extend({
       return d.id;
     }
 
+    // refresh datum into DOM
+    _graph.reload = function() {
+
+      _graph.data.datum(_graph.datum.d3, _graph.idKey)   //Populate the <svg> element with chart data and provide a binding key (removing idKey has no effect?)
+
+    }
+
+    // refresh graph element
     _graph.refresh = function() {
 
       _graph.data.call(_graph.chart);
@@ -54,8 +62,15 @@ SpectralWorkbench.Graph = Class.extend({
 
       _graph.datum = datum;
 
+      // use a closure to give graph access to reloading:
+      _graph.datum.reloadGraph = function() {
+
+        _graph.reload();
+
+      }
+
       // use a closure to give graph access to refreshing:
-      _graph.datum.refresh = function() {
+      _graph.datum.refreshGraph = function() {
 
         _graph.refresh();
 

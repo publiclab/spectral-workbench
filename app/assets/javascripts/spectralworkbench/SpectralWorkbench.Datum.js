@@ -10,11 +10,14 @@ SpectralWorkbench.Datum = Class.extend({
 
     /* 
      * ======================================
-     * Create a new tag and add it to self
+     * Create a new tag and add it to self,
+     * then run it
      */
     _datum.addTag = function(name, callback) {
 
       _datum.tags.push(new SpectralWorkbench.Tag(_datum, name, false, callback));
+
+      _datum.parseTag(_datum.tags[_datum.tags.length-1]);
 
     }
 
