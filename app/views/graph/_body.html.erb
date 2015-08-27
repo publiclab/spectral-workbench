@@ -83,27 +83,15 @@
 
                   <div class="btn-group">
 
-                    <a <% if !logged_in? %>rel="tooltip" title="Log in first!" <% end %>class="btn btn-small">
-                      <i class="icon icon-star"></i> 
-                      <span id="liked"><%= datum.like_count %></span> like<% if datum.like_count != 1 %>s<% end %>
-                    </a>
-
-                    <% if logged_in? && current_user.id != datum.id %>
-                      <a id="likebtn" class="btn btn-small" href="#" onClick="$W.toggle_like(<%= datum.id %>)">
-                        <i class="icon icon-star-empty"></i>
-                        <span id="likeaction">
-                        <% if datum.liked_by(current_user.id) %>Unlike<% else %> Like<% end %>
-                        </span>
-                      </a>
-                    <% end %>
+                    <%= render partial: "likes/buttons", locals: { datum: datum } %>
 
                   </div>
 
                   <% if logged_in? && current_user.login == datum.author %>
 
                     <div class="btn-group">
-                      <a class="btn btn-small" href="/spectrums/<%= datum.id %>/edit"><i class="icon icon-pencil"></i> Edit</a>
-                      <%= link_to '<i class="icon icon-remove-sign"></i> Delete'.html_safe, "/spectrums/destroy/#{datum.id}", :confirm => 'Are you sure?', :class => "btn btn-small" %>
+                      <a class="btn btn-small" href="/spectrums/<%= datum.id %>/edit"><i class="icon icon-pencil"></i></a>
+                      <%= link_to '<i class="icon icon-trash"></i> Delete'.html_safe, "/spectrums/destroy/#{datum.id}", :confirm => 'Are you sure?', :class => "btn btn-small" %>
                     </div>
 
                   <% end %>

@@ -1,0 +1,40 @@
+<%
+tool = { title: "Subtraction", author: "warren", id: 5, toolType: "macro", description: "Choose a spectrum to subtract from this spectrum." } 
+%>
+<h4><%= tool[:title] %></h4>
+
+<p class="attribution">by <a href="">warren</a> | <a href="/macros/<%= tool[:id] %>">Read more &raquo;</a></p>
+
+<p class="description"><%= tool[:description] %></p>
+
+<hr />
+
+<div class="body">
+
+  <form class="form-search">
+    <input type="text" class="input-medium search-query">
+    <button type="submit" class="btn"><i class="icon icon-search"></i></button>
+  </form>
+
+  <div class="results">
+
+    <% if logged_in? %>
+      <%= render partial: 'macros/spectra', locals: { spectrums: Spectrum.where(current_user.id).order('id DESC').limit(10) } %>
+    <% else %>
+      <p style="color:#888">Please <a href="/login">log in</a> to use this.</p>
+    <% end %>
+
+  </div>
+
+</div>
+
+<hr />
+
+<div class="actions">
+
+  <p>
+    <a href="#" class="cancel">cancel</a>
+    <button class="btn btn-primary btn-apply">Apply</button>
+  </p>
+
+</div>

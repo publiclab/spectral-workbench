@@ -24,6 +24,66 @@ SpectralWorkbench.Datum = Class.extend({
 
     /* 
      * ======================================
+     * Cleanly remove a tag by name and refresh graph, and 
+     * execute callback() on completion if provided
+     */
+    _datum.removeTag = function(name, callback) {
+
+      _datum.tags.forEach(function(tag) {
+        if (tag.name == name) {
+
+          tag.destroy(); // if it affected the datum display, tags are flushed and reloaded
+          if (callback) callback(tag);
+
+        }
+      });
+
+    }
+
+
+    /* 
+     * ======================================
+     * Find tags by name, run callback(tag) on each if provided
+     */
+    _datum.getTag = function(name, callback) {
+
+      var response;
+      _datum.tags.forEach(function(tag) {
+        if (tag.name == name) {
+
+          if (callback) callback(tag);
+          response = tag;
+
+        }
+      });
+      return response;
+
+    }
+
+
+    /* 
+     * ======================================
+     * Find powertags by key, run callback(tag) on each if provided
+     */
+    _datum.getPowerTag = function(key, callback) {
+
+      var powertags = [];
+      _datum.tags.forEach(function(tag) {
+        if (tag.powertag && tag.key == key) {
+
+          if (callback) callback(tag);
+          powertags.push(tag);
+
+        }
+      });
+
+      return powertags;
+
+    }
+
+
+    /* 
+     * ======================================
      * Get tags from server, populate datum.tags
      */
     _datum.fetchTags = function() {

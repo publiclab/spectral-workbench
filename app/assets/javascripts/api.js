@@ -38,30 +38,6 @@ $W.calibrate = function(id,x1,w1,x2,w2) {
   }
 }
 
-// Analyze only (depends on HTML elements):
-$W.toggle_like = function(id) {
-  $('#likebtn').addClass("disabled")
-  $.ajax({
-      url: "/likes/toggle/"+id,
-      type: "GET",
-      success: function(result) {
-        if (result == "unliked") {
-          $W.notify('You unliked this spectrum.')
-          $('#likeaction').html("Like")
-          $('#likebtn').removeClass("disabled")
-          $('#liked').html(parseInt($('#liked').html())-1)
-
-        } else {
-          $W.notify('You liked this spectrum.')
-          $('#likeaction').html("Unlike")
-          $('#likebtn').removeClass("disabled")
-          $('#liked').html(parseInt($('#liked').html())+1)
-        }
-      }
-    })
-}
-
-
 // an abstract measure of a spectrum's local contrast, sampling every <res> pixels, and only counting measured slope >1; used as a metric to determine if it's likely to be a CFL. Needs testing against lots of spectra & CFLs
 $W.contrast = function(res) {
   var sum = 0

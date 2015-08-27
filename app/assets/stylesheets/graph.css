@@ -269,3 +269,33 @@ div.spectrum-img-container .alert-zooming div a {
 #tags span.label {
   margin-right:4px;
 }
+
+.datum-tool-pane {
+  background: #eee;
+  text-align: center;
+  padding: 14px;
+}
+
+.datum-tool-pane hr {
+  border-top-color: #ddd;
+}
+
+.datum-tool-pane .description {
+  font-style: italic;
+}
+
+.datum-tool-pane .actions * {
+  margin-right: 6px;
+}
+
+.datum-tool-pane .spectra .spectrum {
+  background: #f8f8f8;
+}
+
+.datum-tool-pane .spectra .spectrum td a.btn-like {
+  text-decoration: none;
+}
+
+.datum-tool-pane .spectra .spectrum.selected {
+  background: #fff8dd;
+}

@@ -5,7 +5,7 @@ class Like < ActiveRecord::Base
   validates_presence_of :user_id, :spectrum_id
   belongs_to :user
   belongs_to :spectrum
-  before_save :increment_likes
+  before_create :increment_likes
   after_destroy :decrement_likes
 
   private

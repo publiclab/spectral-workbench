@@ -16,23 +16,19 @@ class LikesController < ApplicationController
   # as: /likes/toggle/:id where params[:id] is spectrum_id
   def toggle
     @spectrum = Spectrum.find params[:id]
-    unless @spectrum.user_id == current_user.id
-      if @spectrum.liked_by(current_user.id)
-        Like.find_by_user_id(current_user.id,:conditions => {:spectrum_id => @spectrum.id}).delete
-        render :text => "unliked"
-      else
-        @like = Like.new({
-          :user_id => current_user.id,
-          :spectrum_id => params[:id]
-        })
-        if @like.save
-          render :text => @spectrum.likes.length
-        else
-          render :text => "error"
-        end
-      end
+    if @spectrum.liked_by(current_user.id)
+      Like.find_by_user_id(current_user.id,:conditions => {:spectrum_id => @spectrum.id}).delete
+      render :text => "unliked"
     else
-      render :text => "You cannot like your own."
+      @like = Like.new({
+        :user_id => current_user.id,
+        :spectrum_id => params[:id]
+      })
+      if @like.save
+        render :text => @spectrum.likes.length
+      else
+        render :text => "error"
+      end
     end
   end
 

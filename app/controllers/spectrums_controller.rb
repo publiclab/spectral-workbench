@@ -4,7 +4,7 @@ class SpectrumsController < ApplicationController
   # expand this:
   protect_from_forgery :only => [:clone, :extract, :calibrate, :save]
   # http://api.rubyonrails.org/classes/ActionController/RequestForgeryProtection/ClassMethods.html
-  before_filter :require_login,     :only => [ :new, :edit, :create, :upload, :save, :update, :destroy, :calibrate, :extract, :clone, :setsamplerow, :find_brightest_row, :rotate, :reverse ]
+  before_filter :require_login,     :only => [ :new, :edit, :create, :upload, :save, :update, :destroy, :calibrate, :extract, :clone, :setsamplerow, :find_brightest_row, :rotate, :reverse, :choose ]
 
   def stats
   end
@@ -27,6 +27,26 @@ class SpectrumsController < ApplicationController
         format.xml  { render :xml => @spectrums }
       end
     end
+  end
+
+  # returns a list of spectrums by tag in a partial for use in macros and tools
+  def choose
+    # accept wildcards
+    if params[:id].last == "*"
+      comparison = "LIKE"
+      params[:id].chop!
+      params[:id] += "%"
+    else
+      comparison = "="
+    end
+
+    if params[:author]
+      author = User.find_by_login params[:author]
+      @spectrums = Spectrum.joins(:tags).order('id DESC').where('tags.name '+comparison+' (?)', params[:id]).where(user_id: author.id).paginate(:page => params[:page],:per_page => 24)
+    else
+      @spectrums = Spectrum.joins(:tags).order('id DESC').where('tags.name '+comparison+' (?)', params[:id]).paginate(:page => params[:page],:per_page => 24)
+    end
+    render partial: "macros/spectra", locals: { spectrums: @spectrums }
   end
 
   def show

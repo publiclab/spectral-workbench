@@ -2,7 +2,7 @@ SpectralWorkbench.UI.Util = Class.extend({
 
   init: function(_graph) {
 
-    _ui = this;
+    var _ui = this;
     
     _ui.calibrateSpectrum = function(id) {
 
@@ -23,8 +23,28 @@ SpectralWorkbench.UI.Util = Class.extend({
  
     }
 
-  }
+    _ui.tools = {
+ 
+      subtraction: {
+ 
+        title: "Subtraction",
+        description: "Subtraction",
+        apply: false,
+        url: '/spectrums/choose/calibrat*?own=true', // default spectra to show, can use * and ?author=warren
+        onSpectrumApply: function() {
+          // provide better API for own-id:
+          _graph.datum.addTag('subtract:' + $(this).attr('data-id'), function() {
+            close(); // close the tool pane
+          });
+        }
+ 
+      }
+ 
+    }
 
-  // refreshTags
+    // initialize tools
+    $('.tool-subtraction').click(function() { SpectralWorkbench.UI.Tool.init(_ui.tools.subtraction); });
+
+  }
 
 });

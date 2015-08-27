@@ -99,14 +99,15 @@ SpectralWorkbench.Tag = Class.extend({
 
     // Delete it from the server, then from the DOM;
     // this is not often used; data-remote=true and data-method=delete do a good job already
-    destroy = function() {
+    _tag.destroy = function(callback) {
  
       $.ajax({
-        url: "/tags/" + _tag.datum.id + "/destroy",
-        type: "POST",
+        url: "/tags/" + _tag.id,
+        type: "DELETE",
         success: function(response) {
 
           _tag.cleanUp();
+          if (callback) callback(response);
  
         }
       });
