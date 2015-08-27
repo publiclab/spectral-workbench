@@ -29,6 +29,7 @@ SpectralWorkbench.UI.Util = Class.extend({
  
         title: "Subtraction",
         description: "Subtraction",
+        author: "warren",
         apply: false,
         url: '/spectrums/choose/calibrat*?own=true', // default spectra to show, can use * and ?author=warren
         onSpectrumApply: function() {
