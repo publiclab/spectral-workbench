@@ -10,10 +10,8 @@ SpectralWorkbench.UI.Util = Class.extend({
  
         SpectralWorkbench.API.Core.copyCalibration(id, _graph.datum.id, function(response){ 
 
-          var spectrum =  _graph.getSpectrumById(response.id);
-
-          // refreshTags!
-          SpectralWorkbench.API.Core.refreshTags();
+          // fetch tags from server -- cloning calibration and associated tagging happens on the server side
+          _graph.datum.fetchTags();
 
           SpectralWorkbench.API.Core.notify('Spectrum calibration copied from spectrum #' + response.id);
 
@@ -23,12 +21,12 @@ SpectralWorkbench.UI.Util = Class.extend({
  
     }
 
+    // move these somewhere that makes sense, like into the API
     _ui.tools = {
  
       subtraction: {
- 
         title: "Subtraction",
-        description: "Subtraction",
+        description: "Subtract another calibrated spectrum from this one.",
         author: "warren",
         apply: false,
         url: '/spectrums/choose/calibrat*?own=true', // default spectra to show, can use * and ?author=warren
@@ -38,13 +36,35 @@ SpectralWorkbench.UI.Util = Class.extend({
             close(); // close the tool pane
           });
         }
- 
+      },
+
+      copyCalibration: {
+        title: "Copy Calibration",
+        description: "Use a calibrated spectrum to calibrate this one.",
+        author: "warren",
+        apply: false,
+        url: '/spectrums/choose/calibration', // default spectra to show, can use * and ?author=warren
+        onSpectrumApply: function() {
+
+          // provide better API for own-id:
+          SpectralWorkbench.API.Core.copyCalibration($(this).attr('data-id'), _graph.datum.id, function(response){ 
+
+            // fetch tags from server -- cloning calibration and associated tagging happens on the server side
+            _graph.datum.fetchTags();
+         
+            SpectralWorkbench.API.Core.notify('Spectrum calibration copied from spectrum #' + response.id);
+
+            close(); // close the tool pane
+         
+          } );
+        }
       }
  
     }
 
-    // initialize tools
+    // Initialize tools. Eventually have each tool specify its button appearance and class.
     $('.tool-subtraction').click(function() { SpectralWorkbench.UI.Tool.init(_ui.tools.subtraction); });
+    $('.tool-copy-calibration').click(function() { SpectralWorkbench.UI.Tool.init(_ui.tools.copyCalibration); });
 
   }
 

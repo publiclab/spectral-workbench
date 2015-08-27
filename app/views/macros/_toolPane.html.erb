@@ -8,10 +8,18 @@
 
 <div class="body">
 
-  <form class="form-search">
-    <input type="text" class="input-medium search-query">
-    <button type="submit" class="btn"><i class="icon icon-search"></i></button>
-  </form>
+  <div class="search">
+    <form class="form-search">
+      <div class="pull-right">
+        <select name="own" id="calibration_id">
+          <option value="true" selected>Your spectra</option>
+          <option value="false">All spectra</option>
+        </select>
+      </div>
+      <input type="text" class="input-medium search-query">
+      <button type="submit" class="btn"><i class="icon icon-search"></i></button>
+    </form>
+  </div>
 
   <div class="results">
 

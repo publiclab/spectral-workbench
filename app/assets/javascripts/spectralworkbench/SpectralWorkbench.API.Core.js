@@ -117,6 +117,40 @@ SpectralWorkbench.API.Core = {
   },
 
 
+  // apply a provided expression on every pixel of this spectrum
+  transform: function(datum, expression) {
+
+    var red     = datum.red,
+        green   = datum.green,
+        blue    = datum.blue,
+        average = datum.average;
+
+    // we could parse this, actually...
+    eval('var transform = function(R,G,B,A,X,Y,P) { return ' + expression + '; }');
+
+    average.forEach(function(P, i) { 
+
+      if (red[i])   var R = red[i].y;
+      else          var R = 0;
+      if (green[i]) var G = green[i].y;
+      else          var G = 0;
+      if (blue[i])  var B = blue[i].y;
+      else          var B = 0;
+
+      var A = average[i].y,
+          X = average[i].x,
+          Y = average[i].y;
+
+      P.y = transform(R,G,B,A,X,Y,P);
+
+    });
+
+    // some issue here on indexing...
+    datum.refreshGraph();
+
+  },
+
+
   // fetch another spectrum, subtract it from this one
   subtract: function(datum, spectrum_id) {
 

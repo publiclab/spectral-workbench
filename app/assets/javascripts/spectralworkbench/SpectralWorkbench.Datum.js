@@ -88,6 +88,13 @@ SpectralWorkbench.Datum = Class.extend({
      */
     _datum.fetchTags = function() {
 
+      // flush existing displayed tag elements if any
+      _datum.tags.forEach(function(tag) {
+        tag.el.remove();
+      });
+      // flush local tag objects
+      _datum.tags = [];
+
       $('#tags .loading').remove();
 
       // don't split here; specialize via inheritance

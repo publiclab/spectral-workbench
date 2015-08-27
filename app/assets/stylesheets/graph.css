@@ -276,6 +276,10 @@ div.spectrum-img-container .alert-zooming div a {
   padding: 14px;
 }
 
+.datum-tool-pane .search {
+  text-align: left;
+}
+
 .datum-tool-pane hr {
   border-top-color: #ddd;
 }

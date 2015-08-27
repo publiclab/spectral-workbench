@@ -17,8 +17,7 @@
           </td>
         <% end %>
 
-        <td style="width:30px;">
-
+        <td style="width:30px;"> 
           <% if spectrum.calibrated %>
             <i rel="tooltip" 
                title="This spectrum is wavelength calibrated!" 
@@ -42,6 +41,8 @@
         </td>
 
         <td>by <a href="/profile/<%= spectrum.user.login %>"><%= spectrum.user.login %></a></td>
+
+        <td><%= time_ago_in_words(spectrum.created_at) %> ago</td>
 
         <td style="text-align:right;"><a class="btn btn-mini btn-spectrum-apply" data-id="<%= spectrum.id %>">Apply</a></td>
 
