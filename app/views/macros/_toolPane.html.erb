@@ -1,4 +1,4 @@
-<h4 class="title"></h4>
+<h3 class="title"></h3>
 
 <p class="attribution">by <a class="author" href=""></a> | <a class="link" href="">Read more &raquo;</a></p>
 
@@ -16,19 +16,12 @@
           <option value="false">All spectra</option>
         </select>
       </div>
-      <input type="text" class="input-medium search-query">
+      <input type="text" class="input-medium input-choose-spectrum" placeholder="tagnames">
       <button type="submit" class="btn"><i class="icon icon-search"></i></button>
     </form>
   </div>
 
   <div class="results">
-
-    <% if logged_in? %>
-      <%= render partial: 'macros/spectra', locals: { spectrums: Spectrum.where(current_user.id).order('id DESC').limit(10) } %>
-    <% else %>
-      <p style="color:#888">Please <a href="/login">log in</a> to use this.</p>
-    <% end %>
-
   </div>
 
 </div>
@@ -38,8 +31,19 @@
 <div class="actions">
 
   <p>
-    <a href="javascript:void();" class="cancel">cancel</a>
+    <a class="cancel">cancel</a>
     <button class="btn btn-primary btn-apply">Apply</button>
   </p>
 
 </div>
+
+<script>
+$(document).ready(function() {
+
+  $(".datum-tool-pane .results .pagination a").click(function() {
+    $('.datum-tool-pane .results').load($(this).attr("href"));
+    return false;
+  });
+
+});
+</script>

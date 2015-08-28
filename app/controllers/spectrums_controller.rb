@@ -42,32 +42,36 @@ class SpectrumsController < ApplicationController
 
     if params[:author]
       author = User.find_by_login params[:author]
-      @spectrums = Spectrum.joins(:tags).order('id DESC').where('tags.name '+comparison+' (?)', params[:id]).where(user_id: author.id).paginate(:page => params[:page],:per_page => 24)
+      @spectrums = Spectrum.select("DISTINCT spectrums.*").joins(:tags).order('id DESC').where('tags.name '+comparison+' (?)', params[:id]).where(user_id: author.id).paginate(:page => params[:page],:per_page => 6)
     else
-      @spectrums = Spectrum.joins(:tags).order('id DESC').where('tags.name '+comparison+' (?)', params[:id]).paginate(:page => params[:page],:per_page => 24)
+      @spectrums = Spectrum.select("DISTINCT spectrums.*").joins(:tags).order('id DESC').where('tags.name '+comparison+' (?)', params[:id]).paginate(:page => params[:page],:per_page => 6)
     end
-    render partial: "macros/spectra", locals: { spectrums: @spectrums }
+
+    if @spectrums.length > 0
+      render partial: "macros/spectra", locals: { spectrums: @spectrums }
+    else
+      render text: "<p>No results</p>"
+    end
   end
 
+  # eventually start selecting everything but spectrum.data, as show2 
+  # doesn't use this to fetch data, but makes a 2nd call. 
+  # However, format.json does use it!
   def show
     @spectrum = Spectrum.find(params[:id])
-    if @spectrum.data == "" || @spectrum.data.nil?
-      @spectrum.extract_data
-      @spectrum.save
-    end
-    if logged_in?
-      @spectra = Spectrum.find(:all, :limit => 12, :order => "created_at DESC", :conditions => ["id != ? AND author = ?",@spectrum.id,current_user.login])
-    else
-      @spectra = Spectrum.find(:all, :limit => 12, :order => "created_at DESC", :conditions => ["id != ?",@spectrum.id])
-    end
-    @sets = @spectrum.sets
-    @user_sets = SpectraSet.where(author: current_user.login).limit(20).order("created_at DESC") if logged_in?
-    @macros = Macro.find :all, :conditions => {:macro_type => "analyze"}
-    @calibrations = current_user.calibrations.select { |s| s.id != @spectrum.id } if logged_in?
-    @comment = Comment.new
-    
     respond_with(@spectrum) do |format|
-      format.html {}
+      format.html {
+        if logged_in?
+          @spectra = Spectrum.find(:all, :limit => 12, :order => "created_at DESC", :conditions => ["id != ? AND author = ?",@spectrum.id,current_user.login])
+        else
+          @spectra = Spectrum.find(:all, :limit => 12, :order => "created_at DESC", :conditions => ["id != ?",@spectrum.id])
+        end
+        @sets = @spectrum.sets
+        @user_sets = SpectraSet.where(author: current_user.login).limit(20).order("created_at DESC") if logged_in?
+        @macros = Macro.find :all, :conditions => {:macro_type => "analyze"}
+        @calibrations = current_user.calibrations.select { |s| s.id != @spectrum.id } if logged_in?
+        @comment = Comment.new
+      }
       format.xml  { render :xml => @spectrum }
       format.csv  {
         render :text => SpectrumsHelper.show_csv(@spectrum)

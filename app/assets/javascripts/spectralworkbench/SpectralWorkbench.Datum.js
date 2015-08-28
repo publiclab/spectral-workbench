@@ -98,7 +98,7 @@ SpectralWorkbench.Datum = Class.extend({
       $('#tags .loading').remove();
 
       // don't split here; specialize via inheritance
-      //if (_graph.dataType == "spectrum") {
+      if (_datum instanceof SpectralWorkbench.Spectrum) {
 
         $.ajax({
 
@@ -120,11 +120,11 @@ SpectralWorkbench.Datum = Class.extend({
 
         });
 
-      //} else {
+      } else {
 
-      //  console.log('This only works on spectrums for now.');
+        console.log('datum.fetchTags() only works on spectrums for now.');
 
-      //}
+      }
 
     }
 
@@ -147,6 +147,10 @@ SpectralWorkbench.Datum = Class.extend({
         if (tag.key == "subtract") {
 
           SpectralWorkbench.API.Core.subtract(_datum, tag.value);
+
+        } else if (tag.key == "transform") {
+
+          SpectralWorkbench.API.Core.transform(_datum, tag.value);
 
         }
 

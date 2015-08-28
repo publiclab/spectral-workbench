@@ -49,5 +49,7 @@
       </tr>
     <% end %>
   </table>
-  <p><a data-page="<% params[:page] ? params[:page]+1 : 2 %>" data-remote="true" href="<%= request.fullpath %>">More</a></p>
+
+  <%= will_paginate @spectrums, renderer: BootstrapPagination::Rails %>
+
 </div>

@@ -91,7 +91,7 @@
 
                     <div class="btn-group">
                       <a class="btn btn-small" href="/spectrums/<%= datum.id %>/edit"><i class="icon icon-pencil"></i></a>
-                      <%= link_to '<i class="icon icon-trash"></i> Delete'.html_safe, "/spectrums/destroy/#{datum.id}", :confirm => 'Are you sure?', :class => "btn btn-small" %>
+                      <%= link_to '<i class="icon icon-trash"></i>'.html_safe, "/spectrums/destroy/#{datum.id}", :confirm => 'Are you sure?', :class => "btn btn-small" %>
                     </div>
 
                   <% end %>

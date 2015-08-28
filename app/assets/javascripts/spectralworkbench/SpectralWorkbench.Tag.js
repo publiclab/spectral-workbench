@@ -6,8 +6,6 @@ SpectralWorkbench.Tag = Class.extend({
 
     var _tag = this;
 
-    // spectrum, for now:
-    _tag.dataType = 'spectrum';
     _tag.name = name;
     _tag.datum = datum;
 
@@ -53,6 +51,7 @@ SpectralWorkbench.Tag = Class.extend({
       $.ajax({
         url: "/tags",
         type: "POST",
+        dataType: "json",
  
         data: {
           authenticity_token: $('meta[name=csrf-token]').attr('content'),
@@ -65,6 +64,8 @@ SpectralWorkbench.Tag = Class.extend({
         success: function(response) {
  
           _tag.stopSpinner();
+
+          _tag.id = response['saved'][0][1]; // this is kinda illegible
 
           // render them!
           _tag.render();

@@ -13,16 +13,13 @@ class SetsController < ApplicationController
 
   def show
     @set = SpectraSet.find params[:id]
-    @spectrums = Spectrum.find(:all, :limit => 4, :order => "created_at DESC")
-    @comment = Comment.new
-    
     respond_with(@set) do |format|
-      format.html {}
+      format.html {
+        @comment = Comment.new
+      }
       format.xml  { render :xml => @set }
       format.json  {
         json = @set.as_json
-# this won't work: can't set arbitrary properties
-# later comment: ? huh?
         json = json.merge({spectra: []})
         @set.spectrums.each do |spectrum|
           spectrum_json = spectrum.as_json(:except => [:data])
@@ -34,7 +31,7 @@ class SetsController < ApplicationController
     end
   end
 
-  # API call for only calibrated spectra
+  # API call for only calibrated spectra in given set
   def calibrated
     @set = SpectraSet.find params[:id]
     respond_with(@set) do |format|
@@ -42,8 +39,6 @@ class SetsController < ApplicationController
       format.xml  { render :xml => @set }
       format.json  {
         json = @set.as_json
-# this won't work: can't set arbitrary properties
-# later comment: ? huh?
         json = json.merge({spectra: []})
         @set.calibrated_spectrums.each do |spectrum|
           spectrum_json = spectrum.as_json(:except => [:data])

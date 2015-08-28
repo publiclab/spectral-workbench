@@ -193,7 +193,7 @@ SpectralWorkbench.API.Core = {
 
     var overexposure = _graph.datum.getOverexposure();
 
-    if (_graph.dataType == "spectrum") {
+    if (_graph.datum instanceof SpectralWorkbench.Spectrum) {
 
       if (overexposure['r'] || overexposure['g'] || overexposure['b']) {
 

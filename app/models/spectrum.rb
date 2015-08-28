@@ -287,11 +287,6 @@ puts "reversing"
     end
   end
 
-  # used in passing tags to javascript in form 'tag1,tag2,tag:3'
-  def tags_string
-    self.tags.collect(&:name).join(',')
-  end
-
   def normaltags
     self.tags.select { |tag| tag.name.match(':').nil? }
   end

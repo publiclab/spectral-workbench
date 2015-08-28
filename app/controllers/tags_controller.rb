@@ -13,8 +13,9 @@ class TagsController < ApplicationController
         :spectrum_id => params[:tag][:spectrum_id],
         :user_id => current_user.id
       })
-      if tag.save
-        response[:saved] << [tag.name,tag.id]
+      if tag.valid?
+        tag.save
+        response[:saved] << [tag.name, tag.id]
       else
         response[:errors] << "Error: tags "+tag.errors[:name].first
       end

@@ -6,7 +6,7 @@ SpectralWorkbench.UI.Util = Class.extend({
     
     _ui.calibrateSpectrum = function(id) {
 
-      if (_graph.dataType == "spectrum") {
+      if (_graph.datum instanceof SpectralWorkbench.Spectrum) {
  
         SpectralWorkbench.API.Core.copyCalibration(id, _graph.datum.id, function(response){ 
 
@@ -33,7 +33,6 @@ SpectralWorkbench.UI.Util = Class.extend({
         onSpectrumApply: function() {
           // provide better API for own-id:
           _graph.datum.addTag('subtract:' + $(this).attr('data-id'), function() {
-            close(); // close the tool pane
           });
         }
       },
@@ -54,7 +53,6 @@ SpectralWorkbench.UI.Util = Class.extend({
          
             SpectralWorkbench.API.Core.notify('Spectrum calibration copied from spectrum #' + response.id);
 
-            close(); // close the tool pane
          
           } );
         }
