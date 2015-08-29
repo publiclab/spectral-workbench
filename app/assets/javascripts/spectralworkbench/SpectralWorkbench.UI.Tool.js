@@ -7,25 +7,44 @@ SpectralWorkbench.UI.Tool = {
 
     selector = selector || '.datum-tool-pane';
 
-    var el              = $(selector),
-        titleEl         = el.find('.title'),
-        authorEl        = el.find('.attribution .author'),
-        linkEl          = el.find('.attribution .link'),
-        descriptionEl   = el.find('.description'),
-        formEl          = el.find('form'),
-        spectrumApplyEl = el.find('.btn-spectrum-apply'),
-        applyEl         = el.find('.btn-apply'),
-        closeEl         = el.find('.actions .cancel')
-        spinner         = "<i class='disabled icon icon-spinner icon-spin'></i>";
+    var form = {};
+    form.el              = $(selector);
+    form.titleEl         = form.el.find('.title');
+    form.authorEl        = form.el.find('.attribution .author');
+    form.linkEl          = form.el.find('.attribution .link');
+    form.descriptionEl   = form.el.find('.description');
+    form.formEl          = form.el.find('form');
+    form.searchEl        = form.el.find('form input.input-choose-spectrum');
+    form.authorSelectEl  = form.el.find('form select.select-author');
+    form.customFormEl    = form.el.find('.custom');
+    form.spectrumApplyEl = form.el.find('.btn-spectrum-apply');
+    form.applyEl         = form.el.find('.btn-apply');
+    form.closeEl         = form.el.find('.actions .cancel');
+    var spinner          = "<i class='disabled icon icon-spinner icon-spin'></i>";
 
-    if (options.title) titleEl.html(options.title);
-    if (options.description) descriptionEl.html(options.description);
-    if (options.author) authorEl.attr('href', '/profile/' + options.author).html(options.author);
-    if (options.link) linkEl.attr('href', options.link);
+    var cleanUp = function() {
+      // close the tool pane, clean up -- make this run on "cancel" too
+      $(selector).find('.btn-spectrum-apply').html("Apply");
+      $(selector).find('.btn-apply').html("Apply");
+      $(form.el).find('.custom').html('');
+    }
 
-    options.url = options.url || '/spectrums/choose/calibrat*?own=true';
+    var close = function() {
+      cleanUp();
+      $(selector).hide();
+      $('.macros-pane').show();
+    }
 
-    $(el).find('.results').html(spinner);
+    // flush previous if any:
+    cleanUp();
+
+    if (options.title) form.titleEl.html(options.title);
+    if (options.description) form.descriptionEl.html(options.description);
+    if (options.author) form.authorEl.attr('href', '/profile/' + options.author).html(options.author);
+    if (options.link) form.linkEl.attr('href', options.link);
+
+    $(form.el).find('.results').html(spinner);
+    if (options.setup) options.setup(form);
 
     // hook up "apply" buttons in spectrum choice search results
     var connectResults = function(result) {
@@ -33,26 +52,22 @@ SpectralWorkbench.UI.Tool = {
       if (options.onSpectrumApply) { 
         $(selector + ' .btn-spectrum-apply').click(function(e) {
           $(this).html(spinner);
-          options.onSpectrumApply.bind(this)(e);
-          // close the tool pane - usable as finish() in tool callback code
-          $(selector).hide();
-          $(selector).find('.btn-spectrum-apply').html("Apply");
-          $(selector).find('.btn-apply').html("Apply");
-          $('.macros-pane').show();
+          options.onSpectrumApply.bind(this)(form);
+          close();
         });
       }
   
-      if (options.apply) applyEl.show();
-      else               applyEl.hide();
+      if (options.apply) form.applyEl.show();
+      else               form.applyEl.hide();
 
     }
 
     // fetch the spectrum choice list:
-    $(el).find('.results').load(options.url, connectResults);
+    if (options.url) $(form.el).find('.results').load(options.url, connectResults);
 
     // set up the search form
-    $(formEl).on('submit',function() { 
-      $(el).find('.results').html(spinner);
+    $(form.formEl).on('submit',function() { 
+      $(form.el).find('.results').html(spinner);
       $('.results').load(
         '/spectrums/choose/' + $(this).find('input.input-choose-spectrum').val(),
         connectResults
@@ -62,13 +77,13 @@ SpectralWorkbench.UI.Tool = {
     });
 
     if (options.onApply) { 
-      applyEl.click(function(e) {
+      form.applyEl.click(function(e) {
         $(this).html(spinner);
-        options.onApply(e);
+        options.onApply(form);
       });
     }
 
-    closeEl.click(close);
+    form.closeEl.click(close);
 
     // open the pane
     $(selector).show();

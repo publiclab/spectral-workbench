@@ -10,6 +10,7 @@
         <% end %>
 
         <% if logged_in? %>
+          <%# expensive, but worth it %>
           <td style="text-align:center;" class="like-container-<%= spectrum.id %>">
             <a class="btn-like" onClick="SpectralWorkbench.UI.Misc.toggleLike(<%= spectrum.id %>)">
               <i style="color:#888;" class="icon icon-star<% unless spectrum.liked_by(current_user.id) %>-empty<% end %>"></i>
@@ -17,21 +18,12 @@
           </td>
         <% end %>
 
-        <td style="width:30px;"> 
+        <td style="width:14px;"> 
           <% if spectrum.calibrated %>
             <i rel="tooltip" 
                title="This spectrum is wavelength calibrated!" 
                style="font-size:13px;vertical-align:middle;color:#0c5;" 
                class='icon icon-check-sign'></i>
-          <% end %>
-
-          <% if spectrum.has_powertag('range') %>
-            <a href="//publiclab.org/wiki/spectral-workbench-usage#Wavelength+range">
-            <i rel="tooltip" 
-               title="This spectrum is range-limited." 
-               style="font-size:13px;vertical-align:middle;color:#c33;" 
-               class='icon icon-resize-horizontal'></i>
-            </a>
           <% end %>
 
         </td>

@@ -31,6 +31,7 @@ class SpectrumsController < ApplicationController
 
   # returns a list of spectrums by tag in a partial for use in macros and tools
   def choose
+    
     # accept wildcards
     if params[:id].last == "*"
       comparison = "LIKE"
@@ -40,11 +41,16 @@ class SpectrumsController < ApplicationController
       comparison = "="
     end
 
-    if params[:author]
-      author = User.find_by_login params[:author]
-      @spectrums = Spectrum.select("DISTINCT spectrums.*").joins(:tags).order('id DESC').where('tags.name '+comparison+' (?)', params[:id]).where(user_id: author.id).paginate(:page => params[:page],:per_page => 6)
-    else
-      @spectrums = Spectrum.select("DISTINCT spectrums.*").joins(:tags).order('id DESC').where('tags.name '+comparison+' (?)', params[:id]).paginate(:page => params[:page],:per_page => 6)
+    # user's own spectra
+    params[:author] = current_user.login if logged_in? && params[:own]
+
+    @spectrums = Spectrum.order('id DESC').select("DISTINCT spectrums.*").joins(:tags).paginate(:page => params[:page],:per_page => 6)
+    unless params[:id] == "all"
+      @spectrums = @spectrums.where('tags.name '+comparison+' (?)', params[:id])
+      if params[:author]
+        author = User.find_by_login params[:author]
+        @spectrums = @spectrums.where(user_id: author.id)
+      end
     end
 
     if @spectrums.length > 0
