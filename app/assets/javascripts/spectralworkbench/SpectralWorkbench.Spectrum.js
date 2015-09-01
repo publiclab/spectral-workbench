@@ -34,9 +34,9 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
     
           _spectrum.average.push({ y: parseInt(line.average / 2.55)/100, x: x })
 
-          if (line.r) _spectrum.red.push(    { y: parseInt(line.r       / 2.55)/100,       x: x })
-          if (line.g) _spectrum.green.push(  { y: parseInt(line.g       / 2.55)/100,       x: x })
-          if (line.b) _spectrum.blue.push(   { y: parseInt(line.b       / 2.55)/100,       x: x })
+          if (line.r != null) _spectrum.red.push(    { y: parseInt(line.r       / 2.55)/100,       x: x })
+          if (line.g != null) _spectrum.green.push(  { y: parseInt(line.g       / 2.55)/100,       x: x })
+          if (line.b != null) _spectrum.blue.push(   { y: parseInt(line.b       / 2.55)/100,       x: x })
      
         }
      
