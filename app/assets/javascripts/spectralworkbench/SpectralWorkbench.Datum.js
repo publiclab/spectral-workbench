@@ -5,8 +5,13 @@ SpectralWorkbench.Datum = Class.extend({
   init: function(args) {
 
     this.args = args;
-    var _datum = this;
+  
+    this.json  = args;
+    this.title = args.title;
+    this.id    = args.id;
+    this.graph = args.graph;
 
+    var _datum = this;
 
     /* 
      * ======================================

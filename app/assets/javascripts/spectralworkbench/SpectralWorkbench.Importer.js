@@ -1,23 +1,23 @@
 SpectralWorkbench.Importer = Class.extend({
 
-  init: function(url, chart, type, callback) {
+  init: function(url, graph, callback) {
 
     var importer = this;
 
     /* Fetch data */ 
     d3.json(url, function(error, data) {
  
-      if (type == "spectrum") {
+      if (graph.dataType == "spectrum") {
  
         var datum = new SpectralWorkbench.Spectrum(data);
  
-      } else if (type == "set") {
+      } else if (graph.dataType == "set") {
  
         var datum = new SpectralWorkbench.Set(data);
  
       }
  
-      callback(datum, chart);
+      callback(datum);
  
     });
 

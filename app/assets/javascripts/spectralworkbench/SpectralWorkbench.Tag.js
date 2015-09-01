@@ -27,6 +27,8 @@ SpectralWorkbench.Tag = Class.extend({
 
     _tag.startSpinner = function() {
 
+      // grey out graph during load
+      _tag.datum.graph.data.style('opacity', 0.5);
       $('#tag-form-' + _tag.datum.id + ' .add-on i').removeClass('icon-tag')
                                                     .addClass('icon-spin')
                                                     .addClass('icon-spinner');
@@ -35,6 +37,8 @@ SpectralWorkbench.Tag = Class.extend({
 
     _tag.stopSpinner = function() {
 
+      // removed grey out of graph after load
+      _tag.datum.graph.data.style('opacity', 1);
       $('#tag-form-' + _tag.datum.id + ' .add-on i').addClass('icon-tag')
                                                     .removeClass('icon-spin')
                                                     .removeClass('icon-spinner');
@@ -46,7 +50,7 @@ SpectralWorkbench.Tag = Class.extend({
     _tag.upload = function() {
 
       // this gets messy, but whatever
-      _tag.startSpinner();
+      _tag.startSpinner.bind(this);
 
       $.ajax({
         url: "/tags",
@@ -63,7 +67,7 @@ SpectralWorkbench.Tag = Class.extend({
  
         success: function(response) {
  
-          _tag.stopSpinner();
+          _tag.stopSpinner.bind(this);
 
           _tag.id = response['saved'][0][1]; // this is kinda illegible
 

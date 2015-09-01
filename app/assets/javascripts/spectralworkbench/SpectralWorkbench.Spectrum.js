@@ -4,11 +4,7 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
    */
   init: function(data) {
 
-    this._super();
-  
-    this.json  = data;
-    this.title = data.title;
-    this.id    = data.id;
+    this._super(data);
 
     var _spectrum = this;
 

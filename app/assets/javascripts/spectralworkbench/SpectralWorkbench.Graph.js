@@ -58,7 +58,7 @@ SpectralWorkbench.Graph = Class.extend({
      * <chart> is the nvd3 chart
      * <data> is the raw JSON data from the server
      */
-    _graph.load = function(datum, chart, data) {
+    _graph.load = function(datum) {
 
       _graph.datum = datum;
 
@@ -89,7 +89,7 @@ SpectralWorkbench.Graph = Class.extend({
       /* Enter data into the graph */
       _graph.data = d3.select('#graph svg')  //Select the <svg> element you want to render the chart in.   
           .datum(datum.d3, _graph.idKey)   //Populate the <svg> element with chart data and provide a binding key (removing idKey has no effect?)
-          .call(chart)         //Finally, render the chart!
+          .call(_graph.chart)         //Finally, render the chart!
           .attr('id', _graph.idKey)
  
       /* Line event handlers */
@@ -151,7 +151,7 @@ SpectralWorkbench.Graph = Class.extend({
       _graph.zoomSetup();
  
       // actually add it to the display
-      nv.addGraph(chart);
+      nv.addGraph(_graph.chart);
  
     }
 
@@ -305,15 +305,13 @@ SpectralWorkbench.Graph = Class.extend({
       new SpectralWorkbench.Importer( "/spectrums/" 
                       + _graph.args.spectrum_id 
                       + ".json", 
-                        _graph.chart, 
-                        _graph.dataType, 
+                        _graph, 
                         _graph.load);
     } else if (_graph.dataType == "set") {
       new SpectralWorkbench.Importer( "/sets/calibrated/" 
                       + _graph.args.set_id 
                       + ".json", 
-                        _graph.chart, 
-                        _graph.dataType, 
+                        _graph, 
                         _graph.load);
     }
   },

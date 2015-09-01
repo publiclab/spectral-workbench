@@ -23,13 +23,15 @@ SpectralWorkbench.UI.ToolPane = Class.extend({
     form.closeEl         = form.el.find('.actions .cancel');
     var spinner          = "<i class='disabled icon icon-spinner icon-spin'></i>";
 
+    // hide and show things to return to default state
     var cleanUp = function() {
-      // close the tool pane, clean up -- make this run on "cancel" too
       $(selector).find('.btn-spectrum-apply').html("Apply");
       $(selector).find('.btn-apply').html("Apply");
       $(form.el).find('.custom').html('');
+      form.formEl.show();
     }
 
+    // close the tool pane AND clean up. runs on "cancel"
     var close = function() {
       cleanUp();
       $(selector).hide();
@@ -38,6 +40,7 @@ SpectralWorkbench.UI.ToolPane = Class.extend({
 
     // flush previous if any:
     cleanUp();
+    form.searchEl.focus(); // this may be overridden in options.setup()
 
     if (options.title) form.titleEl.html(options.title);
     if (options.description) form.descriptionEl.html(options.description);
@@ -167,9 +170,10 @@ SpectralWorkbench.UI.ToolPane = Class.extend({
         form.customFormEl.html("<p>Enter an expression to apply to the spectrum:</p><form class='expression'><input type='text'></input></form><p><a href='//publiclab.org/wiki/spectral-workbench-tools#Transform'>Read about transforms &raquo;</a>");
         form.el.find('.expression').on('submit', function(e) {
           e.preventDefault();
-          graph.datum.addTag('transform:'+form.el.find('.expression input').val())
+          graph.datum.addTag('transform:'+form.el.find('.expression input').val());
           form.formEl.show();
         });
+        form.el.find('.expression input').focus();
 
       },
       onApply: function(form) {
@@ -194,6 +198,7 @@ SpectralWorkbench.UI.ToolPane = Class.extend({
         inputs    += "<input type='text' class='end' value='800' />"
         inputs    += "<p>The page will refresh once it's added (temporary).</p>"
         form.customFormEl.html(inputs);
+        form.el.find('.start').focus();
 
       },
       onApply: function(form) {
