@@ -88,15 +88,17 @@ class TagTest < ActiveSupport::TestCase
     assert json['range'] == nil
   end
 
-  test "tag creation with unallowed characters" do 
-    tag = Tag.new({
-      user_id:     users(:quentin).id,
-      spectrum_id: spectrums(:one).id,
-      name:        'range;400'
-    })
-    assert !tag.save
-    assert_equal "can only include letters, numbers, and dashes", tag.errors.messages[:name].last
+# We now allow all kinds of characters with "transform" tags. We should switch for this.
 
-  end
+#  test "tag creation with unallowed characters" do 
+#    tag = Tag.new({
+#      user_id:     users(:quentin).id,
+#      spectrum_id: spectrums(:one).id,
+#      name:        'range:400'
+#    })
+#    assert !tag.save
+#    assert_equal "can only include letters, numbers, and dashes", tag.errors.messages[:name].last
+#
+#  end
 
 end

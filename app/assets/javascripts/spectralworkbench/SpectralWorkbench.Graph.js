@@ -268,7 +268,8 @@ SpectralWorkbench.Graph = Class.extend({
 
     }
 
-    _graph.UI = new SpectralWorkbench.UI.Util(_graph);
+    // set up all of UI -- tool panes, etc
+    if (_graph.embed == false) _graph.UI = new SpectralWorkbench.UI.Util(_graph);
 
     _graph.graphSetup();
     _graph.eventSetup();

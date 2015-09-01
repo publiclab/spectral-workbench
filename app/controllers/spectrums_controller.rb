@@ -44,7 +44,13 @@ class SpectrumsController < ApplicationController
     # user's own spectra
     params[:author] = current_user.login if logged_in? && params[:own]
 
-    @spectrums = Spectrum.order('id DESC').select("DISTINCT spectrums.*").joins(:tags).paginate(:page => params[:page],:per_page => 6)
+    @spectrums = Spectrum.order('id DESC')
+                         .select("DISTINCT spectrums.*")
+                         .joins(:tags)
+                         .paginate(:page => params[:page],:per_page => 6)
+
+    # exclude self:
+    @spectrums = @spectrums.where('spectrums.id != ?', params[:not]) if params[:not]
     unless params[:id] == "all"
       @spectrums = @spectrums.where('tags.name '+comparison+' (?)', params[:id])
       if params[:author]
