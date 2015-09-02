@@ -248,23 +248,6 @@ puts "reversing"
     self.photo = Paperclip::string_to_file('capture.png', 'image/png', data)
   end
 
-  # really delete extra data? why not just hide it
-  def set_range(low,high)
-    json = ActiveSupport::JSON.decode(self.clean_json)
-    json['range'] = {
-      low:  low,
-      high: high
-    }
-    self.data = ActiveSupport::JSON.encode(json)
-  end
-
-  def clear_range
-    json = ActiveSupport::JSON.decode(self.clean_json)
-    json.delete_if {|key, value| key == 'range' }
-    self.data = ActiveSupport::JSON.encode(json)
-    self
-  end
-
   def range
     self.powertag('range').split('-').map { |s| s.to_i }
   end

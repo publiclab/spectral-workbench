@@ -63,16 +63,27 @@ SpectralWorkbench.Graph = Class.extend({
       _graph.datum = datum;
 
       // use a closure to give graph access to reloading:
-      _graph.datum.reloadGraph = function() {
-
+      var reloadGraph = function() {
         _graph.reload();
-
       }
 
       // use a closure to give graph access to refreshing:
-      _graph.datum.refreshGraph = function() {
-
+      var refreshGraph = function() {
         _graph.refresh();
+      }
+
+      _graph.datum.reloadGraph = reloadGraph;
+      _graph.datum.refreshGraph = refreshGraph;
+
+      // make accessible to each spectrum too:
+      if (_graph.dataType == "set") {
+
+        _graph.datum.spectra.forEach(function(spectrum) {
+
+          spectrum.reloadGraph = reloadGraph;
+          spectrum.refreshGraph = refreshGraph;
+          
+        });
 
       }
 

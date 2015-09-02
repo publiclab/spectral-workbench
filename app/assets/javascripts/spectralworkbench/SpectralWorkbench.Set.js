@@ -25,6 +25,9 @@ SpectralWorkbench.Set = SpectralWorkbench.Datum.extend({
  
       $.each(set.spectra, function(i,spectrum) {
 
+        // apply tags here:
+        spectrum.fetchTags(); 
+
         data = data.concat([
           {
             values: spectrum.average,

@@ -151,10 +151,51 @@ SpectralWorkbench.API.Core = {
   },
 
 
+  // clip out a given subset of wavelengths from this spectrum
+  // works for spectra, not sets
+  range: function(datum, start, end) {
+
+    // ensure start < end
+    if (start > end) {
+      var tmp = end;
+      end = start;
+      start = tmp;
+    }
+
+    var channels = ['red', 'blue', 'green', 'average'];
+
+    channels.forEach(function(_channel, i) {
+
+      var startIndex = 0, endIndex = datum[_channel].length - 1;
+
+      // count up to first in-range index
+      while (true) {
+        if (datum[_channel][startIndex].x > start) break;
+        startIndex++;
+      }
+
+      // count down to first in-range index
+      while (true) {
+        if (datum[_channel][endIndex].x < end) break;
+        endIndex--;
+      } 
+
+      datum[_channel] = datum[_channel].slice(startIndex, endIndex);
+
+    });
+
+    // reload the graph data:
+    datum.reloadGraph();
+    // refresh the graph:
+    datum.refreshGraph();
+ 
+  },
+
+
   // fetch another spectrum, subtract it from this one
   subtract: function(datum, spectrum_id) {
 
-    channels = [datum.red, datum.blue, datum.green, datum.average];
+    var channels = [datum.red, datum.blue, datum.green, datum.average];
 
     var url = "/spectrums/" + spectrum_id + ".json",
         subtractor;

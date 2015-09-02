@@ -25,16 +25,11 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
      
         } else var x = line.wavelength;
 
-        // only parse in data if it's in a given range, if there's a range directive
-        if (!_spectrum.json.data.hasOwnProperty('range') || x > _spectrum.json.data.range.low && x < _spectrum.json.data.range.high) { 
-    
-          _spectrum.average.push({ y: parseInt(line.average / 2.55)/100, x: x })
+        _spectrum.average.push({ y: parseInt(line.average / 2.55)/100, x: x })
 
-          if (line.r != null) _spectrum.red.push(    { y: parseInt(line.r       / 2.55)/100,       x: x })
-          if (line.g != null) _spectrum.green.push(  { y: parseInt(line.g       / 2.55)/100,       x: x })
-          if (line.b != null) _spectrum.blue.push(   { y: parseInt(line.b       / 2.55)/100,       x: x })
-     
-        }
+        if (line.r != null) _spectrum.red.push(    { y: parseInt(line.r       / 2.55)/100,       x: x })
+        if (line.g != null) _spectrum.green.push(  { y: parseInt(line.g       / 2.55)/100,       x: x })
+        if (line.b != null) _spectrum.blue.push(   { y: parseInt(line.b       / 2.55)/100,       x: x })
      
       });
 

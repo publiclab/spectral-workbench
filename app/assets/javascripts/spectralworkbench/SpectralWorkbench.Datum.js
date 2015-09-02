@@ -157,6 +157,10 @@ SpectralWorkbench.Datum = Class.extend({
 
           SpectralWorkbench.API.Core.transform(_datum, tag.value);
 
+        } else if (tag.key == "range") {
+
+          SpectralWorkbench.API.Core.range(_datum, +tag.value.split('-')[0], +tag.value.split('-')[1]);
+
         }
 
       }
