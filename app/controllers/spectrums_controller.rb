@@ -136,7 +136,6 @@ class SpectrumsController < ApplicationController
   # GET /spectrums/new.xml
   def new
     @spectrum = Spectrum.new
-    require_ownership(@spectrum)
  
     respond_with(@spectrum) do |format|
       format.html {}
@@ -192,8 +191,9 @@ class SpectrumsController < ApplicationController
           @spectrum.tag("video_row:#{params[:video_row]}", current_user.id) if params[:video_row]
           #@spectrum.tag("sample_row:#{params[:video_row]}", current_user.id) if params[:video_row]
 
+          @spectrum.extract_data
+
           if params[:spectrum][:calibration_id] && !params[:is_calibration] && params[:spectrum][:calibration_id] != "calibration" && params[:spectrum][:calibration_id] != "undefined"
-            @spectrum.extract_data
             @spectrum.clone(params[:spectrum][:calibration_id])
             @spectrum.tag("calibration:#{params[:spectrum][:calibration_id]}", current_user.id)
           end

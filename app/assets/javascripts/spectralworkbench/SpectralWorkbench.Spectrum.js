@@ -114,6 +114,30 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
       return _overexposed;
 
     }
+ 
+    // threshold is a percent brightness cutoff; returns a boolean
+    _spectrum.getTooDark = function(threshold) {
+
+      var _tooDark = true,
+          _channels = ["average", "red","green","blue"];
+
+      // by percent!
+      threshold = threshold || 0.05;
+
+      // check each channel for plateaus at 100%:
+      _channels.forEach(function(_channel) {
+
+        for (var i = 0; i < _spectrum[_channel].length; i++) {
+
+          if (_spectrum[_channel][i].y > threshold) _tooDark = false;
+
+        }
+
+      });
+
+      return _tooDark;
+
+    }
 
     _spectrum.load();
 

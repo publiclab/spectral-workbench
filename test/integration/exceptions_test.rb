@@ -42,4 +42,9 @@ class ExceptionsTest < ActionController::IntegrationTest
     assert_response :success
   end
 
+  test "GET /upload" do
+    get "/upload"
+    assert_response :success
+  end
+
 end

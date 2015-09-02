@@ -157,6 +157,13 @@ SpectralWorkbench.Datum = Class.extend({
 
           SpectralWorkbench.API.Core.transform(_datum, tag.value);
 
+        } else if (tag.key == "blend") {
+
+          var blend_id = tag.value.split('#')[0],
+              expression = tag.value.split('#')[1];
+
+          SpectralWorkbench.API.Core.blend(_datum, blend_id, expression);
+
         } else if (tag.key == "range") {
 
           SpectralWorkbench.API.Core.range(_datum, +tag.value.split('-')[0], +tag.value.split('-')[1]);
@@ -166,6 +173,9 @@ SpectralWorkbench.Datum = Class.extend({
       }
 
     }
+
+    // apply tags here:
+    _datum.fetchTags(); 
 
   }
 

@@ -130,16 +130,16 @@ SpectralWorkbench.API.Core = {
 
     average.forEach(function(P, i) { 
 
-      if (red[i])   var R = red[i].y;
+      if (red[i])   var R = +red[i].y;
       else          var R = 0;
-      if (green[i]) var G = green[i].y;
+      if (green[i]) var G = +green[i].y;
       else          var G = 0;
-      if (blue[i])  var B = blue[i].y;
+      if (blue[i])  var B = +blue[i].y;
       else          var B = 0;
 
-      var A = average[i].y,
-          X = average[i].x,
-          Y = average[i].y;
+      var A = +average[i].y,
+          X = +average[i].x,
+          Y = +average[i].y;
 
       P.y = transform(R,G,B,A,X,Y,P);
 
@@ -192,6 +192,57 @@ SpectralWorkbench.API.Core = {
   },
 
 
+  // fetch another spectrum, blend it with this one according to expression
+  blend: function(datum, spectrum_id, expression) {
+
+    var red     = datum.red,
+        green   = datum.green,
+        blue    = datum.blue,
+        average = datum.average,
+        url = "/spectrums/" + spectrum_id + ".json",
+        blender;
+
+    /* Fetch data */ 
+    d3.json(url, function(error, data) {
+ 
+      blender = new SpectralWorkbench.Spectrum(data);
+
+      // we could parse this, actually...
+      eval('var blend = function(R1,G1,B1,A1,R2,G2,B2,A2,X,Y,P) { return ' + expression + '; }');
+     
+      average.forEach(function(P, i) { 
+     
+        if (red[i])   var R1 = +red[i].y;
+        else          var R1 = 0;
+        if (green[i]) var G1 = +green[i].y;
+        else          var G1 = 0;
+        if (blue[i])  var B1 = +blue[i].y;
+        else          var B1 = 0;
+     
+        var A1 = +average[i].y,
+            X = +average[i].x,
+            Y = +average[i].y;
+     
+        var R2 = +blender.getIntensity(i, 'red');
+            G2 = +blender.getIntensity(i, 'green');
+            B2 = +blender.getIntensity(i, 'blue');
+            A2 = +blender.getIntensity(i, 'average');
+
+        P.y = +blend(R1,G1,B1,A1,R2,G2,B2,A2,X,Y,P);
+     
+      });
+
+      // reload the graph data:
+      datum.reloadGraph();
+      // refresh the graph:
+      datum.refreshGraph();
+ 
+    });
+    
+
+  },
+
+
   // fetch another spectrum, subtract it from this one
   subtract: function(datum, spectrum_id) {
 
@@ -210,7 +261,7 @@ SpectralWorkbench.API.Core = {
 
         _channel = _channel.map(function(point) { 
  
-          point.y -= subtractor.getIntensity(point.x);
+          point.y -= +subtractor.getIntensity(point.x);
  
         });
 
@@ -245,6 +296,22 @@ SpectralWorkbench.API.Core = {
       }
 
     } else {
+
+    }
+
+  },
+
+
+  // checks overexposure and displays an alert if it is so
+  // we might just want a class of alert filters separate from the API, or
+  // in a special zone
+  alertTooDark: function(_graph) {
+
+    if (_graph.datum.getTooDark()) {
+
+      var msg = "This spectrum seems very dim. You may need to choose a new image cross section that intersects your spectrum data. <a href='//publiclab.org/wiki/spectral-workbench-calibration#Cross+section'>Learn how to fix this</a>."
+
+      SpectralWorkbench.API.Core.notify(msg, "warning")
 
     }
 

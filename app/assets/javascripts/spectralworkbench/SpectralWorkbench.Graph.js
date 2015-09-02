@@ -92,10 +92,9 @@ SpectralWorkbench.Graph = Class.extend({
 
       SpectralWorkbench.API.Core.alertOverexposure(_graph);
 
-      _graph.tagForm = new SpectralWorkbench.UI.TagForm(_graph); 
+      SpectralWorkbench.API.Core.alertTooDark(_graph);
 
-      // download tags
-      _graph.datum.fetchTags();
+      _graph.tagForm = new SpectralWorkbench.UI.TagForm(_graph); 
 
       /* Enter data into the graph */
       _graph.data = d3.select('#graph svg')  //Select the <svg> element you want to render the chart in.   
