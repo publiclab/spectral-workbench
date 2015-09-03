@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150723220742) do
+ActiveRecord::Schema.define(:version => 20150903140344) do
 
   create_table "comments", :force => true do |t|
     t.string   "author"
@@ -712,6 +712,8 @@ ActiveRecord::Schema.define(:version => 20150723220742) do
     t.boolean  "calibrated",                                  :default => false,   :null => false
   end
 
+  add_index "spectrums", ["created_at"], :name => "index_spectrums_on_created_at"
+  add_index "spectrums", ["like_count"], :name => "index_spectrums_on_like_count"
   add_index "spectrums", ["title"], :name => "index_spectrums_on_title"
   add_index "spectrums", ["user_id"], :name => "index_spectrums_on_user_id"
 
