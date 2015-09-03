@@ -30,9 +30,9 @@ SpectralWorkbench.Graph = Class.extend({
       $('#tag_' + $(this).attr('data-id')).remove();
     });
  
-    var svg = d3.select("#graph").append("svg")
-      .attr("width",  this.width  + this.margin.left + this.margin.right)
-      .attr("height", this.height + this.margin.top  + this.margin.bottom)
+    this.svg = d3.select("#graph").append("svg")
+                                  .attr("width",  this.width  + this.margin.left + this.margin.right)
+                                  .attr("height", this.height + this.margin.top  + this.margin.bottom)
  
     /* key function for d3 data binding, used in _graph.load */
     _graph.idKey = function(d) {
@@ -62,30 +62,8 @@ SpectralWorkbench.Graph = Class.extend({
 
       _graph.datum = datum;
 
-      // use a closure to give graph access to reloading:
-      var reloadGraph = function() {
-        _graph.reload();
-      }
-
-      // use a closure to give graph access to refreshing:
-      var refreshGraph = function() {
-        _graph.refresh();
-      }
-
-      _graph.datum.reloadGraph = reloadGraph;
-      _graph.datum.refreshGraph = refreshGraph;
-
       // make accessible to each spectrum too:
-      if (_graph.dataType == "set") {
-
-        _graph.datum.spectra.forEach(function(spectrum) {
-
-          spectrum.reloadGraph = reloadGraph;
-          spectrum.refreshGraph = refreshGraph;
-          
-        });
-
-      } else {
+      if (_graph.dataType == "spectrum") {
 
         // scan for helper tips
 
@@ -207,6 +185,15 @@ SpectralWorkbench.Graph = Class.extend({
 
       _graph.data.call(zoom);
 
+    }
+
+
+    /*
+     * ======================================
+     * Dim graph, such as while it's loading
+     */
+    _graph.opacity = function(amount) {
+      _graph.svg.style('opacity', amount);
     }
 
 

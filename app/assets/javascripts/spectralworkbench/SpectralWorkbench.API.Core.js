@@ -146,7 +146,7 @@ SpectralWorkbench.API.Core = {
     });
 
     // some issue here on indexing...
-    datum.refreshGraph();
+    datum.graph.refresh();
 
   },
 
@@ -185,9 +185,9 @@ SpectralWorkbench.API.Core = {
     });
 
     // reload the graph data:
-    datum.reloadGraph();
+    datum.graph.reload();
     // refresh the graph:
-    datum.refreshGraph();
+    datum.graph.refresh();
  
   },
 
@@ -233,9 +233,9 @@ SpectralWorkbench.API.Core = {
       });
 
       // reload the graph data:
-      datum.reloadGraph();
+      datum.graph.reload();
       // refresh the graph:
-      datum.refreshGraph();
+      datum.graph.refresh();
  
     });
     
@@ -268,9 +268,9 @@ SpectralWorkbench.API.Core = {
       });
 
       // reload the graph data:
-      datum.reloadGraph();
+      datum.graph.reload();
       // refresh the graph:
-      datum.refreshGraph();
+      datum.graph.refresh();
  
     });
     

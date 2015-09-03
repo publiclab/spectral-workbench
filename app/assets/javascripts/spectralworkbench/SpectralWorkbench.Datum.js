@@ -2,14 +2,14 @@ SpectralWorkbench.Datum = Class.extend({
 
   tags: [],
 
-  init: function(args) {
+  init: function(args, _graph) {
 
     this.args = args;
   
     this.json  = args;
     this.title = args.title;
     this.id    = args.id;
-    this.graph = args.graph;
+    this.graph = _graph;
 
     var _datum = this;
 
@@ -93,6 +93,8 @@ SpectralWorkbench.Datum = Class.extend({
      */
     _datum.fetchTags = function() {
 
+      _datum.graph.opacity(0.5);
+
       // flush existing displayed tag elements if any
       _datum.tags.forEach(function(tag) {
         tag.el.remove();
@@ -142,6 +144,8 @@ SpectralWorkbench.Datum = Class.extend({
 
       });
 
+      _datum.graph.opacity(1);
+
     }
 
 
@@ -173,9 +177,6 @@ SpectralWorkbench.Datum = Class.extend({
       }
 
     }
-
-    // apply tags here:
-    _datum.fetchTags(); 
 
   }
 
