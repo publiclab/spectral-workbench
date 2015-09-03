@@ -85,14 +85,18 @@ SpectralWorkbench.Graph = Class.extend({
           
         });
 
+      } else {
+
+        // scan for helper tips
+
+        SpectralWorkbench.API.Core.alertOverexposure(_graph.datum);
+
+        SpectralWorkbench.API.Core.alertTooDark(_graph.datum);
+
       }
 
       // APIv1 backwards-compatibility
       SpectralWorkbench.API.Legacy.load(datum.json, _graph.dataType);
-
-      SpectralWorkbench.API.Core.alertOverexposure(_graph);
-
-      SpectralWorkbench.API.Core.alertTooDark(_graph);
 
       _graph.tagForm = new SpectralWorkbench.UI.TagForm(_graph); 
 

@@ -281,11 +281,11 @@ SpectralWorkbench.API.Core = {
   // checks overexposure and displays an alert if it is so
   // we might just want a class of alert filters separate from the API, or
   // in a special zone
-  alertOverexposure: function(_graph) {
+  alertOverexposure: function(datum) {
 
-    var overexposure = _graph.datum.getOverexposure();
+    var overexposure = datum.getOverexposure();
 
-    if (_graph.datum instanceof SpectralWorkbench.Spectrum) {
+    if (datum instanceof SpectralWorkbench.Spectrum) {
 
       if (overexposure['r'] || overexposure['g'] || overexposure['b']) {
 
@@ -305,9 +305,9 @@ SpectralWorkbench.API.Core = {
   // checks overexposure and displays an alert if it is so
   // we might just want a class of alert filters separate from the API, or
   // in a special zone
-  alertTooDark: function(_graph) {
+  alertTooDark: function(datum) {
 
-    if (_graph.datum.getTooDark()) {
+    if (datum.getTooDark()) {
 
       var msg = "This spectrum seems very dim. You may need to choose a new image cross section that intersects your spectrum data. <a href='//publiclab.org/wiki/spectral-workbench-calibration#Cross+section'>Learn how to fix this</a>."
 
