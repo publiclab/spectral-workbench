@@ -50,6 +50,7 @@ SpectralWorkbench.Graph = Class.extend({
     _graph.refresh = function() {
 
       _graph.data.call(_graph.chart);
+      _graph.updateSize()();
 
     }
 
@@ -421,6 +422,8 @@ SpectralWorkbench.Graph = Class.extend({
 
         $('div.spectrum-img-container img').width(_graph.width)
                                            .height(100)
+                                           .css('max-width', 'none')
+                                           .css('margin-left', 0);
 
       }
  

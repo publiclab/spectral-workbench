@@ -53,17 +53,6 @@ SpectralWorkbench.API.Core = {
   },
 
 
-  // programmatically set range for current datum
-  setRange: function(_graph) {
-
-    // we could set the tag, then re-fetch the spectrum data? Or do it ourselves, client-side? 
-    // graph.addTag: function(spectrum_id, name, callback) {
-
-    // >>>>>>>>>>>
-
-  },
-
-
   // linear calibrate using pixel positions <x1> and <x2>, to known wavelengths <w1> <w2>
   // and optional callback(response)
   calibrate: function(id, x1, w1, x2, w2, callback) {
@@ -183,6 +172,9 @@ SpectralWorkbench.API.Core = {
       datum[_channel] = datum[_channel].slice(startIndex, endIndex);
 
     });
+
+    // adjust the graph range directly:
+    datum.graph.range = [start, end];
 
     // reload the graph data:
     datum.graph.reload();

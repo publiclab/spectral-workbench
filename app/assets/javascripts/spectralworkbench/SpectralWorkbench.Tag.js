@@ -133,6 +133,9 @@ SpectralWorkbench.Tag = Class.extend({
 
         // if it affected the datum display, reload it:
         if (_tag.powertag) {
+
+          // flush the graph range so the image gets resized:
+          _tag.datum.graph.range = false;
           _tag.datum.load();
           _tag.datum.parseTags();
           _tag.datum.graph.reload();

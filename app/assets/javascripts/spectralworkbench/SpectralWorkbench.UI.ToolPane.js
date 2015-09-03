@@ -196,7 +196,6 @@ SpectralWorkbench.UI.ToolPane = Class.extend({
         inputs    += "<input type='text' class='start' value='400' />"
         inputs    += "<p>Enter an end wavelength:</p>"
         inputs    += "<input type='text' class='end' value='800' />"
-        inputs    += "<p>The page will refresh once it's added (temporary).</p>"
         form.customFormEl.html(inputs);
         form.el.find('.start').focus();
 
@@ -211,9 +210,7 @@ SpectralWorkbench.UI.ToolPane = Class.extend({
           start = tmp;
         }
         form.formEl.show();
-        graph.datum.addTag('range:'+ start + '-' + end, function() {
-          window.location = window.location;
-        });
+        graph.datum.addTag('range:'+ start + '-' + end);
       }
     }
 
