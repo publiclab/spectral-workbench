@@ -10,51 +10,96 @@ SpectralWorkbench.Graph = Class.extend({
     this.embedmargin = 10;
     this.margin = { top: 10, right: 30, bottom: 20, left: 70 };
     this.range = this.args.range || false;
+    this.selector = this.args.selector || '#graph';
+    this.el = $(this.selector);
+    this.imgSelector = this.args.imageSelector || 'div.spectrum-img-container';
+    this.imgContainer = $(this.imgSelector);
+    this.imgEl = this.imgContainer.find('img');
 
     this.API = new SpectralWorkbench.API(this);
 
-    if (this.args.calibrated) this.xUnit = 'nanometers';
-    else this.xUnit = "uncalibrated pixels";
-
     // set/spectrum breakout
     if (this.args.hasOwnProperty('spectrum_id')) {
+
       this.dataType = "spectrum";
+
+      // Create a canvas element to manipulate image data. 
+      // We could have this non-initialized at boot, and only create it if asked to.
+      this.image = new SpectralWorkbench.Image(this.imgEl, this);
+
     } else if (this.args.hasOwnProperty('set_id')) {
+
       this.dataType = "set";
+
     } 
 
     this.updateSize()();
-
-    // deletion listeners
-    $('#tags .tagdelete').bind('ajax:success', function(){
-      $('#tag_' + $(this).attr('data-id')).remove();
-    });
  
-    this.svg = d3.select("#graph").append("svg")
+    this.svg = d3.select(_graph.selector).append("svg")
                                   .attr("width",  this.width  + this.margin.left + this.margin.right)
                                   .attr("height", this.height + this.margin.top  + this.margin.bottom)
+
+
  
     /* key function for d3 data binding, used in _graph.load */
     _graph.idKey = function(d) {
       return d.id;
     }
 
-    // refresh datum into DOM
+
+    /* ======================================
+     * Refresh datum into DOM in d3 syntax
+     */
     _graph.reload = function() {
 
-      _graph.data.datum(_graph.datum.d3, _graph.idKey)   //Populate the <svg> element with chart data and provide a binding key (removing idKey has no effect?)
+      // populate the <svg> element with chart data 
+      // and provide a binding key (removing idKey has no effect?)
+      _graph.data.datum(_graph.datum.d3, _graph.idKey);
 
     }
 
-    // refresh graph element
+
+    /* ======================================
+     * Refresh graph element in d3 syntax, 
+     * then resize image
+     */
     _graph.refresh = function() {
 
+      _graph.setUnits();
       _graph.data.call(_graph.chart);
       _graph.updateSize()();
 
     }
 
-    /* once actual JSON is available and processed, 
+
+    /* ======================================
+     * Sets units for graph element in d3
+     */
+    _graph.setUnits = function() {
+      if (!_graph.datum) {
+
+        if (_graph.args.calibrated) _graph.xUnit = 'nanometers';
+        else _graph.xUnit = "uncalibrated pixels";
+
+      } else if (_graph.dataType == 'spectrum' && _graph.datum.isCalibrated()) {
+
+        _graph.xUnit = 'nanometers';
+
+      } else _graph.xUnit = "uncalibrated pixels";
+ 
+      _graph.chart.xAxis     //Chart x-axis settings
+                  .axisLabel('Wavelength ('+_graph.xUnit+')')
+                  .tickFormat(d3.format('1r'));
+ 
+      _graph.chart.yAxis     //Chart y-axis settings
+                  .axisLabel('Intensity (%)')
+                  .tickFormat(d3.format('%'));
+
+    }
+
+
+    /* ======================================
+     * once actual JSON is available and processed, 
      * <datum> is created; either SW.Set or SW.Spectrum
      * <chart> is the nvd3 chart
      * <data> is the raw JSON data from the server
@@ -148,8 +193,8 @@ SpectralWorkbench.Graph = Class.extend({
  
     }
 
-    /*
-     * ======================================
+
+    /* ======================================
      * Scroll wheel zooming and drag panning;
      * needs rewrite
      */
@@ -189,8 +234,7 @@ SpectralWorkbench.Graph = Class.extend({
     }
 
 
-    /*
-     * ======================================
+    /* ======================================
      * Dim graph, such as while it's loading
      */
     _graph.opacity = function(amount) {
@@ -198,8 +242,7 @@ SpectralWorkbench.Graph = Class.extend({
     }
 
 
-    /*
-     * ======================================
+    /* ======================================
      * Switch to eV as units (not well-implemented; should be 
      * done as display, not actually overwriting data)
      */
@@ -243,8 +286,7 @@ SpectralWorkbench.Graph = Class.extend({
     }
 
 
-    /* 
-     * ======================================
+    /* ======================================
      * Gets a spectrum object by its <id> if it exists in this graph.
      * Maybe we should have a fetchSpectrum which can get them remotely, too?
      */
@@ -270,6 +312,11 @@ SpectralWorkbench.Graph = Class.extend({
 
     }
 
+
+    /* ======================================
+     * Everything else left to do to get this graph started
+     */
+
     // set up all of UI -- tool panes, etc
     if (_graph.embed == false) _graph.UI = new SpectralWorkbench.UI.Util(_graph);
 
@@ -282,6 +329,10 @@ SpectralWorkbench.Graph = Class.extend({
 
   },
 
+
+  /* ======================================
+   * set up initial d3 graph using nvd3 template
+   */
   graphSetup: function() {
  
     var _graph = this;
@@ -294,14 +345,8 @@ SpectralWorkbench.Graph = Class.extend({
                      .showYAxis(true)        //Show the y-axis
                      .showXAxis(true)        //Show the x-axis
     ;
- 
-    _graph.chart.xAxis     //Chart x-axis settings
-              .axisLabel('Wavelength ('+_graph.xUnit+')')
-              .tickFormat(d3.format('1r'));
- 
-    _graph.chart.yAxis     //Chart y-axis settings
-              .axisLabel('Intensity (%)')
-              .tickFormat(d3.format('%'));
+
+    _graph.setUnits();
  
     if (_graph.dataType == "spectrum") {
       new SpectralWorkbench.Importer( "/spectrums/" 
@@ -318,6 +363,10 @@ SpectralWorkbench.Graph = Class.extend({
     }
   },
 
+
+  /* ======================================
+   * connect up clicking, hovering and such
+   */
   eventSetup: function() {
 
     var _graph = this;
@@ -355,6 +404,11 @@ SpectralWorkbench.Graph = Class.extend({
 
   },
 
+
+  /* ======================================
+   * resize image and reset padding based on range and viewport width
+   * could break image out into SpectralWorkbench.Image.js...
+   */
   updateSize: function() {
 
     var _graph = this;
@@ -396,10 +450,10 @@ SpectralWorkbench.Graph = Class.extend({
 
       var extra = 0;
       if (!_graph.embed) extra = 10;
-      $('div.spectrum-img-container').width(_graph.width)
-                                     .height(100)
-                                     .css('margin-left', _graph.margin.left + extra) // not sure but there seems to be some extra margin in the chart
-                                     .css('margin-right',_graph.margin.right);
+      _graph.imgContainer.width(_graph.width)
+                         .height(100)
+                         .css('margin-left', _graph.margin.left + extra) // not sure but there seems to be some extra margin in the chart
+                         .css('margin-right',_graph.margin.right);
 
       if (_graph.range && _graph.datum) {
 
@@ -413,17 +467,17 @@ SpectralWorkbench.Graph = Class.extend({
         _graph.leftCrop  *= _graph.pxPerNm;
         _graph.rightCrop *= _graph.pxPerNm
 
-        $('div.spectrum-img-container img').width(_graph.width + _graph.leftCrop + _graph.rightCrop)
-                                           .height(100)
-                                           .css('max-width', 'none')
-                                           .css('margin-left', -_graph.leftCrop);
+        _graph.imgEl.width(_graph.width + _graph.leftCrop + _graph.rightCrop)
+                    .height(100)
+                    .css('max-width', 'none')
+                    .css('margin-left', -_graph.leftCrop);
 
       } else {
 
-        $('div.spectrum-img-container img').width(_graph.width)
-                                           .height(100)
-                                           .css('max-width', 'none')
-                                           .css('margin-left', 0);
+        _graph.imgEl.width(_graph.width)
+                    .height(100)
+                    .css('max-width', 'none')
+                    .css('margin-left', 0);
 
       }
  
@@ -433,8 +487,8 @@ SpectralWorkbench.Graph = Class.extend({
       }
  
       // hide loading grey background
-      $('#graphing #graph').css('background','white');
-      $('#graphing #graph .icon-spinner').remove();
+      _graph.el.css('background','white');
+      _graph.el.find('.icon-spinner').remove();
  
     });
   }

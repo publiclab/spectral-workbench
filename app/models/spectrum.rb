@@ -41,7 +41,10 @@ class Spectrum < ActiveRecord::Base
       true
     else
       begin
-        !!ActiveSupport::JSON.decode(self.data)
+        !!(json = ActiveSupport::JSON.decode(self.data)) &&
+          json['lines'].class == Array &&
+          json['lines'].first.class == Hash &&
+          !json['lines'].first['wavelength'].nil?
       rescue
         errors[:base] << "data not in valid JSON format"
         false

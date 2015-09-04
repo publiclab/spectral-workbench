@@ -1,5 +1,6 @@
 //= require core/Class.js 
 //= require spectralworkbench/SpectralWorkbench.Importer.js 
+//= require spectralworkbench/SpectralWorkbench.Image.js 
 //= require spectralworkbench/SpectralWorkbench.Datum.js 
 //= require spectralworkbench/SpectralWorkbench.Spectrum.js 
 //= require spectralworkbench/SpectralWorkbench.Set.js 

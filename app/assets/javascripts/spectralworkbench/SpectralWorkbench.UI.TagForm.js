@@ -22,6 +22,13 @@ SpectralWorkbench.UI.TagForm = Class.extend({
 
     });
 
+    // deletion listeners
+    $('#tags .tagdelete').bind('ajax:success', function(){
+
+      $('#tag_' + $(this).attr('data-id')).remove();
+
+    });
+
     return $(selector);
 
   }

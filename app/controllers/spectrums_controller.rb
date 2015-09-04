@@ -1,6 +1,6 @@
 require 'will_paginate/array'
 class SpectrumsController < ApplicationController
-  respond_to :html, :xml, :js, :csv
+  respond_to :html, :xml, :js, :csv, :json
   # expand this:
   protect_from_forgery :only => [:clone, :extract, :calibrate, :save]
   # http://api.rubyonrails.org/classes/ActionController/RequestForgeryProtection/ClassMethods.html
@@ -256,14 +256,21 @@ class SpectrumsController < ApplicationController
   def update
     @spectrum = Spectrum.find(params[:id])
     require_ownership(@spectrum)
+
     @spectrum.title = params[:spectrum][:title] unless params[:spectrum][:title].nil?
     @spectrum.notes = params[:spectrum][:notes] unless params[:spectrum][:notes].nil?
+    @spectrum.data  = params[:spectrum][:data] unless params[:spectrum][:data].nil?
 
-    respond_with(@spectrum) do |format|
+    # clean this up
+    respond_to do |format|
       if @spectrum.save
-        flash[:notice] = 'Spectrum was successfully updated.'
-        format.html { redirect_to(@spectrum) }
-        format.xml  { head :ok }
+        if request.xhr?
+          format.json  { render :json => @spectrum }
+        else
+          flash[:notice] = 'Spectrum was successfully updated.'
+          format.html { redirect_to(@spectrum) }
+          format.xml  { head :ok }
+        end
       else
         format.html { render :action => "edit" }
         format.xml  { render :xml => @spectrum.errors, :status => :unprocessable_entity }

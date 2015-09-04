@@ -35,12 +35,14 @@ SpectralWorkbench.Datum = Class.extend({
     _datum.removeTag = function(name, callback) {
 
       _datum.tags.forEach(function(tag) {
+
         if (tag.name == name) {
 
           tag.destroy(); // if it affected the datum display, tags are flushed and reloaded
           if (callback) callback(tag);
 
         }
+
       });
 
     }
@@ -52,15 +54,19 @@ SpectralWorkbench.Datum = Class.extend({
      */
     _datum.getTag = function(name, callback) {
 
-      var response;
+      var response = false;
+
       _datum.tags.forEach(function(tag) {
+
         if (tag.name == name) {
 
           if (callback) callback(tag);
           response = tag;
 
         }
+
       });
+
       return response;
 
     }
@@ -93,8 +99,6 @@ SpectralWorkbench.Datum = Class.extend({
      */
     _datum.fetchTags = function() {
 
-      _datum.graph.opacity(0.5);
-
       // flush existing displayed tag elements if any
       _datum.tags.forEach(function(tag) {
         tag.el.remove();
@@ -106,6 +110,8 @@ SpectralWorkbench.Datum = Class.extend({
 
       // don't split here; specialize via inheritance
       if (_datum instanceof SpectralWorkbench.Spectrum) {
+
+        _datum.graph.opacity(0.5);
 
         $.ajax({
 

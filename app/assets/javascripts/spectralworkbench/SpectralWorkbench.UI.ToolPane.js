@@ -24,7 +24,7 @@ SpectralWorkbench.UI.ToolPane = Class.extend({
     var spinner          = "<i class='disabled icon icon-spinner icon-spin'></i>";
 
     // hide and show things to return to default state
-    var cleanUp = function() {
+    form.cleanUp = function() {
       $(selector).find('.btn-spectrum-apply').html("Apply");
       $(selector).find('.btn-apply').html("Apply");
       $(form.el).find('.custom').html('');
@@ -32,14 +32,14 @@ SpectralWorkbench.UI.ToolPane = Class.extend({
     }
 
     // close the tool pane AND clean up. runs on "cancel"
-    var close = function() {
-      cleanUp();
+    form.close = function() {
+      form.cleanUp();
       $(selector).hide();
       $('.macros-pane').show();
     }
 
     // flush previous if any:
-    cleanUp();
+    form.cleanUp();
     form.searchEl.focus(); // this may be overridden in options.setup()
 
     if (options.title) form.titleEl.html(options.title);
@@ -48,7 +48,7 @@ SpectralWorkbench.UI.ToolPane = Class.extend({
     if (options.link) form.linkEl.attr('href', options.link);
 
     $(form.el).find('.results').html(spinner);
-    if (options.setup) options.setup(form, _graph);
+    if (options.setup) options.setup.bind(this)(form, _graph); // give it access to this scope
 
     if (options.apply) form.applyEl.show();
     else               form.applyEl.hide();
@@ -60,7 +60,7 @@ SpectralWorkbench.UI.ToolPane = Class.extend({
         $(selector + ' .btn-spectrum-apply').click(function(e) {
           $(this).html(spinner);
           options.onSpectrumApply.bind(this)(form, _graph);
-          close();
+          form.close();
         });
       }
   
@@ -87,12 +87,12 @@ SpectralWorkbench.UI.ToolPane = Class.extend({
     if (options.onApply) { 
       form.applyEl.click(function(e) {
         $(this).html(spinner);
-        options.onApply(form);
-        close();
+        options.onApply.bind(this)(form);
+        form.close();
       });
     }
 
-    form.closeEl.click(close);
+    form.closeEl.click(form.close);
 
     // open the pane
     $(selector).show();
@@ -122,6 +122,7 @@ SpectralWorkbench.UI.ToolPane = Class.extend({
 
   */
   tools: {
+
  
     subtraction: {
       title: "Subtraction",
@@ -137,6 +138,7 @@ SpectralWorkbench.UI.ToolPane = Class.extend({
       }
     },
 
+
     copyCalibration: {
       title: "Copy Calibration",
       description: "Use a calibrated spectrum to calibrate this one.",
@@ -146,7 +148,7 @@ SpectralWorkbench.UI.ToolPane = Class.extend({
       onSpectrumApply: function(form, graph) {
 
         // provide better API for own-id:
-        SpectralWorkbench.API.Core.copyCalibration($(this).attr('data-id'), graph.datum.id, function(response){ 
+        SpectralWorkbench.API.Core.copyCalibration($(this).attr('data-id'), graph.datum, function(response){ 
 
           // fetch tags from server -- cloning calibration and associated tagging happens on the server side
           graph.datum.fetchTags();
@@ -156,6 +158,7 @@ SpectralWorkbench.UI.ToolPane = Class.extend({
         } );
       }
     },
+
 
     transform: {
       title: "Transform",
@@ -181,6 +184,7 @@ SpectralWorkbench.UI.ToolPane = Class.extend({
         form.formEl.show();
       }
     },
+
  
     range: {
       title: "Range",
@@ -212,7 +216,87 @@ SpectralWorkbench.UI.ToolPane = Class.extend({
         form.formEl.show();
         graph.datum.addTag('range:'+ start + '-' + end);
       }
+    },
+
+
+    crossSection: {
+      title: "Choose cross section",
+      description: "Click the image to choose which row of pixels from the source image is used to generate your graph line.",
+      apply: true,
+      author: "warren",
+      setup: function(form) {
+
+        form.formEl.hide();
+        $(form.el).find('.results').html('');
+        form.customFormEl.html("<p>Click the spectrum image or enter a row number:</p><input class='cross-section' type='text' />");
+
+        graph.image.click(function(x, y) {
+
+          $('.cross-section').val(y);
+
+        });
+      },
+      onApply: function(form) {
+
+        graph.datum.imgToJSON(+$('.cross-section').val());
+        graph.datum.load();
+        graph.reload();
+        graph.refresh();
+        alert('Now, calibrate your spectrum to save this cross section.');
+
+      }
+    },
+
+
+    calibrate: {
+      title: "Wavelength calibration",
+      description: "Follow the prompts to wavelength calibrate a fluorescent spectrum.",
+      author: "warren",
+      apply: true,
+      setup: function(form) {
+
+        form.formEl.hide();
+        $(form.el).find('.results').html('');
+        form.customFormEl.html("<p>Click Begin to calibrate your spectrum.</p>");
+        form.applyEl.html("Begin");
+
+      },
+      onApply: function(form) {
+
+        var x1, x2,
+            w1 = 435.833,
+            w2 = 546.074;
+
+        // if you haven't yet, consider selecting a cross section line (and tag)
+        // Make less confusing: all subsequent spectra will use this line if you are uploading. Or mark this as live-capture.
+
+        // need a simple way to reset the toolPane content, like alert();
+        alert('Start by clicking the middle blue line.');
+
+        graph.image.click(function(_x1, _y1) {
+  
+          x1 = _x1;
+ 
+          graph.image.clickOff();
+    
+          alert('Now, click the bright green line.');
+    
+          graph.image.click(function(_x2, _y2) {
+  
+            x2 = _x2;
+
+            graph.datum.calibrateAndUpload(w1, w2, x1, x2);
+
+            form.close();
+    
+          });
+   
+        });
+
+      }
+
     }
+
 
   }
 

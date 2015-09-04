@@ -80,13 +80,15 @@ SpectralWorkbench.API.Core = {
 
   },
 
+
   // clone calibration from spectrum of id <from_id> to spectrum of id <to_id>
-  copyCalibration: function(from_id, to_id, callback) {
+  // -- this could be rewritten to be more client-sided
+  copyCalibration: function(from_id, datum, callback) {
 
     callback = callback || function(response) { SpectralWorkbench.API.Core.notify('Calibration cloned from spectrum #' + from_id); }
 
     $.ajax({
-      url: "/spectrums/clone/" + to_id + ".json",
+      url: "/spectrums/clone/" + datum.id + ".json",
       type: "POST",
 
       data: {
@@ -96,7 +98,9 @@ SpectralWorkbench.API.Core = {
 
       success: function(response) {
 
-        // calibrate client side
+        // refresh data on client side
+        datum.fetch();
+        
         callback(response);
 
       }

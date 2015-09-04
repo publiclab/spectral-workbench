@@ -3,6 +3,7 @@
   <div class="span4 tool-menu">
 
     <h5>Data processing and display</h5>
+    <p><a class="btn btn-small tool-calibrate">Calibrate this spectrum</a></p>
     <p><a class="btn btn-small tool-subtraction">Subtract another spectrum</a></p>
     <p><a class="btn btn-small tool-range">Set wavelength range</a></p>
     <p><a class="btn btn-small tool-copy-calibration">Copy calibration</a></p>
@@ -11,9 +12,8 @@
     <p><a class="btn btn-small disabled">Change units</a></p>
 
     <h5>Data extraction</h5>
-    <p><a class="btn btn-small disabled">Re-extract data from image</a></p>
+    <p><a class="btn btn-small tool-cross-section">Set new cross-section</a></p>
     <p><a class="btn btn-small" href="/spectra/reverse/<%= datum.id %>">Flip image horizontally</a></p>
-    <p><a class="btn btn-small disabled">Set new cross-section</a></p>
     <p><a class="btn btn-small" href="/spectra/find_brightest_row/<%= datum.id %>">Set new cross-section by %</a></p>
     <p><a class="btn btn-small disabled">Detect brightest cross-section</a></p>
 
