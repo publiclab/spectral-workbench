@@ -177,6 +177,31 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
 
 
     /* ======================================
+     * Output server-style JSON of the spectrum
+     * with all active powertags/operations applied -- exactly as currently seen in the graph
+     */
+    _spectrum.toJSON = function() {
+
+      var json = [];
+
+      _spectrum.average.forEach(function(pixel, index) {
+
+        json.push({
+          'average': +pixel.y,
+          'r': +_spectrum.red[index].y,
+          'g': +_spectrum.green[index].y,
+          'b': +_spectrum.blue[index].y,
+          'pixel': index
+        });
+
+      });
+
+      return json;
+
+    }
+
+
+    /* ======================================
      * Overwrite spectrum.json.data.lines, the raw JSON of the spectrum
      * <y> is the y-position of the cross section of pixels, where 0 is the top row
      * <keepCalibrated> is a boolean which indicates whether to keep or flush the calibration

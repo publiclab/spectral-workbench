@@ -187,6 +187,9 @@ SpectralWorkbench.Graph = Class.extend({
       // update graph size now that we have data and esp. range data
       _graph.updateSize()();
       _graph.zoomSetup();
+
+      // set up all of UI -- tool panes, etc
+      if (_graph.embed == false) _graph.UI = new SpectralWorkbench.UI.Util(_graph);
  
       // actually add it to the display
       nv.addGraph(_graph.chart);
@@ -316,9 +319,6 @@ SpectralWorkbench.Graph = Class.extend({
     /* ======================================
      * Everything else left to do to get this graph started
      */
-
-    // set up all of UI -- tool panes, etc
-    if (_graph.embed == false) _graph.UI = new SpectralWorkbench.UI.Util(_graph);
 
     _graph.graphSetup();
     _graph.eventSetup();

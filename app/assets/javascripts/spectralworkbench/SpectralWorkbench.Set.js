@@ -9,7 +9,7 @@ SpectralWorkbench.Set = SpectralWorkbench.Datum.extend({
 
     var set = this;
 
-    this.load = function() {
+    set.load = function() {
 
       $.each(set.json.spectra, function(i,spectrum) {
      
@@ -19,7 +19,7 @@ SpectralWorkbench.Set = SpectralWorkbench.Datum.extend({
 
     }
 
-    this.d3 = function() {
+    set.d3 = function() {
  
       var data = [];
  
@@ -39,7 +39,35 @@ SpectralWorkbench.Set = SpectralWorkbench.Datum.extend({
  
     }
 
-    this.getOverexposure = function() {
+
+
+    /* ======================================
+     * Output server-style JSON of the spectrum
+     * with all active powertags/operations applied -- exactly as currently seen in the graph
+     * STUBBED FOR NOW; could aggreate 
+     */
+    set.toJSON = function() {
+
+      var json = [];
+
+      set.spectra.forEach(function(spectrum) {
+
+        json.push({
+          id: spectrum.id,
+          title: spectrum.json.title,
+          notes: spectrum.json.notes,
+          author: spectrum.json.author,
+          lines: spectrum.toJSON()
+        });
+
+      });
+
+      return json;
+
+    }
+
+
+    set.getOverexposure = function() {
 
       var overexposure = [];
       set.spectra.map(function(spectrum) {

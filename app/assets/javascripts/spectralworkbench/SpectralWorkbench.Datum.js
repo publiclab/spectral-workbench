@@ -13,8 +13,24 @@ SpectralWorkbench.Datum = Class.extend({
 
     var _datum = this;
 
-    /* 
-     * ======================================
+
+    /* ======================================
+     * Turns <a> link with specified selector into a download
+     * link for the currently viewed data, as a JSON file
+     */
+    _datum.downloadJSON = function(selector) {
+
+      $(selector).click(function() {
+
+        $(this).attr('download','spectralwb-' + _datum.id + '.json')
+               .attr('href','data:application/json;utf8,'+JSON.stringify(_datum.toJSON()));
+
+      });
+
+    }
+
+
+    /* ======================================
      * Create a new tag and add it to self,
      * then run it
      */
@@ -27,8 +43,7 @@ SpectralWorkbench.Datum = Class.extend({
     }
 
 
-    /* 
-     * ======================================
+    /* ======================================
      * Cleanly remove a tag by name and refresh graph, and 
      * execute callback() on completion if provided
      */
@@ -48,8 +63,7 @@ SpectralWorkbench.Datum = Class.extend({
     }
 
 
-    /* 
-     * ======================================
+    /* ======================================
      * Find tags by name, run callback(tag) on each if provided
      */
     _datum.getTag = function(name, callback) {
@@ -72,8 +86,7 @@ SpectralWorkbench.Datum = Class.extend({
     }
 
 
-    /* 
-     * ======================================
+    /* ======================================
      * Find powertags by key, run callback(tag) on each if provided
      */
     _datum.getPowerTag = function(key, callback) {
@@ -93,8 +106,7 @@ SpectralWorkbench.Datum = Class.extend({
     }
 
 
-    /* 
-     * ======================================
+    /* ======================================
      * Get tags from server, populate datum.tags
      */
     _datum.fetchTags = function() {
