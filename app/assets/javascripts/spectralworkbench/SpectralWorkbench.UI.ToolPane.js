@@ -219,6 +219,29 @@ SpectralWorkbench.UI.ToolPane = Class.extend({
     },
 
 
+    smooth: {
+      title: "Smoothing",
+      description: "Enter a number of points ahead and behind of a given point to average, in order to smooth the graph. Note that this is <b>not</b> time-averaging, and can suppress small spectral features.",
+      apply: true,
+      author: "warren",
+      setup: function(form) {
+
+        form.formEl.hide();
+        $(form.el).find('.results').html('');
+        form.customFormEl.html("<p>Enter a distance in points to average ahead and behind:</p><input class='distance' type='text' value='3' />");
+
+      },
+      onApply: function(form) {
+
+        graph.datum.addTag('smooth:' + form.el.find('.distance').val());
+
+        graph.reload();
+        graph.refresh();
+
+      }
+    },
+
+
     crossSection: {
       title: "Choose cross section",
       description: "Click the image to choose which row of pixels from the source image is used to generate your graph line.",
@@ -232,7 +255,7 @@ SpectralWorkbench.UI.ToolPane = Class.extend({
 
         graph.image.click(function(x, y) {
 
-          $('.cross-section').val(y);
+          form.find('.cross-section').val(y);
 
         });
       },

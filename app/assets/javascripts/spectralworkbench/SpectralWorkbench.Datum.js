@@ -179,6 +179,10 @@ SpectralWorkbench.Datum = Class.extend({
 
           SpectralWorkbench.API.Core.transform(_datum, tag.value);
 
+        } else if (tag.key == "smooth") {
+
+          SpectralWorkbench.API.Core.smooth(_datum, tag.value);
+
         } else if (tag.key == "blend") {
 
           var blend_id = tag.value.split('#')[0],

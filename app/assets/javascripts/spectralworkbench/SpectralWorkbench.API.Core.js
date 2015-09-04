@@ -116,25 +116,31 @@ SpectralWorkbench.API.Core = {
     var red     = datum.red,
         green   = datum.green,
         blue    = datum.blue,
-        average = datum.average;
+        average = datum.average,
+        r       = red.map(function(d){ return d.y }),
+        g       = green.map(function(d){ return d.y }),
+        b       = blue.map(function(d){ return d.y }),
+        a       = average.map(function(d){ return d.y });
 
     // we could parse this, actually...
-    eval('var transform = function(R,G,B,A,X,Y,P) { return ' + expression + '; }');
+    eval('var transform = function(R,G,B,A,X,Y,I,P,a,r,g,b) { return ' + expression + '; }');
 
     average.forEach(function(P, i) { 
 
-      if (red[i])   var R = +red[i].y;
-      else          var R = 0;
-      if (green[i]) var G = +green[i].y;
-      else          var G = 0;
-      if (blue[i])  var B = +blue[i].y;
-      else          var B = 0;
-
-      var A = +average[i].y,
-          X = +average[i].x,
-          Y = +average[i].y;
-
-      P.y = transform(R,G,B,A,X,Y,P);
+      P.y = transform(
+        +red[i].y,     //R
+        +green[i].y,   //G
+        +blue[i].y,    //B
+        +average[i].y, //A
+        +average[i].x, //X
+        +average[i].y, //Y
+        i,             //I
+        P,             //P
+        a,             //a
+        r,             //r
+        g,             //g
+        b              //b
+      );
 
     });
 
@@ -164,13 +170,13 @@ SpectralWorkbench.API.Core = {
       // count up to first in-range index
       while (true) {
         if (datum[_channel][startIndex].x > start) break;
-        startIndex++;
+        startIndex += 1;
       }
 
       // count down to first in-range index
       while (true) {
         if (datum[_channel][endIndex].x < end) break;
-        endIndex--;
+        endIndex -= 1;
       } 
 
       datum[_channel] = datum[_channel].slice(startIndex, endIndex);
@@ -270,6 +276,38 @@ SpectralWorkbench.API.Core = {
  
     });
     
+  },
+
+
+  // use a rolling average to smooth data: not time-averaging!
+  smooth: function(datum, distance) {
+
+    var average = [];
+
+    datum.average.forEach(function(p, i) {
+
+      average.push(p);
+
+      for (var offset = -distance; offset <= distance; offset += 1) {
+
+        if (offset != 0 && (i + offset) > 0 && (i + offset) < datum.average.length) {
+
+          average[i].y += datum.average[i + offset].y;
+
+        }
+
+      }
+
+      average[i].y /= (distance * 2 + 1);
+
+    });
+
+    datum.average = average;
+
+    // reload the graph data:
+    datum.graph.reload();
+    // refresh the graph:
+    datum.graph.refresh();
 
   },
 

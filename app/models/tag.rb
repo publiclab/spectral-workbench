@@ -6,7 +6,7 @@ class Tag < ActiveRecord::Base
   validates_presence_of :user_id, :on => :create, :message => "can't be blank"
   validates_presence_of :spectrum_id, :on => :create, :message => "can't be blank"
 
-  validates :name, :format => {:with => /[\w\.:\-\*\+\(\)]+/, :message => "can only include letters, numbers, and dashes, or mathematical expressions"}
+  validates :name, :format => {:with => /[\w\.:\-\*\+\[\]\(\)]+/, :message => "can only include letters, numbers, and dashes, or mathematical expressions"}
 
   belongs_to :spectrum
   belongs_to :user
@@ -15,6 +15,7 @@ class Tag < ActiveRecord::Base
     Spectrum.joins(:tags).where('tags.name = (?)',self.name)
   end
 
+  # this doesn't accommodate v2.0 powertags, which can contain math syntax
   def is_powertag?
     self.name.match(/[a-zA-Z-]+:[a-zA-Z0-9-]+/)
   end

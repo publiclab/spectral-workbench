@@ -18,7 +18,7 @@ SpectralWorkbench.Tag = Class.extend({
       _tag.json = {};
     }
 
-    if (_tag.name.match(/[a-zA-Z-]+:[a-zA-Z0-9-]+/)) {
+    if (_tag.name.match(/[\w\.]+:[\w0-9\-\*\+\[\]\(\)]+/)) {
       _tag.powertag = true;
       _tag.key = _tag.name.split(':')[0];
       _tag.value = _tag.name.split(':')[1];

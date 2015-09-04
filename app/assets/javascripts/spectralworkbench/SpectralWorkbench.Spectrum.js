@@ -119,7 +119,7 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
       lines.forEach(function(line) {
 
         line.wavelength = +(startwavelength + i * stepsize).toPrecision(_spectrum.sigDigits);
-        i++;
+        i += 1;
 
       });
 
@@ -361,7 +361,7 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
       // check each channel for plateaus at 100%:
       _channels.forEach(function(_channel) {
 
-        for (var i = 0; i < _spectrum[_channel].length; i++) {
+        for (var i = 0; i < _spectrum[_channel].length; i += 1) {
 
           if (_spectrum[_channel][i].y > threshold) _tooDark = false;
 

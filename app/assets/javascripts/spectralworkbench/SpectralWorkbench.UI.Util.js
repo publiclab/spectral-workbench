@@ -11,6 +11,7 @@ SpectralWorkbench.UI.Util = Class.extend({
     $('.tool-range').click(            function() { new SpectralWorkbench.UI.ToolPane('range', _graph); });
     $('.tool-calibrate').click(        function() { new SpectralWorkbench.UI.ToolPane('calibrate', _graph); });
     $('.tool-cross-section').click(    function() { new SpectralWorkbench.UI.ToolPane('crossSection', _graph); });
+    $('.tool-smooth').click(           function() { new SpectralWorkbench.UI.ToolPane('smooth', _graph); });
 
     // Set up JSON download
 
