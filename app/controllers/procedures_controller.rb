@@ -1,6 +1,6 @@
 class ProceduresController < ApplicationController
   def index
-    @procedures = Procedure.order("id DESC").paginate(:page => params[:page], :per_page => 24)
+    @procedures = Procedure.where(:is_active => true).order("id DESC").paginate(:page => params[:page], :per_page => 24)
   end
 
   def view
@@ -10,7 +10,7 @@ class ProceduresController < ApplicationController
     if @procedure.is_active?
       @steps = ProcedureStep.where(:procedure_id => id, :skipped => false, :is_done => true).order(:step)
     else
-      flash[:error] = "The procedure is not public yet."
+      flash[:error] = "The procedure you were trying to access is not public yet."
       redirect_to "/procedures"
     end
   end
@@ -41,94 +41,115 @@ class ProceduresController < ApplicationController
         render "new"
       end
     else
-      # possibly, we don't have to redirect - we could prompt for login at the moment of save...
       flash[:notice] = "You must first log in to create a procedure."
       redirect_to "/login"
     end
   end
 
   def edit
-    id = params[:id]
-    step = params[:step]
-    if id
-      @procedure = Procedure.find id
-      @steps = ProcedureStep.where(:procedure_id => id).order(:step)
-      
-      @non_ready_steps = ProcedureStep.where(:procedure_id => id, :skipped => false, :is_done=>false).count
-      
-      if @non_ready_steps
-        @ready = false
-	  else
-		@ready = true
-	  end
+    #if logged_in?
+    if 1==1
+      id = params[:id]
+      step = params[:step]
 
-      if step
-        if not ProcedureStep.exists?(:procedure_id => id, :step => step)
-          flash[:error] = "Step not found!"
+      user_id = current_user.id if logged_in?
+      user_id ||= "0"
+
+      if id
+        @procedure = Procedure.find id
+
+        if @procedure.user_id != user_id
+          flash[:error] = "You can edit the procedures that are only owned by you"
+          redirect_to "/procedures"
+          return
         end
-      else
-        @current_step = ProcedureStep.where(:procedure_id => id, :is_done => false, :skipped=>false).order(:step)[0]
-        if @current_step.nil?
-          step = 1
+
+        @steps = ProcedureStep.where(:procedure_id => id).order(:step)
+
+        @non_ready_steps = ProcedureStep.where(:procedure_id => id, :skipped => false, :is_done=>false).count
+
+        if step
+          if not ProcedureStep.exists?(:procedure_id => id, :step => step)
+            flash[:error] = "Step not found!"
+          end
         else
-          step = @current_step.step
+          @current_step = ProcedureStep.where(:procedure_id => id, :is_done => false, :skipped=>false).order(:step)[0]
+          if @current_step.nil?
+            step = 1
+            @ready_to_be_reviewed = true
+          else
+            step = @current_step.step
+          end
         end
+
+        @current_step = ProcedureStep.where(:procedure_id => id, :step => step)[0]
+
+        render :action => "edit"
+      else
+        redirect_to "/procedures"
       end
 
-      @current_step = ProcedureStep.where(:procedure_id => id, :step => step)[0]
-
-      render :action => "edit"
     else
-      redirect_to "/procedures"
+      flash[:notice] = "You must first log in to edit a procedure."
+      redirect_to "/login"
     end
   end
 
   def review
-    id = params[:id]
-    redirect = false
+    #if logged_in?
+    if 1==1
 
-    @procedure = Procedure.find id
-    @steps = ProcedureStep.where(:procedure_id => id).order(:step)
+      user_id = current_user.id if logged_in?
+      user_id ||= "0"
 
-    @non_ready_steps = ProcedureStep.where(:procedure_id => id, :skipped => false, :is_done=>false).count
+      id = params[:id]
+      redirect = false
 
-    if @non_ready_steps
-      @ready = false
-    else
-      @ready = true
-    end
+      @procedure = Procedure.find id
 
-    if request.post?
-      submit = params[:submit]
-
-      @procedure.title = params[:title]
-      @procedure.description = params[:description]
-
-      if submit == "live"
-        @procedure.is_active = true
+      if @procedure.user_id != user_id
+        flash[:error] = "You can review the procedures that are only owned by you"
+        redirect_to "/procedures"
+        return
       end
 
-      @procedure.save
+      @steps = ProcedureStep.where(:procedure_id => id).order(:step)
+      @non_ready_steps = ProcedureStep.where(:procedure_id => id, :skipped => false, :is_done=>false).count
 
-      if submit == "continue"
-        redirect = true
-        redirect_url = "/procedures/edit/#{id}"
-      end
-    else
-      if id
-        render :action => "edit"
+      if @non_ready_steps > 0
+        flash[:error] = "You need to fill all the steps or skip them to either review the procedure or to finally save it."
+        redirect_to "/procedures/edit/#{id}"
+        return
       else
-        redirect = true
-        redirect_url = "/procedures"
+        @ready_to_be_reviewed = true
       end
-    end
 
-    if redirect
-      redirect_to redirect_url
-    end
+      if request.post?
+        submit = params[:submit]
 
+        @procedure.title = params[:title]
+        @procedure.description = params[:description]
+
+        if submit == "live"
+          @procedure.is_active = true
+        end
+
+        @procedure.save
+        flash[:notice] = "You have made the procedure live successfully!"
+        redirect_to "/procedures/edit/#{id}"
+        return
+      else
+        if id
+          render :action => "edit"
+        else
+          redirect_to "/procedures"
+        end
+      end
+    else
+      flash[:notice] = "You must first log in to edit a procedure."
+      redirect_to "/login"
+    end
   end
-
 
   def generate_initial procedure_id
     new_step procedure_id, 1,   "Sample Preparation"

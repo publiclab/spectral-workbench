@@ -19,7 +19,7 @@
 
             <div class="span9">
                 <div class="_row">
-                  <% if @current_step %>
+                  <% if @current_step && !@ready_to_be_reviewed %>
                       <form action="/procedures/updatestep/" method="post">
                       <div class="_row" style="padding-top:15px;">
                         <input class="form-control span12" style="font-size: 18px; height: 46px;" type="text"  id="heading" name="heading" placeholder="Heading" value="<%= @current_step.heading %>">
@@ -51,10 +51,7 @@
 							  </span>
 							</div>
 
-                        
-                        
-                        
-                            
+
                             
                         </div>
                         
@@ -78,7 +75,7 @@
 
                         <div class="_row">
                           <div class="span8">
-                            <h4>Explain what to do</h4>
+                            <h4>Procedure Description</h4>
 
                             <textarea onfocus="editing=true" name="description" class="span12" id="text-input" rows="15" style="width:95%;"><%=@procedure.description%></textarea>
                             <input type='hidden' name='authenticity_token' value="<%= form_authenticity_token %>"/>
@@ -86,13 +83,12 @@
                             <br>
 
                             <div class="control-group">
-                              <% if @ready %>
-                                  <button class="btn btn-lrg btn-success" type="submit" value="live" name="submit">Save</button>
+                                  <% if @ready_to_be_reviewed %>
+                                  <button class="btn btn-lrg btn-success" type="submit" value="live" name="submit">Final Save</button>
                                   <% else %>
                               <button class="btn btn-lrg btn-success" type="submit" name="submit" value="continue">Save &amp; Continue</button>
                                   <% end %>
                               <a class="btn" onclick="$E.toggle_preview()">Preview</a>
-
                             </div>
 
                           </div>

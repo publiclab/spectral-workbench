@@ -2,7 +2,7 @@ class CreateProcedures < ActiveRecord::Migration
   def up
     create_table :procedures do |t|
 	  t.string   :title
-	  t.integer  :author
+	  t.string   :author
 	  t.integer  :user_id		
 	  t.text     :description
 	  t.string   :main_image_url
