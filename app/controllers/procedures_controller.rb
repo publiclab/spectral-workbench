@@ -16,8 +16,8 @@ class ProceduresController < ApplicationController
   end
 
   def create
-    #if logged_in?
-    if 1==1
+    if logged_in?
+    #if 1==1
       if request.post?
         user_id = current_user.id if logged_in?
         user_id ||= "0"
@@ -47,8 +47,8 @@ class ProceduresController < ApplicationController
   end
 
   def edit
-    #if logged_in?
-    if 1==1
+    if logged_in?
+    #if 1==1
       id = params[:id]
       step = params[:step]
 
