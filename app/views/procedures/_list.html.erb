@@ -1,0 +1,17 @@
+<style>._row { clear:left;} </style>
+
+<div class="_row">
+  <% @procedures.each_with_index do |procedure,i| %>
+    <div class="span3 clearfix">
+      <a class="image hidden-phone" href="/procedures/view/<%= procedure.id %>"><img src="<%= procedure.main_image_url %>" class="image" style="background:#ccc;"></a>
+      <a class="image visible-phone" style="float:left;width:50%;margin-right:10px;" href="/procedures/view/<%= procedure.id %>"><img src="<%= procedure.main_image_url %>" class="image" style="background:#ccc;"></a>
+      <h4><a data-transition="slide" href="/procedures/view/<%= procedure.id %>"><%=h truncate(procedure.title,:length => 18) %></a></h4>
+      <p><a data-transition="slide" href="<%=h profile_path(procedure.author) %>"><%=h procedure.author %></a> | <%= time_ago_in_words(procedure.created_at) %> ago</p>
+    </div>
+    <% if ((i+1)/4.0).to_i == ((i+1)/4.0) %>
+    </div>
+    <hr class="hidden-phone" style="clear:both;"/>
+    <div class="_row">
+    <% end %>
+  <% end %>
+</div>

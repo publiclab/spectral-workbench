@@ -1,0 +1,169 @@
+<div class="container-fluid">
+  <div class="row-fluid">
+            <div class="span3">
+                <h3><%= @procedure.title %></h3>
+                <% @steps.each do |step|%>
+                  <div style="padding:10px;<% if step.skipped %>text-decoration: line-through;<% end %>">
+                  <% if step.is_done %>
+                    <i class="icon icon-ok" style="color:#5bb75b"> </i>   <a style="color:#5bb75b; font-size:15px;" href="/procedures/edit/<%=@procedure.id%>/<%= step.step%>"><%= step.heading %></a>
+                  <% elsif @current_step && @current_step.step == step.step %>
+                    <i class="icon icon-asterisk" style="color:#08c;"> </i>   <a style="color:#08c; font-size:15px;" href="/procedures/edit/<%=@procedure.id%>/<%= step.step%>"><%= step.heading %></a>
+                          <% else %>
+                        <i class="icon icon-cog" style="color:#000010;"> </i>   <a style="color:#000010; font-size:15px;" href="/procedures/edit/<%=@procedure.id%>/<%= step.step%>"><%= step.heading %></a>
+
+                          <%end%>
+                  </div>
+                <% end %>
+
+            </div>
+
+            <div class="span9">
+                <div class="_row">
+                  <% if @current_step %>
+                      <form action="/procedures/updatestep/" method="post">
+                      <div class="_row" style="padding-top:15px;">
+                        <input class="form-control span12" style="font-size: 18px; height: 46px;" type="text"  id="heading" name="heading" placeholder="Heading" value="<%= @current_step.heading %>">
+                      </div>
+
+                    <div class="_row">
+                        <div class="span8">
+                        <h4>Explain what to do</h4>
+                        
+
+                          <textarea onfocus="editing=true" name="description" class="span12" id="text-input" rows="15" style="width:95%;"><%=@current_step.description%></textarea>
+                          <input type='hidden' name='authenticity_token' value="<%= form_authenticity_token %>"/>
+                          <input type='hidden' name='procedure' value="<%= @procedure.id %>"/>
+                          <input type='hidden' name='step' value="<%= @current_step.step %>"/>
+                          <div class="checkbox">
+                            <label>
+                              <input type="checkbox" value="true" name="capture_required" <% if @current_step.capture_required %>checked<%end%> >
+                              Capture Required
+                            </label>
+                          </div>
+                          <br>
+
+							<div class="control-group">
+							  <button class="btn btn-lrg btn-success" type="submit">Save &amp; Continue</button>
+							  <a class="btn" onclick="$E.toggle_preview()">Preview</a>
+							  <a class="btn btn-link" onClick="$('#skipstep').modal('show');" >Skip this step</a><a class="btn btn-warning" onClick="$('#addnewstep').modal('show');">Add a missing step</a>
+							  <span style="color:#888;">
+								<a target="_blank" href="http://publiclab.org/wiki/authoring-help#Formatting">Formatting</a>
+							  </span>
+							</div>
+
+                        
+                        
+                        
+                            
+                            
+                        </div>
+                        
+                        <div class="span4">
+
+                            <div class="_row" style="margin-top:20px;">
+                                <h4>Add a Main Image for this Step</h4>
+                                <div style="height:150px; padding:20px;" class="well">
+                            Drag &amp; drop to add an image or file, or!
+                                    </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                      </form>
+                    <% else%>
+                      <form action="/procedures/review/<%= @procedure.id%>" method="post">
+                        <div class="_row" style="padding-top:15px;">
+                          <input class="form-control span12" style="font-size: 18px; height: 46px;" type="text"  id="title" name="title" placeholder="Title" value="<%= @procedure.title %>">
+                        </div>
+
+                        <div class="_row">
+                          <div class="span8">
+                            <h4>Explain what to do</h4>
+
+                            <textarea onfocus="editing=true" name="description" class="span12" id="text-input" rows="15" style="width:95%;"><%=@procedure.description%></textarea>
+                            <input type='hidden' name='authenticity_token' value="<%= form_authenticity_token %>"/>
+                            <input type='hidden' name='procedure' value="<%= @procedure.id %>"/>
+                            <br>
+
+                            <div class="control-group">
+                              <% if @ready %>
+                                  <button class="btn btn-lrg btn-success" type="submit" value="live" name="submit">Save</button>
+                                  <% else %>
+                              <button class="btn btn-lrg btn-success" type="submit" name="submit" value="continue">Save &amp; Continue</button>
+                                  <% end %>
+                              <a class="btn" onclick="$E.toggle_preview()">Preview</a>
+
+                            </div>
+
+                          </div>
+
+                          <div class="span4">
+
+                            <div class="_row" style="margin-top:20px;">
+                              <h4>Add a Main Image for Procedure</h4>
+                              <div style="height:150px; padding:20px;" class="well">
+                                Drag &amp; drop to add an image or file, or!
+                              </div>
+
+                            </div>
+                          </div>
+                        </div>
+                      </form>
+                  <% end %>
+                </div>
+            </div>
+
+  </div>
+
+  <%if @current_step %>
+
+  <div class="modal hide fade" id="addnewstep">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      <b>Add New Step</b>
+    </div>
+
+    <div class="modal-body">
+      <p>This would create a new step with the order <b><%= @current_step.step %></b>. The existing step "<%=@current_step.heading%>" would be shifted by 1.</p>
+      <form id="add" method="POST" action="/procedures/addstep">
+
+        <input type='hidden' name='authenticity_token' value="<%= form_authenticity_token %>"/>
+        <input type='hidden' name='procedure' value="<%= @procedure.id %>"/>
+        <input type='hidden' name='step' value="<%= @current_step.step %>"/>
+        <div class="form-group">
+          <label for="heading"><b>Title for the New Step:</b> </label>
+          <input type="text" id ="heading" class="form-control" name="heading" placeholder="Title of the New Step!">
+        </div>
+
+          <button tabindex="2" class="btn btn-primary" type="submit">Add Step</button>
+
+
+
+      </form>
+
+    </div>
+  </div>
+
+  <div class="modal hide fade" id="skipstep">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      <b>Are you Sure?</b>
+    </div>
+
+    <div class="modal-body">
+      <p>This would skip the step <b><%= @current_step.step %>. <%= @current_step.heading%></b>. You will anyhow be able to come back and edit it by clikcing on the menu listing.</p>
+      <form id="add" method="POST" action="/procedures/skipstep">
+
+        <input type='hidden' name='authenticity_token' value="<%= form_authenticity_token %>"/>
+        <input type='hidden' name='procedure' value="<%= @procedure.id %>"/>
+        <input type='hidden' name='step' value="<%= @current_step.step %>"/>
+
+        <button tabindex="2" class="btn btn-primary" type="submit">Yes, I am sure</button>
+
+
+
+      </form>
+
+    </div>
+  </div>
+<% end %>

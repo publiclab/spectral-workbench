@@ -130,6 +130,18 @@ SpectralWorkbench::Application.routes.draw do
   get '/match/livesearch' => 'match#livesearch'
   get '/match/:id' => 'match#index'
 
+  # And here comes the procedures module!
+  get '/procedures' => 'procedures#index'
+  get '/procedures/view/:id' => 'procedures#view'
+  get '/procedures/edit/:id/:step' => 'procedures#edit'
+  get 'procedures/review/:id' => 'procedures#review'
+  get '/procedures/run/:id' => 'procedures#run'
+
+  post '/procedures/addstep' => 'procedures#add_new_step'
+  post '/procedures/skipstep' => 'procedures#skip_step'
+  post '/procedures/updatestep' => 'procedures#update_step'
+  post 'procedures/review/:id' => 'procedures#review'
+
   # cache_interval is how often the cache is recalculated
   # but if nothing changes, the checksum will not change
   # and the manifest will not trigger a re-download

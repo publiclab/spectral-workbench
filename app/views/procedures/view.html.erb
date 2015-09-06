@@ -1,0 +1,32 @@
+<div class="container-fluid">
+  <hr>
+  <div class="span4">
+	<h3><%= @procedure.title %></h3>
+	<p><%=@procedure.description%></p>
+    <br>
+    <p>
+      <strong>Author:</strong><%= @procedure.author%><br>
+      <%= time_ago_in_words(@procedure.created_at) %>
+    </p>
+
+    <a class="btn btn-lrg btn-success" href="/procedures/run/<%=@procedure.id%>">Run this Procedure</a>
+  </div>
+
+
+  <div class="span8">
+
+    <% @steps.each_with_index do |step, i|%>
+
+        <div>
+          <h4><%=i+1%>. <%= step.heading %></h4>
+          <p><%= step.description %></p>
+        </div>
+
+        <hr>
+
+
+    <% end %>
+
+  </div>
+
+  </div>
