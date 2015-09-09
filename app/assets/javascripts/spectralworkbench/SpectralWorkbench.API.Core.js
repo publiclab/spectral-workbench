@@ -312,6 +312,34 @@ SpectralWorkbench.API.Core = {
   },
 
 
+  // display a spectrum by given id (in a group called "comparisons")
+  compare: function(graph, id) {
+
+    var url = "/spectrums/" + id + ".json"; 
+
+    d3.json(url, function(error, data) {
+ 
+      var datum = new SpectralWorkbench.Spectrum(data, graph);
+
+      graph.comparisons = graph.comparisons || [];
+      graph.comparisons.push(datum);
+
+      var comparison = datum.d3()[0];
+      comparison.color = "red";
+
+      var combined = graph.datum.d3()
+      combined.push(comparison);
+
+      graph.data.datum(combined, graph.idKey);
+
+      // refresh the graph:
+      graph.refresh();
+
+    });
+
+  },
+
+
   // checks overexposure and displays an alert if it is so
   // we might just want a class of alert filters separate from the API, or
   // in a special zone

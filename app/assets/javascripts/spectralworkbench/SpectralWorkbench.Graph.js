@@ -43,6 +43,7 @@ SpectralWorkbench.Graph = Class.extend({
  
     /* key function for d3 data binding, used in _graph.load */
     _graph.idKey = function(d) {
+      // we should mark color channels as "_red"
       return d.id;
     }
 
@@ -53,7 +54,7 @@ SpectralWorkbench.Graph = Class.extend({
     _graph.reload = function() {
 
       // populate the <svg> element with chart data 
-      // and provide a binding key (removing idKey has no effect?)
+      // and provide a binding key
       _graph.data.datum(_graph.datum.d3, _graph.idKey);
 
     }

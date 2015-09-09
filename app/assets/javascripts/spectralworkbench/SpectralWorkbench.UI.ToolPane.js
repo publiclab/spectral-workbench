@@ -355,6 +355,37 @@ SpectralWorkbench.UI.ToolPane = Class.extend({
 
       }
 
+    },
+
+
+    compare: {
+      title: "Compare",
+      description: "Compare this spectrum to others in the graph above.",
+      author: "warren",
+      apply: false,
+      url: '/spectrums/choose/all', // default spectra to show, can use * and ?author=warren
+      setup: function() {
+
+        //$(form.el).find('.results').html('');
+        
+
+      },
+      onSpectrumApply: function(form, graph) {
+
+        // provide better API for own-id:
+        var id = $(this).attr('data-id');
+        $('.comparisons').append('<tr class="spectrum-comparison-' + id + '"></tr>');
+        var compareEl = $('.comparisons tr.spectrum-comparison-' + id);
+        compareEl.append('<td class="title"></td>');
+        compareEl.append('<td class="author"></td>');
+        compareEl.append('<td class="tools"></td>');
+        compareEl.find('.tools').append('<a class=".remove"><i class="icon icon-remove"></i></a>');
+        compareEl.find('.tools .remove');
+
+        SpectralWorkbench.API.Core.compare(graph, id);
+
+      }
+
     }
 
 
