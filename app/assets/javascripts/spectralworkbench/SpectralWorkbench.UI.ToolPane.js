@@ -26,9 +26,11 @@ SpectralWorkbench.UI.ToolPane = Class.extend({
     // hide and show things to return to default state
     form.cleanUp = function() {
       $(selector).find('.btn-spectrum-apply').html("Apply");
-      $(selector).find('.btn-apply').html("Apply");
+      form.applyEl.html("Apply");
       $(form.el).find('.custom').html('');
       form.formEl.show();
+      form.spectrumApplyEl.off('click');
+      form.applyEl.off('click');
     }
 
     // close the tool pane AND clean up. runs on "cancel"
@@ -266,6 +268,41 @@ SpectralWorkbench.UI.ToolPane = Class.extend({
         graph.reload();
         graph.refresh();
         alert('Now, calibrate your spectrum to save this cross section.');
+
+      }
+    },
+
+
+    calibrate2: {
+      title: "Wavelength calibration",
+      description: "Follow the prompts to wavelength calibrate a fluorescent spectrum.",
+      author: "warren",
+      apply: true,
+      setup: function(form) {
+
+        var pane = "";
+
+        pane += "<h5>Calibrate</h5>";
+        pane += "<p>Adjust the sliders to align the reference spectrum to your own. <a href='//publiclab.org/wiki/spectral-workbench-calibration'>Learn more &raquo;</a></p>";
+        pane += "<div class='fit'></div>";
+        pane += "<div class='snapping'></div>";
+        pane += "<div class='reference'><span class='btn btn-mini disabled slider slider-1'>A</span><span class='btn btn-mini disabled slider slider-2'>B</span></div>";
+
+        $('#graph').prepend('<div class="calibrationPane"></div>');
+        $('.calibrationPane').html(pane);
+
+        $('.slider').css('position', 'absolute');
+
+        $('.slider-1').css('left', 100);
+        $('.slider-2').css('left', 300);
+
+        var drag = d3.behavior.drag();
+
+        drag.on('drag', function() { 
+          $(this).css('left', d3.event.x);
+        });
+
+        d3.select('.slider').call(drag)
 
       }
     },
