@@ -24,9 +24,11 @@ class TagsControllerTest < ActionController::TestCase
     assert_redirected_to "/login?back_to=/tags"
   end
 
+  ## test for "post" vs "get"
+
   test "should delete tag" do
     session[:user_id] = tags(:one).user_id # log in
-    get :destroy, :id => tags(:one).id
+    post :destroy, :id => tags(:one).id
     assert_response :redirect
     assert_equal nil, flash[:error]
     assert_equal "Tag 'cfl' deleted.", flash[:notice]
@@ -35,7 +37,7 @@ class TagsControllerTest < ActionController::TestCase
 
   test "should not delete tag if not owner" do
     session[:user_id] = tags(:two).user_id # log in
-    get :destroy, :id => tags(:one).id
+    post :destroy, :id => tags(:one).id
     assert_response :redirect
     assert_equal "You must have authored a tag or own its spectrum to delete it.", flash[:error]
     assert_equal nil, flash[:notice]
@@ -43,7 +45,7 @@ class TagsControllerTest < ActionController::TestCase
   end
 
   test "should not delete tag if not logged in" do
-    get :destroy, :id => 'cfl'
+    post :destroy, :id => 'cfl'
     assert_response :redirect
     assert_equal "You must be logged in to access this function.", flash[:error]
     assert_redirected_to "/login?back_to=/tags/cfl"
@@ -52,7 +54,7 @@ class TagsControllerTest < ActionController::TestCase
   test "should delete tag if admin" do
     session[:user_id] = users(:admin).id # log in as admin
     tag = Tag.find_by_name('cfl')
-    get :destroy, :id => tag.id
+    post :destroy, :id => tag.id
     assert_response :redirect
     assert_equal "Tag 'cfl' deleted.", flash[:notice]
     assert_redirected_to spectrum_path(tag.spectrum_id)
@@ -60,14 +62,13 @@ class TagsControllerTest < ActionController::TestCase
 
   test "powertag creation if you're not the owner" do 
     session[:user_id] = users(:aaron).id # log in
-    tag = Tag.new({
-      user_id:     users(:aaron).id,
-      spectrum_id: spectrums(:one).id, # user_id should be 1, where quentin is 2
-      name:        'range:100-500'
-    })
-    assert_not_equal tag.user_id, tag.spectrum.user_id
-    assert !tag.save
-    assert_equal tag.errors[:base].last, "spectrum owned by another user"
+
+    @request.headers["Content-Type"] = "application/json"
+    @request.headers["Accept"] = "application/javascript"
+    xhr :post, :create, tag: { name: 'range:400-500',
+                        spectrum_id: users(:quentin).spectrums.first.id }
+
+    assert_equal ActiveSupport::JSON.decode(@response.body)['errors'].last, "Error: You must own the spectrum to add powertags"
     assert_response :success
   end
 
@@ -79,9 +80,6 @@ class TagsControllerTest < ActionController::TestCase
       name:        'range:100-500'
     })
     assert tag.save!
-    json = ActiveSupport::JSON.decode(tag.spectrum.clean_json)
-    assert json['range']['low'] == 100
-    assert json['range']['high'] == 500
     assert_response :success
   end
 

@@ -39,53 +39,6 @@ class TagTest < ActiveSupport::TestCase
       name:        'range:100-500'
     })
     assert tag.save
-    json = ActiveSupport::JSON.decode(tag.spectrum.clean_json)
-    assert json['range']['low'] == 100
-    assert json['range']['high'] == 500
-  end
-
-  test "range powertag replacement if there's already a range powertag" do 
-    tag = Tag.new({
-      user_id:     users(:quentin).id,
-      spectrum_id: spectrums(:one).id,
-      name:        'range:100-500'
-    })
-    assert tag.save
-    json = ActiveSupport::JSON.decode(tag.spectrum.clean_json)
-    assert json['range']['low'] == 100
-    assert json['range']['high'] == 500
-    tag = Tag.new({
-      user_id:     users(:quentin).id,
-      spectrum_id: spectrums(:one).id,
-      name:        'range:200-600'
-    })
-    assert tag.save
-    json = ActiveSupport::JSON.decode(tag.spectrum.clean_json)
-    assert json['range']['low'] == 200
-    assert json['range']['high'] == 600
-  end
-
-  test "range powertag creation if provided range are not integers" do 
-    tag = Tag.new({
-      user_id:     users(:quentin).id,
-      spectrum_id: spectrums(:one).id,
-      name:        'range:100-F'
-    })
-    assert !tag.save
-    json = ActiveSupport::JSON.decode(tag.spectrum.clean_json)
-    assert json['range'] == nil
-  end
-
-  test "range powertag creation if provided range are not well formatted" do 
-    tag = Tag.new({
-      user_id:     users(:quentin).id,
-      spectrum_id: spectrums(:one).id,
-      name:        'range:100x400'
-    })
-    assert !tag.save
-    assert_equal "range tag poorly formed; see <a href='//publiclab.org/wiki/spectral-workbench-tagging'>more about tagging</a>", tag.errors[:base].last
-    json = ActiveSupport::JSON.decode(tag.spectrum.clean_json)
-    assert json['range'] == nil
   end
 
 # We now allow all kinds of characters with "transform" tags. We should switch for this.

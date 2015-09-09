@@ -3,31 +3,38 @@ class TagsController < ApplicationController
   before_filter :require_login, :only => [ :create, :destroy ]
 
   def create
-    response = { :errors => [],
+    response = { 
+      :errors => [],
       :saved => [],
     }
+    @spectrum = Spectrum.find(params[:tag][:spectrum_id])
     # we do it this way to handle JSON error generation
     params[:tag][:name].split(',').uniq.each do |name|
-      tag = Tag.new({
-        :name => name.strip,
-        :spectrum_id => params[:tag][:spectrum_id],
-        :user_id => current_user.id
-      })
-      if tag.valid?
-        tag.save
-        response[:saved] << [tag.name, tag.id]
+      if name.match(':').nil? || @spectrum.user_id == current_user.id || current_user.role == "admin"
+        tag = Tag.new({
+          :name => name.strip,
+          :spectrum_id => params[:tag][:spectrum_id],
+          :user_id => current_user.id
+        })
+        if tag.valid?
+          tag.save
+          response[:saved] << [tag.name, tag.id]
+        else
+          response[:errors] << "Error: tags "+tag.errors[:name].first
+        end
       else
-        response[:errors] << "Error: tags "+tag.errors[:name].first
+        response[:errors] << "Error: You must own the spectrum to add powertags"
       end
     end
     respond_to do |format|
-      format.html do
-        if request.xhr?
-          render :json => response
-        else
+      if request.xhr? # ajax
+        format.json { render :json => response }
+      else
+        format.html do
           flash[:notice] = "Tag(s) added."
           redirect_to "/spectrums/"+params[:tag][:spectrum_id]
         end
+        format.json { render :json => response }
       end
     end
   end

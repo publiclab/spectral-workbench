@@ -88,7 +88,13 @@ SpectralWorkbench::Application.routes.draw do
 
   get '/upload' => 'spectrums#new'
 
-  resources :users
+  resources :users do
+    resources :spectrums
+    resources :tags
+    resources :macros
+    resources :sets
+    resources :comments
+  end
   resources :macros
   resources :session
   resources :tags

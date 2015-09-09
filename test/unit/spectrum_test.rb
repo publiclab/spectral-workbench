@@ -56,25 +56,6 @@ class SpectrumTest < ActiveSupport::TestCase
     assert !s.save
   end
 
-  test "spectrum add range" do 
-    s = Spectrum.last
-    s.set_range(300,400)
-    assert s.save
-    s = Spectrum.find s.id
-    json = ActiveSupport::JSON.decode(s.clean_json)
-    assert json['range']['low'] == 300
-    assert json['range']['high'] == 400
-  end
-
-  test "spectrum clear range" do 
-    s = Spectrum.last
-    s.clear_range
-    assert s.save
-    s = Spectrum.find s.id
-    json = ActiveSupport::JSON.decode(s.clean_json)
-    assert json['range'] == nil
-  end
-
   test "spectrum clone calibration" do
     assert true
   end

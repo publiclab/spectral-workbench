@@ -42,9 +42,15 @@ class ExceptionsTest < ActionController::IntegrationTest
     assert_response :success
   end
 
-  test "GET /upload" do
+  test "GET /upload when not logged in" do
     get "/upload"
-    assert_response :success
+    assert_response :redirect
+  end
+
+  test "GET /upload" do
+    @user = users(:quentin) # log in
+    get "/upload"
+    assert_response :redirect
   end
 
 end
