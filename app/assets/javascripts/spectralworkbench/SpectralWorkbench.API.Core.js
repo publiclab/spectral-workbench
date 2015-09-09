@@ -330,7 +330,7 @@ SpectralWorkbench.API.Core = {
 
         comparison = comparison.d3()[0];
         comparison.color = "red";
-e       combined.push(comparison);
+        combined.push(comparison);
 
       });
 
