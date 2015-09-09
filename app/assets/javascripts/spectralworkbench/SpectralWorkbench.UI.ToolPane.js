@@ -373,14 +373,46 @@ SpectralWorkbench.UI.ToolPane = Class.extend({
       onSpectrumApply: function(form, graph) {
 
         // provide better API for own-id:
-        var id = $(this).attr('data-id');
-        $('.comparisons').append('<tr class="spectrum-comparison-' + id + '"></tr>');
-        var compareEl = $('.comparisons tr.spectrum-comparison-' + id);
-        compareEl.append('<td class="title"></td>');
-        compareEl.append('<td class="author"></td>');
-        compareEl.append('<td class="tools"></td>');
-        compareEl.find('.tools').append('<a class=".remove"><i class="icon icon-remove"></i></a>');
-        compareEl.find('.tools .remove');
+        var id =     $(this).attr('data-id'),
+            author = $(this).attr('data-author'),
+            title =  $(this).attr('data-title');
+
+        $('li.comparisons').show();
+
+        $('table.comparisons').append('<tr class="spectrum spectrum-comparison-' + id + '"></tr>');
+
+        var compareEl = $('table.comparisons tr.spectrum-comparison-' + id);
+        compareEl.append('<td class="title"><a href="/spectrums/' + id + '">' + title + '</a></td>');
+        compareEl.append('<td class="author"><a href="/profile/' + author + '">' + author + '</a></td>');
+        compareEl.append('<td class="comparison-tools"></td>');
+
+        compareEl.find('td.comparison-tools').append('<a data-id="' + id + '" class="remove"><i class="icon icon-remove"></i></a>');
+        compareEl.find('.comparison-tools .remove').click(function(){
+
+          compareEl.remove();
+
+          var combined = graph.datum.d3();
+
+          // get rid of self
+          graph.comparisons.forEach(function(datum){
+            if (datum.id != +$(this).attr('data-id')) graph.comparisons.splice(graph.comparisons.indexOf(datum), 1);
+          });
+
+          // re-assemble display data
+          graph.comparisons.forEach(function(comparison) {
+         
+            comparison = comparison.d3()[0];
+            comparison.color = "red";
+            combined.push(comparison);
+         
+          });
+
+          graph.data.datum(combined, graph.idKey);
+          graph.refresh();
+
+          $('li.comparisons a').tab('show');
+
+        });
 
         SpectralWorkbench.API.Core.compare(graph, id);
 

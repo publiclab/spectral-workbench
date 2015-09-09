@@ -1,0 +1,35 @@
+<div class="row-fluid datum-<%= type %> header">
+  <div class="col span12">
+
+    <h2>
+      <a target="_blank" href="/<%= type %>s/<%= datum.id %>">
+        <%= datum.title %>
+      </a>
+      <% if type == :spectrum && datum.calibrated %>
+        <a target="_blank" href="//publiclab.org/wiki/spectral-workbench-calibration">
+        <i rel="tooltip" 
+           title="This spectrum is wavelength calibrated!" 
+           style="font-size:13px;vertical-align:middle;color:#0c5;" 
+           class='icon icon-check-sign'></i>
+        </a>
+      <% end %>
+      <% if type == :spectrum && datum.has_powertag('range') %>
+        <a target="_blank" href="//publiclab.org/wiki/spectral-workbench-usage#Wavelength+range">
+        <i rel="tooltip" 
+           title="This spectrum is range-limited." 
+           style="font-size:13px;vertical-align:middle;color:#c33;" 
+           class='icon icon-resize-horizontal'></i>
+        </a>
+      <% end %>
+    </h2>
+
+    <h3 class="compact"><a target="_blank" href="/<%= type %>s/<%= datum.id %>"><%= if (datum.title.length < 15) then datum.title else datum.title[0..12]+'...' end %></a></h3>
+
+    <% unless is_embed? %>
+      <div class="toolbar toolbar-top">
+        <%= render partial: 'graph/tools', locals: { type: type, datum: datum } %>
+      </div>
+    <% end %>
+
+  </div>
+</div>

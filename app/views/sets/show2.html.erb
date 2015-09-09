@@ -1,18 +1,70 @@
 <%= render :partial => "embed/modal", :locals => { datum: @set, type: :set } %>
 
 <div id="graphing" class="sets">
-<div id="graph"><i class="icon icon-spinner icon-spin"></i></div>
 
-<script type="text/javascript">
+  <div id="graph"><i class="icon icon-spinner icon-spin"></i></div>
 
-  var graph;
-  jQuery(document).ready(function($) {
-    graph = new SpectralWorkbench.Graph({
-      set_id: <%= @set.id %>,
-      calibrated: <%= @set.some_calibrated %>
-    });
-  })
+    <script type="text/javascript">
+ 
+      var graph;
+      jQuery(document).ready(function($) {
+        graph = new SpectralWorkbench.Graph({
+          set_id: <%= @set.id %>,
+          calibrated: <%= @set.some_calibrated %>
+        });
+      });
+ 
+    </script>
+ 
+    <%= render :partial => "graph/header", :locals => {type: :set, datum: @set } %>
+ 
+    <div class="row-fluid below">
+      <div class="col span12">
+ 
+        <ul class="nav nav-tabs">
+          <li class="active"><a href="#tab-spectra"  data-toggle="tab"><i  class="icon icon-list"></i>     Spectra</a></li>
+          <li>               <a href="#tab-comments" data-toggle="tab"><i class="icon icon-comments"></i> <%= @set.comments.length %> Comments</a></li>
+        </ul>
+ 
+        <div class="tab-content">
+ 
+          <div class="tab-pane active" id="tab-spectra">       
 
-</script>
-<%= render :partial => "graph/body", :locals => {type: :set, datum: @set } %>
+            <%= render partial: 'graph/spectra', locals: { datum: @set } %>
+ 
+            <hr />
+ 
+            <div class="btn-group export" style="width:100%;text-align:center;">
+ 
+              <a target="_blank" class="btn btn-small svg" onClick="SpectralWorkbench.API.Core.exportSVG('set-<%= @set.id %>');"><b>SVG</b></a>
+              <a target="_blank" rel="tooltip" title="Currently displayed data" class="btn btn-small btn-download-json"><b>JSON</b></a>
+              <a target="_blank" rel="tooltip" title="Raw data before modifications" class="btn btn-small" href="/sets/<%= @set.id %>.json"><b>raw JSON</b></a>
+              <!--
+              <a target="_blank" class="btn btn-small disabled" href="/sets/<%= @set.id %>.csv"><b>CSV</b></a>
+              <a target="_blank" class="btn btn-small disabled" href="/sets/<%= @set.id %>.xml"><b>XML</b></a>
+              -->
+              <a rel="tooltip" class="btn btn-small" href="//publiclab.org/wiki/spectral-workbench-exporting" title="About export formats"><i class="icon icon-question-sign"></i></a>
+ 
+            </div>
+ 
+            <%= render partial: 'graph/notifications', locals: { type: :set } %>
+ 
+          </div>
+  
+          <div class="tab-pane" id="tab-comments">       
+            <div class="row-fluid">
+            
+              <div class="span2">
+              </div>
+            
+              <div class="span8">
+                <%= render partial: 'comments/list', locals: { datum: @set, comments: @set.comments } %>
+              </div>
+      
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

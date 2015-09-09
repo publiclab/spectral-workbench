@@ -7,19 +7,106 @@
 <div id="graphing" class="spectrums">
   <div id="graph"><i class="icon icon-spinner icon-spin"></i></div>
 
-  <script type="text/javascript">
+    <script type="text/javascript">
+ 
+    var graph; // for debugging, and currently, some ToolPane calls :-(
+    jQuery(document).ready(function($) {
+      graph = new SpectralWorkbench.Graph({
+        spectrum_id: <%= @spectrum.id %>,
+        calibrated: <%= @spectrum.calibrated %>,
+        range: <%= @spectrum.has_powertag('range') ? @spectrum.range : false %>
+      });
+    })
+ 
+    </script>
+ 
+    <%= render :partial => "graph/header", :locals => {type: :spectrum, datum: @spectrum } %>
+ 
+    <div class="row-fluid below">
+      <div class="col span12">
+  
+        <div class="row-fluid">
+        
+          <div class="span4">
+  
+            <div class="btn-group">
+  
+              <%= render partial: "likes/buttons", locals: { datum: @spectrum } %>
+  
+            </div>
+  
+            <% if logged_in? && current_user.login == @spectrum.author %>
+  
+              <div class="btn-group">
+                <a class="btn btn-small" href="/spectrums/<%= @spectrum.id %>/edit"><i class="icon icon-pencil"></i></a>
+                <%= link_to '<i class="icon icon-trash"></i>'.html_safe, "/spectrums/destroy/#{@spectrum.id}", :confirm => 'Are you sure?', :class => "btn btn-small" %>
+              </div>
+  
+            <% end %>
+  
+            <hr />
+  
+            <div class="btn-group export">
+  
+              <a target="_blank" class="btn btn-small svg" onClick="SpectralWorkbench.API.Core.exportSVG('spectrum-<%= @spectrum.id %>');"><b>SVG</b></a>
+              <a target="_blank" rel="tooltip" title="Currently displayed data" class="btn btn-small btn-download-json"><b>JSON</b></a>
+              <a target="_blank" rel="tooltip" title="Raw data before modifications" class="btn btn-small" href="/spectrums/<%= @spectrum.id %>.json"><b>raw JSON</b></a>
+              <a target="_blank" class="btn btn-small" href="/spectrums/<%= @spectrum.id %>.csv"><b>CSV</b></a>
+              <a target="_blank" class="btn btn-small" href="/spectrums/<%= @spectrum.id %>.xml"><b>XML</b></a>
+              <a rel="tooltip" class="btn btn-small" href="//publiclab.org/wiki/spectral-workbench-exporting" title="About export formats"><i class="icon icon-question-sign"></i></a>
+  
+            </div>
+  
+            <hr />
+  
+            <%= render partial: 'tags/tagging', locals: { datum: @spectrum, type: :spectrum, legacy: false } %>
+  
+            <%= render partial: 'graph/notifications', locals: { type: :spectrum } %>
+  
+          </div>
+        
+          <div class="span8">
+  
+            <ul class="nav nav-tabs">
+              <li class="active"><a href="#tab-tools"              data-toggle="tab"><i class="icon icon-cog"></i> Tools</a></li>
+              <li>               <a href="#tab-sets"               data-toggle="tab"><i class="icon icon-list"></i> Sets</a></li>
+              <li>               <a href="#tab-comments"           data-toggle="tab"><i class="icon icon-comments"></i> <%= @spectrum.comments.length %> Comments</a></li>
+              <li class="comparisons" style="display:none;"><a href="#tab-comparisons" data-toggle="tab"><i class="icon icon-columns"></i> Comparisons</a></li>
+            </ul>
+           
+            <div class="tab-content">
 
-  var graph;
-  jQuery(document).ready(function($) {
-    graph = new SpectralWorkbench.Graph({
-      spectrum_id: <%= @spectrum.id %>,
-      calibrated: <%= @spectrum.calibrated %>,
-      range: <%= @spectrum.has_powertag('range') ? @spectrum.range : false %>
-    });
-  })
+              <div class="tab-pane active" id="tab-tools">
+                <%= render partial: 'spectrums/tools', locals: { datum: @spectrum, type: :spectrum } %>
+              </div>
 
-  </script>
+              <div class="tab-pane" id="tab-comparisons">
 
-  <%= render :partial => "graph/body", :locals => {type: :spectrum, datum: @spectrum } %>
+                <p>These spectra are being temporarily displayed for comparison; <a onClick="graph.refresh();$('table.comparisons tr.spectrum').remove();">Clear all</a></p>
 
+                <table class="table comparisons">
+                  <tr>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Tools</th>
+                  </tr>
+                </table>
+              </div>
+
+              <div class="tab-pane" id="tab-sets">
+                <%= render partial: 'graph/sets', locals: { sets: @spectrum.sets } %>
+              </div>
+             
+              <div class="tab-pane" id="tab-comments">       
+                <%= render partial: 'comments/list', locals: { datum: @spectrum, comments: @spectrum.comments } %>
+              </div>
+           
+            </div>
+
+          </div>
+    
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

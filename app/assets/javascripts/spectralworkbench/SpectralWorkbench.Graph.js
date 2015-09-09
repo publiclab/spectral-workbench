@@ -446,7 +446,10 @@ SpectralWorkbench.Graph = Class.extend({
                   - _graph.margin.left 
                   - _graph.margin.right 
                   - (_graph.embedmargin * 2);
- 
+
+      // smaller width style change
+      if ($(window).width() < 768) _graph.width -= 40;
+
       $('#graph').height(_graph.height)
 
       var extra = 0;
@@ -460,8 +463,8 @@ SpectralWorkbench.Graph = Class.extend({
 
         // amount to mask out of image if there's a range tag
         // this is measured in nanometers:
-        _graph.leftCrop =   _graph.range[0] - _graph.datum.json.data.lines[0].wavelength
-        _graph.rightCrop = -_graph.range[1] + _graph.datum.json.data.lines[_graph.datum.json.data.lines.length-1].wavelength
+        _graph.leftCrop =   _graph.range[0] - _graph.datum.json.data.lines[0].wavelength;
+        _graph.rightCrop = -_graph.range[1] + _graph.datum.json.data.lines[_graph.datum.json.data.lines.length-1].wavelength;
 
         _graph.pxPerNm = _graph.width / (_graph.range[1]-_graph.range[0]);
 

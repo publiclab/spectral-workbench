@@ -36,7 +36,7 @@
 
         <td><%= time_ago_in_words(spectrum.created_at) %> ago</td>
 
-        <td style="text-align:right;"><a class="btn btn-mini btn-spectrum-apply" data-id="<%= spectrum.id %>">Apply</a></td>
+        <td style="text-align:right;"><a class="btn btn-mini btn-spectrum-apply" data-title="<%= spectrum.title %>" data-author="<%= spectrum.author %>" data-id="<%= spectrum.id %>">Apply</a></td>
 
       </tr>
     <% end %>

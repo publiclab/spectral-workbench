@@ -59,12 +59,10 @@ div.spectrum-img-container .alert-zooming div a {
   }
 
   #graphing.embed .credit .spectral-workbench {
-    display: block;
   }
 
   #graphing .tools {
-    clear: both;
-    width: 100%;
+    width: 50%;
   }
 
 }
@@ -88,6 +86,10 @@ div.spectrum-img-container .alert-zooming div a {
     display: inline;
   }
 
+}
+
+#graphing .below {
+  margin-top:20px;
 }
 
 #graphing .tools {
@@ -204,7 +206,7 @@ div.spectrum-img-container .alert-zooming div a {
 }
 
 #graphing.embed .credit .site {
-  display:block;
+  display: inline;
 }
 
 #graphing.embed .table-scroll-container {

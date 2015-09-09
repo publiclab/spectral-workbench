@@ -1,24 +1,32 @@
 <%= render partial: "embed/modal", locals: { datum: @spectrum, type: :spectrum } %>
+
 <div id="graphing" class="embed">
 
-<div class="spectrum-img-container">
-  <img class="spectrum" src="<%= @spectrum.photo.url(:large) %>" />
-</div>
+  <div class="spectrum-img-container">
+    <img class="spectrum" src="<%= @spectrum.photo.url(:large) %>" />
+  </div>
 
-<div id="graph"><i class="icon icon-spinner icon-spin"></i></div>
+  <div id="graph"><i class="icon icon-spinner icon-spin"></i></div>
 
-<script type="text/javascript">
+  <script type="text/javascript">
 
-  var graph;
-  jQuery(document).ready(function($) {
-      graph = new SpectralWorkbench.Graph({
-        spectrum_id: <%= @spectrum.id %>,
-        embed: true,
-        calibrated: <%= @spectrum.calibrated %>,
-        range: <%= @spectrum.has_powertag('range') ? @spectrum.range : false %>
-      });
-  })
+    var graph;
+    jQuery(document).ready(function($) {
+        graph = new SpectralWorkbench.Graph({
+          spectrum_id: <%= @spectrum.id %>,
+          embed: true,
+          calibrated: <%= @spectrum.calibrated %>
+        });
+    })
 
-</script>
-<%= render :partial => "graph/body", :locals => {:type => :spectrum, :datum => @spectrum } %>
+  </script>
+
+  <%= render :partial => "graph/header", :locals => {:type => :spectrum, :datum => @spectrum } %>
+
+  <div class="toolbar toolbar-bottom">
+
+    <%= render :partial => 'graph/tools', :locals => { type: :spectrum, datum: @spectrum } %>
+
+  </div>
+
 </div>

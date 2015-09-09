@@ -1,19 +1,27 @@
 <%= render partial: "embed/modal", locals: { datum: @set, type: :set } %>
+
 <div id="graphing" class="sets embed">
-<div id="graph"><i class="icon icon-spinner icon-spin"></i></div>
+  <div id="graph"><i class="icon icon-spinner icon-spin"></i></div>
 
-<script type="text/javascript">
+  <script type="text/javascript">
 
-  var graph;
-  jQuery(document).ready(function($) {
-    graph = new SpectralWorkbench.Graph({
-      set_id: <%= @set.id %>,
-      embed: true,
-      calibrated: <%= @set.some_calibrated %>
-    });
-  })
+    var graph;
+    jQuery(document).ready(function($) {
+      graph = new SpectralWorkbench.Graph({
+        set_id: <%= @set.id %>,
+        embed: true,
+        calibrated: <%= @set.some_calibrated %>
+      });
+    })
 
-</script>
+  </script>
+  
+  <%= render :partial => "graph/header", :locals => {:type => :set, :datum => @set } %>
 
-<%= render :partial => "graph/body", :locals => {:type => :set, :datum => @set } %>
+  <%= render partial: 'graph/spectra', locals: { datum: @set } %>
+   
+  <div class="toolbar toolbar-bottom">
+    <%= render :partial => 'graph/tools', :locals => { type: :set, datum: @set } %>
+  </div>
+  
 </div>

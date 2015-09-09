@@ -312,7 +312,7 @@ SpectralWorkbench.API.Core = {
   },
 
 
-  // display a spectrum by given id (in a group called "comparisons")
+  // display a spectrum by given id (and store in an array graph.comparisons)
   compare: function(graph, id) {
 
     var url = "/spectrums/" + id + ".json"; 
@@ -324,11 +324,15 @@ SpectralWorkbench.API.Core = {
       graph.comparisons = graph.comparisons || [];
       graph.comparisons.push(datum);
 
-      var comparison = datum.d3()[0];
-      comparison.color = "red";
+      var combined = graph.datum.d3();
 
-      var combined = graph.datum.d3()
-      combined.push(comparison);
+      graph.comparisons.forEach(function(comparison) {
+
+        comparison = comparison.d3()[0];
+        comparison.color = "red";
+e       combined.push(comparison);
+
+      });
 
       graph.data.datum(combined, graph.idKey);
 
