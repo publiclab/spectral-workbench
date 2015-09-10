@@ -335,7 +335,7 @@ class SpectrumsController < ApplicationController
   end
 
   def all
-    @spectrums = Spectrum.find(:all)
+    @spectrums = Spectrum.find(:all).paginate(:page => params[:page])
     respond_with(@spectrums) do |format|
       format.xml  { render :xml => @spectrums }
       format.json  { render :json => @spectrums }
@@ -344,9 +344,9 @@ class SpectrumsController < ApplicationController
 
   def rss
     if params[:author]
-      @spectrums = Spectrum.find_all_by_author(params[:author],:order => "created_at DESC",:limit => 12)
+      @spectrums = Spectrum.find_all_by_author(params[:author],:order => "created_at DESC",:limit => 12).paginate(:page => params[:page])
     else
-      @spectrums = Spectrum.find(:all,:order => "created_at DESC",:limit => 12)
+      @spectrums = Spectrum.find(:all,:order => "created_at DESC",:limit => 12).paginate(:page => params[:page])
     end
     respond_to do |format|
       format.xml
@@ -354,7 +354,7 @@ class SpectrumsController < ApplicationController
   end
 
   def plots_rss
-    @spectrums = Spectrum.find(:all,:order => "created_at DESC",:limit => 12, :conditions => ["author != ?","anonymous"])
+    @spectrums = Spectrum.find(:all,:order => "created_at DESC",:limit => 12, :conditions => ["author != ?","anonymous"]).paginate(:page => params[:page])
     render :layout => false
     response.headers["Content-Type"] = "application/xml; charset=utf-8"
   end
