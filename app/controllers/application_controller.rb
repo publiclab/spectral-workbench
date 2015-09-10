@@ -49,9 +49,24 @@ class ApplicationController < ActionController::Base
 
   def require_login
     unless logged_in?
+
       path_info = request.env['PATH_INFO']
-      flash[:error] = "You must be logged in to access this function."
-      redirect_to '/login?back_to=' + URI.encode(path_info) # halts request cycle
+      login_prompt = "You must be <a href='/login?back_to=#{URI.encode(path_info)}'>logged in to do this</a>."
+
+      respond_to do |format|
+        if request.xhr? # ajax
+          format.json { render :json => { :errors => [ login_prompt ] } }
+          format.html do
+            render :text => login_prompt # halts request cycle
+          end
+        else
+          format.html do
+            flash[:error] = login_prompt
+            redirect_to login_link # halts request cycle
+          end
+        end
+      end
+
     end
   end
 

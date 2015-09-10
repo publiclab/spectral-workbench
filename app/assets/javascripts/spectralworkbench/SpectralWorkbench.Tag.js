@@ -51,6 +51,19 @@ SpectralWorkbench.Tag = Class.extend({
       // grey out graph during load
       _tag.datum.graph.opacity(0.5);
 
+      var notify_and_offer_clear = function() {
+
+        var notice = SpectralWorkbench.API.Core.notify("The tag you've applied couldn't be saved, but it's been run locally. <a class='tag-clear-" + _tag.id + "'>Clear it now</a>.");
+
+        $('.tag-clear-' + _tag.id).click(function() {
+
+          _tag.destroy();
+          notice.remove();
+
+        });
+
+      }
+
       $.ajax({
         url: "/tags",
         type: "POST",
@@ -71,33 +84,33 @@ SpectralWorkbench.Tag = Class.extend({
           // remove grey out of graph after load
           _tag.datum.graph.opacity(1);
 
-          _tag.id = response['saved'][0][1]; // this is kinda illegible
+          if (response['saved'] && response['saved'].length > 0) {
+            _tag.id = response['saved'][0][1]; // this is kinda illegible
 
-          // render them!
-          _tag.render();
+            // render them!
+            _tag.render();
 
-          // from init() call
-          if (callback) callback(response);
-
-          $('#taginput').prop('disabled',false);
- 
-          var formId = "#tag-form-" + _tag.datum.id;
-         
-          $(formId + ' input.name').val("");
-          $(formId + ' .control-group').removeClass('error');
-          $(formId + ' .control-group .help-inline').remove();
-         
-          if (response['errors'] && response['errors'].length > 0) {
-         
-            $(formId + ' .control-group').addClass('error');
-            $(formId + ' .control-group .help-inline').remove();
-            $(formId + ' .control-group').append('<span class="help-inline">'+response['errors']+'</span>');
-         
+            // from init() call
+            if (callback) callback(response);
           }
-         
-          $(formId + ' input.name').prop('disabled',false);
+
+          if (response['errors'] && response['errors'].length > 0) {
+
+            _tag.datum.graph.tagForm.error(response['errors']);
+            notify_and_offer_clear();
+            console.log(response.responseText);
+
+          }
 
         },
+
+        error: function(response) {
+
+          _tag.datum.graph.tagForm.error('There was an error.');
+          notify_and_offer_clear();
+          console.log(response.responseText);
+
+        }
  
       });
 
@@ -125,7 +138,8 @@ SpectralWorkbench.Tag = Class.extend({
     // scrubs local tag data; for use after deletion
     _tag.cleanUp = function() {
 
-        _tag.el.remove();
+        // if it failed to initialize, the element may not exist
+        if (_tag.el) _tag.el.remove();
 
         // remove it from datum.tags:
         var index = _tag.datum.tags.indexOf(_tag);

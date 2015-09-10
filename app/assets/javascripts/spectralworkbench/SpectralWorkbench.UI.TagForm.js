@@ -2,13 +2,16 @@ SpectralWorkbench.UI.TagForm = Class.extend({
 
   init: function(_graph) {
 
-    var selector = "#tag-form-" + _graph.datum.id;
+    this.selector = "#tag-form-" + _graph.datum.id;
+    this.el = $("#tag-form-" + _graph.datum.id);
 
-    $(selector).bind('submit', function(e){
+    var tagForm = this;
+
+    $(tagForm.selector).bind('submit', function(e){
 
       e.preventDefault();
 
-      $(selector + ' input.name').val().split(',').forEach(function(tagname) {
+      $(tagForm.selector + ' input.name').val().split(',').forEach(function(tagname) {
 
         _graph.datum.addTag(tagname);
 
@@ -16,9 +19,9 @@ SpectralWorkbench.UI.TagForm = Class.extend({
 
     });
 
-    $(selector).bind('ajax:beforeSend', function(){
+    $(tagForm.selector).bind('ajax:beforeSend', function(){
 
-      $(selector + ' input.name').prop('disabled',true)
+      $(tagForm.selector + ' input.name').prop('disabled',true)
 
     });
 
@@ -29,7 +32,21 @@ SpectralWorkbench.UI.TagForm = Class.extend({
 
     });
 
-    return $(selector);
+    tagForm.error = function(msg) {
+
+      $('#taginput').prop('disabled',false);
+      
+      tagForm.el.find('input.name').val("");
+      tagForm.el.find('.control-group').removeClass('error');
+      tagForm.el.find('.control-group .help-inline').remove();
+      
+      tagForm.el.find('.control-group').addClass('error');
+      tagForm.el.find('.control-group .help-inline').remove();
+      tagForm.el.find('.control-group').append('<span class="help-inline">'+msg+'</span>');
+      
+      tagForm.el.find('input.name').prop('disabled',false);
+
+    }
 
   }
 

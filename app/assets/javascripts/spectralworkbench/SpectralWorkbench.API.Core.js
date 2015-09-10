@@ -1,6 +1,7 @@
 SpectralWorkbench.API.Core = {
 
   // initiate a notification on the page, which fades after <expire> seconds, or doesn't if <expire> is not supplied
+  // also returns the notification element
   notify: function(message, type, expire) {
 
     expire = expire || false;
@@ -33,6 +34,8 @@ SpectralWorkbench.API.Core = {
       }, expire*1000);
 
     }
+
+    return $('#notify-' + id);
 
   },
 

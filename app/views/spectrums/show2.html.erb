@@ -43,6 +43,10 @@
               </div>
   
             <% end %>
+
+            <hr />
+  
+            <%= render partial: 'graph/notifications', locals: { type: :spectrum } %>
   
             <hr />
   
@@ -60,8 +64,6 @@
             <hr />
   
             <%= render partial: 'tags/tagging', locals: { datum: @spectrum, type: :spectrum, legacy: false } %>
-  
-            <%= render partial: 'graph/notifications', locals: { type: :spectrum } %>
   
           </div>
         
