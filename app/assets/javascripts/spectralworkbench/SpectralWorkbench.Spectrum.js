@@ -17,7 +17,7 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
       _spectrum.red     = [];
       _spectrum.green   = [];
       _spectrum.blue    = [];
-
+console.log(_spectrum.json.data);
       // Set up x and y properties like data.x and data.y for d3
       $.each(_spectrum.json.data.lines,function(i,line) {
      

@@ -315,35 +315,81 @@ SpectralWorkbench.API.Core = {
   },
 
 
-  // display a spectrum by given id (and store in an array graph.comparisons)
-  compare: function(graph, id) {
+  // get a spectrum by its ID, pass it to callback(data)
+  fetch: function(graph, id, callback) {
 
     var url = "/spectrums/" + id + ".json"; 
 
     d3.json(url, function(error, data) {
- 
-      var datum = new SpectralWorkbench.Spectrum(data, graph);
 
-      graph.comparisons = graph.comparisons || [];
-      graph.comparisons.push(datum);
-
-      var combined = graph.datum.d3();
-
-      graph.comparisons.forEach(function(comparison) {
-
-        comparison = comparison.d3()[0];
-        comparison.color = "red";
-        combined.push(comparison);
-
-      });
-
-      graph.data.datum(combined, graph.idKey);
-
-      // refresh the graph:
-      graph.refresh();
+      callback(graph, data);
 
     });
 
+  },
+
+  // display a spectrum by given id (and store in an array graph.comparisons)
+  compare: function(graph, data) {
+
+    var datum = new SpectralWorkbench.Spectrum(data, graph);
+
+    // standardize this! and reuse it in similar()
+    graph.comparisons = graph.comparisons || [];
+    graph.comparisons.push(datum);
+
+    var combined = graph.datum.d3();
+
+    graph.comparisons.forEach(function(comparison) {
+
+      comparison = comparison.d3()[0];
+      // use default color array
+      comparison.color = "red";
+      combined.push(comparison);
+
+    });
+
+    graph.data.datum(combined, graph.idKey);
+
+    // refresh the graph:
+    graph.refresh();
+
+  },
+
+
+  // display a spectrum by given id (and store in an array graph.comparisons)
+  similar: function(graph, id, fit, callback) {
+
+    callback = callback || SpectralWorkbench.API.Core.compare;
+
+    fit = fit || 20;
+
+    $.ajax({
+      url: "/match/search/" + id + ".json",
+      type: "GET",
+      dataType: "json",
+
+      data: {
+        fit: fit,
+      },
+
+      success: function(response) {
+
+        if (callback) {
+
+          response.forEach(function(spectrum) {
+
+            // rewrite compare() to accept an array
+            console.log(spectrum);
+            callback(graph, spectrum);
+
+          });
+
+        }
+
+      }
+
+    });
+    
   },
 
 

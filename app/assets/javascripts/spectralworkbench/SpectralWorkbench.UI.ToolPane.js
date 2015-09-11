@@ -414,7 +414,11 @@ SpectralWorkbench.UI.ToolPane = Class.extend({
 
         });
 
-        SpectralWorkbench.API.Core.compare(graph, id);
+        SpectralWorkbench.API.Core.fetch(graph, id, function(graph, data) {
+
+          SpectralWorkbench.API.Core.compare(graph, data);
+
+        });
 
       }
 
