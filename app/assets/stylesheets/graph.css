@@ -21,6 +21,39 @@
   margin-top: 30px;
 }
 
+/* zoom brushing */
+#graphing #graph .nv-context {
+  display: none;
+}
+
+#graphing .zoom {
+  position: absolute; 
+  right: 0;
+}
+
+#graphing .btn-zoom {
+  display: block;
+  margin: 14px 50px;
+}
+
+@media (max-width: 768px) {
+
+  #graphing .btn-zoom {
+    margin: 14px 66px;
+  }
+
+}
+
+#graphing .nvtooltip {
+  padding: 4px;
+}
+
+#graphing .nvtooltip h3 {
+  font-size: 12px;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-weight: bold;
+}
+
 div.spectrum-img-container {
   overflow: hidden;
 }

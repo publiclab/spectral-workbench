@@ -6,6 +6,7 @@ SpectralWorkbench.Graph = Class.extend({
 
     this.args = args;
     this.width = 600;
+    this.zooming = false;
     this.embed = args['embed'] || false;
     this.embedmargin = 10;
     this.margin = { top: 10, right: 30, bottom: 20, left: 70 };
@@ -187,7 +188,6 @@ SpectralWorkbench.Graph = Class.extend({
 
       // update graph size now that we have data and esp. range data
       _graph.updateSize()();
-      _graph.zoomSetup();
 
       // set up all of UI -- tool panes, etc
       if (_graph.embed == false) _graph.UI = new SpectralWorkbench.UI.Util(_graph);
@@ -199,41 +199,13 @@ SpectralWorkbench.Graph = Class.extend({
 
 
     /* ======================================
-     * Scroll wheel zooming and drag panning;
-     * needs rewrite
+     * Toggle zooming and panning, via a "brushing" interface
      */
-    _graph.zoomSetup = function() {
+    _graph.zoom = function() {
 
-      zoomed = function() {
-
-        _graph.data.select('g g').attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
-        d3.selectAll('#graphing path').style('stroke-width', 2/d3.event.scale);
-
-        if (!d3.select('.spectrum-img-container .alert-zooming')[0][0]) {
-
-          d3.select('div.spectrum-img-container').insert("div", ":first-child")
-                                                 .attr("class","alert-zooming")
-                                                 .append("div")
-                                                 .attr("class","alert alert-info")
-                                                 .html("You are zooming on the graph data. <a class='zoom-reset'>Click here</a> to reset the graph display.")
-          d3.select('a.zoom-reset').on("click",function() {
-
-            d3.select('div.alert-zooming').remove();
-            _graph.data.select('g g').attr("transform", "translate(0,0) scale(1)");
-            d3.selectAll('#graphing path').style('stroke-width', 2);
-
-          });
-
-      }
-
-      }
-
-      var zoom = d3.behavior.zoom()
-                            //.center([width / 2, height / 2]) can specify a zoom center if we like
-                            .scaleExtent([1, 10])
-                            .on("zoom", zoomed);
-
-      _graph.data.call(zoom);
+      _graph.zooming = !_graph.zooming;
+      $('.nv-context').toggle();
+      _graph.updateSize()();
 
     }
 
@@ -266,12 +238,12 @@ SpectralWorkbench.Graph = Class.extend({
 
       if (d3.select('.nv-axislabel').html() == "Wavelength (eV)") {
 
-        _graph.chart.xAxis.axisLabel('Wavelength (nanometers)')
+        _graph.chart.xAxis.axisLabel('Wavelength (nanometers)');
         var unitChange = function(d) { d.x = 1239.82/d.x; return d; }
 
       } else if (d3.select('.nv-axislabel').html() == "Wavelength (nanometers)") {
 
-        _graph.chart.xAxis.axisLabel('Wavelength (eV)')
+        _graph.chart.xAxis.axisLabel('Wavelength (eV)');
         var unitChange = function(d) { d.x = 1239.82/d.x; return d; }
 
       }
@@ -337,14 +309,23 @@ SpectralWorkbench.Graph = Class.extend({
   graphSetup: function() {
  
     var _graph = this;
+
+    /* 
+    // if no zooming needed, use this instead perhaps? for speed?: 
     _graph.chart = nv.models.lineChart()
-                     .height(_graph.height-_graph.margin.top-_graph.margin.bottom)
+                     .height(_graph.height-_graph.margin.top-_graph.margin.bottom + 100) // 100 for zoom brush pane, hidden by default
                      .margin(_graph.margin)
                      .useInteractiveGuideline(true)  //We want nice looking tooltips and a guideline!
-//                   .transitionDuration(350)  //how fast do you want the lines to transition?
-                     .showLegend(false)       //Show the legend, allowing users to turn on/off line series.
                      .showYAxis(true)        //Show the y-axis
                      .showXAxis(true)        //Show the x-axis
+                     .showLegend(false)       //Show the legend, allowing users to turn on/off line series.
+    */
+
+    _graph.chart = nv.models.lineWithFocusChart()
+                     .options({ useVoronoi: false })
+                     .height(_graph.height-_graph.margin.top-_graph.margin.bottom + 100) // 100 for zoom brush pane, hidden by default
+                     .margin(_graph.margin)
+                     .showLegend(false)       //Show the legend, allowing users to turn on/off line series.
     ;
 
     _graph.setUnits();
@@ -449,6 +430,9 @@ SpectralWorkbench.Graph = Class.extend({
 
       // smaller width style change
       if ($(window).width() < 768) _graph.width -= 40;
+
+      // make space for the zoom brushing pane
+      if (_graph.zooming) _graph.height += 100;
 
       $('#graph').height(_graph.height)
 
