@@ -52,17 +52,17 @@ class ApplicationController < ActionController::Base
 
       path_info = request.env['PATH_INFO']
       login_link = "/login?back_to=#{URI.encode(path_info)}"
-      login_prompt = "You must be <a href='#{login_link}'>logged in to do this</a>."
 
       respond_to do |format|
         if request.xhr? # ajax
+          login_prompt = "You must be <a href='#{login_link}'>logged in to do this</a>."
           format.json { render :json => { :errors => [ login_prompt ] } }
           format.html do
             render :text => login_prompt # halts request cycle
           end
         else
           format.html do
-            flash[:error] = login_prompt
+            flash[:error] = "You must be logged in to access this function."
             redirect_to login_link # halts request cycle
           end
         end
