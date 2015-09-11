@@ -51,7 +51,8 @@ class ApplicationController < ActionController::Base
     unless logged_in?
 
       path_info = request.env['PATH_INFO']
-      login_prompt = "You must be <a href='/login?back_to=#{URI.encode(path_info)}'>logged in to do this</a>."
+      login_link = "/login?back_to=#{URI.encode(path_info)}"
+      login_prompt = "You must be <a href='#{login_link}'>logged in to do this</a>."
 
       respond_to do |format|
         if request.xhr? # ajax
