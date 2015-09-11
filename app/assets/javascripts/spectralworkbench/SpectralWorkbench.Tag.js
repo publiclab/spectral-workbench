@@ -140,6 +140,7 @@ SpectralWorkbench.Tag = Class.extend({
 
         // if it failed to initialize, the element may not exist
         if (_tag.el) _tag.el.remove();
+        if (_tag.operationEl) _tag.operationEl.remove();
 
         // remove it from datum.tags:
         var index = _tag.datum.tags.indexOf(_tag);
@@ -163,8 +164,20 @@ SpectralWorkbench.Tag = Class.extend({
     _tag.render = function() {
  
       var container = $('#tags span.list');
+      var operationTable = $('table.operations');
  
       _tag.el = $("<span id='tag_" + _tag.id + "'></span>");
+
+      // display in Operations table;
+      // perhaps abstract into PowerTag or Operation subclass
+      if (_tag.powertag) {
+        _tag.operationEl = $("<tr id='tag_" + _tag.id + "'></tr>");
+        _tag.operationEl.append("<td class='title'><b>" + _tag.name + "</b></td>");
+        _tag.operationEl.append("<td class='description'>" + "_tag.description()" + "</td>");
+        _tag.operationEl.append("<td class='date'>" + "</td>");
+        _tag.operationEl.append("<td class='tools'>" + "</td>");
+        operationTable.append(_tag.operationEl);
+      }
 
       container.append(_tag.el);
 
