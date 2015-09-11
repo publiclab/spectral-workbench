@@ -3,12 +3,12 @@ class LikesController < ApplicationController
   before_filter :require_login, :only => [ :toggle, :delete ]
 
   def index
-    @spectrums = Spectrum.order('like_count DESC').where('user_id != 0').paginate(:page => params[:page], :per_page => 24)
+    @spectrums = Spectrum.select("title, created_at, id, user_id, author, photo_file_name, like_count, photo_content_type").order('like_count DESC').where('user_id != 0').paginate(:page => params[:page], :per_page => 24)
   end
 
   # recently liked
   def recent
-    @spectrums = Spectrum.order('created_at DESC').where('user_id != 0').page(params[:page])
+    @spectrums = Spectrum.select("title, created_at, id, user_id, author, photo_file_name, like_count, photo_content_type").order('created_at DESC').where('like_count > 0').where('user_id != 0').page(params[:page])
     render :template => "likes/index"
   end
 
