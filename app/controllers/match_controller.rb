@@ -51,6 +51,7 @@ class MatchController < ApplicationController
 
     @spectrum = Spectrum.find(id)
 
+    # move this to model or get rid of it and deal an error
     if @spectrum.data == "" || @spectrum.data.nil?
       @spectrum.extract_data
       @spectrum.save
@@ -103,11 +104,11 @@ class MatchController < ApplicationController
 
     respond_to do |format|
       format.html {}
-      format.xml  { render :xml => @spectrum }
+      format.xml  { render :xml => @spectra }
       format.csv  {
         render :text => SpectrumsHelper.show_csv(@spectrum)
       }
-      format.json  { render :json => @spectrum }
+      format.json  { render :json => @spectra }
     end
   end
 
