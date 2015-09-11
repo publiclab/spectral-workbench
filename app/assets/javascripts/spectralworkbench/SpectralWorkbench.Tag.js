@@ -172,10 +172,10 @@ SpectralWorkbench.Tag = Class.extend({
       // perhaps abstract into PowerTag or Operation subclass
       if (_tag.powertag) {
         _tag.operationEl = $("<tr id='tag_" + _tag.id + "'></tr>");
-        _tag.operationEl.append("<td class='title'><b>" + _tag.name + "</b></td>");
-        _tag.operationEl.append("<td class='description'>" + "_tag.description()" + "</td>");
-        _tag.operationEl.append("<td class='date'>" + "</td>");
-        _tag.operationEl.append("<td class='tools'>" + "</td>");
+        _tag.operationEl.append("<td class='title'><span class='label purple'>" + _tag.name + "</span></td>");
+        _tag.operationEl.append("<td class='date'>" + moment(_tag.json.created_at).format("MMM Do YYYY hh:mm a") + "</td>");
+        _tag.operationEl.append("<td class='description'><a href='//publiclab.org/wiki/spectral-workbench-tags#" + _tag.key + "'>" + _tag.description() + "</a></td>");
+        _tag.operationEl.append("<td class='operations-tools'><a class='tagdelete'><i class='icon icon-remove'></i></a></td>");
         operationTable.append(_tag.operationEl);
       }
 
@@ -209,6 +209,16 @@ SpectralWorkbench.Tag = Class.extend({
 
       });
  
+    }
+
+
+    _tag.description = function() {
+      if      (_tag.key == "smooth")      return "Rolling average smoothing.";
+      else if (_tag.key == "range")       return "Limits wavelength range.";
+      else if (_tag.key == "transform")   return "Filters this spectrum with a math expression.";
+      else if (_tag.key == "subtract")    return "Subtracts another spectrum from this.";
+      else if (_tag.key == "calibration") return "Copies calibration from another spectrum.";
+      else                                return "No description yet.";
     }
 
 
