@@ -52,6 +52,12 @@ class Spectrum < ActiveRecord::Base
     end
   end
 
+  def json
+    json = self.as_json(:except => [:data])
+    json[:data] = JSON.parse(self.data)
+    json
+  end
+
   def update_calibrated
     self.calibrated = self.is_calibrated?
     true
@@ -529,6 +535,45 @@ puts "reversing"
         return [base, base + 10]
       end
     end
+  end
+
+  def find_similar(range)
+
+    proc_nil = false
+
+    if self.processed_spectrum.nil?
+      spectra = []
+      proc_nil = true
+    else
+      spectra = self.processed_spectrum.closest_match(range, 20)
+    end
+
+    # Some spectrums have many matches with range of 100. Some have very few.
+    # So why stop just at 100? Something dynamic would be good, though takes some extra time
+    # Implementing a sort of binary search for best spectra matching.
+
+    # Time to make our matches more meaningful.
+
+    range_visits = [range] # To check the ranges visited
+
+    # This loop will take 10 iterations at maximum.
+    while !proc_nil and (spectra.size < 2 or spectra.size > 6)
+      if spectra.size > 6 # Need to reduce the range
+       	range = range - 10
+      else
+	range = range + 10
+      end
+
+      if range_visits.member?(range) or range < 10 or range > 150
+        break
+      end
+
+      range_visits.push(range)
+      spectra = self.processed_spectrum.closest_match(range, 20)
+    end
+
+    spectra
+
   end
 
 end

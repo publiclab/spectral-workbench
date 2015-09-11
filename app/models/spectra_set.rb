@@ -1,6 +1,6 @@
 class SpectraSet < ActiveRecord::Base
 
-  attr_accessible :title, :notes, :spectrums_string, :author
+  attr_accessible :title, :notes, :spectrums_string, :author, :user_id
 
   validates_presence_of :title, :user_id
   validates :title, length: { maximum: 60 }

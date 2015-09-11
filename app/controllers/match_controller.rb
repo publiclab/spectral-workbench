@@ -37,10 +37,7 @@ class MatchController < ApplicationController
   def search
     id = params[:id]
     range = params[:fit]
-
-    if range.nil? || range == "" || (range != '0' && range.to_i == 0)
-      range = 100
-    end
+    range ||= 100
 
     @range = range.to_i
 
@@ -51,51 +48,13 @@ class MatchController < ApplicationController
 
     @spectrum = Spectrum.find(id)
 
-    # move this to model or get rid of it and deal an error
-    if @spectrum.data == "" || @spectrum.data.nil?
-      @spectrum.extract_data
-      @spectrum.save
-    end
-
     if !@spectrum.calibrated
       flash[:error] = "The spectrum is not calibrated. If you are the author of this spectrum please calibrate it first"
       redirect_to spectrum_path(id.to_s)
       return
     end
 
-    proc_nil = false
-
-    @processed_spectra = ProcessedSpectrum.find_by_spectrum_id(id)
-    if @processed_spectra.nil? || @processed_spectra == ""
-      @spectra = [@spectrum]
-      proc_nil = true
-    else
-      @spectra = @processed_spectra.closest_match(@range, 20)
-    end
-
-    # Some spectrums have many matches with range of 100. Some have very few.
-    # So why stop just at 100? Something dynamic would be good, though takes some extra time
-    # Implementing a sort of binary search for best spectra matching.
-
-    # Time to make our matches more meaningful.
-
-    range_visits = [@range] # To check the ranges visited
-
-    # This loop will take 10 iterations at maximum.
-    while !proc_nil and (@spectra.size < 2 or @spectra.size > 6)
-      if @spectra.size > 6 # Need to reduce the range
-       	@range = @range - 10
-      else
-	@range = @range + 10
-      end
-
-      if range_visits.member?(@range) or @range < 10 or @range > 150
-        break
-      end
-
-      range_visits.push(@range)
-      @spectra = @processed_spectra.closest_match(@range, 20)
-    end
+    @spectra = @spectrum.find_similar(@range)
 
     @sets = @spectrum.sets
     @macros = Macro.find :all, :conditions => {:macro_type => "analyze"}
@@ -103,12 +62,12 @@ class MatchController < ApplicationController
     @comment = Comment.new
 
     respond_to do |format|
-      format.html {}
+      format.html { render partial: "macros/spectra", locals: { spectrums: @spectra } if params[:toolPane] }
       format.xml  { render :xml => @spectra }
       format.csv  {
         render :text => SpectrumsHelper.show_csv(@spectrum)
       }
-      format.json  { render :json => @spectra }
+      format.json  { render :json => @spectra.map { |s| s.json } } # actually flatten in the json of each spectrum; kind of messy
     end
   end
 

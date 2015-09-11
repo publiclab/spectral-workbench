@@ -12,7 +12,6 @@ class ProcessedSpectrum < ActiveRecord::Base
     #range = 100 # Earlier it was only 100. Now, we can read it from user.
     
     conditions = []
-    ids = []
 
     bins.each do |bin|
       types.each do |type|
@@ -26,11 +25,14 @@ class ProcessedSpectrum < ActiveRecord::Base
     condition_string = conditions.join(" AND ")
     matches = ProcessedSpectrum.find(:all, :conditions => [condition_string],:limit => limit)
       
+    ids = []
     matches.each do |match|
       ids += ["id = #{match.spectrum_id}"]
     end
 
     id_string = ids.join(" OR ")
+    id_string += " AND id != #{self.spectrum_id}"
+
     Spectrum.find(:all, :conditions => [id_string])
   end
 

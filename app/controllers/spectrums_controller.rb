@@ -89,9 +89,7 @@ class SpectrumsController < ApplicationController
         render :text => SpectrumsHelper.show_csv(@spectrum)
       }
       format.json  {
-        json = @spectrum.as_json(:except => [:data])
-        json[:data] = JSON.parse(@spectrum.data)
-        render :json => json
+        render :json => @spectrum.json
       }
     end
   end

@@ -100,7 +100,7 @@ class SetsController < ApplicationController
     spectra = []
     params[:id].split(',').each do |s|
       if (spectrum = Spectrum.find(s))
-        spectra << spectrum.id
+        spectra << spectrum
       end
     end
     @set = SpectraSet.new({:title => params[:spectra_set][:title],

@@ -13,10 +13,15 @@ SpectralWorkbench.UI.Util = Class.extend({
     $('.tool-cross-section').click(    function() { new SpectralWorkbench.UI.ToolPane('crossSection', _graph); });
     $('.tool-smooth').click(           function() { new SpectralWorkbench.UI.ToolPane('smooth', _graph); });
     $('.tool-compare').click(          function() { new SpectralWorkbench.UI.ToolPane('compare', _graph); });
+    $('.tool-similar').click(          function() { new SpectralWorkbench.UI.ToolPane('similar', _graph); });
 
     // Set up JSON download
 
     _graph.datum.downloadJSON('.btn-download-json');
+
+    $('.btn-save-as-set').click(function() {
+      $(this).attr('href', "/sets/new/" + graph.datum.id + ',' + graph.comparisons.map(function(spectrum) { return spectrum.id; }).join(','));
+    });
 
   }
 
