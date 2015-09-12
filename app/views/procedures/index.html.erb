@@ -1,0 +1,12 @@
+<div class="container">
+  <h2>Popular Procedures</h2>
+
+  <hr />
+
+  <div class="row-fluid">
+    <style>._row { clear:left;} </style>
+
+    <%= render :partial => 'procedures/list' %>
+    <%= will_paginate @procedures, renderer: BootstrapPagination::Rails %>
+  </div>
+</div>

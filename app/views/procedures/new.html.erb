@@ -1,0 +1,45 @@
+<div class="container-fluid">
+  <h2>New Procedure</h2>
+  
+  <div class="span6">
+  <% if @procedure && @procedure.errors.any? %>
+    <div class="alert alert-error">
+      <h4>There were errors with your data.</h4>
+      <ul>
+        <% @procedure.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+	<h3>Quick Overview</h3>
+	<ul>
+		<li>Fill the initial information</li>
+		<li>Add as many steps as needed</li>
+		<li>Save and Continue would ensure that you can pick your work from where you left</li>
+		<li>Save the Procedure</li>
+	</ul>
+  </div>
+  
+  <div class="span6">
+  <p>Please use this form to create a new procedure. You can always come back and pick from where you left. If you are looking to clone or run other procedures, click <a href="/procedures">here</a></p> 
+
+<form id="initial_creation" action="/procedures/create" class="form well" method="post">
+
+
+	<div class="control-group" id="title">
+    <input name="title" type="text" id="inputTitle" placeholder="Title">
+    <span class="help-inline"></span>
+  </div>
+
+  <div>
+    <textarea name="description" id="textareaNotes" rows="6" placeholder="Description: why, what, how"></textarea>
+  </div>
+
+  <input type='hidden' name='authenticity_token' value="<%= form_authenticity_token %>"/>
+  <button type="submit" class="btn btn-primary btn-large">Save and Continue</button>
+</form>
+
+  </div>
+
+  </div>
