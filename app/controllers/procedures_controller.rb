@@ -6,8 +6,19 @@ class ProceduresController < ApplicationController
   def view
     id = params[:id]
     @procedure = Procedure.find(id)
+    @preview = false
 
-    if @procedure.is_active?
+    preview = params[:preview]
+
+    if preview and preview == "1"
+      user_id = current_user.id if logged_in?
+      user_id ||= "0"
+      if @procedure.user_id == user_id
+        @preview = true
+      end
+    end
+
+    if @procedure.is_active? || @preview
       @steps = ProcedureStep.where(:procedure_id => id, :skipped => false, :is_done => true).order(:step)
     else
       flash[:error] = "The procedure you were trying to access is not public yet."
@@ -238,7 +249,7 @@ class ProceduresController < ApplicationController
     if @procedure.is_active?
       @steps = ProcedureStep.where(:procedure_id => id, :skipped => false, :is_done => true).order(:step)
     else
-      flash[:error] = "The procedure is not public yet."
+      flash[:error] = "The procedure you are trying to access is not public yet."
       redirect_to "/procedures"
     end
 
