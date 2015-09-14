@@ -7,9 +7,6 @@
     <p>
       <strong>Author:</strong><%= @procedure.author%><br>
       <%= time_ago_in_words(@procedure.created_at) %>
-      <% if @preview %>
-      You are previewing
-      <% end %>
     </p>
 
     <a class="btn btn-lrg btn-success" href="/procedures/run/<%=@procedure.id%>">Run this Procedure</a>

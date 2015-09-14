@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150906214821) do
+ActiveRecord::Schema.define(:version => 20150723220742) do
 
   create_table "comments", :force => true do |t|
     t.string   "author"
@@ -60,52 +60,6 @@ ActiveRecord::Schema.define(:version => 20150906214821) do
     t.string   "published",   :default => "published"
     t.datetime "created_at"
     t.datetime "updated_at"
-  end
-
-  create_table "procedure_runs", :force => true do |t|
-    t.string   "title"
-    t.integer  "procedure_id"
-    t.string   "procedure_name"
-    t.string   "run_by"
-    t.integer  "user_id"
-    t.text     "description"
-    t.string   "main_image_url"
-    t.datetime "created_at",     :null => false
-    t.datetime "updated_at",     :null => false
-  end
-
-  create_table "procedure_step_runs", :force => true do |t|
-    t.integer  "spectrum_id"
-    t.text     "description"
-    t.integer  "order"
-    t.string   "heading"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
-  end
-
-  create_table "procedure_steps", :force => true do |t|
-    t.integer  "procedure_id"
-    t.integer  "step"
-    t.string   "heading"
-    t.text     "description"
-    t.string   "image_url"
-    t.boolean  "capture_required"
-    t.boolean  "is_optional",      :default => true
-    t.boolean  "is_done",          :default => false
-    t.boolean  "skipped",          :default => false
-    t.datetime "created_at",                          :null => false
-    t.datetime "updated_at",                          :null => false
-  end
-
-  create_table "procedures", :force => true do |t|
-    t.string   "title"
-    t.string   "author"
-    t.integer  "user_id"
-    t.text     "description"
-    t.string   "main_image_url"
-    t.boolean  "is_active",      :default => false
-    t.datetime "created_at",                        :null => false
-    t.datetime "updated_at",                        :null => false
   end
 
   create_table "processed_spectrums", :force => true do |t|
