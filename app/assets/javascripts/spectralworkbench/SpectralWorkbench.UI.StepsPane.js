@@ -10,16 +10,22 @@ SpectralWorkbench.UI.SpectraPane = SpectralWorkbench.UI.ToolPane.extend({
     this._super(toolType, _graph, selector);
 
     var form = _tool.form;
+    var lastStep = null;
 
-    _tool.options.steps.forEach(function(step) {
+    _tool.options.steps.forEach(function(step, i) {
 
-      // instruction
-      // setup()
-      // onComplete()
-      // next
-      // last
+      var nextStep = _tool.options.steps[i+1];
+
+      step.begin = function() {
+        // foo.html(step.instructions);
+        step.setup();
+        // register event listener for completion
+        if (nextStep) step.on('finish', nextStep.begin);
+      }
 
     });
+
+    _tool.options.steps[0].begin();
 
   }
 

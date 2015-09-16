@@ -11,6 +11,11 @@ SpectralWorkbench.UI.SpectraPane = SpectralWorkbench.UI.ToolPane.extend({
 
     var form = _tool.form;
 
+    // unhide the SpectraPane related stuff. 
+    // We should just construct it here.
+    form.searchEl.show();//        = form.el.find('form input.input-choose-spectrum');
+    form.el.find('results').show();//        = form.el.find('form input.input-choose-spectrum');
+
     // hook up "apply" buttons in spectrum choice search results
     var connectResults = function(result) {
 

@@ -14,6 +14,8 @@ SpectralWorkbench.UI.ToolPane = Class.extend({
     _tool.options.formData = _tool.options.formData || {};
     _tool.options.formData['not'] = _graph.datum.id;
 
+    // some of these could be moved into SpectraPane subclass:
+    form.graph           = _graph;
     form.el              = $(_tool.selector);
     form.titleEl         = form.el.find('.title');
     form.authorEl        = form.el.find('.attribution .author');

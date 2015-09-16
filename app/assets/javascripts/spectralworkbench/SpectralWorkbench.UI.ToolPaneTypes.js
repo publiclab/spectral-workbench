@@ -160,13 +160,15 @@ SpectralWorkbench.UI.ToolPaneTypes = {
     author: "warren",
     setup: function(form) {
 
+      // shouldnt be necessary in new API, but double check:
       form.formEl.hide();
-      $(form.el).find('.results').html('');
+      form.el.find('.results').html('');
+
       form.customFormEl.html("<p>Click the spectrum image or enter a row number:</p><input class='cross-section' type='text' />");
 
       graph.image.click(function(x, y) {
 
-        form.find('.cross-section').val(y);
+        form.el.find('.cross-section').val(y);
 
       });
     },
@@ -191,27 +193,135 @@ SpectralWorkbench.UI.ToolPaneTypes = {
 
       var pane = "";
 
-      pane += "<h5>Calibrate</h5>";
-      pane += "<p>Adjust the sliders to align the reference spectrum to your own. <a href='//publiclab.org/wiki/spectral-workbench-calibration'>Learn more &raquo;</a></p>";
-      pane += "<div class='fit'></div>";
-      pane += "<div class='snapping'></div>";
-      pane += "<div class='reference'><span class='btn btn-mini disabled slider slider-1'>A</span><span class='btn btn-mini disabled slider slider-2'>B</span></div>";
+      pane += "<p class='prompt form-inline' style='padding-bottom:20px;'>";
+      pane +=   "<b>Calibrate:</b> ";
+      pane +=   "Adjust sliders &amp; align the reference spectrum to yours. ";
+      pane +=   "<a href='//publiclab.org/wiki/spectral-workbench-calibration'>Learn more &raquo;</a> ";
+      pane +=   "<span class='calibration-form pull-right'> ";
+      pane +=     "<input type='checkbox' class='checkbox-snap' /> <label for='checkbox-snap'>Snap</label> ";
+      pane +=     "<input type='text' class='input-wavelength-1 input-mini' /> ";
+      pane +=     "<input type='text' class='input-wavelength-2 input-mini' /> ";
+      pane +=     "<a class='btn btn-primary btn-save-calibrate-2'>Save</a>";
+      pane +=   "</span>";
+      pane += "</p>";
+      pane += "<div class='fit'></div>"; // to show how good the fit is
+      pane += "<div class='reference'><span class='btn btn-mini disabled slider slider-1'>B2</span><span class='btn btn-mini disabled slider slider-2'>G2</span></div>";
+      pane += "<div class='example' style='background:black;overflow:hidden;height:20px;'><img style='max-width:none;display:block;height:20px;' src='/images/snowsky.jpg' /></div>";
 
-      $('#graph').prepend('<div class="calibrationPane"></div>');
-      $('.calibrationPane').html(pane);
+      $('.spectrum-img-container').prepend('<div class="calibration-pane"></div>');
+      $('.calibration-pane').html(pane);
+
+      $('.calibration-pane .slider').css('margin-top', -24);
+
+      // resize image;
+      // example snowsky.jpg is: (redo these at high resolution)
+      // 1818 total width
+      // 586 to blue from left
+      // 1102 to first green
+      // 1123 to second green
+      // 538 between blue and second green
+      // blue to 2nd green is 0.29593 of total
+
+      // x1 and x2 are screen pixel locations starting from left edge of the image
+      var calibrationResize = function(x1, x2) {
+
+        // can we just work as much as possible in data space, rather than in interface space?
+        x1 = +x1;
+        x2 = +x2;
+
+        if ($('.calibration-pane input.checkbox-snap').prop('checked')) {
+
+          // convert to an x-position in the graphed data
+          var convertToDataSpace = function(xIn) {
+
+            var sourceDataRange = graph.datum.average[graph.datum.average.length-1].x - graph.datum.average[0].x;
+
+            return graph.datum.average[0].x + (xIn / graph.imgContainer.width()) * sourceDataRange;
+
+          }
+
+          x1InSourceData = form.graph.datum.getNearbyPeak(convertToDataSpace(x1), 10);
+          x2InSourceData = form.graph.datum.getNearbyPeak(convertToDataSpace(x2), 10);
+
+          // convert back to an x-position in the 
+          var convertToDataSpace = function(xIn) {
+
+            var sourceDataRange = graph.datum.average[graph.datum.average.length-1].x - graph.datum.average[0].x;
+
+            return graph.datum.average[0].x + (xIn / graph.imgContainer.width()) * sourceDataRange;
+
+          }
+          
+
+        }
+
+        var margin = form.graph.margin.left, 
+            exampleWidth = parseInt((x2 - x1) / (538 / 1818)),
+            leftPad = (-parseInt((586 / 1818) * exampleWidth) + x1),
+            percent1 = x1 / form.graph.imgContainer.width(),
+            origImgLeft1 = form.graph.image.width * percent1,
+            percent2 = x2 / form.graph.imgContainer.width(),
+            origImgLeft2 = form.graph.image.width * percent2;
+
+        $('.calibration-pane .example img').css('margin-left', leftPad);
+        $('.calibration-pane .example img').css('width', exampleWidth);
+
+        // account for resizing of image!
+        $('.slider-1').css('left', margin + x1)
+        $('.slider-2').css('left', margin + x2)
+
+        $('.slider-1').attr('data-slider-index', 1);
+        $('.slider-2').attr('data-slider-index', 2);
+
+        // take into account range!
+        var px1 = Math.round(origImgLeft1 * 100) / 100; // pixels from left in original spectrum image
+        var px2 = Math.round(origImgLeft2 * 100) / 100;
+
+        if (form.graph.datum.getPowerTag('range') && form.graph.datum.getPowerTag('range').length > 0) {
+          var rangeOffset = form.graph.datum.nmToPx(+graph.datum.getPowerTag('range')[0].value.split('-')[0]);
+          px1 += rangeOffset;
+          px2 += rangeOffset;
+        }
+
+        $('.input-wavelength-1').val(px1);
+        $('.input-wavelength-2').val(px2);
+
+      }
+
+      // https://en.wikipedia.org/wiki/File:Fluorescent_lighting_spectrum_peaks_labelled.gif
+      $('.btn-save-calibrate-2').click(function() {
+        var blue = $('.input-wavelength-1').val(),
+            green2 = $('.input-wavelength-2').val();
+        graph.datum.calibrateAndUpload(436.6, 546.5, blue, green2); // using 2nd green
+      });
 
       $('.slider').css('position', 'absolute');
 
-      $('.slider-1').css('left', 100);
-      $('.slider-2').css('left', 300);
+      // use autocalibration for first pass, 
+      // or, for now, existing calibration:
+      calibrationResize(436.6, 546.5);
 
       var drag = d3.behavior.drag();
 
       drag.on('drag', function() { 
-        $(this).css('left', d3.event.x);
+
+        var margin = form.graph.margin.left, 
+            left = margin + d3.event.x,
+            index = $(this).attr('data-slider-index'),
+            input = $('.input-wavelength-' + index);
+
+        if (d3.event.x < 0) $(this).css('left', left);
+        else if (d3.event.x > form.graph.imgEl.width()) $(this).css('left', form.graph.imgEl.width());
+        else $(this).css('left', left);
+
+        calibrationResize(
+          +$('.slider-1').css('left').split('px')[0] - margin,
+          +$('.slider-2').css('left').split('px')[0] - margin
+        );
+
       });
 
-      d3.select('.slider').call(drag)
+      d3.selectAll('.slider').call(drag)
 
     }
   },

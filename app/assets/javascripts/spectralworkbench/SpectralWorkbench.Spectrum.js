@@ -65,6 +65,63 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
 
 
     /* ======================================
+     * Returns highest intensity wavelength (or pixel if uncalibrated) 
+     * within <distance> pixels of <x>
+     * in given <channel>; default channel is 'average'.
+     */
+    _spectrum.getNearbyPeak = function(x, distance, channel) {
+
+      channel = channel || "average";
+
+      var max = null,
+          compared = 0; // # of pixels compared
+          plateau = []; // list of equally high points in case there are multiple; 
+                        // we return the center of the plateau; even 
+                        // if the plateau is not continuous
+
+      channel = _spectrum[channel].forEach(function(pixel, i) {
+
+        if (pixel.x > x - distance && pixel.x < x + distance) {
+
+          compared += 1;
+
+          if (max == null) max = pixel;
+
+          if (pixel.y > max.y) {
+
+            max = pixel;
+            plateau = [];
+
+          } else if (pixel.y == max.y) {
+
+            plateau.push(pixel);
+
+          }
+
+        }
+
+      });
+
+      if (compared > 0) {
+
+        if (plateau.length > 0) {
+
+          console.log('Found plateau ' + plateau.length + ' wide in given range; returned center.');
+          return plateau[~~(plateau.length/2)].x; // the middle of the plateau
+
+        } else return max.x;
+
+      } else {
+
+        console.log('No data fell within ' + distance + ' of ' + x + '.');
+        return x; // fallback to original position
+
+      }
+
+    }
+
+
+    /* ======================================
      * Returns true if the spectrum is calibrated (client-side)
      */
     _spectrum.isCalibrated = function() {
@@ -127,8 +184,9 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
 
 
     /* ======================================
-     * Converts a nanometer value to a pixel 
-     * value (counting from left) if the current spectrum is calibrated
+     * Converts a nanometer value to a pixel value
+     * from raw JSON data, disregarding range,
+     * (counting from left) if the current spectrum is calibrated
      */
     _spectrum.nmToPx = function(nm) {
 
@@ -152,7 +210,8 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
 
 
     /* ======================================
-     * Converts a pixel value (counting from left) to a nanometer 
+     * Converts a pixel value (counting from left) 
+     * from raw JSON data, disregarding range, to a nanometer 
      * value if the current spectrum is calibrated
      */
     _spectrum.pxToNm = function(px) {

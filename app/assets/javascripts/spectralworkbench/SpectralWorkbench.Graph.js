@@ -310,17 +310,6 @@ SpectralWorkbench.Graph = Class.extend({
  
     var _graph = this;
 
-    /* 
-    // if no zooming needed, use this instead perhaps? for speed?: 
-    _graph.chart = nv.models.lineChart()
-                     .height(_graph.height-_graph.margin.top-_graph.margin.bottom + 100) // 100 for zoom brush pane, hidden by default
-                     .margin(_graph.margin)
-                     .useInteractiveGuideline(true)  //We want nice looking tooltips and a guideline!
-                     .showYAxis(true)        //Show the y-axis
-                     .showXAxis(true)        //Show the x-axis
-                     .showLegend(false)       //Show the legend, allowing users to turn on/off line series.
-    */
-
     _graph.chart = nv.models.lineWithFocusChart()
                      .options({ useVoronoi: false })
                      .height(_graph.height-_graph.margin.top-_graph.margin.bottom + 100) // 100 for zoom brush pane, hidden by default
@@ -445,15 +434,27 @@ SpectralWorkbench.Graph = Class.extend({
 
       if (_graph.range && _graph.datum) {
 
-        // amount to mask out of image if there's a range tag
-        // this is measured in nanometers:
-        _graph.leftCrop =   _graph.range[0] - _graph.datum.json.data.lines[0].wavelength;
-        _graph.rightCrop = -_graph.range[1] + _graph.datum.json.data.lines[_graph.datum.json.data.lines.length-1].wavelength;
+        if (_graph.datum.isCalibrated()) {
 
-        _graph.pxPerNm = _graph.width / (_graph.range[1]-_graph.range[0]);
+          // amount to mask out of image if there's a range tag
+          // this is measured in nanometers:
+          _graph.leftCrop =   _graph.range[0] - _graph.datum.json.data.lines[0].wavelength;
+          _graph.rightCrop = -_graph.range[1] + _graph.datum.json.data.lines[_graph.datum.json.data.lines.length-1].wavelength;
+         
+          _graph.pxPerNm = _graph.width / (_graph.range[1]-_graph.range[0]);
+         
+          _graph.leftCrop  *= _graph.pxPerNm;
+          _graph.rightCrop *= _graph.pxPerNm
 
-        _graph.leftCrop  *= _graph.pxPerNm;
-        _graph.rightCrop *= _graph.pxPerNm
+        } else {
+
+          // for uncalibrated, we still allow range, in case someone's doing purely comparative work:
+          _graph.leftCrop =   _graph.range[0] - _graph.datum.json.data.lines[0].pixel;
+          _graph.rightCrop = -_graph.range[1] + _graph.datum.json.data.lines[_graph.datum.json.data.lines.length-1].pixel;
+         
+          _graph.pxPerNm = 1; // a lie, but as there are no nanometers in an uncalibrated spectrum, i guess it's OK.
+
+        }
 
         _graph.imgEl.width(_graph.width + _graph.leftCrop + _graph.rightCrop)
                     .height(100)
