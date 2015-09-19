@@ -198,7 +198,10 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
      */
     _spectrum.isCalibrated = function() {
 
-      return _spectrum.json.data.lines[0].hasOwnProperty('wavelength');
+      //return _spectrum.json.data.lines[0].hasOwnProperty('wavelength');
+      // rewritten as above was not accounting for unsaved 
+      // calibration; below can be wrong but it's very unlikely
+      return _spectrum.average[0].x != 0;
 
     }
 

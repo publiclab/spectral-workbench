@@ -72,7 +72,7 @@ SpectralWorkbench.API.Legacy = {
         _graph.datum.json.data.lines = [];
         _graph.datum.average = [];
         
-        $.each(data[i].data,function(i,line) {
+        $.each(_graph.datum.json.data,function(i,line) {
 
           var average = line[1];
           if (average <= 1) average *= 100; // if it's too low, auto-recognize that it's a percentage? This is not great. 

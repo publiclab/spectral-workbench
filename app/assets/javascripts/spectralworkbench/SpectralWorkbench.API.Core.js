@@ -393,6 +393,78 @@ SpectralWorkbench.API.Core = {
   },
 
 
+  // autodetect calibration
+  attemptCalibration: function(graph) {
+
+    var findMax = function(data, channel, startIndex, endIndex) {
+  
+      var max = { index: 0, 
+                  value: 0 },
+          min_required_intensity = 5;
+
+      startIndex = startIndex || 0;
+      endIndex = endIndex || data.length-1;
+
+      data.slice(startIndex, endIndex).forEach(function(line, index){
+
+        if (line[channel] > max.value && line[channel] > min_required_intensity) {
+          max.index = index + startIndex;
+          max.value = line[channel];
+        }
+
+      });
+
+      return max;
+
+    }
+
+    var green = findMax(graph.datum.json.data.lines, 'b');
+    var red   = findMax(graph.datum.json.data.lines, 'r', green.index + 50);
+
+      var estimated_blue_peak = green.index - 1.707 * (red.index - green.index);
+      var blueSearchDistance = 5;
+
+    var blue  = findMax(graph.datum.json.data.lines, 'g', estimated_blue_peak - blueSearchDistance, estimated_blue_peak + blueSearchDistance);
+
+    return [ red.index,
+             green.index,
+             blue.index ];
+
+  },
+
+
+  // We compare the ratios of peak distances to 
+  // see if it is a good fit based on what they *should* be
+  calibrationFit: function(r,g,b) {
+
+    var gb_diff = g - b;
+    var rg_diff = r - g;
+    var rb_diff = r - b;
+  
+    var allowedError = 5;
+    
+    var diff_rat = (gb_diff/111) - (rg_diff/65);
+    
+    var gbrg = gb_diff / rg_diff;
+    var diff = gbrg - 1.707;
+    
+    console.log("GB/RG ratio:" + gbrg);
+    console.log("Expected ratio: 1.707");
+    console.log("Diff in these ratios:" + diff);
+    console.log("Diff in GB/111 and RG/65:" + diff_rat);
+    
+    var percentageError = diff * 100 / 1.707;
+    
+    console.log("percentage error in GB/RG ratio: " + percentageError + " %");
+    console.log("Allowed percentage is: " + allowedError + " %");
+    
+    console.log("Expected to be a CFL?: " + (percentageError < allowedError && percentageError > -1 * allowedError));
+
+    return percentageError;
+
+  },
+
+
   // checks overexposure and displays an alert if it is so
   // we might just want a class of alert filters separate from the API, or
   // in a special zone
@@ -406,11 +478,13 @@ SpectralWorkbench.API.Core = {
 
         var msg = "This spectrum looks overexposed. <a href='//publiclab.org/wiki/spectral-workbench-usage#Overexposure'>Learn how to fix this</a>."
 
-        SpectralWorkbench.API.Core.notify(msg, "warning")
+        SpectralWorkbench.API.Core.notify(msg, "warning");
 
       }
 
     } else {
+
+      // what? WHAT?
 
     }
 

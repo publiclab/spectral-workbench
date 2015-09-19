@@ -190,6 +190,14 @@ SpectralWorkbench.UI.ToolPaneTypes = {
   },
 
 
+  /*
+
+* spectrum reversal mgmt
+* debug actual calibration to be sure
+* add new slider images
+* account for page resizing
+
+  */
   calibrate2: {
     title: "Wavelength calibration",
     dataType: "spectrum",
@@ -200,14 +208,15 @@ SpectralWorkbench.UI.ToolPaneTypes = {
 
       var pane = "";
 
-      pane += "<p class='prompt form-inline' style='padding-bottom:20px;'>";
+      pane += "<p class='prompt form-inline' style='padding-bottom:30px;'>";
       pane +=   "<b>Calibrate:</b> ";
       pane +=   "Adjust sliders &amp; align the reference spectrum to yours. ";
       pane +=   "<a href='//publiclab.org/wiki/spectral-workbench-calibration'>Learn more &raquo;</a> ";
       pane +=   "<span class='calibration-form pull-right'> ";
-      pane +=     "<input type='checkbox' class='checkbox-snap' /> <label for='checkbox-snap'>Snap</label> ";
+      pane +=     "<input id='checkbox-snap' type='checkbox' class='checkbox-snap' checked='true' /> <label for='checkbox-snap'>Snap</label> ";
       pane +=     "<input type='text' class='input-wavelength-1 input-mini' /> ";
       pane +=     "<input type='text' class='input-wavelength-2 input-mini' /> ";
+      pane +=     "<a class='btn btn-auto-calibrate'>Auto-calibrate</a>";
       pane +=     "<a class='btn btn-primary btn-save-calibrate-2'>Save</a>";
       pane +=   "</span>";
       pane += "</p>";
@@ -234,6 +243,16 @@ SpectralWorkbench.UI.ToolPaneTypes = {
       // or, for now, existing calibration:
       var _graph = form.graph,
           extent = form.graph.extent;
+
+      attemptCalibration = function() {
+
+        var auto_cal = SpectralWorkbench.API.Core.attemptCalibration(_graph),
+            blue2guess  = _graph.imgContainer.width() * (auto_cal[2] / _graph.image.width),
+            green2guess = _graph.imgContainer.width() * (auto_cal[1] / _graph.image.width);
+
+        calibrationResize(blue2guess, green2guess);
+
+      }
 
       /*
 
@@ -275,10 +294,12 @@ SpectralWorkbench.UI.ToolPaneTypes = {
         $('.slider-1').css('left', parseInt(x1) + margin);
         $('.slider-2').css('left', parseInt(x2) + margin);
 
+        $('.slider-1').attr('data-pos', x1); 
+        $('.slider-2').attr('data-pos', x2);
+
         // get source image pixel location, round to 2 decimal places:
         ix1 = Math.round(_graph.displayPxToImagePx(x1) * 100) / 100;
         ix2 = Math.round(_graph.displayPxToImagePx(x2) * 100) / 100;
-console.log(x1, x2)
 
         // no, need to display image space pixel positions here
         $('.input-wavelength-1').val(ix1);
@@ -290,6 +311,12 @@ console.log(x1, x2)
       var blue2 = 436.6,
           green2 = 546.5;
 
+      $('.btn-auto-calibrate').click(function() {
+
+        attemptCalibration();
+
+      });
+
       $('.btn-save-calibrate-2').click(function() {
 
         _graph.datum.calibrateAndUpload(
@@ -298,6 +325,8 @@ console.log(x1, x2)
           $('.input-wavelength-1').val(), 
           $('.input-wavelength-2').val()
         ); 
+
+        $('.calibration-pane').remove();
 
       });
 
@@ -309,8 +338,18 @@ console.log(x1, x2)
         return x;
       }
 
-      calibrationResize(limitRange(_graph.nmToDisplayPx(blue2)),
-                        limitRange(_graph.nmToDisplayPx(green2)));
+      if (_graph.datum.isCalibrated()) {
+
+// This is wrong; show the native calibration
+// also, isCalibrated() doesn't read current data, just saved data
+        calibrationResize(limitRange(_graph.nmToDisplayPx(blue2)),
+                          limitRange(_graph.nmToDisplayPx(green2)));
+
+      } else {
+
+        attemptCalibration();
+
+      }
 
       var drag = d3.behavior.drag();
 

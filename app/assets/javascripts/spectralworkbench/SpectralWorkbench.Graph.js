@@ -101,8 +101,7 @@ SpectralWorkbench.Graph = Class.extend({
 
       // what proportion of the full image is being displayed?
       var proportion = x / _graph.width, // x position as a percent of displayed graph
-          proportionDisplayed = _graph.extent[0] / _graph.fullExtent[0]; // account for out-of-range parts of image
-          
+          proportionDisplayed = (_graph.extent[1] -_graph.extent[0]) / (_graph.fullExtent[1] - _graph.fullExtent[0]); // account for out-of-range parts of image
 
       return proportion / proportionDisplayed * _graph.image.width;
 
