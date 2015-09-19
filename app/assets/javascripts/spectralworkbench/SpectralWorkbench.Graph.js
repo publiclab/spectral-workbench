@@ -1,5 +1,7 @@
 SpectralWorkbench.Graph = Class.extend({
 
+  extent: [0,0],
+
   init: function(args) {
 
     var _graph = this;
@@ -70,6 +72,95 @@ SpectralWorkbench.Graph = Class.extend({
       _graph.setUnits();
       _graph.data.call(_graph.chart);
       _graph.updateSize()();
+
+    }
+
+
+    /* ======================================
+     * Accepts nanometer wavelength <nm> 
+     * returns an x-coordinate in the source image space.
+     */
+/*
+    // this is redundant (although simpler than) spectrum.nmToPx()
+    _graph.nmToImagePx = function(nm) {
+
+      var extentWidth = _graph.extent[1] - _graph.extent[0],
+          proportion = ((nm - _graph.extent[0]) / extentWidth);
+
+      return proportion * _graph.image.width;
+
+    }
+*/
+
+
+    /* ======================================
+     * Converts an x-coordinate pixel value from display space 
+     * to an image space pixel value
+     */
+    _graph.displayPxToImagePx = function(x) {
+
+      // what proportion of the full image is being displayed?
+      var proportion = x / _graph.width, // x position as a percent of displayed graph
+          proportionDisplayed = _graph.extent[0] / _graph.fullExtent[0]; // account for out-of-range parts of image
+          
+
+      return proportion / proportionDisplayed * _graph.image.width;
+
+    }
+
+
+    /* ======================================
+     * Accepts x-coordinate in display space as shown 
+     * on page & returns wavelength in nanometers.
+     * Unlike datum.pxToNm, does not rely on an image or its dimensions.
+     */
+    _graph.displayPxToNm = function(x) {
+
+      var proportion = x / _graph.width,
+          extentWidth = _graph.extent[1] - _graph.extent[0];
+
+      return _graph.extent[0] + (proportion * extentWidth);
+
+    }
+
+
+    /* ======================================
+     * Accepts wavelength in nanometers & returns
+     * x-coordinate in display space as shown on page.
+     */
+    _graph.nmToDisplayPx = function(nm) {
+
+      var extentWidth = _graph.extent[1] - _graph.extent[0],
+          proportion = ((nm - _graph.extent[0]) / extentWidth);
+
+      return proportion * _graph.width;
+
+    }
+
+
+    /* ======================================
+     * Accepts x,y in graph UI pixel space, returns
+     * {x: x, y: y} in data space in nanometers
+     * (or pixels if uncalibrated) -- note that
+     * that point may not exist in datum, but you can use
+     * datum.getNearestPoint(x) to find something close.
+     * Pass false for x or y to convert only one coordinate.
+     */
+    _graph.pxToNm = function(x, y) {
+
+      if (x) {
+        var percentX = x / _graph.width,
+            extentX = _graph.extent, // accounts for range limiting
+            dx      = percentX * (extentX[1] - extentX[0]) + extentX[0];
+      } else var dx = false;
+
+      if (y) {
+        var percentY = y / _graph.height,
+            extentY = _graph.extent, // accounts for range limiting
+            dy      = percentY * (extentY[1] - extentY[0]) + extentY[0];
+      } else var dy = false;
+
+      return { x: dx, y: dy };
 
     }
 
@@ -431,6 +522,12 @@ SpectralWorkbench.Graph = Class.extend({
                          .height(100)
                          .css('margin-left', _graph.margin.left + extra) // not sure but there seems to be some extra margin in the chart
                          .css('margin-right',_graph.margin.right);
+
+      // Why would we even be running updateSize if datum is not yet loaded? Gah.
+      if (_graph.datum) {
+        _graph.extent = _graph.datum.getFullExtentX(); // store min/max of graph without range limits
+        _graph.fullExtent = _graph.datum.getExtentX(); // store min/max of graph
+      }
 
       if (_graph.range && _graph.datum) {
 

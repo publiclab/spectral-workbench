@@ -37,14 +37,15 @@ SpectralWorkbench.UI.ToolPaneTypes = {
  
   subtraction: {
     title: "Subtraction",
+    dataType: "spectrum",
     description: "Subtract another calibrated spectrum from this one.",
     author: "warren",
     apply: false,
     formData: { own: true },
     url: '/spectrums/choose/calibrat*', // default spectra to show, can use * and ?author=warren
-    onSpectrumApply: function(form, graph) {
+    onSpectrumApply: function(form, _graph) {
       // provide better API for own-id:
-      graph.datum.addTag('subtract:' + $(this).attr('data-id'), function() {
+      _graph.datum.addTag('subtract:' + $(this).attr('data-id'), function() {
       });
     }
   },
@@ -52,17 +53,18 @@ SpectralWorkbench.UI.ToolPaneTypes = {
 
   copyCalibration: {
     title: "Copy Calibration",
+    dataType: "spectrum",
     description: "Use a calibrated spectrum to calibrate this one.",
     author: "warren",
     apply: false,
     url: '/spectrums/choose/calibration', // default spectra to show, can use * and ?author=warren
-    onSpectrumApply: function(form, graph) {
+    onSpectrumApply: function(form, _graph) {
 
       // provide better API for own-id:
-      SpectralWorkbench.API.Core.copyCalibration($(this).attr('data-id'), graph.datum, function(response){ 
+      SpectralWorkbench.API.Core.copyCalibration($(this).attr('data-id'), _graph.datum, function(response){ 
 
         // fetch tags from server -- cloning calibration and associated tagging happens on the server side
-        graph.datum.fetchTags();
+        _graph.datum.fetchTags();
      
         SpectralWorkbench.API.Core.notify('Spectrum calibration copied from spectrum #' + response.id);
      
@@ -73,6 +75,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
 
   transform: {
     title: "Transform",
+    dataType: "any",
     description: "Apply a JavaScript math expression (such as 'R*G+B') to each point in the spectrum, using variables R for red, G, B, and A for average..",
     author: "warren",
     apply: true,
@@ -84,14 +87,14 @@ SpectralWorkbench.UI.ToolPaneTypes = {
       form.customFormEl.html("<p>Enter an expression to apply to the spectrum:</p><form class='expression'><input type='text'></input></form><p><a href='//publiclab.org/wiki/spectral-workbench-tools#Transform'>Read about transforms &raquo;</a>");
       form.el.find('.expression').on('submit', function(e) {
         e.preventDefault();
-        graph.datum.addTag('transform:'+form.el.find('.expression input').val());
+        form.graph.datum.addTag('transform:'+form.el.find('.expression input').val());
         form.formEl.show();
       });
       form.el.find('.expression input').focus();
 
     },
     onApply: function(form) {
-      graph.datum.addTag('transform:'+form.el.find('.expression input').val())
+      form.graph.datum.addTag('transform:'+form.el.find('.expression input').val())
       form.formEl.show();
     }
   },
@@ -99,6 +102,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
 
   range: {
     title: "Range",
+    dataType: "any",
     description: "Select a wavelength range; subsequent operations will only use this range.",
     author: "warren",
     apply: true,
@@ -125,13 +129,14 @@ SpectralWorkbench.UI.ToolPaneTypes = {
         start = tmp;
       }
       form.formEl.show();
-      graph.datum.addTag('range:'+ start + '-' + end);
+      form.graph.datum.addTag('range:'+ start + '-' + end);
     }
   },
 
 
   smooth: {
     title: "Smoothing",
+    dataType: "any",
     description: "Enter a number of points ahead and behind of a given point to average, in order to smooth the graph. Note that this is <b>not</b> time-averaging, and can suppress small spectral features.",
     apply: true,
     author: "warren",
@@ -144,10 +149,10 @@ SpectralWorkbench.UI.ToolPaneTypes = {
     },
     onApply: function(form) {
 
-      graph.datum.addTag('smooth:' + form.el.find('.distance').val());
+      form.graph.datum.addTag('smooth:' + form.el.find('.distance').val());
 
-      graph.reload();
-      graph.refresh();
+      form.graph.reload();
+      form.graph.refresh();
 
     }
   },
@@ -155,6 +160,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
 
   crossSection: {
     title: "Choose cross section",
+    dataType: "spectrum",
     description: "Click the image to choose which row of pixels from the source image is used to generate your graph line.",
     apply: true,
     author: "warren",
@@ -166,7 +172,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
 
       form.customFormEl.html("<p>Click the spectrum image or enter a row number:</p><input class='cross-section' type='text' />");
 
-      graph.image.click(function(x, y) {
+      form.graph.image.click(function(x, y) {
 
         form.el.find('.cross-section').val(y);
 
@@ -174,10 +180,10 @@ SpectralWorkbench.UI.ToolPaneTypes = {
     },
     onApply: function(form) {
 
-      graph.datum.imgToJSON(+$('.cross-section').val());
-      graph.datum.load();
-      graph.reload();
-      graph.refresh();
+      form.graph.datum.imgToJSON(+$('.cross-section').val());
+      form.graph.datum.load();
+      form.graph.reload();
+      form.graph.refresh();
       alert('Now, calibrate your spectrum to save this cross section.');
 
     }
@@ -186,6 +192,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
 
   calibrate2: {
     title: "Wavelength calibration",
+    dataType: "spectrum",
     description: "Follow the prompts to wavelength calibrate a fluorescent spectrum.",
     author: "warren",
     apply: true,
@@ -212,6 +219,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
       $('.calibration-pane').html(pane);
 
       $('.calibration-pane .slider').css('margin-top', -24);
+      $('.slider').css('position', 'absolute');
 
       // resize image;
       // example snowsky.jpg is: (redo these at high resolution)
@@ -222,102 +230,105 @@ SpectralWorkbench.UI.ToolPaneTypes = {
       // 538 between blue and second green
       // blue to 2nd green is 0.29593 of total
 
-      // x1 and x2 are screen pixel locations starting from left edge of the image
+      // use autocalibration for first pass, 
+      // or, for now, existing calibration:
+      var _graph = form.graph,
+          extent = form.graph.extent;
+
+      /*
+
+        Mostly, we get pixel x,y data, and move the sliders and image accordingly,
+          then generate wavelengths for the inputs. 
+
+        Sometimes, we get wavelength inputs, find the pixel locations, and move the 
+          sliders and image accordingly, then display the wavelengths in the inputs. 
+
+        We should store the wavelength extents of the graph just once 
+         (although we could change this on resize) - in the Graph object. 
+
+      */
+      // x1 and x2 are displace space pixel values
       var calibrationResize = function(x1, x2) {
 
-        // can we just work as much as possible in data space, rather than in interface space?
-        x1 = +x1;
-        x2 = +x2;
-
+        // snap to nearest
         if ($('.calibration-pane input.checkbox-snap').prop('checked')) {
 
-          // convert to an x-position in the graphed data
-          var convertToDataSpace = function(xIn) {
+          // calculate their wavelength values 
+          // (fallback to data-space pixels, if uncalibrated)
+          var w1 = _graph.displayPxToNm(x1),
+              w2 = _graph.displayPxToNm(x2);
 
-            var sourceDataRange = graph.datum.average[graph.datum.average.length-1].x - graph.datum.average[0].x;
-
-            return graph.datum.average[0].x + (xIn / graph.imgContainer.width()) * sourceDataRange;
-
-          }
-
-          x1InSourceData = form.graph.datum.getNearbyPeak(convertToDataSpace(x1), 10);
-          x2InSourceData = form.graph.datum.getNearbyPeak(convertToDataSpace(x2), 10);
-
-          // convert back to an x-position in the 
-          var convertToDataSpace = function(xIn) {
-
-            var sourceDataRange = graph.datum.average[graph.datum.average.length-1].x - graph.datum.average[0].x;
-
-            return graph.datum.average[0].x + (xIn / graph.imgContainer.width()) * sourceDataRange;
-
-          }
-          
+          // may return data-space pixel values instead of wavelengths, if not calibrated:
+          x1 = _graph.nmToDisplayPx(_graph.datum.getNearbyPeak(w1, 10));
+          x2 = _graph.nmToDisplayPx(_graph.datum.getNearbyPeak(w2, 10));
 
         }
 
-        var margin = form.graph.margin.left, 
-            exampleWidth = parseInt((x2 - x1) / (538 / 1818)),
-            leftPad = (-parseInt((586 / 1818) * exampleWidth) + x1),
-            percent1 = x1 / form.graph.imgContainer.width(),
-            origImgLeft1 = form.graph.image.width * percent1,
-            percent2 = x2 / form.graph.imgContainer.width(),
-            origImgLeft2 = form.graph.image.width * percent2;
+        var margin = _graph.margin.left, 
+            // distance between blue2 and green2 in example spectrum image:
+            exampleImgWidth = parseInt((x2 - x1) / (538 / 1818)), // in display pixels
+            leftPad = (-parseInt((586 / 1818) * exampleImgWidth) + x1); // in display pixels
 
         $('.calibration-pane .example img').css('margin-left', leftPad);
-        $('.calibration-pane .example img').css('width', exampleWidth);
+        $('.calibration-pane .example img').css('width', exampleImgWidth);
 
-        // account for resizing of image!
-        $('.slider-1').css('left', margin + x1)
-        $('.slider-2').css('left', margin + x2)
+        $('.slider-1').css('left', parseInt(x1) + margin);
+        $('.slider-2').css('left', parseInt(x2) + margin);
 
-        $('.slider-1').attr('data-slider-index', 1);
-        $('.slider-2').attr('data-slider-index', 2);
+        // get source image pixel location, round to 2 decimal places:
+        ix1 = Math.round(_graph.displayPxToImagePx(x1) * 100) / 100;
+        ix2 = Math.round(_graph.displayPxToImagePx(x2) * 100) / 100;
+console.log(x1, x2)
 
-        // take into account range!
-        var px1 = Math.round(origImgLeft1 * 100) / 100; // pixels from left in original spectrum image
-        var px2 = Math.round(origImgLeft2 * 100) / 100;
-
-        if (form.graph.datum.getPowerTag('range') && form.graph.datum.getPowerTag('range').length > 0) {
-          var rangeOffset = form.graph.datum.nmToPx(+graph.datum.getPowerTag('range')[0].value.split('-')[0]);
-          px1 += rangeOffset;
-          px2 += rangeOffset;
-        }
-
-        $('.input-wavelength-1').val(px1);
-        $('.input-wavelength-2').val(px2);
+        // no, need to display image space pixel positions here
+        $('.input-wavelength-1').val(ix1);
+        $('.input-wavelength-2').val(ix2);
 
       }
 
       // https://en.wikipedia.org/wiki/File:Fluorescent_lighting_spectrum_peaks_labelled.gif
+      var blue2 = 436.6,
+          green2 = 546.5;
+
       $('.btn-save-calibrate-2').click(function() {
-        var blue = $('.input-wavelength-1').val(),
-            green2 = $('.input-wavelength-2').val();
-        graph.datum.calibrateAndUpload(436.6, 546.5, blue, green2); // using 2nd green
+
+        _graph.datum.calibrateAndUpload(
+          blue2, 
+          green2, 
+          $('.input-wavelength-1').val(), 
+          $('.input-wavelength-2').val()
+        ); 
+
       });
 
-      $('.slider').css('position', 'absolute');
+      // if these are outside the currently
+      // displayed range, limit them:
+      var limitRange = function(x) {
+        if (x > _graph.imgContainer.width()) x = _graph.imgContainer.width();
+        if (x < 0) x = 0;
+        return x;
+      }
 
-      // use autocalibration for first pass, 
-      // or, for now, existing calibration:
-      calibrationResize(436.6, 546.5);
+      calibrationResize(limitRange(_graph.nmToDisplayPx(blue2)),
+                        limitRange(_graph.nmToDisplayPx(green2)));
 
       var drag = d3.behavior.drag();
 
       drag.on('drag', function() { 
 
-        var margin = form.graph.margin.left, 
-            left = margin + d3.event.x,
-            index = $(this).attr('data-slider-index'),
-            input = $('.input-wavelength-' + index);
+        var margin = _graph.margin.left
+            x = limitRange(d3.event.x);
 
-        if (d3.event.x < 0) $(this).css('left', left);
-        else if (d3.event.x > form.graph.imgEl.width()) $(this).css('left', form.graph.imgEl.width());
-        else $(this).css('left', left);
+        // if these are outside the currently
+        // displayed range, limit them:
+        if (x > _graph.imgContainer.width()) x = _graph.imgContainer.width();
+        if (x < 0) x = 0;
 
-        calibrationResize(
-          +$('.slider-1').css('left').split('px')[0] - margin,
-          +$('.slider-2').css('left').split('px')[0] - margin
-        );
+        $(this).css('left', x + margin);
+        $(this).attr('data-pos', x);
+
+        calibrationResize(+$('.slider-1').attr('data-pos'), 
+                          +$('.slider-2').attr('data-pos'));
 
       });
 
@@ -329,6 +340,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
 
   calibrate: {
     title: "Wavelength calibration",
+    dataType: "spectrum",
     description: "Follow the prompts to wavelength calibrate a fluorescent spectrum.",
     author: "warren",
     apply: true,
@@ -352,19 +364,19 @@ SpectralWorkbench.UI.ToolPaneTypes = {
       // need a simple way to reset the toolPane content, like alert();
       alert('Start by clicking the middle blue line.');
 
-      graph.image.click(function(_x1, _y1) {
+      form.graph.image.click(function(_x1, _y1) {
 
         x1 = _x1;
 
-        graph.image.clickOff();
+        form.graph.image.clickOff();
   
         alert('Now, click the bright green line.');
   
-        graph.image.click(function(_x2, _y2) {
+        form.graph.image.click(function(_x2, _y2) {
 
           x2 = _x2;
 
-          graph.datum.calibrateAndUpload(w1, w2, x1, x2);
+          form.graph.datum.calibrateAndUpload(w1, w2, x1, x2);
 
           form.close();
   
@@ -379,6 +391,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
 
   compare: {
     title: "Compare",
+    dataType: "any",
     description: "Compare this spectrum to others in the graph above.",
     author: "warren",
     apply: false,
@@ -389,7 +402,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
       
 
     },
-    onSpectrumApply: function(form, graph) {
+    onSpectrumApply: function(form, _graph) {
 
       // provide better API for own-id:
       var id =     $(this).attr('data-id'),
@@ -410,15 +423,15 @@ SpectralWorkbench.UI.ToolPaneTypes = {
 
         compareEl.remove();
 
-        var combined = graph.datum.d3();
+        var combined = _graph.datum.d3();
 
         // get rid of self
-        graph.comparisons.forEach(function(datum){
-          if (datum.id != +$(this).attr('data-id')) graph.comparisons.splice(graph.comparisons.indexOf(datum), 1);
+        _graph.comparisons.forEach(function(datum){
+          if (datum.id != +$(this).attr('data-id')) _graph.comparisons.splice(_graph.comparisons.indexOf(datum), 1);
         });
 
         // re-assemble display data
-        graph.comparisons.forEach(function(comparison) {
+        _graph.comparisons.forEach(function(comparison) {
        
           comparison = comparison.d3()[0];
           comparison.color = "red";
@@ -426,16 +439,16 @@ SpectralWorkbench.UI.ToolPaneTypes = {
        
         });
 
-        graph.data.datum(combined, graph.idKey);
-        graph.refresh();
+        _graph.data.datum(combined, _graph.idKey);
+        _graph.refresh();
 
         $('li.comparisons a').tab('show');
 
       });
 
-      SpectralWorkbench.API.Core.fetch(graph, id, function(graph, data) {
+      SpectralWorkbench.API.Core.fetch(_graph, id, function(_graph, data) {
 
-        SpectralWorkbench.API.Core.compare(graph, data);
+        SpectralWorkbench.API.Core.compare(_graph, data);
 
       });
 
@@ -446,6 +459,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
 
   similar: {
     title: "Find Similar",
+    dataType: "spectrum",
     description: "Search the database for similar spectra.",
     author: "warren",
     apply: false,
@@ -456,7 +470,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
       
 
     },
-    onSpectrumApply: function(form, graph) {
+    onSpectrumApply: function(form, _graph) {
 
       // provide better API for own-id:
       var id =     $(this).attr('data-id'),
@@ -477,15 +491,15 @@ SpectralWorkbench.UI.ToolPaneTypes = {
 
         compareEl.remove();
 
-        var combined = graph.datum.d3();
+        var combined = _graph.datum.d3();
 
         // get rid of self
-        graph.comparisons.forEach(function(datum){
-          if (datum.id != +$(this).attr('data-id')) graph.comparisons.splice(graph.comparisons.indexOf(datum), 1);
+        _graph.comparisons.forEach(function(datum){
+          if (datum.id != +$(this).attr('data-id')) _graph.comparisons.splice(_graph.comparisons.indexOf(datum), 1);
         });
 
         // re-assemble display data
-        graph.comparisons.forEach(function(comparison) {
+        _graph.comparisons.forEach(function(comparison) {
        
           comparison = comparison.d3()[0];
           comparison.color = "red";
@@ -493,16 +507,16 @@ SpectralWorkbench.UI.ToolPaneTypes = {
        
         });
 
-        graph.data.datum(combined, graph.idKey);
-        graph.refresh();
+        _graph.data.datum(combined, _graph.idKey);
+        _graph.refresh();
 
         $('li.comparisons a').tab('show');
 
       });
 
-      SpectralWorkbench.API.Core.fetch(graph, id, function(graph, data) {
+      SpectralWorkbench.API.Core.fetch(_graph, id, function(_graph, data) {
 
-        SpectralWorkbench.API.Core.compare(graph, data);
+        SpectralWorkbench.API.Core.compare(_graph, data);
 
       });
 

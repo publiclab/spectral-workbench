@@ -65,6 +65,78 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
 
 
     /* ======================================
+     * Returns [min, max] x-axis extent of displayed data
+     * without wavelength range limiting
+     * in nanometers (or pixels if uncalibrated)
+     */
+    _spectrum.getFullExtentX = function() {
+
+      if (_spectrum.isCalibrated()) {
+
+        var start =  _spectrum.json.data.lines[0].wavelength;
+        var end =  _spectrum.json.data.lines[_spectrum.json.data.lines.length-1].wavelength;
+
+      } else {
+
+        var start =  _spectrum.json.data.lines[0].pixel;
+        var end =  _spectrum.json.data.lines[_spectrum.json.data.lines.length-1].pixel;
+
+      }
+
+      return [start, end];
+
+    }
+
+
+    /* ======================================
+     * Returns [min, max] x-axis extent of displayed data
+     * after any wavelength range limiting
+     * in nanometers (or pixels if uncalibrated)
+     */
+    _spectrum.getExtentX = function() {
+
+      return d3.extent(_spectrum.d3()[0].values, function(d){ return d.x; });
+
+    }
+
+
+    /* ======================================
+     * Returns [min, max] y-axis extent of displayed data
+     */
+    _spectrum.getExtentY = function() {
+
+      return d3.extent(_spectrum.d3()[0].values, function(d){ return d.y; });
+
+    }
+
+
+    /* ======================================
+     * Returns nearest point to <x> in data space
+     * in given <channel>; default channel is 'average'.
+     */
+    _spectrum.getNearestPoint = function(x, channel) {
+
+      channel = channel || "average";
+
+      var closest = null;
+
+      channel = _spectrum[channel].forEach(function(pixel) {
+
+        if (closest == null || Math.abs(pixel.x - x) < closest.dist) {
+
+          closest = pixel;
+          closest.dist = Math.abs(pixel.x - x);
+
+        }
+
+      });
+
+      return closest;
+
+    }
+
+
+    /* ======================================
      * Returns highest intensity wavelength (or pixel if uncalibrated) 
      * within <distance> pixels of <x>
      * in given <channel>; default channel is 'average'.
@@ -184,8 +256,9 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
 
 
     /* ======================================
-     * Converts a nanometer value to a pixel value
-     * from raw JSON data, disregarding range,
+     * Converts a nanometer value to a pixel x-value in the original image
+     * from raw JSON data, disregarding range, assuming that each
+     * spectrum.json.data.lines corresponds to a pixel in the original image,
      * (counting from left) if the current spectrum is calibrated
      */
     _spectrum.nmToPx = function(nm) {
@@ -212,7 +285,10 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
     /* ======================================
      * Converts a pixel value (counting from left) 
      * from raw JSON data, disregarding range, to a nanometer 
-     * value if the current spectrum is calibrated
+     * value if the current spectrum is calibrated.
+     * Result may not correspond to a specific point of data, but use
+     * spectrum.getNearestPoint() if needed.
+     * Returns false if not calibrated.
      */
     _spectrum.pxToNm = function(px) {
 

@@ -67,6 +67,44 @@ SpectralWorkbench.Set = SpectralWorkbench.Datum.extend({
     }
 
 
+    /* ======================================
+     * Returns [min, max] x-axis extent across all
+     * member spectra in wavelength nanometers,
+     * without applying wavelength range limits.
+     * This only returns calibrated spectra (for now).
+     */
+    set.getFullExtentX = function() {
+
+      return d3.extent(set.spectra.map(function(spectrum){ return spectrum.getFullExtentX(); }));
+
+    }
+
+
+    /* ======================================
+     * Returns [min, max] x-axis extent across all member spectra
+     * after applying wavelength range limits
+     */
+    set.getExtentX = function() {
+
+      return d3.extent(set.spectra.map(function(spectrum){ return spectrum.getExtentX(); }));
+
+    }
+
+
+    /* ======================================
+     * Returns [min, max] y-axis extent across all member spectra
+     */
+    set.getExtentY = function() {
+
+      return d3.extent(set.spectra.map(function(spectrum){ return spectrum.getExtentY(); }));
+
+    }
+
+
+    /* ======================================
+     * Returns array of overexposure assessments 
+     * (boolean) of member spectra
+     */
     set.getOverexposure = function() {
 
       var overexposure = [];
