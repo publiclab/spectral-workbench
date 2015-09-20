@@ -394,6 +394,7 @@ SpectralWorkbench.API.Core = {
 
 
   // autodetect calibration
+  // adapted from https://gist.github.com/Sreyanth/8dcb8343e4770cd9d301
   attemptCalibration: function(graph) {
 
     var findMax = function(data, channel, startIndex, endIndex) {

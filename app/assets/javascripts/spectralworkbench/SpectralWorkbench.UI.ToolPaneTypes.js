@@ -221,8 +221,13 @@ SpectralWorkbench.UI.ToolPaneTypes = {
       pane +=   "</span>";
       pane += "</p>";
       pane += "<div class='fit'></div>"; // to show how good the fit is
-      pane += "<div class='reference'><span class='btn btn-mini disabled slider slider-1'>B2</span><span class='btn btn-mini disabled slider slider-2'>G2</span></div>";
-      pane += "<div class='example' style='background:black;overflow:hidden;height:20px;'><img style='max-width:none;display:block;height:20px;' src='/images/snowsky.jpg' /></div>";
+      pane += "<div class='reference'>";
+      pane +=   "<span class='btn btn-mini disabled slider slider-1'>B2<div class='slider-marker' style='width: 1px; border-left-width: 1px; border-left-style: solid; border-left-color: red; height: 200px; position: absolute; margin-left: 3px;'></div></span>";
+      pane +=   "<span class='btn btn-mini disabled slider slider-2'>G2<div class='slider-marker' style='width: 1px; border-left-width: 1px; border-left-style: solid; border-left-color: red; height: 200px; position: absolute; margin-left: 3px;'></div></span>";
+      pane += "</div>";
+      pane += "<div class='example' style='background:black;overflow:hidden;height:20px;'><img style='max-width:none;display:block;height:20px;' src='/images/snowsky.jpg' />";
+      pane += " <p style='color: rgba(255, 255, 255, 0.701961); text-align: right; margin-top: -19px; font-size: 10px; padding: 1px 4px;'>REFERENCE</p>";
+      pane += "</div>";
 
       $('.spectrum-img-container').prepend('<div class="calibration-pane"></div>');
       $('.calibration-pane').html(pane);
