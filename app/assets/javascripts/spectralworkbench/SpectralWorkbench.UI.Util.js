@@ -7,7 +7,7 @@ SpectralWorkbench.UI.Util = Class.extend({
     // Initialize tools buttons
     $('.tool-transform').click(        function() { new SpectralWorkbench.UI.ToolPane('transform', _graph); });
     $('.tool-range').click(            function() { new SpectralWorkbench.UI.ToolPane('range', _graph); });
-    $('.tool-calibrate').click(        function() { new SpectralWorkbench.UI.ToolPane('calibrate', _graph); });
+    $('.tool-calibrate').click(        function() { new SpectralWorkbench.UI.ToolPane('calibrate2', _graph); });
     $('.tool-cross-section').click(    function() { new SpectralWorkbench.UI.ToolPane('crossSection', _graph); });
     $('.tool-smooth').click(           function() { new SpectralWorkbench.UI.ToolPane('smooth', _graph); });
     $('.tool-similar').click(          function() { new SpectralWorkbench.UI.ToolPane('similar', _graph); });

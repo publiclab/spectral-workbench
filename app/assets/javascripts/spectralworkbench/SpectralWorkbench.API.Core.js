@@ -434,34 +434,78 @@ SpectralWorkbench.API.Core = {
   },
 
 
+  /* find all major troughs and peaks in ref,
+   * where troughs are midpoints of troughs 
+   * (since they should have flat floors)
+   * find corresponding ones for spectrum, 
+   * normalize min/max of both,
+   * RMSE them
+   */
+  calibrationFitRmse: function() {
+  },
+
+
   // We compare the ratios of peak distances to 
   // see if it is a good fit based on what they *should* be
+  // Accepts any unit, as it works on ratios
   calibrationFit: function(r,g,b) {
 
     var gb_diff = g - b;
     var rg_diff = r - g;
     var rb_diff = r - b;
-  
-    var allowedError = 5;
-    
-    var diff_rat = (gb_diff/111) - (rg_diff/65);
+
+    /*
+    The ratio of peaks should be as follows:
+
+    |-------B-----------G-------R---------|
+                1.707   :   1
+    */
     
     var gbrg = gb_diff / rg_diff;
-    var diff = gbrg - 1.707;
+    var diff = gbrg - 1.707; // diff should therefore = 0
     
     console.log("GB/RG ratio:" + gbrg);
     console.log("Expected ratio: 1.707");
     console.log("Diff in these ratios:" + diff);
-    console.log("Diff in GB/111 and RG/65:" + diff_rat);
     
-    var percentageError = diff * 100 / 1.707;
+    var percentageError = diff * 100 / 1.707; // percentage away from expected
     
     console.log("percentage error in GB/RG ratio: " + percentageError + " %");
+  
+    var allowedError = 5;
+
     console.log("Allowed percentage is: " + allowedError + " %");
-    
     console.log("Expected to be a CFL?: " + (percentageError < allowedError && percentageError > -1 * allowedError));
 
     return percentageError;
+
+  },
+
+
+  /* 
+   * Given a blue 2 and green 2 peak source image pixel position,
+   * and a spectrum to compare against, look 
+   * for an expected red peak and reply with a "score"
+   * for how good the calibration is based on the expected 
+   * ratio of (G-B):(R-G) = 1.707:1
+   * <g> and <b> are x-coordinates in data space.
+   * Returns distance in nanometer wavelength using provided b + g,
+   * where 0 indicates a perfect fit. 
+   * The ratio of peaks should be as follows:
+   * 
+   *  |-------B-----------G-------R---------|
+   *              1.707   :   1
+   * 
+   * But, we should recalculate the 1.707 using a really good spectrum from NIST.
+   */
+  calibrationFitGB: function(b, g, spectrum) {
+
+    var bg2gr = 1.707, // expected ratio
+        gb_diff = g - b,
+        expected_r = g + (gb_diff / bg2gr), // estimate where the r peak should be
+        found_r = spectrum.getNearbyPeak(expected_r, 5); // look around nearby for an actual peak
+
+    return found_r - expected_r;
 
   },
 

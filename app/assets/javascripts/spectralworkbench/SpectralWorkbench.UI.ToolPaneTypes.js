@@ -216,14 +216,14 @@ SpectralWorkbench.UI.ToolPaneTypes = {
       pane +=     "<input id='checkbox-snap' type='checkbox' class='checkbox-snap' checked='true' /> <label for='checkbox-snap'>Snap</label> ";
       pane +=     "<input type='text' class='input-wavelength-1 input-mini' /> ";
       pane +=     "<input type='text' class='input-wavelength-2 input-mini' /> ";
-      pane +=     "<a class='btn btn-auto-calibrate'>Auto-calibrate</a>";
+      pane +=     "<a class='btn btn-auto-calibrate'>Auto-calibrate</a> ";
       pane +=     "<a class='btn btn-primary btn-save-calibrate-2'>Save</a>";
       pane +=   "</span>";
       pane += "</p>";
-      pane += "<div class='fit'></div>"; // to show how good the fit is
+      pane += "<div class='fit pull-right label label-success' style='margin-top:-23px'></div>"; // to show how good the fit is
       pane += "<div class='reference'>";
-      pane +=   "<span class='btn btn-mini disabled slider slider-1'>B2<div class='slider-marker' style='width: 1px; border-left-width: 1px; border-left-style: solid; border-left-color: red; height: 200px; position: absolute; margin-left: 3px;'></div></span>";
-      pane +=   "<span class='btn btn-mini disabled slider slider-2'>G2<div class='slider-marker' style='width: 1px; border-left-width: 1px; border-left-style: solid; border-left-color: red; height: 200px; position: absolute; margin-left: 3px;'></div></span>";
+      pane +=   "<span class='btn btn-mini disabled slider slider-1' style='background:#00f;color:white;'>B2<div class='slider-marker' style='width: 1px; border-left-width: 1px; border-left-style: solid; border-left-color: red; height: 200px; position: absolute; margin-left: 3px;'></div></span>";
+      pane +=   "<span class='btn btn-mini disabled slider slider-2' style='background:#0a0;color:white;'>G2<div class='slider-marker' style='width: 1px; border-left-width: 1px; border-left-style: solid; border-left-color: red; height: 200px; position: absolute; margin-left: 3px;'></div></span>";
       pane += "</div>";
       pane += "<div class='example' style='background:black;overflow:hidden;height:20px;'><img style='max-width:none;display:block;height:20px;' src='/images/snowsky.jpg' />";
       pane += " <p style='color: rgba(255, 255, 255, 0.701961); text-align: right; margin-top: -19px; font-size: 10px; padding: 1px 4px;'>REFERENCE</p>";
@@ -274,19 +274,36 @@ SpectralWorkbench.UI.ToolPaneTypes = {
       // x1 and x2 are displace space pixel values
       var calibrationResize = function(x1, x2) {
 
+        // calculate their wavelength values 
+        // (fallback to data-space pixels, if uncalibrated)
+        var w1 = _graph.displayPxToNm(x1),
+            w2 = _graph.displayPxToNm(x2);
+
         // snap to nearest
         if ($('.calibration-pane input.checkbox-snap').prop('checked')) {
 
-          // calculate their wavelength values 
-          // (fallback to data-space pixels, if uncalibrated)
-          var w1 = _graph.displayPxToNm(x1),
-              w2 = _graph.displayPxToNm(x2);
+          // snap to nearest peak
+          w1 = _graph.datum.getNearbyPeak(w1, 10);
+          w2 = _graph.datum.getNearbyPeak(w2, 10);
 
           // may return data-space pixel values instead of wavelengths, if not calibrated:
-          x1 = _graph.nmToDisplayPx(_graph.datum.getNearbyPeak(w1, 10));
-          x2 = _graph.nmToDisplayPx(_graph.datum.getNearbyPeak(w2, 10));
+          x1 = _graph.nmToDisplayPx(w1);
+          x2 = _graph.nmToDisplayPx(w2);
 
         }
+
+        var nm_error = parseInt(SpectralWorkbench.API.Core.calibrationFitGB(w1, w2, _graph.datum) * 100) / 100;
+
+        $('.calibration-pane .fit').html('FIT: ' + nm_error + 'nm')
+                                   .removeClass('label-success')    // green
+                                   .removeClass('label-warning')    // yellow
+                                   .removeClass('label-important'); //red
+
+        // color fitness indicator: 1 = green, 3 = yellow, worse = red
+        if      (Math.abs(nm_error) < 1) $('.calibration-pane .fit').addClass('label-success');
+        else if (Math.abs(nm_error) < 3) $('.calibration-pane .fit').addClass('label-warning');
+        else                             $('.calibration-pane .fit').addClass('label-important');
+
 
         var margin = _graph.margin.left, 
             // distance between blue2 and green2 in example spectrum image:
@@ -346,6 +363,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
       if (_graph.datum.isCalibrated()) {
 
 // This is wrong; show the native calibration
+  // or is it OK, because it uses the graph to find blue2 and green2?
 // also, isCalibrated() doesn't read current data, just saved data
         calibrationResize(limitRange(_graph.nmToDisplayPx(blue2)),
                           limitRange(_graph.nmToDisplayPx(green2)));
@@ -355,6 +373,13 @@ SpectralWorkbench.UI.ToolPaneTypes = {
         attemptCalibration();
 
       }
+
+      $('.input-wavelength-1', '.input-wavelength-2').change(function() {
+        calibrationResize(
+          $('.input-wavelength-1').val(), 
+          $('.input-wavelength-2').val()
+        );
+      });
 
       var drag = d3.behavior.drag();
 
