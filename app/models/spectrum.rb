@@ -203,7 +203,7 @@ class Spectrum < ActiveRecord::Base
   end
 
   # clones calibration from another spectrum (preferably taken from the same device)
-  def clone(clone_id)
+  def clone_calibration(clone_id)
     clone_source = Spectrum.find clone_id
     d = ActiveSupport::JSON.decode(self.clean_json)
     cd = ActiveSupport::JSON.decode(clone_source.clean_json)

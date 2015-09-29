@@ -2,9 +2,6 @@
 require 'will_paginate/array'
 
 class CaptureController < ApplicationController
-  #protect_from_forgery :only => [:clone, :extract, :calibrate]
-  # http://api.rubyonrails.org/classes/ActionController/RequestForgeryProtection/ClassMethods.html
-  # we no longer use recaptcha; start requiring auth token: 
   skip_before_filter :verify_authenticity_token
 
   before_filter :require_login, :except => [:index, :recent_calibrations]
@@ -68,7 +65,7 @@ class CaptureController < ApplicationController
 
       # clone calibration? Do it based on a tag.
       # But can we clone all tags, and normalization, and sample row?
-      @spectrum.clone(params[:spectrum][:calibration_id]) if params[:clone]
+      @spectrum.clone_calibration(params[:spectrum][:calibration_id]) if params[:clone]
       @spectrum.tag("calibration:#{params[:spectrum][:calibration_id]}", current_user.id) if params[:clone]
 
       @spectrum.tag("video_row:#{params[:video_row]}", current_user.id) if params[:video_row]

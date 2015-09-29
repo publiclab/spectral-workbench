@@ -2,9 +2,9 @@ require 'will_paginate/array'
 class SpectrumsController < ApplicationController
   respond_to :html, :xml, :js, :csv, :json
   # expand this:
-  protect_from_forgery :only => [:clone, :extract, :calibrate, :save]
+  protect_from_forgery :only => [:clone_calibration, :extract, :calibrate, :save]
   # http://api.rubyonrails.org/classes/ActionController/RequestForgeryProtection/ClassMethods.html
-  before_filter :require_login,     :only => [ :new, :edit, :create, :upload, :save, :update, :destroy, :calibrate, :extract, :clone, :setsamplerow, :find_brightest_row, :rotate, :reverse, :choose ]
+  before_filter :require_login,     :only => [ :new, :edit, :create, :upload, :save, :update, :destroy, :calibrate, :extract, :clone_calibration, :clone, :setsamplerow, :find_brightest_row, :rotate, :reverse, :choose ]
 
   def stats
   end
@@ -192,7 +192,7 @@ class SpectrumsController < ApplicationController
           @spectrum.extract_data
 
           if params[:spectrum][:calibration_id] && !params[:is_calibration] && params[:spectrum][:calibration_id] != "calibration" && params[:spectrum][:calibration_id] != "undefined"
-            @spectrum.clone(params[:spectrum][:calibration_id])
+            @spectrum.clone_calibration(params[:spectrum][:calibration_id])
             @spectrum.tag("calibration:#{params[:spectrum][:calibration_id]}", current_user.id)
           end
 
@@ -312,16 +312,32 @@ class SpectrumsController < ApplicationController
     redirect_to spectrum_path(@spectrum)
   end
 
-  # Copy calibration from an existing calibrated spectrum.
-  # Start doing this client side!
   def clone
     @spectrum = Spectrum.find(params[:id])
-    @cloneSpectrum = Spectrum.find(params[:clone_id])
+    @new = @spectrum.dup
+    @new.author = current_user.login
+    @new.user_id = current_user.id
+    @new.photo = @spectrum.photo
+    @new.save!
+    @new.tag("cloneOf:#{@spectrum.id}", current_user.id)
+    # now copy over all tags:
+    @spectrum.tags.each do |tag|
+      @new.tag(tag.name, tag.user_id) unless tag.name.split(':').first == "cloneOf"
+    end
+    flash[:notice] = "You successfully cloned <a href='#{spectrum_path(@spectrum)}'>Spectrum ##{@spectrum.id}</a>"
+    redirect_to spectrum_path(@new)
+  end
+
+  # Copy calibration from an existing calibrated spectrum.
+  # Start doing this client side!
+  def clone_calibration
+    @spectrum = Spectrum.find(params[:id])
+    @calibration_clone_source = Spectrum.find(params[:clone_id])
     require_ownership(@spectrum)
-    @spectrum.clone(@cloneSpectrum.id)
+    @spectrum.clone_calibration(@calibration_clone_source.id)
     @spectrum.save
     @spectrum.remove_powertags('calibration')
-    @spectrum.tag("calibration:#{@cloneSpectrum.id}", current_user.id)
+    @spectrum.tag("calibration:#{@calibration_clone_source.id}", current_user.id)
     
     respond_with(@spectrums) do |format|
       format.html {
@@ -382,7 +398,7 @@ class SpectrumsController < ApplicationController
     require_ownership(@spectrum)
     @spectrum.sample_row = @spectrum.find_brightest_row
     @spectrum.extract_data
-    @spectrum.clone(@spectrum.id) # recover calibration
+    @spectrum.clone_calibration(@spectrum.id) # recover calibration
     @spectrum.save
     flash[:warning] = "If this spectrum image is not perfectly vertical, you may need to recalibrate after <a href='//publiclab.org/wiki/spectral-workbench-calibration#Cross+section'>setting a new cross-section</a>."
     redirect_to spectrum_path(@spectrum)
@@ -394,7 +410,7 @@ class SpectrumsController < ApplicationController
     require_ownership(@spectrum)
     @spectrum.rotate
     @spectrum.extract_data
-    @spectrum.clone(@spectrum.id)
+    @spectrum.clone_calibration(@spectrum.id)
     @spectrum.save
     redirect_to spectrum_path(@spectrum)
   end
@@ -410,6 +426,7 @@ class SpectrumsController < ApplicationController
     redirect_to spectrum_path(@spectrum)
   end
 
+  # search for calibrations to clone from
   def clone_search
     @spectrum = Spectrum.find(params[:id])
     @calibrations = Spectrum.where(calibrated: true)
