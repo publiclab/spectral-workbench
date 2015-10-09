@@ -13,11 +13,11 @@ SpectralWorkbench.UI.SpectraPane = SpectralWorkbench.UI.ToolPane.extend({
 
     // unhide the SpectraPane related stuff. 
     // We should just construct it here.
-    console.log(form.searchEl);//        = form.el.find('form input.input-choose-spectrum');
-    console.log(form.el.find('results'));//        = form.el.find('form input.input-choose-spectrum');
 
+    //$('.datum-tool-pane .search, .datum-tool-pane .results').show()
     form.searchEl.show();//        = form.el.find('form input.input-choose-spectrum');
-    form.el.find('results').show();//        = form.el.find('form input.input-choose-spectrum');
+    form.el.find('.search').show();//        = form.el.find('form input.input-choose-spectrum');
+    form.el.find('.results').show();//        = form.el.find('form input.input-choose-spectrum');
 
     // hook up "apply" buttons in spectrum choice search results
     var connectResults = function(result) {

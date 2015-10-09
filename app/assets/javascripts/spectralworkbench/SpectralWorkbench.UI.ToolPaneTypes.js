@@ -507,6 +507,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
         _graph.data.datum(combined, _graph.idKey);
         _graph.refresh();
 
+        // this isn't working...
         $('li.comparisons a').tab('show');
 
       });
