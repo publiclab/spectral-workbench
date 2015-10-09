@@ -393,55 +393,51 @@ SpectralWorkbench.API.Core = {
   },
 
 
+  // find highest peak in given channel "r", "g", "b", 
+  // in given range (if any), with a min. 
+  // required intensity of 5
+  // <data> is an instance of spectrum.json.data.lines, like:
+  // SpectralWorkbench.API.Core.findMax(graph.datum.json.data.lines, 'b');
+  // returns an index; this is a pixel position
+  findMax: function(data, channel, startIndex, endIndex) {
+
+    var max = { index: 0, 
+                value: 0 },
+        min_required_intensity = 5;
+
+    startIndex = startIndex || 0;
+    endIndex = endIndex || data.length-1;
+
+    data.slice(startIndex, endIndex).forEach(function(line, index){
+
+      if (line[channel] > max.value && line[channel] > min_required_intensity) {
+        max.index = index + startIndex;
+        max.value = line[channel];
+      }
+
+    });
+
+    return max;
+
+  },
+
+
   // autodetect calibration
   // adapted from https://gist.github.com/Sreyanth/8dcb8343e4770cd9d301
   attemptCalibration: function(graph) {
 
-    var findMax = function(data, channel, startIndex, endIndex) {
-  
-      var max = { index: 0, 
-                  value: 0 },
-          min_required_intensity = 5;
-
-      startIndex = startIndex || 0;
-      endIndex = endIndex || data.length-1;
-
-      data.slice(startIndex, endIndex).forEach(function(line, index){
-
-        if (line[channel] > max.value && line[channel] > min_required_intensity) {
-          max.index = index + startIndex;
-          max.value = line[channel];
-        }
-
-      });
-
-      return max;
-
-    }
-
-    var green = findMax(graph.datum.json.data.lines, 'b');
-    var red   = findMax(graph.datum.json.data.lines, 'r', green.index + 50);
+    var green = SpectralWorkbench.API.Core.findMax(graph.datum.json.data.lines, 'g');
+    var red   = SpectralWorkbench.API.Core.findMax(graph.datum.json.data.lines, 'r', green.index + 50);
 
       var estimated_blue_peak = green.index - 1.707 * (red.index - green.index);
       var blueSearchDistance = 5;
 
-    var blue  = findMax(graph.datum.json.data.lines, 'g', estimated_blue_peak - blueSearchDistance, estimated_blue_peak + blueSearchDistance);
+    var blue  = SpectralWorkbench.API.Core.findMax(graph.datum.json.data.lines, 'b', estimated_blue_peak - blueSearchDistance, estimated_blue_peak + blueSearchDistance);
 
     return [ red.index,
              green.index,
              blue.index ];
 
-  },
-
-
-  /* find all major troughs and peaks in ref,
-   * where troughs are midpoints of troughs 
-   * (since they should have flat floors)
-   * find corresponding ones for spectrum, 
-   * normalize min/max of both,
-   * RMSE them
-   */
-  calibrationFitRmse: function() {
   },
 
 
@@ -506,6 +502,113 @@ SpectralWorkbench.API.Core = {
         found_r = spectrum.getNearbyPeak(expected_r, 5); // look around nearby for an actual peak
 
     return found_r - expected_r;
+
+  },
+
+
+  /* 
+   * Assesses calibration accuracy by comparison to a well-established reference.
+   * Essentially, we're asking: with this spectrum, 
+   * if it were calibrated with w1, w2, x1, x2, 
+   * would it match our best known CFL spectrum?
+   * 
+   * Using the method:
+   * 1. find all major troughs and peaks in ref,
+   *    where troughs are midpoints of troughs 
+   *    (since they should have flat floors)
+   *    find corresponding ones for spectrum, 
+   * 3. equalize max heights,
+   * 4. RMSE them & return error
+   * 
+   * Wavelengths sourced from NIST & Wikipedia's Ocean Optics reference: 
+   * http://publiclab.org/notes/warren/09-30-2015/new-wavelength-calibration-procedure-preview-for-spectral-workbench-2-0#c12626
+   * Intensities sourced from reference spectrum: 
+   * http://publiclab.org/notes/warren/09-30-2015/new-wavelength-calibration-procedure-preview-for-spectral-workbench-2-0#c12620
+   */
+  rmseCalibration: function(spectrum, w1, w2, x1, x2) {
+
+    // points as [wavelength, intensity], where intensity is out of 255
+    // 
+    // values are stretched such that they have the same range of intensities, 0-1.00
+    // Indented values are troughs -- midpoint between the known peaks
+    var points = [
+          [404.66,   4],
+                        [420.245,  0],
+          [435.83,  86],
+                        [461.765,  0],
+          [487.70,  64],
+                        [515.6,    0],
+          [543.50, 117],
+                        [544.785, 87],
+          [546.07,  93],
+                        [561.535,  8],
+          [577.00,   6],
+                        [578.05,  75],
+          [579.10,  15],
+                        [583.35,  48],
+          [587.60,  58],
+                        [590.3,   29],
+          [593.00,  50],
+                        [595.5,   31],
+          [598.00,  23],
+                        [604.8,   17],
+          [611.60, 155],
+                        [620.8,   24],
+          [630.00,  41],
+                        [640,      3],
+          [650.00,  16],
+                        [655.5,    1],
+          [661.00,   7]
+        ],
+        max = 155,
+        max2 = 0,
+        error = 0;
+
+
+    // PROBLEM: we would Spectrum.getIntensity, but we want
+    // only a temp calibration, so we can evaluate it before
+    // committing. So we build our own little tools:
+
+    var tempCalibration = spectrum.calibrate(w1, w2, x1, x2); // returns a temp spectrum.json.data.lines
+
+    // create a custom intensity getter for not-yet-saved calibrations.
+    var getIntensity = function(wavelength) {
+
+      var nmPerPx         = (tempCalibration[tempCalibration.length-1].wavelength - tempCalibration[0].wavelength) / tempCalibration.length,
+          startWavelength = tempCalibration[0].wavelength,
+          index = parseInt((wavelength - startWavelength) / nmPerPx); // each index should be contents of 1 pixel
+
+      if (tempCalibration[index]) return tempCalibration[index].average; // if this index exists
+      else return 0; // or it doesn't
+
+    }
+
+
+    points.forEach(function(point, index) {
+
+      // add it as a third array index
+      point.push(getIntensity(point[0]));
+
+      if (max2 < point[2]) max2 = point[2];
+
+    });
+
+//console.log('max2',max2)
+
+    points.forEach(function(point, index) {
+
+//console.log( parseInt(point[0]), parseInt((10*point[2]/max2 - 10*point[1]/max)/10), point[2], point[1] );
+
+      // adjust for max intensity of each spectrum
+      error += Math.pow(   10 * point[2] / max2
+                         - 10 * point[1] / max, 2) / 10; // percentages greater than 1 so squaring exaggerates rather than minimizes error
+
+      //error += Math.pow(   10*point[2]/max2
+      //                   - 10*point[1]/max, 2) / 10;
+
+    });
+
+    return error;
 
   },
 

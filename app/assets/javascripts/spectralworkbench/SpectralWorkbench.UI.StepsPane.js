@@ -1,7 +1,7 @@
 /*
  * A ToolPane type that displays a list of spectra and a spectrum search interface
  */
-SpectralWorkbench.UI.SpectraPane = SpectralWorkbench.UI.ToolPane.extend({
+SpectralWorkbench.UI.StepsPane = SpectralWorkbench.UI.ToolPane.extend({
 
   init: function(toolType, _graph, selector) {
 
