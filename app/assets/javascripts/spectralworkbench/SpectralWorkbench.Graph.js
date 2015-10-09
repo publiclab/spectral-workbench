@@ -94,6 +94,21 @@ SpectralWorkbench.Graph = Class.extend({
 
 
     /* ======================================
+     * Converts an x-coordinate pixel value from image space 
+     * to a display space pixel value
+     */
+    _graph.imagePxToDisplayPx = function(x) {
+
+      // what proportion of the full image is being displayed?
+      var proportion = x / _graph.image.width, // x position as a percent of original image
+          proportionDisplayed = (_graph.extent[1] -_graph.extent[0]) / (_graph.fullExtent[1] - _graph.fullExtent[0]); // account for out-of-range parts of image
+
+      return proportion * (_graph.width / proportionDisplayed);
+
+    }
+
+
+    /* ======================================
      * Converts an x-coordinate pixel value from display space 
      * to an image space pixel value
      */

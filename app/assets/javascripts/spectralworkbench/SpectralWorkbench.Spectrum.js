@@ -30,9 +30,9 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
 
         _spectrum.average.push({ y: parseInt(line.average / 2.55)/100, x: x })
 
-        if (line.r != null) _spectrum.red.push(    { y: parseInt(line.r       / 2.55)/100,       x: x })
-        if (line.g != null) _spectrum.green.push(  { y: parseInt(line.g       / 2.55)/100,       x: x })
-        if (line.b != null) _spectrum.blue.push(   { y: parseInt(line.b       / 2.55)/100,       x: x })
+        if (line.r != null) _spectrum.red.push(  { y: parseInt(line.r / 2.55)/100, x: x })
+        if (line.g != null) _spectrum.green.push({ y: parseInt(line.g / 2.55)/100, x: x })
+        if (line.b != null) _spectrum.blue.push( { y: parseInt(line.b / 2.55)/100, x: x })
      
       });
 
@@ -213,7 +213,7 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
      */
     _spectrum.calibrateAndUpload = function(w1, w2, x1, x2) {
 
-      _spectrum.calibrate(w1, w2, x1, x2);
+      _spectrum.json.data.lines = _spectrum.calibrate(w1, w2, x1, x2);
 
       _spectrum.graph.datum.load()
       _spectrum.graph.reload()
@@ -229,7 +229,7 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
 
         if (_spectrum.getTag('calibration') == false) _spectrum.addTag('calibration');
 
-        SpectralWorkbench.API.Core.notify("Your new calibration has been saved.", "warning");
+        SpectralWorkbench.API.Core.notify("Your new calibration has been saved.", "success");
 
       });
 
@@ -237,23 +237,31 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
 
 
     /* ======================================
-     * Linear calibrates on the client side; then uploads and tags
+     * Linear calibrates on the client side, but doesn't save;
+     * returns a new set of lines which can be used to overwrite
+     * spectrum.json.data.lines.
      * w1 and w2 are nanometer wavelength values, and x1 and x2 are 
-     * corresponding pixel positions, measured from left
+     * corresponding pixel positions, measured from left.
      */
     _spectrum.calibrate = function(w1, w2, x1, x2) {
 
-      var i = 0,
-          lines = _spectrum.json.data.lines,
-          stepsize = (w2 - w1) / (x2 - x1),
-          startwavelength = w1 - (stepsize * x1);
+      var stepsize = (w2 - w1) / (x2 - x1),
+          startwavelength = w1 - (stepsize * x1),
+          output = [];
 
-      lines.forEach(function(line) {
+      _spectrum.json.data.lines.forEach(function(line, i) {
 
-        line.wavelength = +(startwavelength + i * stepsize).toPrecision(_spectrum.sigDigits);
-        i += 1;
+        output.push({
+          'average': line.average,
+          'r': line.r,
+          'g': line.g,
+          'b': line.b,
+          'wavelength': +(startwavelength + (i * stepsize)).toPrecision(_spectrum.sigDigits)
+        });
 
       });
+
+      return output;
 
     }
 

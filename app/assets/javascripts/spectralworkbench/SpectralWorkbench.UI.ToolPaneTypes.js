@@ -206,26 +206,37 @@ SpectralWorkbench.UI.ToolPaneTypes = {
     apply: true,
     setup: function(form) {
 
+      var blue2 = 435.83,
+          green2 = 546.07,
+          left2blue = 211,
+          blue2green = 743-211,
+          exampleImgWidth = 1390;
+
+      // Using reference image from 
+      // http://publiclab.org/notes/warren/09-30-2015/new-wavelength-calibration-procedure-preview-for-spectral-workbench-2-0
+      // I read the blue ~436 peak at 211px from left, 
+      // and the green ~546 peak at 742px from left
+
       var pane = "";
 
       pane += "<p class='prompt form-inline' style='padding-bottom:30px;'>";
       pane +=   "<b>Calibrate:</b> ";
-      pane +=   "Adjust sliders &amp; align the reference spectrum to yours. ";
+      pane +=   "<span class='hidden-phone'>Adjust sliders &amp; align the reference spectrum to yours.</span> ";
       pane +=   "<a href='//publiclab.org/wiki/spectral-workbench-calibration'>Learn more &raquo;</a> ";
       pane +=   "<span class='calibration-form pull-right'> ";
-      pane +=     "<input id='checkbox-snap' type='checkbox' class='checkbox-snap' checked='true' /> <label for='checkbox-snap'>Snap</label> ";
+      pane +=     "<input id='checkbox-snap' type='checkbox' class='checkbox-snap' checked='true' /> <label tooltip='Snap to nearest peak' for='checkbox-snap'>Snap</label> ";
       pane +=     "<input type='text' class='input-wavelength-1 input-mini' /> ";
       pane +=     "<input type='text' class='input-wavelength-2 input-mini' /> ";
       pane +=     "<a class='btn btn-auto-calibrate'>Auto-calibrate</a> ";
       pane +=     "<a class='btn btn-primary btn-save-calibrate-2'>Save</a>";
       pane +=   "</span>";
       pane += "</p>";
-      pane += "<div class='fit pull-right label label-success' style='margin-top:-23px'></div>"; // to show how good the fit is
+      pane += "<div class='fit-container'><div class='fit pull-right label label-success' style='margin-top:-23px'></div></div>"; // to show how good the fit is
       pane += "<div class='reference'>";
       pane +=   "<span class='btn btn-mini disabled slider slider-1' style='background:#00f;color:white;'>B2<div class='slider-marker' style='width: 1px; border-left-width: 1px; border-left-style: solid; border-left-color: red; height: 200px; position: absolute; margin-left: 3px;'></div></span>";
       pane +=   "<span class='btn btn-mini disabled slider slider-2' style='background:#0a0;color:white;'>G2<div class='slider-marker' style='width: 1px; border-left-width: 1px; border-left-style: solid; border-left-color: red; height: 200px; position: absolute; margin-left: 3px;'></div></span>";
       pane += "</div>";
-      pane += "<div class='example' style='background:black;overflow:hidden;height:20px;'><img style='max-width:none;display:block;height:20px;' src='/images/snowsky.jpg' />";
+      pane += "<div class='example' style='background:black;overflow:hidden;height:20px;'><img style='max-width:none;display:block;height:20px;' src='/images/snowsky-corrected.jpg' />";
       pane += " <p style='color: rgba(255, 255, 255, 0.701961); text-align: right; margin-top: -19px; font-size: 10px; padding: 1px 4px;'>REFERENCE</p>";
       pane += "</div>";
 
@@ -235,15 +246,6 @@ SpectralWorkbench.UI.ToolPaneTypes = {
       $('.calibration-pane .slider').css('margin-top', -24);
       $('.slider').css('position', 'absolute');
 
-      // resize image;
-      // example snowsky.jpg is: (redo these at high resolution)
-      // 1818 total width
-      // 586 to blue from left
-      // 1102 to first green
-      // 1123 to second green
-      // 538 between blue and second green
-      // blue to 2nd green is 0.29593 of total
-
       // use autocalibration for first pass, 
       // or, for now, existing calibration:
       var _graph = form.graph,
@@ -251,7 +253,8 @@ SpectralWorkbench.UI.ToolPaneTypes = {
 
       attemptCalibration = function() {
 
-        var auto_cal = SpectralWorkbench.API.Core.attemptCalibration(_graph),
+        var auto_cal = SpectralWorkbench.API.Core.attemptCalibration(_graph), // [r,g,b]
+            // convert to display space from image space:
             blue2guess  = _graph.imgContainer.width() * (auto_cal[2] / _graph.image.width),
             green2guess = _graph.imgContainer.width() * (auto_cal[1] / _graph.image.width);
 
@@ -271,7 +274,8 @@ SpectralWorkbench.UI.ToolPaneTypes = {
          (although we could change this on resize) - in the Graph object. 
 
       */
-      // x1 and x2 are displace space pixel values
+
+      // x1 and x2 are display space space pixel values
       var calibrationResize = function(x1, x2) {
 
         // calculate their wavelength values 
@@ -292,26 +296,13 @@ SpectralWorkbench.UI.ToolPaneTypes = {
 
         }
 
-        var nm_error = parseInt(SpectralWorkbench.API.Core.calibrationFitGB(w1, w2, _graph.datum) * 100) / 100;
-
-        $('.calibration-pane .fit').html('FIT: ' + nm_error + 'nm')
-                                   .removeClass('label-success')    // green
-                                   .removeClass('label-warning')    // yellow
-                                   .removeClass('label-important'); //red
-
-        // color fitness indicator: 1 = green, 3 = yellow, worse = red
-        if      (Math.abs(nm_error) < 1) $('.calibration-pane .fit').addClass('label-success');
-        else if (Math.abs(nm_error) < 3) $('.calibration-pane .fit').addClass('label-warning');
-        else                             $('.calibration-pane .fit').addClass('label-important');
-
-
         var margin = _graph.margin.left, 
             // distance between blue2 and green2 in example spectrum image:
-            exampleImgWidth = parseInt((x2 - x1) / (538 / 1818)), // in display pixels
-            leftPad = (-parseInt((586 / 1818) * exampleImgWidth) + x1); // in display pixels
+            exampleImgBlue2Green = parseInt((x2 - x1) / (blue2green / exampleImgWidth)), // in display pixels
+            leftPad = (-parseInt((left2blue / exampleImgWidth) * exampleImgBlue2Green) + x1); // in display pixels
 
         $('.calibration-pane .example img').css('margin-left', leftPad);
-        $('.calibration-pane .example img').css('width', exampleImgWidth);
+        $('.calibration-pane .example img').css('width', exampleImgBlue2Green);
 
         $('.slider-1').css('left', parseInt(x1) + margin);
         $('.slider-2').css('left', parseInt(x2) + margin);
@@ -323,15 +314,22 @@ SpectralWorkbench.UI.ToolPaneTypes = {
         ix1 = Math.round(_graph.displayPxToImagePx(x1) * 100) / 100;
         ix2 = Math.round(_graph.displayPxToImagePx(x2) * 100) / 100;
 
-        // no, need to display image space pixel positions here
+        var error = parseInt(SpectralWorkbench.API.Core.rmseCalibration(_graph.datum, blue2, green2, ix1, ix2));
+
+        $('.calibration-pane .fit').html('Fit: ' + error)
+                                   .removeClass('label-success')    // green
+                                   .removeClass('label-warning')    // yellow
+                                   .removeClass('label-important'); //red
+
+        // color fitness indicator: 1 = green, 3 = yellow, worse = red
+        if      (Math.abs(error) < 15) $('.calibration-pane .fit').addClass('label-success');
+        else if (Math.abs(error) < 28) $('.calibration-pane .fit').addClass('label-warning');
+        else                             $('.calibration-pane .fit').addClass('label-important');
+
         $('.input-wavelength-1').val(ix1);
         $('.input-wavelength-2').val(ix2);
 
       }
-
-      // https://en.wikipedia.org/wiki/File:Fluorescent_lighting_spectrum_peaks_labelled.gif
-      var blue2 = 436.6,
-          green2 = 546.5;
 
       $('.btn-auto-calibrate').click(function() {
 
@@ -360,11 +358,9 @@ SpectralWorkbench.UI.ToolPaneTypes = {
         return x;
       }
 
+      // note: isCalibrated() doesn't read current data, just saved data
       if (_graph.datum.isCalibrated()) {
 
-// This is wrong; show the native calibration
-  // or is it OK, because it uses the graph to find blue2 and green2?
-// also, isCalibrated() doesn't read current data, just saved data
         calibrationResize(limitRange(_graph.nmToDisplayPx(blue2)),
                           limitRange(_graph.nmToDisplayPx(green2)));
 
@@ -374,10 +370,10 @@ SpectralWorkbench.UI.ToolPaneTypes = {
 
       }
 
-      $('.input-wavelength-1', '.input-wavelength-2').change(function() {
+      $('.input-wavelength-1, .input-wavelength-2').change(function() {
         calibrationResize(
-          $('.input-wavelength-1').val(), 
-          $('.input-wavelength-2').val()
+          _graph.imagePxToDisplayPx($('.input-wavelength-1').val()), 
+          _graph.imagePxToDisplayPx($('.input-wavelength-2').val())
         );
       });
 
@@ -511,6 +507,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
         _graph.data.datum(combined, _graph.idKey);
         _graph.refresh();
 
+        // this isn't working...
         $('li.comparisons a').tab('show');
 
       });
