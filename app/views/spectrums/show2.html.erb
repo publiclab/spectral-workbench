@@ -34,7 +34,7 @@
           <div class="span4">
   
             <div class="btn-group">
-  
+
               <%= render partial: "likes/buttons", locals: { datum: @spectrum } %>
   
             </div>
@@ -47,6 +47,8 @@
               </div>
   
             <% end %>
+
+            <p style="margin-top:10px;color:#888;"><i>Uploaded on <%= @spectrum.created_at.to_s(:long) %></i></p>
 
             <hr />
   
