@@ -517,8 +517,10 @@ SpectralWorkbench.API.Core = {
    *    where troughs are midpoints of troughs 
    *    (since they should have flat floors)
    *    find corresponding ones for spectrum, 
-   * 3. equalize max heights,
-   * 4. RMSE them & return error
+   * 2. measure heights of peaks above the average of their neighboring troughs (local heights)
+   * 3. do same for reference,
+   * 3. scale to max global heights of spectrum and reference, respectively,
+   * 4. RMSE the local heights & return error
    * 
    * Wavelengths sourced from NIST & Wikipedia's Ocean Optics reference: 
    * http://publiclab.org/notes/warren/09-30-2015/new-wavelength-calibration-procedure-preview-for-spectral-workbench-2-0#c12626
@@ -533,34 +535,36 @@ SpectralWorkbench.API.Core = {
     // Indented values are troughs -- midpoint between the known peaks
     var points = [
           [404.66,   4],
-                        [420.245,  0],
           [435.83,  86],
-                        [461.765,  0],
           [487.70,  64],
-                        [515.6,    0],
           [543.50, 117],
-                        [544.785, 87],
           [546.07,  93],
-                        [561.535,  8],
           [577.00,   6],
-                        [578.05,  75],
           [579.10,  15],
-                        [583.35,  48],
           [587.60,  58],
-                        [590.3,   29],
           [593.00,  50],
-                        [595.5,   31],
           [598.00,  23],
-                        [604.8,   17],
           [611.60, 155],
-                        [620.8,   24],
           [630.00,  41],
-                        [640,      3],
           [650.00,  16],
-                        [655.5,    1],
           [661.00,   7]
         ],
-        max = 155,
+        troughs = [
+          [420.245,  0],
+          [461.765,  0],
+          [515.6,    0],
+          [544.785, 87],
+          [561.535,  8],
+          [578.05,  75],
+          [583.35,  48],
+          [590.3,   29],
+          [595.5,   31],
+          [604.8,   17],
+          [620.8,   24],
+          [640,      3],
+          [655.5,    1]
+        ],
+        max = 155 - (17+24)/2, // local max
         max2 = 0,
         error = 0;
 
@@ -583,32 +587,41 @@ SpectralWorkbench.API.Core = {
 
     }
 
+    var localBaseline;
 
+    // calculate local baseline, store in points[3], save max2
     points.forEach(function(point, index) {
 
       // add it as a third array index
       point.push(getIntensity(point[0]));
 
-      if (max2 < point[2]) max2 = point[2];
+      if (index > 0 && troughs[index]) { 
+        localBaseline = (troughs[index - 1][1] + troughs[index][1]) / 2;
+        var localBaseline2 = (getIntensity(troughs[index - 1][0]) + getIntensity(troughs[index][0])) / 2;
+      } else if (index > 0) {
+        localBaseline = (0 + troughs[index - 1][1]) / 2;
+        var localBaseline2 = (0 + getIntensity(troughs[index - 1][0])) / 2;
+      } else {
+        localBaseline = (0 + troughs[index][1]) / 2;
+        var localBaseline2 = (0 + getIntensity(troughs[index][0])) / 2;
+      }
+
+      point.push(localBaseline2);
+
+      if (max2 < (point[2] - localBaseline2)) max2 = point[2] - localBaseline2;
 
     });
-
-//console.log('max2',max2)
 
     points.forEach(function(point, index) {
 
-//console.log( parseInt(point[0]), parseInt((10*point[2]/max2 - 10*point[1]/max)/10), point[2], point[1] );
 
-      // adjust for max intensity of each spectrum
-      error += Math.pow(   10 * point[2] / max2
-                         - 10 * point[1] / max, 2) / 10; // percentages greater than 1 so squaring exaggerates rather than minimizes error
-
-      //error += Math.pow(   10*point[2]/max2
-      //                   - 10*point[1]/max, 2) / 10;
+      // adjust for max intensity of each spectrum; compare to average of 2 neighboring troughs
+      error += Math.pow(   10 * ((point[2] - point[3]) / max2)
+                         - 10 * ((point[1] - localBaseline) / max), 2); // percentages greater than 1 so squaring exaggerates rather than minimizes error
 
     });
 
-    return error;
+    return Math.sqrt(error);
 
   },
 

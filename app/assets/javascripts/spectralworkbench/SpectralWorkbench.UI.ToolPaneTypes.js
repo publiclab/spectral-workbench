@@ -322,8 +322,8 @@ SpectralWorkbench.UI.ToolPaneTypes = {
                                    .removeClass('label-important'); //red
 
         // color fitness indicator: 1 = green, 3 = yellow, worse = red
-        if      (Math.abs(error) < 15) $('.calibration-pane .fit').addClass('label-success');
-        else if (Math.abs(error) < 28) $('.calibration-pane .fit').addClass('label-warning');
+        if      (Math.abs(error) < 12) $('.calibration-pane .fit').addClass('label-success');
+        else if (Math.abs(error) < 16) $('.calibration-pane .fit').addClass('label-warning');
         else                             $('.calibration-pane .fit').addClass('label-important');
 
         $('.input-wavelength-1').val(ix1);
