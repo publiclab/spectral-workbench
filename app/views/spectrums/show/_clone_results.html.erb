@@ -17,7 +17,7 @@ $('#clone_btn_<%= spectrum.id %>').click(function() {
     	i.value = "<%= form_authenticity_token %>"
     	$('#clone<%= spectrum.id %>form').append(i);
     f.method = 'POST';
-    f.action = "/spectrums/clone/<%= @spectrum.id %>?clone_id=<%= spectrum.id %>"
+    f.action = "/spectrums/clone_calibration/<%= @spectrum.id %>?clone_id=<%= spectrum.id %>"
     f.submit();
 })
 

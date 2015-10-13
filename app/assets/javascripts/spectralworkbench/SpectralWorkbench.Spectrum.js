@@ -376,8 +376,8 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
 
 
     /* ======================================
-     * Upload a new json string to the server, overwriting the original. 
-     * Not recommended without cloning! But recoverable from original image.
+     * Fetch data to populate self, from server, using spectrum.id.
+     * Overwrites spectrum.json and runs spectrum.load().
      */
     _spectrum.fetch = function(url, callback) {
 
