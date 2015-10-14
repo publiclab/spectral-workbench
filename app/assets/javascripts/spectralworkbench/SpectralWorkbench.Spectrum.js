@@ -438,10 +438,10 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
 
  
     /* ======================================
-     * Inspects all channell recursively for sequential
+     * Inspects all channels recursively for sequential
      * pixels of 100%, which would indicate overexposure. Returns
      * whether it passed the threshold and the last inspected index.
-     * <threshold> is how many pixels of consecutive 100% triggers an overexposure warning
+     * <threshold> is how bright a pixel must be to trigger an overexposure warning (0-255)
      * <consecutive> is how many pixels of consecutive 100% triggers an overexposure warning
      */
     _spectrum.getOverexposure = function(threshold, consecutive) {
