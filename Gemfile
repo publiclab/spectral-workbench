@@ -53,6 +53,7 @@ group :development, :test do
 end
 
 gem 'jasmine', :group => [:development, :test]
+gem 'jasmine-jquery-rails', :group => [:development, :test]
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'

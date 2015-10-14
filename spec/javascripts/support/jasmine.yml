@@ -15,6 +15,7 @@ src_files:
   - assets/analyze.js
   - assets/application.js
   - assets/spectralworkbench/SpectralWorkbench.js
+  - assets/jasmine-jquery.js
 
 # stylesheets
 #

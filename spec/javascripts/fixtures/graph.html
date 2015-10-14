@@ -1,0 +1,25 @@
+<div class="spectrum-img-container">
+  <img class="spectrum" src="/system/photos/1/large/spectrum.png" />
+</div>
+
+<div id="graphing" class="spectrums">
+
+  <div id="graph">
+    <div class="zoom"><a onClick="graph.zoom();" class="btn-zoom"><i class="icon icon-zoom-in"></i></a></div>
+    <i class="icon icon-spinner icon-spin"></i>
+  </div>
+
+  <script type="text/javascript">
+ 
+    var graph; // for debugging, and currently, some ToolPane calls :-(
+    jQuery(document).ready(function($) {
+      graph = new SpectralWorkbench.Graph({
+        spectrum_id: 1,
+        calibrated: false,
+        range: false
+      });
+    })
+ 
+  </script>
+
+</div>
