@@ -16,6 +16,7 @@ src_files:
   - assets/application.js
   - assets/spectralworkbench/SpectralWorkbench.js
   - assets/jasmine-jquery.js
+  - assets/jasmine-ajax/lib/mock-ajax.js
 
 # stylesheets
 #

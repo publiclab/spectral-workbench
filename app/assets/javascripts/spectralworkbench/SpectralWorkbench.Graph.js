@@ -7,6 +7,8 @@ SpectralWorkbench.Graph = Class.extend({
     var _graph = this;
 
     this.args = args;
+    this.loaded = false; // measure initial load completion
+    this.onComplete = args['onComplete'] || function() { console.log('graph load complete'); };
     this.width = 600;
     this.zooming = false;
     this.embed = args['embed'] || false;
@@ -74,23 +76,6 @@ SpectralWorkbench.Graph = Class.extend({
       _graph.updateSize()();
 
     }
-
-
-    /* ======================================
-     * Accepts nanometer wavelength <nm> 
-     * returns an x-coordinate in the source image space.
-     */
-/*
-    // this is redundant (although simpler than) spectrum.nmToPx()
-    _graph.nmToImagePx = function(nm) {
-
-      var extentWidth = _graph.extent[1] - _graph.extent[0],
-          proportion = ((nm - _graph.extent[0]) / extentWidth);
-
-      return proportion * _graph.image.width;
-
-    }
-*/
 
 
     /* ======================================
@@ -299,7 +284,10 @@ SpectralWorkbench.Graph = Class.extend({
  
       // actually add it to the display
       nv.addGraph(_graph.chart);
- 
+
+      _graph.loaded = true;
+      _graph.onComplete(true);
+
     }
 
 

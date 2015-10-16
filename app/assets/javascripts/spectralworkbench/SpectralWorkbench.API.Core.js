@@ -56,6 +56,8 @@ SpectralWorkbench.API.Core = {
   },
 
 
+
+/*
   // linear calibrate using pixel positions <x1> and <x2>, to known wavelengths <w1> <w2>
   // and optional callback(response)
   calibrate: function(id, x1, w1, x2, w2, callback) {
@@ -82,6 +84,7 @@ SpectralWorkbench.API.Core = {
     });
 
   },
+*/
 
 
   // clone calibration from spectrum of id <from_id> to spectrum of id <to_id>
