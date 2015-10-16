@@ -57,12 +57,19 @@ describe("Graph", function() {
 
   });
 
-  it("is not undefined when initialized with range", function() {
+  var callback;
+
+  it("is not undefined when initialized with range", function(done) {
+
+    callback = jasmine.createSpy('success');
 
     graph = new SpectralWorkbench.Graph({
       spectrum_id: 9,
       calibrated: true,
-      range: [400, 800]
+      range: [400, 800],
+      onComplete: callback,
+      onImageComplete: function() { done(); } // fires when graph.image is loaded, so that later tests can run
+
     });
 
     expect(graph).toBeDefined();
@@ -72,14 +79,6 @@ describe("Graph", function() {
 
   it("fires onComplete event when done initializing", function() {
 
-    var callback = jasmine.createSpy('success');
-
-    graph = new SpectralWorkbench.Graph({
-      spectrum_id: 9,
-      calibrated: true,
-      onComplete: callback 
-    });
-
     expect(callback).toHaveBeenCalled();
     expect(callback).toHaveBeenCalledWith(true);
     expect(callback).not.toHaveBeenCalledWith(false);
@@ -87,8 +86,6 @@ describe("Graph", function() {
   });
 
   it("is has basic initialized attributes and methods", function() {
-
-    graph = new SpectralWorkbench.Graph({ spectrum_id: 9 });
 
     expect(graph.dataType).toBe('spectrum');
     expect(graph.asdgasj).not.toBeDefined(); // counter test
@@ -104,8 +101,69 @@ describe("Graph", function() {
     expect(graph.imgEl.html()).toBeDefined();
     expect(graph.svg).toBeDefined();
 
-      //graph.tagForm instanceof SpectralWorkbench.UI.TagForm); 
-      //graph.chart
+    expect(graph.svg).toBeDefined();
+    expect(graph.tagForm instanceof SpectralWorkbench.UI.TagForm).toBe(true); 
+
+  });
+
+  it("width and image not to be undefined", function() {
+
+    expect(graph.width).toBeDefined();
+    expect(graph.extent).toBeDefined();
+    expect(graph.fullExtent).toBeDefined();
+    expect(graph.image).toBeDefined();
+
+    expect(graph.image.width).toBeDefined();
+
+  });
+
+  it("imagePxToDisplayPx() converts an x-coordinate pixel value from image space to a display space pixel value", function() {
+
+    expect(graph.imagePxToDisplayPx(500)).toBe(551.25);
+
+  });
+
+  it("displayPxToImagePx() converts an x-coordinate pixel value from display space to an image space pixel value", function() {
+
+    expect(graph.displayPxToImagePx(500)).toBe(453.51473922902494);
+
+  });
+
+  it("displayPxToNm() accepts x-coordinate in display space as shown on page & returns wavelength in nanometers", function() {
+
+    // Unlike datum.pxToNm, does not rely on an image or its dimensions.
+    expect(graph.displayPxToNm(500)).toBe(659.9234671201814);
+
+  });
+
+  it("nmToDisplayPx() accepts wavelength in nanometers & returns x-coordinate in display space as shown on page", function() {
+
+    expect(graph.nmToDisplayPx(500)).toBe(295.4076718226018);
+
+  });
+
+  it("pxToNm() accepts x,y in graph UI pixel space, returns {x: x, y: y} in data space in nanometers", function() {
+
+    /*
+     * (or pixels if uncalibrated) -- note that
+     * that point may not exist in datum, but you can use
+     * datum.getNearestPoint(x) to find something close.
+     * Pass false for x or y to convert only one coordinate.
+     */
+    expect(graph.pxToNm(500)).toEqual({ x: 659.9234671201814, y: false });
+
+  });
+
+  it("getSpectrumById() only works for sets", function() {
+
+    expect(graph.getSpectrumById(9)).not.toBeDefined();
+
+  });
+
+
+
+
+    // test these too: 
 
     /* ======================================
      * Refresh datum into DOM in d3 syntax
@@ -119,40 +177,6 @@ describe("Graph", function() {
      */
 //    graph.refresh = function() {
     
-    /* ======================================
-     * Converts an x-coordinate pixel value from image space 
-     * to a display space pixel value
-     */
-//    graph.imagePxToDisplayPx = function(x) {
-
-    /* ======================================
-     * Converts an x-coordinate pixel value from display space 
-     * to an image space pixel value
-     */
-//    graph.displayPxToImagePx = function(x) {
-
-    /* ======================================
-     * Accepts x-coordinate in display space as shown 
-     * on page & returns wavelength in nanometers.
-     * Unlike datum.pxToNm, does not rely on an image or its dimensions.
-     */
-//    graph.displayPxToNm = function(x) {
-
-    /* ======================================
-     * Accepts wavelength in nanometers & returns
-     * x-coordinate in display space as shown on page.
-     */
-//    graph.nmToDisplayPx = function(nm) {
-
-    /* ======================================
-     * Accepts x,y in graph UI pixel space, returns
-     * {x: x, y: y} in data space in nanometers
-     * (or pixels if uncalibrated) -- note that
-     * that point may not exist in datum, but you can use
-     * datum.getNearestPoint(x) to find something close.
-     * Pass false for x or y to convert only one coordinate.
-     */
-//    graph.pxToNm = function(x, y) {
 
 //    graph.updateSize()();
 
@@ -170,19 +194,9 @@ describe("Graph", function() {
     // graph.toggleUnits()
 
     /* ======================================
-     * Gets a spectrum object by its <id> if it exists in this graph.
-     * Maybe we should have a fetchSpectrum which can get them remotely, too?
-     */
-//    graph.getSpectrumById = function(id) {
-
-    /* ======================================
      * set up initial d3 graph using nvd3 template
      */
 //    graph.graphSetup: function() {
-
-
-  });
-
 
 });
 

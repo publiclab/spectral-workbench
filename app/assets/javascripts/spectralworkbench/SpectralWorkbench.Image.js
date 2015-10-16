@@ -1,11 +1,13 @@
 SpectralWorkbench.Image = Class.extend({
 
-  init: function(element, _graph) {
+  init: function(element, _graph, callback) {
 
     var image = this;
 
     image.imgEl = element;
     image.imgObj = new Image();
+
+    image.callback = callback;
 
     image.imgObj.onload = function() {
 
@@ -21,6 +23,8 @@ SpectralWorkbench.Image = Class.extend({
       image.ctx.canvas.width = image.width;
       image.ctx.canvas.height = image.height;
       image.ctx.drawImage(image.imgObj, 0, 0, image.width, image.height);
+
+      image.callback(); // since image loading is asynchronous
 
     }
 

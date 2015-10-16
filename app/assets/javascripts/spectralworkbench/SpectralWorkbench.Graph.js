@@ -9,6 +9,7 @@ SpectralWorkbench.Graph = Class.extend({
     this.args = args;
     this.loaded = false; // measure initial load completion
     this.onComplete = args['onComplete'] || function() { console.log('graph load complete'); };
+    this.onImageComplete = args['onImageComplete'] || function() { console.log('image load complete'); };
     this.width = 600;
     this.zooming = false;
     this.embed = args['embed'] || false;
@@ -30,7 +31,7 @@ SpectralWorkbench.Graph = Class.extend({
 
       // Create a canvas element to manipulate image data. 
       // We could have this non-initialized at boot, and only create it if asked to.
-      this.image = new SpectralWorkbench.Image(this.imgEl, this);
+      this.image = new SpectralWorkbench.Image(this.imgEl, this, this.onImageComplete);
 
     } else if (this.args.hasOwnProperty('set_id')) {
 

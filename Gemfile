@@ -54,6 +54,8 @@ end
 
 gem 'jasmine', :group => [:development, :test]
 gem 'jasmine-jquery-rails', :group => [:development, :test]
+# this doesn't seem to work; maybe it's an old version? Trying Bower
+#gem 'jasmine-ajax', :group => [:development, :test]
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
