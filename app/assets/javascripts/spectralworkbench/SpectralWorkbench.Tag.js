@@ -2,6 +2,7 @@ SpectralWorkbench.Tag = Class.extend({
 
   // <json> is a JSON obj of the tag as received from the server; 
   // if this doesn't exist, it's a new tag
+  // <callback> will be called as callback(tag, ajaxResponse)
   init: function(datum, name, json, callback) {
 
     var _tag = this;
@@ -22,8 +23,7 @@ SpectralWorkbench.Tag = Class.extend({
       _tag.powertag = true;
       _tag.key = _tag.name.split(':')[0];
       _tag.value = _tag.name.split(':')[1];
-    }
-
+    } else _tag.powertag = false;
 
     _tag.startSpinner = function() {
 
@@ -43,7 +43,7 @@ SpectralWorkbench.Tag = Class.extend({
 
 
     // if new, send tag to server
-    _tag.upload = function() {
+    _tag.upload = function(callback) {
 
       // this gets messy, but whatever
       _tag.startSpinner();
@@ -78,20 +78,22 @@ SpectralWorkbench.Tag = Class.extend({
         },
  
         success: function(response) {
- 
+
           _tag.stopSpinner();
 
           // remove grey out of graph after load
           _tag.datum.graph.opacity(1);
 
           if (response['saved'] && response['saved'].length > 0) {
+
             _tag.id = response['saved'][0][1]; // this is kinda illegible
 
             // render them!
             _tag.render();
 
             // from init() call
-            if (callback) callback(response);
+            if (callback) callback(_tag, response);
+
           }
 
           if (response['errors'] && response['errors'].length > 0) {
@@ -118,9 +120,8 @@ SpectralWorkbench.Tag = Class.extend({
 
 
     // Delete it from the server, then from the DOM;
-    // this is not often used; data-remote=true and data-method=delete do a good job already
     _tag.destroy = function(callback) {
- 
+
       $.ajax({
         url: "/tags/" + _tag.id,
         type: "DELETE",
@@ -223,8 +224,10 @@ SpectralWorkbench.Tag = Class.extend({
     }
 
 
-    if (_tag.isNew) _tag.upload();
+    if (_tag.isNew) _tag.upload(callback);
     else _tag.render();
+
+    return _tag;
  
   }
 

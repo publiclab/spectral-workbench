@@ -36,16 +36,21 @@ SpectralWorkbench.Datum = Class.extend({
      */
     _datum.addTag = function(name, callback) {
 
-      _datum.tags.push(new SpectralWorkbench.Tag(_datum, name, false, callback));
+      var tag = new SpectralWorkbench.Tag(_datum, name, false, callback);
 
-      _datum.parseTag(_datum.tags[_datum.tags.length-1]);
+      _datum.tags.push(tag);
+
+      _datum.parseTag(tag);
+
+      return tag;
 
     }
 
 
     /* ======================================
-     * Cleanly remove a tag by name and refresh graph, and 
-     * execute callback() on completion if provided
+     * Cleanly removes tags with given name and refreshes graph, and 
+     * execute callback() on completion(s) if provided, because
+     * this is asynchronous! Callback is passed to .remove() which executes it.
      */
     _datum.removeTag = function(name, callback) {
 
@@ -53,8 +58,9 @@ SpectralWorkbench.Datum = Class.extend({
 
         if (tag.name == name) {
 
-          tag.destroy(); // if it affected the datum display, tags are flushed and reloaded
-          if (callback) callback(tag);
+          // if it affected the datum display, tags are flushed and reloaded
+          // -- and tag is removed from _datum.tags after roundtrip
+          tag.destroy(callback); 
 
         }
 

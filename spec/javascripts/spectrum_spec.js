@@ -1,4 +1,3 @@
-
 describe("Spectrum", function() {
 
   var data = getJSONFixture('spectrum.json')

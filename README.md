@@ -109,3 +109,11 @@ For questions related to the use of this software and your open source spectrome
 Development is occurring at https://github.com/publiclab/spectral-workbench/; please fork and submit pull requests; for more guidelines on contributing to Public Lab projects, see http://publiclab.org/wiki/contributing-to-public-lab-software
 
 If you're a developer, consider joining the Public Lab developer list, also at http://publiclab.org/wiki/developers
+
+###Testing
+
+Before submitting changes, please run tests with `rake test` to ensure that your code passes.
+
+Also run `rake jasmine` and navigate to http://localhost:8888 to check client-side tests.
+
+New tests are also appreciated to increase coverage; Rails tests are in /test and Jasmine tests (JavaScript tests) are in /spec.

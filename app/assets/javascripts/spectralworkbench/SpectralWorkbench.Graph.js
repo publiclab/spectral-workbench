@@ -390,9 +390,8 @@ SpectralWorkbench.Graph = Class.extend({
     _graph.graphSetup();
     _graph.eventSetup();
 
-    // Update the chart when window updates.
-    $(window).on('resize', _graph.updateSize());
-    // nv.utils.windowResize( this.updateSize.apply(this)); // this one didn't work - maybe it's only on resize of the svg element?
+    // Update the chart when DOM element resizes
+    $(_graph.selector).on('resize', _graph.updateSize());
 
   },
 
@@ -471,16 +470,19 @@ SpectralWorkbench.Graph = Class.extend({
 
 
   /* ======================================
-   * resize image and reset padding based on range and viewport width
-   * could break image out into SpectralWorkbench.Image.js...
+   * Resize image and reset padding based on range and viewport width.
+   * Note: accepts optional <newWidth> which is used in our Jasmine tests
+   * since this is based on assumption that the element we're calling .width() on is visible,
+   * which may not last in future jQuery versions: http://api.jquery.com/width/,
+   * and is not true during Jasmine testing.
    */
-  updateSize: function() {
+  updateSize: function(newWidth) {
 
     var _graph = this;
  
     return (function() { 
- 
-      _graph.width  = getUrlParameter('width')  || $(window).width() || _graph.width;
+
+      _graph.width  = newWidth || getUrlParameter('width')  || $(_graph.selector).width() || _graph.width;
  
       if (getUrlParameter('height')) {
  
@@ -488,8 +490,9 @@ SpectralWorkbench.Graph = Class.extend({
  
       } else {
  
-        if (($(window).height() < 450 && _graph.dataType == 'set') || 
-            ($(window).height() < 350 && _graph.dataType == 'spectrum')) { 
+        if (($(_graph.selector).height() < 450 && _graph.dataType == 'set') || 
+            ($(_graph.selector).height() < 350 && _graph.dataType == 'spectrum')) { 
+
           // compact
           _graph.height = 180;
           $('#embed').addClass('compact');
@@ -512,12 +515,12 @@ SpectralWorkbench.Graph = Class.extend({
                   - (_graph.embedmargin * 2);
 
       // smaller width style change
-      if ($(window).width() < 768) _graph.width -= 40;
+      if ($(_graph.selector).width() < 768) _graph.width -= 40;
 
       // make space for the zoom brushing pane
       if (_graph.zooming) _graph.height += 100;
 
-      $('#graph').height(_graph.height)
+      $(_graph.selector).height(_graph.height)
 
       var extra = 0;
       if (!_graph.embed) extra = 10;
@@ -578,7 +581,7 @@ SpectralWorkbench.Graph = Class.extend({
       // hide loading grey background
       _graph.el.css('background','white');
       _graph.el.find('.icon-spinner').remove();
- 
+
     });
   }
 
