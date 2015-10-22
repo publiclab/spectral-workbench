@@ -39,6 +39,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
     title: "Subtraction",
     dataType: "spectrum",
     description: "Subtract another calibrated spectrum from this one.",
+    link: "//publiclab.org/wiki/spectral-workbench-toolpanes#Subtraction",
     author: "warren",
     apply: false,
     formData: { own: true },
@@ -55,6 +56,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
     title: "Copy Calibration",
     dataType: "spectrum",
     description: "Use a calibrated spectrum to calibrate this one.",
+    link: "//publiclab.org/wiki/spectral-workbench-toolpanes#Copy+Calibration",
     author: "warren",
     apply: false,
     url: '/spectrums/choose/calibration', // default spectra to show, can use * and ?author=warren
@@ -77,6 +79,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
     title: "Transform",
     dataType: "any",
     description: "Apply a JavaScript math expression (such as 'R*G+B') to each point in the spectrum, using variables R for red, G, B, and A for average..",
+    link: "//publiclab.org/wiki/spectral-workbench-toolpanes#Transform",
     author: "warren",
     apply: true,
     setup: function(form) {
@@ -93,8 +96,8 @@ SpectralWorkbench.UI.ToolPaneTypes = {
       form.el.find('.expression input').focus();
 
     },
-    onApply: function(form) {
-      form.graph.datum.addTag('transform:'+form.el.find('.expression input').val())
+    onApply: function(form, callback) {
+      form.graph.datum.addTag('transform:'+form.el.find('.expression input').val(), callback)
       form.formEl.show();
     }
   },
@@ -104,6 +107,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
     title: "Range",
     dataType: "any",
     description: "Select a wavelength range; subsequent operations will only use this range.",
+    link: "//publiclab.org/wiki/spectral-workbench-toolpanes#Range",
     author: "warren",
     apply: true,
     setup: function(form) {
@@ -138,6 +142,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
     title: "Smoothing",
     dataType: "any",
     description: "Enter a number of points ahead and behind of a given point to average, in order to smooth the graph. Note that this is <b>not</b> time-averaging, and can suppress small spectral features.",
+    link: "//publiclab.org/wiki/spectral-workbench-toolpanes#Smooth",
     apply: true,
     author: "warren",
     setup: function(form) {
@@ -162,6 +167,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
     title: "Choose cross section",
     dataType: "spectrum",
     description: "Click the image to choose which row of pixels from the source image is used to generate your graph line.",
+    link: "//publiclab.org/wiki/spectral-workbench-toolpanes#Cross+Section",
     apply: true,
     author: "warren",
     setup: function(form) {
@@ -202,6 +208,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
     title: "Wavelength calibration",
     dataType: "spectrum",
     description: "Follow the prompts to wavelength calibrate a fluorescent spectrum.",
+    link: "//publiclab.org/wiki/spectral-workbench-toolpanes#Calibrate",
     author: "warren",
     apply: true,
     setup: function(form) {
@@ -407,6 +414,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
     title: "Wavelength calibration",
     dataType: "spectrum",
     description: "Follow the prompts to wavelength calibrate a fluorescent spectrum.",
+    link: "//publiclab.org/wiki/spectral-workbench-toolpanes#Calibrate",
     author: "warren",
     apply: true,
     setup: function(form) {
@@ -458,6 +466,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
     title: "Compare",
     dataType: "any",
     description: "Compare this spectrum to others in the graph above.",
+    link: "//publiclab.org/wiki/spectral-workbench-toolpanes#Compare",
     author: "warren",
     apply: false,
     url: '/spectrums/choose/all', // default spectra to show, can use * and ?author=warren
@@ -527,6 +536,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
     title: "Find Similar",
     dataType: "spectrum",
     description: "Search the database for similar spectra.",
+    link: "//publiclab.org/wiki/spectral-workbench-toolpanes#Find similar",
     author: "warren",
     apply: false,
     url: '/match/search/$ID?toolPane=true', // default spectra to show, can use * and ?author=warren

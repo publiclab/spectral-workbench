@@ -12,3 +12,95 @@
 
   </div>
 </div>
+
+<div class="notifications-container"></div>
+
+<div class="export">
+  <div class="svg"></div>
+</div>
+
+
+<p id="tags" class="tags">
+  <b>Tags:</b> 
+  <span class="list">
+    <span class="loading" style="color:#aaa">Loading...</span>
+  </span>
+</p>
+
+<form id="tag-form-9" class="form tag-form" action="/tags">
+  <input type="hidden" name="tag[spectrum_id]" value="9" />
+  <div class="control-group">
+    <div class="input-prepend">
+      <span class="add-on"><i class="icon-tags"></i></span>
+      <input class="name" name="tag[name]" type="text" class="span10" placeholder="soil, sunlight" data-provide="typeahead" data-source="['calibration','soil','']">
+    </div>
+  </div>
+</form>
+
+
+<div style="display:none;" class="datum-tool-pane span8">
+
+  <h3 class="title"></h3>
+
+  <p class="attribution">by <a class="author" href=""></a> | <a class="link" href="">Read more &raquo;</a></p>
+
+  <p class="description"></p>
+
+  <hr />
+
+  <div class="body">
+
+    <!-- much of this could be moved into SpectraPane -->
+    <div class="search" style="display:none;">
+      <form class="form-search">
+        <div class="pull-right">
+          <select name="own" class="select-author">
+            <option value="true" selected>Your spectra</option>
+            <option value="false">All spectra</option>
+          </select>
+        </div>
+        <input type="text" class="input-medium input-choose-spectrum" placeholder="tagnames">
+        <button type="submit" class="btn"><i class="icon icon-search"></i></button>
+      </form>
+    </div>
+    <!-- end -->
+
+    <div class="custom">
+    </div>
+ 
+    <div class="results" style="display:none;">
+    </div>
+
+  </div>
+
+  <hr />
+
+  <div class="actions">
+
+    <p>
+      <a class="cancel">cancel</a>
+      <button class="btn btn-primary btn-apply">Apply</button>
+    </p>
+
+  </div>
+
+</div>
+
+<div class="span8 macros-pane">
+
+  <h5>Operations</h5>
+
+  <p><a href="//publiclab.org/wiki/spectral-workbench-api#Powertags">Powertags</a> enable reversible modification of data -- they act like filters which process the data. The graph you see above represents the data <b>after</b> these operations have been run. Delete them to undo their effects, or to apply them in a new order.</p>
+
+  <table class="table operations">
+
+    <tr>
+      <th>Title</th>
+      <th>Date</th>
+      <th>Description</th>
+      <th>Tools</th>
+    </tr>
+
+  </table>
+
+</div>

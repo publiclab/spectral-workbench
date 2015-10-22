@@ -11,13 +11,17 @@ describe("Tag", function() {
 
     ajaxSpy = spyOn($, "ajax").and.callFake(function(object) {
 
-      // check this if you have trouble faking a server response: 
-      console.log('Faked response to:', object.url)
+      var response;
 
-      if      (object.url == '/spectrums/9.json') object.success(TestResponses.spectrum.success.responseText);
-      else if (object.url == '/spectrums/9/tags') object.success(TestResponses.tags.success.responseText);
-      else if (object.url == '/tags') object.success({'saved':[[1,1]]}); // && object.method == "PUT" // method doesn't work and isn't necessary as of yet
-      else if (object.url == '/tags/1') object.success('success'); // && object.method == "DELETE"
+      if      (object.url == '/spectrums/9.json') response = object.success(TestResponses.spectrum.success.responseText);
+      else if (object.url == '/spectrums/9/tags') response = object.success(TestResponses.tags.success.responseText);
+      else if (object.url == '/tags')             response = object.success({'saved':[[1,1]]}); // && object.method == "PUT" // method doesn't work and isn't necessary as of yet
+      else if (object.url == '/tags/1')           response = object.success('success'); // && object.method == "DELETE"
+      else response = 'none';
+
+      // check this if you have trouble faking a server response: 
+      if (response != 'none') console.log('Faked response to:', object.url)
+      else console.log('Failed to fake response to:', object.url)
 
     });
 

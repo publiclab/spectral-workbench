@@ -3,7 +3,7 @@ SpectralWorkbench.UI.ToolPane = Class.extend({
   form: {},
   spinner: "<i class='disabled icon icon-spinner icon-spin'></i>",
 
-  init: function(toolType, _graph, selector) {
+  init: function(toolType, _graph, selector, callback) {
 
     var _tool = this;
     var form = _tool.form;
@@ -13,6 +13,9 @@ SpectralWorkbench.UI.ToolPane = Class.extend({
 
     _tool.options.formData = _tool.options.formData || {};
     _tool.options.formData['not'] = _graph.datum.id;
+
+    // create basic toolpane in selector DOM el here:
+
 
     // some of these could be moved into SpectraPane subclass:
     form.graph           = _graph;
@@ -25,6 +28,7 @@ SpectralWorkbench.UI.ToolPane = Class.extend({
     form.searchEl        = form.el.find('form input.input-choose-spectrum');
     form.authorSelectEl  = form.el.find('form select.select-author');
     form.customFormEl    = form.el.find('.custom');
+    // spectrumApplyEl doesn't occur in every one
     form.spectrumApplyEl = form.el.find('.btn-spectrum-apply');
     form.applyEl         = form.el.find('.btn-apply');
     form.closeEl         = form.el.find('.actions .cancel');
@@ -50,6 +54,7 @@ SpectralWorkbench.UI.ToolPane = Class.extend({
     form.cleanUp();
     form.searchEl.focus(); // this may be overridden in _tool.options.setup()... how?
 
+    // these should be required
     if (_tool.options.title) form.titleEl.html(_tool.options.title);
     if (_tool.options.description) form.descriptionEl.html(_tool.options.description);
     if (_tool.options.author) form.authorEl.attr('href', '/profile/' + _tool.options.author).html(_tool.options.author);
@@ -74,6 +79,8 @@ SpectralWorkbench.UI.ToolPane = Class.extend({
     // open the pane
     $(_tool.selector).show();
     $('.macros-pane').hide();
+
+    return _tool;
 
   }
 

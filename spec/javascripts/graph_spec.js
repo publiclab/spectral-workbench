@@ -11,8 +11,15 @@ describe("Graph", function() {
 
     ajaxSpy = spyOn($, "ajax").and.callFake(function(object) {
 
-      if      (object.url == '/spectrums/9.json') object.success(TestResponses.spectrum.success.responseText);
-      else if (object.url == '/spectrums/9/tags') object.success(TestResponses.tags.success.responseText);
+      var response;
+
+      if      (object.url == '/spectrums/9.json') response = object.success(TestResponses.spectrum.success.responseText);
+      else if (object.url == '/spectrums/9/tags') response = object.success(TestResponses.tags.success.responseText);
+      else response = 'none';
+
+      // check this if you have trouble faking a server response: 
+      if (response != 'none') console.log('Faked response to:', object.url)
+      else console.log('Failed to fake response to:', object.url)
 
     });
 

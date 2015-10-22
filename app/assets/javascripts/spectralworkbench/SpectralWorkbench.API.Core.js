@@ -1,5 +1,6 @@
 SpectralWorkbench.API.Core = {
 
+
   // initiate a notification on the page, which fades after <expire> seconds, or doesn't if <expire> is not supplied
   // also returns the notification element
   notify: function(message, type, expire) {
@@ -39,6 +40,7 @@ SpectralWorkbench.API.Core = {
 
   },
 
+
   // does this really belong here? No. 
   initNotifications: function() {
 
@@ -47,44 +49,17 @@ SpectralWorkbench.API.Core = {
     
   },
 
+
+  /* let's put it in Spectrum?: */
   exportSVG: function(name) {
 
     var dataUrl = "data:image/svg+xml;utf8,"+$('#graph').html();
     $('.export .svg').attr('download', name+'.svg');
     $('.export .svg').attr('href', dataUrl);
 
-  },
-
-
-
-/*
-  // linear calibrate using pixel positions <x1> and <x2>, to known wavelengths <w1> <w2>
-  // and optional callback(response)
-  calibrate: function(id, x1, w1, x2, w2, callback) {
-
-    $.ajax({
-      url: "/spectra/calibrate/0.json", // ugly
-      type: "POST",
-
-      data: {
-        authenticity_token: $('meta[name=csrf-token]').attr('content'),
-        id: id,
-        x1: x1,
-        x2: x2,
-        w1: w1,
-        w2: x2
-      },
-
-      success: function(response) {
-
-        if (callback) callback(response);
-
-      }
-
-    });
+    return $('.export .svg');
 
   },
-*/
 
 
   // clone calibration from spectrum of id <from_id> to spectrum of id <to_id>
@@ -94,7 +69,7 @@ SpectralWorkbench.API.Core = {
     callback = callback || function(response) { SpectralWorkbench.API.Core.notify('Calibration cloned from spectrum #' + from_id); }
 
     $.ajax({
-      url: "/spectrums/clone/" + datum.id + ".json",
+      url: "/spectrums/clone_calibration/" + datum.id + ".json",
       type: "POST",
 
       data: {
@@ -106,7 +81,7 @@ SpectralWorkbench.API.Core = {
 
         // refresh data on client side
         datum.fetch();
-        
+
         callback(response);
 
       }
@@ -201,7 +176,7 @@ SpectralWorkbench.API.Core = {
 
 
   // fetch another spectrum, blend it with this one according to expression
-  blend: function(datum, spectrum_id, expression) {
+  blend: function(datum, spectrum_id, expression, callback) {
 
     var red     = datum.red,
         green   = datum.green,
@@ -211,39 +186,48 @@ SpectralWorkbench.API.Core = {
         blender;
 
     /* Fetch data */ 
-    d3.json(url, function(error, data) {
+    $.ajax({
+      url: url,
+      type: "GET",
+      dataType: "json",
+
+      success: function(data) {
  
-      blender = new SpectralWorkbench.Spectrum(data);
+        blender = new SpectralWorkbench.Spectrum(data);
+       
+        // we could parse this, actually...
+        eval('var blend = function(R1,G1,B1,A1,R2,G2,B2,A2,X,Y,P) { return ' + expression + '; }');
+      
+        average.forEach(function(P, i) { 
+      
+          if (red[i])   var R1 = +red[i].y;
+          else          var R1 = 0;
+          if (green[i]) var G1 = +green[i].y;
+          else          var G1 = 0;
+          if (blue[i])  var B1 = +blue[i].y;
+          else          var B1 = 0;
+      
+          var A1 = +average[i].y,
+              X = +average[i].x,
+              Y = +average[i].y;
+      
+          var R2 = +blender.getIntensity(i, 'red');
+              G2 = +blender.getIntensity(i, 'green');
+              B2 = +blender.getIntensity(i, 'blue');
+              A2 = +blender.getIntensity(i, 'average');
+       
+          P.y = +blend(R1,G1,B1,A1,R2,G2,B2,A2,X,Y,P);
+      
+        });
+       
+        // reload the graph data:
+        datum.graph.reload();
+        // refresh the graph:
+        datum.graph.refresh();
+       
+        if (callback) callback();
 
-      // we could parse this, actually...
-      eval('var blend = function(R1,G1,B1,A1,R2,G2,B2,A2,X,Y,P) { return ' + expression + '; }');
-     
-      average.forEach(function(P, i) { 
-     
-        if (red[i])   var R1 = +red[i].y;
-        else          var R1 = 0;
-        if (green[i]) var G1 = +green[i].y;
-        else          var G1 = 0;
-        if (blue[i])  var B1 = +blue[i].y;
-        else          var B1 = 0;
-     
-        var A1 = +average[i].y,
-            X = +average[i].x,
-            Y = +average[i].y;
-     
-        var R2 = +blender.getIntensity(i, 'red');
-            G2 = +blender.getIntensity(i, 'green');
-            B2 = +blender.getIntensity(i, 'blue');
-            A2 = +blender.getIntensity(i, 'average');
-
-        P.y = +blend(R1,G1,B1,A1,R2,G2,B2,A2,X,Y,P);
-     
-      });
-
-      // reload the graph data:
-      datum.graph.reload();
-      // refresh the graph:
-      datum.graph.refresh();
+      }
  
     });
     
@@ -252,7 +236,7 @@ SpectralWorkbench.API.Core = {
 
 
   // fetch another spectrum, subtract it from this one
-  subtract: function(datum, spectrum_id) {
+  subtract: function(datum, spectrum_id, callback) {
 
     var channels = [datum.red, datum.blue, datum.green, datum.average];
 
@@ -261,24 +245,33 @@ SpectralWorkbench.API.Core = {
 
 
     /* Fetch data */ 
-    d3.json(url, function(error, data) {
- 
-      subtractor = new SpectralWorkbench.Spectrum(data);
+    $.ajax({
+      url: url,
+      type: "GET",
+      dataType: "json",
 
-      channels.forEach(function(_channel) {
-
-        _channel = _channel.map(function(point) { 
+      success: function(data) {
  
-          point.y -= +subtractor.getIntensity(point.x);
- 
+        subtractor = new SpectralWorkbench.Spectrum(data);
+       
+        channels.forEach(function(_channel) {
+       
+          _channel = _channel.map(function(point) { 
+       
+            point.y -= +subtractor.getIntensity(point.x);
+       
+          });
+       
         });
+       
+        // reload the graph data:
+        datum.graph.reload();
+        // refresh the graph:
+        datum.graph.refresh();
+         
+        if (callback) callback();
 
-      });
-
-      // reload the graph data:
-      datum.graph.reload();
-      // refresh the graph:
-      datum.graph.refresh();
+      }
  
     });
     
@@ -331,6 +324,7 @@ SpectralWorkbench.API.Core = {
 
   },
 
+
   // display a spectrum by given id (and store in an array graph.comparisons)
   compare: function(graph, data) {
 
@@ -345,7 +339,8 @@ SpectralWorkbench.API.Core = {
     graph.comparisons.forEach(function(comparison) {
 
       comparison = comparison.d3()[0];
-      // use default color array
+
+      // switch to use default color array
       comparison.color = "red";
       combined.push(comparison);
 
@@ -382,7 +377,7 @@ SpectralWorkbench.API.Core = {
           response.forEach(function(spectrum) {
 
             // rewrite compare() to accept an array
-            console.log(spectrum);
+
             callback(graph, spectrum);
 
           });
@@ -401,7 +396,7 @@ SpectralWorkbench.API.Core = {
   // required intensity of 5
   // <data> is an instance of spectrum.json.data.lines, like:
   // SpectralWorkbench.API.Core.findMax(graph.datum.json.data.lines, 'b');
-  // returns an index; this is a pixel position
+  // returns { index: <int>, value: <int> } -- index is a pixel position
   findMax: function(data, channel, startIndex, endIndex) {
 
     var max = { index: 0, 

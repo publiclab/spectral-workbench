@@ -1,27 +1,29 @@
 SpectralWorkbench.UI.TagForm = Class.extend({
 
-  init: function(_graph) {
-
-    this.selector = "#tag-form-" + _graph.datum.id;
-    this.el = $("#tag-form-" + _graph.datum.id);
+  init: function(_graph, callback) {
 
     var tagForm = this;
 
-    $(tagForm.selector).bind('submit', function(e){
+    tagForm.selector = "#tag-form-" + _graph.datum.id;
+    tagForm.el = $(tagForm.selector);
+    tagForm.input = tagForm.el.find('input.name');
+
+    tagForm.el.bind('submit', function(e){
 
       e.preventDefault();
 
-      $(tagForm.selector + ' input.name').val().split(',').forEach(function(tagname) {
+      tagForm.input.val().split(',').forEach(function(tagname) {
 
-        _graph.datum.addTag(tagname);
+        _graph.datum.addTag(tagname, callback);
 
       });
 
     });
 
-    $(tagForm.selector).bind('ajax:beforeSend', function(){
+    tagForm.el.bind('ajax:beforeSend', function(){
 
-      $(tagForm.selector + ' input.name').prop('disabled',true)
+      tagForm.input.prop('disabled',true)
+      $('#tags .loading').remove();
 
     });
 
@@ -47,6 +49,8 @@ SpectralWorkbench.UI.TagForm = Class.extend({
       tagForm.el.find('input.name').prop('disabled',false);
 
     }
+
+    return tagForm;
 
   }
 

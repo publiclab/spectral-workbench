@@ -381,22 +381,24 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
      */
     _spectrum.fetch = function(url, callback) {
 
-      url = url || '/spectrums/' + _spectrum.id;
+      url = url || '/spectrums/' + _spectrum.id + '.json';
 
       $.ajax({
 
         url: url,
         type: "GET",
         dataType: "json",
-      }).done(function(response) {
+        success: function(response) {
 
-        _spectrum.json  = response;
-        _spectrum.load();
+          _spectrum.json  = response;
+          _spectrum.load();
 
-      }).fail(function(response) {
+        },
+        error: function(response) {
 
-        SpectralWorkbench.API.Core.notify(response['errors'], "error");
+          SpectralWorkbench.API.Core.notify(response['errors'], "error");
 
+        }
       });
       
     }
