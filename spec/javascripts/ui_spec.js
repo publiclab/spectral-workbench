@@ -155,6 +155,15 @@ describe("UI", function() {
     expect(toolPane.form.applyEl.length).toBe(1);
     expect(toolPane.form.closeEl.length).toBe(1);
 
+    toolPane.form.close();
+    expect($('.datum-tool-pane').is(':visible')).toBe(false);
+    expect($(toolPane.form.el).find('.custom').html()).toBe('');
+    expect(toolPane.form.formEl.is(':visible')).toBe(false);
+    expect(toolPane.form.applyEl.html()).toBe('Apply');
+
+    // only if it's a SpectraPane
+    //expect(toolPane.form.spectrumApplyEl.html()).toBe('Apply');
+
   });
 
 
@@ -172,8 +181,16 @@ describe("UI", function() {
     // toolPane.form.applyEl.click();
     // toolPane.form.close(); should be called
 
+    // figure out a callback to ensure the API call transform() has been called.
 
   });
+
+
+  // test for toolPane teardown! 
+
+  // Then a second toolPane, a spectraPane
+
+
 
 
 /*
