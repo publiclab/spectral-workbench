@@ -47,11 +47,15 @@ describe("UI", function() {
     graph = new SpectralWorkbench.Graph({
       spectrum_id: 9,
       calibrated: true,
-      onImageComplete: function() { done(); } // fires when graph.image is loaded, so that later tests can run
-    });
+      onImageComplete: function() {
 
-    expect(graph).toBeDefined();
-    expect(graph.datum).toBeDefined();
+        expect(graph).toBeDefined();
+        expect(graph.datum).toBeDefined();
+
+        done(); 
+
+      } // fires when graph.image is loaded, so that later tests can run
+    });
 
   });
 
@@ -89,6 +93,8 @@ describe("UI", function() {
 
     tagForm.input.val('myTag');
     expect(tagForm.input.val()).toBe('myTag');
+
+    console.log('be sure this runs');
 
     // we can't do this unless we ajaxSpy fake the ajax:afterSend event
     //tagForm.el.bind('ajax:afterSend', function(){});

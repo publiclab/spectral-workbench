@@ -526,6 +526,7 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
      * Returns a set of graph line datasets formatted for display in a d3 chart
      */
     _spectrum.d3 = function() {
+
       return [
         {
           values: _spectrum.average,
@@ -549,6 +550,7 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
           color:  'rgba(0,0,255,0.2)'
         }
       ];
+
     }
 
 

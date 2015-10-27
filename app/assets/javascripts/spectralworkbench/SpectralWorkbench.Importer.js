@@ -22,7 +22,7 @@ SpectralWorkbench.Importer = Class.extend({
  
         // fetch and apply tags here -- i.e. only if they're the graph's primary data:
         datum.fetchTags(); 
- 
+
         callback(datum);
 
       }

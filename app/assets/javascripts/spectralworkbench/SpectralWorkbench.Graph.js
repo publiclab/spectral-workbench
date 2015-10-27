@@ -46,14 +46,6 @@ SpectralWorkbench.Graph = Class.extend({
                                   .attr("height", this.height + this.margin.top  + this.margin.bottom)
 
 
- 
-    /* key function for d3 data binding, used in _graph.load */
-    _graph.idKey = function(d) {
-      // we should mark color channels as "_red"
-      return d.id;
-    }
-
-
     /* ======================================
      * Refresh datum into DOM in d3 syntax
      */
@@ -61,7 +53,7 @@ SpectralWorkbench.Graph = Class.extend({
 
       // populate the <svg> element with chart data 
       // and provide a binding key
-      _graph.data.datum(_graph.datum.d3, _graph.idKey);
+      _graph.data.datum(_graph.datum.d3);
 
     }
 
@@ -201,7 +193,54 @@ SpectralWorkbench.Graph = Class.extend({
 
       _graph.datum = datum;
 
-      // make accessible to each spectrum too:
+      // APIv1 backwards-compatibility
+      SpectralWorkbench.API.Legacy.load(datum.json, _graph.dataType);
+
+      _graph.tagForm = new SpectralWorkbench.UI.TagForm(_graph); 
+
+      /* Enter data into the graph */
+      _graph.data = d3.select('#graph svg')  //Select the <svg> element you want to render the chart in.   
+          .datum(datum.d3)   //Populate the <svg> element with chart data
+          .call(_graph.chart)         //Finally, render the chart!
+
+      // create DOM <id> attributes for our lines:
+
+      // This would be for *all* lines, or lines if this were not a zoomable graph:
+      // d3.selectAll('g.nv-line > g > g.nv-groups g') 
+
+      // apparently HTML id has to begin with a string? 
+      // http://stackoverflow.com/questions/70579/what-are-valid-values-for-the-id-attribute-in-html
+
+      // main graph lines
+      d3.selectAll('g.nv-focus g.nv-line > g > g.nv-groups g') 
+        //.addClass('main-line') // we should do this (or the d3 equiv.) for later selections. Or if nvd3 offers a ready-made selection
+        .attr("id", function(datum, index) {
+          var id = d3.select('svg').data()[0][index].id; // this is the real d3 DOM-stored data
+          return 'spectrum-line-' + id;
+        });
+
+      // zoom graph lines
+      d3.selectAll('g.nv-context g.nv-line > g > g.nv-groups g') 
+        .attr("id", function(datum, index) {
+          var id = d3.select('svg').data()[0][index].id; // this is the real d3 DOM-stored data
+          return 'spectrum-line-' + id;
+        });
+
+      // graph line hover circles for main graph lines
+      d3.selectAll('g.nv-focus g.nv-scatterWrap g.nv-groups g') 
+        .attr("id", function(datum, index) {
+          var id = d3.select('svg').data()[0][index].id; // this is the real d3 DOM-stored data
+          return 'spectrum-hover-' + id;
+        });
+
+      // graph line hover circles for zoom graph lines
+      d3.selectAll('g.nv-context g.nv-scatterWrap g.nv-groups g') 
+        .attr("id", function(datum, index) {
+          var id = d3.select('svg').data()[0][index].id; // this is the real d3 DOM-stored data
+          return 'spectrum-hover-' + id;
+        });
+
+
       if (_graph.dataType == "spectrum") {
 
         // scan for helper tips
@@ -210,72 +249,13 @@ SpectralWorkbench.Graph = Class.extend({
 
         SpectralWorkbench.API.Core.alertTooDark(_graph.datum);
 
+      } else if (_graph.dataType == "set") {
+
+        // table and graph hovers etc.
+        if (_graph.datum) _graph.datum.setupUI();
+
       }
 
-      // APIv1 backwards-compatibility
-      SpectralWorkbench.API.Legacy.load(datum.json, _graph.dataType);
-
-      _graph.tagForm = new SpectralWorkbench.UI.TagForm(_graph); 
-
-      /* Enter data into the graph */
-      _graph.data = d3.select('#graph svg')  //Select the <svg> element you want to render the chart in.   
-          .datum(datum.d3, _graph.idKey)   //Populate the <svg> element with chart data and provide a binding key (removing idKey has no effect?)
-          .call(_graph.chart)         //Finally, render the chart!
-          .attr('id', _graph.idKey)
- 
-      /* Line event handlers */
-      /* ...move into SW.Graph.Event? */
-      var onmouseover = function() {
-     
-        var el = this;
-        var id = d3.select(el).data()[0].id;
-        $('tr.spectrum-'+id).addClass('highlight');
-        d3.select(el).classed('highlight',true);
-        // scroll to the spectrum in the table below:
-        if (_graph.embed) window.location = (window.location+'').split('#')[0]+'#s'+id;
-     
-      }
-     
-      var onmouseout = function() {
-     
-        var el = this;
-        var id = d3.select(el).data()[0].id;
-        $('tr.spectrum-'+id).removeClass('highlight');
-        d3.select(el).classed('highlight',false);
-     
-      }
-
-      d3.selectAll('g.nv-scatterWrap g.nv-groups g') // ONLY the lines, not the scatterplot-based hover circles
-          .on("mouseover", onmouseover)
-          .on("mouseout", onmouseout)
- 
-      d3.selectAll('g.nv-line > g > g.nv-groups g') // ONLY the lines, not the scatterplot-based hover circles
-          .attr("id", function(datum) {
-
-            var sel = d3.select(this),
-                data  = sel.data()[0];
-
-            // color corresponding table entry
-            $('tr.spectrum-'+datum.id+' div.key').css('background',sel.style('stroke'));
- 
-            // highlight corresponding line when hovering on table row
-            $('tr.spectrum-'+datum.id).mouseover(function() {
-              d3.selectAll('g.nv-line > g > g.nv-groups > g').classed('dimmed', true );
-              d3.selectAll('g#spectrum-line-'+datum.id).classed(      'dimmed', false);
-              d3.selectAll('g#spectrum-line-'+datum.id).classed(   'highlight', true );
-            });
-
-            $('tr.spectrum-'+datum.id).mouseout(function() {
-              d3.selectAll('g.nv-line > g > .nv-groups *').classed( 'dimmed', false);
-              d3.selectAll('g#spectrum-line-'+datum.id).classed( 'highlight', false);
-            });
-
-            // apparently HTML id has to begin with a string? 
-            // http://stackoverflow.com/questions/70579/what-are-valid-values-for-the-id-attribute-in-html
-
-            return 'spectrum-line-'+datum.id;
-
-          });
 
       // update graph size now that we have data and esp. range data
       _graph.updateSize()();
@@ -287,7 +267,11 @@ SpectralWorkbench.Graph = Class.extend({
       nv.addGraph(_graph.chart);
 
       _graph.loaded = true;
-      _graph.onComplete(true);
+      _graph.onComplete(_graph);
+ 
+      // hide loading grey background
+      _graph.el.css('background','white');
+      _graph.el.find('.icon-spinner').remove();
 
     }
 
@@ -349,7 +333,7 @@ SpectralWorkbench.Graph = Class.extend({
       });
       
       _graph.data = d3.select('#graph svg')  //Select the <svg> element you want to render the chart in.   
-            .datum(_graph.datum.d3, _graph.idKey)   //Populate the <svg> element with chart data and provide a binding key (removing idKey has no effect?)
+            .datum(_graph.datum.d3)   //Populate the <svg> element with chart data and provide a binding key (removing idKey has no effect?)
 
       _graph.updateSize()();
  
@@ -393,6 +377,8 @@ SpectralWorkbench.Graph = Class.extend({
     // Update the chart when DOM element resizes
     $(_graph.selector).on('resize', _graph.updateSize());
 
+    return _graph;
+
   },
 
 
@@ -403,7 +389,7 @@ SpectralWorkbench.Graph = Class.extend({
  
     var _graph = this;
 
-    _graph.chart = nv.models.lineWithFocusChart()
+    _graph.chart = nv.models.lineWithFocusChart() // this sets up zooming behavior
                      .options({ useVoronoi: false })
                      .height(_graph.height-_graph.margin.top-_graph.margin.bottom + 100) // 100 for zoom brush pane, hidden by default
                      .margin(_graph.margin)
@@ -429,7 +415,8 @@ SpectralWorkbench.Graph = Class.extend({
 
 
   /* ======================================
-   * connect up clicking, hovering and such
+   * connect up set table checkboxes/visibility;
+   * for hover behaviors, see Set.setupUI();
    */
   eventSetup: function() {
 
@@ -452,6 +439,7 @@ SpectralWorkbench.Graph = Class.extend({
           $('table.spectra input.visible-all').attr('checked',false);
         }
       })
+
       $('table.spectra input.visible-all').change(function(e) {
         var el = this;
         var checked = $(el).is(':checked');
@@ -577,10 +565,6 @@ SpectralWorkbench.Graph = Class.extend({
       if (_graph.chart) {
         _graph.chart.update();
       }
- 
-      // hide loading grey background
-      _graph.el.css('background','white');
-      _graph.el.find('.icon-spinner').remove();
 
     });
   }

@@ -39,6 +39,7 @@ describe("Graph", function() {
 
     expect(graph).toBeDefined();
     expect(graph.datum).toBeDefined();
+    expect(graph.dataType).toBe('spectrum');
 
     // we'd like to test the URL, but if it's wrong, it won't get the right faked data anyways:
     // and this doesn't work with the ajaxSpy method:
@@ -77,7 +78,7 @@ describe("Graph", function() {
   it("fires onComplete event when done initializing", function() {
 
     expect(callback).toHaveBeenCalled();
-    expect(callback).toHaveBeenCalledWith(true);
+    expect(callback).not.toHaveBeenCalledWith(undefined);
     expect(callback).not.toHaveBeenCalledWith(false);
 
   });
