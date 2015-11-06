@@ -32,11 +32,17 @@ SpectralWorkbench.Datum = Class.extend({
 
     /* ======================================
      * Create a new tag and add it to self,
-     * then run it
+     * then run it.
+     * This is a bit weird -- we want to parse the tag immediately, but 
+     * we actually do so asynchronously with the callback, which is called 
+     * when we get a response from the server. This causes some havoc with 
+     * our tests, but is a faster response for the user.
      */
     _datum.addTag = function(name, callback) {
 
       var tag = new SpectralWorkbench.Tag(_datum, name, false, callback);
+
+      // we just do these before waiting to hear back from the above: 
 
       _datum.tags.push(tag);
 
@@ -119,8 +125,15 @@ SpectralWorkbench.Datum = Class.extend({
 
       // flush existing displayed tag elements if any
       _datum.tags.forEach(function(tag) {
+
+        // this only removes those by the TagForm, not in the Operations table
         tag.el.remove();
+
+        // also remove them from the Operations table:
+        if (tag.operationEl) tag.operationEl.remove();
+
       });
+
       // flush local tag objects
       _datum.tags = [];
 

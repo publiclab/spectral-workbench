@@ -155,13 +155,10 @@ SpectralWorkbench.Tag = Class.extend({
           _tag.datum.parseTags();
           _tag.datum.graph.reload();
           _tag.datum.graph.refresh();
-          if (callback) callback();
-
-        } else {
-
-          if (callback) callback();
 
         }
+
+        if (callback) callback(_tag);
 
     }
 

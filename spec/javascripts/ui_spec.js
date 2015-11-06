@@ -41,6 +41,7 @@ describe("UI", function() {
       if      (object.url == '/spectrums/9.json') response = object.success(TestResponses.spectrum.success.responseText);
       else if (object.url == '/spectrums/9/tags') response = object.success(TestResponses.tags.success.responseText);
       else if (object.url == '/tags') response = object.success({"errors":[],"saved":[["tagtest",145165]]});
+      else if (object.url.substr(0,6) == '/tags/') response = object.success("success"); // deletion; includes id, which we wildcard
       else response = 'none';
 
       // check this if you have trouble faking a server response: 
@@ -173,8 +174,6 @@ describe("UI", function() {
 
   it("should create tags and display them", function(done) {
 
-    persistFixture(); // don't cleanUp this fixture after this spec; we're spreading the test over 2 specs
-
     // test that the range is not yet limited
     expect(graph.datum.getExtentX()).toEqual([269.089, 958.521]);
 
@@ -208,34 +207,51 @@ describe("UI", function() {
   });
 
 
-  var deletionCallbackSpy = jasmine.createSpy('success');
+  var tagDeletionCallbackSpy = jasmine.createSpy('success');
 
-  it("should delete tags and remove them from display", function() {
-
-    unPersistFixture();
-
-    expect($('.tags .list span.label a:first').html()).toBe('range:500-550');
+  it("should delete tags and remove them from display", function(done) {
  
     // this won't be intercepted by jasmine-ajax, boo: $('#tags .tagdelete').bind('ajax:success', function(){
     // so we need to be cleverer to delete via the interface:
     // $('.tags .list span:last .tagdelete').trigger('click');
 
-    // anyways we can do it manually:
-    graph.datum.removeTag('range:500-550', function(tag) {
+    tag = graph.datum.addTag('range:520-530', function(tag, ajaxResponse) {
 
-      expect(tag).toBeDefined(); // the response
+      graph.datum.tags.push(tag); // we have to fake this because of the weird ordering of Datum.addTag; it's done for us, but not til after we need it
 
-      expect(graph.datum.getTag('range:500-550')).toBe(false);
+      // ensure it's there to be deleted:
+      expect(graph.datum.getTag('range:520-530')).not.toBe(false);
 
-      expect($('.tags .list span.label a:first').html()).not.toBe('range:500-550');
+      // anyways we can do it manually:
+      graph.datum.removeTag('range:520-530', function(tag) {
 
-      deletionCallbackSpy();
+        expect(tag).toBeDefined(); // the response
+      
+        expect(graph.datum.getTag('range:520-530')).toBe(false);
+      
+        expect($('.tags .list span.label a:first').html()).not.toBe('range:520-530');
 
-      // now test that the graph's no longer range limited
+        var el = $("span#tag_" + tag.id);
+        // display in Operations table;
+        var operationEl = $("tr#tag_" + tag.id);
 
-      done(); // complete asynchronous call
+        expect(el.length).toBe(0); // the tag DOM element
+        expect(operationEl.length).toBe(0); // the tag's DOM element in the Operations table
+       
+        tagDeletionCallbackSpy();
+       
+        done(); // complete asynchronous call
+
+      });
 
     });
+
+  }); // takes a little longer, this one
+
+
+  it("tag deletion callback is called", function() {
+
+    expect(tagDeletionCallbackSpy).toHaveBeenCalled();
 
   });
 
