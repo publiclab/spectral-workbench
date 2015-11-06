@@ -6,7 +6,7 @@
     <p><a class="btn btn-small" href="/spectrums/clone/<%= @spectrum.id %>">Clone this spectrum</a> and work on a copy</p>
 
     <h5>Data processing and display <a href="//publiclab.org/wiki/spectral-workbench-tools#Data+processing+and+display"><i class="icon icon-question-mark"></i></a></h5>
-    <p><a class="btn btn-small tool-calibrate">Calibrate</a> this spectrum</p>
+    <p><a class="btn btn-small tool-calibrate<%= ' btn-primary' unless @spectrum.calibrated %>">Calibrate</a> this spectrum</p>
     <p><a class="btn btn-small tool-subtraction">Subtract</a> another spectrum</p>
     <p><a class="btn btn-small tool-range">Set wavelength range</a></p>
     <p><a class="btn btn-small tool-copy-calibration">Copy calibration</a></p>

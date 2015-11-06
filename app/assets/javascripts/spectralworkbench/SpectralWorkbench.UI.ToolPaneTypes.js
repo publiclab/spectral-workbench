@@ -212,6 +212,11 @@ SpectralWorkbench.UI.ToolPaneTypes = {
     link: "//publiclab.org/wiki/spectral-workbench-toolpanes#Calibrate",
     author: "warren",
     apply: true,
+    cleanUp: function() {
+
+      $('.calibration-pane').remove();
+
+    },
     setup: function(form) {
 
       var blue2 = 435.83,

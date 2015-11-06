@@ -41,6 +41,7 @@ SpectralWorkbench.UI.ToolPane = Class.extend({
       form.formEl.show();
       form.spectrumApplyEl.off('click');
       form.applyEl.off('click');
+      if (_tool.options.cleanUp) _tool.options.cleanUp();
     }
 
     // close the tool pane AND clean up. runs on "cancel"
