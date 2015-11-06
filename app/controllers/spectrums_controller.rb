@@ -33,7 +33,7 @@ class SpectrumsController < ApplicationController
   def choose
     
     # accept wildcards
-    if params[:id].last == "*"
+    if params[:id] && params[:id].last == "*"
       comparison = "LIKE"
       params[:id].chop!
       params[:id] += "%"
@@ -51,7 +51,7 @@ class SpectrumsController < ApplicationController
 
     # exclude self:
     @spectrums = @spectrums.where('spectrums.id != ?', params[:not]) if params[:not]
-    unless params[:id] == "all"
+    unless params[:id] == "all" || params[:id].nil?
       @spectrums = @spectrums.where('tags.name '+comparison+' (?)', params[:id])
       if params[:author]
         author = User.find_by_login params[:author]

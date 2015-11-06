@@ -107,8 +107,8 @@ SpectralWorkbench.Datum = Class.extend({
       _datum.tags.forEach(function(tag) {
         if (tag.powertag && tag.key == key) {
 
-          if (callback) callback(tag);
           powertags.push(tag);
+          if (callback) callback(tag);
 
         }
       });
