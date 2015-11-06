@@ -262,7 +262,8 @@ SpectralWorkbench.UI.ToolPaneTypes = {
       // use autocalibration for first pass, 
       // or, for now, existing calibration:
       var _graph = form.graph,
-          extent = form.graph.extent;
+          extent = form.graph.extent,
+          error;
 
       attemptCalibration = function() {
 
@@ -327,7 +328,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
         ix1 = Math.round(_graph.displayPxToImagePx(x1) * 100) / 100;
         ix2 = Math.round(_graph.displayPxToImagePx(x2) * 100) / 100;
 
-        var error = parseInt(SpectralWorkbench.API.Core.rmseCalibration(_graph.datum, blue2, green2, ix1, ix2));
+        error = parseInt(SpectralWorkbench.API.Core.rmseCalibration(_graph.datum, blue2, green2, ix1, ix2));
 
         $('.calibration-pane .fit').html('Fit: ' + error)
                                    .removeClass('label-success')    // green
@@ -358,6 +359,22 @@ SpectralWorkbench.UI.ToolPaneTypes = {
           $('.input-wavelength-1').val(), 
           $('.input-wavelength-2').val()
         ); 
+
+        // clear the previous assessement tags
+        _graph.datum.getPowerTag('error', function(tag) { tag.destroy() });
+        _graph.datum.getPowerTag('calibrationQuality', function(tag) { tag.destroy() });
+        _graph.datum.getPowerTag('linearCalibration', function(tag) { tag.destroy() });
+
+        // save the calculated error (from the rmse)
+        _graph.datum.addTag('error:' + error);
+        _graph.datum.addTag('linearCalibration:' + 
+          $('.input-wavelength-1').val() + '-' + 
+          $('.input-wavelength-2').val()
+        );
+
+        if      (Math.abs(error) < 12) _graph.datum.addTag('calibrationQuality:good');
+        else if (Math.abs(error) < 16) _graph.datum.addTag('calibrationQuality:medium');
+        else                           _graph.datum.addTag('calibrationQuality:poor');
 
         $('.calibration-pane').remove();
 
