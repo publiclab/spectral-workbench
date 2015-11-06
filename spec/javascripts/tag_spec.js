@@ -162,7 +162,7 @@ describe("Tag", function() {
 
     graph.datum.removeTag('sodium', function(tag) {
 
-      expect(tag).not.toBeDefined(); // the response
+      expect(tag).toBeDefined(); // the removed tag is returned
 
       expect(graph.datum.getTag('sodium')).toBe(false);
 
