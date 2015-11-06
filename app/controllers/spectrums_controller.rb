@@ -44,8 +44,8 @@ class SpectrumsController < ApplicationController
     # user's own spectra
     params[:author] = current_user.login if logged_in? && params[:own]
 
-    @spectrums = Spectrum.order('id DESC')
-                         .select("DISTINCT spectrums.*")
+    @spectrums = Spectrum.order('spectrums.id DESC')
+                         .select("DISTINCT(spectrums.id), spectrums.title, spectrums.created_at, spectrums.user_id, spectrums.author")
                          .joins(:tags)
                          .paginate(:page => params[:page],:per_page => 6)
 

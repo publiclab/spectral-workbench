@@ -59,6 +59,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
     link: "//publiclab.org/wiki/spectral-workbench-toolpanes#Copy+Calibration",
     author: "warren",
     apply: false,
+    formData: { own: true },
     url: '/spectrums/choose/calibration', // default spectra to show, can use * and ?author=warren
     onSpectrumApply: function(form, _graph) {
 
