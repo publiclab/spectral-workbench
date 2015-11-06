@@ -127,8 +127,7 @@ SpectralWorkbench.Tag = Class.extend({
         type: "DELETE",
         success: function(response) {
 
-          _tag.cleanUp();
-          if (callback) callback(response);
+          _tag.cleanUp(callback);
  
         }
       });
@@ -137,7 +136,7 @@ SpectralWorkbench.Tag = Class.extend({
 
 
     // scrubs local tag data; for use after deletion
-    _tag.cleanUp = function() {
+    _tag.cleanUp = function(callback) {
 
         // if it failed to initialize, the element may not exist
         if (_tag.el) _tag.el.remove();
@@ -156,6 +155,12 @@ SpectralWorkbench.Tag = Class.extend({
           _tag.datum.parseTags();
           _tag.datum.graph.reload();
           _tag.datum.graph.refresh();
+          if (callback) callback();
+
+        } else {
+
+          if (callback) callback();
+
         }
 
     }
@@ -225,7 +230,12 @@ SpectralWorkbench.Tag = Class.extend({
 
 
     if (_tag.isNew) _tag.upload(callback);
-    else _tag.render();
+    else {
+
+      if (callback) callback(); // callback directly, as we don't need to wait for an upload
+      _tag.render();
+
+    }
 
     return _tag;
  
