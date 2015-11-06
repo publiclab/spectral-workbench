@@ -162,7 +162,7 @@ describe("Tag", function() {
 
     graph.datum.removeTag('sodium', function(tag) {
 
-      expect(tag).toBeDefined(); // the response
+      expect(tag).not.toBeDefined(); // the response
 
       expect(graph.datum.getTag('sodium')).toBe(false);
 
@@ -184,9 +184,10 @@ describe("Tag", function() {
 
   it("creates properly for powertag like 'range'", function() {
 
+    // test that the graph is not range-limited
     tag = graph.datum.addTag('range:400-700');
 
-    // tag should then be parsed
+    // tag should then be parsed, but that happens after the callback, so can't test here
 
     expect(tag).toBeDefined();
 
@@ -205,11 +206,37 @@ describe("Tag", function() {
   });
 
 
-  // these are all tested as part of the above, but could be individually tested as well:
+  it("applies effect of powertag 'range' in graph data", function() {
 
-  // Delete it from the server, then from the DOM;
-  // tag.destroy()
-  // scrubs local tag data; for use after deletion
-  // tag.cleanUp()
+    // test that it's there and the graph is not range-limited
+    expect(graph.datum.getTag('range:400-700')).not.toBe(false);
+
+    // apply the powertag! It may have been parsed already but we try again to be sure. 
+    graph.datum.parseTag(tag);
+
+    expect(graph.datum.getExtentX()[0]).toBeGreaterThan(400); // only within 400-700 range
+    expect(graph.datum.getExtentX()[1]).toBeLessThan(700); // only within 400-700 range
+    expect(graph.datum.getExtentX()).toEqual([400.245, 697.935]); // only within 400-700 range
+
+  });
+
+
+  it("removes effect of powertag 'range' in graph data upon tag deletion", function() {
+
+    // test that it's there and the graph is not range-limited
+    expect(graph.datum.getTag('range:400-700')).not.toBe(false);
+
+    // apply the powertag! It may have been parsed already but we try again to be sure. 
+    graph.datum.removeTag('range:400-700', function() {
+
+      expect(graph.datum.getTag('range:400-700')).toBe(false);
+      expect(graph.datum.getExtentX()).not.toEqual([400.245, 697.935]); // only within 400-700 range
+      expect(graph.datum.getExtentX()[0]).not.toBeGreaterThan(400); // only within 400-700 range
+      expect(graph.datum.getExtentX()[1]).not.toBeLessThan(700); // only within 400-700 range
+      expect(graph.datum.getExtentX()).toEqual([269.089, 958.521]);
+
+    });
+
+  });
 
 });

@@ -1,15 +1,32 @@
-
-    // actually insert DOM elements into the page
-    //_tag.render = function() {
-
-
-// test interface at:
-// table.operations --
-//    <tr id="tag_144860"><td class="title"><span class="label purple">cloneOf:59688</span></td><td class="date">Oct 19th 2015 11:54 am</td><td class="description"><a href="//publiclab.org/wiki/spectral-workbench-tags#cloneOf">Spectrum is a copy of </a><a href="/spectrums/59688">Spectrum #59688</a>.</td><td class="operations-tools"><a class="tagdelete" data-id="144860" data-remote="true" data-method="delete" href="/tags/144860" data-confirm="Are you sure? This tag contains functional data used in the display and analysis of the spectrum."><i class="icon icon-remove"></i></a></td></tr>
+/*
+  This suite of specs is quite messy, as we're testing both
+  the data models and their in-DOM representations, and have only 
+  limited callbacks and event handlers to rely upon for asynchronous sequences. Sorry!
+*/
 
 describe("UI", function() {
 
-  var graph, ajaxSpy;
+  var graph, ajaxSpy, tagForm;
+
+
+  var cleanUp;
+
+  // disable cleanUp() method to persist the fixture across specs
+  persistFixture = function() {
+
+    cleanUp = jasmine.getFixtures().cleanUp; // save the cleanUp function
+
+    jasmine.getFixtures().cleanUp = function() {}; // replace it with a fake one
+
+  }
+
+  // restore non-persistent fixture behavior
+  unPersistFixture = function() {
+
+    jasmine.getFixtures().cleanUp = cleanUp;
+
+  }
+
 
   beforeEach(function() {
 
@@ -63,10 +80,9 @@ describe("UI", function() {
   // test tag creation
   it("should generate a TagForm", function(done) {
 
-    var tagForm = new SpectralWorkbench.UI.TagForm(graph, function() {
+    tagForm = new SpectralWorkbench.UI.TagForm(graph, function() {
 
       // this is called by **each** tag added, if there are more than one
-      console.log('tag returned success');
 
       // tagForm input should not be disabled anymore
       expect(tagForm.input.prop('disabled')).toBe(false);
@@ -101,12 +117,14 @@ describe("UI", function() {
     // but it'd be nice to test if the tag input is disabled
 
     // tagform is submitted, string is split by ',' and each tag is sent to addTag
-    tagForm.el.on('submit', function() {
+    tagForm.el.on('submit', function(e) {
 
       // then it'll run addTag
 
       // after submitting, disabled should be true, but maybe it doesn't happen until later?
       expect(tagForm.input.prop('disabled')).toBe(false);
+
+      e.preventDefault(); // stop actual request
 
     });
 
@@ -125,12 +143,101 @@ describe("UI", function() {
   });
 
 
-  // try spaces in tags, etc
-  // tagForm.el.find('input.name').val('my tag');
+  // spaces in tags are done on server side, so we can't test them here unless we move them to client side
+  xit("should replace spaces in tags with dashes", function() {
+
+    expect(tagForm.el).toBeDefined();
+
+    tagForm.input.val('my tag with spaces');
+
+    // tagform is submitted, string is split by ',' and each tag is sent to addTag
+    tagForm.el.on('submit', function(e) {
+
+      expect($('.tags .list span:last a:last').html()).toBe('my-tag-with-spaces');
+
+      e.preventDefault(); // stop actual request
+
+    });
+
+    tagForm.el.trigger('submit');
+
+  });
 
 
   // test asynch tag deletion too:
   //$('#tags .tagdelete').bind('ajax:success', function(){
+  // and ensure tag display refresh/cleanup
+
+  // i.e. add a range tag, check that range is now limited, then remove it and check again
+  //  this is not yet working...
+
+  it("should create tags and display them", function(done) {
+
+    persistFixture(); // don't cleanUp this fixture after this spec; we're spreading the test over 2 specs
+
+    // test that the range is not yet limited
+    expect(graph.datum.getExtentX()).toEqual([269.089, 958.521]);
+
+    tagForm = new SpectralWorkbench.UI.TagForm(graph, function() {
+
+      // be sure the tag is there now. 
+      expect($('.tags .list span:last a:first').html()).toBe('range:500-550');
+
+      // datum.tags.push is run **after** the callback :-/
+      //expect(graph.datum.getTag('range:500-550')).not.toBe(false);
+
+      // test that the range is actually limited
+      // except that datum.parseTags is run **after** the callback :-/
+      //expect(graph.datum.getExtentX()).toEqual([500, 550]);
+      // ... therefore we have to test range limiting separately; in tag_spec.js
+
+      done();
+
+    });
+
+    tagForm.input.val('range:500-550');
+    expect(tagForm.input.val()).toBe('range:500-550');
+
+    // tag submit form is not cleared because tagForm.el.bind('ajax:beforeSend'... is not triggered in jquery-ajax;
+    // below attempt doesn't work; this also means "Loading..." is not cleared :-/
+    //tagForm.el.trigger('ajax:beforeSend'); // fake this because jquery-ajax doesn't
+    //expect(tagForm.input.val()).toBe('');
+
+    tagForm.el.trigger('submit');
+
+  });
+
+
+  var deletionCallbackSpy = jasmine.createSpy('success');
+
+  it("should delete tags and remove them from display", function() {
+
+    unPersistFixture();
+
+    expect($('.tags .list span.label a:first').html()).toBe('range:500-550');
+ 
+    // this won't be intercepted by jasmine-ajax, boo: $('#tags .tagdelete').bind('ajax:success', function(){
+    // so we need to be cleverer to delete via the interface:
+    // $('.tags .list span:last .tagdelete').trigger('click');
+
+    // anyways we can do it manually:
+    graph.datum.removeTag('range:500-550', function(tag) {
+
+      expect(tag).toBeDefined(); // the response
+
+      expect(graph.datum.getTag('range:500-550')).toBe(false);
+
+      expect($('.tags .list span.label a:first').html()).not.toBe('range:500-550');
+
+      deletionCallbackSpy();
+
+      // now test that the graph's no longer range limited
+
+      done(); // complete asynchronous call
+
+    });
+
+  });
 
 
   it("should generate a transform ToolPane", function() {
