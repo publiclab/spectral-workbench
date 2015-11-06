@@ -14,7 +14,12 @@ SpectralWorkbench.UI.TagForm = Class.extend({
 
       tagForm.input.val().split(',').forEach(function(tagname) {
 
-        _graph.datum.addTag(tagname, callback);
+        _graph.datum.addTag(tagname, function() {
+
+          tagForm.input.val('');
+          if (callback) callback();
+
+        });
 
       });
 
@@ -24,13 +29,6 @@ SpectralWorkbench.UI.TagForm = Class.extend({
 
       tagForm.input.prop('disabled',true)
       $('#tags .loading').remove();
-
-    });
-
-    // deletion listeners
-    $('#tags .tagdelete').bind('ajax:success', function(){
-
-      $('#tag_' + $(this).attr('data-id')).remove();
 
     });
 

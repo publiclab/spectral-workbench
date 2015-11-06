@@ -165,7 +165,7 @@ SpectralWorkbench.Tag = Class.extend({
 
     // actually insert DOM elements into the page
     _tag.render = function() {
- 
+
       var container = $('#tags span.list');
       var operationTable = $('table.operations');
  
@@ -192,16 +192,15 @@ SpectralWorkbench.Tag = Class.extend({
       _tag.deleteEl = $('#tag_' + _tag.id + ' .tagdelete');
 
       _tag.deleteEl.attr('data-id', _tag.id)
-                   .attr('data-remote', true)
-                   .attr('data-method', 'delete')
-                   .attr('href', "/tags/" + _tag.id);
+                   .click(function() { 
+                            if (!_tag.powertag || confirm('Are you sure? This tag contains functional data used in the display and analysis of the spectrum.')) _tag.destroy();
+      });
 
       if (_tag.powertag) {
 
         // we use CSS classnames to identify tag types by color
         _tag.el.addClass('purple');
         _tag.el.attr('title', 'This is a powertag.');
-        _tag.deleteEl.attr('data-confirm', 'Are you sure? This tag contains functional data used in the display and analysis of the spectrum.');
 
       }
 
