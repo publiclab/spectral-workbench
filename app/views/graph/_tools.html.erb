@@ -1,6 +1,6 @@
 <div class="toolbar">
   <p class="credit">
-    by <a target="_blank" href="/profile/<%= datum.author %>"><%= datum.author %></a> 
+    by <a target="_blank" href="/profile/<%= datum.author %>"><%= datum.author %></a> <% if type == :spectrum && datum.has_powertag('cloneOf') %>(<a href="/spectrums/<%= datum.powertag('cloneOf') %>">clone</a>)<% end %>
     <span class="site">
       on 
       <span class="spectral-workbench">
