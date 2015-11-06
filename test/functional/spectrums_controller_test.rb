@@ -47,6 +47,20 @@ class SpectrumsControllerTest < ActionController::TestCase
     assert_not_nil :sets
   end
 
+  test "should respond to choose" do
+    session[:user_id] = User.first.id # log in
+    get :choose, :id => 'calibration'
+    assert_response :success
+    assert_not_nil :spectrums
+  end
+
+  test "should respond to choose with wildcard" do
+    session[:user_id] = User.first.id # log in
+    get :choose, :id => '*'
+    assert_response :success
+    assert_not_nil :spectrums
+  end
+
   test "should get edit" do
     session[:user_id] = User.first.id # log in
     get :edit, :id => spectrums(:one).id
