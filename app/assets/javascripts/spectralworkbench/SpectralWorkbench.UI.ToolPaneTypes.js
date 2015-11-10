@@ -376,6 +376,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
         else if (Math.abs(error) < 16) _graph.datum.addTag('calibrationQuality:medium');
         else                           _graph.datum.addTag('calibrationQuality:poor');
 
+        form.close();
         $('.calibration-pane').remove();
 
       });
