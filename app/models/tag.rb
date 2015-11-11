@@ -11,6 +11,23 @@ class Tag < ActiveRecord::Base
   belongs_to :spectrum
   belongs_to :user
 
+  before_save :scan_powertags
+
+
+  def scan_powertags
+
+    if self.is_powertag?
+
+      if self.key == 'crossSection'
+        spectrum = self.spectrum
+        spectrum.sample_row = self.value
+        spectrum.save
+      end
+
+    end
+
+  end
+
   def spectra
     Spectrum.joins(:tags).where('tags.name = (?)',self.name)
   end
@@ -18,6 +35,14 @@ class Tag < ActiveRecord::Base
   # this doesn't accommodate v2.0 powertags, which can contain math syntax
   def is_powertag?
     self.name.match(/[a-zA-Z-]+:[a-zA-Z0-9-]+/)
+  end
+
+  def key
+    self.name.split(':').first
+  end
+
+  def value
+    self.name.split(':').last
   end
 
   # supplies a string of CSS classnames for this type of tag

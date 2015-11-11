@@ -164,6 +164,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
   },
 
 
+  // test this in jasmine!!!
   crossSection: {
     title: "Choose cross section",
     dataType: "spectrum",
@@ -179,18 +180,39 @@ SpectralWorkbench.UI.ToolPaneTypes = {
 
       form.customFormEl.html("<p>Click the spectrum image or enter a row number:</p><input class='cross-section' type='text' />");
 
-      form.graph.image.click(function(x, y) {
+      form.graph.image.click(function(x, y, e) {
 
         form.el.find('.cross-section').val(y);
 
+        form.graph.image.setLine(y);
+
       });
+
+      // restore the existing sample row indicator
+      // test this in jasmine!!!
+      form.closeEl.click(function() { form.graph.image.setLine(form.graph.args.sample_row) });
+
+      form.customFormEl.find('input').on('change', function() {
+
+        form.graph.image.setLine(form.customFormEl.find('input').val());
+
+      });
+
     },
     onApply: function(form) {
 
       form.graph.datum.imgToJSON(+$('.cross-section').val());
+
+      form.graph.args.sample_row = +$('.cross-section').val();
+      form.graph.image.setLine(form.graph.args.sample_row);
+
+      form.graph.datum.getPowerTag('crossSection', function(tag) { tag.destroy() });
+      form.graph.datum.addTag('crossSection:' + $('.cross-section').val());
+
       form.graph.datum.load();
       form.graph.reload();
       form.graph.refresh();
+
       alert('Now, calibrate your spectrum to save this cross section.');
 
     }
@@ -212,9 +234,11 @@ SpectralWorkbench.UI.ToolPaneTypes = {
     link: "//publiclab.org/wiki/spectral-workbench-toolpanes#Calibrate",
     author: "warren",
     apply: true,
-    cleanUp: function() {
+    cleanUp: function(form) {
 
       $('.calibration-pane').remove();
+
+      form.graph.imgContainer.height(graph.imgContainer.height() - 80);
 
     },
     setup: function(form) {
@@ -246,8 +270,8 @@ SpectralWorkbench.UI.ToolPaneTypes = {
       pane += "</p>";
       pane += "<div class='fit-container'><div class='fit pull-right label label-success' style='margin-top:-23px'></div></div>"; // to show how good the fit is
       pane += "<div class='reference'>";
-      pane +=   "<span class='btn btn-mini disabled slider slider-1' style='background:#00f;color:white;'>B2<div class='slider-marker' style='width: 1px; border-left-width: 1px; border-left-style: solid; border-left-color: red; height: 200px; position: absolute; margin-left: 3px;'></div></span>";
-      pane +=   "<span class='btn btn-mini disabled slider slider-2' style='background:#0a0;color:white;'>G2<div class='slider-marker' style='width: 1px; border-left-width: 1px; border-left-style: solid; border-left-color: red; height: 200px; position: absolute; margin-left: 3px;'></div></span>";
+      pane +=   "<span class='btn btn-mini disabled slider slider-1' style='background:#00f;color:white;'>B2<div class='slider-marker' style='width: 1px; border-left-width: 1px; border-left-style: solid; border-left-color: red; height: 235px; position: absolute; margin-left: 3px;'></div></span>";
+      pane +=   "<span class='btn btn-mini disabled slider slider-2' style='background:#0a0;color:white;'>G2<div class='slider-marker' style='width: 1px; border-left-width: 1px; border-left-style: solid; border-left-color: red; height: 235px; position: absolute; margin-left: 3px;'></div></span>";
       pane += "</div>";
       pane += "<div class='example' style='background:black;overflow:hidden;height:20px;'><img style='max-width:none;display:block;height:20px;' src='/images/snowsky-corrected.jpg' />";
       pane += " <p style='color: rgba(255, 255, 255, 0.701961); text-align: right; margin-top: -19px; font-size: 10px; padding: 1px 4px;'>REFERENCE</p>";
@@ -265,7 +289,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
           extent = form.graph.extent,
           error;
 
-      attemptCalibration = function() {
+      var attemptCalibration = function() {
 
         var auto_cal = SpectralWorkbench.API.Core.attemptCalibration(_graph), // [r,g,b]
             // convert to display space from image space:
@@ -315,6 +339,9 @@ SpectralWorkbench.UI.ToolPaneTypes = {
             exampleImgBlue2Green = parseInt((x2 - x1) / (blue2green / exampleImgWidth)), // in display pixels
             leftPad = (-parseInt((left2blue / exampleImgWidth) * exampleImgBlue2Green) + x1); // in display pixels
 
+        _graph.imgContainer.height(180); // we should move away from hard-coded height, but couldn't make the below work:
+        //_graph.imgContainer.height(_graph.imgContainer.height() + 80);
+
         $('.calibration-pane .example img').css('margin-left', leftPad);
         $('.calibration-pane .example img').css('width', exampleImgBlue2Green);
 
@@ -352,6 +379,8 @@ SpectralWorkbench.UI.ToolPaneTypes = {
       });
 
       $('.btn-save-calibrate-2').click(function() {
+
+        $('.btn-save-calibrate-2').html('<i class="icon icon-spinner icon-white icon-spin"></i>');
 
         _graph.datum.calibrateAndUpload(
           blue2, 

@@ -54,6 +54,26 @@ SpectralWorkbench.Datum = Class.extend({
 
 
     /* ======================================
+     * Create new tags and add them to self,
+     * then run them.
+     */
+    _datum.addTags = function(names, callback) {
+/*
+      var tag = new SpectralWorkbench.Tag(_datum, name, false, callback);
+
+      // we just do these before waiting to hear back from the above: 
+
+      _datum.tags.push(tag);
+
+      _datum.parseTag(tag);
+
+      return tag;
+*/
+
+    }
+
+
+    /* ======================================
      * Cleanly removes tags with given name and refreshes graph, and 
      * execute callback() on completion(s) if provided, because
      * this is asynchronous! Callback is passed to .remove() which executes it.

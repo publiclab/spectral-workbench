@@ -18,6 +18,8 @@ SpectralWorkbench.Graph = Class.extend({
     this.range = this.args.range || false;
     this.selector = this.args.selector || '#graph';
     this.el = $(this.selector);
+
+    // this could be moved into the graph.image Image object:
     this.imgSelector = this.args.imageSelector || 'div.spectrum-img-container';
     this.imgContainer = $(this.imgSelector);
     this.imgEl = this.imgContainer.find('img');
@@ -269,8 +271,7 @@ SpectralWorkbench.Graph = Class.extend({
       _graph.loaded = true;
       _graph.onComplete(_graph);
  
-      // hide loading grey background
-      _graph.el.css('background','white');
+      // hide loading spinner
       _graph.el.find('.icon-spinner').remove();
 
     }
@@ -374,8 +375,10 @@ SpectralWorkbench.Graph = Class.extend({
     _graph.graphSetup();
     _graph.eventSetup();
 
-    // Update the chart when DOM element resizes
-    $(_graph.selector).on('resize', _graph.updateSize());
+    
+    if (_graph.embed) $(_graph.selector).on('resize', _graph.updateSize()); // if embed, update the chart when DOM element resizes
+    else $(window).on('resize', _graph.updateSize()); // else resize when window resizes
+    
 
     return _graph;
 
