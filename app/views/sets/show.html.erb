@@ -50,7 +50,7 @@
         <p><a rel="license" href="http://creativecommons.org/publicdomain/zero/1.0/"><img src="http://i.creativecommons.org/p/zero/1.0/88x31.png" style="border-style: none;" alt="CC0" /></a></p>
         <p class="hidden-phone"><small>
         To the extent possible under law,
-        <%# if @set.author.url %><a rel="dct:publisher" href="http://publiclab.org"><%# end %>
+        <%# if @set.author.url %><a rel="dct:publisher" href="//publiclab.org"><%# end %>
         <span property="dct:title"><%= @set.author %></span><%# if @set.author.url %></a><%# end %>
         has waived all copyright and related or neighboring rights to
         "<span property="dct:title"><%= @set.title %></span>".
@@ -164,7 +164,7 @@ $W.plot = $.plot($("#graph"),$W.data,flotoptions);
     var size = prompt("What size, in WIDTHxHEIGHT?","500x150")
     var width = size.split('x')[0]
     var height = size.split('x')[1]
-    $('#embedcode').val("<iframe width='"+width+"px' height='"+height+"px' border='0' src='http://spectralworkbench.org/sets/embed/<%= @set.id %>?width="+width+"&height="+height+"'></iframe>")
+    $('#embedcode').val("<iframe width='"+width+"px' height='"+height+"px' border='0' src='//spectralworkbench.org/sets/embed/<%= @set.id %>?width="+width+"&height="+height+"'></iframe>")
     $('#embedcode').focus()
     $('#embedcode').select()
   })

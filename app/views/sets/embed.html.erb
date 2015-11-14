@@ -28,9 +28,9 @@
   $.plot($("#graph"),data,flotoptions);
 </script>
 
-<b><a target="_blank" href="http://spectralworkbench.org/sets/show/<%= @set.id %>"><%= @set.title %></a></b>
-<span style="text-align:right;">by <a href="http://spectralworkbench.org/spectra/author/<%= @set.author %>"><%= @set.author %></a></span>
-<span style="text-align:right;">on <img src="/images/spectralworkbench.png" /> <a href="http://spectralworkbench.org">SpectralWorkbench.org</a></span>
+<b><a target="_blank" href="//spectralworkbench.org/sets/show/<%= @set.id %>"><%= @set.title %></a></b>
+<span style="text-align:right;">by <a href="//spectralworkbench.org/spectra/author/<%= @set.author %>"><%= @set.author %></a></span>
+<span style="text-align:right;">on <img src="/images/spectralworkbench.png" /> <a href="//spectralworkbench.org">SpectralWorkbench.org</a></span>
 <span id="hidelegend"> | <a href="javascript:void();" onClick="flotoptions.legend = {show:false};$.plot($('#graph'),data,flotoptions);">hide legend</a></span>
 <style>
 html {

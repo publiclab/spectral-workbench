@@ -225,7 +225,7 @@ $W = {
         $W.ctx.drawImage(video,0,-$W.sample_start_row)
       }
 
-      // testing line; go to http://spectralworkbench.org/capture?debug=true
+      // testing line; go to //spectralworkbench.org/capture?debug=true
       if ($W.debug_tmp) $W.debug_log = "$W.height="+$W.height+" $W.width="+$W.width+" #canvas height="+$('#canvas').height()
     }
   },

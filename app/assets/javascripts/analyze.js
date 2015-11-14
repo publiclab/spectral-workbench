@@ -51,7 +51,7 @@ $W = {
     })
     // we could switch to "selection" http://people.iola.dk/olau/flot/examples/selection.html
     $('#calibrate').click(function() {
-      $("#toolbar_notification").html("Click on the middle blue band (<a href='http://publiclaboratory.org/wiki/spectral-workbench-calibration'>Learn more</a>)")
+      $("#toolbar_notification").html("Click on the middle blue band (<a href='//publiclab.org/wiki/spectral-workbench-calibration'>Learn more</a>)")
       // observe clicks to graph:
       $("#graph").bind("plotclick", function (event, pos, item) {
         $W.second_calibration($W.getPixelFromWavelength(pos.x),435.833)
@@ -66,7 +66,7 @@ $W = {
       var size = prompt("What size, in WIDTHxHEIGHT, in pixels?","500x550")
       var width = size.split('x')[0]
       var height = size.split('x')[1]
-      $('#embedcode').val("<iframe width='"+width+"px' height='"+height+"px' border='0' src='http://spectralworkbench.org/spectrums/embed2/"+$W.spectrum_id+"?width="+width+"&height="+height+"'></iframe>")
+      $('#embedcode').val("<iframe width='"+width+"px' height='"+height+"px' border='0' src='//spectralworkbench.org/spectrums/embed2/"+$W.spectrum_id+"?width="+width+"&height="+height+"'></iframe>")
       $('#embedcode').focus()
       $('#embedcode').select()
     })
@@ -182,7 +182,7 @@ $W = {
       if (oe.r) channels.push("red")
       if (oe.g) channels.push("green")
       if (oe.b) channels.push("blue")
-      $W.notify(msg+channels.join(', ')+". <a href='http://publiclab.org/wiki/spectral-workbench-usage#Overexposure'>Learn how to fix this</a>.","warning",false)
+      $W.notify(msg+channels.join(', ')+". <a href='//publiclab.org/wiki/spectral-workbench-usage#Overexposure'>Learn how to fix this</a>.","warning",false)
     }
   },
 

@@ -18,8 +18,8 @@ xml.rss "version" => "2.0", "xmlns:dc" => "http://purl.org/dc/elements/1.1/" do
        xml.pubDate     spectrum.created_at.to_s(:rfc822)
        xml.category    "spectrum"
        xml.link        url_for :only_path => false, :controller => 'spectrums', :action => 'show', :id => spectrum.id
-       xml.image "http://spectralworkbench.org"+spectrum.photo.url(:large)
-       xml.description "<iframe width='500px' height='400px' border='0' src='http://spectralworkbench.org/spectra/embed/"+spectrum.id.to_s+"'></iframe><br />"+RDiscount.new(spectrum.notes.to_s)+"<br /><br />View full (<a href='http://creativecommons.org/publicdomain/zero/1.0/'>public domain</a>) data: http://spectralworkbench.org/spectra/"+spectrum.id.to_s
+       xml.image "https://spectralworkbench.org"+spectrum.photo.url(:large)
+       xml.description "<iframe width='500px' height='400px' border='0' src='https://spectralworkbench.org/spectra/embed/"+spectrum.id.to_s+"'></iframe><br />"+RDiscount.new(spectrum.notes.to_s)+"<br /><br />View full (<a href='http://creativecommons.org/publicdomain/zero/1.0/'>public domain</a>) data: https://spectralworkbench.org/spectra/"+spectrum.id.to_s
        xml.guid        url_for :only_path => false, :controller => 'spectrums', :action => 'show', :id => spectrum.id
      end
    end
