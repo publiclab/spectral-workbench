@@ -55,23 +55,58 @@ SpectralWorkbench.Datum = Class.extend({
 
     /* ======================================
      * Create new tags and add them to self,
-     * then run them.
+     * then run them. Unfinished.
      */
+    /*
     _datum.addTags = function(names, callback) {
-/*
-      var tag = new SpectralWorkbench.Tag(_datum, name, false, callback);
 
-      // we just do these before waiting to hear back from the above: 
+      var tags = {};
 
-      _datum.tags.push(tag);
+      // grey out graph during load
+      _datum.graph.opacity(0.5);
 
-      _datum.parseTag(tag);
+      names.split(',').forEach(function(tagname, index) {
 
-      return tag;
-*/
+        // dont yet submit 
+        var tag = new SpectralWorkbench.Tag(_datum, tagname, { batch: true }, callback);
+
+        // this gets messy, but whatever
+        _tag.startSpinner();
+        
+        // we just do these before waiting to hear back from the above: 
+        
+        _datum.tags.push(tag);
+
+        tags[tagname] = tag;
+
+        _datum.tags.push(tag);
+
+      });
+
+      $.ajax({
+        url: "/tags",
+        type: "POST",
+        dataType: "json",
+ 
+        data: {
+          authenticity_token: $('meta[name=csrf-token]').attr('content'),
+          tag: {
+            spectrum_id: _tag.datum.id,
+            name: _tag.name
+          }
+        },
+
+        success: _tag.uploadSuccess,
+
+        error: _tag.uploadError
+ 
+      });
+
+
+      return tags;
 
     }
-
+    */
 
     /* ======================================
      * Cleanly removes tags with given name and refreshes graph, and 

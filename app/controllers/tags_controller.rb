@@ -2,12 +2,17 @@ class TagsController < ApplicationController
 
   before_filter :require_login, :only => [ :create, :destroy ]
 
+
   def create
+
     response = { 
       :errors => [],
-      :saved => [],
+      :saved => {},
     }
+
     @spectrum = Spectrum.find(params[:tag][:spectrum_id])
+                        .select("id, title, created_at, user_id, author, calibrated")
+
     # we do it this way to handle JSON error generation
     params[:tag][:name].split(',').uniq.each do |name|
       if name.match(':').nil? || @spectrum.user_id == current_user.id || current_user.role == "admin"
@@ -18,7 +23,7 @@ class TagsController < ApplicationController
         })
         if tag.valid?
           tag.save
-          response[:saved] << [tag.name, tag.id]
+          response[:saved][tag.name] = { id: tag.id }
         else
           response[:errors] << "Error: tags "+tag.errors[:name].first
         end
@@ -26,6 +31,7 @@ class TagsController < ApplicationController
         response[:errors] << "Error: You must own the spectrum to add powertags"
       end
     end
+
     respond_to do |format|
       if request.xhr? # ajax
         format.json { render :json => response }
@@ -37,7 +43,9 @@ class TagsController < ApplicationController
         format.json { render :json => response }
       end
     end
+
   end
+
 
   def show
     @tag = Tag.find_by_name(params[:id], :order => "id DESC")
@@ -52,6 +60,7 @@ class TagsController < ApplicationController
       format.json  { render :json => @spectrums }
     end
   end
+
 
   def destroy
     @tag = Tag.find(params[:id])

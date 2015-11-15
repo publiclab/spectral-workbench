@@ -10,19 +10,36 @@ SpectralWorkbench.Tag = Class.extend({
     _tag.name = name;
     _tag.datum = datum;
 
-    if (json) {
-      _tag.isNew = false;
-      _tag.json = json;
-      _tag.id = json.id;
+    if (json) { 
+
+      if (json.hasOwnProperty('batch')) { // we (mis)use json as options in a new tag; pass { batch: true } to stop tag from uploading
+
+        // it's going to be batch-submitted by the parent Datum; don't upload
+        _tag.uploadable = false;
+
+      } else {
+
+        // it's an existing tag; don't upload
+        _tag.json = json;
+        _tag.id = json.id;
+        _tag.uploadable = false;
+
+      }
+
     } else {
-      _tag.isNew = true;
+
+      // it's a new tag; upload when done constructing
+      _tag.uploadable = false;
       _tag.json = {};
+
     }
 
     if (_tag.name.match(/[\w\.]+:[\w0-9\-\*\+\[\]\(\)]+/)) {
+
       _tag.powertag = true;
       _tag.key = _tag.name.split(':')[0];
       _tag.value = _tag.name.split(':')[1];
+
     } else _tag.powertag = false;
 
     _tag.startSpinner = function() {
@@ -51,19 +68,6 @@ SpectralWorkbench.Tag = Class.extend({
       // grey out graph during load
       _tag.datum.graph.opacity(0.5);
 
-      var notify_and_offer_clear = function() {
-
-        var notice = SpectralWorkbench.API.Core.notify("The tag you've applied couldn't be saved, but it's been run locally. <a class='tag-clear-" + _tag.id + "'>Clear it now</a>.");
-
-        $('.tag-clear-' + _tag.id).click(function() {
-
-          _tag.destroy();
-          notice.remove();
-
-        });
-
-      }
-
       $.ajax({
         url: "/tags",
         type: "POST",
@@ -76,51 +80,77 @@ SpectralWorkbench.Tag = Class.extend({
             name: _tag.name
           }
         },
- 
-        success: function(response) {
 
-          _tag.stopSpinner();
+        success: _tag.uploadSuccess,
 
-          // remove grey out of graph after load
-          _tag.datum.graph.opacity(1);
-
-          if (response['saved'] && response['saved'].length > 0) {
-
-            _tag.id = response['saved'][0][1]; // this is kinda illegible
-
-            // render them!
-            _tag.render();
-
-            // from init() call
-            if (callback) callback(_tag, response);
-
-          }
-
-          if (response['errors'] && response['errors'].length > 0) {
-
-            _tag.datum.graph.tagForm.error(response['errors']);
-            notify_and_offer_clear();
-            console.log(response.responseText);
-
-          }
-
-        },
-
-        error: function(response) {
-
-          _tag.datum.graph.tagForm.error('There was an error.');
-          notify_and_offer_clear();
-          console.log(response.responseText);
-
-        }
+        error: _tag.uploadError
  
       });
 
     }
 
 
+    // used on failed tag upload
+    _tag.notify_and_offer_clear = function() {
+
+      var notice = SpectralWorkbench.API.Core.notify("The tag you've applied couldn't be saved, but it's been run locally. <a class='tag-clear-" + _tag.id + "'>Clear it now</a>.");
+
+      $('.tag-clear-' + _tag.id).click(function() {
+
+        _tag.destroy();
+        notice.remove();
+
+      });
+
+    }
+
+
+    _tag.uploadSuccess = function(response) {
+
+      _tag.stopSpinner();
+
+      // remove grey out of graph after load
+      _tag.datum.graph.opacity(1);
+
+      if (response['saved'] && response['saved'].length > 0) {
+
+        _tag.id = response['saved'][_tag.name].id; // response is a JSON object whose properties are tagnames, each with property <id>
+
+        // render them!
+        _tag.render();
+
+        // from init() call
+        if (callback) callback(_tag, response);
+
+      }
+
+      if (response['errors'] && response['errors'].length > 0) {
+
+        _tag.datum.graph.tagForm.error(response['errors']);
+        _tag.notify_and_offer_clear();
+        console.log(response.responseText);
+
+      }
+
+    }
+
+
+    _tag.uploadError = function(response) {
+
+      _tag.datum.graph.tagForm.error('There was an error.');
+      _tag.notify_and_offer_clear();
+      console.log(response.responseText);
+
+    }
+
+
     // Delete it from the server, then from the DOM;
     _tag.destroy = function(callback) {
+
+      $('tr#tag_' + _tag.id + ' .label, span#tag_' + _tag.id).css('background', '#bbb')
+                                                             .html(_tag.el.html() + " <i class='icon icon-spinner icon-spin icon-white'></i>");
+
+      $('tr#tag_' + _tag.id).css('color', '#bbb')
 
       $.ajax({
         url: "/tags/" + _tag.id,
@@ -225,7 +255,7 @@ SpectralWorkbench.Tag = Class.extend({
     }
 
 
-    if (_tag.isNew) _tag.upload(callback);
+    if (_tag.uploadable) _tag.upload(callback);
     else {
 
       if (callback) callback(); // callback directly, as we don't need to wait for an upload
