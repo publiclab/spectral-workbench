@@ -14,6 +14,7 @@ SpectralWorkbench.Tag = Class.extend({
 
       if (json.hasOwnProperty('batch')) { // we (mis)use json as options in a new tag; pass { batch: true } to stop tag from uploading
 
+console.log('batch', _tag)
         // it's going to be batch-submitted by the parent Datum; don't upload
         _tag.uploadable = false;
 

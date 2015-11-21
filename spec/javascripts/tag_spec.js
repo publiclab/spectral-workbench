@@ -25,7 +25,6 @@ describe("Tag", function() {
 
     });
 
-
   });
 
 
@@ -70,6 +69,7 @@ describe("Tag", function() {
     tag = graph.datum.addTag('sodium', function(tag, ajaxResponse) {
 
       // beware; these can fail silently if this callback is not called; add a toHaveBeenCalled() test
+console.log('beware',tag)
       expect(tag.json).toBeDefined();
       expect(tag.id).toBeDefined();
       expect(tag.id).toBe(1);
@@ -82,6 +82,7 @@ describe("Tag", function() {
 
     // tag should then be parsed
 
+console.log('beware2',tag)
     expect(tag).toBeDefined();
     expect(tag.isNew).toBe(true);
     expect(tag.json).toEqual({});
