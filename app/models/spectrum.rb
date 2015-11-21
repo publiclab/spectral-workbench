@@ -263,6 +263,7 @@ puts "reversing"
 
   # a string of either a single tag name or a series of comma-delimited tags
   def tag(tags, user_id)
+    tags = tags.strip
     if tags.match(',').nil?
       tag = Tag.new({
         :spectrum_id => self.id,
