@@ -41,7 +41,7 @@ SpectralWorkbench.Datum = Class.extend({
     _datum.addTag = function(name, callback) {
 
       var tag = new SpectralWorkbench.Tag(_datum, name, false, callback);
-console.log('in addTag', tag)
+
       // we just do these before waiting to hear back from the above: 
 
       _datum.tags.push(tag);
@@ -109,7 +109,7 @@ console.log('in addTag', tag)
     */
 
     /* ======================================
-     * Cleanly removes tags with given name and refreshes graph, and 
+     * Cleanly removes all tags with given name and refreshes graph, and 
      * execute callback() on completion(s) if provided, because
      * this is asynchronous! Callback is passed to .remove() which executes it.
      */

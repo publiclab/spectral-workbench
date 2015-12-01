@@ -1,3 +1,6 @@
+// this is a tough one to test, with lots of asynchronicity :-/
+// however, many errors can be avoided by testing pre-existing tags
+// to avoid needing to deal with asynchronicity.
 describe("Tag", function() {
 
   var graph, tag, ajaxSpy;
@@ -96,6 +99,11 @@ console.log('beware2',tag)
     expect(gottenTag.id).toBeDefined();
     expect(gottenTag.id).toBe(1);
 
+    // confirm it's not a powertag
+    expect(gottenTag.key).not.toBeDefined();
+    expect(gottenTag.value).not.toBeDefined();
+    expect(gottenTag.powertag).toEqual(false);
+
   });
 
 
@@ -142,30 +150,15 @@ console.log('beware2',tag)
   });
 
 
-  // strangely, by this point, getTag('sodium') DOES work... 
-
-  it("with tagname 'sodium' is not a powertag", function() {
-
-    var gottenTag = graph.datum.getTag('sodium');
-
-    // not to be a powertag:
-    expect(gottenTag).not.toBe(false);
-    expect(gottenTag.key).not.toBeDefined();
-    expect(gottenTag.value).not.toBeDefined();
-    expect(gottenTag.powertag).toEqual(false);
-
-  });
-
-
   var deletionCallbackSpy = jasmine.createSpy('success');
 
-  it("deletes properly with datum.removeTag()", function(done) {
+  it("deletes pre-existing tag 'upload' with datum.removeTag()", function(done) {
 
-    graph.datum.removeTag('sodium', function(tag) {
+    graph.datum.removeTag('upload', function(tag) {
 
       expect(tag).toBeDefined(); // the removed tag is returned
 
-      expect(graph.datum.getTag('sodium')).toBe(false);
+      expect(graph.datum.getTag('upload')).toBe(false);
 
       deletionCallbackSpy();
 
