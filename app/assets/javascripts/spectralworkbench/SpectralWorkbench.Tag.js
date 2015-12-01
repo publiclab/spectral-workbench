@@ -12,9 +12,10 @@ SpectralWorkbench.Tag = Class.extend({
 
     if (json) { 
 
-      if (json.hasOwnProperty('batch')) { // we (mis)use json as options in a new tag; pass { batch: true } to stop tag from uploading
+      // this isn't used yet; it will be when Datum.addTags() is complete
+      // we (mis)use json as options in a new tag; pass { batch: true } to stop tag from uploading
+      if (json.hasOwnProperty('batch')) { 
 
-console.log('batch', _tag)
         // it's going to be batch-submitted by the parent Datum; don't upload
         _tag.uploadable = false;
 
@@ -30,7 +31,7 @@ console.log('batch', _tag)
     } else {
 
       // it's a new tag; upload when done constructing
-      _tag.uploadable = false;
+      _tag.uploadable = true;
       _tag.json = {};
 
     }
@@ -113,9 +114,9 @@ console.log('batch', _tag)
       // remove grey out of graph after load
       _tag.datum.graph.opacity(1);
 
-      if (response['saved'] && response['saved'].length > 0) {
+      if (response['saved']) {
 
-        _tag.id = response['saved'][_tag.name].id; // response is a JSON object whose properties are tagnames, each with property <id>
+        if (response['saved'][_tag.name] && response['saved'][_tag.name].hasOwnProperty('id')) _tag.id = response['saved'][_tag.name].id; // response is a JSON object whose properties are tagnames, each with property <id>
 
         // render them!
         _tag.render();
@@ -256,7 +257,7 @@ console.log('batch', _tag)
     }
 
 
-    if (_tag.uploadable) _tag.upload(callback);
+    if (_tag.uploadable && callback) _tag.upload(callback);
     else {
 
       if (callback) callback(); // callback directly, as we don't need to wait for an upload
