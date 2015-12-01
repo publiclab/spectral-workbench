@@ -18,7 +18,8 @@
       graph = new SpectralWorkbench.Graph({
         spectrum_id: <%= @spectrum.id %>,
         calibrated: <%= @spectrum.calibrated %>,
-        range: <%= @spectrum.has_powertag('range') ? @spectrum.range : false %>
+        range: <%= @spectrum.has_powertag('range') ? @spectrum.range : false %>,
+        sample_row: <%= @spectrum.sample_row %>
       });
     })
  

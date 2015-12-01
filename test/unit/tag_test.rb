@@ -41,6 +41,23 @@ class TagTest < ActiveSupport::TestCase
     assert tag.save
   end
 
+  test "crossSection powertag creation and spectrum.sample_row saving" do 
+    tag = Tag.new({
+      user_id:     users(:quentin).id,
+      spectrum_id: spectrums(:one).id,
+      name:        'crossSection:100'
+    })
+    assert tag.save
+    assert_equal 100, tag.spectrum.sample_row
+    assert_not_equal 200, tag.spectrum.sample_row
+  end
+
+  test "tag spectra" do 
+    tag = Tag.last
+    spectra = tag.spectra
+    assert spectra
+  end
+
 # We now allow all kinds of characters with "transform" tags. We should switch for this.
 
 #  test "tag creation with unallowed characters" do 

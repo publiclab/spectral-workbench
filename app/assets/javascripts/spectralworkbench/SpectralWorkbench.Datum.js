@@ -54,7 +54,62 @@ SpectralWorkbench.Datum = Class.extend({
 
 
     /* ======================================
-     * Cleanly removes tags with given name and refreshes graph, and 
+     * Create new tags and add them to self,
+     * then run them. Unfinished.
+     */
+    /*
+    _datum.addTags = function(names, callback) {
+
+      var tags = {};
+
+      // grey out graph during load
+      _datum.graph.opacity(0.5);
+
+      names.split(',').forEach(function(tagname, index) {
+
+        // dont yet submit 
+        var tag = new SpectralWorkbench.Tag(_datum, tagname, { batch: true }, callback);
+
+        // this gets messy, but whatever
+        _tag.startSpinner();
+        
+        // we just do these before waiting to hear back from the above: 
+        
+        _datum.tags.push(tag);
+
+        tags[tagname] = tag;
+
+        _datum.tags.push(tag);
+
+      });
+
+      $.ajax({
+        url: "/tags",
+        type: "POST",
+        dataType: "json",
+ 
+        data: {
+          authenticity_token: $('meta[name=csrf-token]').attr('content'),
+          tag: {
+            spectrum_id: _tag.datum.id,
+            name: _tag.name
+          }
+        },
+
+        success: _tag.uploadSuccess,
+
+        error: _tag.uploadError
+ 
+      });
+
+
+      return tags;
+
+    }
+    */
+
+    /* ======================================
+     * Cleanly removes all tags with given name and refreshes graph, and 
      * execute callback() on completion(s) if provided, because
      * this is asynchronous! Callback is passed to .remove() which executes it.
      */

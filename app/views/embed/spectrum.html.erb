@@ -15,7 +15,8 @@
         graph = new SpectralWorkbench.Graph({
           spectrum_id: <%= @spectrum.id %>,
           embed: true,
-          calibrated: <%= @spectrum.calibrated %>
+          calibrated: <%= @spectrum.calibrated %>,
+          sample_row: <%= @spectrum.sample_row %>
         });
     })
 

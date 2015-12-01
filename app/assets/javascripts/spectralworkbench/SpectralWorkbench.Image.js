@@ -6,6 +6,7 @@ SpectralWorkbench.Image = Class.extend({
 
     image.imgEl = element;
     image.imgObj = new Image();
+    image.lineEl = false; // the line indicating the cross-section
 
     image.callback = callback;
 
@@ -24,11 +25,14 @@ SpectralWorkbench.Image = Class.extend({
       image.ctx.canvas.height = image.height;
       image.ctx.drawImage(image.imgObj, 0, 0, image.width, image.height);
 
+      if (_graph.args.hasOwnProperty('sample_row')) image.setLine(_graph.args.sample_row);
+
       image.callback(); // since image loading is asynchronous
 
     }
 
     image.imgObj.src = image.imgEl.attr('src');
+
 
     /* ======================================
      * Returns a array of pixel brightnesses in [r,g,b,a] format, 
@@ -58,6 +62,60 @@ SpectralWorkbench.Image = Class.extend({
       }
 
       return output;
+
+    }
+
+
+    /* ======================================
+     * Display a horizontal line on the image, y pixels below the top edge
+     * (used for showing the image cross section)
+     */
+    image.setupLine = function(y) {
+
+      image.imgEl.before($('<div class="section-line-container"><div class="section-line"></div></div>'));
+      image.lineContainerEl = _graph.imgContainer.find('.section-line-container');
+      image.lineContainerEl.css('position', 'relative');
+      image.lineEl = _graph.imgContainer.find('.section-line');
+      image.lineEl.css('position', 'absolute')
+                  .css('width', '100%')
+                  .css('top', 0)
+                  .css('border-bottom', '1px solid rgba(255,255,255,0.5)')
+                  .css('font-size', '9px')
+                  .css('color', 'rgba(255,255,255,0.5)')
+                  .css('text-align', 'right')
+                  .css('padding-right', '6px')
+
+    }
+
+
+    /* ======================================
+     * Display a horizontal line on the image, y pixels below the top edge
+     * in displace pixels. To use in image pixels, divide by image pixels and multiply
+     * by display height of element in pixels -- 100 by default.
+     * (used for showing the image cross section)
+     */
+    image.setLine = function(y) {
+
+      if (!image.lineEl) image.setupLine();
+
+      y -= 1; // off by one correction
+      y = y / image.height * 100; // convert to display scale
+
+      if (y > 20) {
+
+        image.lineEl.html('GRAPHED CROSS SECTION &nbsp;');
+        image.lineEl.css('margin-top', '-22px');
+
+      } else {
+
+        image.lineEl.html('');
+        image.lineEl.css('margin-top', '0');
+
+      }
+
+      image.lineEl.css('top', y);
+
+      return image.lineEl;
 
     }
 
