@@ -28,8 +28,12 @@ class Tag < ActiveRecord::Base
 
   end
 
+  # dangerous to call unmodified -- high load!
   def spectra
-    Spectrum.joins(:tags).where('tags.name = (?)',self.name)
+    Spectrum.select("spectrums.id, spectrums.title, spectrums.created_at, spectrums.user_id, spectrums.author, spectrums.calibrated")
+            .joins(:tags)
+            .where('tags.name = (?)', self.name)
+            .order("spectrums.id DESC")
   end
 
   # this doesn't accommodate v2.0 powertags, which can contain math syntax

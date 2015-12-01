@@ -10,8 +10,10 @@ class TagsController < ApplicationController
       :saved => {},
     }
 
-    @spectrum = Spectrum.find(params[:tag][:spectrum_id])
-                        .select("id, title, created_at, user_id, author, calibrated")
+    @spectrum = Spectrum.select("id, title, created_at, user_id, author, calibrated")
+                        .where(id: params[:tag][:spectrum_id])
+                        .limit(1)
+                        .first
 
     # we do it this way to handle JSON error generation
     params[:tag][:name].split(',').uniq.each do |name|

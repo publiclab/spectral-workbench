@@ -52,6 +52,12 @@ class TagTest < ActiveSupport::TestCase
     assert_not_equal 200, tag.spectrum.sample_row
   end
 
+  test "tag spectra" do 
+    tag = Tag.last
+    spectra = tag.spectra
+    assert spectra
+  end
+
 # We now allow all kinds of characters with "transform" tags. We should switch for this.
 
 #  test "tag creation with unallowed characters" do 
