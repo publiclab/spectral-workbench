@@ -9,6 +9,7 @@ class Spectrum < ActiveRecord::Base
   has_many :comments, :dependent => :destroy
   has_many :likes, :dependent => :destroy
   has_many :tags, :dependent => :destroy
+  has_many :snapshots, :dependent => :destroy
   has_one :processed_spectrum, :dependent => :destroy
   has_and_belongs_to_many :spectra_sets
 
@@ -259,6 +260,17 @@ puts "reversing"
 
   def range
     self.powertag('range').split('-').map { |s| s.to_i }
+  end
+
+  def add_snapshot(user, data)
+
+    self.snapshots << Snapshot.create({
+      user_id: user.id,
+      data: data
+    })
+
+   self.snapshots.last
+
   end
 
   # a string of either a single tag name or a series of comma-delimited tags

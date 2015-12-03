@@ -5,6 +5,7 @@ class SpectrumsController < ApplicationController
   protect_from_forgery :only => [:clone_calibration, :extract, :calibrate, :save]
   # http://api.rubyonrails.org/classes/ActionController/RequestForgeryProtection/ClassMethods.html
   before_filter :require_login,     :only => [ :new, :edit, :create, :upload, :save, :update, :destroy, :calibrate, :extract, :clone_calibration, :clone, :setsamplerow, :find_brightest_row, :rotate, :reverse, :choose ]
+  # switch to -- :except => [ :index, :stats, :show, :show2, :anonymous, :embed, :embed2, :search, :recent, :all, :rss, :plots_rss, :match, :clone_search, :compare_search, :set_search
 
   def stats
   end
