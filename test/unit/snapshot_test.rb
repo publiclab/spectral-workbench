@@ -4,12 +4,15 @@ class SnapshotTest < ActiveSupport::TestCase
 
   test "creating a snapshot" do
 
+    data = "data"
+
     snapshot = Snapshot.new({
                      spectrum_id: Spectrum.last.id,
-                     user_id: User.first.id
+                     user_id: User.first.id,
+                     data: '{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}'
                    })
 
-    snapshot.save
+    snapshot.save!
 
     assert_not_nil snapshot
     assert_not_nil snapshot.id
@@ -22,7 +25,7 @@ class SnapshotTest < ActiveSupport::TestCase
     spectrum = Spectrum.last
     snapshots = spectrum.snapshots.length
 
-    data = ""
+    data = '{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}'
 
     snapshot = spectrum.add_snapshot(User.first, data)
 

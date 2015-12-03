@@ -5,12 +5,10 @@ class SnapshotsController < ApplicationController
   def create
 
     @spectrum = Spectrum.find params[:id]
-    @snapshot = Spectrum.add_snapshot({
-
-      user_id: current_user.id,
-      data: params[:data]
-
-    })
+    @snapshot = @spectrum.add_snapshot(
+      current_user,
+      params[:data]
+    )
 
   end
 
