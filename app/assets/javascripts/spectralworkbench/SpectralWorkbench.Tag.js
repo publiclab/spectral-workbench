@@ -251,7 +251,7 @@ SpectralWorkbench.Tag = Class.extend({
       else if (_tag.key == "range")       return "Limits wavelength range.";
       else if (_tag.key == "transform")   return "Filters this spectrum with a math expression.";
       else if (_tag.key == "subtract")    return "Subtracts another spectrum from this.";
-      else if (_tag.key == "calibration") return "Copies calibration from another spectrum.";
+      else if (_tag.key == "calibration") return "Copies calibration from <a href='/spectrums/" + _tag.value + "'>Spectrum #" + _tag.value + "</a>.";
       else if (_tag.key == "cloneOf")     return "Spectrum is a copy of <a href='/spectrums/" + _tag.value + "'>Spectrum #" + _tag.value + "</a>.";
       else                                return "No description yet.";
     }

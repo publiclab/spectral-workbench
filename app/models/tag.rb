@@ -12,6 +12,7 @@ class Tag < ActiveRecord::Base
   belongs_to :user
 
   before_save :scan_powertags
+  before_destroy :clean_snapshots
 
 
   def scan_powertags
@@ -47,6 +48,22 @@ class Tag < ActiveRecord::Base
 
   def value
     self.name.split(':').last
+  end
+
+  def has_snapshot?
+    self.name.match(/#/) && snapshot
+  end
+
+  def snapshot_id
+    self.value.split('#').last.to_i
+  end
+
+  def snapshot
+    Snapshot.find self.snapshot_id
+  end
+
+  def clean_snapshots
+    self.snapshot.delete if self.has_snapshot?
   end
 
   # supplies a string of CSS classnames for this type of tag

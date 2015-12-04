@@ -37,6 +37,13 @@ class Spectrum < ActiveRecord::Base
     self.spectra_sets
   end
 
+  def latest_snapshot
+    Snapshot.where(spectrum_id: self.id)
+            .order("created_at DESC")
+            .limit(1)
+            .last
+  end
+
   def validate_json
     if self.data.nil?
       true

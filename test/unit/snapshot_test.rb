@@ -2,6 +2,7 @@ require 'test_helper'
 
 class SnapshotTest < ActiveSupport::TestCase
 
+
   test "creating a snapshot" do
 
     data = "data"
@@ -19,6 +20,24 @@ class SnapshotTest < ActiveSupport::TestCase
     assert_not_nil Snapshot.find snapshot.id
 
   end
+
+
+  test "creating a snapshot with non-JSON data should fail" do
+
+    data = "data"
+
+    snapshot = Snapshot.new({
+                     spectrum_id: Spectrum.last.id,
+                     user_id: User.first.id
+                   })
+
+    assert_equal false, snapshot.save
+
+    assert_not_nil snapshot
+    assert_nil snapshot.id
+
+  end
+
 
   test "using spectrum.add_snapshot()" do
 
@@ -43,7 +62,34 @@ class SnapshotTest < ActiveSupport::TestCase
     assert_not_nil Spectrum.last.snapshots.last.id
     assert_not_nil Spectrum.last.snapshots.last.spectrum_id
     assert_equal Spectrum.last.snapshots.last.spectrum_id, spectrum.id
+    assert_equal Spectrum.last.latest_snapshot.spectrum_id, spectrum.id
 
   end
+
+  ## Tagging
+
+  test "tag snapshots" do
+
+    snapshot = Snapshot.new({
+                 spectrum_id: Spectrum.last.id,
+                 user_id: User.first.id,
+                 data: '{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}'
+               })
+    snapshot.save
+
+    tag = Tag.new({
+      user_id:     users(:quentin).id,
+      spectrum_id: spectrums(:one).id,
+      name:        "subtract:1##{snapshot.id}"
+    })
+
+    assert tag.save
+    assert tag.has_snapshot?
+    assert_equal tag.snapshot_id, snapshot.id
+    assert_not_nil tag.snapshot
+    assert_equal tag.snapshot.id, snapshot.id
+
+  end
+
 
 end
