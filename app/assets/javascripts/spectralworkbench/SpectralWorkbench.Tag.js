@@ -1,5 +1,18 @@
 SpectralWorkbench.Tag = Class.extend({
 
+  // these tagnames will trigger a snapshot to be saved to the server:
+  snapshot_tagnames: [
+
+    "calibration",
+    "subtract",
+    "transform",
+    "range",
+    "crossSection",
+    "smooth",
+    "flip"
+
+  ],
+
   // <json> is a JSON obj of the tag as received from the server; 
   // if this doesn't exist, it's a new tag
   // <callback> will be called as callback(tag, ajaxResponse)
@@ -43,12 +56,8 @@ SpectralWorkbench.Tag = Class.extend({
       _tag.key = _tag.name.split(':')[0];
       _tag.value = _tag.name.split(':')[1];
 
-      // scan for tags that require snapshots
-      if (false) {
-
-        _tag.needs_snapshot = true;
-
-      }
+      // scan for tags that require snapshots, but this isn't the right place to save it -- we need to parse it!
+      if (_tag.snapshot_tagnames.indexOf(_tag.key) != -1) _tag.snapshot = true;
 
     } else _tag.powertag = false;
 
@@ -265,6 +274,43 @@ SpectralWorkbench.Tag = Class.extend({
       else if (_tag.key == "calibration") return "Copies calibration from <a href='/spectrums/" + _tag.value + "'>Spectrum #" + _tag.value + "</a>.";
       else if (_tag.key == "cloneOf")     return "Spectrum is a copy of <a href='/spectrums/" + _tag.value + "'>Spectrum #" + _tag.value + "</a>.";
       else                                return "No description yet.";
+    }
+
+
+    _tag.parse = function() {
+
+      if (_tag.powertag) {
+
+        if (_tag.key == "subtract") {
+
+          SpectralWorkbench.API.Core.subtract(_tag.datum, _tag.value);
+
+        } else if (_tag.key == "transform") {
+
+          SpectralWorkbench.API.Core.transform(_tag.datum, _tag.value);
+
+        } else if (_tag.key == "smooth") {
+
+          SpectralWorkbench.API.Core.smooth(_datum, tag.value);
+
+        } else if (_tag.key == "blend") {
+
+          var blend_id = _tag.value.split('#')[0],
+              expression = _tag.value.split('#')[1];
+
+          SpectralWorkbench.API.Core.blend(_tag.datum, blend_id, expression);
+
+        } else if (_tag.key == "range") {
+
+          SpectralWorkbench.API.Core.range(_tag.datum, +_tag.value.split('-')[0], +_tag.value.split('-')[1]);
+
+        }
+
+      }
+
+      // save the parsed tag data:
+      if (_tag.snapshot) _tag.data = JSON.stringify(_tag.datum.json.data);
+
     }
 
 

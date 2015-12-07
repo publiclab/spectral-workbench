@@ -46,7 +46,7 @@ SpectralWorkbench.Datum = Class.extend({
 
       _datum.tags.push(tag);
 
-      _datum.parseTag(tag);
+      tag.parse();
 
       return tag;
 
@@ -232,45 +232,11 @@ SpectralWorkbench.Datum = Class.extend({
 
       _datum.tags.forEach(function(tag) {
 
-        _datum.parseTag(tag);
+        tag.parse();
 
       });
 
       _datum.graph.opacity(1);
-
-    }
-
-
-    _datum.parseTag = function(tag) {
-
-      if (tag.powertag) {
-
-        if (tag.key == "subtract") {
-
-          SpectralWorkbench.API.Core.subtract(_datum, tag.value);
-
-        } else if (tag.key == "transform") {
-
-          SpectralWorkbench.API.Core.transform(_datum, tag.value);
-
-        } else if (tag.key == "smooth") {
-
-          SpectralWorkbench.API.Core.smooth(_datum, tag.value);
-
-        } else if (tag.key == "blend") {
-
-          var blend_id = tag.value.split('#')[0],
-              expression = tag.value.split('#')[1];
-
-          SpectralWorkbench.API.Core.blend(_datum, blend_id, expression);
-
-        } else if (tag.key == "range") {
-
-          SpectralWorkbench.API.Core.range(_datum, +tag.value.split('-')[0], +tag.value.split('-')[1]);
-
-        }
-
-      }
 
     }
 

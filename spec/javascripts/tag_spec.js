@@ -155,9 +155,13 @@ describe("Tag", function() {
       expect(tag.value).toBeDefined();
       expect(tag.value).toBe('400-700');
       expect(tag.powertag).toEqual(true);
+      expect(tag.snapshot).toEqual(true);
 
       // apply the powertag! It may have been parsed already but we try again to be sure. 
-      graph.datum.parseTag(tag);
+      tag.parse();
+      expect(tag.data).not.toBeUndefined();
+      // should have cached a data snapshot locally:
+      expect(typeof tag.data).toBe('string');
 
       expect(graph.datum.getExtentX()[0]).toBeGreaterThan(400); // only within 400-700 range
       expect(graph.datum.getExtentX()[1]).toBeLessThan(700); // only within 400-700 range
