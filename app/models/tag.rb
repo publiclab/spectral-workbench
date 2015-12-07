@@ -29,6 +29,17 @@ class Tag < ActiveRecord::Base
 
   end
 
+  # this should return true for any powertag that operates on the data:
+  def needs_snapshot?
+    self.is_powertag? && ['calibrate',
+                          'subtract',
+                          'transform',
+                          'range',
+                          'crossSection',  
+                          'flip',  
+                          'smooth'].include?(self.key)
+  end
+
   # dangerous to call unmodified -- high load!
   def spectra
     Spectrum.select("spectrums.id, spectrums.title, spectrums.created_at, spectrums.user_id, spectrums.author, spectrums.calibrated")
@@ -51,7 +62,13 @@ class Tag < ActiveRecord::Base
   end
 
   def has_snapshot?
-    self.name.match(/#/) && snapshot
+    self.name.match(/#/) && self.snapshot
+  end
+
+  def add_snapshot(user, data)
+    self.spectrum.add_snapshot(user, data)
+    self.name = self.name + "#" + self.spectrum.snapshots.last.id.to_s
+    self.save
   end
 
   def snapshot_id
@@ -63,7 +80,7 @@ class Tag < ActiveRecord::Base
   end
 
   def clean_snapshots
-    self.snapshot.delete if self.has_snapshot?
+    self.snapshot.destroy if self.has_snapshot?
   end
 
   # supplies a string of CSS classnames for this type of tag

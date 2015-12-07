@@ -66,30 +66,41 @@ class SnapshotTest < ActiveSupport::TestCase
 
   end
 
+
   ## Tagging
 
-  test "tag snapshots" do
-
-    snapshot = Snapshot.new({
-                 spectrum_id: Spectrum.last.id,
-                 user_id: User.first.id,
-                 data: '{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}'
-               })
-    snapshot.save
+  test "tag relation to snapshots via # and cleanup on deletion" do
 
     tag = Tag.new({
       user_id:     users(:quentin).id,
       spectrum_id: spectrums(:one).id,
-      name:        "subtract:1##{snapshot.id}"
+      name:        "subtract:1" # this will generate a new snapshot and auto-add it to the tagname
+      #name:        "subtract:1##{snapshot.id}"
     })
 
     assert tag.save
+    assert tag.needs_snapshot?
+
+    data = '{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}'
+    tag.add_snapshot(User.last, data)
+
     assert tag.has_snapshot?
-    assert_equal tag.snapshot_id, snapshot.id
+    assert_equal tag.snapshot_id, tag.spectrum.snapshots.last.id
+    assert_equal tag.snapshot_id, Snapshot.last.id
+    assert_equal tag.name, "subtract:1##{tag.spectrum.snapshots.last.id}"
     assert_not_nil tag.snapshot
-    assert_equal tag.snapshot.id, snapshot.id
+
+    assert_not_nil Snapshot.where(id: tag.snapshot_id).first
+
+    tag.destroy
+
+    # should delete snapshot too
+    assert_nil Snapshot.where(id: tag.snapshot_id).first
 
   end
 
+  test "fetch all tags for a given snapshot, and don't clean up if another tag depends on it" do
+
+  end
 
 end

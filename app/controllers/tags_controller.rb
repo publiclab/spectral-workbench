@@ -3,6 +3,7 @@ class TagsController < ApplicationController
   before_filter :require_login, :only => [ :create, :destroy ]
 
 
+  # FYI, we've stopped accepting requests with multiple comma-delimited tags
   def create
 
     response = { 
@@ -15,23 +16,36 @@ class TagsController < ApplicationController
                         .limit(1)
                         .first
 
-    # we do it this way to handle JSON error generation
-    params[:tag][:name].split(',').uniq.each do |name|
-      if name.match(':').nil? || @spectrum.user_id == current_user.id || current_user.role == "admin"
-        tag = Tag.new({
-          :name => name.strip,
-          :spectrum_id => params[:tag][:spectrum_id],
-          :user_id => current_user.id
-        })
-        if tag.valid?
-          tag.save
-          response[:saved][tag.name] = { id: tag.id }
-        else
-          response[:errors] << "Error: tags "+tag.errors[:name].first
-        end
-      else
-        response[:errors] << "Error: You must own the spectrum to add powertags"
+    # we used to accept multiple comma-delimited tags and return a batch of errors.
+    # that's getting messy. We need better client-side error handling
+    tag = params[:tag]
+    name = params[:tag][:name]
+
+    if name.match(':').nil? || @spectrum.user_id == current_user.id || current_user.role == "admin"
+
+      name = name.strip # clean whitespace
+      tag = Tag.new({
+        :name => name,
+        :spectrum_id => params[:tag][:spectrum_id],
+        :user_id => current_user.id
+      })
+
+      # look for enclosed data in the tag request if 
+      # it's the kind of powertag that should create a snapshot
+      # the enclosed data is not required; but the client side will do it automatically
+      if tag.needs_snapshot? && tag[:data]
+        self.spectrum.add_snapshot(self.user, tag[:data])
       end
+
+      if tag.valid?
+        tag.save
+        response[:saved][tag.name] = { id: tag.id }
+      else
+        response[:errors] << "Error: tags "+tag.errors[:name].first
+      end
+
+    else
+      response[:errors] << "Error: You must own the spectrum to add powertags"
     end
 
     respond_to do |format|

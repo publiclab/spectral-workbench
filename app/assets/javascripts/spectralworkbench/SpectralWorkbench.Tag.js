@@ -36,11 +36,19 @@ SpectralWorkbench.Tag = Class.extend({
 
     }
 
+    // detect powertags by format
     if (_tag.name.match(/[\w\.]+:[\w0-9\-\*\+\[\]\(\)]+/)) {
 
       _tag.powertag = true;
       _tag.key = _tag.name.split(':')[0];
       _tag.value = _tag.name.split(':')[1];
+
+      // scan for tags that require snapshots
+      if (false) {
+
+        _tag.needs_snapshot = true;
+
+      }
 
     } else _tag.powertag = false;
 
@@ -70,21 +78,24 @@ SpectralWorkbench.Tag = Class.extend({
       // grey out graph during load
       _tag.datum.graph.opacity(0.5);
 
+      var data = {
+        authenticity_token: $('meta[name=csrf-token]').attr('content'),
+        tag: {
+          spectrum_id: _tag.datum.id,
+          name: _tag.name
+        }
+      };
+
+      // this will have to be adapted as we add tags to sets
+      if (_tag.needs_snapshot) data.tag.data = JSON.stringify(_tag.datum.json.data);
+
       $.ajax({
+ 
         url: "/tags",
         type: "POST",
         dataType: "json",
- 
-        data: {
-          authenticity_token: $('meta[name=csrf-token]').attr('content'),
-          tag: {
-            spectrum_id: _tag.datum.id,
-            name: _tag.name
-          }
-        },
-
+        data: data,
         success: _tag.uploadSuccess,
-
         error: _tag.uploadError
  
       });
