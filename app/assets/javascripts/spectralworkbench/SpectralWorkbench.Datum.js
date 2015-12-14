@@ -31,22 +31,17 @@ SpectralWorkbench.Datum = Class.extend({
 
 
     /* ======================================
-     * Create a new tag and add it to self,
-     * then run it.
-     * This is a bit weird -- we want to parse the tag immediately, but 
-     * we actually do so asynchronously with the callback, which is called 
-     * when we get a response from the server. This causes some havoc with 
-     * our tests, but is a faster response for the user.
+     * Create a new tag, upload it, parse it.
      */
     _datum.addTag = function(name, callback) {
 
-      var tag = new SpectralWorkbench.Tag(_datum, name, false, callback);
+      var tag = new SpectralWorkbench.Tag(_datum, name, false, function() {
 
-      // we just do these before waiting to hear back from the above: 
+        _datum.tags.push(tag);
 
-      _datum.tags.push(tag);
+        callback();
 
-      tag.parse();
+      });
 
       return tag;
 
@@ -55,7 +50,7 @@ SpectralWorkbench.Datum = Class.extend({
 
     /* ======================================
      * Create new tags and add them to self,
-     * then run them. Unfinished.
+     * then run them. Unfinished. Maybe abandoned.
      */
     /*
     _datum.addTags = function(names, callback) {

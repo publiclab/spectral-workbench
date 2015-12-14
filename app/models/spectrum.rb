@@ -269,10 +269,11 @@ puts "reversing"
     self.powertag('range').split('-').map { |s| s.to_i }
   end
 
-  def add_snapshot(user, data)
+  def add_snapshot(tag, data)
 
     self.snapshots << Snapshot.create({
-      user_id: user.id,
+      user_id: tag.user_id,
+      tag_id: tag.id,
       data: data
     })
 

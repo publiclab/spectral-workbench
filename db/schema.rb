@@ -667,6 +667,7 @@ ActiveRecord::Schema.define(:version => 20151202002150) do
   create_table "snapshots", :force => true do |t|
     t.integer  "user_id"
     t.integer  "spectrum_id"
+    t.integer  "tag_id"
     t.text     "description"
     t.text     "data"
     t.datetime "created_at",  :null => false

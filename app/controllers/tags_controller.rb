@@ -5,49 +5,43 @@ class TagsController < ApplicationController
 
   # FYI, we've stopped accepting requests with multiple comma-delimited tags
   def create
-
     response = { 
       :errors => [],
       :saved => {},
     }
-
     @spectrum = Spectrum.select("id, title, created_at, user_id, author, calibrated")
                         .where(id: params[:tag][:spectrum_id])
                         .limit(1)
                         .first
-
-    # we used to accept multiple comma-delimited tags and return a batch of errors.
-    # that's getting messy. We need better client-side error handling
-    tag = params[:tag]
-    name = params[:tag][:name]
-
-    if name.match(':').nil? || @spectrum.user_id == current_user.id || current_user.role == "admin"
-
-      name = name.strip # clean whitespace
+    if params[:tag][:name].match(':').nil? || @spectrum.user_id == current_user.id || current_user.role == "admin"
+      name = params[:tag][:name].strip # clean whitespace
       tag = Tag.new({
         :name => name,
         :spectrum_id => params[:tag][:spectrum_id],
         :user_id => current_user.id
       })
-
-      # look for enclosed data in the tag request if 
-      # it's the kind of powertag that should create a snapshot
-      # the enclosed data is not required; but the client side will do it automatically
-      if tag.needs_snapshot? && tag[:data]
-        self.spectrum.add_snapshot(self.user, tag[:data])
-      end
-
+      tag.created_at = DateTime.parse(params[:tag][:created_at]) if params[:tag][:created_at]
       if tag.valid?
-        tag.save
+        # look for enclosed data in the tag request if 
+        # it's the kind of powertag that should create a snapshot
+        # the enclosed data is not required; but the client side will do it automatically
         response[:saved][tag.name] = { id: tag.id }
+        old_name = tag.name
+        tag.save
+        # send updated name to client:
+        if tag.generate_reference?
+          response[:saved][old_name][:name] = tag.name
+        end
+        # setup the generated snapshot if needed:
+        if tag.generate_snapshot? && params[:tag][:data]
+          snapshot = tag.create_snapshot(params[:tag][:data])
+        end
       else
         response[:errors] << "Error: tags "+tag.errors[:name].first
       end
-
     else
       response[:errors] << "Error: You must own the spectrum to add powertags"
     end
-
     respond_to do |format|
       if request.xhr? # ajax
         format.json { render :json => response }
@@ -59,7 +53,6 @@ class TagsController < ApplicationController
         format.json { render :json => response }
       end
     end
-
   end
 
 
@@ -103,27 +96,21 @@ class TagsController < ApplicationController
     end
   end
 
-  def index
 
+  def index
     # resourceful request for a set's tag list:
     if params[:set_id]
-
       @set = Set.find params[:set_id]
       render partial: 'tags/inlineList', locals: { datum: @set }, layout: false
-
     # resourceful request for a spectrum's tag list:
     elsif params[:spectrum_id]
-
       @spectrum = Spectrum.find params[:spectrum_id]
-
       if request.xhr?
         render :json => @spectrum.tags
       else
         render partial: 'tags/inlineList', locals: { datum: @spectrum }, layout: false
       end
-
     else
-
       # this is dumb, get rid of it:
       @tags = Tag.order("id DESC").where(created_at: Time.now-1.month..Time.now).limit(100)
       count = {}
@@ -136,7 +123,6 @@ class TagsController < ApplicationController
       end
       @tagnames = count.sort_by {|k,v| v }.reverse
     end
-
   end
 
 end

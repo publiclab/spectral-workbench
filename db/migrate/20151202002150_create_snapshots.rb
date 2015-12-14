@@ -4,6 +4,7 @@ class CreateSnapshots < ActiveRecord::Migration
     create_table "snapshots" do |t|
       t.integer   :user_id
       t.integer   :spectrum_id
+      t.integer   :tag_id
       t.text      :description
       t.text      :data
 

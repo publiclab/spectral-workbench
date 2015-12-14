@@ -46,11 +46,11 @@ class SnapshotTest < ActiveSupport::TestCase
 
     data = '{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}'
 
-    snapshot = spectrum.add_snapshot(User.first, data)
+    snapshot = spectrum.add_snapshot(Tag.last, data)
 
     assert_not_nil snapshot
     assert_not_nil snapshot.user_id
-    assert_equal snapshot.user_id, User.first.id
+    assert_equal snapshot.user_id, Tag.last.user_id
     assert_not_equal snapshots, spectrum.snapshots.length
     assert_equal snapshots + 1, spectrum.snapshots.length
     assert_not_nil snapshot.id
@@ -69,33 +69,152 @@ class SnapshotTest < ActiveSupport::TestCase
 
   ## Tagging
 
-  test "tag relation to snapshots via # and cleanup on deletion" do
+  test "no reference id should be generated if referred-to spectrum has no snapshots" do
 
     tag = Tag.new({
       user_id:     users(:quentin).id,
       spectrum_id: spectrums(:one).id,
-      name:        "subtract:1" # this will generate a new snapshot and auto-add it to the tagname
+      name:        "subtract:#{spectrums(:one).id}"
+    })
+
+    assert tag.save
+
+    assert_not_equal tag.value.split('#').length, 2
+    reference_id = tag.value.split('#').last # should yield spectrum id, not snapshot id
+    assert_equal spectrums(:one).snapshots.length, 0
+    assert_not_equal tag.value, "#{spectrums(:one).id}##{reference_id}"
+    assert_nil tag.reference
+
+  end
+
+  # if you subtract spectrum from self, it should use the last 
+  # snapshot before the current one, due to references being made before snapshots. 
+  test "no circular references to own spectrum" do 
+
+    # trigger a snapshot to be generated:
+    tag1 = Tag.new({
+      user_id:     users(:quentin).id,
+      spectrum_id: spectrums(:one).id,
+      name:        "smooth:2"
+    })
+
+    data = '{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}'
+    tag1.create_snapshot(data)
+
+    tag = Tag.new({
+      user_id:     users(:quentin).id,
+      spectrum_id: spectrums(:one).id,
+      name:        "subtract:#{spectrums(:one).id}"
+    })
+
+    assert tag.save
+
+    assert_equal tag.value.split('#').length, 2
+    reference_id = tag.value.split('#').last.to_i
+    assert_equal spectrums(:one).snapshots.last.id, reference_id
+    assert_equal tag.value, "#{spectrums(:one).id}##{reference_id}"
+    assert_not_nil tag.reference
+
+    data = '{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}'
+    snapshot = tag.create_snapshot(data)
+
+    assert_not_nil tag.snapshot
+    assert_not_nil tag.reference
+    assert_not_equal tag.snapshot.id, tag.reference_id
+    # but they point at different snapshots of the same spectrum:
+    assert_equal tag.snapshot.spectrum_id, tag.reference.spectrum_id
+    assert tag.snapshot.created_at > tag.reference.created_at
+
+  end
+
+
+  test "generating snapshot but not a reference" do 
+
+    tag = Tag.new({
+      user_id:     users(:quentin).id,
+      spectrum_id: spectrums(:one).id,
+      name:        "smooth:2"
+    })
+
+    assert tag.save
+
+    assert_equal tag.key, "smooth"
+    assert_equal tag.value, "2"
+
+    assert tag.generate_snapshot?
+
+    data = '{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}'
+    tag.create_snapshot(data)
+
+    assert_not_nil tag.snapshot
+    assert !tag.has_reference?
+    assert_nil tag.reference_id
+
+    assert_equal spectrums(:one).snapshots.length, 1
+
+  end
+
+
+  test "tag relation to generated and reference snapshots via snapshot.tag_id and #, and cleanup on deletion" do
+
+    referred_spectrum = spectrums(:one)
+
+    # should generate a snapshot:
+    tag1 = Tag.new({
+      user_id:     users(:quentin).id,
+      spectrum_id: referred_spectrum.id,
+      name:        "smooth:2"
+    })
+
+    assert tag1.save
+
+    data = '{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}'
+    tag1.create_snapshot(data)
+
+    assert_not_nil tag1.snapshot
+
+    tag = Tag.new({
+      user_id:     users(:quentin).id,
+      spectrum_id: spectrums(:two).id,
+      name:        "subtract:#{referred_spectrum.id}" # this will generate a new snapshot and auto-add it to the tagname
       #name:        "subtract:1##{snapshot.id}"
     })
 
     assert tag.save
-    assert tag.needs_snapshot?
+
+    assert_equal tag.key, "subtract"
+
+    assert tag.generate_snapshot?
 
     data = '{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}'
-    tag.add_snapshot(User.last, data)
+    tag.create_snapshot(data)
+    # as of the previous test, spectrums(:one) should have a snapshot
 
-    assert tag.has_snapshot?
-    assert_equal tag.snapshot_id, tag.spectrum.snapshots.last.id
-    assert_equal tag.snapshot_id, Snapshot.last.id
-    assert_equal tag.name, "subtract:1##{tag.spectrum.snapshots.last.id}"
     assert_not_nil tag.snapshot
 
-    assert_not_nil Snapshot.where(id: tag.snapshot_id).first
+    snapshot = Snapshot.last
+    assert_equal snapshot.tag_id, tag.id
+    assert_equal tag.snapshot.id, Snapshot.last.id
+
+    # test the reference snapshot too: 
+    # the reference should refer to the latest snapshot of the referred-to spectrum,
+    # NOT the tag's own spectrum snapshot. No circular references!
+    assert_not_equal tag.name, "subtract:1##{tag.spectrum.snapshots.last.id}"
+    assert_equal tag.key, "subtract"
+    assert_equal 1, tag.spectrum.snapshots.length
+
+    assert tag.has_reference?
+    assert tag.name, "subtract:1##{referred_spectrum.snapshots.last.id}"
+    assert_equal referred_spectrum.snapshots.last.id, tag.reference.id
+    assert_equal tag.value, "#{referred_spectrum.id}##{tag1.spectrum.snapshots.last.id}"
+    assert_not_nil tag.reference
+    assert_equal tag.reference_id, tag1.spectrum.snapshots.last.id
+    assert_not_nil Snapshot.where(id: tag.reference_id).first
 
     tag.destroy
 
     # should delete snapshot too
-    assert_nil Snapshot.where(id: tag.snapshot_id).first
+    assert_equal Snapshot.where(id: tag.snapshot.id).length, 0
 
   end
 

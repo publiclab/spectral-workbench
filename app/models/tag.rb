@@ -6,14 +6,15 @@ class Tag < ActiveRecord::Base
   validates_presence_of :user_id, :on => :create, :message => "can't be blank"
   validates_presence_of :spectrum_id, :on => :create, :message => "can't be blank"
 
-  validates :name, :format => {:with => /[\w\.:\-\*\+\[\]\(\)]+/, :message => "can only include letters, numbers, and dashes, or mathematical expressions"}
+  validates :name, :format => {:with => /[\w\.:\-\*\+\[\]\(\)\#]+/, :message => "can only include letters, numbers, and dashes, or mathematical expressions"}
 
   belongs_to :spectrum
   belongs_to :user
+  has_one :snapshot, :dependent => :destroy
 
   before_save :scan_powertags
-  before_destroy :clean_snapshots
 
+  # use before_destroy to validate destroy based on rules? deletable?
 
   def scan_powertags
 
@@ -25,19 +26,14 @@ class Tag < ActiveRecord::Base
         spectrum.save
       end
 
+      # default to latest snapshot as reference:
+      self.add_reference(false) if self.generate_reference?
+
+      # would like to generate snapshot here, but must do so in TagController, 
+      # as we need client-submitted data to do so
+
     end
 
-  end
-
-  # this should return true for any powertag that operates on the data:
-  def needs_snapshot?
-    self.is_powertag? && ['calibrate',
-                          'subtract',
-                          'transform',
-                          'range',
-                          'crossSection',  
-                          'flip',  
-                          'smooth'].include?(self.key)
   end
 
   # dangerous to call unmodified -- high load!
@@ -61,26 +57,59 @@ class Tag < ActiveRecord::Base
     self.name.split(':').last
   end
 
-  def has_snapshot?
-    self.name.match(/#/) && self.snapshot
+  def generate_reference?
+    self.is_powertag? && ['calibration',
+                          'subtract',
+                          'transform'].include?(self.key)
   end
 
-  def add_snapshot(user, data)
-    self.spectrum.add_snapshot(user, data)
-    self.name = self.name + "#" + self.spectrum.snapshots.last.id.to_s
-    self.save
+  def has_reference?
+    self.name.match(/#/)
   end
 
-  def snapshot_id
-    self.value.split('#').last.to_i
+  def reference_id
+    if self.has_reference?
+      self.value.split('#').last.to_i
+    else
+      nil
+    end
   end
 
-  def snapshot
-    Snapshot.find self.snapshot_id
+  def reference
+    Snapshot.where(id: self.reference_id).last
   end
 
-  def clean_snapshots
-    self.snapshot.destroy if self.has_snapshot?
+  # Refer to an existing snapshot with an operation; 
+  # defaults to latest snapshot of the spectrum.
+  # If there are no snapshots, it does not add # to the name,
+  # and simply references the original data. 
+  # Will only run if reference does not already exist.
+  # Also: if reference is to self, this runs before snapshotting, so
+  # it will not reference its own snapshot, but the previous one. 
+  def add_reference(snapshot_id)
+    unless self.has_reference?
+      spectrum = Spectrum.find(self.value)
+      if spectrum.snapshots && spectrum.snapshots.length > 0
+        snapshot_id ||= spectrum.snapshots.last.id
+        self.name = self.name + "#" + snapshot_id.to_s
+      end
+    end
+  end
+
+  # this should return true for any powertag that operates on the data:
+  def generate_snapshot?
+    self.is_powertag? && ['calibration',
+                          'subtract',
+                          'transform',
+                          'range',
+                          'crossSection',  
+                          'flip',  
+                          'smooth'].include?(self.key)
+  end
+
+  # save a snapshot of the spectrum after having applied this operation
+  def create_snapshot(data)
+    self.spectrum.add_snapshot(self, data)
   end
 
   # supplies a string of CSS classnames for this type of tag

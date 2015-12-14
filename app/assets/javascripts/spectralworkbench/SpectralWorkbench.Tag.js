@@ -96,7 +96,7 @@ SpectralWorkbench.Tag = Class.extend({
       };
 
       // this will have to be adapted as we add tags to sets
-      if (_tag.needs_snapshot) data.tag.data = JSON.stringify(_tag.datum.json.data);
+      if (_tag.snapshot) data.tag.data = _tag.data;
 
       $.ajax({
  
@@ -136,7 +136,15 @@ SpectralWorkbench.Tag = Class.extend({
 
       if (response['saved']) {
 
-        if (response['saved'][_tag.name] && response['saved'][_tag.name].hasOwnProperty('id')) _tag.id = response['saved'][_tag.name].id; // response is a JSON object whose properties are tagnames, each with property <id>
+        if (response['saved'][_tag.name]) {
+
+          // response is a JSON object whose properties are tagnames, each with property <id>
+          if (response['saved'][_tag.name].hasOwnProperty('id')) _tag.id = response['saved'][_tag.name].id;
+
+          // response will be sorted by name, but a new name will be received for snapshotted tags; we update local name here:
+          if (response['saved'][_tag.name].hasOwnProperty('name')) _tag.name = response['saved'][_tag.name].name;
+
+        }
 
         // render them!
         _tag.render();
@@ -291,7 +299,7 @@ SpectralWorkbench.Tag = Class.extend({
 
         } else if (_tag.key == "smooth") {
 
-          SpectralWorkbench.API.Core.smooth(_datum, tag.value);
+          SpectralWorkbench.API.Core.smooth(_tag.datum, _tag.value);
 
         } else if (_tag.key == "blend") {
 
@@ -308,14 +316,17 @@ SpectralWorkbench.Tag = Class.extend({
 
       }
 
-      // save the parsed tag data:
+      // save the parsed tag data
       if (_tag.snapshot) _tag.data = JSON.stringify(_tag.datum.json.data);
 
     }
 
+    if (_tag.uploadable && callback) {
 
-    if (_tag.uploadable && callback) _tag.upload(callback);
-    else {
+      _tag.parse();
+      _tag.upload(callback);
+
+    } else {
 
       if (callback) callback(); // callback directly, as we don't need to wait for an upload
       _tag.render();
