@@ -22,6 +22,28 @@ class SnapshotTest < ActiveSupport::TestCase
   end
 
 
+  test "creating a snapshot with different author than spectrum should fail" do
+
+    data = "data"
+
+    count = Snapshot.count
+
+    snapshot = Snapshot.new({
+                     spectrum_id: Spectrum.last.id,
+                     user_id: Spectrum.last.id + 1,
+                     data: '{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}'
+                   })
+
+    assert snapshot.user_id != snapshot.spectrum.user_id
+    assert !snapshot.valid?
+    snapshot.save
+
+    assert_nil snapshot.id
+    assert_equal Snapshot.count, count
+
+  end
+
+
   test "creating a snapshot with non-JSON data should fail" do
 
     data = "data"
@@ -46,11 +68,19 @@ class SnapshotTest < ActiveSupport::TestCase
 
     data = '{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}'
 
-    snapshot = spectrum.add_snapshot(Tag.last, data)
+    tag = Tag.new({
+      user_id:     users(:quentin).id,
+      spectrum_id: spectrums(:one).id,
+      name:        "subtract:#{spectrums(:one).id}"
+    })
+
+    assert_not_nil tag.spectrum
+    assert_not_nil tag.spectrum.user_id
+    snapshot = spectrum.add_snapshot(tag, data)
 
     assert_not_nil snapshot
     assert_not_nil snapshot.user_id
-    assert_equal snapshot.user_id, Tag.last.user_id
+    assert_equal snapshot.user_id, tag.user_id
     assert_not_equal snapshots, spectrum.snapshots.length
     assert_equal snapshots + 1, spectrum.snapshots.length
     assert_not_nil snapshot.id
@@ -120,6 +150,9 @@ class SnapshotTest < ActiveSupport::TestCase
 
     assert_not_nil tag.snapshot
     assert_not_nil tag.reference
+    # ensure same author:
+    assert_equal tag.user_id, tag.snapshot.user_id
+    assert_equal tag.spectrum.user_id, tag.snapshot.user_id
     assert_not_equal tag.snapshot.id, tag.reference_id
     # but they point at different snapshots of the same spectrum:
     assert_equal tag.snapshot.spectrum_id, tag.reference.spectrum_id
@@ -144,6 +177,8 @@ class SnapshotTest < ActiveSupport::TestCase
     assert tag.generate_snapshot?
 
     data = '{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}'
+    assert_not_nil tag.spectrum
+    assert_not_nil tag.spectrum.user_id
     tag.create_snapshot(data)
 
     assert_not_nil tag.snapshot
@@ -161,7 +196,7 @@ class SnapshotTest < ActiveSupport::TestCase
 
     # should generate a snapshot:
     tag1 = Tag.new({
-      user_id:     users(:quentin).id,
+      user_id:     referred_spectrum.user_id,
       spectrum_id: referred_spectrum.id,
       name:        "smooth:2"
     })
@@ -174,7 +209,7 @@ class SnapshotTest < ActiveSupport::TestCase
     assert_not_nil tag1.snapshot
 
     tag = Tag.new({
-      user_id:     users(:quentin).id,
+      user_id:     spectrums(:two).user_id,
       spectrum_id: spectrums(:two).id,
       name:        "subtract:#{referred_spectrum.id}" # this will generate a new snapshot and auto-add it to the tagname
       #name:        "subtract:1##{snapshot.id}"
@@ -218,7 +253,7 @@ class SnapshotTest < ActiveSupport::TestCase
 
   end
 
-  test "fetch all tags for a given snapshot, and don't clean up if another tag depends on it" do
+  test "" do
 
   end
 

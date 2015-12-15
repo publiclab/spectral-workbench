@@ -9,8 +9,15 @@ class Snapshot < ActiveRecord::Base
   validates_presence_of :spectrum_id
   validates_presence_of :data
 
-  validate :validate_json
+  validate :validate_json, :validate_author
 
+  def validate_author
+    if self.spectrum.nil?
+      errors.add(:spectrum_id, "must be a real spectrum")
+    elsif self.user_id != self.spectrum.user_id
+      errors.add(:user_id, "must match user ID of spectrum")
+    end
+  end
 
   def validate_json
     if self.data.nil?

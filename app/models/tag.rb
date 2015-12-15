@@ -8,6 +8,8 @@ class Tag < ActiveRecord::Base
 
   validates :name, :format => {:with => /[\w\.:\-\*\+\[\]\(\)\#]+/, :message => "can only include letters, numbers, and dashes, or mathematical expressions"}
 
+  validate :powertags_by_owner
+
   belongs_to :spectrum
   belongs_to :user
   has_one :snapshot, :dependent => :destroy
@@ -32,6 +34,14 @@ class Tag < ActiveRecord::Base
       # would like to generate snapshot here, but must do so in TagController, 
       # as we need client-submitted data to do so
 
+    end
+
+  end
+
+  def powertags_by_owner
+
+    if self.is_powertag? && self.spectrum.user_id != self.user_id && self.user.role != "admin"
+      errors[:base] << "powertags may only be made by spectrum owner or admins"
     end
 
   end
@@ -98,7 +108,8 @@ class Tag < ActiveRecord::Base
 
   # this should return true for any powertag that operates on the data:
   def generate_snapshot?
-    self.is_powertag? && ['calibration',
+    self.is_powertag? && ['calibration', # calibration clone
+                          'linearCalibration', # manual calibration
                           'subtract',
                           'transform',
                           'range',

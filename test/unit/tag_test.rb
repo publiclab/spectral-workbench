@@ -41,6 +41,25 @@ class TagTest < ActiveSupport::TestCase
     assert tag.save
   end
 
+  test "non-admin powertag creation invalidation for other user's spectrum" do 
+    tag = Tag.new({
+      user_id:     users(:aaron).id,
+      spectrum_id: spectrums(:one).id,
+      name:        'range:100-500'
+    })
+    assert tag.user_id != tag.spectrum.user_id
+    assert !tag.valid?
+  end
+
+  test "admin powertag creation for other user's spectrum" do 
+    tag = Tag.new({
+      user_id:     users(:admin).id,
+      spectrum_id: spectrums(:one).id,
+      name:        'range:100-500'
+    })
+    assert tag.valid?
+  end
+
   test "crossSection powertag creation and spectrum.sample_row saving" do 
     tag = Tag.new({
       user_id:     users(:quentin).id,

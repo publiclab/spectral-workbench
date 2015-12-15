@@ -272,7 +272,7 @@ puts "reversing"
   def add_snapshot(tag, data)
 
     self.snapshots << Snapshot.create({
-      user_id: tag.user_id,
+      user_id: tag.spectrum.user_id,
       tag_id: tag.id,
       data: data
     })
