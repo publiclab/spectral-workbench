@@ -52,10 +52,13 @@ group :development, :test do
   #gem 'factory_girl_rails'
 end
 
-gem 'jasmine', :group => [:development, :test]
-gem 'jasmine-jquery-rails', :group => [:development, :test]
-# this doesn't seem to work; maybe it's an old version? Trying Bower
-#gem 'jasmine-ajax', :group => [:development, :test]
+group :test, :development do
+  gem 'jasmine-rails'
+  gem 'jasmine'
+  gem 'jasmine-jquery-rails'
+  # this doesn't seem to work; maybe it's an old version? Trying Bower
+  #gem 'jasmine-ajax'
+end
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'

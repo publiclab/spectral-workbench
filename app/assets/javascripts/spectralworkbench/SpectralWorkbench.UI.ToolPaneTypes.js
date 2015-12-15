@@ -382,12 +382,28 @@ SpectralWorkbench.UI.ToolPaneTypes = {
 
         $('.btn-save-calibrate-2').html('<i class="icon icon-spinner icon-white icon-spin"></i>');
 
+        /* Deprecating with new Snapshots system:
         _graph.datum.calibrateAndUpload(
           blue2, 
           green2, 
           $('.input-wavelength-1').val(), 
           $('.input-wavelength-2').val()
         ); 
+        */
+        _graph.datum.json.data.lines = _spectrum.calibrate(
+          blue2, 
+          green2, 
+          $('.input-wavelength-1').val(), 
+          $('.input-wavelength-2').val()
+        );
+
+        _graph.datum.load()
+        _graph.reload()
+        _graph.refresh()
+
+        if (_graph.datum.getTag('calibration') == false) _graph.datum.addTag('calibration');
+
+        SpectralWorkbench.API.Core.notify("Your new calibration has been saved.", "success");
 
         // clear the previous assessement tags
         _graph.datum.getPowerTag('error', function(tag) { tag.destroy() });

@@ -69,24 +69,13 @@ describe("Tag", function() {
   });
 
 
-  var addTagCallbackSpy = jasmine.createSpy('success');
+  it("creates properly for simple tagname like 'sodium', and returns with datum.getTag()", function() {
 
-  it("creates properly for simple tagname like 'sodium', and returns with datum.getTag()", function(done) {
+    // as of Snapshots, this is synchronous:
+    tag = graph.datum.addTag('sodium');
 
-    tag = graph.datum.addTag('sodium', function(tag, ajaxResponse) {
-
-      // beware; these can fail silently if this callback is not called; add a toHaveBeenCalled() test
-
-      expect(tag.json).toBeDefined();
-      expect(tag.id).toBeDefined(); // not defined because we're not uploading it?
-      expect(tag.id).toBe(1);
-
-      addTagCallbackSpy();
-
-      // if this completes before the remainder of the tests in this spec, those can fail silently
-      done();
-
-    });
+    expect(tag.json).toBeDefined();
+    expect(tag.id).toBeDefined(); // not defined because we're not uploading it?  expect(tag.id).toBe(1);
 
     // tag should then be parsed
 
@@ -94,10 +83,8 @@ describe("Tag", function() {
     expect(tag.uploadable).toBe(true);
     expect(tag.json).toEqual({});
 
-    // Why would this already be accessible? Shouldn't this all be run in the callback?
-    // Actually, we don't wait for the callback to instantiate the tag; we cheat and just add it.
-    // (see Datum.addTag()) However, the tag most likely won't yet have an id, 
-    // unless the async call beats it to completion:
+    expect(graph.datum.tags.length).not.toBe(0);
+
     var gottenTag = graph.datum.getTag('sodium');
 
     expect(gottenTag).toBeDefined();
@@ -107,13 +94,6 @@ describe("Tag", function() {
     expect(gottenTag.key).not.toBeDefined();
     expect(gottenTag.value).not.toBeDefined();
     expect(gottenTag.powertag).toEqual(false);
-
-  });
-
-
-  it("datum.addTag callback is called", function() {
-
-    expect(addTagCallbackSpy).toHaveBeenCalled();
 
   });
 
@@ -165,7 +145,7 @@ describe("Tag", function() {
 
       expect(graph.datum.getExtentX()[0]).toBeGreaterThan(400); // only within 400-700 range
       expect(graph.datum.getExtentX()[1]).toBeLessThan(700); // only within 400-700 range
-      expect(graph.datum.getExtentX()).toEqual([400.245, 698.798]); // only within 400-700 range
+      expect(graph.datum.getExtentX()).toEqual([400.245, 697.935]); // only within 400-700 range
 
       // in normal async in production, tag would've been added to graph.datum.tags, 
       // but fake async is too fast and it's not there yet

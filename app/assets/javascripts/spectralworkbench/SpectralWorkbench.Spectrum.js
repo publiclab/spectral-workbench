@@ -407,6 +407,8 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
     /* ======================================
      * Upload a new json string to the server, overwriting the original. 
      * Not recommended without cloning! But recoverable from original image.
+     * Most uses of this function will be deprecated with the Snapshots system:
+     * https://publiclab.org/wiki/spectral-workbench-snapshots
      */
     _spectrum.upload = function(url, callback) {
 

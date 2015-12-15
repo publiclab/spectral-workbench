@@ -52,6 +52,8 @@ SpectralWorkbench::Application.routes.draw do
 
   # See how all your routes lay out with 'rake routes'
 
+  mount JasmineRails::Engine => "/specs" if defined?(JasmineRails)
+
   get '/local/:login' => 'sessions#local'
   get '/logout' => 'sessions#logout'
   get '/login' => 'sessions#login'

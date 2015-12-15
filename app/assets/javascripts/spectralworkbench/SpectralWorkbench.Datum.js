@@ -35,15 +35,13 @@ SpectralWorkbench.Datum = Class.extend({
      */
     _datum.addTag = function(name, callback) {
 
-      var tag = new SpectralWorkbench.Tag(_datum, name, false, function() {
+      return new SpectralWorkbench.Tag(_datum, name, false, function(tag) {
 
         _datum.tags.push(tag);
 
-        callback();
+        if (callback) callback(tag);
 
       });
-
-      return tag;
 
     }
 
