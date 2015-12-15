@@ -44,6 +44,24 @@ class SnapshotTest < ActiveSupport::TestCase
   end
 
 
+  test "creating a snapshot with different author than spectrum but via tag.create_snapshot should make snapshot with same user as spectrum" do
+
+    # trigger a snapshot to be generated:
+    tag1 = Tag.new({
+      user_id:     users(:quentin).id,
+      spectrum_id: spectrums(:one).id,
+      name:        "smooth:2"
+    })
+
+    data = '{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}'
+    snapshot = tag1.create_snapshot(data)
+
+    assert snapshot.user_id == snapshot.spectrum.user_id
+    assert snapshot.valid?
+
+  end
+
+
   test "creating a snapshot with non-JSON data should fail" do
 
     data = "data"
