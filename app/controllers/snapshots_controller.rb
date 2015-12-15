@@ -1,6 +1,5 @@
 class SnapshotsController < ApplicationController
-
-  before_filter :require_login, :except => []
+  respond_to :json
 
   def create
 
@@ -9,6 +8,18 @@ class SnapshotsController < ApplicationController
       current_user,
       params[:data]
     )
+
+  end
+
+  def show
+
+    @snapshot = Snapshot.find params[:id]
+
+    respond_with(@snapshot) do |format|
+      format.json  {
+        render :json => @snapshot.data
+      }
+    end
 
   end
 

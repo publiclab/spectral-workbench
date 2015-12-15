@@ -99,12 +99,15 @@ SpectralWorkbench::Application.routes.draw do
   end
   resources :macros
   resources :session
-  resources :tags
+  resources :tags do
+    resources :snapshots
+  end
   resources :sets do 
     resources :comments
   end
   resources :comments, :belongs_to => :spectrums
   resources :spectrums do
+    resources :snapshots
     resources :comments
     resources :tags
     member do

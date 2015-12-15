@@ -376,6 +376,38 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
 
 
     /* ======================================
+     * Fetch data from a specified snapshot (if provided)
+     * to populate self from server, using spectrum.id.
+     * Overwrites spectrum.json and runs spectrum.load().
+     * Defaults server response will be latest snapshot if not specified,
+     * or original data if no snapshots exist.
+     */
+    /*_spectrum.fetch = function(url, callback) {
+
+      url = url || '/spectrums/' + _spectrum.id + '.json';
+
+      $.ajax({
+
+        url: url,
+        type: "GET",
+        dataType: "json",
+        success: function(response) {
+
+          _spectrum.json  = response;
+          _spectrum.load();
+
+        },
+        error: function(response) {
+
+          SpectralWorkbench.API.Core.notify(response['errors'], "error");
+
+        }
+      });
+      
+    });*/
+
+
+    /* ======================================
      * Fetch data to populate self, from server, using spectrum.id.
      * Overwrites spectrum.json and runs spectrum.load().
      */

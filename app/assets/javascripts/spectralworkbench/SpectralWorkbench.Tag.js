@@ -1,9 +1,11 @@
 SpectralWorkbench.Tag = Class.extend({
 
   // these tagnames will trigger a snapshot to be saved to the server:
+  // this list must be kept consistent with that in /app/models/tag.rb
   snapshot_tagnames: [
 
     "calibration",
+    "linearCalibration",
     "subtract",
     "transform",
     "range",
@@ -55,6 +57,14 @@ SpectralWorkbench.Tag = Class.extend({
       _tag.powertag = true;
       _tag.key = _tag.name.split(':')[0];
       _tag.value = _tag.name.split(':')[1];
+
+      if (_tag.name.match("#")) {
+        _tag.has_snapshot = true;
+        _tag.snapshot_id = _tag.value.split('#')[1];
+        _tag.value = _tag.value.split('#')[0];
+      } else {
+        _tag.has_snapshot = false;
+      }
 
       // scan for tags that require snapshots, but this isn't the right place to save it -- we need to parse it!
       if (_tag.snapshot_tagnames.indexOf(_tag.key) != -1) _tag.snapshot = true;
@@ -298,6 +308,10 @@ SpectralWorkbench.Tag = Class.extend({
 
           SpectralWorkbench.API.Core.subtract(_tag.datum, _tag.value);
 
+        } else if (_tag.key == "copyCalibration") {
+
+          SpectralWorkbench.API.Core.copyCalibration(_tag.datum, _tag.value);
+
         } else if (_tag.key == "transform") {
 
           SpectralWorkbench.API.Core.transform(_tag.datum, _tag.value);
@@ -308,8 +322,8 @@ SpectralWorkbench.Tag = Class.extend({
 
         } else if (_tag.key == "blend") {
 
-          var blend_id = _tag.value.split('#')[0],
-              expression = _tag.value.split('#')[1];
+          var blend_id = _tag.value.split('$')[0],
+              expression = _tag.value.split('$')[1];
 
           SpectralWorkbench.API.Core.blend(_tag.datum, blend_id, expression);
 

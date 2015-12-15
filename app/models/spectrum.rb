@@ -211,6 +211,7 @@ class Spectrum < ActiveRecord::Base
   end
 
   # clones calibration from another spectrum (preferably taken from the same device)
+  # deprecating in 2.0 in favor of client-side powertag-based cloneCalibration
   def clone_calibration(clone_id)
     clone_source = Spectrum.find clone_id
     d = ActiveSupport::JSON.decode(self.clean_json)
@@ -230,6 +231,7 @@ class Spectrum < ActiveRecord::Base
       end
       i += 1
     end
+    self.tag("calibration:#{clone_id}", self.user_id)
     # figure out how to know when to reverse based on a cloned calibration... maybe we need to store reversal...
     #self.reverse if (wavelength1 < wavelength2 && x1 > x2) || (wavelength1 > wavelength2 && x1 < x2)
     self.data = ActiveSupport::JSON.encode(d)

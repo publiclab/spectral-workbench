@@ -64,7 +64,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
     onSpectrumApply: function(form, _graph) {
 
       // provide better API for own-id:
-      SpectralWorkbench.API.Core.copyCalibration($(this).attr('data-id'), _graph.datum, function(response){ 
+      SpectralWorkbench.API.Core.copyCalibration(_graph.datum, $(this).attr('data-id'), function(response){ 
 
         // fetch tags from server -- cloning calibration and associated tagging happens on the server side
         _graph.datum.fetchTags();

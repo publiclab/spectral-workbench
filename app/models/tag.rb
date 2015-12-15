@@ -6,7 +6,7 @@ class Tag < ActiveRecord::Base
   validates_presence_of :user_id, :on => :create, :message => "can't be blank"
   validates_presence_of :spectrum_id, :on => :create, :message => "can't be blank"
 
-  validates :name, :format => {:with => /[\w\.:\-\*\+\[\]\(\)\#]+/, :message => "can only include letters, numbers, and dashes, or mathematical expressions"}
+  validates :name, :format => {:with => /[\w\.:\-\*\+\[\]\(\)\#\$]+/, :message => "can only include letters, numbers, and dashes, or mathematical expressions"}
 
   validate :powertags_by_owner
 
