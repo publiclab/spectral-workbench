@@ -147,7 +147,7 @@ SpectralWorkbench.Tag = Class.extend({
       if (response['saved']) {
 
         if (response['saved'][_tag.name]) {
-
+console.log('name',_tag.name, response['saved'], response['saved'][_tag.name]);
           // response is a JSON object whose properties are tagnames, each with property <id>
           if (response['saved'][_tag.name].hasOwnProperty('id')) _tag.id = response['saved'][_tag.name].id;
 

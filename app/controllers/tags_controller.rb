@@ -5,7 +5,7 @@ class TagsController < ApplicationController
 
   # FYI, we've stopped accepting requests with multiple comma-delimited tags
   def create
-    response = { 
+    @response = { 
       :errors => [],
       :saved => {},
     }
@@ -25,32 +25,30 @@ class TagsController < ApplicationController
         # look for enclosed data in the tag request if 
         # it's the kind of powertag that should create a snapshot
         # the enclosed data is not required; but the client side will do it automatically
-        response[:saved][tag.name] = { id: tag.id }
         old_name = tag.name
         tag.save
-        # send updated name to client:
-        if tag.generate_reference?
-          response[:saved][old_name][:name] = tag.name
-        end
+        @response[:saved][old_name] = { id: tag.id }
+        # send updated name to client if any:
+        @response[:saved][old_name][:name] = tag.name
         # setup the generated snapshot if needed:
         if tag.generate_snapshot? && params[:tag][:data]
           snapshot = tag.create_snapshot(params[:tag][:data])
         end
       else
-        response[:errors] << "Error: tags "+tag.errors[:name].first
+        @response[:errors] << "Error: tags "+tag.errors[:name].first
       end
     else
-      response[:errors] << "Error: You must own the spectrum to add powertags"
+      @response[:errors] << "Error: You must own the spectrum to add powertags"
     end
     respond_to do |format|
       if request.xhr? # ajax
-        format.json { render :json => response }
+        format.json { render :json => @response }
       else
         format.html do
           flash[:notice] = "Tag(s) added."
           redirect_to "/spectrums/"+params[:tag][:spectrum_id]
         end
-        format.json { render :json => response }
+        format.json { render :json => @response }
       end
     end
   end

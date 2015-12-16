@@ -66,9 +66,6 @@ SpectralWorkbench.UI.ToolPaneTypes = {
       // provide better API for own-id:
       SpectralWorkbench.API.Core.copyCalibration(_graph.datum, $(this).attr('data-id'), function(response){ 
 
-        // fetch tags from server -- cloning calibration and associated tagging happens on the server side
-        _graph.datum.fetchTags();
-     
         SpectralWorkbench.API.Core.notify('Spectrum calibration copied from spectrum #' + response.id);
      
       } );

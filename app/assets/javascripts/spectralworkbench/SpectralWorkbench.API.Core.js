@@ -109,6 +109,9 @@ SpectralWorkbench.API.Core = {
         datum.json.data.lines.forEach(function(line, i) {
           line.wavelength = source.json.data.lines[i].wavelength;
         });
+
+        if (source.snapshot) datum.addTag('calibration:' + from_id + '#' + source.snapshot_id);
+        else datum.addTag('calibration:' + from_id);
  
         // reload the graph data:
         datum.graph.reload();

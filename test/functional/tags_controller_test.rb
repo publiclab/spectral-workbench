@@ -12,6 +12,9 @@ class TagsControllerTest < ActionController::TestCase
     get :create, tag: { name: 'mytag',
                         spectrum_id: Spectrum.first.id }
     assert_response :redirect
+    assert_not_nil assigns(:response)[:saved]['mytag']
+    assert_not_nil assigns(:response)[:saved]['mytag']['id']
+    assert_not_nil assigns(:response)[:saved]['mytag']['name']
     assert_equal "Tag(s) added.", flash[:notice]
     assert_redirected_to spectrum_path(Spectrum.first.id)
   end
@@ -74,12 +77,52 @@ class TagsControllerTest < ActionController::TestCase
 
   test "powertag creation if you're not the owner but you are an admin" do 
     session[:user_id] = users(:admin).id # log in
+
+    @request.headers["Content-Type"] = "application/json"
+    @request.headers["Accept"] = "application/javascript"
+    xhr :post, :create, tag: { 
+      name: 'range:100-500',
+      spectrum_id: spectrums(:one).id
+    }
+
+    response = ActiveSupport::JSON.decode(@response.body)
+    assert_not_nil response
+    assert_not_nil response['saved']
+    assert_not_nil response['saved']['range:100-500']
+    assert_not_nil response['saved']['range:100-500']['id']
+    assert_not_nil response['saved']['range:100-500']['name']
+    assert_response :success
+  end
+
+  test "powertag creation which generates a snapshot and returns a new #tagname" do 
+    session[:user_id] = users(:admin).id # log in
+
+    # create a snapshot which will be referred to:
     tag = Tag.new({
-      user_id:     users(:quentin).id,
-      spectrum_id: spectrums(:one).id,
+      user_id:     spectrums(:two).user_id,
+      spectrum_id: spectrums(:two).id,
       name:        'range:100-500'
     })
     assert tag.save!
+    data = '{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}'
+    tag.create_snapshot(data)
+
+    # now refer to it:
+    @request.headers["Content-Type"] = "application/json"
+    @request.headers["Accept"] = "application/javascript"
+    tagname = "subtract:#{spectrums(:two).id}"
+    xhr :post, :create, tag: { 
+      name: tagname,
+      spectrum_id: spectrums(:one).id
+    }
+
+    response = ActiveSupport::JSON.decode(@response.body)
+    assert_not_nil response
+    assert_not_nil response['saved']
+    assert_not_nil response['saved'][tagname]
+    assert_not_nil response['saved'][tagname]['id']
+    assert_not_nil response['saved'][tagname]['name']
+    assert response['saved'][tagname]['name'], tagname + "##{tag.snapshot.id}"
     assert_response :success
   end
 
