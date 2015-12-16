@@ -28,12 +28,17 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
      
         } else var x = line.wavelength;
 
-        _spectrum.average.push({ y: parseInt(line.average / 2.55)/100, x: x })
+        // only actually add it if it's in specified wavelength range ([start, end]), if any:
+        if (_spectrum.graph && (!_spectrum.graph.range || !_spectrum.graph.hasOwnProperty('range') || (x > _spectrum.graph.range[0] && x < _spectrum.graph.range[1]))) {
 
-        if (line.r != null) _spectrum.red.push(  { y: parseInt(line.r / 2.55)/100, x: x })
-        if (line.g != null) _spectrum.green.push({ y: parseInt(line.g / 2.55)/100, x: x })
-        if (line.b != null) _spectrum.blue.push( { y: parseInt(line.b / 2.55)/100, x: x })
-     
+          _spectrum.average.push({ y: parseInt(line.average / 2.55)/100, x: x })
+ 
+          if (line.r != null) _spectrum.red.push(  { y: parseInt(line.r / 2.55)/100, x: x })
+          if (line.g != null) _spectrum.green.push({ y: parseInt(line.g / 2.55)/100, x: x })
+          if (line.b != null) _spectrum.blue.push( { y: parseInt(line.b / 2.55)/100, x: x })
+
+        }
+
       });
 
     }
@@ -201,7 +206,7 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
       //return _spectrum.json.data.lines[0].hasOwnProperty('wavelength');
       // rewritten as above was not accounting for unsaved 
       // calibration; below can be wrong but it's very unlikely
-      return _spectrum.average[0].x != 0;
+      return _spectrum.average[0] && _spectrum.average[0].x != 0;
 
     }
 
@@ -429,6 +434,8 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
 
           _spectrum.json  = response;
           _spectrum.load();
+
+          if (callback) callback();
 
         },
         error: function(response) {

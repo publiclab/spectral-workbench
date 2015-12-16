@@ -163,8 +163,10 @@ SpectralWorkbench.API.Core = {
   },
 
 
-  // clip out a given subset of wavelengths from this spectrum
-  // works for spectra, not sets
+  // Clip out a given subset of wavelengths from this spectrum.
+  // Works for spectra, not sets.
+  // Not well designed for successive use; should factor into 
+  // Spectrum.load or reconcile with other tag operations.
   range: function(datum, start, end) {
 
     // ensure start < end

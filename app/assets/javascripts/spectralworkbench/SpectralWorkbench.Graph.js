@@ -69,6 +69,7 @@ SpectralWorkbench.Graph = Class.extend({
       _graph.setUnits();
       _graph.data.call(_graph.chart);
       _graph.updateSize()();
+      console.log('graph refreshed');
 
     }
 

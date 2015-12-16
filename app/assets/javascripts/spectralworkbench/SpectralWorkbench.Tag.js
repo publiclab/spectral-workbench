@@ -227,10 +227,10 @@ SpectralWorkbench.Tag = Class.extend({
 
           // re-fetch spectrum data, as it may have been overwritten by various tags:
           _tag.datum.fetch(false, function() {
+
             _tag.datum.parseTags();
             _tag.datum.graph.reload();
             _tag.datum.graph.refresh();
-
             _tag.datum.graph.undim();
 
           });
@@ -253,12 +253,17 @@ SpectralWorkbench.Tag = Class.extend({
       // display in Operations table;
       // perhaps abstract into PowerTag or Operation subclass
       if (_tag.powertag) {
+
         _tag.operationEl = $("<tr id='tag_" + _tag.id + "'></tr>");
         _tag.operationEl.append("<td class='title'><span class='label purple'>" + _tag.name + "</span></td>");
-        _tag.operationEl.append("<td class='date'>" + moment(_tag.json.created_at).format("MMM Do YYYY hh:mm a") + "</td>");
+
+        if (_tag.has_snapshot) _tag.operationEl.find('.title').append(" <i tooltip='Hello' class='icon icon-thumb-tack'></i>");
+
+        _tag.operationEl.append("<td class='date'><small>" + moment(_tag.json.created_at).format("MMM Do YYYY hh:mm a") + "</small></td>");
         _tag.operationEl.append("<td class='description'><a href='//publiclab.org/wiki/spectral-workbench-tags#" + _tag.key + "'>" + _tag.description() + "</a></td>");
         _tag.operationEl.append("<td class='operations-tools'><a class='tagdelete'><i class='icon icon-remove'></i></a></td>");
         operationTable.append(_tag.operationEl);
+
       }
 
       container.append(_tag.el);
