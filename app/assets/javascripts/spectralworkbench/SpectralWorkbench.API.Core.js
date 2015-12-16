@@ -53,8 +53,8 @@ SpectralWorkbench.API.Core = {
   fetchSpectrum: function(id, callback) {
 
     // coerce into string:
-    if ((""+id).match(/\#/)) {
-      snapshot_id = parseInt((""+id).split('#')[1]);
+    if (("" + id).match(/\#/)) {
+      snapshot_id = parseInt(("" + id).split('#')[1]);
       url = "/snapshots/" + snapshot_id + ".json";
       is_snapshot = true;
     } else {
@@ -69,7 +69,9 @@ SpectralWorkbench.API.Core = {
       dataType: "json",
 
       success: function(data) {
- 
+
+        if (is_snapshot) data.data = { lines: data.lines }; // doesn't receive a full Spectrum model, just the data, so we rearrange to match
+
         var spectrum = new SpectralWorkbench.Spectrum(data);
 
         spectrum.snapshot = is_snapshot;
@@ -95,43 +97,39 @@ SpectralWorkbench.API.Core = {
   },
 
 
-  // clone calibration from spectrum of id <from_id> to spectrum of id <to_id>
-  // -- this could be rewritten to be more client-sided
-  copyCalibration: function(datum, from_id, callback) {
-
-    callback = callback || function(response) { SpectralWorkbench.API.Core.notify('Calibration cloned from spectrum ' + from_id); };
-
-    var source;
+  // clone calibration from spectrum of id <from_id> to <spectrum>
+  copyCalibration: function(spectrum, from_id, callback) {
 
     SpectralWorkbench.API.Core.fetchSpectrum(from_id, function(source) {
 
-        // copy the calibration here, using calibrate? No, use converters per pixel
-        datum.json.data.lines.forEach(function(line, i) {
+        // what if the image sizes don't match? 
+        // well, they should, if they're from the same device.
+        spectrum.json.data.lines.forEach(function(line, i) {
           line.wavelength = source.json.data.lines[i].wavelength;
         });
-
-        if (source.snapshot) datum.addTag('calibration:' + from_id + '#' + source.snapshot_id);
-        else datum.addTag('calibration:' + from_id);
  
+        // reload the spectrum data:
+        spectrum.load();
+
         // reload the graph data:
-        datum.graph.reload();
+        spectrum.graph.reload();
         // refresh the graph:
-        datum.graph.refresh();
+        spectrum.graph.refresh();
          
-        if (callback) callback(datum);
+        if (callback) callback(spectrum);
 
     });
 
   },
 
 
-  // apply a provided expression on every pixel of this spectrum
-  transform: function(datum, expression) {
+  // apply a provided expression on every pixel of <spectrum>
+  transform: function(spectrum, expression) {
 
-    var red     = datum.red,
-        green   = datum.green,
-        blue    = datum.blue,
-        average = datum.average,
+    var red     = spectrum.red,
+        green   = spectrum.green,
+        blue    = spectrum.blue,
+        average = spectrum.average,
         r       = red.map(function(d){ return d.y }),
         g       = green.map(function(d){ return d.y }),
         b       = blue.map(function(d){ return d.y }),
@@ -160,7 +158,7 @@ SpectralWorkbench.API.Core = {
     });
 
     // some issue here on indexing...
-    datum.graph.refresh();
+    spectrum.graph.refresh();
 
   },
 

@@ -55,7 +55,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
   copyCalibration: {
     title: "Copy Calibration",
     dataType: "spectrum",
-    description: "Use a calibrated spectrum to calibrate this one.",
+    description: "Use data from an earlier calibrated spectrum to calibrate this one.",
     link: "//publiclab.org/wiki/spectral-workbench-toolpanes#Copy+Calibration",
     author: "warren",
     apply: false,
@@ -64,11 +64,14 @@ SpectralWorkbench.UI.ToolPaneTypes = {
     onSpectrumApply: function(form, _graph) {
 
       // provide better API for own-id:
-      SpectralWorkbench.API.Core.copyCalibration(_graph.datum, $(this).attr('data-id'), function(response){ 
+      var id = $(this).attr('data-id');
 
-        SpectralWorkbench.API.Core.notify('Spectrum calibration copied from spectrum #' + response.id);
-     
-      } );
+      if ($(this).attr('data-snapshot')) id = id + "#" + $(this).attr('data-snapshot');
+
+      graph.datum.addTag('calibrate:' + id);
+         
+      SpectralWorkbench.API.Core.notify('Spectrum calibration copied from <a href="/spectrums/' + id + '">Spectrum ' + id + '</a>');
+
     }
   },
 
@@ -379,15 +382,9 @@ SpectralWorkbench.UI.ToolPaneTypes = {
 
         $('.btn-save-calibrate-2').html('<i class="icon icon-spinner icon-white icon-spin"></i>');
 
-        /* Deprecating with new Snapshots system:
-        _graph.datum.calibrateAndUpload(
-          blue2, 
-          green2, 
-          $('.input-wavelength-1').val(), 
-          $('.input-wavelength-2').val()
-        ); 
-        */
-        _graph.datum.json.data.lines = _spectrum.calibrate(
+/*
+// do this in linearCalibration tag, below?
+        _graph.datum.json.data.lines = _graph.datum.calibrate(
           blue2, 
           green2, 
           $('.input-wavelength-1').val(), 
@@ -397,6 +394,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
         _graph.datum.load()
         _graph.reload()
         _graph.refresh()
+*/
 
         if (_graph.datum.getTag('calibration') == false) _graph.datum.addTag('calibration');
 
@@ -405,10 +403,13 @@ SpectralWorkbench.UI.ToolPaneTypes = {
         // clear the previous assessement tags
         _graph.datum.getPowerTag('error', function(tag) { tag.destroy() });
         _graph.datum.getPowerTag('calibrationQuality', function(tag) { tag.destroy() });
+// or don't, if there's history that's relied upon?
         _graph.datum.getPowerTag('linearCalibration', function(tag) { tag.destroy() });
 
         // save the calculated error (from the rmse)
         _graph.datum.addTag('error:' + error);
+
+// this tag should actually change the display, rather than the above?
         _graph.datum.addTag('linearCalibration:' + 
           $('.input-wavelength-1').val() + '-' + 
           $('.input-wavelength-2').val()

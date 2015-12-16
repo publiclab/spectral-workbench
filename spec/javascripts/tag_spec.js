@@ -183,12 +183,12 @@ describe("Tag", function() {
 
       // not to be a powertag:
       expect(tag.key).toBeDefined();
-      expect(tag.key).toBe('range');
+      expect(tag.key).toBe('subtract');
       expect(tag.value).toBeDefined();
       expect(tag.value).toBe('3');
       expect(tag.powertag).toEqual(true);
       expect(tag.has_snapshot).toBe(true);
-      expect(tag.snapshot_id).toEqual(4);
+      expect(tag.snapshot_id).toEqual('4');
 
       // apply the powertag! It may have been parsed already but we try again to be sure. 
       tag.parse();
@@ -196,9 +196,7 @@ describe("Tag", function() {
       // should have cached a data snapshot locally:
       expect(typeof tag.data).toBe('string');
 
-      expect(graph.datum.getExtentX()[0]).toBeGreaterThan(400); // only within 400-700 range
-      expect(graph.datum.getExtentX()[1]).toBeLessThan(700); // only within 400-700 range
-      expect(graph.datum.getExtentX()).toEqual([400.245, 697.935]); // only within 400-700 range
+    });
 
   });
 

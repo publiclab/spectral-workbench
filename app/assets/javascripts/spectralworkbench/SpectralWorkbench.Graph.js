@@ -292,8 +292,16 @@ SpectralWorkbench.Graph = Class.extend({
     /* ======================================
      * Dim graph, such as while it's loading
      */
-    _graph.opacity = function(amount) {
-      _graph.svg.style('opacity', amount);
+    _graph.dim = function() {
+      _graph.svg.style('opacity', 0.5);
+    }
+
+
+    /* ======================================
+     * Un-dim graph, such as while it's loading
+     */
+    _graph.undim = function() {
+      _graph.svg.style('opacity', 1);
     }
 
 

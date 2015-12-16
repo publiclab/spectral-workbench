@@ -97,6 +97,7 @@ SpectralWorkbench::Application.routes.draw do
     resources :sets
     resources :comments
   end
+  resources :snapshots
   resources :macros
   resources :session
   resources :tags do

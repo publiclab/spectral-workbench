@@ -56,7 +56,7 @@ SpectralWorkbench.Datum = Class.extend({
       var tags = {};
 
       // grey out graph during load
-      _datum.graph.opacity(0.5);
+      _datum.graph.dim();
 
       names.split(',').forEach(function(tagname, index) {
 
@@ -190,7 +190,7 @@ SpectralWorkbench.Datum = Class.extend({
       // don't split here; specialize via inheritance
       if (_datum instanceof SpectralWorkbench.Spectrum) {
 
-        _datum.graph.opacity(0.5);
+        _datum.graph.dim();
 
         $.ajax({
 
@@ -229,7 +229,7 @@ SpectralWorkbench.Datum = Class.extend({
 
       });
 
-      _datum.graph.opacity(1);
+      _datum.graph.undim();
 
     }
 

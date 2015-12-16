@@ -15,6 +15,8 @@ SpectralWorkbench.Tag = Class.extend({
 
   ],
 
+  has_snapshot: false, // default
+
   // <json> is a JSON obj of the tag as received from the server; 
   // if this doesn't exist, it's a new tag
   // <callback> will be called as callback(tag, ajaxResponse)
@@ -57,13 +59,12 @@ SpectralWorkbench.Tag = Class.extend({
       _tag.powertag = true;
       _tag.key = _tag.name.split(':')[0];
       _tag.value = _tag.name.split(':')[1];
+      _tag.value_snapshot = _tag.value; // include snapshot syntax if exists
 
       if (_tag.name.match("#")) {
         _tag.has_snapshot = true;
         _tag.snapshot_id = _tag.value.split('#')[1];
         _tag.value = _tag.value.split('#')[0];
-      } else {
-        _tag.has_snapshot = false;
       }
 
       // scan for tags that require snapshots, but this isn't the right place to save it -- we need to parse it!
@@ -95,7 +96,7 @@ SpectralWorkbench.Tag = Class.extend({
       _tag.startSpinner();
 
       // grey out graph during load
-      _tag.datum.graph.opacity(0.5);
+      _tag.datum.graph.dim();
 
       var data = {
         authenticity_token: $('meta[name=csrf-token]').attr('content'),
@@ -142,12 +143,12 @@ SpectralWorkbench.Tag = Class.extend({
       _tag.stopSpinner();
 
       // remove grey out of graph after load
-      _tag.datum.graph.opacity(1);
+      _tag.datum.graph.undim();
 
       if (response['saved']) {
 
         if (response['saved'][_tag.name]) {
-console.log('name',_tag.name, response['saved'], response['saved'][_tag.name]);
+
           // response is a JSON object whose properties are tagnames, each with property <id>
           if (response['saved'][_tag.name].hasOwnProperty('id')) _tag.id = response['saved'][_tag.name].id;
 
@@ -208,6 +209,8 @@ console.log('name',_tag.name, response['saved'], response['saved'][_tag.name]);
     // scrubs local tag data; for use after deletion
     _tag.cleanUp = function(callback) {
 
+        _tag.datum.graph.dim();
+
         // if it failed to initialize, the element may not exist
         if (_tag.el) _tag.el.remove();
         if (_tag.operationEl) _tag.operationEl.remove();
@@ -221,10 +224,16 @@ console.log('name',_tag.name, response['saved'], response['saved'][_tag.name]);
 
           // flush the graph range so the image gets resized:
           _tag.datum.graph.range = false;
-          _tag.datum.load();
-          _tag.datum.parseTags();
-          _tag.datum.graph.reload();
-          _tag.datum.graph.refresh();
+
+          // re-fetch spectrum data, as it may have been overwritten by various tags:
+          _tag.datum.fetch(false, function() {
+            _tag.datum.parseTags();
+            _tag.datum.graph.reload();
+            _tag.datum.graph.refresh();
+
+            _tag.datum.graph.undim();
+
+          });
 
         }
 
@@ -289,7 +298,7 @@ console.log('name',_tag.name, response['saved'], response['saved'][_tag.name]);
       else if (_tag.key == "range")             return "Limits wavelength range.";
       else if (_tag.key == "transform")         return "Filters this spectrum with a math expression.";
       else if (_tag.key == "subtract")          return "Subtracts another spectrum from this.";
-      else if (_tag.key == "calibration")       return "Copies calibration from <a href='/spectrums/" + _tag.value + "'>Spectrum #" + _tag.value + "</a>.";
+      else if (_tag.key == "calibrate")         return "Copies calibration from <a href='/spectrums/" + _tag.value + "'>Spectrum #" + _tag.value + "</a>.";
       else if (_tag.key == "cloneOf")           return "Spectrum is a copy of <a href='/spectrums/" + _tag.value + "'>Spectrum #" + _tag.value + "</a>.";
       else if (_tag.key == "linearCalibration") return "Manually calibrated with two reference points.";
       else if (_tag.key == "error")             return "Scores a calibration 'fit' is by comparison to a known reference; lower is better, zero is perfect.";
@@ -306,15 +315,19 @@ console.log('name',_tag.name, response['saved'], response['saved'][_tag.name]);
 
         if (_tag.key == "subtract") {
 
-          SpectralWorkbench.API.Core.subtract(_tag.datum, _tag.value);
+          SpectralWorkbench.API.Core.subtract(_tag.datum, _tag.value_snapshot);
 
-        } else if (_tag.key == "copyCalibration") {
+        } else if (_tag.key == "flip:horizontal") {
 
-          SpectralWorkbench.API.Core.copyCalibration(_tag.datum, _tag.value);
+          SpectralWorkbench.API.Core.flipHorizontal(_tag.datum);
+
+        } else if (_tag.key == "calibrate") {
+
+          if (_tag.has_snapshot) SpectralWorkbench.API.Core.copyCalibration(_tag.datum, _tag.value_snapshot);
 
         } else if (_tag.key == "transform") {
 
-          SpectralWorkbench.API.Core.transform(_tag.datum, _tag.value);
+          SpectralWorkbench.API.Core.transform(_tag.datum, _tag.value_snapshot);
 
         } else if (_tag.key == "smooth") {
 
@@ -322,8 +335,8 @@ console.log('name',_tag.name, response['saved'], response['saved'][_tag.name]);
 
         } else if (_tag.key == "blend") {
 
-          var blend_id = _tag.value.split('$')[0],
-              expression = _tag.value.split('$')[1];
+          var blend_id = _tag.value_snapshot.split('$')[0],
+              expression = _tag.value_snapshot.split('$')[1];
 
           SpectralWorkbench.API.Core.blend(_tag.datum, blend_id, expression);
 

@@ -19,7 +19,7 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
       _spectrum.blue    = [];
 
       // Set up x and y properties like data.x and data.y for d3
-      $.each(_spectrum.json.data.lines,function(i,line) {
+      _spectrum.json.data.lines.forEach(function(line, i) {
      
         if (line.wavelength == null) {
      
@@ -376,67 +376,6 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
 
 
     /* ======================================
-     * Fetch data from a specified snapshot (if provided)
-     * to populate self from server, using spectrum.id.
-     * Overwrites spectrum.json and runs spectrum.load().
-     * Defaults server response will be latest snapshot if not specified,
-     * or original data if no snapshots exist.
-     */
-    /*_spectrum.fetch = function(url, callback) {
-
-      url = url || '/spectrums/' + _spectrum.id + '.json';
-
-      $.ajax({
-
-        url: url,
-        type: "GET",
-        dataType: "json",
-        success: function(response) {
-
-          _spectrum.json  = response;
-          _spectrum.load();
-
-        },
-        error: function(response) {
-
-          SpectralWorkbench.API.Core.notify(response['errors'], "error");
-
-        }
-      });
-      
-    });*/
-
-
-    /* ======================================
-     * Fetch data to populate self, from server, using spectrum.id.
-     * Overwrites spectrum.json and runs spectrum.load().
-     */
-    _spectrum.fetch = function(url, callback) {
-
-      url = url || '/spectrums/' + _spectrum.id + '.json';
-
-      $.ajax({
-
-        url: url,
-        type: "GET",
-        dataType: "json",
-        success: function(response) {
-
-          _spectrum.json  = response;
-          _spectrum.load();
-
-        },
-        error: function(response) {
-
-          SpectralWorkbench.API.Core.notify(response['errors'], "error");
-
-        }
-      });
-      
-    }
-
-
-    /* ======================================
      * Upload a new json string to the server, overwriting the original. 
      * Not recommended without cloning! But recoverable from original image.
      * Most uses of this function will be deprecated with the Snapshots system:
@@ -468,6 +407,35 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
 
         SpectralWorkbench.API.Core.notify(response['errors'], "error");
 
+      });
+      
+    }
+
+
+    /* ======================================
+     * Fetch data to populate self, from server, using spectrum.id.
+     * Overwrites spectrum.json and runs spectrum.load().
+     */
+    _spectrum.fetch = function(url, callback) {
+
+      url = url || '/spectrums/' + _spectrum.id + '.json';
+
+      $.ajax({
+
+        url: url,
+        type: "GET",
+        dataType: "json",
+        success: function(response) {
+
+          _spectrum.json  = response;
+          _spectrum.load();
+
+        },
+        error: function(response) {
+
+          SpectralWorkbench.API.Core.notify(response['errors'], "error");
+
+        }
       });
       
     }
