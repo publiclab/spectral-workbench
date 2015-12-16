@@ -1,7 +1,7 @@
 <div class="row-fluid">
   <% @users.each_with_index do |user,i| %>
     <div class="span3 %> clearfix">
-      <li><a href="<%= profile_path(user.login) %>"><i class="icon icon-user"></i> <%= user.login %></a></li>
+      <li><a href="<%= profile_path(user.login) %>"><i class="fa fa-user"></i> <%= user.login %></a></li>
     </div>
     <% if ((i+1)/4.0).to_i == ((i+1)/4.0) %>
     </div>

@@ -8,7 +8,7 @@
 </p>
 <% if logged_in? && current_user.login == @set.author %>
   <div class="btn-group pull-right" style="margin:10px 0;">
-    <%= link_to '<i class="icon icon-remove-sign"></i> Remove from set'.html_safe, "/sets/remove/"+@set.id.to_s+"?s="+spectrum.id.to_s, :confirm => 'Are you sure?', :class => "btn btn-small" %>
+    <%= link_to '<i class="fa fa-trash"></i> Remove from set'.html_safe, "/sets/remove/"+@set.id.to_s+"?s="+spectrum.id.to_s, :confirm => 'Are you sure?', :class => "btn btn-small" %>
   </div>
 <% end %>
 </div>

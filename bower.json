@@ -4,7 +4,7 @@
   "dependencies": {
     "d3": "~3.3.13",
     "nvd3": "~1.7.1",
-    "fontawesome": "~3.2.1",
+    "fontawesome": "~4.5.0",
     "bootstrap-css": "~2.3.2",
     "jquery": "~1.11",
     "flot": "~0.7",

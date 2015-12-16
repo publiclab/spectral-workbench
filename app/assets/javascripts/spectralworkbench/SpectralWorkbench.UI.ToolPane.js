@@ -1,7 +1,7 @@
 SpectralWorkbench.UI.ToolPane = Class.extend({
 
   form: {},
-  spinner: "<i class='disabled icon icon-spinner icon-spin'></i>",
+  spinner: "<i class='disabled fa fa-spinner fa-spin'></i>",
 
   init: function(toolType, _graph, selector, callback) {
 
@@ -69,7 +69,7 @@ SpectralWorkbench.UI.ToolPane = Class.extend({
 
     if (_tool.options.onApply) { 
       form.applyEl.click(function(e) {
-        $(this).html("<i class='icon icon-spinner icon-spin icon-white'></i>");
+        $(this).html("<i class='fa fa-spinner fa-spin fa-white'></i>");
         _tool.options.onApply.bind(this)(form);
         form.close();
       });

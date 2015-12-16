@@ -45,11 +45,11 @@ h5 small {
   background: #a6c;
 }
 
-.icon {
+.fa {
   color:black;
 }
 
-.icon-white {
+.fa-white {
   color:white;
 }
 
@@ -72,6 +72,9 @@ h5 small {
 }
 #header div.btn-group.mobile {
   padding-right:0px;
+}
+#header .fa-camera {
+  margin-right:6px;
 }
 #header ul.nav {
   margin:10px;

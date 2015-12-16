@@ -221,7 +221,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
 
   /*
 
-* spectrum reversal mgmt
+* spectrum reversal mgmnt
 * debug actual calibration to be sure
 * add new slider images
 * account for page resizing
@@ -380,7 +380,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
 
       $('.btn-save-calibrate-2').click(function() {
 
-        $('.btn-save-calibrate-2').html('<i class="icon icon-spinner icon-white icon-spin"></i>');
+        $('.btn-save-calibrate-2').html('<i class="fa fa-spinner fa-white fa-spin"></i>');
 
 /*
 // do this in linearCalibration tag, below?
@@ -559,7 +559,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
       compareEl.append('<td class="author"><a href="/profile/' + author + '">' + author + '</a></td>');
       compareEl.append('<td class="comparison-tools"></td>');
 
-      compareEl.find('td.comparison-tools').append('<a data-id="' + id + '" class="remove"><i class="icon icon-remove"></i></a>');
+      compareEl.find('td.comparison-tools').append('<a data-id="' + id + '" class="remove"><i class="fa fa-remove"></i></a>');
       compareEl.find('.comparison-tools .remove').click(function(){
 
         compareEl.remove();
@@ -629,7 +629,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
       compareEl.append('<td class="author"><a href="/profile/' + author + '">' + author + '</a></td>');
       compareEl.append('<td class="comparison-tools"></td>');
 
-      compareEl.find('td.comparison-tools').append('<a data-id="' + id + '" class="remove"><i class="icon icon-remove"></i></a>');
+      compareEl.find('td.comparison-tools').append('<a data-id="' + id + '" class="remove"><i class="fa fa-remove"></i></a>');
       compareEl.find('.comparison-tools .remove').click(function(){
 
         compareEl.remove();

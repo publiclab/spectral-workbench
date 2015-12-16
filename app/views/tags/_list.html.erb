@@ -1,7 +1,7 @@
 <div class="row-fluid">
   <% @tags.each_with_index do |tag,i| %>
     <div class="span3 %> clearfix">
-      <li><a href="<%= tags_path(tag) %>"><i class="icon icon-tag"></i> <%= tag.name %></a></li>
+      <li><a href="<%= tags_path(tag) %>"><i class="fa fa-tag"></i> <%= tag.name %></a></li>
     </div>
     <% if ((i+1)/4.0).to_i == ((i+1)/4.0) %>
     </div>

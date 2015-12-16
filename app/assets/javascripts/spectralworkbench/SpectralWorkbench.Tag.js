@@ -15,6 +15,7 @@ SpectralWorkbench.Tag = Class.extend({
 
   ],
 
+  has_reference: false, // default
   has_snapshot: false, // default
 
   // <json> is a JSON obj of the tag as received from the server; 
@@ -62,29 +63,29 @@ SpectralWorkbench.Tag = Class.extend({
       _tag.value_snapshot = _tag.value; // include snapshot syntax if exists
 
       if (_tag.name.match("#")) {
-        _tag.has_snapshot = true;
+        _tag.has_reference = true;
         _tag.snapshot_id = _tag.value.split('#')[1];
         _tag.value = _tag.value.split('#')[0];
       }
 
       // scan for tags that require snapshots, but this isn't the right place to save it -- we need to parse it!
-      if (_tag.snapshot_tagnames.indexOf(_tag.key) != -1) _tag.snapshot = true;
+      if (_tag.snapshot_tagnames.indexOf(_tag.key) != -1) _tag.has_snapshot = true;
 
     } else _tag.powertag = false;
 
     _tag.startSpinner = function() {
 
-      $('#tag-form-' + _tag.datum.id + ' .add-on i').removeClass('icon-tag')
-                                                    .addClass('icon-spin')
-                                                    .addClass('icon-spinner');
+      $('#tag-form-' + _tag.datum.id + ' .add-on i').removeClass('fa-tag')
+                                                    .addClass('fa-spin')
+                                                    .addClass('fa-spinner');
 
     }
 
     _tag.stopSpinner = function() {
 
-      $('#tag-form-' + _tag.datum.id + ' .add-on i').addClass('icon-tag')
-                                                    .removeClass('icon-spin')
-                                                    .removeClass('icon-spinner');
+      $('#tag-form-' + _tag.datum.id + ' .add-on i').addClass('fa-tag')
+                                                    .removeClass('fa-spin')
+                                                    .removeClass('fa-spinner');
 
     }
 
@@ -189,7 +190,7 @@ SpectralWorkbench.Tag = Class.extend({
     _tag.destroy = function(callback) {
 
       $('tr#tag_' + _tag.id + ' .label, span#tag_' + _tag.id).css('background', '#bbb')
-                                                             .html(_tag.el.html() + " <i class='icon icon-spinner icon-spin icon-white'></i>");
+                                                             .html(_tag.el.html() + " <i class='fa fa-spinner fa-spin fa-white'></i>");
 
       $('tr#tag_' + _tag.id).css('color', '#bbb')
 
@@ -257,11 +258,11 @@ SpectralWorkbench.Tag = Class.extend({
         _tag.operationEl = $("<tr id='tag_" + _tag.id + "'></tr>");
         _tag.operationEl.append("<td class='title'><span class='label purple'>" + _tag.name + "</span></td>");
 
-        if (_tag.has_snapshot) _tag.operationEl.find('.title').append(" <i tooltip='Hello' class='icon icon-thumb-tack'></i>");
+        if (_tag.has_snapshot) _tag.operationEl.find('.title').prepend(" <a href='https://publiclab.org/wiki/spectral-workbench-snapshots'><i rel='tooltip' title='This operation generated a data snapshot. Click to learn more.' class='fa fa-thumb-tack'></i></a>");
 
         _tag.operationEl.append("<td class='date'><small>" + moment(_tag.json.created_at).format("MMM Do YYYY hh:mm a") + "</small></td>");
         _tag.operationEl.append("<td class='description'><a href='//publiclab.org/wiki/spectral-workbench-tags#" + _tag.key + "'>" + _tag.description() + "</a></td>");
-        _tag.operationEl.append("<td class='operations-tools'><a class='tagdelete'><i class='icon icon-remove'></i></a></td>");
+        _tag.operationEl.append("<td class='operations-tools'><a class='tagdelete'><i class='fa fa-remove'></i></a></td>");
         operationTable.append(_tag.operationEl);
 
       }
@@ -328,7 +329,7 @@ SpectralWorkbench.Tag = Class.extend({
 
         } else if (_tag.key == "calibrate") {
 
-          if (_tag.has_snapshot) SpectralWorkbench.API.Core.copyCalibration(_tag.datum, _tag.value_snapshot);
+          if (_tag.has_reference) SpectralWorkbench.API.Core.copyCalibration(_tag.datum, _tag.value_snapshot);
 
         } else if (_tag.key == "transform") {
 

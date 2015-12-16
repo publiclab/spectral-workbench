@@ -273,7 +273,7 @@ SpectralWorkbench.Graph = Class.extend({
       _graph.onComplete(_graph);
  
       // hide loading spinner
-      _graph.el.find('.icon-spinner').remove();
+      _graph.el.find('.fa-spinner').remove();
 
     }
 

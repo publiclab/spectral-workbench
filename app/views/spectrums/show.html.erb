@@ -24,7 +24,7 @@
 
   <% if mobile? && !@spectrum.calibrated %>
     <div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">×</button>
-      <i class="icon icon-exclamation-sign"></i> Calibration is easiest <b>from a computer</b>, after which you can use it from your phone.
+      <i class="fa fa-exclamation-circle"></i> Calibration is easiest <b>from a computer</b>, after which you can use it from your phone.
     </div>
   <% end %>
 
@@ -35,13 +35,13 @@
 
     <div class="navbar navbar-inverse navbar-static-bottom" style="margin:0;">
       <div class="navbar-inner">
-        <a id="$('#calibrate-begin').focus()" data-toggle="modal" href="#calibratemodal1" class="btn btn-primary"><i class="icon icon-white icon-screenshot"></i><span class="hidden-phone"> Calibrate</span></a>
+        <a id="$('#calibrate-begin').focus()" data-toggle="modal" href="#calibratemodal1" class="btn btn-primary"><i class="fa fa-white fa-crosshairs"></i><span class="hidden-phone"> Calibrate</span></a>
 
-        <a href="#embed-modal" class="btn btn-inverse hidden-phone" data-toggle="modal"><i class="icon icon-white icon-share"></i><span class="hidden-phone"> Embed</span></a>
+        <a href="#embed-modal" class="btn btn-inverse hidden-phone" data-toggle="modal"><i class="fa fa-white fa-share"></i><span class="hidden-phone"> Embed</span></a>
         <%= render partial: "embed/modal", locals: { datum: @spectrum, type: :spectrum } %>
-        <a class="btn btn-inverse" data-toggle="modal" href="#setmodal"><i class="icon icon-white icon-plus-sign"></i><span class="hidden-phone"> Add to set</span></a>
-        <a class="btn btn-inverse hidden-phone" id="createSet" href="javascript:void(0);"><i class="icon icon-white icon-list"></i><span class="hidden-phone"> Save as set</span></a>
-        <a data-toggle="modal" class="btn btn-inverse" href="#comparemodal"><i class="icon icon-white icon-align-left"></i><span class="hidden-phone"> Compare</span></a>
+        <a class="btn btn-inverse" data-toggle="modal" href="#setmodal"><i class="fa fa-white fa-plus-circle"></i><span class="hidden-phone"> Add to set</span></a>
+        <a class="btn btn-inverse hidden-phone" id="createSet" href="javascript:void(0);"><i class="fa fa-white fa-list"></i><span class="hidden-phone"> Save as set</span></a>
+        <a data-toggle="modal" class="btn btn-inverse" href="#comparemodal"><i class="fa fa-white fa-align-left"></i><span class="hidden-phone"> Compare</span></a>
         <a class="btn btn-inverse" href="/match/search/<%= @spectrum.id %>">Find similar</a>
         <% if logged_in? && current_user.id == 1 && @spectrum.calibrated %><a href="/key/<%= @spectrum.id %>" class="btn btn-inverse">Make key</a><% end %>
         <a href="/spectrums/show2/<%= @spectrum.id %>" class="btn btn-inverse">Preview 2.0 beta</a>
@@ -66,7 +66,7 @@
         <a class="btn btn-small" href="/spectrums/<%= @spectrum.id %>.json"><b>JSON</b></a>
         <a class="btn btn-small" href="/spectrums/<%= @spectrum.id %>.csv"><b>CSV</b></a>
         <a class="btn btn-small" href="/spectrums/<%= @spectrum.id %>.xml"><b>XML</b></a>
-        <a rel="tooltip" class="btn btn-small" href="http://publiclab.org/wiki/spectral-workbench-exporting" title="About export formats"><i class="icon icon-question-sign"></i></a>
+        <a rel="tooltip" class="btn btn-small" href="http://publiclab.org/wiki/spectral-workbench-exporting" title="About export formats"><i class="fa fa-question-circle"></i></a>
       </div>
 
       <div class="hidden-phone">
@@ -100,8 +100,8 @@
     <div class="span8">
       <% if logged_in? && current_user.login == @spectrum.author %>
         <div class="btn-group pull-right" style="margin-top:10px;margin-left:10px;">
-          <a class="btn btn-small" href="/spectrums/<%= @spectrum.id %>/edit"><i class="icon icon-pencil"></i> Edit</a>
-          <%= link_to '<i class="icon icon-remove-sign"></i> Delete'.html_safe, "/spectrums/destroy/"+@spectrum.id.to_s, :confirm => 'Are you sure?', :class => "btn btn-small" %>
+          <a class="btn btn-small" href="/spectrums/<%= @spectrum.id %>/edit"><i class="fa fa-pencil"></i> Edit</a>
+          <%= link_to '<i class="fa fa-trash"></i> Delete'.html_safe, "/spectrums/destroy/"+@spectrum.id.to_s, :confirm => 'Are you sure?', :class => "btn btn-small" %>
         </div>
       <% end %>
 

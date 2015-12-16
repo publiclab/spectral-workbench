@@ -11,7 +11,7 @@
 
     <div class="navbar navbar-inverse navbar-static-bottom" style="margin:0;">
       <div class="navbar-inner">
-        <a href="#embed-modal" class="btn btn-inverse hidden-phone" data-toggle="modal"><i class="icon icon-white icon-share"></i><span class="hidden-phone"> Embed</span></a>
+        <a href="#embed-modal" class="btn btn-inverse hidden-phone" data-toggle="modal"><i class="fa fa-white fa-share"></i><span class="hidden-phone"> Embed</span></a>
         <%= render :partial => "embed/modal", :locals => { datum: @set, type: :set } %>
 
         <a class="btn btn-inverse hidden-phone" onClick="$W.run_macro('warren','equalize_area')">Equalize area</a>
@@ -19,13 +19,13 @@
         <a class="btn btn-inverse hidden-phone" onClick="$W.run_macro('warren','subset')">Crop view</a>
         <a class="btn btn-inverse" href="/sets/show2/<%= @set.id %>">Preview 2.0 beta</a>
         <div class="btn-group dropup pull-right">
-          <a data-toggle="dropdown" class="btn btn-inverse"><i class="icon icon-white icon-briefcase"></i><span class="hidden-phone"> More tools</span></a>
+          <a data-toggle="dropdown" class="btn btn-inverse"><i class="fa fa-white fa-briefcase"></i><span class="hidden-phone"> More tools</span></a>
           <ul class="dropdown-menu">
             <li><a onClick="$W.run_macro('warren','equalize_area')">Equalize area</a></li>
             <li><a onClick="$W.run_macro('warren','equalize-height')">Equalize height</a></li>
             <li><a onClick="$W.run_macro('warren','centroidish')">Find graph "centers"</a></li>
             <li><a onClick="$W.run_macro('warren','centroidish_cutoff')">Find graph "centers" only between 410-700nm</a></li>
-            <li><a href="#macrosmodal" data-toggle="modal"><i class="icon icon-forward"></i> Macros/scripting</a></li>
+            <li><a href="#macrosmodal" data-toggle="modal"><i class="fa fa-forward"></i> Macros/scripting</a></li>
           </ul>
         </div>
 
@@ -61,8 +61,8 @@
     <div class="span9">
       <% if logged_in? && current_user.login == @set.author %>
         <div class="btn-group pull-right" style="margin-top:10px;">
-          <a class="btn btn-small" href="/sets/edit/<%= @set.id %>"><i class="icon icon-pencil"></i> Edit</a>
-          <%= link_to '<i class="icon icon-remove-sign"></i> Delete'.html_safe, "/sets/delete/"+@set.id.to_s, :confirm => 'Are you sure?', :class => "btn btn-small" %>
+          <a class="btn btn-small" href="/sets/edit/<%= @set.id %>"><i class="fa fa-pencil"></i> Edit</a>
+          <%= link_to '<i class="fa fa-trash"></i> Delete'.html_safe, "/sets/delete/"+@set.id.to_s, :confirm => 'Are you sure?', :class => "btn btn-small" %>
         </div>
       <% end %>
 
