@@ -10,13 +10,22 @@ class Tag < ActiveRecord::Base
 
   validate :powertags_by_owner
 
+  # place this before the has_one :snapshot so it runs before dependent => :destroy
+  before_destroy :validate_destroyable
+
   belongs_to :spectrum
   belongs_to :user
   has_one :snapshot, :dependent => :destroy
 
   before_save :scan_powertags
 
-  # use before_destroy to validate destroy based on rules? deletable?
+  def powertags_by_owner
+
+    if self.is_powertag? && self.spectrum.user_id != self.user_id && self.user.role != "admin"
+      errors[:base] << "powertags may only be made by spectrum owner or admins"
+    end
+
+  end
 
   def scan_powertags
 
@@ -38,10 +47,18 @@ class Tag < ActiveRecord::Base
 
   end
 
-  def powertags_by_owner
+  def validate_destroyable
 
-    if self.is_powertag? && self.spectrum.user_id != self.user_id && self.user.role != "admin"
-      errors[:base] << "powertags may only be made by spectrum owner or admins"
+    if self.is_powertag? && self.generate_snapshot?
+
+      if self.snapshot.is_latest?
+        return true
+      else
+        return false
+      end
+
+    else
+      return true
     end
 
   end
@@ -108,7 +125,7 @@ class Tag < ActiveRecord::Base
 
   # this should return true for any powertag that operates on the data:
   def generate_snapshot?
-    self.is_powertag? && ['calibration', # calibration clone
+    self.is_powertag? && ['calibrate', # calibration clone
                           'linearCalibration', # manual calibration
                           'subtract',
                           'transform',

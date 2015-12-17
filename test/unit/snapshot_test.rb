@@ -5,17 +5,17 @@ class SnapshotTest < ActiveSupport::TestCase
 
   test "creating a snapshot" do
 
-    data = "data"
-
     snapshot = Snapshot.new({
                      spectrum_id: Spectrum.last.id,
                      user_id: User.first.id,
+                     tag_id: Tag.first.id,
                      data: '{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}'
                    })
 
     snapshot.save!
 
-    assert_not_nil snapshot
+    assert snapshot
+    assert snapshot.is_latest?
     assert_not_nil snapshot.id
     assert_not_nil Snapshot.find snapshot.id
 
@@ -24,13 +24,12 @@ class SnapshotTest < ActiveSupport::TestCase
 
   test "creating a snapshot with different author than spectrum should fail" do
 
-    data = "data"
-
     count = Snapshot.count
 
     snapshot = Snapshot.new({
                      spectrum_id: Spectrum.last.id,
                      user_id: Spectrum.last.id + 1,
+                     tag_id: Tag.first.id,
                      data: '{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}'
                    })
 
@@ -46,15 +45,19 @@ class SnapshotTest < ActiveSupport::TestCase
 
   test "creating a snapshot with different author than spectrum but via tag.create_snapshot should make snapshot with same user as spectrum" do
 
+    assert_not_equal spectrums(:one).user_id, users(:aaron).id
+
     # trigger a snapshot to be generated:
-    tag1 = Tag.new({
+    tag = Tag.new({
       user_id:     users(:quentin).id,
       spectrum_id: spectrums(:one).id,
       name:        "smooth:2"
     })
 
+    tag.save
+
     data = '{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}'
-    snapshot = tag1.create_snapshot(data)
+    snapshot = tag.create_snapshot(data)
 
     assert snapshot.user_id == snapshot.spectrum.user_id
     assert snapshot.valid?
@@ -68,7 +71,8 @@ class SnapshotTest < ActiveSupport::TestCase
 
     snapshot = Snapshot.new({
                      spectrum_id: Spectrum.last.id,
-                     user_id: User.first.id
+                     user_id: User.first.id,
+                     tag_id: Tag.first.id
                    })
 
     assert_equal false, snapshot.save
@@ -91,6 +95,8 @@ class SnapshotTest < ActiveSupport::TestCase
       spectrum_id: spectrums(:one).id,
       name:        "subtract:#{spectrums(:one).id}"
     })
+
+    assert tag.save
 
     assert_not_nil tag.spectrum
     assert_not_nil tag.spectrum.user_id
@@ -145,6 +151,8 @@ class SnapshotTest < ActiveSupport::TestCase
       spectrum_id: spectrums(:one).id,
       name:        "smooth:2"
     })
+
+    assert tag1.save
 
     data = '{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}'
     tag1.create_snapshot(data)
@@ -222,7 +230,7 @@ class SnapshotTest < ActiveSupport::TestCase
     assert tag1.save
 
     data = '{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}'
-    tag1.create_snapshot(data)
+    assert tag1.create_snapshot(data)
 
     assert_not_nil tag1.snapshot
 
@@ -240,7 +248,7 @@ class SnapshotTest < ActiveSupport::TestCase
     assert tag.generate_snapshot?
 
     data = '{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}'
-    tag.create_snapshot(data)
+    assert tag.create_snapshot(data)
     # as of the previous test, spectrums(:one) should have a snapshot
 
     assert_not_nil tag.snapshot
@@ -264,6 +272,7 @@ class SnapshotTest < ActiveSupport::TestCase
     assert_equal tag.reference_id, tag1.spectrum.snapshots.last.id
     assert_not_nil Snapshot.where(id: tag.reference_id).first
 
+    assert tag.snapshot.is_latest?
     tag.destroy
 
     # should delete snapshot too
@@ -271,7 +280,47 @@ class SnapshotTest < ActiveSupport::TestCase
 
   end
 
-  test "" do
+  test "rejecting deletion of a snapshot that's not the latest" do
+
+    data = '{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}'
+
+    # trigger a snapshot to be generated:
+    tag1 = Tag.new({
+      user_id:     users(:quentin).id,
+      spectrum_id: spectrums(:one).id,
+      name:        "smooth:2"
+    })
+
+    assert tag1.valid?
+
+    tag1.save
+    snapshot1 = tag1.create_snapshot(data)
+
+    assert snapshot1.valid?
+
+    tag2 = Tag.new({
+      user_id:     users(:quentin).id,
+      spectrum_id: spectrums(:one).id,
+      name:        "smooth:5"
+    })
+
+    assert tag2.valid?
+
+    tag2.save
+    snapshot2 = tag2.create_snapshot(data)
+
+    assert snapshot2.valid?
+
+    assert !snapshot1.is_latest?
+    assert_difference 'Snapshot.count', 0 do
+      snapshot1.destroy
+    end
+
+    # this one should be the latest, so deletable:
+    assert snapshot2.is_latest?
+    assert_difference 'Snapshot.count', -1 do
+      snapshot2.destroy
+    end
 
   end
 

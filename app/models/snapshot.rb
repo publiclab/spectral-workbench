@@ -2,14 +2,20 @@ class Snapshot < ActiveRecord::Base
 
   belongs_to :spectrum
   belongs_to :user
+  belongs_to :tag
 
   attr_accessible :id, :user_id, :spectrum_id, :description, :data, :tag_id
 
   validates_presence_of :user_id
+  validates_presence_of :tag_id
   validates_presence_of :spectrum_id
   validates_presence_of :data
 
   validate :validate_json, :validate_author
+
+  # is_latest is also used by the parent tag's before_destroy
+  before_destroy :is_latest?
+
 
   def validate_author
     if self.spectrum.nil?
@@ -33,6 +39,16 @@ class Snapshot < ActiveRecord::Base
         false
       end
     end
+  end
+
+  def is_latest?
+
+    latest = Snapshot.where(spectrum_id: self.spectrum_id)
+                     .order('created_at DESC')
+                     .limit(1)
+                     .last
+    latest.id == self.id
+
   end
 
 end

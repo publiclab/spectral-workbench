@@ -4,7 +4,7 @@ SpectralWorkbench.Tag = Class.extend({
   // this list must be kept consistent with that in /app/models/tag.rb
   snapshot_tagnames: [
 
-    "calibration",
+    "calibrate",
     "linearCalibration",
     "subtract",
     "transform",
@@ -256,10 +256,12 @@ SpectralWorkbench.Tag = Class.extend({
       if (_tag.powertag) {
 
         _tag.operationEl = $("<tr id='tag_" + _tag.id + "'></tr>");
+        if (_tag.has_snapshot) {
+          _tag.operationEl.append("<td class='snapshot'><a href='https://publiclab.org/wiki/spectral-workbench-snapshots'><i rel='tooltip' title='This operation generated a data snapshot. Click to learn more.' class='fa fa-thumb-tack'></i></a></td>");
+        } else {
+          _tag.operationEl.append("<td class='snapshot'></td>");
+        }
         _tag.operationEl.append("<td class='title'><span class='label purple'>" + _tag.name + "</span></td>");
-
-        if (_tag.has_snapshot) _tag.operationEl.find('.title').prepend(" <a href='https://publiclab.org/wiki/spectral-workbench-snapshots'><i rel='tooltip' title='This operation generated a data snapshot. Click to learn more.' class='fa fa-thumb-tack'></i></a>");
-
         _tag.operationEl.append("<td class='date'><small>" + moment(_tag.json.created_at).format("MMM Do YYYY hh:mm a") + "</small></td>");
         _tag.operationEl.append("<td class='description'><a href='//publiclab.org/wiki/spectral-workbench-tags#" + _tag.key + "'>" + _tag.description() + "</a></td>");
         _tag.operationEl.append("<td class='operations-tools'><a class='tagdelete'><i class='fa fa-remove'></i></a></td>");
