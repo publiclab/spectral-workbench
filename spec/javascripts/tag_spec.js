@@ -125,58 +125,6 @@ describe("Tag", function() {
   });
 
 
-  it("creates powertag 'range' and applies effect in graph data, then removes effect upon tag deletion", function(done) {
-
-    // test that the graph is not range-limited
-    tag = graph.datum.addTag('range:400-700', function(tag) {
-
-      // not to be a powertag:
-      expect(tag.key).toBeDefined();
-      expect(tag.key).toBe('range');
-      expect(tag.value).toBeDefined();
-      expect(tag.value).toBe('400-700');
-      expect(tag.powertag).toEqual(true);
-      expect(tag.snapshot).toEqual(true);
-
-      // apply the powertag! It may have been parsed already but we try again to be sure. 
-      tag.parse();
-      expect(tag.data).not.toBeUndefined();
-      // should have cached a data snapshot locally:
-      expect(typeof tag.data).toBe('string');
-
-      expect(graph.datum.getExtentX()[0]).toBeGreaterThan(400); // only within 400-700 range
-      expect(graph.datum.getExtentX()[1]).toBeLessThan(700); // only within 400-700 range
-      expect(graph.datum.getExtentX()).toEqual([400.245, 697.935]); // only within 400-700 range
-
-      // in normal async in production, tag would've been added to graph.datum.tags, 
-      // but fake async is too fast and it's not there yet
-
-      // so we can't run removeTag without a slight delay: 
-      setTimeout(function() {
-
-        tag.id = 1; // fake the id because normally this'd be added but we're doing things too fast;
-        graph.datum.removeTag('range:400-700', function() {
- 
-          // test that the graph is not range-limited:
-    
-          expect(graph.datum.getTag('range:400-700')).toBe(false);
-          expect(graph.datum.getExtentX()).not.toEqual([400.245, 697.935]); // only within 400-700 range
-          expect(graph.datum.getExtentX()[0]).not.toBeGreaterThan(400); // only within 400-700 range
-          expect(graph.datum.getExtentX()[1]).not.toBeLessThan(700); // only within 400-700 range
-          expect(graph.datum.getExtentX()).toEqual([269.089, 958.521]);
-  
-          done();
-    
-        });
-      }, 2000);
-
-    });
-
-    expect(tag).toBeDefined();
-
-  }, 10000); // extra wait for this mega nested spec
-
-
   it("creates powertag 'subtract' and is aware of specified snapshot", function() {
 
     tag = graph.datum.addTag('subtract:3#4', function(tag) {
@@ -199,5 +147,66 @@ describe("Tag", function() {
     });
 
   });
+
+
+  it("creates powertag 'range' and applies effect in graph data, then removes effect upon tag deletion", function(done) {
+
+    var operationTable = $('table.operations');
+
+    expect(operationTable.find('tr.operation-tag .operations-tools .operation-tag-delete').length).toBe(0);
+
+    // test that the graph is not range-limited
+    tag = graph.datum.addTag('range:400-700', function(tag) {
+
+      // not to be a powertag:
+      expect(tag.key).toBeDefined();
+      expect(tag.key).toBe('range');
+      expect(tag.value).toBeDefined();
+      expect(tag.value).toBe('400-700');
+      expect(tag.powertag).toEqual(true);
+      expect(tag.has_snapshot).toEqual(true);
+
+      // apply the powertag! It may have been parsed already but we try again to be sure. 
+      tag.parse();
+      expect(tag.data).not.toBeUndefined();
+      // should have cached a data snapshot locally:
+      expect(typeof tag.data).toBe('string');
+
+      expect(graph.datum.getExtentX()[0]).toBeGreaterThan(400); // only within 400-700 range
+      expect(graph.datum.getExtentX()[1]).toBeLessThan(700); // only within 400-700 range
+      expect(graph.datum.getExtentX()).toEqual([400.245, 697.935]); // only within 400-700 range
+
+      expect(operationTable.find('tr.operation-tag .operations-tools .operation-tag-delete').length).toBe(1);
+      expect(operationTable.find('tr.operation-tag:last .operations-tools .operation-tag-delete').css('display')).toBe('inline');
+
+      // in normal async in production, tag would've been added to graph.datum.tags, 
+      // but fake async is too fast and it's not there yet
+
+      // so we can't run removeTag without a slight delay: 
+      setTimeout(function() {
+
+        tag.id = 1; // fake the id because normally this'd be added but we're doing things too fast;
+        graph.datum.removeTag('range:400-700', function() {
+ 
+          // test that the graph is not range-limited:
+    
+          expect(graph.datum.getTag('range:400-700')).toBe(false);
+          expect(graph.datum.getExtentX()).not.toEqual([400.245, 697.935]); // only within 400-700 range
+          expect(graph.datum.getExtentX()[0]).not.toBeGreaterThan(400); // only within 400-700 range
+          expect(graph.datum.getExtentX()[1]).not.toBeLessThan(700); // only within 400-700 range
+          expect(graph.datum.getExtentX()).toEqual([269.089, 958.521]);
+
+          expect(operationTable.find('tr.operation-tag .operations-tools .operation-tag-delete').length).toBe(0);
+  
+          done();
+    
+        });
+      }, 2000);
+
+    });
+
+    expect(tag).toBeDefined();
+
+  }, 10000); // extra wait for this mega nested spec
 
 });

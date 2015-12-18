@@ -15,6 +15,7 @@ class TagsControllerTest < ActionController::TestCase
     assert_not_nil assigns(:response)[:saved]['mytag']
     assert_not_nil assigns(:response)[:saved]['mytag']['id']
     assert_not_nil assigns(:response)[:saved]['mytag']['name']
+    assert_not_nil assigns(:response)[:saved]['mytag']['created_at']
     assert_equal "Tag(s) added.", flash[:notice]
     assert_redirected_to spectrum_path(Spectrum.first.id)
   end

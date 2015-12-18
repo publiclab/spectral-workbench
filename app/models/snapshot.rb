@@ -42,13 +42,15 @@ class Snapshot < ActiveRecord::Base
   end
 
   def is_latest?
-
     latest = Snapshot.where(spectrum_id: self.spectrum_id)
                      .order('created_at DESC')
                      .limit(1)
                      .last
     latest.id == self.id
+  end
 
+  def has_dependent_spectra?
+    Tag.where('name LIKE (?)', '%#' + self.id.to_s).length > 0
   end
 
 end

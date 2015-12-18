@@ -21,15 +21,15 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
       // Set up x and y properties like data.x and data.y for d3
       _spectrum.json.data.lines.forEach(function(line, i) {
      
-        if (line.wavelength == null) {
-     
-          var x = line.pixel;
-          // change graph labels
-     
-        } else var x = line.wavelength;
+        if (line.wavelength == null) var x = line.pixel; // change graph labels
+        else                         var x = line.wavelength;
 
-        // only actually add it if it's in specified wavelength range ([start, end]), if any:
-        if (_spectrum.graph && (!_spectrum.graph.range || !_spectrum.graph.hasOwnProperty('range') || (x > _spectrum.graph.range[0] && x < _spectrum.graph.range[1]))) {
+        // Only actually add it if it's in specified wavelength range ([start, end]), if any;
+        // or, if there's no graph at all, add it. Perhaps range should be stored in spectrum?
+        // But we need range in the graph to calculate viewport sizes.
+        // Tortured:
+
+        if (!_spectrum.graph || (!_spectrum.graph.range || (x >= _spectrum.graph.range[0] && x <= _spectrum.graph.range[1]))) {
 
           _spectrum.average.push({ y: parseInt(line.average / 2.55)/100, x: x })
  
@@ -100,7 +100,12 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
      */
     _spectrum.getExtentX = function() {
 
-      return d3.extent(_spectrum.d3()[0].values, function(d){ return d.x; });
+      var start =  _spectrum.average[0].x;
+      var end =  _spectrum.average[_spectrum.average.length - 1].x;
+
+      return [start, end];
+
+//      return d3.extent(_spectrum.d3()[0].values, function(d){ return d.x; }); // previous version, probably slower?
 
     }
 

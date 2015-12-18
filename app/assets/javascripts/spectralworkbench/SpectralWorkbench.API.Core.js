@@ -165,8 +165,10 @@ SpectralWorkbench.API.Core = {
 
   // Clip out a given subset of wavelengths from this spectrum.
   // Works for spectra, not sets.
-  // Not well designed for successive use; should factor into 
-  // Spectrum.load or reconcile with other tag operations.
+  // Untested for multiple successive use on one Spectrum.
+  // Sets graph.range, which is used in Spectrum.load to change 
+  // spectrum.average, .red, .blue, .green, 
+  // but doesn't affect original spectrum.json.data.lines.
   range: function(datum, start, end) {
 
     // ensure start < end
@@ -198,7 +200,8 @@ SpectralWorkbench.API.Core = {
 
     });
 
-    // adjust the graph range directly:
+    // adjust the Graph range directly;
+    // this is used in graph and image DOM sizing and conversions
     datum.graph.range = [start, end];
 
     // reload the graph data:

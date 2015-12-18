@@ -27,7 +27,7 @@ class TagsController < ApplicationController
         # the enclosed data is not required; but the client side will do it automatically
         old_name = tag.name
         tag.save
-        @response[:saved][old_name] = { id: tag.id }
+        @response[:saved][old_name] = { id: tag.id, created_at: tag.created_at }
         # send updated name to client if any:
         @response[:saved][old_name][:name] = tag.name
         # setup the generated snapshot if needed:

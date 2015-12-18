@@ -30,6 +30,8 @@ SpectralWorkbench.Tag = Class.extend({
 
     if (json) { 
 
+      _tag.created_at = new Date(json.created_at);
+
       // this isn't used yet; it will be when Datum.addTags() is complete
       // we (mis)use json as options in a new tag; pass { batch: true } to stop tag from uploading
       if (json.hasOwnProperty('batch')) { 
@@ -108,7 +110,7 @@ SpectralWorkbench.Tag = Class.extend({
       };
 
       // this will have to be adapted as we add tags to sets
-      if (_tag.snapshot) data.tag.data = _tag.data;
+      if (_tag.has_snapshot) data.tag.data = _tag.data;
 
       $.ajax({
  
@@ -155,6 +157,9 @@ SpectralWorkbench.Tag = Class.extend({
 
           // response will be sorted by name, but a new name will be received for snapshotted tags; we update local name here:
           if (response['saved'][_tag.name].hasOwnProperty('name')) _tag.name = response['saved'][_tag.name].name;
+
+          // response will be sorted by name, but a new name will be received for snapshotted tags; we update local name here:
+          if (response['saved'][_tag.name].hasOwnProperty('created_at')) _tag.created_at = new Date(response['saved'][_tag.name].created_at);
 
         }
 
@@ -216,6 +221,8 @@ SpectralWorkbench.Tag = Class.extend({
         if (_tag.el) _tag.el.remove();
         if (_tag.operationEl) _tag.operationEl.remove();
 
+        _tag.showLastOperationDeleteButtonOnly();
+
         // remove it from datum.tags:
         var index = _tag.datum.tags.indexOf(_tag);
         _tag.datum.tags.splice(index, 1);
@@ -255,17 +262,25 @@ SpectralWorkbench.Tag = Class.extend({
       // perhaps abstract into PowerTag or Operation subclass
       if (_tag.powertag) {
 
-        _tag.operationEl = $("<tr id='tag_" + _tag.id + "'></tr>");
+        _tag.operationEl = $("<tr class='operation-tag' id='tag_" + _tag.id + "'></tr>");
         if (_tag.has_snapshot) {
           _tag.operationEl.append("<td class='snapshot'><a href='https://publiclab.org/wiki/spectral-workbench-snapshots'><i rel='tooltip' title='This operation generated a data snapshot. Click to learn more.' class='fa fa-thumb-tack'></i></a></td>");
         } else {
           _tag.operationEl.append("<td class='snapshot'></td>");
         }
         _tag.operationEl.append("<td class='title'><span class='label purple'>" + _tag.name + "</span></td>");
-        _tag.operationEl.append("<td class='date'><small>" + moment(_tag.json.created_at).format("MMM Do YYYY hh:mm a") + "</small></td>");
-        _tag.operationEl.append("<td class='description'><a href='//publiclab.org/wiki/spectral-workbench-tags#" + _tag.key + "'>" + _tag.description() + "</a></td>");
-        _tag.operationEl.append("<td class='operations-tools'><a class='tagdelete'><i class='fa fa-remove'></i></a></td>");
+        _tag.operationEl.append("<td class='date'><small>" + moment(_tag.json.created_at).format("MM-DD-YY HH:mm a") + "</small></td>");
+        _tag.operationEl.append("<td class='description'><small><a href='//publiclab.org/wiki/spectral-workbench-tags#" + _tag.key + "'>" + _tag.description() + "</a></small></td>");
+        _tag.operationEl.append("<td class='operations-tools'><a class='operation-tag-delete'><i class='fa fa-trash btn btn-link'></i></a></td>");
+
         operationTable.append(_tag.operationEl);
+
+        if (_tag.created_at) {
+
+          // only final operation should have deletion button
+          _tag.showLastOperationDeleteButtonOnly();
+ 
+        }
 
       }
 
@@ -274,20 +289,28 @@ SpectralWorkbench.Tag = Class.extend({
       _tag.el.attr('rel', 'tooltip')
              .addClass('label label-info')
              .append("<a href='/tags/" + _tag.name + "'>" + _tag.name+"</a> ")
-             .append("<a class='tagdelete'>x</a>");
-
-      _tag.deleteEl = $('#tag_' + _tag.id + ' .tagdelete');
-
-      _tag.deleteEl.attr('data-id', _tag.id)
-                   .click(function() { 
-                            if (!_tag.powertag || confirm('Are you sure? This tag contains functional data used in the display and analysis of the spectrum.')) _tag.destroy();
-      });
 
       if (_tag.powertag) {
 
         // we use CSS classnames to identify tag types by color
         _tag.el.addClass('purple');
         _tag.el.attr('title', 'This is a powertag.');
+        _tag.deleteEl = $('#tag_' + _tag.id + ' .operation-tag-delete');
+        // these will only be clickable if the button is shown:
+        _tag.deleteEl.attr('data-id', _tag.id)
+                     .click(function() { 
+                        if (confirm('Are you sure? This tag contains functional data used in the display and analysis of the spectrum.')) {
+                          _tag.destroy();
+                        }
+                     })
+
+      } else {
+
+        // this is for regular tag display, to the left:
+        _tag.el.append("<a class='tag-delete'>x</a>");
+        _tag.deleteEl = $('#tag_' + _tag.id + ' .tag-delete');
+        _tag.deleteEl.attr('data-id', _tag.id)
+                     .click(function() { _tag.destroy(); });
 
       }
 
@@ -301,7 +324,18 @@ SpectralWorkbench.Tag = Class.extend({
     }
 
 
+    // only final operation should have deletion button
+    _tag.showLastOperationDeleteButtonOnly = function() {
+
+      var operationTable = $('table.operations');
+      operationTable.find('tr.operation-tag .operations-tools .operation-tag-delete').hide();
+      operationTable.find('tr.operation-tag:last .operations-tools .operation-tag-delete').show();
+
+    }
+
+
     _tag.description = function() {
+
       if      (_tag.key == "smooth")            return "Rolling average smoothing.";
       else if (_tag.key == "range")             return "Limits wavelength range.";
       else if (_tag.key == "transform")         return "Filters this spectrum with a math expression.";
@@ -314,6 +348,7 @@ SpectralWorkbench.Tag = Class.extend({
       else if (_tag.key == "crossSection")      return "Sets the row of pixels, counting from top row, used to generate the graph.";
       else if (_tag.key == "flip")              return "Indicates that the spectrum image has been flipped horizontally.";
       else                                      return "No description yet.";
+
     }
 
 
@@ -357,7 +392,7 @@ SpectralWorkbench.Tag = Class.extend({
       }
 
       // save the parsed tag data
-      if (_tag.snapshot) _tag.data = JSON.stringify(_tag.datum.json.data);
+      if (_tag.has_snapshot) _tag.data = JSON.stringify(_tag.datum.json.data);
 
     }
 

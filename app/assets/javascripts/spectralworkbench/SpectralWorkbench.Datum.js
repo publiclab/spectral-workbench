@@ -200,6 +200,11 @@ SpectralWorkbench.Datum = Class.extend({
        
           success: function(response) {
 
+            response.sort(function(a, b) {
+              if (a.created_at && a.created_at < b.created_at) return -1;
+              else return 1;
+            });
+
             response.forEach(function(tag) {
 
               _datum.tags.push(new SpectralWorkbench.Tag(_datum, tag.name, tag));

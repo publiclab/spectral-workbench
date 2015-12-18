@@ -62,7 +62,7 @@ describe("Graph", function() {
 
     graph = new SpectralWorkbench.Graph({
       spectrum_id: 9,
-      calibrated: true,
+      calibrated: true, // 269.089 to 958.521
       range: [400, 800],
       onComplete: callback,
       onImageComplete: function() { done(); } // fires when graph.image is loaded, so that later tests can run
@@ -111,23 +111,55 @@ describe("Graph", function() {
     expect(graph.width).toBeDefined();
     expect(graph.extent).toBeDefined();
     expect(graph.fullExtent).toBeDefined();
+    expect(graph.fullExtent[1] - graph.fullExtent[0]).toBeGreaterThan(graph.extent[1] - graph.extent[0]);
     expect(graph.image).toBeDefined();
-
+    expect(graph.image.imgEl).toBeDefined();
     expect(graph.image.width).toBeDefined();
 
   });
 
+  var originalPxPerNm;
 
   it("imagePxToDisplayPx() converts an x-coordinate pixel value from image space to a display space pixel value", function() {
 
-    expect(graph.imagePxToDisplayPx(500)).toBe(412.5);
+    originalPxPerNm = graph.image.width / (graph.fullExtent[1] - graph.fullExtent[0]);
+
+    // image 800px wide, displayed at 800px, but with range limiting pushing it wider
+    // source spectrum goes from 269.089 to 958.521, or a range of 689.432nm
+    // so, ~131nm between start and range start (400)
+    // and ~158.521nm between range end (800) and end
+    // and pxPerNm should be 1.1603754975109946
+    // margins make displayed image width more difficult to calculate:
+    // default margin = { top: 10, right: 30, bottom: 20, left: 70 };
+    // but we can use graph.imgEl.width() for the final displayed width:
+    expect(Math.round(graph.imagePxToDisplayPx(originalPxPerNm * 130.911))).toBeCloseTo(0); // toBeCloseTo(0, 1) syntax doesn't seem to work for precision?
+    expect(Math.round(graph.imagePxToDisplayPx(originalPxPerNm * (689.432 - 158.521)))).toBeCloseTo(graph.width);
+
+  });
+
+
+  it("imagePxToDisplayPx() converts an x-coordinate pixel value from image space to a display space pixel value without range", function() {
+
+    var range = graph.range;
+    graph.range = false;
+    graph.datum.load();
+    graph.updateSize()();
+
+    expect(graph.imagePxToDisplayPx(500)).toBeCloseTo(412.5);
+
+    graph.range = range;
+    graph.datum.load();
+    graph.updateSize()();
 
   });
 
 
   it("displayPxToImagePx() converts an x-coordinate pixel value from display space to an image space pixel value", function() {
 
-    expect(graph.displayPxToImagePx(500)).toBe(606.060606060606);
+    // toBeCloseTo(0, 1) syntax doesn't seem to work for precision?
+    expect(Math.round(graph.displayPxToImagePx(0))).toBeCloseTo(Math.round(originalPxPerNm * 130.911));
+    expect(Math.round(graph.displayPxToImagePx(graph.width))).toBeCloseTo(Math.round(originalPxPerNm * (689.432 - 158.521)));
+    //expect(graph.displayPxToImagePx(500)).toBeCloseTo(606.060606060606);
 
   });
 
@@ -135,27 +167,16 @@ describe("Graph", function() {
   it("displayPxToNm() accepts x-coordinate in display space as shown on page & returns wavelength in nanometers", function() {
 
     // Unlike datum.pxToNm, does not rely on an image or its dimensions.
-    expect(graph.displayPxToNm(500)).toBe(791.3859696969696);
+    expect(graph.displayPxToNm(0)).toBeCloseTo(graph.extent[0]);
+    expect(graph.displayPxToNm(graph.width)).toBeCloseTo(graph.extent[1]);
 
   });
 
 
   it("nmToDisplayPx() accepts wavelength in nanometers & returns x-coordinate in display space as shown on page", function() {
 
-    expect(graph.nmToDisplayPx(500)).toBe(221.05335986725305);
-
-  });
-
-
-  it("pxToNm() accepts x,y in graph UI pixel space, returns {x: x, y: y} in data space in nanometers", function() {
-
-    /*
-     * (or pixels if uncalibrated) -- note that
-     * that point may not exist in datum, but you can use
-     * datum.getNearestPoint(x) to find something close.
-     * Pass false for x or y to convert only one coordinate.
-     */
-    expect(graph.pxToNm(500)).toEqual({ x: 791.3859696969696, y: false });
+    expect(graph.nmToDisplayPx(graph.extent[0])).toBeCloseTo(0);
+    expect(graph.nmToDisplayPx(graph.extent[1])).toBeCloseTo(graph.width);
 
   });
 
@@ -165,14 +186,21 @@ describe("Graph", function() {
     $('#graph').width(1000);
 
     // force resize; because the graph is hidden, it won't work automatically:
+    graph.datum.load();
     graph.updateSize(1000)();
 
     // confirm all dimensions over again
-    expect(graph.imagePxToDisplayPx(500)).toBe(550);
-    expect(graph.displayPxToImagePx(500)).toBe(454.54545454545456);
-    expect(graph.displayPxToNm(500)).toBe(660.8117272727272);
-    expect(graph.nmToDisplayPx(500)).toBe(294.7378131563374);
-    expect(graph.pxToNm(500)).toEqual({ x: 660.8117272727272, y: false });
+    expect(Math.round(graph.imagePxToDisplayPx(originalPxPerNm * 130.911))).toBeCloseTo(0 - 1); // rounding error; toBeCloseTo(0, 1) syntax doesn't seem to work for precision?
+    expect(Math.round(graph.imagePxToDisplayPx(originalPxPerNm * (689.432 - 158.521)))).toBeCloseTo(graph.width - 1); // rounding error
+    expect(Math.round(graph.imagePxToDisplayPx(500))).toBeCloseTo(659);
+
+    expect(graph.displayPxToNm(0)).toBeCloseTo(graph.extent[0]);
+    expect(graph.displayPxToNm(graph.width)).toBeCloseTo(graph.extent[1]);
+    expect(Math.round(graph.displayPxToNm(500))).toBeCloseTo(627);
+
+    expect(graph.nmToDisplayPx(graph.extent[0])).toBeCloseTo(0);
+    expect(graph.nmToDisplayPx(graph.extent[1])).toBeCloseTo(graph.width);
+    expect(Math.round(graph.nmToDisplayPx(500))).toBeCloseTo(220);
 
   });
 

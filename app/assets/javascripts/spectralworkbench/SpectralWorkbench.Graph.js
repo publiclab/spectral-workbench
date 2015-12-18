@@ -82,9 +82,11 @@ SpectralWorkbench.Graph = Class.extend({
 
       // what proportion of the full image is being displayed?
       var proportion = x / _graph.image.width, // x position as a percent of original image
-          proportionDisplayed = (_graph.extent[1] -_graph.extent[0]) / (_graph.fullExtent[1] - _graph.fullExtent[0]); // account for out-of-range parts of image
+          scaledX = proportion * _graph.image.imgEl.width(), // that proportion of the displayed DOM image element
+          displayPxPerNm = _graph.image.imgEl.width() / (_graph.fullExtent[1] - _graph.fullExtent[0]), 
+          leftXOffsetInDisplayPx = (_graph.extent[0] - _graph.fullExtent[0]) * displayPxPerNm;
 
-      return proportion * (_graph.width / proportionDisplayed);
+      return scaledX - leftXOffsetInDisplayPx;
 
     }
 
@@ -96,10 +98,13 @@ SpectralWorkbench.Graph = Class.extend({
     _graph.displayPxToImagePx = function(x) {
 
       // what proportion of the full image is being displayed?
-      var proportion = x / _graph.width, // x position as a percent of displayed graph
-          proportionDisplayed = (_graph.extent[1] -_graph.extent[0]) / (_graph.fullExtent[1] - _graph.fullExtent[0]); // account for out-of-range parts of image
+      var displayPxPerNm = _graph.image.imgEl.width() / (_graph.fullExtent[1] - _graph.fullExtent[0]), 
+          leftXOffsetInDisplayPx = (_graph.extent[0] - _graph.fullExtent[0]) * displayPxPerNm,
+          fullX = x + leftXOffsetInDisplayPx, // starting from true image DOM element zero
+          proportion = fullX / _graph.image.imgEl.width(), // x position as a percent of DOM image
+          scaledX = proportion * _graph.image.width; // that proportion of the original image
 
-      return proportion / proportionDisplayed * _graph.image.width;
+      return scaledX;
 
     }
 
@@ -112,7 +117,7 @@ SpectralWorkbench.Graph = Class.extend({
     _graph.displayPxToNm = function(x) {
 
       var proportion = x / _graph.width,
-          extentWidth = _graph.extent[1] - _graph.extent[0];
+          extentWidth = _graph.extent[1] - _graph.extent[0]; // as displayed after range limiting, not fullExtent
 
       return _graph.extent[0] + (proportion * extentWidth);
 
@@ -129,33 +134,6 @@ SpectralWorkbench.Graph = Class.extend({
           proportion = ((nm - _graph.extent[0]) / extentWidth);
 
       return proportion * _graph.width;
-
-    }
-
-
-    /* ======================================
-     * Accepts x,y in graph UI pixel space, returns
-     * {x: x, y: y} in data space in nanometers
-     * (or pixels if uncalibrated) -- note that
-     * that point may not exist in datum, but you can use
-     * datum.getNearestPoint(x) to find something close.
-     * Pass false for x or y to convert only one coordinate.
-     */
-    _graph.pxToNm = function(x, y) {
-
-      if (x) {
-        var percentX = x / _graph.width,
-            extentX = _graph.extent, // accounts for range limiting
-            dx      = percentX * (extentX[1] - extentX[0]) + extentX[0];
-      } else var dx = false;
-
-      if (y) {
-        var percentY = y / _graph.height,
-            extentY = _graph.extent, // accounts for range limiting
-            dy      = percentY * (extentY[1] - extentY[0]) + extentY[0];
-      } else var dy = false;
-
-      return { x: dx, y: dy };
 
     }
 
@@ -403,7 +381,7 @@ SpectralWorkbench.Graph = Class.extend({
 
     _graph.chart = nv.models.lineWithFocusChart() // this sets up zooming behavior
                      .options({ useVoronoi: false })
-                     .height(_graph.height-_graph.margin.top-_graph.margin.bottom + 100) // 100 for zoom brush pane, hidden by default
+                     .height(_graph.height - _graph.margin.top - _graph.margin.bottom + 100) // 100 for zoom brush pane, hidden by default
                      .margin(_graph.margin)
                      .showLegend(false)       //Show the legend, allowing users to turn on/off line series.
     ;
@@ -510,9 +488,9 @@ SpectralWorkbench.Graph = Class.extend({
       }
  
       _graph.width  = _graph.width  
-                  - _graph.margin.left 
-                  - _graph.margin.right 
-                  - (_graph.embedmargin * 2);
+                    - _graph.margin.left 
+                    - _graph.margin.right 
+                    - (_graph.embedmargin * 2);
 
       // smaller width style change
       if ($(_graph.selector).width() < 768) _graph.width -= 40;
@@ -529,10 +507,9 @@ SpectralWorkbench.Graph = Class.extend({
                          .css('margin-left', _graph.margin.left + extra) // not sure but there seems to be some extra margin in the chart
                          .css('margin-right',_graph.margin.right);
 
-      // Why would we even be running updateSize if datum is not yet loaded? Gah.
       if (_graph.datum) {
-        _graph.extent = _graph.datum.getFullExtentX(); // store min/max of graph without range limits
-        _graph.fullExtent = _graph.datum.getExtentX(); // store min/max of graph
+        _graph.fullExtent = _graph.datum.getFullExtentX(); // store min/max of graph without range limits
+        _graph.extent = _graph.datum.getExtentX(); // store min/max of graph
       }
 
       if (_graph.range && _graph.datum) {
@@ -559,7 +536,7 @@ SpectralWorkbench.Graph = Class.extend({
 
         }
 
-        _graph.imgEl.width(_graph.width + _graph.leftCrop + _graph.rightCrop)
+        _graph.imgEl.width(_graph.width + _graph.leftCrop + _graph.rightCrop) // left and rightCrop are masked out range
                     .height(100)
                     .css('max-width', 'none')
                     .css('margin-left', -_graph.leftCrop);

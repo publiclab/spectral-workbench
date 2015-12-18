@@ -19,48 +19,40 @@ class Tag < ActiveRecord::Base
 
   before_save :scan_powertags
 
-  def powertags_by_owner
 
+  def powertags_by_owner
     if self.is_powertag? && self.spectrum.user_id != self.user_id && self.user.role != "admin"
       errors[:base] << "powertags may only be made by spectrum owner or admins"
     end
-
   end
 
   def scan_powertags
-
     if self.is_powertag?
-
       if self.key == 'crossSection'
         spectrum = self.spectrum
         spectrum.sample_row = self.value
         spectrum.save
       end
-
       # default to latest snapshot as reference:
       self.add_reference(false) if self.generate_reference?
-
       # would like to generate snapshot here, but must do so in TagController, 
       # as we need client-submitted data to do so
-
     end
 
   end
 
   def validate_destroyable
-
     if self.is_powertag? && self.generate_snapshot?
-
-      if self.snapshot.is_latest?
+      if self.snapshot.nil?
+        return true
+      elsif self.snapshot.is_latest? && !self.snapshot.has_dependent_spectra?
         return true
       else
         return false
       end
-
     else
       return true
     end
-
   end
 
   # dangerous to call unmodified -- high load!
@@ -143,9 +135,7 @@ class Tag < ActiveRecord::Base
   # supplies a string of CSS classnames for this type of tag
   def colors
     colors = ""
-
     colors = " purple" if self.is_powertag?
-
     colors
   end
 
