@@ -272,6 +272,18 @@ class SnapshotTest < ActiveSupport::TestCase
     assert_equal tag.reference_id, tag1.spectrum.snapshots.last.id
     assert_not_nil Snapshot.where(id: tag.reference_id).first
 
+    # reject deletion of a referred_to snapshot:
+    assert referred_spectrum.latest_snapshot.has_dependent_spectra?
+    assert_difference 'Snapshot.count', 0 do
+      referred_spectrum.latest_snapshot.destroy
+    end
+    assert_difference 'Snapshot.count', 0 do
+      referred_spectrum.latest_snapshot.tag.destroy
+    end
+    assert_difference 'Snapshot.count', 0 do
+      referred_spectrum.destroy
+    end
+
     assert tag.snapshot.is_latest?
     tag.destroy
 

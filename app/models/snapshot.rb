@@ -14,7 +14,7 @@ class Snapshot < ActiveRecord::Base
   validate :validate_json, :validate_author
 
   # is_latest is also used by the parent tag's before_destroy
-  before_destroy :is_latest?
+  before_destroy :is_latest?, :has_no_dependent_spectra?
 
 
   def validate_author
@@ -51,6 +51,11 @@ class Snapshot < ActiveRecord::Base
 
   def has_dependent_spectra?
     Tag.where('name LIKE (?)', '%#' + self.id.to_s).length > 0
+  end
+
+  # negative form used in validation
+  def has_no_dependent_spectra?
+    !self.has_dependent_spectra?
   end
 
 end

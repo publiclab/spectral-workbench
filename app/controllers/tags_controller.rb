@@ -55,12 +55,11 @@ class TagsController < ApplicationController
 
 
   def show
-    @tag = Tag.find_by_name(params[:id], :order => "id DESC")
-    if @tag
-      @spectrums = @tag.spectra.paginate(:page => params[:page], :per_page => 24)
-    end
-    @spectrums = [] if @spectrums.nil?
-    @comments = Comment.all :limit => 12, :order => "id DESC"
+    @spectrums = Spectrum.select("spectrums.id, spectrums.title, spectrums.created_at, spectrums.user_id, spectrums.author, spectrums.calibrated")
+                         .joins(:tags)
+                         .where('tags.name = (?)', params[:id])
+                         .order("spectrums.id DESC")
+                         .paginate(:page => params[:page], :per_page => 24)
     respond_to do |format|
       format.html {} # show.html.erb
       format.xml  { render :xml => @spectrums }
@@ -103,6 +102,9 @@ class TagsController < ApplicationController
     # resourceful request for a spectrum's tag list:
     elsif params[:spectrum_id]
       @spectrum = Spectrum.find params[:spectrum_id]
+      @spectrum.tags.each do |tag|
+        tag[:has_dependent_spectra] = tag.snapshot && tag.snapshot.has_dependent_spectra?
+      end
       if request.xhr?
         render :json => @spectrum.tags
       else

@@ -172,6 +172,9 @@ div.spectrum-img-container .alert-zooming div a {
   color: #888;
 }
 
+#graphing table .btn-link.disabled {
+  background: white;
+}
 
 #graphing svg .highlight {
   stroke: red !important;

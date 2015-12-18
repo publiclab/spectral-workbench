@@ -7,6 +7,11 @@ class TagsControllerTest < ActionController::TestCase
     assert_response :success
   end
 
+  test "should show tag index for spectrum" do
+    get :index, :spectrum_id => spectrums(:one).id
+    assert_response :success
+  end
+
   test "should create tag" do
     session[:user_id] = User.first.id # log in
     get :create, tag: { name: 'mytag',
@@ -92,6 +97,8 @@ class TagsControllerTest < ActionController::TestCase
     assert_not_nil response['saved']['range:100-500']
     assert_not_nil response['saved']['range:100-500']['id']
     assert_not_nil response['saved']['range:100-500']['name']
+    assert_not_nil response['saved']['range:100-500']['created_at']
+    assert_nil response['saved']['range:100-500']['has_dependent_spectra']
     assert_response :success
   end
 
@@ -116,7 +123,7 @@ class TagsControllerTest < ActionController::TestCase
       name: tagname,
       spectrum_id: spectrums(:one).id
     }
-
+    assert_response :success
     response = ActiveSupport::JSON.decode(@response.body)
     assert_not_nil response
     assert_not_nil response['saved']
@@ -124,7 +131,6 @@ class TagsControllerTest < ActionController::TestCase
     assert_not_nil response['saved'][tagname]['id']
     assert_not_nil response['saved'][tagname]['name']
     assert response['saved'][tagname]['name'], tagname + "##{tag.snapshot.id}"
-    assert_response :success
   end
 
 end

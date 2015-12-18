@@ -65,9 +65,13 @@ SpectralWorkbench.Tag = Class.extend({
       _tag.value_snapshot = _tag.value; // include snapshot syntax if exists
 
       if (_tag.name.match("#")) {
+
         _tag.has_reference = true;
         _tag.snapshot_id = _tag.value.split('#')[1];
         _tag.value = _tag.value.split('#')[0];
+
+        _tag.deletable = !_tag.json.has_dependent_spectra;
+
       }
 
       // scan for tags that require snapshots, but this isn't the right place to save it -- we need to parse it!
@@ -271,7 +275,13 @@ SpectralWorkbench.Tag = Class.extend({
         _tag.operationEl.append("<td class='title'><span class='label purple'>" + _tag.name + "</span></td>");
         _tag.operationEl.append("<td class='date'><small>" + moment(_tag.json.created_at).format("MM-DD-YY HH:mm a") + "</small></td>");
         _tag.operationEl.append("<td class='description'><small><a href='//publiclab.org/wiki/spectral-workbench-tags#" + _tag.key + "'>" + _tag.description() + "</a></small></td>");
-        _tag.operationEl.append("<td class='operations-tools'><a class='operation-tag-delete'><i class='fa fa-trash btn btn-link'></i></a></td>");
+        _tag.operationEl.append("<td class='operations-tools'></td>");
+        _tag.operationEl.find("td.operations-tools").append("<a class='operation-tag-delete'><i class='fa fa-trash btn btn-link'></i></a>");
+
+        if (!_tag.deletable) _tag.operationEl.find("td.operations-tools").append("<i rel='tooltip' title='Other data depends on this snapshot. Clone the spectrum to work from an earlier version.' class='operation-tag-delete-disabled fa fa-lock btn btn-link disabled'></i>");
+        else _tag.operationEl.find("td.operations-tools").append("<i rel='tooltip' title='Subsequent operations depend on this snapshot.' class='operation-tag-delete-disabled fa fa-lock btn btn-link disabled'></i>");
+
+        $("[rel=tooltip]").tooltip(); // activate tooltips
 
         operationTable.append(_tag.operationEl);
 
@@ -328,8 +338,13 @@ SpectralWorkbench.Tag = Class.extend({
     _tag.showLastOperationDeleteButtonOnly = function() {
 
       var operationTable = $('table.operations');
+      operationTable.find('tr.operation-tag .operations-tools .operation-tag-delete-disabled').show();
       operationTable.find('tr.operation-tag .operations-tools .operation-tag-delete').hide();
-      operationTable.find('tr.operation-tag:last .operations-tools .operation-tag-delete').show();
+
+      if (_tag.deletable) {
+        operationTable.find('tr.operation-tag:last .operations-tools .operation-tag-delete-disabled').hide();
+        operationTable.find('tr.operation-tag:last .operations-tools .operation-tag-delete').show();
+      }
 
     }
 
