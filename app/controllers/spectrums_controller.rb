@@ -30,13 +30,18 @@ class SpectrumsController < ApplicationController
     end
   end
 
-  # returns a list of spectrums by tag in a partial for use in macros and tools
+  # Returns a list of spectrums by tag, name, or id
+  # in a partial for use in macros and tools.
+  # ..can we merge this with search?
   def choose
     
     # accept wildcards
     if params[:id] && params[:id].last == "*"
       comparison = "LIKE"
       params[:id].chop!
+      params[:id] += "%"
+    elsif params[:partial]
+      comparison = "LIKE"
       params[:id] += "%"
     else
       comparison = "="
@@ -45,25 +50,28 @@ class SpectrumsController < ApplicationController
     # user's own spectra
     params[:author] = current_user.login if logged_in? && params[:own]
 
+# must re-craft this query to search spectra with no tags:
     @spectrums = Spectrum.order('spectrums.id DESC')
                          .select("DISTINCT(spectrums.id), spectrums.title, spectrums.created_at, spectrums.user_id, spectrums.author, spectrums.calibrated")
-                         .joins(:tags)
+                         .joins("LEFT OUTER JOIN tags ON tags.spectrum_id = spectrums.id")
                          .paginate(:page => params[:page],:per_page => 6)
 
     # exclude self:
     @spectrums = @spectrums.where('spectrums.id != ?', params[:not]) if params[:not]
-    unless params[:id] == "all" || params[:id].nil?
-      @spectrums = @spectrums.where('tags.name '+comparison+' (?)', params[:id])
-      if params[:author]
-        author = User.find_by_login params[:author]
-        @spectrums = @spectrums.where(user_id: author.id)
-      end
+
+    if params[:id] != "all" && !params[:id].nil?
+      @spectrums = @spectrums.where('tags.name ' + comparison + ' (?) OR spectrums.title ' + comparison + ' (?) OR spectrums.id = ?', 
+                                    params[:id], params[:id], params[:id].to_i)
+      
+      @spectrums = @spectrums.where(user_id: User.find_by_login(params[:author]).id) if params[:author]
     end
 
-    if @spectrums.length > 0
-      render partial: "macros/spectra", locals: { spectrums: @spectrums }
-    else
-      render text: "<p>No results</p>"
+    respond_with(@spectrums) do |format|
+      format.html {
+        render partial: "macros/spectra", locals: { spectrums: @spectrums }
+      }
+      format.xml  { render :xml => @spectrums }
+      format.json  { render :json => @spectrums }
     end
   end
 

@@ -33,6 +33,7 @@ class TagsController < ApplicationController
         # setup the generated snapshot if needed:
         if tag.generate_snapshot? && params[:tag][:data]
           snapshot = tag.create_snapshot(params[:tag][:data])
+          tag[:snapshot_id] = snapshot.id # add it to the response even though it's not part of the record
         end
       else
         @response[:errors] << "Error: tags "+tag.errors[:name].first
@@ -103,7 +104,14 @@ class TagsController < ApplicationController
     elsif params[:spectrum_id]
       @spectrum = Spectrum.find params[:spectrum_id]
       @spectrum.tags.each do |tag|
-        tag[:has_dependent_spectra] = tag.snapshot && tag.snapshot.has_dependent_spectra?
+        if tag.snapshot
+          tag[:snapshot_id] = tag.snapshot.id
+          if tag.snapshot.has_dependent_spectra?
+            tag[:has_dependent_spectra] = true
+          else
+            tag[:has_dependent_spectra] = false
+          end
+        end
       end
       if request.xhr?
         render :json => @spectrum.tags

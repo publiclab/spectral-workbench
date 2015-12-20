@@ -1,3 +1,6 @@
+<% if spectrums.length == 0 %>
+<p>No results</p>
+<% else %>
 <div class="table-scroll-container list">
   <table class="table spectra">
     <% spectrums.each do |spectrum| %>
@@ -52,3 +55,4 @@
   <%= will_paginate spectrums, renderer: BootstrapPagination::Rails if @match %>
 
 </div>
+<% end %>

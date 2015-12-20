@@ -27,6 +27,8 @@ class SpectrumsControllerTest < ActionController::TestCase
   test "should show spectrum" do
     get :show, :id => spectrums(:one).id
     assert_response :success # to /analyze/spectrums/#, lets update this
+    assert_nil assigns(:spectrums)
+    assert_not_nil assigns(:spectrum)
   end
 
   test "should show spectrum json" do
@@ -52,6 +54,57 @@ class SpectrumsControllerTest < ActionController::TestCase
     get :choose, :id => 'calibration'
     assert_response :success
     assert_not_nil :spectrums
+  end
+
+  test "should respond to choose in JSON" do
+    session[:user_id] = User.first.id # log in
+    get :choose, :id => 'calibration', :format => :json
+    assert_response :success
+    assert_not_nil :spectrums
+  end
+
+  test "should respond with 'No results' to invalid search" do
+    session[:user_id] = User.first.id # log in
+    get :choose, :id => 'calibration'
+    assert_response :success
+    assert_equal @response.body, "<p>No results</p>\n"
+  end
+
+  test "should respond to choose with partial tagname" do
+    session[:user_id] = User.first.id # log in
+
+    spectrums(:one).tag( "calibration:#{spectrums(:two).id}",
+                         User.first.id )
+    assert Tag.where('name LIKE (?)', 'calibration%')
+
+    get :choose, :id => 'calibration*'
+
+    assert_response :success
+    assert_not_equal assigns(:spectrums), []
+    assert_equal assigns(:spectrums).first.id, spectrums(:one).id
+  end
+
+  test "should respond to choose with spectrum ID" do
+    session[:user_id] = User.first.id # log in
+
+    get :choose, :id => spectrums(:one).id
+
+    assert_response :success
+    assert_not_equal assigns(:spectrums), []
+    assert_equal assigns(:spectrums).first.id, spectrums(:one).id
+  end
+
+  test "should respond to choose with title beginning" do
+    session[:user_id] = User.first.id # log in
+
+    assert spectrums(:one).id != nil
+    spectrums(:one).title = "Elephant spectrum"
+    spectrums(:one).save
+
+    get :choose, :id => 'Elephant*'
+    assert_response :success
+    assert_not_equal assigns(:spectrums), []
+    assert_equal assigns(:spectrums).first.id, spectrums(:one).id
   end
 
   test "should respond to choose with wildcard" do

@@ -15,8 +15,9 @@ SpectralWorkbench.Tag = Class.extend({
 
   ],
 
-  has_reference: false, // default
-  has_snapshot: false, // default
+  has_reference: false,
+  has_snapshot: false, // if we have a snapshot record in the db
+  needs_snapshot: false, // if we should send snapshotted data, based on the snapshot_tagnames list
 
   // <json> is a JSON obj of the tag as received from the server; 
   // if this doesn't exist, it's a new tag
@@ -64,18 +65,23 @@ SpectralWorkbench.Tag = Class.extend({
       _tag.value = _tag.name.split(':')[1];
       _tag.value_snapshot = _tag.value; // include snapshot syntax if exists
 
+      if (_tag.json.hasOwnProperty('snapshot_id')) { // from the server
+        _tag.has_snapshot = true;
+        _tag.snapshot_id = _tag.json.snapshot_id;
+      }
+
+      _tag.deletable = (!_tag.has_snapshot || _tag.json.has_dependent_spectra != true);
+
       if (_tag.name.match("#")) {
 
         _tag.has_reference = true;
         _tag.snapshot_id = _tag.value.split('#')[1];
         _tag.value = _tag.value.split('#')[0];
 
-        _tag.deletable = !_tag.json.has_dependent_spectra;
-
       }
 
       // scan for tags that require snapshots, but this isn't the right place to save it -- we need to parse it!
-      if (_tag.snapshot_tagnames.indexOf(_tag.key) != -1) _tag.has_snapshot = true;
+      if (_tag.snapshot_tagnames.indexOf(_tag.key) != -1) _tag.needs_snapshot = true;
 
     } else _tag.powertag = false;
 
@@ -114,7 +120,7 @@ SpectralWorkbench.Tag = Class.extend({
       };
 
       // this will have to be adapted as we add tags to sets
-      if (_tag.has_snapshot) data.tag.data = _tag.data;
+      if (_tag.needs_snapshot) data.tag.data = _tag.data;
 
       $.ajax({
  
@@ -159,11 +165,10 @@ SpectralWorkbench.Tag = Class.extend({
           // response is a JSON object whose properties are tagnames, each with property <id>
           if (response['saved'][_tag.name].hasOwnProperty('id')) _tag.id = response['saved'][_tag.name].id;
 
-          // response will be sorted by name, but a new name will be received for snapshotted tags; we update local name here:
-          if (response['saved'][_tag.name].hasOwnProperty('name')) _tag.name = response['saved'][_tag.name].name;
+          if (response['saved'][_tag.name].hasOwnProperty('created_at')) _tag.created_at = new Date(response['saved'][_tag.name].created_at);
 
           // response will be sorted by name, but a new name will be received for snapshotted tags; we update local name here:
-          if (response['saved'][_tag.name].hasOwnProperty('created_at')) _tag.created_at = new Date(response['saved'][_tag.name].created_at);
+          if (response['saved'][_tag.name].hasOwnProperty('name')) _tag.name = response['saved'][_tag.name].name;
 
         }
 
@@ -267,21 +272,20 @@ SpectralWorkbench.Tag = Class.extend({
       if (_tag.powertag) {
 
         _tag.operationEl = $("<tr class='operation-tag' id='tag_" + _tag.id + "'></tr>");
+
         if (_tag.has_snapshot) {
-          _tag.operationEl.append("<td class='snapshot'><a href='https://publiclab.org/wiki/spectral-workbench-snapshots'><i rel='tooltip' title='This operation generated a data snapshot. Click to learn more.' class='fa fa-thumb-tack'></i></a></td>");
+          _tag.operationEl.append("<td class='snapshot'><a href='https://publiclab.org/wiki/spectral-workbench-snapshots'><i rel='tooltip' title='This operation generated a data snapshot with id " + _tag.snapshot_id + ". Click to learn more.' class='fa fa-thumb-tack'></i></a></td>");
         } else {
           _tag.operationEl.append("<td class='snapshot'></td>");
         }
         _tag.operationEl.append("<td class='title'><span class='label purple'>" + _tag.name + "</span></td>");
         _tag.operationEl.append("<td class='date'><small>" + moment(_tag.json.created_at).format("MM-DD-YY HH:mm a") + "</small></td>");
-        _tag.operationEl.append("<td class='description'><small><a href='//publiclab.org/wiki/spectral-workbench-tags#" + _tag.key + "'>" + _tag.description() + "</a></small></td>");
+        _tag.operationEl.append("<td class='description'><small>" + _tag.description() + " <a href='//publiclab.org/wiki/spectral-workbench-tags#" + _tag.key + "'>Read more</a></small></td>");
         _tag.operationEl.append("<td class='operations-tools'></td>");
         _tag.operationEl.find("td.operations-tools").append("<a class='operation-tag-delete'><i class='fa fa-trash btn btn-link'></i></a>");
 
-        if (!_tag.deletable) _tag.operationEl.find("td.operations-tools").append("<i rel='tooltip' title='Other data depends on this snapshot. Clone the spectrum to work from an earlier version.' class='operation-tag-delete-disabled fa fa-lock btn btn-link disabled'></i>");
+        if (!_tag.deletable) _tag.operationEl.find("td.operations-tools").append("<i rel='tooltip' title='Other data depends on this snapshot. Clone the spectrum to work from an earlier version.' class='operation-tag-delete-disabled fa fa-lock btn btn-link disabled' style='color:#00a;'></i>");
         else _tag.operationEl.find("td.operations-tools").append("<i rel='tooltip' title='Subsequent operations depend on this snapshot.' class='operation-tag-delete-disabled fa fa-lock btn btn-link disabled'></i>");
-
-        $("[rel=tooltip]").tooltip(); // activate tooltips
 
         operationTable.append(_tag.operationEl);
 
@@ -291,6 +295,10 @@ SpectralWorkbench.Tag = Class.extend({
           _tag.showLastOperationDeleteButtonOnly();
  
         }
+
+        // initialize tooltips after hiding/showing is complete
+        $("[rel=tooltip]").tooltip('destroy')
+                          .tooltip();
 
       }
 
@@ -354,11 +362,11 @@ SpectralWorkbench.Tag = Class.extend({
       if      (_tag.key == "smooth")            return "Rolling average smoothing.";
       else if (_tag.key == "range")             return "Limits wavelength range.";
       else if (_tag.key == "transform")         return "Filters this spectrum with a math expression.";
-      else if (_tag.key == "subtract")          return "Subtracts another spectrum from this.";
-      else if (_tag.key == "calibrate")         return "Copies calibration from <a href='/spectrums/" + _tag.value + "'>Spectrum #" + _tag.value + "</a>.";
-      else if (_tag.key == "cloneOf")           return "Spectrum is a copy of <a href='/spectrums/" + _tag.value + "'>Spectrum #" + _tag.value + "</a>.";
+      else if (_tag.key == "subtract")          return "Subtracts <a href='/spectrums/" + _tag.value + "'>Spectrum " + _tag.value + "</a> from this.";
+      else if (_tag.key == "calibrate")         return "Copies calibration from <a href='/spectrums/" + _tag.value + "'>Spectrum " + _tag.value + "</a>.";
+      else if (_tag.key == "cloneOf")           return "Spectrum is a copy of <a href='/spectrums/" + _tag.value + "'>Spectrum " + _tag.value + "</a>.";
       else if (_tag.key == "linearCalibration") return "Manually calibrated with two reference points.";
-      else if (_tag.key == "error")             return "Scores a calibration 'fit' is by comparison to a known reference; lower is better, zero is perfect.";
+      else if (_tag.key == "error")             return "Scores a calibration 'fit' by comparison to a known reference; lower is better, zero is perfect.";
       else if (_tag.key == "calibrationQuality")return "Roughly indicates how good a calibration 'fit' is.";
       else if (_tag.key == "crossSection")      return "Sets the row of pixels, counting from top row, used to generate the graph.";
       else if (_tag.key == "flip")              return "Indicates that the spectrum image has been flipped horizontally.";
@@ -407,7 +415,7 @@ SpectralWorkbench.Tag = Class.extend({
       }
 
       // save the parsed tag data
-      if (_tag.has_snapshot) _tag.data = JSON.stringify(_tag.datum.json.data);
+      if (_tag.needs_snapshot) _tag.data = JSON.stringify(_tag.datum.json.data);
 
     }
 
