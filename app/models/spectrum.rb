@@ -223,6 +223,21 @@ class Spectrum < ActiveRecord::Base
     self.data.gsub("'",'"').gsub(/([a-z]+):/,'"\\1":')
   end
 
+  def clone(user)
+    new = self.dup
+    new.author = user.login
+    new.user_id = user.id
+    new.photo = self.photo
+    new.save!
+    # now copy over all tags, in reverse order to preserve created_at:
+    self.tags.reverse.each do |tag|
+      newtag = new.tag(tag.name, user.id) unless tag.key == "cloneOf"
+      newtag.create_snapshot(tag.snapshot.data) if tag.generate_snapshot? && tag.snapshot && !tag.snapshot.data.nil?
+    end
+    new.tag("cloneOf:#{self.id}", user.id)
+    new
+  end
+
   # clones calibration from another spectrum (preferably taken from the same device)
   # deprecating in 2.0 in favor of client-side powertag-based cloneCalibration
   def clone_calibration(clone_id)
@@ -306,11 +321,12 @@ puts "reversing"
         :user_id => user_id,
       })
       unless self.has_tag(tag.name) # duplicate
-        tag.save!
+        tag.save
+        return tag
       end     
     else
       tags.split(',').each do |name|
-        self.tag(name, user_id)
+        return self.tag(name, user_id)
       end
     end
   end

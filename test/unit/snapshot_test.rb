@@ -6,11 +6,11 @@ class SnapshotTest < ActiveSupport::TestCase
   test "creating a snapshot" do
 
     snapshot = Snapshot.new({
-                     spectrum_id: Spectrum.last.id,
-                     user_id: User.first.id,
-                     tag_id: Tag.first.id,
-                     data: '{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}'
-                   })
+                 spectrum_id: Spectrum.last.id,
+                 user_id:     User.first.id,
+                 tag_id:      Tag.first.id,
+                 data:        '{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}'
+               })
 
     snapshot.save!
 
@@ -27,11 +27,11 @@ class SnapshotTest < ActiveSupport::TestCase
     count = Snapshot.count
 
     snapshot = Snapshot.new({
-                     spectrum_id: Spectrum.last.id,
-                     user_id: Spectrum.last.id + 1,
-                     tag_id: Tag.first.id,
-                     data: '{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}'
-                   })
+                 spectrum_id: Spectrum.last.id,
+                 user_id:     Spectrum.last.id + 1,
+                 tag_id:      Tag.first.id,
+                 data:        '{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}'
+               })
 
     assert snapshot.user_id != snapshot.spectrum.user_id
     assert !snapshot.valid?
@@ -70,10 +70,10 @@ class SnapshotTest < ActiveSupport::TestCase
     data = "data"
 
     snapshot = Snapshot.new({
-                     spectrum_id: Spectrum.last.id,
-                     user_id: User.first.id,
-                     tag_id: Tag.first.id
-                   })
+                 spectrum_id: Spectrum.last.id,
+                 user_id:     User.first.id,
+                 tag_id:      Tag.first.id
+               })
 
     assert_equal false, snapshot.save
 
@@ -238,7 +238,6 @@ class SnapshotTest < ActiveSupport::TestCase
       user_id:     spectrums(:two).user_id,
       spectrum_id: spectrums(:two).id,
       name:        "subtract:#{referred_spectrum.id}" # this will generate a new snapshot and auto-add it to the tagname
-      #name:        "subtract:1##{snapshot.id}"
     })
 
     assert tag.save

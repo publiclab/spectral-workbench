@@ -323,16 +323,7 @@ class SpectrumsController < ApplicationController
 
   def clone
     @spectrum = Spectrum.find(params[:id])
-    @new = @spectrum.dup
-    @new.author = current_user.login
-    @new.user_id = current_user.id
-    @new.photo = @spectrum.photo
-    @new.save!
-    @new.tag("cloneOf:#{@spectrum.id}", current_user.id)
-    # now copy over all tags:
-    @spectrum.tags.each do |tag|
-      @new.tag(tag.name, tag.user_id) unless tag.name.split(':').first == "cloneOf"
-    end
+    @new = @spectrum.clone(current_user)
     flash[:notice] = "You successfully cloned <a href='#{spectrum_path(@spectrum)}'>Spectrum ##{@spectrum.id}</a>"
     redirect_to spectrum_path(@new)
   end

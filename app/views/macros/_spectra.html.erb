@@ -16,7 +16,7 @@
           <%# expensive, but worth it %>
           <td style="text-align:center;" class="like-container-<%= spectrum.id %>">
             <a class="btn-like" onClick="SpectralWorkbench.UI.Misc.toggleLike(<%= spectrum.id %>)">
-              <i style="color:#888;" class="fa fa-star<% unless spectrum.liked_by(current_user.id) %>-empty<% end %>"></i>
+              <i style="color:#888;" class="fa fa-star<% unless spectrum.liked_by(current_user.id) %>-o<% end %>"></i>
             </a>
           </td>
         <% end %>
