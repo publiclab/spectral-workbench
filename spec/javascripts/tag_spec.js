@@ -19,10 +19,15 @@ describe("Tag", function() {
 
       var response;
 
+      // object.method == "PUT" // object.method doesn't work :-/
       if      (object.url == '/spectrums/9.json') response = object.success(TestResponses.spectrum.success.responseText);
       else if (object.url == '/spectrums/9/tags') response = object.success(TestResponses.tags.success.responseText);
       // the following is only faked properly for the 'sodium' tag, of course:
-      else if (object.url == '/tags')             response = object.success({'saved':{'sodium': {'id': 1}}}); // && object.method == "PUT" // method doesn't work and isn't necessary as of yet
+      else if (object.url == '/tags')             response = object.success({'saved':{'sodium':        {'id': 1}, 
+                                                                                      'subtract:3#4':  {'id': 2, 'snapshot_id': 5}, // where 5 is the new snapshot
+                                                                                      'range:400-700': {'id': 3, 'snapshot_id': 6}
+                                                             }}); 
+      else if (object.url == '/snapshots/4.json') response = object.success(TestResponses.snapshot.success.responseText);
       else if (object.url == '/tags/1' || object.url == '/tags/42') response = object.success('success'); // && object.method == "DELETE"
       else response = 'none';
 
@@ -129,14 +134,14 @@ describe("Tag", function() {
 
     tag = graph.datum.addTag('subtract:3#4', function(tag) {
 
-      // not to be a powertag:
       expect(tag.key).toBeDefined();
       expect(tag.key).toBe('subtract');
       expect(tag.value).toBeDefined();
       expect(tag.value).toBe('3');
       expect(tag.powertag).toEqual(true);
+      expect(tag.needs_snapshot).toBe(true);
       expect(tag.has_snapshot).toBe(true);
-      expect(tag.snapshot_id).toEqual('4');
+      expect(tag.snapshot_id).toEqual(5);
 
       // apply the powertag! It may have been parsed already but we try again to be sure. 
       tag.parse();
@@ -164,7 +169,9 @@ describe("Tag", function() {
       expect(tag.value).toBeDefined();
       expect(tag.value).toBe('400-700');
       expect(tag.powertag).toEqual(true);
+      expect(tag.needs_snapshot).toEqual(true);
       expect(tag.has_snapshot).toEqual(true);
+      expect(tag.snapshot_id).toEqual(6);
 
       // apply the powertag! It may have been parsed already but we try again to be sure. 
       tag.parse();

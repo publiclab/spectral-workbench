@@ -31,23 +31,11 @@ SpectralWorkbench.Tag = Class.extend({
 
     if (json) { 
 
+      // it's an existing tag; don't upload
+      _tag.json = json;
+      _tag.id = json.id;
+      _tag.uploadable = false;
       _tag.created_at = new Date(json.created_at);
-
-      // this isn't used yet; it will be when Datum.addTags() is complete
-      // we (mis)use json as options in a new tag; pass { batch: true } to stop tag from uploading
-      if (json.hasOwnProperty('batch')) { 
-
-        // it's going to be batch-submitted by the parent Datum; don't upload
-        _tag.uploadable = false;
-
-      } else {
-
-        // it's an existing tag; don't upload
-        _tag.json = json;
-        _tag.id = json.id;
-        _tag.uploadable = false;
-
-      }
 
     } else {
 
@@ -65,7 +53,13 @@ SpectralWorkbench.Tag = Class.extend({
       _tag.value = _tag.name.split(':')[1];
       _tag.value_snapshot = _tag.value; // include snapshot syntax if exists
 
-      if (_tag.json.hasOwnProperty('snapshot_id')) { // from the server
+      // scan for tags that require snapshots, but this isn't the right place to save it -- we need to parse it!
+      if (_tag.snapshot_tagnames.indexOf(_tag.key) != -1) _tag.needs_snapshot = true;
+
+      // has it generated a snapshot?
+      // note that this won't have happened yet for new tags, until after parsing;
+      // however, we check response from tag.upload() for a snapshot id and set it there too
+      if (_tag.json.hasOwnProperty('snapshot_id')) { // from the server-side database
         _tag.has_snapshot = true;
         _tag.snapshot_id = _tag.json.snapshot_id;
       }
@@ -79,9 +73,6 @@ SpectralWorkbench.Tag = Class.extend({
         _tag.value = _tag.value.split('#')[0];
 
       }
-
-      // scan for tags that require snapshots, but this isn't the right place to save it -- we need to parse it!
-      if (_tag.snapshot_tagnames.indexOf(_tag.key) != -1) _tag.needs_snapshot = true;
 
     } else _tag.powertag = false;
 
@@ -160,15 +151,27 @@ SpectralWorkbench.Tag = Class.extend({
 
       if (response['saved']) {
 
+        // response is a JSON object whose keys are tagnames
         if (response['saved'][_tag.name]) {
 
-          // response is a JSON object whose properties are tagnames, each with property <id>
-          if (response['saved'][_tag.name].hasOwnProperty('id')) _tag.id = response['saved'][_tag.name].id;
+          var tag_response = response['saved'][_tag.name];
 
-          if (response['saved'][_tag.name].hasOwnProperty('created_at')) _tag.created_at = new Date(response['saved'][_tag.name].created_at);
+          if (tag_response.hasOwnProperty('id')) _tag.id = tag_response.id;
+
+          if (tag_response.hasOwnProperty('created_at')) _tag.created_at = new Date(tag_response.created_at);
 
           // response will be sorted by name, but a new name will be received for snapshotted tags; we update local name here:
-          if (response['saved'][_tag.name].hasOwnProperty('name')) _tag.name = response['saved'][_tag.name].name;
+          if (tag_response.hasOwnProperty('name')) _tag.name = tag_response.name;
+
+          // get snapshot_id from server
+          if (_tag.needs_snapshot && tag_response.hasOwnProperty('snapshot_id')) {
+
+            _tag.snapshot_id = tag_response.snapshot_id;
+            _tag.has_snapshot = true;
+
+            _tag.deletable = (!_tag.has_snapshot || _tag.json.has_dependent_spectra != true);
+
+          }
 
         }
 

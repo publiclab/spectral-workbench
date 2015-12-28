@@ -8,7 +8,7 @@ var TestResponses = {
   tags: {
     success: {
       status: 200,
-      responseText: [{"created_at":"2015-08-18T14:59:26Z","id":42,"name":"upload","set_id":null,"spectrum_id":9,"updated_at":"2015-08-18T14:59:26Z","user_id":1},{"created_at":"2015-08-18T14:59:49Z","id":43,"name":"calibration","set_id":null,"spectrum_id":9,"updated_at":"2015-08-18T14:59:49Z","user_id":1}]
+      responseText: [{"created_at":"2015-08-18T14:59:26Z","id":42,"name":"upload","set_id":null,"spectrum_id":9,"updated_at":"2015-08-18T14:59:26Z","user_id":1,"snapshot_id":1},{"created_at":"2015-08-18T14:59:49Z","id":43,"name":"calibration","set_id":null,"spectrum_id":9,"updated_at":"2015-08-18T14:59:49Z","user_id":1,"snapshot_id":2}]
     }
   },
 
