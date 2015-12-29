@@ -1,7 +1,5 @@
 SpectralWorkbench.Datum = Class.extend({
 
-  tags: [],
-
   init: function(args, _graph) {
 
     this.args = args;
@@ -10,9 +8,9 @@ SpectralWorkbench.Datum = Class.extend({
     this.title = args.title;
     this.id    = args.id;
     this.graph = _graph;
+    this.tags = [];
 
     var _datum = this;
-
 
     /* ======================================
      * Turns <a> link with specified selector into a download
@@ -31,100 +29,47 @@ SpectralWorkbench.Datum = Class.extend({
 
 
     /* ======================================
-     * Create a new tag, upload it, parse it.
+     * Create a new Tag or PowerTag depending on name,
+     * upload it, parse it accordingly.
      */
     _datum.addTag = function(name, callback) {
 
-      return new SpectralWorkbench.Tag(_datum, name, false, function(tag) {
+      var type = SpectralWorkbench.Tag;
 
-        _datum.tags.push(tag);
+      if (name.match(/[\w\.]+:[\w0-9\-\#\*\+\[\]\(\)]+/)) type = SpectralWorkbench.PowerTag;
 
-        if (callback) callback(tag);
-
-      });
+      return new type(_datum, name, false, callback);
 
     }
 
 
     /* ======================================
-     * Create new tags and add them to self,
-     * then run them. Unfinished. Maybe abandoned.
+     * Return array of tags with given name, run 
+     * callback(tag), if provided, on each.
      */
-    /*
-    _datum.addTags = function(names, callback) {
+    _datum.getTags = function(name, callback) {
 
-      var tags = {};
-
-      // grey out graph during load
-      _datum.graph.dim();
-
-      names.split(',').forEach(function(tagname, index) {
-
-        // dont yet submit 
-        var tag = new SpectralWorkbench.Tag(_datum, tagname, { batch: true }, callback);
-
-        // this gets messy, but whatever
-        _tag.startSpinner();
-        
-        // we just do these before waiting to hear back from the above: 
-        
-        _datum.tags.push(tag);
-
-        tags[tagname] = tag;
-
-        _datum.tags.push(tag);
-
-      });
-
-      $.ajax({
-        url: "/tags",
-        type: "POST",
-        dataType: "json",
- 
-        data: {
-          authenticity_token: $('meta[name=csrf-token]').attr('content'),
-          tag: {
-            spectrum_id: _tag.datum.id,
-            name: _tag.name
-          }
-        },
-
-        success: _tag.uploadSuccess,
-
-        error: _tag.uploadError
- 
-      });
-
-
-      return tags;
-
-    }
-    */
-
-    /* ======================================
-     * Cleanly removes all tags with given name and refreshes graph, and 
-     * execute callback() on completion(s) if provided, because
-     * this is asynchronous! Callback is passed to .remove() which executes it.
-     */
-    _datum.removeTag = function(name, callback) {
+      var response = [];
 
       _datum.tags.forEach(function(tag) {
 
         if (tag.name == name) {
 
-          // if it affected the datum display, tags are flushed and reloaded
-          // -- and tag is removed from _datum.tags after roundtrip
-          tag.destroy(callback); 
+          if (callback) callback(tag);
+          response.push(tag);
 
         }
 
       });
 
+      return response;
+
     }
 
 
     /* ======================================
-     * Find tags by name, run callback(tag) on each if provided
+     * Return first tag with given name, run 
+     * callback(tag) on the result.
      */
     _datum.getTag = function(name, callback) {
 
@@ -134,12 +79,13 @@ SpectralWorkbench.Datum = Class.extend({
 
         if (tag.name == name) {
 
-          if (callback) callback(tag);
           response = tag;
 
         }
 
       });
+
+      if (callback) callback(response);
 
       return response;
 
@@ -153,7 +99,7 @@ SpectralWorkbench.Datum = Class.extend({
 
       var powertags = [];
       _datum.tags.forEach(function(tag) {
-        if (tag.powertag && tag.key == key) {
+        if (tag instanceof SpectralWorkbench.PowerTag && tag.key == key) {
 
           powertags.push(tag);
           if (callback) callback(tag);
@@ -230,7 +176,7 @@ SpectralWorkbench.Datum = Class.extend({
 
       _datum.tags.forEach(function(tag) {
 
-        tag.parse();
+        if (tag instanceof SpectralWorkbench.PowerTag) tag.parse();
 
       });
 

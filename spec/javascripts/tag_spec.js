@@ -80,7 +80,7 @@ describe("Tag", function() {
     tag = graph.datum.addTag('sodium');
 
     expect(tag.json).toBeDefined();
-    expect(tag.id).toBeDefined(); // not defined because we're not uploading it?  expect(tag.id).toBe(1);
+    expect(tag.id).not.toBeDefined(); // not defined (yet) because we're not waiting for it to be uploaded
 
     // tag should then be parsed
 
@@ -98,25 +98,38 @@ describe("Tag", function() {
     // confirm it's not a powertag
     expect(gottenTag.key).not.toBeDefined();
     expect(gottenTag.value).not.toBeDefined();
-    expect(gottenTag.powertag).toEqual(false);
-    expect(gottenTag.has_snapshot).toEqual(false);
+    expect(gottenTag instanceof SpectralWorkbench.PowerTag).toEqual(false);
+    expect(gottenTag.snapshot_id).not.toBeDefined();
 
   });
 
 
   var deletionCallbackSpy = jasmine.createSpy('success');
 
-  it("deletes pre-existing tag 'upload' with datum.removeTag()", function(done) {
+  it("deletes pre-existing tag 'sodium' with datum.getTag().remove()", function(done) {
 
-    graph.datum.removeTag('upload', function(tag) {
+    var taglength = graph.datum.tags.length;
 
-      expect(tag).toBeDefined(); // the removed tag is returned
+    graph.datum.getTags('sodium', function(tag) {
 
-      expect(graph.datum.getTag('upload')).toBe(false);
+      tag.id = 1; // fake the id because normally this'd have been added upon creation response from server;
 
-      deletionCallbackSpy();
+      tag.destroy(function(tag2) {
 
-      done(); // complete asynchronous call
+        expect(tag2).toBeDefined(); // the removed tag is returned
+ 
+        expect(taglength - graph.datum.tags.length).toBe(1);
+        expect(graph.datum.getTag('sodium')).toBe(false); // this won't work if there's more than 1 'upload' tag
+
+        // explicitly check that this exact tag is no longer listed; 
+        // not just a tag with the same name:
+        expect(graph.datum.tags.indexOf(tag2)).toBe(-1); 
+
+        deletionCallbackSpy();
+
+        done(); // complete asynchronous call
+
+      });
 
     });
 
@@ -130,6 +143,8 @@ describe("Tag", function() {
   });
 
 
+  var creationCallbackSpy = jasmine.createSpy('success');
+
   it("creates powertag 'subtract' and is aware of specified snapshot", function() {
 
     tag = graph.datum.addTag('subtract:3#4', function(tag) {
@@ -138,9 +153,9 @@ describe("Tag", function() {
       expect(tag.key).toBe('subtract');
       expect(tag.value).toBeDefined();
       expect(tag.value).toBe('3');
-      expect(tag.powertag).toEqual(true);
+      expect(tag instanceof SpectralWorkbench.PowerTag).toEqual(true);
       expect(tag.needs_snapshot).toBe(true);
-      expect(tag.has_snapshot).toBe(true);
+      expect(tag.snapshot_id).toBeDefined();
       expect(tag.snapshot_id).toEqual(5);
 
       // apply the powertag! It may have been parsed already but we try again to be sure. 
@@ -149,7 +164,16 @@ describe("Tag", function() {
       // should have cached a data snapshot locally:
       expect(typeof tag.data).toBe('string');
 
+      creationCallbackSpy();
+
     });
+
+  });
+
+
+  it("creation callback is called", function() {
+
+    expect(creationCallbackSpy).toHaveBeenCalled();
 
   });
 
@@ -168,9 +192,9 @@ describe("Tag", function() {
       expect(tag.key).toBe('range');
       expect(tag.value).toBeDefined();
       expect(tag.value).toBe('400-700');
-      expect(tag.powertag).toEqual(true);
+      expect(tag instanceof SpectralWorkbench.PowerTag).toEqual(true);
       expect(tag.needs_snapshot).toEqual(true);
-      expect(tag.has_snapshot).toEqual(true);
+      expect(tag.snapshot_id).toBeDefined();
       expect(tag.snapshot_id).toEqual(6);
 
       // apply the powertag! It may have been parsed already but we try again to be sure. 
@@ -193,7 +217,7 @@ describe("Tag", function() {
       setTimeout(function() {
 
         tag.id = 1; // fake the id because normally this'd be added but we're doing things too fast;
-        graph.datum.removeTag('range:400-700', function() {
+        tag.destroy(function(tag) {
  
           // test that the graph is not range-limited:
     

@@ -1,24 +1,5 @@
 SpectralWorkbench.Tag = Class.extend({
 
-  // these tagnames will trigger a snapshot to be saved to the server:
-  // this list must be kept consistent with that in /app/models/tag.rb
-  snapshot_tagnames: [
-
-    "calibrate",
-    "linearCalibration",
-    "subtract",
-    "transform",
-    "range",
-    "crossSection",
-    "smooth",
-    "flip"
-
-  ],
-
-  has_reference: false,
-  has_snapshot: false, // if we have a snapshot record in the db
-  needs_snapshot: false, // if we should send snapshotted data, based on the snapshot_tagnames list
-
   // <json> is a JSON obj of the tag as received from the server; 
   // if this doesn't exist, it's a new tag
   // <callback> will be called as callback(tag, ajaxResponse)
@@ -28,6 +9,25 @@ SpectralWorkbench.Tag = Class.extend({
 
     _tag.name = name;
     _tag.datum = datum;
+    _tag.deletable = true; // this is only false for some PowerTags, a subclass
+
+    _tag.description = function() {
+
+      if      (_tag.key == "smooth")            return "Rolling average smoothing.";
+      else if (_tag.key == "range")             return "Limits wavelength range.";
+      else if (_tag.key == "transform")         return "Filters this spectrum with a math expression.";
+      else if (_tag.key == "subtract")          return "Subtracts <a href='/spectrums/" + _tag.value + "'>Spectrum " + _tag.value + "</a> from this.";
+      else if (_tag.key == "calibrate")         return "Copies calibration from <a href='/spectrums/" + _tag.value + "'>Spectrum " + _tag.value + "</a>.";
+      else if (_tag.key == "cloneOf")           return "Spectrum is a copy of <a href='/spectrums/" + _tag.value + "'>Spectrum " + _tag.value + "</a>.";
+      else if (_tag.key == "linearCalibration") return "Manually calibrated with two reference points.";
+      else if (_tag.key == "error")             return "Scores a calibration 'fit' by comparison to a known reference; lower is better, zero is perfect.";
+      else if (_tag.key == "calibrationQuality")return "Roughly indicates how good a calibration 'fit' is.";
+      else if (_tag.key == "crossSection")      return "Sets the row of pixels, counting from top row, used to generate the graph.";
+      else if (_tag.key == "flip")              return "Indicates that the spectrum image has been flipped horizontally.";
+      else                                      return "No description yet.";
+
+    }
+
 
     if (json) { 
 
@@ -44,37 +44,6 @@ SpectralWorkbench.Tag = Class.extend({
       _tag.json = {};
 
     }
-
-    // detect powertags by format
-    if (_tag.name.match(/[\w\.]+:[\w0-9\-\*\+\[\]\(\)]+/)) {
-
-      _tag.powertag = true;
-      _tag.key = _tag.name.split(':')[0];
-      _tag.value = _tag.name.split(':')[1];
-      _tag.value_snapshot = _tag.value; // include snapshot syntax if exists
-
-      // scan for tags that require snapshots, but this isn't the right place to save it -- we need to parse it!
-      if (_tag.snapshot_tagnames.indexOf(_tag.key) != -1) _tag.needs_snapshot = true;
-
-      // has it generated a snapshot?
-      // note that this won't have happened yet for new tags, until after parsing;
-      // however, we check response from tag.upload() for a snapshot id and set it there too
-      if (_tag.json.hasOwnProperty('snapshot_id')) { // from the server-side database
-        _tag.has_snapshot = true;
-        _tag.snapshot_id = _tag.json.snapshot_id;
-      }
-
-      _tag.deletable = (!_tag.has_snapshot || _tag.json.has_dependent_spectra != true);
-
-      if (_tag.name.match("#")) {
-
-        _tag.has_reference = true;
-        _tag.snapshot_id = _tag.value.split('#')[1];
-        _tag.value = _tag.value.split('#')[0];
-
-      }
-
-    } else _tag.powertag = false;
 
     _tag.startSpinner = function() {
 
@@ -110,8 +79,8 @@ SpectralWorkbench.Tag = Class.extend({
         }
       };
 
-      // this will have to be adapted as we add tags to sets
-      if (_tag.needs_snapshot) data.tag.data = _tag.data;
+      // for PowerTags: this will have to be adapted as we add tags to sets
+      if (_tag.data) data.tag.data = _tag.data;
 
       $.ajax({
  
@@ -119,7 +88,11 @@ SpectralWorkbench.Tag = Class.extend({
         type: "POST",
         dataType: "json",
         data: data,
-        success: _tag.uploadSuccess,
+        success: function(response) {
+
+          _tag.uploadSuccess(response, callback);
+
+        },
         error: _tag.uploadError
  
       });
@@ -142,7 +115,7 @@ SpectralWorkbench.Tag = Class.extend({
     }
 
 
-    _tag.uploadSuccess = function(response) {
+    _tag.uploadSuccess = function(response, callback) {
 
       _tag.stopSpinner();
 
@@ -156,22 +129,13 @@ SpectralWorkbench.Tag = Class.extend({
 
           var tag_response = response['saved'][_tag.name];
 
-          if (tag_response.hasOwnProperty('id')) _tag.id = tag_response.id;
+          Object.keys(tag_response).forEach(function(key) {
 
-          if (tag_response.hasOwnProperty('created_at')) _tag.created_at = new Date(tag_response.created_at);
+            _tag[key] = tag_response[key];
 
-          // response will be sorted by name, but a new name will be received for snapshotted tags; we update local name here:
-          if (tag_response.hasOwnProperty('name')) _tag.name = tag_response.name;
+            if (key == 'created_at') _tag.created_at = new Date(tag_response.created_at);
 
-          // get snapshot_id from server
-          if (_tag.needs_snapshot && tag_response.hasOwnProperty('snapshot_id')) {
-
-            _tag.snapshot_id = tag_response.snapshot_id;
-            _tag.has_snapshot = true;
-
-            _tag.deletable = (!_tag.has_snapshot || _tag.json.has_dependent_spectra != true);
-
-          }
+          });
 
         }
 
@@ -231,31 +195,9 @@ SpectralWorkbench.Tag = Class.extend({
 
         // if it failed to initialize, the element may not exist
         if (_tag.el) _tag.el.remove();
-        if (_tag.operationEl) _tag.operationEl.remove();
-
-        _tag.showLastOperationDeleteButtonOnly();
 
         // remove it from datum.tags:
-        var index = _tag.datum.tags.indexOf(_tag);
-        _tag.datum.tags.splice(index, 1);
-
-        // if it affected the datum display, reload it:
-        if (_tag.powertag) {
-
-          // flush the graph range so the image gets resized:
-          _tag.datum.graph.range = false;
-
-          // re-fetch spectrum data, as it may have been overwritten by various tags:
-          _tag.datum.fetch(false, function() {
-
-            _tag.datum.parseTags();
-            _tag.datum.graph.reload();
-            _tag.datum.graph.refresh();
-            _tag.datum.graph.undim();
-
-          });
-
-        }
+        _tag.datum.tags.splice(_tag.datum.tags.indexOf(_tag), 1);
 
         if (callback) callback(_tag);
 
@@ -266,44 +208,8 @@ SpectralWorkbench.Tag = Class.extend({
     _tag.render = function() {
 
       var container = $('#tags span.list');
-      var operationTable = $('table.operations');
  
       _tag.el = $("<span id='tag_" + _tag.id + "'></span>");
-
-      // display in Operations table;
-      // perhaps abstract into PowerTag or Operation subclass
-      if (_tag.powertag) {
-
-        _tag.operationEl = $("<tr class='operation-tag' id='tag_" + _tag.id + "'></tr>");
-
-        if (_tag.has_snapshot) {
-          _tag.operationEl.append("<td class='snapshot'><a href='https://publiclab.org/wiki/spectral-workbench-snapshots'><i rel='tooltip' title='This operation generated a data snapshot with id " + _tag.snapshot_id + ". Click to learn more.' class='fa fa-thumb-tack'></i></a></td>");
-        } else {
-          _tag.operationEl.append("<td class='snapshot'></td>");
-        }
-        _tag.operationEl.append("<td class='title'><span class='label purple'>" + _tag.name + "</span></td>");
-        _tag.operationEl.append("<td class='date'><small>" + moment(_tag.json.created_at).format("MM-DD-YY HH:mm a") + "</small></td>");
-        _tag.operationEl.append("<td class='description'><small>" + _tag.description() + " <a href='//publiclab.org/wiki/spectral-workbench-tags#" + _tag.key + "'>Read more</a></small></td>");
-        _tag.operationEl.append("<td class='operations-tools'></td>");
-        _tag.operationEl.find("td.operations-tools").append("<a class='operation-tag-delete'><i class='fa fa-trash btn btn-link'></i></a>");
-
-        if (!_tag.deletable) _tag.operationEl.find("td.operations-tools").append("<i rel='tooltip' title='Other data depends on this snapshot. Clone the spectrum to work without affecting downstream use.' class='operation-tag-delete-disabled fa fa-lock btn btn-link disabled' style='color:#00a;'></i>");
-        else _tag.operationEl.find("td.operations-tools").append("<i rel='tooltip' title='Subsequent operations depend on this snapshot.' class='operation-tag-delete-disabled fa fa-lock btn btn-link disabled'></i>");
-
-        operationTable.append(_tag.operationEl);
-
-        if (_tag.created_at) {
-
-          // only final operation should have deletion button
-          _tag.showLastOperationDeleteButtonOnly();
- 
-        }
-
-        // initialize tooltips after hiding/showing is complete
-        $("[rel=tooltip]").tooltip('destroy')
-                          .tooltip();
-
-      }
 
       container.append(_tag.el);
 
@@ -311,29 +217,11 @@ SpectralWorkbench.Tag = Class.extend({
              .addClass('label label-info')
              .append("<a href='/tags/" + _tag.name + "'>" + _tag.name+"</a> ")
 
-      if (_tag.powertag) {
-
-        // we use CSS classnames to identify tag types by color
-        _tag.el.addClass('purple');
-        _tag.el.attr('title', 'This is a powertag.');
-        _tag.deleteEl = $('#tag_' + _tag.id + ' .operation-tag-delete');
-        // these will only be clickable if the button is shown:
-        _tag.deleteEl.attr('data-id', _tag.id)
-                     .click(function() { 
-                        if (confirm('Are you sure? This tag contains functional data used in the display and analysis of the spectrum.')) {
-                          _tag.destroy();
-                        }
-                     })
-
-      } else {
-
         // this is for regular tag display, to the left:
         _tag.el.append("<a class='tag-delete'>x</a>");
         _tag.deleteEl = $('#tag_' + _tag.id + ' .tag-delete');
         _tag.deleteEl.attr('data-id', _tag.id)
                      .click(function() { _tag.destroy(); });
-
-      }
 
       // deletion listener
       _tag.deleteEl.bind('ajax:success', function(){
@@ -345,94 +233,21 @@ SpectralWorkbench.Tag = Class.extend({
     }
 
 
-    // only final operation should have deletion button
-    _tag.showLastOperationDeleteButtonOnly = function() {
-
-      var operationTable = $('table.operations');
-      operationTable.find('tr.operation-tag .operations-tools .operation-tag-delete-disabled').show();
-      operationTable.find('tr.operation-tag .operations-tools .operation-tag-delete').hide();
-
-      if (_tag.deletable) {
-        operationTable.find('tr.operation-tag:last .operations-tools .operation-tag-delete-disabled').hide();
-        operationTable.find('tr.operation-tag:last .operations-tools .operation-tag-delete').show();
-      }
-
-    }
-
-
-    _tag.description = function() {
-
-      if      (_tag.key == "smooth")            return "Rolling average smoothing.";
-      else if (_tag.key == "range")             return "Limits wavelength range.";
-      else if (_tag.key == "transform")         return "Filters this spectrum with a math expression.";
-      else if (_tag.key == "subtract")          return "Subtracts <a href='/spectrums/" + _tag.value + "'>Spectrum " + _tag.value + "</a> from this.";
-      else if (_tag.key == "calibrate")         return "Copies calibration from <a href='/spectrums/" + _tag.value + "'>Spectrum " + _tag.value + "</a>.";
-      else if (_tag.key == "cloneOf")           return "Spectrum is a copy of <a href='/spectrums/" + _tag.value + "'>Spectrum " + _tag.value + "</a>.";
-      else if (_tag.key == "linearCalibration") return "Manually calibrated with two reference points.";
-      else if (_tag.key == "error")             return "Scores a calibration 'fit' by comparison to a known reference; lower is better, zero is perfect.";
-      else if (_tag.key == "calibrationQuality")return "Roughly indicates how good a calibration 'fit' is.";
-      else if (_tag.key == "crossSection")      return "Sets the row of pixels, counting from top row, used to generate the graph.";
-      else if (_tag.key == "flip")              return "Indicates that the spectrum image has been flipped horizontally.";
-      else                                      return "No description yet.";
-
-    }
-
-
-    _tag.parse = function() {
-
-      if (_tag.powertag) {
-
-        if (_tag.key == "subtract") {
-
-          SpectralWorkbench.API.Core.subtract(_tag.datum, _tag.value_snapshot);
-
-        } else if (_tag.key == "flip:horizontal") {
-
-          SpectralWorkbench.API.Core.flipHorizontal(_tag.datum);
-
-        } else if (_tag.key == "calibrate") {
-
-          if (_tag.has_reference) SpectralWorkbench.API.Core.copyCalibration(_tag.datum, _tag.value_snapshot);
-
-        } else if (_tag.key == "transform") {
-
-          SpectralWorkbench.API.Core.transform(_tag.datum, _tag.value_snapshot);
-
-        } else if (_tag.key == "smooth") {
-
-          SpectralWorkbench.API.Core.smooth(_tag.datum, _tag.value);
-
-        } else if (_tag.key == "blend") {
-
-          var blend_id = _tag.value_snapshot.split('$')[0],
-              expression = _tag.value_snapshot.split('$')[1];
-
-          SpectralWorkbench.API.Core.blend(_tag.datum, blend_id, expression);
-
-        } else if (_tag.key == "range") {
-
-          SpectralWorkbench.API.Core.range(_tag.datum, +_tag.value.split('-')[0], +_tag.value.split('-')[1]);
-
-        }
-
-      }
-
-      // save the parsed tag data
-      if (_tag.needs_snapshot) _tag.data = JSON.stringify(_tag.datum.json.data);
-
-    }
-
     if (_tag.uploadable && callback) {
 
-      _tag.parse();
       _tag.upload(callback);
+
+      // render called after upload, in uploadSuccess
 
     } else {
 
       if (callback) callback(); // callback directly, as we don't need to wait for an upload
-      _tag.render();
+
+      _tag.render(); // note: overridden in PowerTag
 
     }
+
+    _tag.datum.tags.push(_tag);
 
     return _tag;
  

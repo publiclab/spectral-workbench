@@ -221,7 +221,7 @@ describe("UI", function() {
     expect(graph.datum.getTag('range:520-530')).not.toBe(false);
 
     // anyways we can do it manually:
-    graph.datum.removeTag('range:520-530', function(tag) {
+    graph.datum.getTag('range:520-530').destroy(function(tag) {
 
       expect(tag).toBeDefined(); // the response
     
