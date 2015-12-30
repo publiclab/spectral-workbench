@@ -49,7 +49,7 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
       _tag.snapshot_id = _tag.json.snapshot_id;
     }
 
-    _tag.deletable = (!_tag.hasOwnProperty('snapshot_id') || _tag.json.has_dependent_spectra != true);
+    _tag.deletable = (!_tag.hasOwnProperty('snapshot_id') || _tag.has_dependent_spectra != true);
 
     if (_tag.name.match("#")) {
 
@@ -59,23 +59,59 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
 
     }
 
-// MODIFY: accommodate rejected deletion
     // Delete it from the server, then from the DOM;
     _tag.destroy = function(callback) {
 
-      $('tr#tag_' + _tag.id + ' .label, span#tag_' + _tag.id).css('background', '#bbb')
-                                                             .html(_tag.el.html() + " <i class='fa fa-spinner fa-spin fa-white'></i>");
+      $('tr#tag_' + _tag.id + ' .label').css('background', '#bbb')
+                                        .append(" <i class='fa fa-spinner fa-spin fa-white'></i>");
 
-      $('tr#tag_' + _tag.id).css('color', '#bbb')
+      $('tr#tag_' + _tag.id).css('color', '#bbb');
 
       $.ajax({
         url: "/tags/" + _tag.id,
         type: "DELETE",
+
         success: function(response) {
 
           _tag.cleanUp(callback);
  
+        },
+
+        error: function(response) {
+
+          console.log('Deletion of tag ' + _tag.id + ' rejected.', response)
+
+          $('tr#tag_' + _tag.id + ' .label').css('background', 'red')
+
+          $('tr#tag_' + _tag.id + ' .label i.fa').removeClass('fa-spinner')
+                                                 .addClass('fa-warning')
+                                                 .css('color', '#600');
+
+          $('tr#tag_' + _tag.id + ' .label').prop('rel', 'tooltip');
+                                                 
+// confirm fa-warning in a test
+
+          $('tr#tag_' + _tag.id).css('color', '#600');
+
+          _tag.has_dependent_spectra = response.has_dependent_spectra;
+          _tag.is_latest = response.is_latest;
+
+          if (response.has_dependent_spectra) {
+
+            _tag.deletable = false;
+            $('tr#tag_' + _tag.id + ' .label').prop('title', 'Operation could not be deleted because other operations rely on it. Try cloning this spectrum to make changes without disrupting dependent data.');
+
+          } else if (!response.is_latest) {
+
+            _tag.deletable = false;
+            $('tr#tag_' + _tag.id + ' .label').prop('title', 'Operation could not be deleted because it is not the most recent operation to this spectrum. Deletions must occur most-recent-first.');
+
+          }
+
+          if (callback) callback(response, _tag); // for testing, at least
+
         }
+
       });
  
     }
@@ -245,10 +281,7 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
 
       _tag.superUploadSuccess(response, callback);
 
-// either make deletable a method, or just check this statement each time we try to delete:
-// ... actually the problem is that we write this to the DOM and it doesn't stay true. 
-// So maybe run it regularly, or as planned, return an error when this ends up being false.
-      _tag.deletable = (!_tag.hasOwnProperty('snapshot_id') || _tag.json.has_dependent_spectra != true);
+      _tag.deletable = (!_tag.hasOwnProperty('snapshot_id') || _tag.has_dependent_spectra != true);
 
     }
 

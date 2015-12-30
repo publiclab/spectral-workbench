@@ -11,7 +11,7 @@ class Tag < ActiveRecord::Base
   validate :powertags_by_owner
 
   # place this before the has_one :snapshot so it runs before dependent => :destroy
-  before_destroy :validate_destroyable
+  before_destroy :is_deletable?
 
   belongs_to :spectrum
   belongs_to :user
@@ -41,11 +41,12 @@ class Tag < ActiveRecord::Base
 
   end
 
-  def validate_destroyable
+  # used as validation
+  def is_deletable?
     if self.is_powertag? && self.generate_snapshot?
       if self.snapshot.nil?
         return true
-      elsif self.snapshot.is_latest? && !self.snapshot.has_dependent_spectra?
+      elsif self.snapshot.is_deletable?
         return true
       else
         return false

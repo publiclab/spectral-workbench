@@ -41,6 +41,10 @@ class Snapshot < ActiveRecord::Base
     end
   end
 
+  def is_deletable?
+    self.is_latest? && self.has_no_dependent_spectra?
+  end
+
   def is_latest?
     latest = Snapshot.where(spectrum_id: self.spectrum_id)
                      .order('created_at DESC')

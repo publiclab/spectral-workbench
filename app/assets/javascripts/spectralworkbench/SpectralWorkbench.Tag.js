@@ -129,6 +129,8 @@ SpectralWorkbench.Tag = Class.extend({
 
           var tag_response = response['saved'][_tag.name];
 
+          // this will typically copy in .id, .snapshot_id, .created_at, 
+          // and .has_dependent_spectra (some for powertags)
           Object.keys(tag_response).forEach(function(key) {
 
             _tag[key] = tag_response[key];
@@ -170,19 +172,19 @@ SpectralWorkbench.Tag = Class.extend({
     // Delete it from the server, then from the DOM;
     _tag.destroy = function(callback) {
 
-      $('tr#tag_' + _tag.id + ' .label, span#tag_' + _tag.id).css('background', '#bbb')
+      $('span#tag_' + _tag.id).css('background', '#bbb')
                                                              .html(_tag.el.html() + " <i class='fa fa-spinner fa-spin fa-white'></i>");
-
-      $('tr#tag_' + _tag.id).css('color', '#bbb')
 
       $.ajax({
         url: "/tags/" + _tag.id,
         type: "DELETE",
+
         success: function(response) {
 
           _tag.cleanUp(callback);
  
         }
+
       });
  
     }

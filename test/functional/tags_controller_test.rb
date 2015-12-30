@@ -102,6 +102,78 @@ class TagsControllerTest < ActionController::TestCase
     assert_response :success
   end
 
+  test "should not delete tag if not latest snapshot, in json" do
+    session[:user_id] = users(:aaron).id # log in
+    # create a snapshot
+    tag = Tag.new({
+      user_id:     users(:aaron).id,
+      spectrum_id: users(:aaron).spectrums.last.id,
+      name:        'smooth:1'
+    })
+    assert tag.save!
+    assert_equal tag.name, 'smooth:1'
+    assert tag.create_snapshot('{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}')
+
+    # create a snapshot which will refer to the same spectrum, and be the latest:
+    tag2 = Tag.new({
+      user_id:     tag.user_id,
+      spectrum_id: tag.spectrum_id,
+      name:        'smooth:3'
+    })
+    assert tag2.save!
+    assert_equal tag2.name, 'smooth:3'
+    tag2.create_snapshot('{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}')
+
+    xhr :post, :destroy, :id => tag.id # we do this instead of :format => :json, for some reason
+
+    assert_response 422 # rejected
+    assert_nil flash[:error]
+    assert_nil flash[:notice]
+    response = ActiveSupport::JSON.decode(@response.body)
+    assert_not_nil response
+    assert_not_nil response['has_dependent_spectra']
+    assert_equal response['has_dependent_spectra'], false
+    assert_not_nil response['is_latest']
+    assert_equal response['is_latest'], false
+  end
+
+  test "should not delete tag if there are dependent spectra, in json" do
+    session[:user_id] = users(:aaron).id # log in
+    # create a snapshot
+    tag = Tag.new({
+      user_id:     users(:aaron).id,
+      spectrum_id: users(:aaron).spectrums.last.id,
+      name:        'smooth:1'
+    })
+    assert tag.save!
+    assert_equal tag.name, 'smooth:1'
+    assert tag.create_snapshot('{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}')
+    assert tag.snapshot.is_latest?
+
+    # create a snapshot which will reference this snapshot, and be dependent on it:
+    tag2 = Tag.new({
+      user_id:     Spectrum.last.user_id,
+      spectrum_id: Spectrum.last.id,
+      name:        "subtract:#{tag.spectrum_id}"
+    })
+    assert tag2.save!
+    assert_not_equal tag.spectrum_id, tag2.spectrum_id
+    tag2.create_snapshot('{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}')
+    assert_equal tag2.name, "subtract:#{tag.spectrum_id}##{tag.snapshot.id}"
+
+    xhr :post, :destroy, :id => tag.id # we do this instead of :format => :json, for some reason
+
+    assert_response 422 # rejected
+    assert_nil flash[:error]
+    assert_nil flash[:notice]
+    response = ActiveSupport::JSON.decode(@response.body)
+    assert_not_nil response
+    assert_not_nil response['has_dependent_spectra']
+    assert_equal response['has_dependent_spectra'], true
+    assert_not_nil response['is_latest']
+    assert_equal response['is_latest'], true
+  end
+
   test "powertag creation which generates a snapshot and returns a new #tagname" do 
     session[:user_id] = users(:admin).id # log in
 

@@ -53,6 +53,75 @@ class TagTest < ActiveSupport::TestCase
     assert tag.save
   end
 
+  test "powertags .is_deletable? should be false if they do not have the latest snapshot for that spectrum" do 
+
+    # create a snapshot
+    tag = Tag.new({
+      user_id:     users(:aaron).id,
+      spectrum_id: users(:aaron).spectrums.last.id,
+      name:        'smooth:1'
+    })
+    assert tag.save!
+    assert_equal tag.name, 'smooth:1'
+    assert tag.create_snapshot('{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}')
+
+    # create a snapshot which will refer to the same spectrum, and be the latest:
+    tag2 = Tag.new({
+      user_id:     tag.user_id,
+      spectrum_id: tag.spectrum_id,
+      name:        'smooth:3'
+    })
+    assert tag2.save!
+    assert_equal tag2.name, 'smooth:3'
+    tag2.create_snapshot('{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}')
+
+    assert !tag.is_deletable?
+    assert tag.snapshot
+    assert !tag.snapshot.is_latest?
+    assert !tag.snapshot.has_dependent_spectra?
+
+    # ensure no change:
+    assert_difference('Tag.count', 0) do
+      tag.destroy
+    end
+
+  end
+
+  test "powertags .is_deletable? should be false if other tags rely on their snapshot" do 
+
+    tag = Tag.new({
+      user_id:     users(:aaron).id,
+      spectrum_id: users(:aaron).spectrums.last.id,
+      name:        'smooth:1'
+    })
+    assert tag.save!
+    assert_equal tag.name, 'smooth:1'
+    assert tag.create_snapshot('{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}')
+    assert tag.snapshot.is_latest?
+
+    # create a snapshot which will reference this snapshot, and be dependent on it:
+    tag2 = Tag.new({
+      user_id:     Spectrum.last.user_id,
+      spectrum_id: Spectrum.last.id,
+      name:        "subtract:#{tag.spectrum_id}"
+    })
+    assert tag2.save!
+    assert_not_equal tag.spectrum_id, tag2.spectrum_id
+    tag2.create_snapshot('{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}')
+    assert_equal tag2.name, "subtract:#{tag.spectrum_id}##{tag.snapshot.id}"
+
+    assert !tag.is_deletable?
+    assert tag.snapshot
+    assert tag.snapshot.is_latest?
+    assert tag.snapshot.has_dependent_spectra?
+
+    # ensure no change:
+    assert_difference('Tag.count', 0) do
+      tag.destroy
+    end
+
+  end
+
   test "non-admin powertag creation invalidation for other user's spectrum" do 
     tag = Tag.new({
       user_id:     users(:aaron).id,

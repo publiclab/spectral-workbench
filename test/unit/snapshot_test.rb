@@ -117,6 +117,7 @@ class SnapshotTest < ActiveSupport::TestCase
     assert_not_nil Spectrum.last.snapshots.last.spectrum_id
     assert_equal Spectrum.last.snapshots.last.spectrum_id, spectrum.id
     assert_equal Spectrum.last.latest_snapshot.spectrum_id, spectrum.id
+    assert_equal Spectrum.last.latest_snapshot.id, snapshot.id
 
   end
 
@@ -323,12 +324,14 @@ class SnapshotTest < ActiveSupport::TestCase
     assert snapshot2.valid?
 
     assert !snapshot1.is_latest?
+    assert !snapshot1.is_deletable?
     assert_difference 'Snapshot.count', 0 do
       snapshot1.destroy
     end
 
     # this one should be the latest, so deletable:
     assert snapshot2.is_latest?
+    assert snapshot2.is_deletable?
     assert_difference 'Snapshot.count', -1 do
       snapshot2.destroy
     end

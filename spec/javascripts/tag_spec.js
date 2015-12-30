@@ -25,10 +25,12 @@ describe("Tag", function() {
       // the following is only faked properly for the 'sodium' tag, of course:
       else if (object.url == '/tags')             response = object.success({'saved':{'sodium':        {'id': 1}, 
                                                                                       'subtract:3#4':  {'id': 2, 'snapshot_id': 5}, // where 5 is the new snapshot
+                                                                                      'smooth:3':      {'id': 2, 'snapshot_id': 5},
                                                                                       'range:400-700': {'id': 3, 'snapshot_id': 6}
                                                              }}); 
       else if (object.url == '/snapshots/4.json') response = object.success(TestResponses.snapshot.success.responseText);
       else if (object.url == '/tags/1' || object.url == '/tags/42') response = object.success('success'); // && object.method == "DELETE"
+      else if (object.url == '/tags/99') response = object.error({ 'has_dependent_spectra': true }); // && object.method == "DELETE"
       else response = 'none';
 
       // check this if you have trouble faking a server response: 
@@ -114,16 +116,16 @@ describe("Tag", function() {
 
       tag.id = 1; // fake the id because normally this'd have been added upon creation response from server;
 
-      tag.destroy(function(tag2) {
+      tag.destroy(function(deletedTag) {
 
-        expect(tag2).toBeDefined(); // the removed tag is returned
+        expect(deletedTag).toBeDefined(); // the removed tag is returned
  
         expect(taglength - graph.datum.tags.length).toBe(1);
         expect(graph.datum.getTag('sodium')).toBe(false); // this won't work if there's more than 1 'upload' tag
 
         // explicitly check that this exact tag is no longer listed; 
         // not just a tag with the same name:
-        expect(graph.datum.tags.indexOf(tag2)).toBe(-1); 
+        expect(graph.datum.tags.indexOf(deletedTag)).toBe(-1); 
 
         deletionCallbackSpy();
 
@@ -139,6 +141,62 @@ describe("Tag", function() {
   it("deletion callback is called", function() {
 
     expect(deletionCallbackSpy).toHaveBeenCalled();
+
+  });
+
+
+  var errorDeletionCallbackSpy = jasmine.createSpy('success');
+
+  it("indicates deletion failure of powertag 'smooth:3' due to server's finding that tag.has_dependent_spectra is true; another spectrum relies on it", function(done) {
+
+    // first create the tag:
+    graph.datum.addTag('smooth:3', function() {
+
+      var taglength = graph.datum.tags.length;
+
+      graph.datum.getTags('smooth:3', function(tag) {
+ 
+        tag.id = 99; // fake the id to trigger rejected deletion
+
+        expect(tag.has_dependent_spectra).not.toBe(true); // this should not yet be set
+
+        var index = graph.datum.tags.indexOf(tag);
+ 
+        tag.destroy(function(response, deletedTag) {
+
+          expect(deletedTag).toBeDefined(); // the removed tag is returned
+          expect(deletedTag.has_dependent_spectra).toBe(true); // this should have blocked deletability
+          expect(taglength - graph.datum.tags.length).toBe(0); // no change
+          expect(graph.datum.getTag('smooth:3')).not.toBe(false); // should still be there
+ 
+          // explicitly check that this exact tag is still listed; 
+          expect(graph.datum.tags.indexOf(deletedTag)).toBe(index); 
+          expect(graph.datum.tags.indexOf(deletedTag)).not.toBe(-1); 
+
+          // check interface for spinner; 
+          // we can't do this because we've changed tag.id! 
+          /* 
+          expect($('tr#tag_' + tag.id + ' .label i.fa').length).not.toBe(0);
+          expect($('tr#tag_' + tag.id + ' .label i.fa').hasClass('fa-spinner')).toBe(false);
+          expect($('tr#tag_' + tag.id + ' .label i.fa').hasClass('fa-alert')).toBe(true);
+          */
+ 
+          errorDeletionCallbackSpy();
+ 
+          done(); // complete asynchronous call
+ 
+        });
+ 
+      });
+
+    });
+
+  });
+
+
+  it("errored deletion callback is called", function() {
+
+    expect(errorDeletionCallbackSpy).toHaveBeenCalled();
 
   });
 
@@ -199,9 +257,11 @@ describe("Tag", function() {
 
       // apply the powertag! It may have been parsed already but we try again to be sure. 
       tag.parse();
-      expect(tag.data).not.toBeUndefined();
+
       // should have cached a data snapshot locally:
+      expect(tag.data).not.toBeUndefined();
       expect(typeof tag.data).toBe('string');
+      expect(tag.has_dependent_spectra).not.toBe(true); // because we set this in the faked response, to test
 
       expect(graph.datum.getExtentX()[0]).toBeGreaterThan(400); // only within 400-700 range
       expect(graph.datum.getExtentX()[1]).toBeLessThan(700); // only within 400-700 range

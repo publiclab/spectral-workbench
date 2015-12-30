@@ -73,14 +73,30 @@ class TagsController < ApplicationController
     @tag = Tag.find(params[:id])
     if @tag
       if @tag.user_id == current_user.id || current_user.role == "admin"
-        @tag.destroy
-        respond_to do |format|
-          format.html do
-            if request.xhr?
-              render :text => "success"
-            else
-              flash[:notice] = "Tag '"+@tag.name+"' deleted."
-              redirect_to spectrum_path(@tag.spectrum_id)
+        if @tag.is_deletable?
+          @tag.destroy
+          flash[:notice] = "Tag '#{@tag.name}' deleted."
+          respond_to do |format|
+            format.html do
+              if request.xhr?
+                render :text => "success"
+              else
+                redirect_to spectrum_path(@tag.spectrum_id)
+              end
+            end
+          end
+        else
+          respond_to do |format|
+            format.html do
+              if request.xhr?
+                render :json => { has_dependent_spectra: @tag.snapshot.has_dependent_spectra?, 
+                                  is_latest: @tag.snapshot.is_latest?
+                                },
+                       :status => :unprocessable_entity
+              else
+                flash[:error] = "Powertags/operations may not be deleted if other data relies upon it."
+                redirect_to spectrum_path(@tag.spectrum_id)
+              end
             end
           end
         end
@@ -95,12 +111,11 @@ class TagsController < ApplicationController
   end
 
 
+  # resourceful request for a spectrum's or set's tag list:
   def index
-    # resourceful request for a set's tag list:
     if params[:set_id]
       @set = Set.find params[:set_id]
       render partial: 'tags/inlineList', locals: { datum: @set }, layout: false
-    # resourceful request for a spectrum's tag list:
     elsif params[:spectrum_id]
       @spectrum = Spectrum.find params[:spectrum_id]
       @spectrum.tags.each do |tag|

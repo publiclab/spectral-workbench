@@ -17,6 +17,7 @@
     jQuery(document).ready(function($) {
       graph = new SpectralWorkbench.Graph({
         spectrum_id: <%= @spectrum.id %>,
+        // the following will be deprecated for snapshot/tag-based metadata
         calibrated: <%= @spectrum.calibrated %>,
         range: <%= @spectrum.has_powertag('range') ? @spectrum.range : false %>,
         sample_row: <%= @spectrum.sample_row %>

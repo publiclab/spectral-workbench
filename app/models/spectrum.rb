@@ -7,7 +7,7 @@ class Spectrum < ActiveRecord::Base
   attr_accessible :title, :author, :user_id, :notes, :photo, :video_row
 
   # place this before the has_one :snapshot so it runs before dependent => :destroy
-  before_destroy :validate_destroyable
+  before_destroy :is_deletable?
 
   has_many :comments, :dependent => :destroy
   has_many :likes, :dependent => :destroy
@@ -36,11 +36,11 @@ class Spectrum < ActiveRecord::Base
   after_save :generate_processed_spectrum
   before_save :update_calibrated
 
-  # not allowed to destroy a spectrum someone else depends on
-  def validate_destroyable
+  # validation: not allowed to destroy a spectrum someone else depends on
+  def is_deletable?
     destroyable = true
     self.tags.each do |tag|
-      destroyable = destroyable && tag.validate_destroyable
+      destroyable = destroyable && tag.is_deletable?
     end
     errors[:base] << "spectrum is depended upon by other data"
     destroyable
