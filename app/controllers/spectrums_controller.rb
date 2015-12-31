@@ -82,16 +82,21 @@ class SpectrumsController < ApplicationController
     @spectrum = Spectrum.find(params[:id])
     respond_with(@spectrum) do |format|
       format.html {
-        if logged_in?
-          @spectra = Spectrum.find(:all, :limit => 12, :order => "created_at DESC", :conditions => ["id != ? AND author = ?",@spectrum.id,current_user.login])
+        # temporary routing until we deprecate 1.0 paths to /legacy
+        if @spectrum.has_operations && params[:action] != 'show2' && params[:v] != '1'
+          redirect_to "/spectrums/show2/#{@spectrum.id}"
         else
-          @spectra = Spectrum.find(:all, :limit => 12, :order => "created_at DESC", :conditions => ["id != ?",@spectrum.id])
+          if logged_in?
+            @spectra = Spectrum.find(:all, :limit => 12, :order => "created_at DESC", :conditions => ["id != ? AND author = ?",@spectrum.id,current_user.login])
+          else
+            @spectra = Spectrum.find(:all, :limit => 12, :order => "created_at DESC", :conditions => ["id != ?",@spectrum.id])
+          end
+          @sets = @spectrum.sets
+          @user_sets = SpectraSet.where(author: current_user.login).limit(20).order("created_at DESC") if logged_in?
+          @macros = Macro.find :all, :conditions => {:macro_type => "analyze"}
+          @calibrations = current_user.calibrations.select { |s| s.id != @spectrum.id } if logged_in?
+          @comment = Comment.new
         end
-        @sets = @spectrum.sets
-        @user_sets = SpectraSet.where(author: current_user.login).limit(20).order("created_at DESC") if logged_in?
-        @macros = Macro.find :all, :conditions => {:macro_type => "analyze"}
-        @calibrations = current_user.calibrations.select { |s| s.id != @spectrum.id } if logged_in?
-        @comment = Comment.new
       }
       format.xml  { render :xml => @spectrum }
       format.csv  {

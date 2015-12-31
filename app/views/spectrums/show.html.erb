@@ -9,6 +9,11 @@
 
   <% if logged_in? %>
     <% if @spectrum.author == current_user.login %>
+      <% if @spectrum.has_operations %>
+        <div class="alert alert-warning">
+          This spectrum has been edited in the new Spectral Workbench 2.0 interface. <a href="/spectrums/show2/<%= @spectrum.id %>">Continue working with it there</a> or you may encounter compatibility issues.
+        </div>
+      <% end %>
       <% if !@spectrum.calibrated %>
         <div class="alert alert-warning"><button type="button" class="close" data-dismiss="alert">×</button>
           This spectrum is not yet calibrated. <a class="btn btn-primary btn-small" data-toggle="modal" href="#calibratemodal1" onClick="$('calibrate-begin').focus()">Calibrate</a>

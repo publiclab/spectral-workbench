@@ -88,6 +88,14 @@ class Spectrum < ActiveRecord::Base
     User.find self.user_id
   end
 
+  # this is used to determine if we should force user into 2.0 interface:
+  def has_operations
+    Tag.where(spectrum_id: self.id)
+       .collect(&:name)
+       .select { |s| !s.match(':').nil? }
+       .length > 0
+  end
+
   def self.weekly_tallies
     # past 52 weeks of data
     weeks = {}
