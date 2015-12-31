@@ -4,6 +4,8 @@ class TagsController < ApplicationController
 
 
   # FYI, we've stopped accepting requests with multiple comma-delimited tags
+  # so, if we edit SpectralWorkbench.Tag.js, we can ditch the 'errors' and 
+  # 'saved' hashes in the response. 
   def create
     @response = { 
       :errors => [],
@@ -13,6 +15,7 @@ class TagsController < ApplicationController
                         .where(id: params[:tag][:spectrum_id])
                         .limit(1)
                         .first
+    # is it a powertag? only owners or admins can make those:
     if params[:tag][:name].match(':').nil? || @spectrum.user_id == current_user.id || current_user.role == "admin"
       name = params[:tag][:name].strip # clean whitespace
       tag = Tag.new({
@@ -33,7 +36,7 @@ class TagsController < ApplicationController
         # setup the generated snapshot if needed:
         if tag.generate_snapshot? && params[:tag][:data]
           snapshot = tag.create_snapshot(params[:tag][:data])
-          tag[:snapshot_id] = snapshot.id # add it to the response even though it's not part of the record
+          @response[:saved][old_name][:snapshot_id] = snapshot.id # add it to the response even though it's not part of the record
         end
       else
         @response[:errors] << "Error: tags "+tag.errors[:name].first
@@ -75,12 +78,12 @@ class TagsController < ApplicationController
       if @tag.user_id == current_user.id || current_user.role == "admin"
         if @tag.is_deletable?
           @tag.destroy
-          flash[:notice] = "Tag '#{@tag.name}' deleted."
           respond_to do |format|
             format.html do
               if request.xhr?
                 render :text => "success"
               else
+                flash[:notice] = "Tag '#{@tag.name}' deleted."
                 redirect_to spectrum_path(@tag.spectrum_id)
               end
             end
@@ -90,6 +93,7 @@ class TagsController < ApplicationController
             format.html do
               if request.xhr?
                 render :json => { has_dependent_spectra: @tag.snapshot.has_dependent_spectra?, 
+                                  dependent_spectra: @tag.dependent_spectrum_ids,
                                   is_latest: @tag.snapshot.is_latest?
                                 },
                        :status => :unprocessable_entity
@@ -118,18 +122,20 @@ class TagsController < ApplicationController
       render partial: 'tags/inlineList', locals: { datum: @set }, layout: false
     elsif params[:spectrum_id]
       @spectrum = Spectrum.find params[:spectrum_id]
-      @spectrum.tags.each do |tag|
+      @tags = @spectrum.tags
+      @tags.each do |tag|
         if tag.snapshot
           tag[:snapshot_id] = tag.snapshot.id
           if tag.snapshot.has_dependent_spectra?
             tag[:has_dependent_spectra] = true
+            tag[:dependent_spectra] = tag.dependent_spectrum_ids
           else
             tag[:has_dependent_spectra] = false
           end
         end
       end
       if request.xhr?
-        render :json => @spectrum.tags
+        render :json => @tags
       else
         render partial: 'tags/inlineList', locals: { datum: @spectrum }, layout: false
       end

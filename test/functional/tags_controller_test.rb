@@ -170,6 +170,8 @@ class TagsControllerTest < ActionController::TestCase
     assert_not_nil response
     assert_not_nil response['has_dependent_spectra']
     assert_equal response['has_dependent_spectra'], true
+    assert_not_nil response['dependent_spectra']
+    assert_equal response['dependent_spectra'], [tag2.spectrum_id]
     assert_not_nil response['is_latest']
     assert_equal response['is_latest'], true
   end

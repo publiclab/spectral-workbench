@@ -30,15 +30,20 @@ SpectralWorkbench.Datum = Class.extend({
 
     /* ======================================
      * Create a new Tag or PowerTag depending on name,
-     * upload it, parse it accordingly.
+     * upload it, parse it accordingly. 
      */
-    _datum.addTag = function(name, callback) {
+    _datum.addTag = function(name, callback, json) {
+
+      json = json || false;
+
+      // is it possible to have Tag constructor simply return a PowerTag if it matches?
+      // i.e. move this code into Tag?
 
       var type = SpectralWorkbench.Tag;
 
-      if (name.match(/[\w\.]+:[\w0-9\-\#\*\+\[\]\(\)]+/)) type = SpectralWorkbench.PowerTag;
+      if (name.match(/[\w\.]+:[\w0-9\-#\*\+\[\]\(\)]+/)) type = SpectralWorkbench.PowerTag;
 
-      return new type(_datum, name, false, callback);
+      return new type(_datum, name, json, callback);
 
     }
 
@@ -151,9 +156,9 @@ SpectralWorkbench.Datum = Class.extend({
               else return 1;
             });
 
-            response.forEach(function(tag) {
+            response.forEach(function(json) {
 
-              _datum.tags.push(new SpectralWorkbench.Tag(_datum, tag.name, tag));
+              _datum.addTag(json.name, false, json);
 
             });
 

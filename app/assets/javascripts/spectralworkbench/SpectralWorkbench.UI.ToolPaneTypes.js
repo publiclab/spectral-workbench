@@ -151,10 +151,18 @@ SpectralWorkbench.UI.ToolPaneTypes = {
       form.formEl.hide();
       $(form.el).find('.results').html('');
       form.customFormEl.html("<p>Enter a distance in points to average ahead and behind:</p><input class='distance' type='text' value='3' />");
+      form.el.find('.distance').keypress(function(e) {
+        if (e.which == 13) {
+          e.preventDefault();
+          form.applyEl.focus(); // this isn't doing anything :-(
+          form.applyEl.trigger('click');
+        }
+      });
 
     },
     onApply: function(form) {
 
+      form.applyEl.html('<i class="fa fa-spinner fa-spin fa-white"></i>'); // this isn't doing anything :-(
       form.graph.datum.addTag('smooth:' + form.el.find('.distance').val());
 
       form.graph.reload();

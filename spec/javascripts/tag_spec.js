@@ -24,7 +24,7 @@ describe("Tag", function() {
       else if (object.url == '/spectrums/9/tags') response = object.success(TestResponses.tags.success.responseText);
       // the following is only faked properly for the 'sodium' tag, of course:
       else if (object.url == '/tags')             response = object.success({'saved':{'sodium':        {'id': 1}, 
-                                                                                      'subtract:3#4':  {'id': 2, 'snapshot_id': 5}, // where 5 is the new snapshot
+                                                                                      'subtract:3':    {'id': 2, 'snapshot_id': 5, 'name': 'subtract:3#4'},
                                                                                       'smooth:3':      {'id': 2, 'snapshot_id': 5},
                                                                                       'range:400-700': {'id': 3, 'snapshot_id': 6}
                                                              }}); 
@@ -203,14 +203,16 @@ describe("Tag", function() {
 
   var creationCallbackSpy = jasmine.createSpy('success');
 
-  it("creates powertag 'subtract' and is aware of specified snapshot", function() {
+  it("creates powertag 'subtract' and is aware of specified snapshot reference #4", function() {
 
-    tag = graph.datum.addTag('subtract:3#4', function(tag) {
+    tag = graph.datum.addTag('subtract:3', function(tag) {
 
       expect(tag.key).toBeDefined();
       expect(tag.key).toBe('subtract');
       expect(tag.value).toBeDefined();
       expect(tag.value).toBe('3');
+      expect(tag.has_reference).toBe(true);
+      expect(tag.reference_id).toBe(4);
       expect(tag instanceof SpectralWorkbench.PowerTag).toEqual(true);
       expect(tag.needs_snapshot).toBe(true);
       expect(tag.snapshot_id).toBeDefined();

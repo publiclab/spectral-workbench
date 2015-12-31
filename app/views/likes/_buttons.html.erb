@@ -1,11 +1,11 @@
 <span class="like-container-<%= datum.id %> btn-group">
 <a <% if !logged_in? %>rel="tooltip" title="Log in first!" <% end %>class="btn btn-small">
-  <i class="fa fa-star<% if datum.like_count == 0 %>-empty<% end %>"></i> 
+  <i class="fa fa-star<% if datum.like_count == 0 %>-o<% end %>"></i> 
   <span class="liked"><%= datum.like_count %></span>
 </a>
 <% if logged_in? %>
   <a class="btn-like btn btn-small" onClick="SpectralWorkbench.UI.Misc.toggleLike(<%= datum.id %>);">
-    <i class="fa fa-star<% unless datum.liked_by(current_user.id) %>-empty<% end %>"></i>
+    <i class="fa fa-star<% unless datum.liked_by(current_user.id) %>-o<% end %>"></i>
     <span class="action">
     <% if datum.liked_by(current_user.id) %>Unlike<% else %> Like<% end %>
     </span>

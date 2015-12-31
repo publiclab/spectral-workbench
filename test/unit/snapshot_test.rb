@@ -14,8 +14,10 @@ class SnapshotTest < ActiveSupport::TestCase
 
     snapshot.save!
 
-    assert snapshot
-    assert snapshot.is_latest?
+    assert         snapshot
+    assert         snapshot.is_latest?
+    assert_not_nil snapshot.dependent_spectrum_ids
+    assert_equal   snapshot.dependent_spectrum_ids, []
     assert_not_nil snapshot.id
     assert_not_nil Snapshot.find snapshot.id
 

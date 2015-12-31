@@ -53,8 +53,12 @@ class Snapshot < ActiveRecord::Base
     latest.id == self.id
   end
 
+  def dependent_spectrum_ids
+    Tag.where('name LIKE (?)', '%#' + self.id.to_s).collect(&:spectrum_id).uniq
+  end
+
   def has_dependent_spectra?
-    Tag.where('name LIKE (?)', '%#' + self.id.to_s).length > 0
+    self.dependent_spectrum_ids.length > 0
   end
 
   # negative form used in validation

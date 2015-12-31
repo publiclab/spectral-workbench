@@ -9,6 +9,8 @@ class TagTest < ActiveSupport::TestCase
       user_id:     users(:quentin).id
     })
     assert tag.save!
+    assert_not_nil tag.dependent_spectrum_ids
+    assert_equal tag.dependent_spectrum_ids, []
     assert_not_nil tag.spectrum
   end
 
@@ -64,6 +66,9 @@ class TagTest < ActiveSupport::TestCase
     assert tag.save!
     assert_equal tag.name, 'smooth:1'
     assert tag.create_snapshot('{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}')
+
+    assert_not_nil tag.dependent_spectrum_ids
+    assert_equal tag.dependent_spectrum_ids, []
 
     # create a snapshot which will refer to the same spectrum, and be the latest:
     tag2 = Tag.new({

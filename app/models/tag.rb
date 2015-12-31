@@ -30,7 +30,7 @@ class Tag < ActiveRecord::Base
     if self.is_powertag?
       if self.key == 'crossSection'
         spectrum = self.spectrum
-        spectrum.sample_row = self.value
+        spectrum.sample_row = self.value # transition this to tag-based; this is just legacy compatibility
         spectrum.save
       end
       # default to latest snapshot as reference:
@@ -38,7 +38,6 @@ class Tag < ActiveRecord::Base
       # would like to generate snapshot here, but must do so in TagController, 
       # as we need client-submitted data to do so
     end
-
   end
 
   # used as validation
@@ -97,6 +96,10 @@ class Tag < ActiveRecord::Base
 
   def reference
     Snapshot.where(id: self.reference_id).last
+  end
+
+  def dependent_spectrum_ids
+    self.snapshot.nil? ? [] : self.snapshot.dependent_spectrum_ids
   end
 
   # Refer to an existing snapshot with an operation; 

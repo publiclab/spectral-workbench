@@ -234,18 +234,21 @@ SpectralWorkbench.Tag = Class.extend({
  
     }
 
+    if (!(_tag instanceof SpectralWorkbench.PowerTag)) { // note: this section overridden in PowerTag
 
-    if (_tag.uploadable && callback) {
+      if (_tag.uploadable && callback) {
+ 
+        _tag.upload(callback);
+ 
+        // render called after upload, in uploadSuccess
+ 
+      } else {
+ 
+        if (callback) callback(); // callback directly, as we don't need to wait for an upload
 
-      _tag.upload(callback);
-
-      // render called after upload, in uploadSuccess
-
-    } else {
-
-      if (callback) callback(); // callback directly, as we don't need to wait for an upload
-
-      _tag.render(); // note: overridden in PowerTag
+        _tag.render();
+ 
+      }
 
     }
 

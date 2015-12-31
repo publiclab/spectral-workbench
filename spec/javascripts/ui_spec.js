@@ -180,7 +180,7 @@ describe("UI", function() {
     tagForm = new SpectralWorkbench.UI.TagForm(graph, function() {
 
       // be sure the tag is there now. 
-      expect($('.tags .list span:last a:first').html()).toBe('range:500-550');
+      expect($('.operations tr:last .label').html()).toBe('range:500-550');
 
       // datum.tags.push is run **after** the callback :-/
       //expect(graph.datum.getTag('range:500-550')).not.toBe(false);
