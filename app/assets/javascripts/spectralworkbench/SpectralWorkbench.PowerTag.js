@@ -196,12 +196,6 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
 
       _tag.operationEl = $("<tr class='operation-tag' data-id='" + _tag.id + "' id='tag_" + _tag.id + "'></tr>");
 
-      if (_tag.needs_reference && !_tag.has_reference) {
-
-        // indicate that there is no reference, which is unusual
-        // ...
-
-      }
 
       if (_tag.snapshot_id) {
 
@@ -243,6 +237,18 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
         _tag.operationEl.append("<td class='snapshot'></td>");
 
       }
+
+
+      // indicate that there is no reference, which is unusual
+      if (_tag.needs_reference && _tag.has_reference != true) {
+
+        _tag.operationEl.find(".snapshot").append('<i style="color:#ed0;" class="fa fa-exclamation-triangle" rel="popover" data-placement="bottom" data-html="true" data-title="No snapshot" data-content=""></i>');
+        var string = "<p>The spectrum this operation refers to does not have any snapshots, which means it may be uncalibrated, and/or be created using Spectral Workbench 1.0, an old version. Be aware that this may affect your use of this spectrum.</p>";
+        _tag.operationEl.find(".snapshot i").attr('data-content', string);
+        _tag.operationEl.find(".snapshot i").popover();
+
+      }
+
 
       _tag.operationEl.append("<td class='title'><span class='label purple'>" + _tag.name + "</span></td>");
       if (_tag.has_reference) _tag.operationEl.find('.label').append("#" + _tag.reference_id);
