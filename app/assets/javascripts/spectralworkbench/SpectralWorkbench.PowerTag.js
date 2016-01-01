@@ -26,6 +26,13 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
 
   ],
 
+  reference_tagnames: [
+
+    "calibration",
+    "subtract",
+    "transform"
+
+  ],
 
   /* ======================================
    * <json> is a JSON obj of the tag as received from the server; 
@@ -45,8 +52,8 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
     _tag.value = _tag.name.split(':')[1];
 
     // scan for tags that require snapshots, but this isn't the right place to save it -- we need to parse it!
-    if (_tag.snapshot_tagnames.indexOf(_tag.key) != -1) _tag.needs_snapshot = true;
-console.log('json',_tag.name,_tag.json)
+    if (_tag.snapshot_tagnames.indexOf(_tag.key) != -1)  _tag.needs_snapshot  = true;
+    if (_tag.reference_tagnames.indexOf(_tag.key) != -1) _tag.needs_reference = true;
 
 
     // in a new tag, we rely on parent class's tag.upload() to copy 
@@ -56,9 +63,10 @@ console.log('json',_tag.name,_tag.json)
       // has it generated a snapshot?
       // note that this won't have happened yet for new tags, until after parsing;
       // however, we check response from tag.upload() for a snapshot id and set it there too
-      if (json.hasOwnProperty('snapshot_id'))           _tag.snapshot_id           = json.snapshot_id;
-      if (json.hasOwnProperty('has_dependent_spectra')) _tag.has_dependent_spectra = json.has_dependent_spectra;
-      if (json.hasOwnProperty('dependent_spectra'))     _tag.dependent_spectra     = json.dependent_spectra;
+      if (json.hasOwnProperty('snapshot_id'))                 _tag.snapshot_id                 = json.snapshot_id;
+      if (json.hasOwnProperty('has_dependent_spectra'))       _tag.has_dependent_spectra       = json.has_dependent_spectra;
+      if (json.hasOwnProperty('dependent_spectra'))           _tag.dependent_spectra           = json.dependent_spectra;
+      if (json.hasOwnProperty('refers_to_latest_snapshot'))   _tag.refers_to_latest_snapshot   = json.refers_to_latest_snapshot;
 
     }
 
@@ -188,9 +196,30 @@ console.log('json',_tag.name,_tag.json)
 
       _tag.operationEl = $("<tr class='operation-tag' data-id='" + _tag.id + "' id='tag_" + _tag.id + "'></tr>");
 
+      if (_tag.needs_reference && !_tag.has_reference) {
+
+        // indicate that there is no reference, which is unusual
+        // ...
+
+      }
+
       if (_tag.snapshot_id) {
 
+        // indicate snapshot
         _tag.operationEl.append("<td class='snapshot'><a href='https://publiclab.org/wiki/spectral-workbench-snapshots'><i rel='tooltip' title='This operation generated a data snapshot with id " + _tag.snapshot_id + ". Click to learn more.' class='fa fa-thumb-tack'></i></a></td>");
+
+
+        // display if not pointing at latest snapshot, in popover
+        if (_tag.refers_to_latest_snapshot) {
+
+          _tag.operationEl.find(".snapshot").append('<i style="color:#ed0;" class="fa fa-exclamation-triangle" rel="popover" data-placement="bottom" data-html="true" data-title="Updates" data-content=""></i>');
+          var string = "<p>The spectrum this operation refers to has been edited since the reference was made, and this operation no longer refers to the most recent snapshot of the spectrum.</p>";
+          string += "<p><a class='btn btn-small disabled'>Update the reference to latest</a></p>"
+          _tag.operationEl.find(".snapshot i").attr('data-content', string);
+          _tag.operationEl.find(".snapshot i").popover();
+
+        }
+
 
         // display referring spectra in a popover
         if (_tag.dependent_spectra) {
@@ -207,6 +236,7 @@ console.log('json',_tag.name,_tag.json)
           _tag.operationEl.find(".snapshot i").popover();
 
        }
+
 
       } else {
 

@@ -99,6 +99,7 @@ class TagsControllerTest < ActionController::TestCase
     assert_not_nil response['saved']['range:100-500']['name']
     assert_not_nil response['saved']['range:100-500']['created_at']
     assert_nil response['saved']['range:100-500']['has_dependent_spectra']
+    assert_nil response['saved']['range:100-500']['reference_is_latest']
     assert_response :success
   end
 
@@ -205,6 +206,65 @@ class TagsControllerTest < ActionController::TestCase
     assert_not_nil response['saved'][tagname]['id']
     assert_not_nil response['saved'][tagname]['name']
     assert response['saved'][tagname]['name'], tagname + "##{tag.snapshot.id}"
+  end
+
+  test "powertag index listing for spectrum, which indicates that a referenced snapshot is no longer latest for that spectrum" do 
+
+    # create a snapshot which will be referred to:
+    tag = Tag.new({
+      user_id:     spectrums(:two).user_id,
+      spectrum_id: spectrums(:two).id,
+      name:        "smooth:3"
+    })
+    assert tag.save!
+    data = '{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}'
+    tag.create_snapshot(data)
+
+    # create an operation which will refer to the snapshot:
+    tag2 = Tag.new({
+      user_id:     spectrums(:one).user_id,
+      spectrum_id: spectrums(:one).id,
+      name:        "subtract:#{spectrums(:two).id}"
+    })
+    assert tag2.save!
+
+    @request.headers["Content-Type"] = "application/json"
+    @request.headers["Accept"] = "application/javascript"
+
+    xhr :get, :index, spectrum_id: spectrums(:one).id, :format => :json
+
+    assert_response :success
+    response = ActiveSupport::JSON.decode(@response.body)
+    assert_not_nil response
+    tag = response.last
+    assert_not_nil tag
+    assert_not_equal tag['name'], "subtract:#{spectrums(:two).id}"
+    assert_equal     tag['name'], "subtract:#{spectrums(:two).id}##{spectrums(:two).snapshots.first.id}"
+    assert_not_nil   tag['refers_to_latest_snapshot']
+    assert_equal     tag['refers_to_latest_snapshot'], true
+
+    # create a new snapshot, making our tag no longer pointed at the most recent snapshot
+    tag = Tag.new({
+      user_id:     spectrums(:two).user_id,
+      spectrum_id: spectrums(:two).id,
+      name:        'range:100-500'
+    })
+    assert tag.save!
+    data = '{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}'
+    tag.create_snapshot(data)
+
+    xhr :get, :index, spectrum_id: spectrums(:one).id, :format => :json
+    assert_response :success
+    response = ActiveSupport::JSON.decode(@response.body)
+    assert_not_nil response
+    tag = response.last
+    index = response.length - 1
+    assert_not_nil tag
+    assert_not_equal tag['name'], "subtract:#{spectrums(:two).id}"
+    assert_equal     tag['name'], "subtract:#{spectrums(:two).id}##{spectrums(:two).snapshots.first.id}"
+    assert_not_nil   tag['refers_to_latest_snapshot']
+    assert_equal     tag['refers_to_latest_snapshot'], false
+
   end
 
 end

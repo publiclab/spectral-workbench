@@ -124,6 +124,8 @@ class TagsController < ApplicationController
       @spectrum = Spectrum.find params[:spectrum_id]
       @tags = @spectrum.tags
       @tags.each do |tag|
+        # may be able to append this information in the model, tuck it away
+        tag[:refers_to_latest_snapshot] = tag.reference.is_latest? if tag.has_reference?
         if tag.snapshot
           tag[:snapshot_id] = tag.snapshot.id
           if tag.snapshot.has_dependent_spectra?
