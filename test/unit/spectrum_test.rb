@@ -89,9 +89,11 @@ class SpectrumTest < ActiveSupport::TestCase
     assert_not_nil s.id
     assert_not_equal s.id, spectrums(:one).id
     assert_equal s.tags.length - 1, spectrums(:one).tags.length
-    assert_equal s.tags.first.name, spectrums(:one).tags.first.name
-    assert_equal s.tags.first.name, "smooth:2"
-    assert_not_nil s.tags.first.snapshot
+    assert_equal s.tags.order('created_at').first.name, spectrums(:one).tags.order('created_at').first.name
+    assert_equal s.tags[0].name, "cloneOf:#{spectrums(:one).id}"
+    assert_equal s.tags[1].name, "smooth:2"
+    assert_not_equal s.tags.first.user_id, spectrums(:one).tags.first.user_id
+    assert_not_nil s.tags[1].snapshot
 
   end
 

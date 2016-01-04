@@ -123,7 +123,7 @@ class TagsController < ApplicationController
     elsif params[:spectrum_id]
       @spectrum = Spectrum.find params[:spectrum_id]
       @tags = []
-      @spectrum.tags.each do |tag|
+      @spectrum.tags.order('created_at').each do |tag|
         # here we convert to a hash so we can append arbitrary fields without triggering a warning:
         hash = tag.attributes
         # may be able to append this information in the model, tuck it away
