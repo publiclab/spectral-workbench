@@ -90,6 +90,8 @@ SpectralWorkbench::Application.routes.draw do
 
   get '/upload' => 'spectrums#new'
 
+  get '/tags/change_reference/:id' => 'tags#change_reference'
+
   resources :users do
     resources :spectrums
     resources :tags

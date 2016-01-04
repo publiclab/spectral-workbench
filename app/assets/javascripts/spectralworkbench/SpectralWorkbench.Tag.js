@@ -11,23 +11,6 @@ SpectralWorkbench.Tag = Class.extend({
     _tag.datum = datum;
     _tag.deletable = true; // this is only false for some PowerTags, a subclass
 
-    _tag.description = function() {
-
-      if      (_tag.key == "smooth")            return "Rolling average smoothing.";
-      else if (_tag.key == "range")             return "Limits wavelength range.";
-      else if (_tag.key == "transform")         return "Filters this spectrum with a math expression.";
-      else if (_tag.key == "subtract")          return "Subtracts <a href='/spectrums/" + _tag.value + "'>Spectrum " + _tag.value + "</a> from this.";
-      else if (_tag.key == "calibrate")         return "Copies calibration from <a href='/spectrums/" + _tag.value + "'>Spectrum " + _tag.value + "</a>.";
-      else if (_tag.key == "cloneOf")           return "Spectrum is a copy of <a href='/spectrums/" + _tag.value + "'>Spectrum " + _tag.value + "</a>.";
-      else if (_tag.key == "linearCalibration") return "Manually calibrated with two reference points.";
-      else if (_tag.key == "error")             return "Scores a calibration 'fit' by comparison to a known reference; lower is better, zero is perfect.";
-      else if (_tag.key == "calibrationQuality")return "Roughly indicates how good a calibration 'fit' is.";
-      else if (_tag.key == "crossSection")      return "Sets the row of pixels, counting from top row, used to generate the graph.";
-      else if (_tag.key == "flip")              return "Indicates that the spectrum image has been flipped horizontally.";
-      else                                      return "No description yet.";
-
-    }
-
 
     if (json) { 
 

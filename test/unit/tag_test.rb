@@ -55,7 +55,7 @@ class TagTest < ActiveSupport::TestCase
     assert tag.save
   end
 
-  test "powertags .is_deletable? should be false if they do not have the latest snapshot for that spectrum" do 
+  test "powertags .is_deletable? should be false if they are not the latest snapshot for that spectrum" do 
 
     # create a snapshot
     tag = Tag.new({
@@ -124,6 +124,53 @@ class TagTest < ActiveSupport::TestCase
     assert_difference('Tag.count', 0) do
       tag.destroy
     end
+
+  end
+
+  test "tag.change_reference fails gracefully if given snapshot_id isn't valid, but succeeds when valid" do 
+
+    tag = Tag.new({
+      user_id:     users(:aaron).id,
+      spectrum_id: users(:aaron).spectrums.last.id,
+      name:        'smooth:8'
+    })
+    assert tag.save!
+    assert_equal tag.name, 'smooth:8'
+    assert tag.create_snapshot('{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}')
+    assert tag.snapshot.is_latest?
+
+    tag2 = Tag.new({
+      user_id:     users(:aaron).id,
+      spectrum_id: users(:aaron).spectrums.last.id,
+      name:        'smooth:12'
+    })
+    assert tag2.save!
+    assert_equal tag2.name, 'smooth:12'
+    assert tag2.create_snapshot('{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}')
+    assert tag2.snapshot.is_latest?
+
+    # create a snapshot which will reference this snapshot, and be dependent on it:
+    tag3 = Tag.new({
+      user_id:     Spectrum.last.user_id,
+      spectrum_id: Spectrum.last.id,
+      name:        "subtract:#{tag.spectrum_id}"
+    })
+    assert tag3.save!
+    assert_equal tag3.name, "subtract:#{tag.spectrum_id}##{tag2.snapshot.id}"
+
+    # create a snapshot which we should NOT be able to change tag3's reference to:
+    assert tag3.create_snapshot('{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}')
+
+    tag3.change_reference(tag.snapshot.id + 100) # feed it an invalid id
+    assert_equal tag3.reference_id, tag2.snapshot.id # confirm no change
+
+    tag3.change_reference(tag3.snapshot.id) # feed it an id which is a real snapshot, but not of the right spectrum
+    assert_equal tag3.reference_id, tag2.snapshot.id # confirm no change
+
+    tag3.change_reference(tag.snapshot.id)
+    assert_not_equal tag3.reference_id, tag2.snapshot.id
+    assert_equal tag3.reference_id, tag.snapshot.id # confirm change
+    assert_equal tag3.name, "subtract:#{tag.spectrum_id}##{tag.snapshot.id}"
 
   end
 

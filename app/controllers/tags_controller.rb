@@ -1,6 +1,6 @@
 class TagsController < ApplicationController
 
-  before_filter :require_login, :only => [ :create, :destroy ]
+  before_filter :require_login, :only => [ :create, :destroy, :change_reference ]
 
 
   # FYI, we've stopped accepting requests with multiple comma-delimited tags
@@ -34,7 +34,7 @@ class TagsController < ApplicationController
         # send updated name to client if any:
         @response[:saved][old_name][:name] = tag.name
         # setup the generated snapshot if needed:
-        if tag.generate_snapshot? && params[:tag][:data]
+        if tag.needs_snapshot? && params[:tag][:data]
           snapshot = tag.create_snapshot(params[:tag][:data])
           @response[:saved][old_name][:snapshot_id] = snapshot.id # add it to the response even though it's not part of the record
         end
@@ -122,19 +122,23 @@ class TagsController < ApplicationController
       render partial: 'tags/inlineList', locals: { datum: @set }, layout: false
     elsif params[:spectrum_id]
       @spectrum = Spectrum.find params[:spectrum_id]
-      @tags = @spectrum.tags
-      @tags.each do |tag|
+      @tags = []
+      @spectrum.tags.each do |tag|
+        # here we convert to a hash so we can append arbitrary fields without triggering a warning:
+        hash = tag.attributes
         # may be able to append this information in the model, tuck it away
-        tag[:refers_to_latest_snapshot] = tag.reference.is_latest? if tag.has_reference?
+        hash[:refers_to_latest_snapshot] = tag.has_reference? && tag.reference.is_latest?
+        hash[:reference_spectrum_snapshots] = tag.reference_spectrum.snapshots.collect(&:id) if tag.needs_reference?
         if tag.snapshot
-          tag[:snapshot_id] = tag.snapshot.id
+          hash[:snapshot_id] = tag.snapshot.id
           if tag.snapshot.has_dependent_spectra?
-            tag[:has_dependent_spectra] = true
-            tag[:dependent_spectra] = tag.dependent_spectrum_ids
+            hash[:has_dependent_spectra] = true
+            hash[:dependent_spectra] = tag.dependent_spectrum_ids
           else
-            tag[:has_dependent_spectra] = false
+            hash[:has_dependent_spectra] = false
           end
         end
+        @tags << hash
       end
       if request.xhr?
         render :json => @tags
@@ -154,6 +158,20 @@ class TagsController < ApplicationController
       end
       @tagnames = count.sort_by {|k,v| v }.reverse
     end
+  end
+
+  # json only
+  def change_reference
+
+    @tag = Tag.find params[:id]
+    
+
+    if (@tag.user_id == current_user.id || current_user.role == "admin") && @tag.change_reference(params[:snapshot_id])
+      render :json => @tag
+    else
+      render :json => false, :status => 422
+    end
+
   end
 
 end

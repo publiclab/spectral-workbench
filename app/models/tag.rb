@@ -34,15 +34,15 @@ class Tag < ActiveRecord::Base
         spectrum.save
       end
       # default to latest snapshot as reference:
-      self.add_reference(false) if self.generate_reference?
-      # would like to generate snapshot here, but must do so in TagController, 
+      self.add_reference(false) if self.needs_reference?
+      # would like to create snapshot here, but must do so in TagController, 
       # as we need client-submitted data to do so
     end
   end
 
   # used as validation
   def is_deletable?
-    if self.is_powertag? && self.generate_snapshot?
+    if self.is_powertag? && self.needs_snapshot?
       if self.snapshot.nil?
         return true
       elsif self.snapshot.is_deletable?
@@ -76,7 +76,7 @@ class Tag < ActiveRecord::Base
     self.name.split(':').last
   end
 
-  def generate_reference?
+  def needs_reference?
     self.is_powertag? && ['calibration',
                           'subtract',
                           'transform'].include?(self.key)
@@ -96,6 +96,10 @@ class Tag < ActiveRecord::Base
 
   def reference
     Snapshot.where(id: self.reference_id).last
+  end
+
+  def reference_spectrum
+    Spectrum.find(self.value.split('#').first) if self.needs_reference?
   end
 
   def dependent_spectrum_ids
@@ -119,8 +123,18 @@ class Tag < ActiveRecord::Base
     end
   end
 
+  def change_reference(snapshot_id)
+    oldName = self.name
+    oldName = oldName.split('#')[0] if self.has_reference?
+    snapshots = Snapshot.where(id: snapshot_id).where(spectrum_id: self.reference_spectrum.id)
+    if snapshots.length > 0
+      self.name = oldName + "#" + snapshot_id.to_s
+    end
+    self.save
+  end
+
   # this should return true for any powertag that operates on the data:
-  def generate_snapshot?
+  def needs_snapshot?
     self.is_powertag? && ['calibrate', # calibration clone
                           'linearCalibration', # manual calibration
                           'subtract',

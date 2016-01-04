@@ -242,6 +242,8 @@ class TagsControllerTest < ActionController::TestCase
     assert_equal     tag['name'], "subtract:#{spectrums(:two).id}##{spectrums(:two).snapshots.first.id}"
     assert_not_nil   tag['refers_to_latest_snapshot']
     assert_equal     tag['refers_to_latest_snapshot'], true
+    assert_not_nil   tag['reference_spectrum_snapshots']
+    assert_equal     tag['reference_spectrum_snapshots'].length, spectrums(:two).snapshots.length
 
     # create a new snapshot, making our tag no longer pointed at the most recent snapshot
     tag = Tag.new({
@@ -264,6 +266,37 @@ class TagsControllerTest < ActionController::TestCase
     assert_equal     tag['name'], "subtract:#{spectrums(:two).id}##{spectrums(:two).snapshots.first.id}"
     assert_not_nil   tag['refers_to_latest_snapshot']
     assert_equal     tag['refers_to_latest_snapshot'], false
+
+  end
+
+  test 'change_reference' do 
+    session[:user_id] = nil # ensure not logged in
+
+    # try while not logged in
+    xhr :post, :change_reference, id: tags(:one).id, snapshot_id: -1
+
+    # not 422, because we're prompted to log in;
+    # it's JSON, so we're given a string back, not redirected 
+    assert @response.body.match("logged in to do this")
+
+    #session[:user_id] = User.first.id # log in
+    #assert_not_equal tags(:one).user_id, User.first.id
+
+    # try non-owned snapshot_id (this requires setup of a tag which actually has a reference spectrum...)
+    #xhr :post, :change_reference, id: tags(:one).id, snapshot_id: -1
+
+    # 422, because we don't own it:
+    #assert_response 422
+
+    # remainder is well-tested in tag unit test... 
+
+
+    # try invalid snapshot_id
+    # xhr :post, :change_reference, id: tags(:one).id, snapshot_id: -1
+    
+    # assert_response 422
+
+    # try successful request
 
   end
 

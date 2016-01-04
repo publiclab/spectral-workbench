@@ -173,6 +173,7 @@ class SnapshotTest < ActiveSupport::TestCase
     assert_equal spectrums(:one).snapshots.last.id, reference_id
     assert_equal tag.value, "#{spectrums(:one).id}##{reference_id}"
     assert_not_nil tag.reference
+    assert_not_nil tag.reference_spectrum
 
     data = '{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}'
     snapshot = tag.create_snapshot(data)
@@ -203,7 +204,7 @@ class SnapshotTest < ActiveSupport::TestCase
     assert_equal tag.key, "smooth"
     assert_equal tag.value, "2"
 
-    assert tag.generate_snapshot?
+    assert tag.needs_snapshot?
 
     data = '{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}'
     assert_not_nil tag.spectrum
@@ -247,7 +248,7 @@ class SnapshotTest < ActiveSupport::TestCase
 
     assert_equal tag.key, "subtract"
 
-    assert tag.generate_snapshot?
+    assert tag.needs_snapshot?
 
     data = '{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}'
     assert tag.create_snapshot(data)

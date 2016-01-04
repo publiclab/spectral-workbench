@@ -240,7 +240,7 @@ class Spectrum < ActiveRecord::Base
     # now copy over all tags, in reverse order to preserve created_at:
     self.tags.reverse.each do |tag|
       newtag = new.tag(tag.name, user.id) unless tag.key == "cloneOf"
-      newtag.create_snapshot(tag.snapshot.data) if tag.generate_snapshot? && tag.snapshot && !tag.snapshot.data.nil?
+      newtag.create_snapshot(tag.snapshot.data) if tag.needs_snapshot? && tag.snapshot && !tag.snapshot.data.nil?
     end
     new.tag("cloneOf:#{self.id}", user.id)
     new
