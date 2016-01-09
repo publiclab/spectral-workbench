@@ -73,7 +73,7 @@
 
     <h2>Recently uploaded spectra <small class="hidden-phone">by contributors like you</small></h2>
 
-    <%= render :partial => 'spectrums/list' %>
+    <%= render :partial => 'spectrums/list', locals: { spectrums: @spectrums } %>
     <%= will_paginate @spectrums, renderer: BootstrapPagination::Rails %>
   </div>
 

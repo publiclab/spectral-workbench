@@ -40,22 +40,6 @@ describe("API", function() {
   });
 
 
-  it("can create notifications in the DOM", function() {
-
-    var noticeEl = SpectralWorkbench.API.Core.notify('Hello, world!', 'success');
-
-    expect(noticeEl.html()).toBe('<b>Success:</b> Hello, world!');
-    expect(noticeEl.html()).not.toBe('Goodbye, world!');
-    expect(noticeEl.hasClass('alert-success')).toBe(true);
-
-    var noticeEl = SpectralWorkbench.API.Core.notify('Hello, world!', 'error');
-
-    expect($('.notifications-container p').length).toBe(2);
-    expect(noticeEl.hasClass('alert-error')).toBe(true);
-
-  });
-
-
   var fetchSpectrumCallbackSpy;
 
   it("can fetch a spectrum with fetchSpectrum()", function(done) {
@@ -169,12 +153,12 @@ describe("API", function() {
 
   it("can transform graph data", function() {
 
-    expect(graph.datum.average[100]).toEqual({ y: 0.21, x: 355.376, series: 0 });
+    expect(graph.datum.average[100]).toEqual({ y: 0.21, x: 355.376});
 
     // uses function(R,G,B,A,X,Y,I,P,a,r,g,b)
     SpectralWorkbench.API.Core.transform(graph.datum, 'R+G*X'); // random transform
 
-    expect(graph.datum.average[100]).toEqual({ y: 53.526399999999995, x: 355.376, series: 0 });
+    expect(graph.datum.average[100]).toEqual({ y: 53.526399999999995, x: 355.376 });
 
   });
 
@@ -270,7 +254,7 @@ describe("API", function() {
 
   it("can compare graph data from another spectrum", function() {
 
-    SpectralWorkbench.API.Core.compare(graph, graph.datum.json); // just compare it to itself
+    SpectralWorkbench.API.Core.compare(graph, graph.datum); // just compare it to itself
 
     expect(graph.comparisons).toBeDefined();
     expect(graph.comparisons.length).toEqual(1);

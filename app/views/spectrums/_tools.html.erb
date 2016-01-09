@@ -3,7 +3,7 @@
   <div class="span4 tool-menu">
 
     <h5>Versioning <a href="//publiclab.org/wiki/spectral-workbench-tools#Versioning"><i class="fa fa-question-mark"></i></a></h5>
-    <p><a class="btn btn-small" href="/spectrums/clone/<%= @spectrum.id %>">Clone this spectrum</a> and work on a copy</p>
+    <p><a class="btn btn-small" href="/spectrums/fork/<%= @spectrum.id %>"><i class="fa fa-code-fork"></i> Fork this spectrum</a> and work on a copy</p>
 
     <h5>Data processing and display <a href="//publiclab.org/wiki/spectral-workbench-tools#Data+processing+and+display"><i class="fa fa-question-mark"></i></a></h5>
     <p><a class="btn btn-small tool-calibrate<%= ' btn-primary' unless @spectrum.calibrated %>">Calibrate</a> this spectrum</p>
@@ -23,8 +23,8 @@
     <h5>Comparison &amp; Sets <a href="//publiclab.org/wiki/spectral-workbench-tools#Comparisons+&amp;+Sets"><i class="fa fa-question-mark"></i></a></h5>
     <p><a class="btn btn-small tool-compare">Compare</a> with another spectrum</p>
     <p><a class="btn btn-small tool-similar">Find similar</a></p>
+    <p><a class="btn btn-small tool-similar-legacy" href="/match/search/<%= @spectrum.id %>">Find similar</a> (legacy)</p>
     <p><a class="btn btn-small disabled">Add to a set</a></p>
-    <p><a class="btn btn-small disabled">Save as a set</a></p>
 
     <p>Want a tool that's not listed here? <a href="//publiclab.org/wiki/spectral-workbench-wishlist">Add a request</a> to the Wishlist, or <a href="//publiclab.org/wiki/spectral-workbench-api">learn how to write a macro</a>.</p>
 
@@ -52,7 +52,7 @@
 
     <small>
 
-      <p><a href="//publiclab.org/wiki/spectral-workbench-api#Operations">Operations</a> enable reversible modification of data -- they act like filters which process the data. The graph you see above represents the data <b>after</b> these operations have been run. Delete them to undo their effects, or to apply them in a new order.</p>
+      <p><a href="//publiclab.org/wiki/spectral-workbench-operations">Operations</a> enable reversible modification of data -- they act like filters which process the data. The graph you see above represents the data <b>after</b> these operations have been run. Delete them to undo their effects, or to apply them in a new order.</p>
 
       <ul>
 
@@ -60,7 +60,7 @@
 
         <li>The <i class="fa fa-chevron-circle-down"></i> symbol indicates that the operation's data snapshot is being referred to by another operation. Click it to learn more.</li>
 
-        <li>Operations with a <code>#000</code>-style suffix, like <span class="label purple">subtract:3243#2414</span> are referring to a specific snapshot (in this example, <b>#2414</b>) of another spectrum. <a href="https://publiclab.org/wiki/spectral-workbench-snapshots#References">Click to learn more</a>.</li>
+        <li>Operations with a <code>#000</code>-style suffix, like <span class="label purple">subtract:3243#2414</span> are referring to a specific snapshot (in this example, <b>#2414</b>) of another spectrum. <a href="https://publiclab.org/wiki/spectral-workbench-snapshots#References+vs.+Snapshots">Click to learn more</a>.</li>
       <ul>
 
     </small>

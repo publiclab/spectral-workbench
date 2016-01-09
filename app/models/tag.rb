@@ -20,6 +20,25 @@ class Tag < ActiveRecord::Base
   before_save :scan_powertags
 
 
+  # this should return true for any powertag that operates on the data:
+  def needs_snapshot?
+    self.is_powertag? && ['calibrate', # calibration clone
+                          'linearCalibration', # manual calibration
+                          'subtract',
+                          'transform',
+                          'range',
+                          'crossSection',  
+                          'flip',  
+                          'smooth'].include?(self.key)
+  end
+
+  def needs_reference?
+    self.is_powertag? && ['calibration',
+                          'subtract',
+                          'forked',
+                          'transform'].include?(self.key)
+  end
+
   def powertags_by_owner
     if self.is_powertag? && self.spectrum.user_id != self.user_id && self.user.role != "admin"
       errors[:base] << "powertags may only be made by spectrum owner or admins"
@@ -76,12 +95,6 @@ class Tag < ActiveRecord::Base
     self.name.split(':').last
   end
 
-  def needs_reference?
-    self.is_powertag? && ['calibration',
-                          'subtract',
-                          'transform'].include?(self.key)
-  end
-
   def has_reference?
     self.name.match(/#/)
   end
@@ -131,18 +144,6 @@ class Tag < ActiveRecord::Base
       self.name = oldName + "#" + snapshot_id.to_s
     end
     self.save
-  end
-
-  # this should return true for any powertag that operates on the data:
-  def needs_snapshot?
-    self.is_powertag? && ['calibrate', # calibration clone
-                          'linearCalibration', # manual calibration
-                          'subtract',
-                          'transform',
-                          'range',
-                          'crossSection',  
-                          'flip',  
-                          'smooth'].include?(self.key)
   end
 
   # save a snapshot of the spectrum after having applied this operation

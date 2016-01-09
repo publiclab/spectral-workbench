@@ -9,7 +9,6 @@ SpectralWorkbench.Tag = Class.extend({
 
     _tag.name = name;
     _tag.datum = datum;
-    _tag.deletable = true; // this is only false for some PowerTags, a subclass
 
 
     if (json) { 
@@ -86,7 +85,7 @@ SpectralWorkbench.Tag = Class.extend({
     // used on failed tag upload
     _tag.notify_and_offer_clear = function() {
 
-      var notice = SpectralWorkbench.API.Core.notify("The tag you've applied couldn't be saved, but it's been run locally. <a class='tag-clear-" + _tag.id + "'>Clear it now</a>.");
+      var notice = _tag.datum.graph.UI.notify("The tag you've applied couldn't be saved, but it's been run locally. <a class='tag-clear-" + _tag.id + "'>Clear it now</a>.");
 
       $('.tag-clear-' + _tag.id).click(function() {
 
@@ -101,6 +100,7 @@ SpectralWorkbench.Tag = Class.extend({
     _tag.uploadSuccess = function(response, callback) {
 
       _tag.stopSpinner();
+      _tag.datum.graph.tagForm.clearError();
 
       // remove grey out of graph after load
       _tag.datum.graph.undim();

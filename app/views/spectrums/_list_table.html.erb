@@ -1,0 +1,36 @@
+<div class="table-scroll-container">
+  <table class="table spectra">
+    <tr>
+      <th style="width:14px;">ID</th>
+      <th style="width:40px;"></th>
+      <th>Title</th>
+      <th>Created</th>
+      <th>Author</th>
+    </tr>
+    <% spectrums.each do |spectrum| %>
+      <tr class="spectrum spectrum-<%= spectrum.id %>" id="s<%= spectrum.id %>">
+        <td><%= spectrum.id %></td>
+        <td>
+
+            <i rel="tooltip" 
+               title="This spectrum is wavelength calibrated!" 
+               style="font-size:13px;vertical-align:middle;color:#0c5;" 
+               class='fa fa-check-sign'></i>
+
+            <% if spectrum.has_powertag('range') %>
+              <a href="//publiclab.org/wiki/spectral-workbench-usage#Wavelength+range">
+              <i rel="tooltip" 
+                 title="This spectrum is range-limited." 
+                 style="font-size:13px;vertical-align:middle;color:#c33;" 
+                 class='fa fa-resize-horizontal'></i>
+              </a>
+            <% end %>
+
+        </td>
+        <td><a href="/spectrums/<%= spectrum.id %>"><%= spectrum.title %></a></td>
+        <td><%= spectrum.created_at.to_s(:short) %></td>
+        <td><a href="/profile/<%= spectrum.user.login %>"><%= spectrum.user.login %></a></td>
+      </tr>
+    <% end %>
+  </table>
+</div>

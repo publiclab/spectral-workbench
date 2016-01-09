@@ -53,9 +53,19 @@ describe("Graph", function() {
 
   });
 
+
+  xit("makes imgContainer match width of graph bounds", function() {
+
+     expect(d3.select('.nv-series-0')[0][0].getBBox().width).toBe(graph.width - 10); // 10 is the "extra"
+
+  });
+
+
   var callback;
 
 
+  // This should be deprecated once we move to purely tag-based ranges;
+  // instead we can set the range after init? 
   it("is not undefined when initialized with range", function(done) {
 
     callback = jasmine.createSpy('success');
@@ -122,21 +132,27 @@ describe("Graph", function() {
 
   it("imagePxToDisplayPx() converts an x-coordinate pixel value from image space to a display space pixel value", function() {
 
-    originalPxPerNm = graph.image.width / (graph.fullExtent[1] - graph.fullExtent[0]);
+    originalPxPerNm = originalPxPerNm = graph.image.width / (graph.fullExtent[1] - graph.fullExtent[0]);
 
-    // image 800px wide, displayed at 800px, but with range limiting pushing it wider
-    // source spectrum goes from 269.089 to 958.521, or a range of 689.432nm
-    // so, ~131nm between start and range start (400)
-    // and ~158.521nm between range end (800) and end
+    // image 800px wide (graph.image.width), normally displayed at 800px, 
+    // but with 400-800 range limiting pushing it wider; 1189.27px
+    // source spectrum goes from 269.089nm to 958.521nm, or a range of 689.432nm
+    // so, 130.911nm between start and range start (400)
+    // and 158.521nm between range end (800) and end
+    // leaving 400.0nm displayed range
     // and pxPerNm should be 1.1603754975109946
     // margins make displayed image width more difficult to calculate:
-    // default margin = { top: 10, right: 30, bottom: 20, left: 70 };
+    // default margin = { top: 10, right: 30, bottom: 20, left: 70 }; but right margin is not used in image display
     // but we can use graph.imgEl.width() for the final displayed width:
-    expect(Math.round(graph.imagePxToDisplayPx(originalPxPerNm * 130.911))).toBeCloseTo(0); // toBeCloseTo(0, 1) syntax doesn't seem to work for precision?
-    expect(Math.round(graph.imagePxToDisplayPx(originalPxPerNm * (689.432 - 158.521)))).toBeCloseTo(graph.width);
+
+    // 130 nm in original image pixels; 
+    expect(Math.round(graph.imagePxToDisplayPx(originalPxPerNm * 130.911))).toBeCloseTo(0);
+    // graph.width is 690px, displayed image, cropped
+
+    var rightEdgeNm = 689.432 - 158.521; // full range in nm minus hidden right side should be right edge in nm
+    expect(Math.round(graph.imagePxToDisplayPx(originalPxPerNm * rightEdgeNm))).toBeCloseTo(Math.round(graph.imgContainer.width())); 
 
   });
-
 
   it("imagePxToDisplayPx() converts an x-coordinate pixel value from image space to a display space pixel value without range", function() {
 
@@ -145,7 +161,13 @@ describe("Graph", function() {
     graph.datum.load();
     graph.updateSize()();
 
-    expect(graph.imagePxToDisplayPx(500)).toBeCloseTo(412.5);
+    /*
+      image should be 680px wide as seen by viewer,
+      so 500/800 = 0.625, times 680 = 425
+    */
+
+    expect(graph.imgContainer.width()).toBe(680);
+    expect(graph.imagePxToDisplayPx(500)).toBeCloseTo(425);
 
     graph.range = range;
     graph.datum.load();
@@ -158,7 +180,8 @@ describe("Graph", function() {
 
     // toBeCloseTo(0, 1) syntax doesn't seem to work for precision?
     expect(Math.round(graph.displayPxToImagePx(0))).toBeCloseTo(Math.round(originalPxPerNm * 130.911));
-    expect(Math.round(graph.displayPxToImagePx(graph.width))).toBeCloseTo(Math.round(originalPxPerNm * (689.432 - 158.521)));
+    var rightEdgeNm = 689.432 - 158.521; // displayed range in nm (~400) minus hidden right side should be right edge in nm
+    expect(Math.round(graph.displayPxToImagePx(graph.width))).toBeCloseTo(Math.round(originalPxPerNm * rightEdgeNm));
     //expect(graph.displayPxToImagePx(500)).toBeCloseTo(606.060606060606);
 
   });
@@ -181,6 +204,14 @@ describe("Graph", function() {
   });
 
 
+  xit("makes imgContainer match width of graph bounds after a range is set", function() {
+
+     expect(graph.range.length).toBe(2);
+     expect(d3.select('.nv-series-0')[0][0].getBBox().width).toBe(graph.width - 10); // 10 is the "extra" space the d3 chart requires
+
+  });
+
+
   it("gets resized when container is resized", function() {
 
     $('#graph').width(1000);
@@ -190,17 +221,23 @@ describe("Graph", function() {
     graph.updateSize(1000)();
 
     // confirm all dimensions over again
-    expect(Math.round(graph.imagePxToDisplayPx(originalPxPerNm * 130.911))).toBeCloseTo(0 - 1); // rounding error; toBeCloseTo(0, 1) syntax doesn't seem to work for precision?
-    expect(Math.round(graph.imagePxToDisplayPx(originalPxPerNm * (689.432 - 158.521)))).toBeCloseTo(graph.width - 1); // rounding error
-    expect(Math.round(graph.imagePxToDisplayPx(500))).toBeCloseTo(659);
+    //expect(d3.select('.nv-series-0')[0][0].getBBox().width).toBe(graph.width - 10); // 10 is the "extra"
+
+    expect(Math.round(graph.imagePxToDisplayPx(originalPxPerNm * 130.911))).toBeCloseTo(-1); // rounding error; toBeCloseTo(0, 1) syntax doesn't seem to work for precision?
+    var rightEdgeNm = 689.432 - 158.521; // displayed range in nm (~400) minus hidden right side should be right edge in nm
+    expect(Math.round(graph.imagePxToDisplayPx(originalPxPerNm * rightEdgeNm))).toBeCloseTo(graph.imgContainer.width() + 1); // rounding error
+    expect(Math.round(graph.imagePxToDisplayPx(500))).toBeCloseTo(675);
 
     expect(graph.displayPxToNm(0)).toBeCloseTo(graph.extent[0]);
     expect(graph.displayPxToNm(graph.width)).toBeCloseTo(graph.extent[1]);
-    expect(Math.round(graph.displayPxToNm(500))).toBeCloseTo(627);
+    expect(Math.round(graph.displayPxToNm(500))).toBeCloseTo(622);
 
     expect(graph.nmToDisplayPx(graph.extent[0])).toBeCloseTo(0);
     expect(graph.nmToDisplayPx(graph.extent[1])).toBeCloseTo(graph.width);
-    expect(Math.round(graph.nmToDisplayPx(500))).toBeCloseTo(220);
+    expect(Math.round(graph.nmToDisplayPx(500))).toBeCloseTo(225);
+
+    // measure width of graph element, but it seems to be 5px off, for some reason: 
+    // d3.select('.nv-linesWrap')[0][0].getBBox().width
 
   });
 
@@ -210,6 +247,7 @@ describe("Graph", function() {
     expect(graph.getSpectrumById(9)).not.toBeDefined();
 
   });
+
 
 
 

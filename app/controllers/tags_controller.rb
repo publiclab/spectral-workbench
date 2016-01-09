@@ -81,7 +81,7 @@ class TagsController < ApplicationController
           respond_to do |format|
             format.html do
               if request.xhr?
-                render :text => "success"
+                render :json => { :message => "success" }
               else
                 flash[:notice] = "Tag '#{@tag.name}' deleted."
                 redirect_to spectrum_path(@tag.spectrum_id)

@@ -80,7 +80,7 @@ class SpectrumTest < ActiveSupport::TestCase
     s = false # pin scope
 
     assert_difference('Spectrum.count', 1) do
-      s = spectrums(:one).clone(users(:aaron))
+      s = spectrums(:one).fork(users(:aaron))
     end
 
     # ensure this works across users:
@@ -90,7 +90,7 @@ class SpectrumTest < ActiveSupport::TestCase
     assert_not_equal s.id, spectrums(:one).id
     assert_equal s.tags.length - 1, spectrums(:one).tags.length
     assert_equal s.tags.order('created_at').first.name, spectrums(:one).tags.order('created_at').first.name
-    assert_equal s.tags[0].name, "cloneOf:#{spectrums(:one).id}"
+    assert_equal s.tags[0].name, "forked:#{spectrums(:one).id}##{snapshot.id}"
     assert_equal s.tags[1].name, "smooth:2"
     assert_not_equal s.tags.first.user_id, spectrums(:one).tags.first.user_id
     assert_not_nil s.tags[1].snapshot

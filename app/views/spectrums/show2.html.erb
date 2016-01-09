@@ -81,6 +81,7 @@
               <li class="active"><a href="#tab-tools"              data-toggle="tab"><i class="fa fa-cog"></i> Tools</a></li>
               <li>               <a href="#tab-sets"               data-toggle="tab"><i class="fa fa-list"></i> Sets</a></li>
               <li>               <a href="#tab-comments"           data-toggle="tab"><i class="fa fa-comments"></i> <%= @spectrum.comments.length %> Comments</a></li>
+              <% if @spectrum.forks %><li><a href="#tab-forks"     data-toggle="tab"><i class="fa fa-code-fork"></i> <%= @spectrum.forks.length %> Forks</a></li><% end %>
               <li class="comparisons" style="display:none;"><a href="#tab-comparisons" data-toggle="tab"><i class="fa fa-columns"></i> Comparisons</a></li>
             </ul>
            
@@ -112,6 +113,10 @@
              
               <div class="tab-pane" id="tab-comments">       
                 <%= render partial: 'comments/list', locals: { datum: @spectrum, comments: @spectrum.comments } %>
+              </div>
+             
+              <div class="tab-pane" id="tab-forks">
+                <%= render partial: 'spectrums/list_table', locals: { spectrums: @spectrum.forks } %>
               </div>
            
             </div>

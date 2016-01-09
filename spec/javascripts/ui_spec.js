@@ -78,6 +78,22 @@ describe("UI", function() {
   });
 
 
+  it("can create notifications in the DOM", function() {
+
+    var noticeEl = graph.UI.notify('Hello, world!', 'success');
+
+    expect(noticeEl.html()).toBe('<b>Success:</b> Hello, world!');
+    expect(noticeEl.html()).not.toBe('Goodbye, world!');
+    expect(noticeEl.hasClass('alert-success')).toBe(true);
+
+    var noticeEl = graph.UI.notify('Hello, world!', 'error');
+
+    expect($('.notifications-container p').length).toBe(2);
+    expect(noticeEl.hasClass('alert-error')).toBe(true);
+
+  });
+
+
   // test tag creation
   it("should generate a TagForm", function(done) {
 

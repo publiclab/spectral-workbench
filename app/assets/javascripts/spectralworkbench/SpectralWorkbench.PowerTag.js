@@ -30,6 +30,7 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
 
     "calibration",
     "subtract",
+    "forked",
     "transform"
 
   ],
@@ -47,6 +48,7 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
     // basic Tag initialization
     _tag._super(datum, name, json, false);
 
+    _tag.datum.powertags.push(_tag);
 
     _tag.key = _tag.name.split(':')[0];
     _tag.value = _tag.name.split(':')[1];
@@ -58,35 +60,8 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
 
     _tag.description = function() {
 
-      if      (_tag.key == "smooth")            return "Rolling average smoothing.";
-      else if (_tag.key == "range")             return "Limits wavelength range.";
-      else if (_tag.key == "cloneOf")           return "Spectrum is a copy of <a href='/spectrums/" + _tag.value + "'>Spectrum " + _tag.value + "</a>.";
-      else if (_tag.key == "linearCalibration") return "Manually calibrated with two reference points.";
-      else if (_tag.key == "error")             return "Scores a calibration 'fit' by comparison to a known reference; lower is better, zero is perfect.";
-      else if (_tag.key == "calibrationQuality")return "Roughly indicates how good a calibration 'fit' is.";
-      else if (_tag.key == "crossSection")      return "Sets the row of pixels, counting from top row, used to generate the graph.";
-      else if (_tag.key == "flip")              return "Indicates that the spectrum image has been flipped horizontally.";
-      else if (_tag.key == "transform")         return "Filters this spectrum with a math expression.";
-      else if (_tag.key == "blend") {
-
-        response = "Filters this spectrum with a math expression, in combination with data from <a href='/spectrums/" + _tag.value + "'>Spectrum " + _tag.value + "</a>";
-        if (_tag.has_reference) response += ", snapshot #" + _tag.reference_id;
-        return response;
-
-      } else if (_tag.key == "subtract") {
-
-        response = "Subtracts <a href='/spectrums/" + _tag.value + "'>Spectrum " + _tag.value + "</a>";
-        if (_tag.has_reference) response += ", snapshot #" + _tag.reference_id;
-        response += " from this spectrum.";
-        return response;
-
-      } else if (_tag.key == "calibrate") {
-
-        response = "Copies calibration from <a href='/spectrums/" + _tag.value + "'>Spectrum " + _tag.value + "</a>";
-        if (_tag.has_reference) response += ", snapshot #" + _tag.reference_id;
-        return response;
-
-      } else return "No description yet.";
+      if (SpectralWorkbench.API.Operations.hasOwnProperty(_tag.key)) return SpectralWorkbench.API.Operations[_tag.key].description(_tag);
+      else                                                           return "No description yet.";
 
     }
 
@@ -209,6 +184,9 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
         // remove it from datum.tags:
         _tag.datum.tags.splice(_tag.datum.tags.indexOf(_tag), 1);
 
+        // remove it from datum.powertags:
+        _tag.datum.powertags.splice(_tag.datum.powertags.indexOf(_tag), 1);
+
         // do this after removing
         _tag.showLastOperationDeleteButtonOnly();
 
@@ -254,7 +232,7 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
 
           _tag.operationEl.find(".snapshot").append('<i style="color:#999;" class="fa fa-chevron-circle-down" rel="popover" data-placement="bottom" data-html="true" data-title="Dependent spectra" data-content=""></i>');
 
-          var string = '<p><small>This <a href="https://publiclab.org/wiki/spectral-workbench-snapshots" target="_blank">snapshot</a> (ID #' + _tag.snapshot_id + ') is used by ' + _tag.dependent_spectra.length + ' other operations. You therefore cannot delete it, but you can clone this spectrum and revert this operation on the copy.</small></p><p>';
+          var string = '<p><small>This <a href="https://publiclab.org/wiki/spectral-workbench-snapshots" target="_blank">snapshot</a> (ID #' + _tag.snapshot_id + ') is used by ' + _tag.dependent_spectra.length + ' other operations. You therefore cannot delete it, but you can fork this spectrum and revert this operation on the copy.</small></p><p>';
           _tag.dependent_spectra.forEach(function(id) {
             string = string + '<a href="/spectrums/' + id + '">Spectrum ' + id + '</a> <i class="fa fa-external-link"></i><br />';
           });
@@ -265,6 +243,8 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
 
        }
 
+// only allow reference switching if it's not depended on; 
+// show explanation if it is depended on
 
         // display if not pointing at latest snapshot, in popover
         if (_tag.reference_spectrum_snapshots) {
@@ -339,7 +319,7 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
       _tag.operationEl.append("<td class='title'><span class='label purple'>" + _tag.name + "</span></td>");
       if (_tag.has_reference) _tag.operationEl.find('.label').append("#" + _tag.reference_id);
       _tag.operationEl.append("<td class='date'><small>" + moment(_tag.json.created_at).format("MM-DD-YY HH:mm a") + "</small></td>");
-      _tag.operationEl.append("<td class='description'><small>" + _tag.description() + " <a href='//publiclab.org/wiki/spectral-workbench-tags#" + _tag.key + "'>Read more</a></small></td>");
+      _tag.operationEl.append("<td class='description'><small>" + _tag.description() + " <a href='//publiclab.org/wiki/spectral-workbench-operations#" + _tag.key + "'>Read more</a></small></td>");
       _tag.operationEl.append("<td class='operations-tools'></td>");
       _tag.operationEl.find("td.operations-tools").append("<a class='operation-tag-delete'><i class='fa fa-trash btn btn-link'></i></a>");
 
@@ -387,7 +367,7 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
       operationTable.find('tr.operation-tag .date .last-indicator').remove();
 
       // need to check for *datum's last tag's* deletability
-      if (_tag.datum.tags[_tag.datum.tags.length - 1].deletable()) {
+      if (_tag.datum.powertags.length > 0 && _tag.datum.powertags[_tag.datum.powertags.length - 1].deletable()) {
 
         operationTable.find('tr.operation-tag:last .operations-tools .operation-tag-delete-disabled').hide();
         operationTable.find('tr.operation-tag:last .operations-tools .operation-tag-delete').show();
@@ -398,47 +378,37 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
     }
 
 
+    /*
+     * Eventually create a collection keyed with _tag.key in API.Operations, 
+     * each of which has a run() method which accepts a _tag, 
+     * and a description() method which returns description
+     */
     _tag.parse = function() {
 
-      if (_tag.key == "subtract") {
+      if (SpectralWorkbench.API.Operations.hasOwnProperty(_tag.key) && SpectralWorkbench.API.Operations[_tag.key].run) {
 
-        SpectralWorkbench.API.Core.subtract(_tag.datum, _tag.value_with_snapshot);
+        console.log("parsing tag", _tag.name);
+        SpectralWorkbench.API.Operations[_tag.key].run(_tag);
 
-      } else if (_tag.key == "flip:horizontal") {
+      } else {
 
-        SpectralWorkbench.API.Core.flipHorizontal(_tag.datum);
-
-      } else if (_tag.key == "calibrate") {
-
-        // We only copy spectra if you refer to a snapshot of another spectrum; 
-        // no copying from original data as it should not have a calibration:
-        if (_tag.has_reference) SpectralWorkbench.API.Core.copyCalibration(_tag.datum, _tag.value_with_snapshot);
-
-// warn user here that there's a problem
-
-      } else if (_tag.key == "transform") {
-
-        SpectralWorkbench.API.Core.transform(_tag.datum, _tag.value_with_snapshot);
-
-      } else if (_tag.key == "smooth") {
-
-        SpectralWorkbench.API.Core.smooth(_tag.datum, _tag.value);
-
-      } else if (_tag.key == "blend") {
-
-        var blend_id = _tag.value_with_snapshot.split('$')[0],
-            expression = _tag.value_with_snapshot.split('$')[1];
-
-        SpectralWorkbench.API.Core.blend(_tag.datum, blend_id, expression);
-
-      } else if (_tag.key == "range") {
-
-        SpectralWorkbench.API.Core.range(_tag.datum, +_tag.value.split('-')[0], +_tag.value.split('-')[1]);
+        console.log("passive tag", _tag.name);
+        // passive; no effect on data
+        _tag.labelEl().removeClass('purple');
+        _tag.labelEl().css('background', 'grey');
 
       }
 
       // save the parsed tag data
       if (_tag.needs_snapshot) _tag.data = JSON.stringify(_tag.datum.json.data);
+
+    }
+
+
+    // fails because powertags is not yet populated. 
+    _tag.isLastPowerTag = function() {
+
+      return _tag.datum.powertags.indexOf(_tag) == _tag.datum.powertags.length - 1;
 
     }
 

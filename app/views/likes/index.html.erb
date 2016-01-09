@@ -11,7 +11,7 @@
 <div class="row-fluid">
   <style>._row { clear:left;} </style>
 
-  <%= render :partial => 'spectrums/list' %>
+  <%= render :partial => 'spectrums/list', locals: { spectrums: @spectrums } %>
   <%= will_paginate @spectrums, renderer: BootstrapPagination::Rails %>
 </div>
 </div>

@@ -1,53 +1,8 @@
+/*
+ * General API methods.
+ */
+
 SpectralWorkbench.API.Core = {
-
-
-  // initiate a notification on the page, which fades after <expire> seconds, or doesn't if <expire> is not supplied
-  // also returns the notification element
-  notify: function(message, type, expire) {
-
-    expire = expire || false;
-
-    if (type) {
-      title = "<b>"+type[0].toUpperCase() + type.substr(1, type.length-1) + ":</b> ";
-    } else title = "";
-
-    if (expire == null) expire = true
-
-    var id = parseInt(Math.random()*100000)
-
-    $('.notifications-container').append("<p id='notify-" + id + "' class='alert'></p>")
-
-    $('#notify-' + id).html(title + message).addClass('alert-' + type)
-
-    $('#notification-count').html($('.notifications-container p').length);
-    $('.notification-count-icon').show();
-
-    if (expire) {
-
-      setTimeout(function() {
-
-        $('#notify-'+id).remove()
-
-        $('#notification-count').html($('.notifications-container p').length);
-        if ($('.notifications-container p').length == 0) $('.notification-count-icon').hide();
-        else $('.notification-count-icon').show();
-
-      }, expire*1000);
-
-    }
-
-    return $('#notify-' + id);
-
-  },
-
-
-  // does this really belong here? No. 
-  initNotifications: function() {
-
-    $('#notification-count').html(+$('.notifications-container').html());
-    if (+$('#notification-count').html() > 0) $('#notifications').show();
-    
-  },
 
 
   fetchSpectrum: function(id, callback) {
@@ -110,11 +65,6 @@ SpectralWorkbench.API.Core = {
  
         // reload the spectrum data:
         spectrum.load();
-
-        // reload the graph data:
-        spectrum.graph.reload();
-        // refresh the graph:
-        spectrum.graph.refresh();
          
         if (callback) callback(spectrum);
 
@@ -203,11 +153,6 @@ SpectralWorkbench.API.Core = {
     // adjust the Graph range directly;
     // this is used in graph and image DOM sizing and conversions
     datum.graph.range = [start, end];
-
-    // reload the graph data:
-    datum.graph.reload();
-    // refresh the graph:
-    datum.graph.refresh();
  
   },
 
@@ -248,11 +193,6 @@ SpectralWorkbench.API.Core = {
     
       });
      
-      // reload the graph data:
-      datum.graph.reload();
-      // refresh the graph:
-      datum.graph.refresh();
-     
       if (callback) callback();
 
     });
@@ -276,11 +216,6 @@ SpectralWorkbench.API.Core = {
         });
      
       });
-     
-      // reload the graph data:
-      datum.graph.reload();
-      // refresh the graph:
-      datum.graph.refresh();
        
       if (callback) callback();
  
@@ -314,32 +249,11 @@ SpectralWorkbench.API.Core = {
 
     datum.average = average;
 
-    // reload the graph data:
-    datum.graph.reload();
-    // refresh the graph:
-    datum.graph.refresh();
-
-  },
-
-
-  // get a spectrum by its ID, pass it to callback(data)
-  fetch: function(graph, id, callback) {
-
-    var url = "/spectrums/" + id + ".json"; 
-
-    d3.json(url, function(error, data) {
-
-      callback(graph, data);
-
-    });
-
   },
 
 
   // display a spectrum by given id (and store in an array graph.comparisons)
-  compare: function(graph, data) {
-
-    var datum = new SpectralWorkbench.Spectrum(data, graph);
+  compare: function(graph, datum, callback) {
 
     // standardize this! and reuse it in similar()
     graph.comparisons = graph.comparisons || [];
@@ -361,6 +275,8 @@ SpectralWorkbench.API.Core = {
 
     // refresh the graph:
     graph.refresh();
+
+    if (callback) callback();
 
   },
 
@@ -635,44 +551,45 @@ SpectralWorkbench.API.Core = {
   },
 
 
-  // checks overexposure and displays an alert if it is so
-  // we might just want a class of alert filters separate from the API, or
-  // in a special zone
-  alertOverexposure: function(datum) {
+  addComparison: function(_graph, id, author, title) {
 
-    var overexposure = datum.getOverexposure();
+    $('li.comparisons').show();
 
-    if (datum instanceof SpectralWorkbench.Spectrum) {
+    $('table.comparisons').append('<tr class="spectrum spectrum-comparison-' + id + '"></tr>');
 
-      if (overexposure['r'] || overexposure['g'] || overexposure['b']) {
+    var compareEl = $('table.comparisons tr.spectrum-comparison-' + id);
+    compareEl.append('<td class="title"><a href="/spectrums/' + id + '">' + title + '</a></td>');
+    compareEl.append('<td class="author"><a href="/profile/' + author + '">' + author + '</a></td>');
+    compareEl.append('<td class="comparison-tools"></td>');
 
-        var msg = "This spectrum looks overexposed. <a href='//publiclab.org/wiki/spectral-workbench-usage#Overexposure'>Learn how to fix this</a>."
+    compareEl.find('td.comparison-tools').append('<a data-id="' + id + '" class="remove"><i class="fa fa-remove"></i></a>');
+    compareEl.find('.comparison-tools .remove').click(function(){
 
-        SpectralWorkbench.API.Core.notify(msg, "warning");
+      compareEl.remove();
 
-      }
+      var combined = _graph.datum.d3();
 
-    } else {
+      // get rid of self
+      _graph.comparisons.forEach(function(datum){
+        if (datum.id != +$(this).attr('data-id')) _graph.comparisons.splice(_graph.comparisons.indexOf(datum), 1);
+      });
 
-      // what? WHAT?
+      // re-assemble display data
+      _graph.comparisons.forEach(function(comparison) {
+     
+        comparison = comparison.d3()[0];
+        comparison.color = "red";
+        combined.push(comparison);
+     
+      });
 
-    }
+      _graph.data.datum(combined, _graph.idKey);
+      _graph.refresh();
 
-  },
+      // this isn't working...
+      $('li.comparisons a').tab('show');
 
-
-  // checks overexposure and displays an alert if it is so
-  // we might just want a class of alert filters separate from the API, or
-  // in a special zone
-  alertTooDark: function(datum) {
-
-    if (datum.getTooDark()) {
-
-      var msg = "This spectrum seems very dim. You may need to choose a new image cross section that intersects your spectrum data. <a href='//publiclab.org/wiki/spectral-workbench-calibration#Cross+section'>Learn how to fix this</a>."
-
-      SpectralWorkbench.API.Core.notify(msg, "warning")
-
-    }
+    });
 
   }
 

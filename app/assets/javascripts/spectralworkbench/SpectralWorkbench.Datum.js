@@ -9,6 +9,7 @@ SpectralWorkbench.Datum = Class.extend({
     this.id    = args.id;
     this.graph = _graph;
     this.tags = [];
+    this.powertags = [];
 
     var _datum = this;
 
@@ -143,6 +144,8 @@ SpectralWorkbench.Datum = Class.extend({
 
         _datum.graph.dim();
 
+        console.log("fetching tags for spectrum", _datum.id);
+
         $.ajax({
 
           url: "/spectrums/" + _datum.id + "/tags",
@@ -156,13 +159,22 @@ SpectralWorkbench.Datum = Class.extend({
               else return 1;
             });
 
-            response.forEach(function(json) {
+            response.forEach(function(json, i) {
 
-              _datum.addTag(json.name, false, json);
+              // only refresh the graph if this is the final tag:
+              if (i == response.length - 1) {
+
+                var callback = function() { 
+
+                  _datum.graph.reload_and_refresh();
+
+                }
+
+              } else callback = false;
+
+              _datum.addTag(json.name, callback, json);
 
             });
-
-            _datum.parseTags();
 
           }
 

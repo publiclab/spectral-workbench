@@ -186,7 +186,8 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
 
       if (compared > 0) {
 
-        if (plateau.length > 0) {
+        // don't allow plateaus at <3%
+        if (plateau.length > 0 && max.y > 0.03) {
 
           console.log('Found plateau ' + plateau.length + ' wide in given range; returned center.');
           return plateau[~~(plateau.length/2)].x; // the middle of the plateau
@@ -239,7 +240,7 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
 
         if (_spectrum.getTag('calibration') == false) _spectrum.addTag('calibration');
 
-        SpectralWorkbench.API.Core.notify("Your new calibration has been saved.", "success");
+        _spectrum.graph.UI.notify("Your new calibration has been saved.", "success");
 
       });
 
@@ -415,7 +416,7 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
 
       }).fail(function(response) {
 
-        SpectralWorkbench.API.Core.notify(response['errors'], "error");
+        _spectrum.graph.UI.notify(response['errors'], "error");
 
       });
       
@@ -445,7 +446,7 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
         },
         error: function(response) {
 
-          SpectralWorkbench.API.Core.notify(response['errors'], "error");
+          _spectrum.graph.UI.notify(response['errors'], "error");
 
         }
       });

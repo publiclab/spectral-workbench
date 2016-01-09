@@ -20,7 +20,7 @@
   </div>
 
   <div class="span8">
-    <%= render :partial => 'list' %>
+    <%= render :partial => 'list', locals: { spectrums: @spectrums } %>
     <%= will_paginate @spectrums, renderer: BootstrapPagination::Rails %>
   </div>
 </div>

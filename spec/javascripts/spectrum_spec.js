@@ -78,7 +78,7 @@ describe("Spectrum", function() {
 
     // search for other peaks
     expect(spectrum.getNearbyPeak(436, 10, 'blue')).toBe(435.623);
-    expect(spectrum.getNearbyPeak(543, 10, 'green')).toBe(545.207);
+    expect(spectrum.getNearbyPeak(546, 10, 'green')).toBe(545.207);
 
   });
 

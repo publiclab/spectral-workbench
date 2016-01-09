@@ -19,11 +19,11 @@ SpectralWorkbench.Importer = Class.extend({
           var datum = new SpectralWorkbench.Set(data, graph);
   
         }
+
+        callback(datum);
  
         // fetch and apply tags here -- i.e. only if they're the graph's primary data:
         datum.fetchTags(); 
-
-        callback(datum);
 
       }
  

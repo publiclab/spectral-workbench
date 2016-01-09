@@ -148,6 +148,68 @@ SpectralWorkbench.Image = Class.extend({
     }
 
 
+    /* ======================================
+     * Resizes image; called in Graph.updateSize()
+     */
+    image.updateSize = function() {
+
+      // OK, due to issue https://github.com/publiclab/spectral-workbench/issues/240, 
+      // we are getting aggressively empirical here and adding "_graph.extraPadding" to fix things
+      // but essentially it seems there's a difference between reported d3 chart display width and actual 
+      // measurable DOM width, so we adjust the displayed image with extraPadding.
+
+
+// extra removed
+      _graph.imgContainer.width(_graph.width)
+                         .height(100);
+
+      if (!_graph.embed) _graph.imgContainer.css('margin-left',  _graph.margin.left);
+      else               _graph.imgContainer.css('margin-left',  _graph.margin.left);
+                         // .css('margin-right', _graph.margin.right); // margin not required on image, for some reason
+
+
+      if (_graph.range && _graph.datum) {
+
+        if (_graph.datum.isCalibrated()) {
+
+          // amount to mask out of image if there's a range tag;
+          // this is measured in nanometers:
+          _graph.leftCrop =   _graph.extent[0] - _graph.datum.json.data.lines[0].wavelength;
+          _graph.rightCrop = -_graph.extent[1] + _graph.datum.json.data.lines[_graph.datum.json.data.lines.length - 1].wavelength;
+          // note, we must use extent here instead of range, as range may extend beyond limit of data;
+          // although we could alternately set the chart extent to include empty space
+
+          _graph.pxPerNm = (_graph.width) / (_graph.extent[1] - _graph.extent[0]);
+         
+          _graph.leftCrop  *= _graph.pxPerNm;
+          _graph.rightCrop *= _graph.pxPerNm;
+
+        } else {
+
+          // for uncalibrated, we still allow range, in case someone's doing purely comparative work:
+          _graph.leftCrop =   _graph.extent[0] - _graph.datum.json.data.lines[0].pixel;
+          _graph.rightCrop = -_graph.extent[1] + _graph.datum.json.data.lines[_graph.datum.json.data.lines.length - 1].pixel;
+         
+          _graph.pxPerNm = 1; // a lie, but as there are no nanometers in an uncalibrated spectrum, i guess it's OK.
+
+        }
+
+        _graph.imgEl.width(_graph.width + _graph.leftCrop + _graph.rightCrop) // left and rightCrop are masked out range
+                    .css('max-width', 'none')
+                    .css('margin-left', -_graph.leftCrop);
+
+      } else {
+
+        _graph.imgEl.width(_graph.width)
+                    .height(100)
+                    .css('max-width', 'none')
+                    .css('margin-left', 0);
+
+      }
+
+    }
+
+
   }
 
 });

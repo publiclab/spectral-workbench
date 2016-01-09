@@ -231,20 +231,26 @@ class Spectrum < ActiveRecord::Base
     self.data.gsub("'",'"').gsub(/([a-z]+):/,'"\\1":')
   end
 
-  def clone(user)
+  def forks
+    Tag.where('name LIKE (?)', 'forked:' + self.id.to_s + '%').collect(&:spectrum)
+  end
+
+  def fork(user)
     new = self.dup
     new.author = user.login
     new.user_id = user.id
     new.photo = self.photo
     new.save!
-    new.tag("cloneOf:#{self.id}", user.id)
+    new.tag("forked:#{self.id}", user.id)
     # now copy over all tags, in order:
     self.tags.each do |tag|
-      newtag = new.tag(tag.name, user.id) unless tag.key == "cloneOf"
-      # preserve created_at, for tag ordering; we should be able to tell based on spectrum created_at
-      newtag.created_at = tag.created_at
-      newtag.save
-      newtag.create_snapshot(tag.snapshot.data) if tag.needs_snapshot? && tag.snapshot && !tag.snapshot.data.nil?
+      unless tag.key == "forked"
+        newtag = new.tag(tag.name, user.id) 
+        # preserve created_at, for tag ordering; we should be able to tell based on spectrum created_at
+        newtag.created_at = tag.created_at
+        newtag.save
+        newtag.create_snapshot(tag.snapshot.data) if tag.needs_snapshot? && tag.snapshot && !tag.snapshot.data.nil?
+      end
     end
     new
   end

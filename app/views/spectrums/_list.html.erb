@@ -1,7 +1,7 @@
 <style>._row { clear:left;} </style>
 
 <div class="_row">
-  <% @spectrums.each_with_index do |spectrum,i| %>
+  <% spectrums.each_with_index do |spectrum,i| %>
     <div class="span3 clearfix">
       <a class="image hidden-phone" href="<%= spectrum_path(spectrum.id) %>"><img src="<%= spectrum.photo.url(:thumb) %>" class="image" style="background:#ccc;"></a>
       <a class="image visible-phone" style="float:left;width:50%;margin-right:10px;" href="<%= spectrum_path(spectrum.id) %>"><img src="<%= spectrum.photo.url(:thumb) %>" class="image" style="background:#ccc;"></a>

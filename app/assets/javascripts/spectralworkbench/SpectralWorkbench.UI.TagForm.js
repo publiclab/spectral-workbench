@@ -12,12 +12,17 @@ SpectralWorkbench.UI.TagForm = Class.extend({
 
       e.preventDefault();
 
+      _graph.dim();
+
       tagForm.input.val().split(',').forEach(function(tagname) {
 
         _graph.datum.addTag(tagname, function() {
 
           tagForm.input.val('');
+
           if (callback) callback();
+
+          _graph.reload_and_refresh();
 
         });
 
@@ -32,13 +37,19 @@ SpectralWorkbench.UI.TagForm = Class.extend({
 
     });
 
+    tagForm.clearError = function() {
+
+      tagForm.el.find('.control-group').removeClass('error');
+      tagForm.el.find('.control-group .help-inline').remove();
+
+    };
+
     tagForm.error = function(msg) {
 
       $('#taginput').prop('disabled',false);
       
       tagForm.el.find('input.name').val("");
-      tagForm.el.find('.control-group').removeClass('error');
-      tagForm.el.find('.control-group .help-inline').remove();
+      tagForm.clearError();
       
       tagForm.el.find('.control-group').addClass('error');
       tagForm.el.find('.control-group .help-inline').remove();
