@@ -94,12 +94,15 @@ class TagsController < ApplicationController
               if request.xhr?
                 render :json => { has_dependent_spectra: @tag.snapshot.has_dependent_spectra?, 
                                   dependent_spectra: @tag.dependent_spectrum_ids,
+                                  has_subsequent_depended_on_snapshots: @tag.snapshot.has_subsequent_depended_on_snapshots?,
                                   is_latest: @tag.snapshot.is_latest?
                                 },
                        :status => :unprocessable_entity
               else
                 flash[:error] = "Powertags/operations may not be deleted if other data relies upon it."
-                redirect_to spectrum_path(@tag.spectrum_id)
+                # OMG, without status 303, some browsers will redirect with request method DELETE and delete the spectrum!
+                # http://api.rubyonrails.org/classes/ActionController/Redirecting.html
+                redirect_to spectrum_path(@tag.spectrum_id), status: :see_other # i.e. 303 to force GET. VERY DANGEROUS, RAILS!
               end
             end
           end
@@ -137,6 +140,7 @@ class TagsController < ApplicationController
           else
             hash[:has_dependent_spectra] = false
           end
+          hash[:has_subsequent_depended_on_snapshots] = tag.snapshot.has_subsequent_depended_on_snapshots?
         end
         @tags << hash
       end
@@ -161,15 +165,16 @@ class TagsController < ApplicationController
   end
 
   # json only
+  # ensure that this cannot be done for tags that are referred to
+  # and TEST it
   def change_reference
 
     @tag = Tag.find params[:id]
     
-
     if (@tag.user_id == current_user.id || current_user.role == "admin") && @tag.change_reference(params[:snapshot_id])
       render :json => @tag
     else
-      render :json => false, :status => 422
+      render :json => { error: 'Cannot change reference of tag with dependent spectra.' }, :status => 422
     end
 
   end

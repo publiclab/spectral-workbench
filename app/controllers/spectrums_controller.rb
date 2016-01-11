@@ -54,22 +54,21 @@ class SpectrumsController < ApplicationController
     @spectrums = Spectrum.order('spectrums.id DESC')
                          .select("DISTINCT(spectrums.id), spectrums.title, spectrums.created_at, spectrums.user_id, spectrums.author, spectrums.calibrated")
                          .joins("LEFT OUTER JOIN tags ON tags.spectrum_id = spectrums.id")
+                         .joins("JOIN users ON users.id = spectrums.user_id")
                          .paginate(:page => params[:page],:per_page => 6)
 
     # exclude self:
     @spectrums = @spectrums.where('spectrums.id != ?', params[:not]) if params[:not]
 
     if params[:id] != "all" && !params[:id].nil?
-      @spectrums = @spectrums.where('tags.name ' + comparison + ' (?) OR spectrums.title ' + comparison + ' (?) OR spectrums.id = ?', 
-                                    params[:id], params[:id], params[:id].to_i)
+      @spectrums = @spectrums.where('tags.name ' + comparison + ' (?) OR spectrums.title ' + comparison + ' (?) OR spectrums.id = ? OR users.login = ?', 
+                                    params[:id], params[:id], params[:id].to_i, params[:id])
       
       @spectrums = @spectrums.where(user_id: User.find_by_login(params[:author]).id) if params[:author]
     end
 
     respond_with(@spectrums) do |format|
-      format.html {
-        render partial: "macros/spectra", locals: { spectrums: @spectrums }
-      }
+      format.html { render partial: "macros/spectra", locals: { spectrums: @spectrums } }
       format.xml  { render :xml => @spectrums }
       format.json  { render :json => @spectrums }
     end
@@ -294,13 +293,13 @@ class SpectrumsController < ApplicationController
   # DELETE /spectrums/1.xml
   def destroy
     @spectrum = Spectrum.find(params[:id])
-    require_ownership(@spectrum)
-    @spectrum.destroy
-
-    flash[:notice] = "Spectrum deleted."
-    respond_with(@spectrum) do |format|
-      format.html { redirect_to('/') }
-      format.xml  { head :ok }
+    if require_ownership(@spectrum)
+      @spectrum.destroy
+      flash[:notice] = "Spectrum deleted."
+      respond_with(@spectrum) do |format|
+        format.html { redirect_to('/') }
+        format.xml  { head :ok }
+      end
     end
   end
 

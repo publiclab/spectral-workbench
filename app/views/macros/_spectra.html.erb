@@ -52,7 +52,22 @@
     <% end %>
   </table>
 
-  <%= will_paginate spectrums, renderer: BootstrapPagination::Rails if @match %>
+  <%= will_paginate spectrums, renderer: BootstrapPagination::Rails, inner_window: 1 %>
+
+  <script>
+
+    $(function () {
+      $('.pagination a').click(function () {
+        $.get(this.href, function(response) {
+
+          $('.results').html(response);
+
+        });
+        return false;
+      });
+    });
+
+  </script>
 
 </div>
 <% end %>

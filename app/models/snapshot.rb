@@ -41,15 +41,17 @@ class Snapshot < ActiveRecord::Base
     end
   end
 
+  # rescind requirement of is_latest
+  # but must use self.has_subsequent_depended_on_snapshots?
   def is_deletable?
     self.is_latest? && self.has_no_dependent_spectra?
   end
 
   def is_latest?
-    latest = Snapshot.where(spectrum_id: self.spectrum_id)
-                     .order('created_at DESC')
-                     .limit(1)
-                     .last
+    latest = self.spectrum.snapshots
+                 .order('created_at DESC')
+                 .limit(1)
+                 .last
     latest.id == self.id
   end
 
@@ -64,6 +66,14 @@ class Snapshot < ActiveRecord::Base
   # negative form used in validation
   def has_no_dependent_spectra?
     !self.has_dependent_spectra?
+  end
+
+  def has_subsequent_depended_on_snapshots?
+    depended_on_snapshots = false
+    self.spectrum.snapshots.where('created_at > ?', self.created_at).each do |snapshot|
+      depended_on_snapshots = depended_on_snapshots || snapshot.has_dependent_spectra?
+    end
+    depended_on_snapshots
   end
 
 end

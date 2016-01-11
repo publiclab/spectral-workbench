@@ -30,7 +30,7 @@ describe("Tag", function() {
                                                              }}); 
       else if (object.url == '/snapshots/4.json') response = object.success(TestResponses.snapshot.success.responseText);
       else if (object.url == '/tags/1' || object.url == '/tags/42') response = object.success('success'); // && object.method == "DELETE"
-      else if (object.url == '/tags/99') response = object.error({ 'has_dependent_spectra': true }); // && object.method == "DELETE"
+      else if (object.url == '/tags/99') response = object.error({ responseJSON: { 'has_dependent_spectra': true } }); // && object.method == "DELETE"
       else response = 'none';
 
       // check this if you have trouble faking a server response: 

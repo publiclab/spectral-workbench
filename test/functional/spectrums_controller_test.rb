@@ -164,12 +164,37 @@ class SpectrumsControllerTest < ActionController::TestCase
     assert_equal Spectrum.last.tags.last.name, "forked:#{spectrums(:one).id}"
   end
 
-  #test "should destroy spectrum" do
-  #  assert_difference('Spectrum.count', -1) do
-  #    delete :destroy, :id => spectrums(:one).to_param
-  #  end
-  #
-  #  assert_redirected_to spectrums_path
-  #end
+  test "should not destroy spectrum if not owner" do
+    session[:user_id] = users(:aaron).id # log in
+    current_user = users(:aaron) # log in
+    assert_not_equal current_user.id, spectrums(:one).user_id
+    assert_not_equal current_user.role, "admin"
+    assert_difference('Spectrum.count', 0) do
+      delete :destroy, :id => spectrums(:one).id
+    end
+    assert_redirected_to spectrum_path(spectrums(:one))
+  end
+
+  test "should destroy spectrum" do
+    session[:user_id] = spectrums(:one).user.id # log in
+    current_user = spectrums(:one).user # log in
+    assert_equal current_user.id, spectrums(:one).user.id
+    assert_difference('Spectrum.count', -1) do
+      delete :destroy, :id => spectrums(:one).id
+    end
+    assert_redirected_to '/'
+  end
+
+  test "should destroy spectrum if admin" do
+    session[:user_id] = users(:admin).id # log in
+    current_user = users(:admin) # log in
+    spectrum = Spectrum.last
+    assert_not_equal spectrum.user_id, current_user.id
+    spectrum.save
+    assert_difference('Spectrum.count', -1) do
+      delete :destroy, :id => spectrum.id
+    end
+    assert_redirected_to '/'
+  end
 
 end

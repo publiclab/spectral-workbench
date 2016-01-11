@@ -2,6 +2,18 @@
 
   <div class="span4 tool-menu">
 
+    <% if logged_in? && @spectrum.user_id != current_user.id %>
+      <p class="alert alert-warning">You can only use tools if you own the spectrum. Fork this spectrum to edit it.</p>
+      <script>
+        $(function () { $('.tool-menu .btn').addClass('disabled'); });
+      </script>
+    <% elsif !logged_in? %>
+      <p class="alert alert-warning">Log in to use these tools.</p>
+      <script>
+        $(function () { $('.tool-menu .btn').addClass('disabled'); });
+      </script>
+    <% end %>
+
     <h5>Versioning <a href="//publiclab.org/wiki/spectral-workbench-tools#Versioning"><i class="fa fa-question-mark"></i></a></h5>
     <p><a class="btn btn-small" href="/spectrums/fork/<%= @spectrum.id %>"><i class="fa fa-code-fork"></i> Fork this spectrum</a> and work on a copy</p>
 

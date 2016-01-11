@@ -255,6 +255,7 @@ class SnapshotTest < ActiveSupport::TestCase
     # as of the previous test, spectrums(:one) should have a snapshot
 
     assert_not_nil tag.snapshot
+    assert !tag.snapshot.has_subsequent_depended_on_snapshots?
 
     snapshot = Snapshot.last
     assert_equal snapshot.tag_id, tag.id

@@ -73,11 +73,12 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
       // has it generated a snapshot?
       // note that this won't have happened yet for new tags, until after parsing;
       // however, we check response from tag.upload() for a snapshot id and set it there too
-      if (json.hasOwnProperty('snapshot_id'))                  _tag.snapshot_id                  = json.snapshot_id;
-      if (json.hasOwnProperty('has_dependent_spectra'))        _tag.has_dependent_spectra        = json.has_dependent_spectra;
-      if (json.hasOwnProperty('dependent_spectra'))            _tag.dependent_spectra            = json.dependent_spectra;
-      if (json.hasOwnProperty('refers_to_latest_snapshot'))    _tag.refers_to_latest_snapshot    = json.refers_to_latest_snapshot;
-      if (json.hasOwnProperty('reference_spectrum_snapshots')) _tag.reference_spectrum_snapshots = json.reference_spectrum_snapshots;
+      if (json.hasOwnProperty('snapshot_id'))                          _tag.snapshot_id                          = json.snapshot_id;
+      if (json.hasOwnProperty('has_dependent_spectra'))                _tag.has_dependent_spectra                = json.has_dependent_spectra;
+      if (json.hasOwnProperty('dependent_spectra'))                    _tag.dependent_spectra                    = json.dependent_spectra;
+      if (json.hasOwnProperty('has_subsequent_depended_on_snapshots')) _tag.has_subsequent_depended_on_snapshots = json.has_subsequent_depended_on_snapshots;
+      if (json.hasOwnProperty('refers_to_latest_snapshot'))            _tag.refers_to_latest_snapshot            = json.refers_to_latest_snapshot;
+      if (json.hasOwnProperty('reference_spectrum_snapshots'))         _tag.reference_spectrum_snapshots         = json.reference_spectrum_snapshots;
 
     }
 
@@ -133,8 +134,6 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
 
         error: function(response) {
 
-          console.log('Deletion of tag ' + _tag.id + ' rejected.', response)
-
           _tag.labelEl().css('background', '#b00');
           _tag.labelEl().find('i.fa').removeClass('fa-spinner fa-spin')
                                      .addClass('fa-exclamation-circle');
@@ -144,15 +143,18 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
                                                                .css('color', '#600');
           $('tr#tag_' + _tag.id).css('color', '#600');
 
-          _tag.has_dependent_spectra = response.has_dependent_spectra;
-          _tag.dependent_spectra = response.dependent_spectra;
-          _tag.is_latest = response.is_latest;
+          _tag.has_dependent_spectra = response.responseJSON.has_dependent_spectra;
+          _tag.dependent_spectra = response.responseJSON.dependent_spectra;
+          _tag.has_subsequent_depended_on_snapshots = response.responseJSON.has_subsequent_depended_on_snapshots;
+          _tag.is_latest = response.responseJSON.is_latest;
 
-          if (response.hasOwnProperty('has_dependent_spectra') && _tag.has_dependent_spectra) {
+          console.log('Deletion of tag ' + _tag.id + ' rejected.', response, _tag)
+
+          if (_tag.has_dependent_spectra == true) {
 
             _tag.notice("Operation could not be deleted because other operations rely on it. Try cloning this spectrum to make changes without disrupting dependent data.", "error");
 
-          } else if (response.hasOwnProperty('is_latest') && !_tag.is_latest) {
+          } else if (_tag.is_latest != true) {
 
             _tag.notice("Operation could not be deleted because it is not the most recent operation to this spectrum. Deletions must occur most-recent-first.", "error");
 
@@ -241,10 +243,8 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
           _tag.operationEl.find(".snapshot i").attr('data-content', string);
           _tag.operationEl.find(".snapshot i").popover();
 
-       }
+        }
 
-// only allow reference switching if it's not depended on; 
-// show explanation if it is depended on
 
         // display if not pointing at latest snapshot, in popover
         if (_tag.reference_spectrum_snapshots) {
@@ -275,35 +275,48 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
 
             }
 
-            string += "<p><small>Choose a reference:</small></p>";
-            string += "<select class='reference-snapshots-available' class='span5'>";
- 
-            _tag.reference_spectrum_snapshots.forEach(function(snapshot) {
- 
-              string += "<option value='" + snapshot + "'";
-              if (snapshot == _tag.reference_id) string += " selected";
-              string += ">" + snapshot;
-              if (snapshot == _tag.reference_id) string += " (current)";
-              string += "</option>";
- 
-            });
- 
-            string += "</select>";
-            string += "<a class='btn btn-small btn-primary btn-update-reference'>Change reference</a>"
- 
-            // alternative is to display this menu in the description field
-            _tag.operationEl.find(".snapshot i").attr('data-content', string);
- 
-            _tag.operationEl.find(".snapshot i").popover()
-                                                .click(function() {
-              _tag.operationEl.find(".snapshot .btn-update-reference").click(function() {
-                
-                _tag.changeReference(_tag.operationEl.find(".snapshot .reference-snapshots-available").val());
+            if (_tag.has_dependent_spectra || _tag.has_subsequent_depended_on_snapshots) {
+
+              string += "<p>You cannot change this reference, as other data depend on it. Fork this spectrum to make changes on a copy.</p>";
+  
+              // alternative is to display this menu in the description field
+              _tag.operationEl.find(".snapshot i").attr('data-content', string);
+  
+              _tag.operationEl.find(".snapshot i").popover()
+
+            } else {
+
+              string += "<p><small>Choose a reference:</small></p>";
+              string += "<select class='reference-snapshots-available' class='span5'>";
+  
+              _tag.reference_spectrum_snapshots.forEach(function(snapshot) {
+  
+                string += "<option value='" + snapshot + "'";
+                if (snapshot == _tag.reference_id) string += " selected";
+                string += ">" + snapshot;
+                if (snapshot == _tag.reference_id) string += " (current)";
+                string += "</option>";
   
               });
- 
-            });
- 
+  
+              string += "</select>";
+              string += "<a class='btn btn-small btn-primary btn-update-reference'>Change reference</a>"
+  
+              // alternative is to display this menu in the description field
+              _tag.operationEl.find(".snapshot i").attr('data-content', string);
+  
+              _tag.operationEl.find(".snapshot i").popover()
+                                                  .click(function() {
+                _tag.operationEl.find(".snapshot .btn-update-reference").click(function() {
+                  
+                  _tag.changeReference(_tag.operationEl.find(".snapshot .reference-snapshots-available").val());
+    
+                });
+  
+              });
+
+            }
+
           }
 
         }
@@ -467,7 +480,7 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
 
     _tag.deletable = function() {
 
-      return (!_tag.hasOwnProperty('snapshot_id') || _tag.has_dependent_spectra != true);
+      return (!_tag.hasOwnProperty('snapshot_id') || (_tag.has_dependent_spectra != true && _tag.has_subsequent_depended_on_snapshots != true));
 
     }
 

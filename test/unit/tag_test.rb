@@ -119,6 +119,7 @@ class TagTest < ActiveSupport::TestCase
     assert tag.snapshot
     assert tag.snapshot.is_latest?
     assert tag.snapshot.has_dependent_spectra?
+    assert !tag.snapshot.has_subsequent_depended_on_snapshots?
 
     # ensure no change:
     assert_difference('Tag.count', 0) do
@@ -157,20 +158,44 @@ class TagTest < ActiveSupport::TestCase
     })
     assert tag3.save!
     assert_equal tag3.name, "subtract:#{tag.spectrum_id}##{tag2.snapshot.id}"
+    assert tag3.needs_reference?
+    assert tag3.has_reference?
+    assert_not_nil tag3.reference
+    assert_equal tag3.reference.id, tag2.snapshot.id
+    assert tag2.snapshot.has_dependent_spectra?
+    assert_not_nil tag2.snapshot.dependent_spectrum_ids
+    assert_equal tag2.snapshot.dependent_spectrum_ids.first, tag3.spectrum_id
+    assert !tag2.snapshot.has_subsequent_depended_on_snapshots?
+    assert tag.snapshot.has_subsequent_depended_on_snapshots?
 
     # create a snapshot which we should NOT be able to change tag3's reference to:
     assert tag3.create_snapshot('{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}')
 
+    assert !tag3.snapshot.has_subsequent_depended_on_snapshots?
     tag3.change_reference(tag.snapshot.id + 100) # feed it an invalid id
     assert_equal tag3.reference_id, tag2.snapshot.id # confirm no change
 
     tag3.change_reference(tag3.snapshot.id) # feed it an id which is a real snapshot, but not of the right spectrum
     assert_equal tag3.reference_id, tag2.snapshot.id # confirm no change
 
-    tag3.change_reference(tag.snapshot.id)
+    tag3.change_reference(tag.snapshot.id) # back to original tag snapshot
     assert_not_equal tag3.reference_id, tag2.snapshot.id
     assert_equal tag3.reference_id, tag.snapshot.id # confirm change
     assert_equal tag3.name, "subtract:#{tag.spectrum_id}##{tag.snapshot.id}"
+
+    # depend on it with a new tag4, then try to change reference to original, valid snapshot
+    tag4 = Tag.new({
+      user_id:     tag3.user_id,
+      spectrum_id: tag3.spectrum_id,
+      name:        "subtract:#{tag3.spectrum_id}##{tag3.snapshot.id}" # depend on the tag/ref-snapshot we're about to try to change
+    })
+    assert tag4.save!
+    assert_equal tag4.name, "subtract:#{tag3.spectrum_id}##{tag3.snapshot.id}"
+    assert tag3.snapshot.has_dependent_spectra?
+    assert !tag3.snapshot.has_subsequent_depended_on_snapshots?
+
+    tag3.change_reference(tag2.snapshot.id)
+    assert_not_equal tag3.reference_id, tag2.snapshot.id # confirm no change
 
   end
 
