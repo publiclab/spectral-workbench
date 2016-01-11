@@ -89,9 +89,14 @@ class SpectrumTest < ActiveSupport::TestCase
     assert_not_nil s.id
     assert_not_equal s.id, spectrums(:one).id
     assert_equal s.tags.length - 1, spectrums(:one).tags.length
-    assert_equal s.tags.order('created_at').first.name, spectrums(:one).tags.order('created_at').first.name
+    assert_equal s.tags.order('created_at').last.name, spectrums(:one).tags.order('created_at').last.name
     assert_equal s.tags[0].name, "forked:#{spectrums(:one).id}##{snapshot.id}"
     assert_equal s.tags[1].name, "smooth:2"
+    # ensure sorted by created_at:
+    sortedTags = s.tags.sort { |a, b| a.created_at <=> b.created_at }
+    assert_equal s.tags.collect(&:name).join(','), sortedTags.collect(&:name).join(',')
+    # ensure all same tags as original, plus "forked":
+    assert_equal s.tags.collect(&:name).join(','), "forked:#{spectrums(:one).id}##{snapshot.id}," + spectrums(:one).tags.collect(&:name).join(',')
     assert_not_equal s.tags.first.user_id, spectrums(:one).tags.first.user_id
     assert_not_nil s.tags[1].snapshot
 

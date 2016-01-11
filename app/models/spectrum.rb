@@ -242,12 +242,16 @@ class Spectrum < ActiveRecord::Base
     new.photo = self.photo
     new.save!
     new.tag("forked:#{self.id}", user.id)
+    # record "now" timestamp
+    now = Time.now
+    seconds = 0
     # now copy over all tags, in order:
     self.tags.each do |tag|
       unless tag.key == "forked"
         newtag = new.tag(tag.name, user.id) 
         # preserve created_at, for tag ordering; we should be able to tell based on spectrum created_at
-        newtag.created_at = tag.created_at
+        newtag.created_at = now + seconds.seconds # forward-date each by 1 second
+        seconds += 1
         newtag.save
         newtag.create_snapshot(tag.snapshot.data) if tag.needs_snapshot? && tag.snapshot && !tag.snapshot.data.nil?
       end
