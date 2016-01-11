@@ -159,6 +159,7 @@
       if (!calibration) {
         $("#calibration_id").val("calibration"); // calibrate later
         $('#uploadUncalibrated').button('loading');
+        $('#uploadUncalibrated').prepend('<i class="fa fa-circle-o-notch fa-spin"></i> ')
       } else {
         $('#uploadBtn').button('loading');
       }

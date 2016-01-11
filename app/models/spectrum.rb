@@ -35,6 +35,7 @@ class Spectrum < ActiveRecord::Base
 
   after_save :generate_processed_spectrum
   before_save :update_calibrated
+  #before_create :rename_with_id
 
   # validation: not allowed to destroy a spectrum someone else depends on
   def is_deletable?
@@ -56,6 +57,11 @@ class Spectrum < ActiveRecord::Base
             .limit(1)
             .last
   end
+
+#  def rename_with_id
+#    extension = File.extname(self.image_file_name).downcase
+#    self.image.instance_write(:file_name, "#{Time.now.to_i}#{extension}")
+#  end
 
   def validate_json
     if self.data.nil?
