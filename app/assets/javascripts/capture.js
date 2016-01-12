@@ -59,7 +59,7 @@ $W = {
       this.preview_ctx = $('#preview')[0].getContext('2d')
     }
 
-    setInterval($W.alert_overexposure,3000)
+    setInterval($W.alert_overexposure,500)
     $W.data = [{label: "webcam",data:[]}]
     if ($('video')[0]) {
       $('video')[0].width = "320"
@@ -731,14 +731,21 @@ $W = {
   },
   // checks overexposure and displays an alert if it is so, and what channel
   alert_overexposure: function() {
+    console.log('Checking for overexposure');
     var oe = $W.detect_overexposure()
     if (oe.r || oe.g || oe.b) {
-      var msg = "Light source is too strong; overexposure in channels: "
+      var msg = "<b>Light source too strong</b>; clipping in channels: "
       var channels = []
       if (oe.r) channels.push("red")
       if (oe.g) channels.push("green")
       if (oe.b) channels.push("blue")
-      $W.notify(msg+channels.join(','),"warning")
+      $W.notify(msg+channels.join(', '),"warning")
+      // notify is not working in capture, not sure why...
+      $('.capture-navbar .capture-messages').html(msg + channels.join(', '));
+      $('.capture-navbar').addClass('red');
+    } else {
+      $('.capture-navbar .capture-messages').html('');
+      $('.capture-navbar').removeClass('red');
     }
   },
 

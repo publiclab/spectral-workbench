@@ -86,6 +86,14 @@ h5 small {
   color:#222;
 }
 
+.capture-navbar.red .navbar-inner {
+  background: #b00;
+}
+
+.capture-navbar.red .nav .active a {
+  background-color: #900; !important
+}
+
 #display {
   background:#444;
 }
