@@ -13,6 +13,7 @@ class SetsController < ApplicationController
 
   def show
     @set = SpectraSet.find params[:id]
+    @spectrums = @set.spectrums
     respond_with(@set) do |format|
       format.html {
         @comment = Comment.new
@@ -69,6 +70,7 @@ class SetsController < ApplicationController
 
   def embed2
     @set = SpectraSet.find params[:id]
+    @spectrums = @set.spectrums
     render :template => 'embed/set', :layout => 'embed'
   end
 
@@ -81,7 +83,7 @@ class SetsController < ApplicationController
       else
         flash[:error] = "Failed to add to that set."
       end
-      redirect_to "/sets/#{@set.id}"
+      redirect_to "/sets/show2/#{@set.id}"
     else
       flash[:error] = "You must own that set to add to it."
       redirect_to spectrum_path(@spectrum)

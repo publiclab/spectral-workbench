@@ -25,7 +25,23 @@ class SpectraSet < ActiveRecord::Base
   def contains(spectrum)
     self.spectrums.include?(spectrum)
   end
-  
+
+  # latest snapshots of all spectra, if exist, in JSON
+  # default to spectra themselves if not
+# we need a well crafted query here...
+#  def snapshots
+#    json = []
+#    @set.spectrums.each do |spectrum|
+#      json << spectrum.as_json(:except => [:data])
+#      if spectrum.snapshots.nil? || spectrum.snapshots.length == 0
+#        json.last[:data] = JSON.parse(spectrum.data) 
+#      else
+#        json.last[:data] = JSON.parse(spectrum.snapshots.last.data) 
+#      end
+#    end
+# optimize and test this
+#  end
+ 
   def match(spectrum)
     set = self.sort_set(spectrum)
     # find lowest score, return it

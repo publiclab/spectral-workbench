@@ -1,4 +1,4 @@
-SpectralWorkbench.UI.Util = Class.extend({
+SpectralWorkbench.UI.Spectrum = Class.extend({
 
   init: function(_graph) {
 

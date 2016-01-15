@@ -33,22 +33,53 @@
  
           <div class="tab-pane active" id="tab-spectra">       
 
-            <%= render partial: 'graph/spectra', locals: { datum: @set } %>
+            <%= render partial: 'graph/spectra', locals: { datum: @set, spectrums: @spectrums } %>
  
             <hr />
  
-            <div class="btn-group export" style="width:100%;text-align:center;">
- 
-              <a target="_blank" class="btn btn-small svg" onClick="SpectralWorkbench.API.Core.exportSVG('set-<%= @set.id %>');"><b>SVG</b></a>
-              <a target="_blank" rel="tooltip" title="Currently displayed data" class="btn btn-small btn-download-json"><b>JSON</b></a>
-              <a target="_blank" rel="tooltip" title="Raw data before modifications" class="btn btn-small" href="/sets/<%= @set.id %>.json"><b>raw JSON</b></a>
-              <!--
-              <a target="_blank" class="btn btn-small disabled" href="/sets/<%= @set.id %>.csv"><b>CSV</b></a>
-              <a target="_blank" class="btn btn-small disabled" href="/sets/<%= @set.id %>.xml"><b>XML</b></a>
-              -->
-              <a rel="tooltip" class="btn btn-small" href="//publiclab.org/wiki/spectral-workbench-exporting" title="About export formats"><i class="fa fa-question-circle"></i></a>
- 
+            <div style="width:100%;text-align:center;">
+
+              <div class="btn-group export">
+             
+                <a target="_blank" class="btn btn-small svg" onClick="SpectralWorkbench.API.Core.exportSVG('set-<%= @set.id %>');"><b>SVG</b></a>
+                <a target="_blank" rel="tooltip" title="Currently displayed data" class="btn btn-small btn-download-json"><b>JSON</b></a>
+                <a target="_blank" rel="tooltip" title="Raw data before modifications" class="btn btn-small" href="/sets/<%= @set.id %>.json"><b>raw JSON</b></a>
+                <!--
+                <a target="_blank" class="btn btn-small disabled" href="/sets/<%= @set.id %>.csv"><b>CSV</b></a>
+                <a target="_blank" class="btn btn-small disabled" href="/sets/<%= @set.id %>.xml"><b>XML</b></a>
+                -->
+                <a rel="tooltip" class="btn btn-small" href="//publiclab.org/wiki/spectral-workbench-exporting" title="About export formats"><i class="fa fa-question-circle"></i></a>
+             
+              </div>
+
+              <% if logged_in? %>
+                <div class="btn-group">
+                  <a class="btn btn-small btn-add-spectra"><i class="fa fa-plus-circle"></i> Add spectra</a>
+                </div>
+              <% end %>
+
             </div>
+
+            <div class="spectra-search" style="display:none;margin-left:20px;">
+
+              <form class="form-search">
+                <div class="pull-right">
+                  <select name="own" class="select-author">
+                    <option value="true" selected>Your spectra</option>
+                    <option value="false">All spectra</option>
+                  </select>
+                </div>
+                <input type="text" class="input-medium input-choose-spectrum" placeholder="search">
+                <button type="submit" class="btn"><i class="fa fa-search"></i></button>
+              </form>
+      
+              <div class="results">
+              </div>
+
+              <hr />
+
+            </div>
+
 
             <% if logged_in? && current_user.login == @set.author || current_user.role == "admin" %>
             <div class="btn-group export" style="width:100%;text-align:center; margin-top: 20px;">

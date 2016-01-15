@@ -18,7 +18,7 @@
   
   <%= render :partial => "graph/header", :locals => {:type => :set, :datum => @set } %>
 
-  <%= render partial: 'graph/spectra', locals: { datum: @set } %>
+  <%= render partial: 'graph/spectra', locals: { datum: @set, spectrums: @spectrums } %>
    
   <div class="toolbar toolbar-bottom">
     <%= render :partial => 'graph/tools', :locals => { type: :set, datum: @set } %>

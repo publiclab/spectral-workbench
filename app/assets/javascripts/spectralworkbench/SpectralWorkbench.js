@@ -10,7 +10,8 @@
 //= require spectralworkbench/SpectralWorkbench.API.Legacy.js 
 //= require spectralworkbench/SpectralWorkbench.API.Core.js 
 //= require spectralworkbench/SpectralWorkbench.API.Operations.js 
-//= require spectralworkbench/SpectralWorkbench.UI.Util.js
+//= require spectralworkbench/SpectralWorkbench.UI.Spectrum.js
+//= require spectralworkbench/SpectralWorkbench.UI.Set.js
 //= require spectralworkbench/SpectralWorkbench.UI.ToolPaneTypes.js
 //= require spectralworkbench/SpectralWorkbench.UI.ToolPane.js
 //= require spectralworkbench/SpectralWorkbench.UI.SpectraPane.js

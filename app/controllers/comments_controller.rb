@@ -45,7 +45,7 @@ class CommentsController < ApplicationController
 	user_id:        current_user.id,
 	email:          current_user.email})
     if @comment.save
-      UserMailer.set_comment_notification(@set,@comment,User.find_by_login(@set.author)) if (!logged_in? || current_user.login != @set.author)
+      UserMailer.set_comment_notification(@set,@comment,User.find(@set.user_id)) if (!logged_in? || current_user.id != @set.user_id)
       @set.notify_commenters(@comment,current_user) if logged_in?
       @set.notify_commenters(@comment,false) unless logged_in?
 

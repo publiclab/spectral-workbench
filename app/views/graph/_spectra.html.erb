@@ -6,12 +6,13 @@
       </th>
       <th style="width:14px;"></th>
       <th style="width:14px;">ID</th>
+      <th style="width:100px;">Snapshot <a href="//publiclab.org/wiki/spectral-workbench-snapshots"><i style="color:#aaa;" class="fa fa-question-circle"></i></a></th>
       <th style="width:25px;">Tools</th>
       <th style="width:40px;"></th>
-      <th>Spectra (<%= datum.spectrums.length %>)</th>
+      <th><%= spectrums.length if spectrums %> Spectra</th>
       <th>Author</th>
     </tr>
-    <% datum.spectrums.each do |spectrum| %>
+    <% spectrums.each do |spectrum| %>
       <tr class="spectrum spectrum-<%= spectrum.id %>" id="s<%= spectrum.id %>">
         <td style="text-align:center;">
           <input data-id="<%= spectrum.id %>" class="visible" type="checkbox" checked="true" />
@@ -20,6 +21,13 @@
           <div class="key"></div>
         </td>
         <td><%= spectrum.id %></td>
+        <td>
+          <% if spectrum.snapshots.length > 0 %>
+            <%= "##{spectrum.snapshots.last.id}" %>
+          <% else %>
+            none
+          <% end %>
+        </td>
         <td><a onClick="$('.spectrum-tools-<%= spectrum.id %>').toggle()"><i class="fa fa-cog"></i></a></td>
         <td>
 
@@ -54,7 +62,7 @@
       </tr>
       <tr style="display:none;" class="spectrum-tools spectrum-tools-<%= spectrum.id %>"> 
         <td colspan="5">
-          <a class="btn btn-small btn-default" href="/sets/remove/<%= datum.id %>?s=<%= spectrum.id %>"><i class="fa fa-remove-circle"></i> Remove from set</a>
+          <a class="btn btn-small btn-default" href="/sets/remove/<%= datum.id %>?s=<%= spectrum.id %>"><i class="fa fa-remove-o"></i> Remove from set</a>
         </td>
       </tr>
     <% end %>

@@ -235,10 +235,9 @@ SpectralWorkbench.Graph = Class.extend({
           return 'spectrum-hover-' + id;
         });
 
-      // set up all of UI -- tool panes, etc
-      _graph.UI = new SpectralWorkbench.UI.Util(_graph);
-
       if (_graph.dataType == "spectrum") {
+
+        _graph.UI = new SpectralWorkbench.UI.Spectrum(_graph);
 
         // scan for helper tips
 
@@ -248,8 +247,7 @@ SpectralWorkbench.Graph = Class.extend({
 
       } else if (_graph.dataType == "set") {
 
-        // table and graph hovers etc.
-        if (_graph.datum) _graph.datum.setupUI();
+        if (_graph.datum) _graph.UI = new SpectralWorkbench.UI.Set(_graph, _graph.args.set_id, _graph.datum.spectra);
 
       }
 

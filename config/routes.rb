@@ -92,6 +92,8 @@ SpectralWorkbench::Application.routes.draw do
 
   get '/tags/change_reference/:id' => 'tags#change_reference'
 
+  get '/spectrums/choose' => 'spectrums#choose' # for pagination in adding spectrums to sets, for some reason needed to explicitly set this?
+
   resources :users do
     resources :spectrums
     resources :tags
