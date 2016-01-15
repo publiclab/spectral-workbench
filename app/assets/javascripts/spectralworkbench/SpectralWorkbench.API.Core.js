@@ -347,8 +347,11 @@ SpectralWorkbench.API.Core = {
   },
 
 
-  // autodetect calibration
+  // Attempts to autodetect calibration,
   // adapted from https://gist.github.com/Sreyanth/8dcb8343e4770cd9d301
+  // returns [r, g, b] as original image pixel positions from stored json data
+  // -- a gotcha is that sometimes stored json pixel data is not full-width;
+  // we are transitioning to using native image widths instead of downscaled
   attemptCalibration: function(graph) {
 
     var green = SpectralWorkbench.API.Core.findMax(graph.datum.json.data.lines, 'g');

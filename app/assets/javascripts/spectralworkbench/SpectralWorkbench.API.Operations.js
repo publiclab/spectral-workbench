@@ -149,7 +149,7 @@ SpectralWorkbench.API.Operations = {
     description: function(tag) {
 
       var response = "Manually calibrated with two reference points.";
-      if (tag.datum.powertags.indexOf(tag) != 0) response += " <span style='color:#900'>This should be the first operation.</span>";
+      if (tag.datum.powertags.indexOf(tag) != 0) response += " <span style='color:#900'>Only a crossSection operation should precede this.</span>";
       return response;
 
     },

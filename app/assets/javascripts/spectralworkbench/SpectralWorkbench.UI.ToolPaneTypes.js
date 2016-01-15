@@ -40,7 +40,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
     title: "Subtraction",
     dataType: "spectrum",
     description: "Subtract another calibrated spectrum from this one.",
-    link: "//publiclab.org/wiki/spectral-workbench-toolpanes#Subtraction",
+    link: "//publiclab.org/wiki/spectral-workbench-operations#subtract",
     author: "warren",
     apply: false,
     formData: { own: true },
@@ -65,7 +65,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
     title: "Copy Calibration",
     dataType: "spectrum",
     description: "Use data from an earlier calibrated spectrum to calibrate this one.",
-    link: "//publiclab.org/wiki/spectral-workbench-toolpanes#Copy+Calibration",
+    link: "//publiclab.org/wiki/spectral-workbench-operations#calibrate",
     author: "warren",
     apply: false,
     formData: { own: true },
@@ -95,7 +95,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
     title: "Transform",
     dataType: "any",
     description: "Apply a JavaScript math expression (such as 'R*G+B') to each point in the spectrum, using variables R for red, G, B, and A for average..",
-    link: "//publiclab.org/wiki/spectral-workbench-toolpanes#Transform",
+    link: "//publiclab.org/wiki/spectral-workbench-operations#transform",
     author: "warren",
     apply: true,
     setup: function(form) {
@@ -138,7 +138,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
     title: "Range",
     dataType: "any",
     description: "Select a wavelength range; subsequent operations will only use this range.",
-    link: "//publiclab.org/wiki/spectral-workbench-toolpanes#Range",
+    link: "//publiclab.org/wiki/spectral-workbench-operations#range",
     author: "warren",
     apply: true,
     setup: function(form) {
@@ -183,7 +183,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
     title: "Smoothing",
     dataType: "any",
     description: "Enter a number of points ahead and behind of a given point to average, in order to smooth the graph. Note that this is <b>not</b> time-averaging, and can suppress small spectral features.",
-    link: "//publiclab.org/wiki/spectral-workbench-toolpanes#Smooth",
+    link: "//publiclab.org/wiki/spectral-workbench-operations#smooth",
     apply: true,
     author: "warren",
     setup: function(form) {
@@ -227,7 +227,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
     title: "Choose cross section",
     dataType: "spectrum",
     description: "Click the image to choose which row of pixels from the source image is used to generate your graph line.",
-    link: "//publiclab.org/wiki/spectral-workbench-toolpanes#Cross+Section",
+    link: "//publiclab.org/wiki/spectral-workbench-operations#crossSection",
     apply: true,
     author: "warren",
     setup: function(form) {
@@ -295,7 +295,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
     title: "Wavelength calibration",
     dataType: "spectrum",
     description: "Follow the prompts to wavelength calibrate a fluorescent spectrum. Align B2 (which should be 435.83 nanometers) and G2 (which should be 546.07 nanometers) with their corresponding peaks in your calibration. It's best to calibrate before any other operations, especially before range limiting.",
-    link: "//publiclab.org/wiki/spectral-workbench-toolpanes#Calibrate",
+    link: "//publiclab.org/wiki/spectral-workbench-calibration",
     author: "warren",
     apply: true,
     cleanUp: function(form) {
@@ -313,6 +313,9 @@ SpectralWorkbench.UI.ToolPaneTypes = {
           left2blue = 211,
           blue2green = 743-211,
           exampleImgWidth = 1390;
+
+      form.graph.imgContainer.height(180); // we should move away from hard-coded height, but couldn't make the below work:
+      //form.graph.imgContainer.height(_graph.imgContainer.height() + 80);
 
       // Using reference image from 
       // http://publiclab.org/notes/warren/09-30-2015/new-wavelength-calibration-procedure-preview-for-spectral-workbench-2-0
@@ -356,10 +359,11 @@ SpectralWorkbench.UI.ToolPaneTypes = {
 
       var attemptCalibration = function() {
 
-        var auto_cal = SpectralWorkbench.API.Core.attemptCalibration(_graph), // [r,g,b]
+        var widthAsCalibrated = _graph.datum.json.data.lines.length; // sometimes calibration was run on a lower-res image; we are transitioning away from this
+            auto_cal = SpectralWorkbench.API.Core.attemptCalibration(_graph), // [r,g,b] in terms of width of json stored image data
             // convert to display space from image space:
-            blue2guess  = _graph.imgContainer.width() * (auto_cal[2] / _graph.image.width),
-            green2guess = _graph.imgContainer.width() * (auto_cal[1] / _graph.image.width);
+            blue2guess  = _graph.imgContainer.width() * (auto_cal[2] / widthAsCalibrated),
+            green2guess = _graph.imgContainer.width() * (auto_cal[1] / widthAsCalibrated);
 
         calibrationResize(blue2guess, green2guess);
 
@@ -378,7 +382,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
 
       */
 
-      // x1 and x2 are display space space pixel values;
+      // x1 and x2 are display space pixel values;
       // x1Lock and x2Lock are optional, default-off, for locking a slider you're not dragging
       var calibrationResize = function(x1, x2, x1Lock, x2Lock) {
 
@@ -403,28 +407,25 @@ SpectralWorkbench.UI.ToolPaneTypes = {
 
         }
 
-        var margin = _graph.margin.left, 
-            // distance between blue2 and green2 in example spectrum image:
-            exampleImgBlue2Green = parseInt((x2 - x1) / (blue2green / exampleImgWidth)), // in display pixels
+        // distance between blue2 and green2 in example spectrum image:
+        var exampleImgBlue2Green = parseInt((x2 - x1) / (blue2green / exampleImgWidth)), // in display pixels
             leftPad = (-parseInt((left2blue / exampleImgWidth) * exampleImgBlue2Green) + x1); // in display pixels
-
-        _graph.imgContainer.height(180); // we should move away from hard-coded height, but couldn't make the below work:
-        //_graph.imgContainer.height(_graph.imgContainer.height() + 80);
 
         $('.calibration-pane .example img').css('margin-left', leftPad);
         $('.calibration-pane .example img').css('width', exampleImgBlue2Green);
 
-        $('.slider-1').css('left', parseInt(x1) + margin - 10);
-        $('.slider-2').css('left', parseInt(x2) + margin - 10);
+        $('.slider-1').css('left', parseInt(x1) + _graph.margin.left - 10);
+        $('.slider-2').css('left', parseInt(x2) + _graph.margin.left - 10);
 
         $('.slider-1').attr('data-pos', x1); 
         $('.slider-2').attr('data-pos', x2);
 
-// HERE
+        // compatibility with legacy systems where data extraction from image to json is not always 1:1
+        var jsonPxPerImgPx = _graph.datum.json.data.lines.length/_graph.image.width;
 
         // get source image pixel location, round to 2 decimal places:
-        ix1 = Math.round(_graph.displayPxToImagePx(x1) * 100) / 100;
-        ix2 = Math.round(_graph.displayPxToImagePx(x2) * 100) / 100;
+        ix1 = Math.round(_graph.displayPxToImagePx(x1) * jsonPxPerImgPx * 100) / 100;
+        ix2 = Math.round(_graph.displayPxToImagePx(x2) * jsonPxPerImgPx * 100) / 100;
 
         error = parseInt(SpectralWorkbench.API.Core.rmseCalibration(_graph.datum, blue2, green2, ix1, ix2));
 
@@ -540,12 +541,13 @@ SpectralWorkbench.UI.ToolPaneTypes = {
   },
 
 
+  // this is not used after calibration2 was added. Deprecate soon.
   calibrate: {
 
     title: "Wavelength calibration",
     dataType: "spectrum",
     description: "Follow the prompts to wavelength calibrate a fluorescent spectrum.",
-    link: "//publiclab.org/wiki/spectral-workbench-toolpanes#Calibrate",
+    link: "//publiclab.org/wiki/spectral-workbench-calibration",
     author: "warren",
     apply: true,
     setup: function(form) {
@@ -598,7 +600,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
     title: "Compare",
     dataType: "any",
     description: "Compare this spectrum to others in the graph above.",
-    link: "//publiclab.org/wiki/spectral-workbench-toolpanes#Compare",
+    link: "//publiclab.org/wiki/spectral-workbench-operations#Compare",
     author: "warren",
     apply: false,
     url: '/spectrums/choose/all', // default spectra to show, can use * and ?author=warren
@@ -638,7 +640,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
     title: "Find Similar",
     dataType: "spectrum",
     description: "Search the database for similar spectra.",
-    link: "//publiclab.org/wiki/spectral-workbench-toolpanes#Find similar",
+    link: "//publiclab.org/wiki/spectral-workbench-usage#Find+similar",
     author: "warren",
     apply: false,
     url: '/match/search/$ID?toolPane=true', // default spectra to show, can use * and ?author=warren
@@ -671,7 +673,52 @@ SpectralWorkbench.UI.ToolPaneTypes = {
 
     }
 
-  }
+  },
 
+
+  /*
+  // incomplete, works through tag form: 
+  blend: {
+
+    title: "Blend",
+    dataType: "any",
+    description: "Blends this spectrum with a second spectrum, using a JavaScript math expression (such as 'R*G+B') to each point in the two spectra, as described in the documentation",
+    link: "//publiclab.org/wiki/spectral-workbench-operations#blend",
+    author: "warren",
+    apply: true,
+    setup: function(form) {
+
+      form.formEl.hide();
+      $(form.el).find('.results').html('');
+      // create custom form
+      form.customFormEl.html("<p>Enter an expression to apply to the spectrum:</p><form class='expression'><input type='text'></input></form><p><a href='//publiclab.org/wiki/spectral-workbench-tools#Transform'>Read about transforms &raquo;</a>");
+
+      form.el.find('.expression').on('submit', function(e) {
+
+        e.preventDefault();
+        form.graph.datum.addTag('transform:'+form.el.find('.expression input').val());
+        form.formEl.show();
+
+      });
+
+      form.el.find('.expression input').focus();
+
+    },
+    onApply: function(form, callback) {
+
+      form.formEl.show();
+
+      form.graph.dim();
+      form.graph.datum.addTag('transform:'+form.el.find('.expression input').val(), function() {
+
+        form.graph.reload_and_refresh();
+        if (callback) callback();
+
+      });
+
+    }
+
+  },
+  */
 
 }

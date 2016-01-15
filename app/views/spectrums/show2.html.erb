@@ -1,7 +1,7 @@
 <%= render :partial => "embed/modal", :locals => { datum: @spectrum, type: :spectrum } %>
 
 <div class="spectrum-img-container">
-  <img class="spectrum" src="<%= @spectrum.photo.url(:large) %>" />
+  <img class="spectrum" src="<%= @spectrum.photo.url(:original) %>" />
 </div>
 
 <div id="graphing" class="spectrums">
