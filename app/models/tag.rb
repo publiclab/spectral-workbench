@@ -11,7 +11,7 @@ class Tag < ActiveRecord::Base
   validate :powertags_by_owner
 
   # place this before the has_one :snapshot so it runs before dependent => :destroy
-  before_destroy :is_deletable?
+  before_destroy :is_deletable?, :scan_powertags_destroy
 
   belongs_to :spectrum
   belongs_to :user
@@ -33,7 +33,7 @@ class Tag < ActiveRecord::Base
   end
 
   def needs_reference?
-    self.is_powertag? && ['calibration',
+    self.is_powertag? && ['calibrate', # calibration clone
                           'subtract',
                           'forked',
                           'transform'].include?(self.key)
@@ -47,15 +47,27 @@ class Tag < ActiveRecord::Base
 
   def scan_powertags
     if self.is_powertag?
+      spectrum = self.spectrum
       if self.key == 'crossSection'
-        spectrum = self.spectrum
         spectrum.sample_row = self.value # transition this to tag-based; this is just legacy compatibility
+        spectrum.save
+      elsif self.key == 'calibrate' || self.key == 'linearCalibration'
+        spectrum.calibrated = spectrum.is_calibrated?
         spectrum.save
       end
       # default to latest snapshot as reference:
       self.add_reference(false) if self.needs_reference?
       # would like to create snapshot here, but must do so in TagController, 
       # as we need client-submitted data to do so
+    end
+  end
+
+  def scan_powertags_destroy
+    if self.is_powertag?
+      if self.key == 'calibrate' || self.key == 'linearCalibration'
+        spectrum.calibrated = spectrum.is_calibrated?
+        spectrum.save
+      end
     end
   end
 

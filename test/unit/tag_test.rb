@@ -34,13 +34,26 @@ class TagTest < ActiveSupport::TestCase
     assert !tag.save
   end
 
+  test "linearCalibration powertag re-marks spectrum as calibrated" do 
+    s = spectrums(:one)
+    assert !s.calibrated
+    tag = Tag.new({
+      user_id:     users(:quentin).id,
+      spectrum_id: s.id,
+      name:        'linearCalibration:180.15-634.54'
+    })
+    assert tag.save
+    s = Spectrum.find s.id
+    assert s.calibrated
+  end
+
   # the data could be overwritten in a separate call, though
   test "linearCalibration powertag does not change spectrum data" do 
     data = spectrums(:one).data
     tag = Tag.new({
       user_id:     users(:quentin).id,
       spectrum_id: spectrums(:one).id,
-      name:        'range:100-500'
+      name:        'linearCalibration:180.15-634.54'
     })
     assert_equal tag.spectrum.data, data
     assert tag.save

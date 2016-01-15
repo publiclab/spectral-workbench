@@ -207,11 +207,15 @@ class Spectrum < ActiveRecord::Base
     if self.data.nil?
       false
     else
-      begin
-        d = ActiveSupport::JSON.decode(self.clean_json)
-        !d.nil? && !d['lines'].nil? && !d['lines'].first['wavelength'].nil?
-      rescue
-        false
+      if self.tags.collect(&:key).include?('calibrate') || self.tags.collect(&:key).include?('linearCalibration')
+        true
+      else
+        begin
+          d = ActiveSupport::JSON.decode(self.clean_json)
+          !d.nil? && !d['lines'].nil? && !d['lines'].first['wavelength'].nil?
+        rescue
+          false
+        end
       end
     end
   end
@@ -262,7 +266,7 @@ class Spectrum < ActiveRecord::Base
         newtag.create_snapshot(tag.snapshot.data) if tag.needs_snapshot? && tag.snapshot && !tag.snapshot.data.nil?
       end
     end
-    new
+    Spectrum.find new.id # refetch it to get all the tags, for some reason needed by tests
   end
 
   # clones calibration from another spectrum (preferably taken from the same device)
@@ -347,10 +351,8 @@ puts "reversing"
         :name => tags.strip,
         :user_id => user_id,
       })
-      unless self.has_tag(tag.name) # duplicate
-        tag.save
-        return tag
-      end     
+      tag.save
+      return tag
     else
       tags.split(',').each do |name|
         return self.tag(name, user_id)
@@ -520,10 +522,10 @@ puts "reversing"
     id = self.id
     if self.calibrated
       if self.processed_spectrum
-        self.processed_spectrum.update_attributes(generate_hashed_values)
+        self.processed_spectrum.update_attributes(self.generate_hashed_values)
         self.processed_spectrum.save
       else
-        self.processed_spectrum = ProcessedSpectrum.new(generate_hashed_values)
+        self.processed_spectrum = ProcessedSpectrum.new(self.generate_hashed_values)
         self.processed_spectrum.save
       end
     end
@@ -532,6 +534,7 @@ puts "reversing"
   # Generate the values hash for the processed spectrum
   def generate_hashed_values
 
+#    if self.has_snapshot
     decoded = ActiveSupport::JSON.decode(self.clean_json)
 
     lines = decoded['lines']

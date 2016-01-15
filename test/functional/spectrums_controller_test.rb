@@ -153,7 +153,7 @@ class SpectrumsControllerTest < ActionController::TestCase
     assert_redirected_to spectrum_path(spectrum)
   end
 
-  test "should clone spectrum" do
+  test "should fork spectrum" do
     session[:user_id] = User.first.id # log in
     # we need a real spectrum with an image to work with:
     spectrum = Spectrum.last
