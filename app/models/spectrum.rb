@@ -518,8 +518,8 @@ puts "reversing"
   end
 
   # Process the spectrum for the "Closest Match Module"
+  # -- run after_save
   def generate_processed_spectrum
-    id = self.id
     if self.calibrated
       if self.processed_spectrum
         self.processed_spectrum.update_attributes(self.generate_hashed_values)
@@ -534,8 +534,11 @@ puts "reversing"
   # Generate the values hash for the processed spectrum
   def generate_hashed_values
 
-#    if self.has_snapshot
-    decoded = ActiveSupport::JSON.decode(self.clean_json)
+    if self.snapshots.length > 0
+      decoded = ActiveSupport::JSON.decode(self.snapshots.last.data)
+    else
+      decoded = ActiveSupport::JSON.decode(self.clean_json)
+    end
 
     lines = decoded['lines']
 

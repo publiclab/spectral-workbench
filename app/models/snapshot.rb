@@ -15,7 +15,7 @@ class Snapshot < ActiveRecord::Base
 
   # is_latest is also used by the parent tag's before_destroy
   before_destroy :is_latest?, :has_no_dependent_spectra?
-
+  after_save :generate_processed_spectrum
 
   def validate_author
     if self.spectrum.nil?
@@ -39,6 +39,10 @@ class Snapshot < ActiveRecord::Base
         false
       end
     end
+  end
+
+  def generate_processed_spectrum
+    self.spectrum.generate_processed_spectrum
   end
 
   # rescind requirement of is_latest

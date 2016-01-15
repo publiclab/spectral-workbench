@@ -24,6 +24,44 @@ class SnapshotTest < ActiveSupport::TestCase
   end
 
 
+  test "creating a snapshot should generate/update a processed spectrum" do
+
+    s = Spectrum.last
+    assert_nil s.processed_spectrum
+
+    assert_difference 'ProcessedSpectrum.count', 1 do
+      s.save! # trigger generate_processed_spectrum, records if calibrated
+    end
+
+    ps = s.processed_spectrum.inspect
+    assert s.processed_spectrum
+
+    snapshot = Snapshot.new({
+                 spectrum_id: Spectrum.last.id,
+                 user_id:     User.first.id,
+                 tag_id:      Tag.first.id,
+                 data:        '{"lines":[{"r":20,"g":20,"b":20,"average":20,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}'
+               })
+
+    assert snapshot.spectrum.calibrated
+
+    # updates, doesn't create a new PS
+    assert_difference 'ProcessedSpectrum.count', 0 do
+      snapshot.save!
+    end
+
+    assert           snapshot
+    assert           snapshot.is_latest?
+    assert_not_nil   snapshot.dependent_spectrum_ids
+    assert_equal     snapshot.dependent_spectrum_ids, []
+    assert_equal     ProcessedSpectrum.last.spectrum_id, s.id # confirm new PS 
+    assert_not_equal ProcessedSpectrum.last.inspect, ps # compare stringified
+    assert_not_nil   snapshot.id
+    assert_not_nil   Snapshot.find snapshot.id
+
+  end
+
+
   test "creating a snapshot with different author than spectrum should fail" do
 
     count = Snapshot.count
