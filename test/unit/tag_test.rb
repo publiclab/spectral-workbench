@@ -34,7 +34,7 @@ class TagTest < ActiveSupport::TestCase
     assert !tag.save
   end
 
-  test "linearCalibration powertag re-marks spectrum as calibrated" do 
+  test "linearCalibration powertag marks spectrum as calibrated" do 
     s = spectrums(:one)
     assert !s.calibrated
     tag = Tag.new({
@@ -45,6 +45,34 @@ class TagTest < ActiveSupport::TestCase
     assert tag.save
     s = Spectrum.find s.id
     assert s.calibrated
+  end
+
+  test "linearCalibration powertag deletion marks spectrum as uncalibrated" do 
+    s = spectrums(:one)
+    # make it uncalibrated data:
+    s.data = '{"lines":[{"r":10,"g":10,"b":10,"average":10},{"r":10,"g":10,"b":10,"average":10}]}'
+    s.save!
+    assert !s.calibrated
+
+    # trigger calibration to be true via tag
+    tag = Tag.new({
+      user_id:     users(:quentin).id,
+      spectrum_id: s.id,
+      name:        'linearCalibration:180.15-634.54'
+    })
+    assert !s.is_calibrated?
+    assert tag.save # should process tags and update spectrum.calibrated after_save
+
+    s = Spectrum.find s.id # re-fetch updated version
+    assert s.is_calibrated?
+    assert s.calibrated
+
+    tag = Tag.where(spectrum_id: s.id)
+             .where(name: 'linearCalibration:180.15-634.54')
+
+    assert tag.last.destroy
+    s = Spectrum.find s.id # re-fetch updated version
+    assert !s.calibrated
   end
 
   # the data could be overwritten in a separate call, though

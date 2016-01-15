@@ -11,13 +11,15 @@ class Tag < ActiveRecord::Base
   validate :powertags_by_owner
 
   # place this before the has_one :snapshot so it runs before dependent => :destroy
-  before_destroy :is_deletable?, :scan_powertags_destroy
+  before_destroy :is_deletable?
+  after_destroy :scan_powertags_destroy
 
   belongs_to :spectrum
   belongs_to :user
   has_one :snapshot, :dependent => :destroy
 
   before_save :scan_powertags
+  after_save :scan_powertags_after_save
 
 
   # this should return true for any powertag that operates on the data:
@@ -51,9 +53,6 @@ class Tag < ActiveRecord::Base
       if self.key == 'crossSection'
         spectrum.sample_row = self.value # transition this to tag-based; this is just legacy compatibility
         spectrum.save
-      elsif self.key == 'calibrate' || self.key == 'linearCalibration'
-        spectrum.calibrated = spectrum.is_calibrated?
-        spectrum.save
       end
       # default to latest snapshot as reference:
       self.add_reference(false) if self.needs_reference?
@@ -62,11 +61,18 @@ class Tag < ActiveRecord::Base
     end
   end
 
+  def scan_powertags_after_save
+    if self.is_powertag?
+      if self.key == 'calibrate' || self.key == 'linearCalibration'
+        spectrum.save # update spectrum.calibrated
+      end
+    end
+  end
+
   def scan_powertags_destroy
     if self.is_powertag?
       if self.key == 'calibrate' || self.key == 'linearCalibration'
-        spectrum.calibrated = spectrum.is_calibrated?
-        spectrum.save
+        spectrum.save # update spectrum.calibrated
       end
     end
   end
