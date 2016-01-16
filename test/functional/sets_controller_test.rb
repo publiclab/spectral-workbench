@@ -14,8 +14,20 @@ class SetsControllerTest < ActionController::TestCase
     assert_not_nil assigns(:set)
   end
 
+  test "should show2 spectra_set" do
+    get :show2, :id => spectra_sets(:one).id
+    assert_response :success
+    assert_not_nil assigns(:set)
+  end
+
   test "should show spectra_set json" do
     get :show, :id => spectra_sets(:one).id, :format => :json
+    assert_response :success
+    assert_not_nil assigns(:set)
+  end
+
+  test "should show calibrated spectra_set json" do
+    get :calibrated, :id => spectra_sets(:one).id, :format => :json
     assert_response :success
     assert_not_nil assigns(:set)
   end

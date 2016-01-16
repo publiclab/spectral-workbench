@@ -81,7 +81,7 @@
             </div>
 
 
-            <% if logged_in? && current_user.login == @set.author || current_user.role == "admin" %>
+            <% if logged_in? && current_user.login == @set.author || logged_in? && current_user.role == "admin" %>
             <div class="btn-group export" style="width:100%;text-align:center; margin-top: 20px;">
  
               <%= link_to '<i class="fa fa-trash"></i> Delete'.html_safe, "/sets/delete/"+@set.id.to_s, :confirm => 'Are you sure?', :class => "btn btn-small" %>
