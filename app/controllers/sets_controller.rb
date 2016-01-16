@@ -13,21 +13,21 @@ class SetsController < ApplicationController
 
   def show
     @set = SpectraSet.find params[:id]
-    @spectrums = @set.spectrums
+
+    # don't fetch the data here; but do get latest snapshot_ids
+    @spectrums = Spectrum.select('DISTINCT(spectrums.id), spectrums.title, spectrums.created_at, spectrums.id, spectrums.calibrated, spectrums.user_id, like_count, snapshots.id AS snapshot_id, spectra_sets.id AS set_id')
+                         .joins(:snapshots)
+                         .joins(:spectra_sets)
+                         .where('set_id = ?', @set.id)
+                         .group('spectrums.id')
+
     respond_with(@set) do |format|
       format.html {
         @comment = Comment.new
       }
       format.xml  { render :xml => @set }
       format.json  {
-        json = @set.as_json
-        json = json.merge({spectra: []})
-        @set.spectrums.each do |spectrum|
-          spectrum_json = spectrum.as_json(:except => [:data])
-          spectrum_json[:data] = JSON.parse(spectrum.data)
-          json[:spectra] << spectrum_json
-        end
-        render :json => json
+        render :json => @set.as_json_with_snapshots
       }
     end
   end
@@ -39,14 +39,7 @@ class SetsController < ApplicationController
       # format.html {}
       format.xml  { render :xml => @set }
       format.json  {
-        json = @set.as_json
-        json = json.merge({spectra: []})
-        @set.calibrated_spectrums.each do |spectrum|
-          spectrum_json = spectrum.as_json(:except => [:data])
-          spectrum_json[:data] = JSON.parse(spectrum.data)
-          json[:spectra] << spectrum_json
-        end
-        render :json => json
+        render :json => @set.as_json_with_calibrated_snapshots
       }
     end
   end
@@ -69,8 +62,7 @@ class SetsController < ApplicationController
   end
 
   def embed2
-    @set = SpectraSet.find params[:id]
-    @spectrums = @set.spectrums
+    show
     render :template => 'embed/set', :layout => 'embed'
   end
 
