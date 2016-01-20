@@ -190,6 +190,8 @@ $W = {
     if (navigator.webkitGetUserMedia && v >= 30) {
       MediaStreamTrack.getSources(function(a){
         $.each(a,function(i,source) {
+          if ($W.debugChrome) alert(source.id + '//' + source.label + '//' + source.kind)
+          console.log(source)
           if (source.kind == "video") $W.chrome_cameras.push(source)
         })
       });

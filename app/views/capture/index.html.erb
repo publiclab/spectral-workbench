@@ -135,6 +135,11 @@
     <% end %>
     width: 640
   }) 
+
+  <% if params[:debugChrome] %>
+    $W.debugChrome = true;
+  <% end %>
+
   setInterval($W.getRow,100)
   <% if @calibration %>
     $W.calibrated = true
