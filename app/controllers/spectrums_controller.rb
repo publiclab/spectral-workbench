@@ -209,7 +209,6 @@ class SpectrumsController < ApplicationController
 
           if params[:spectrum][:calibration_id] && !params[:is_calibration] && params[:spectrum][:calibration_id] != "calibration" && params[:spectrum][:calibration_id] != "undefined"
             @spectrum.clone_calibration(params[:spectrum][:calibration_id])
-            @spectrum.tag("calibration:#{params[:spectrum][:calibration_id]}", current_user.id)
           end
 
           if params[:geotag]
@@ -344,7 +343,7 @@ class SpectrumsController < ApplicationController
     @spectrum.clone_calibration(@calibration_clone_source.id)
     @spectrum.save
     @spectrum.remove_powertags('calibration')
-    @spectrum.tag("calibration:#{@calibration_clone_source.id}", current_user.id)
+    @spectrum.tag("calibrate:#{@calibration_clone_source.id}", current_user.id)
     
     respond_with(@spectrums) do |format|
       format.html {

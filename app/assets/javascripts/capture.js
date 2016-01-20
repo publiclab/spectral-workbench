@@ -23,7 +23,7 @@ $W = {
 
   initialize: function(args) {
     this.mobile = args['mobile'] || false
-    this.flipped = args['flipped'] || false
+    this.flipped = args['flipped'] == true || false
     this.interface = args['interface'] || false
     this.mode = args['mode'] || 'combined'
     flotoptions.colors = [ "#ffffff", "rgba(255,0,0,0.3)", "rgba(0,255,0,0.3)", "rgba(0,0,255,0.3)", "#ffff00"]
@@ -88,6 +88,11 @@ $W = {
       };
       //video.play()
       $W.chromeCameraSelect()
+      // flip image horiz. based on init terms
+      if ($W.flipped == true) {
+        $W.flipped = false; // <= turn it false because f_h() will toggle it. messy.
+        $W.flip_horizontal();
+      }
     } else {
       //flash context
       console.log('flash or something else')
@@ -386,40 +391,27 @@ $W = {
     setTimeout(function() { if ($('#geotag').val() == "true") $W.geolocate() },500)
     this_.getRecentCalibrations()
   },
+
   getRecentCalibrations: function() {
     $.ajax({
-      url: "/capture/recent_calibrations",
+      url: "/capture/recent_calibrations?calibration_id=" + $W.calibration_id,
       type: "GET",
       success: function(data) {
         var html = "<option value='calibration'>[+] New calibration/uncalibrated</option>"
         $.each(data, function(index, spectrum) {
-          html += "<option value="+spectrum.id+">"+spectrum.title+" ("+spectrum.created_at_in_words+" ago)</option>"
+          html += "<option "
+          if ($W.calibration_id == spectrum.id) html += "selected "
+          html += "value="+spectrum.id+">#"+spectrum.id+": "+spectrum.title+" ("+spectrum.created_at_in_words+" ago)</option>"
         });
         $("#calibration_id").html(html);
       }
     })
   },
+
   cancelSave: function() {
     $('#geotag').val('false')
     $('#lon').val('')
     $('#lat').val('')
-  },
-
-  match: function() {
-    cols = []
-    $.each($W.full_data,function(i,datum) {
-      cols.push(i+":"+datum[3])
-    })
-    $("#match").html("<p><img src='/images/spinner-green.gif' /></p>");
-    $.ajax({
-      url: "/sets/find_match/"+$W.set+"?calibration="+$W.calibration_id,
-      type: "POST",
-      data: {data: cols.join(',')},
-      //context: document.body
-      success: function(result) {
-        $("#match").html("<p>"+result+"</p>");
-      }
-    })
   },
 
   auto_detect_sample_row: function() {

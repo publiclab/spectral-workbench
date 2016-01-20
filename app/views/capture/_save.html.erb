@@ -53,10 +53,10 @@
   <input name="lon" type="hidden" id="lon" />
   <% if logged_in? %>
   <p><small>Choose a recent reference calibration, or use this as a new calibration.</small></p>
-  <select name="spectrum[calibration_id]" id="calibration_id">
+  <select name="spectrum[calibration_id]" id="calibration_id" style="width:100%;">
     <option value="calibration">[+] New calibration/uncalibrated</option>
     <% @calibrations.each do |spectrum| %>
-    <option value="<%= spectrum.id %>"><%= spectrum.title %> (<%= time_ago_in_words(spectrum.created_at) %> ago)</option>
+      <option <% if spectrum.id == @calibration.id %>selected <% end %>value="<%= spectrum.id %>">#<%= spectrum.id %>: <%= spectrum.title %> (<%= time_ago_in_words(spectrum.created_at) %> ago)</option>
     <% end %>
   </select>
   <% end %>

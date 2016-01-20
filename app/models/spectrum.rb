@@ -250,9 +250,10 @@ class Spectrum < ActiveRecord::Base
   def clone_calibration(clone_id)
     clone_source = Spectrum.find clone_id
     d = ActiveSupport::JSON.decode(self.clean_json)
-    cd = ActiveSupport::JSON.decode(clone_source.clean_json)
+    cd = clone_source.latest_json_data
     # assume linear:
     lines = cd['lines']
+    lines = lines.reverse if clone_source.is_flipped
     length = lines.length
     startWavelength = lines[0]['wavelength'].to_f
     endWavelength = lines[length-1]['wavelength'].to_f
@@ -266,7 +267,7 @@ class Spectrum < ActiveRecord::Base
       end
       i += 1
     end
-    self.tag("calibration:#{clone_id}", self.user_id)
+    self.tag("calibrate:#{clone_id}", self.user_id)
     # figure out how to know when to reverse based on a cloned calibration... maybe we need to store reversal...
     #self.reverse if (wavelength1 < wavelength2 && x1 > x2) || (wavelength1 > wavelength2 && x1 < x2)
     self.data = ActiveSupport::JSON.encode(d)
@@ -451,7 +452,7 @@ class Spectrum < ActiveRecord::Base
 
   # no colon required
   def has_powertag(name)
-    Tag.where('name LIKE (?)',name+':%').where(spectrum_id: self.id).length > 0
+    self.powertags(name).length > 0
   end
 
   # no colon required
@@ -465,10 +466,9 @@ class Spectrum < ActiveRecord::Base
   end
 
   # if it has horizontally flipped input image: red is at left
-  # here, we have made an assumption of ascending pixel values. Deprecate this.
+  # newly calculated based on linearCalibration tag having x1 > x2
   def is_flipped
-    d = ActiveSupport::JSON.decode(self.clean_json)
-    !d['lines'].nil? && !d['lines'][0].nil? && !d['lines'][0]['wavelength'].nil? && !d['lines'][d['lines'].length-1]['wavelength'].nil? && d['lines'][0]['wavelength'] > d['lines'][d['lines'].length-1]['wavelength']
+    self.has_powertag('linearCalibration') && self.powertag('linearCalibration').split('-')[0].to_f > self.powertag('linearCalibration').split('-')[1].to_f
   end
 
   def liked_by(user_id)

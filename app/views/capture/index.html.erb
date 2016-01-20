@@ -129,6 +129,7 @@
     calibrated: <%= !@calibration.nil? %>,
     interface:"capture",
     mode:"combined",
+    flipped: <%= @calibration.is_flipped || params[:flipped] == 'true' %>,
     <% if @calibration && @calibration.has_powertag('video_row') %>
       video_row: <%= @calibration.powertag('video_row') %>,
     <% end %>

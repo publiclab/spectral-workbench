@@ -12,6 +12,8 @@ class CaptureController < ApplicationController
       @calibration = current_user.last_calibration
       @calibration = Spectrum.find(params[:calibration_id]) if params[:calibration_id]
       @calibrations = Spectrum.where(calibrated: true, user_id: current_user.id)
+      @calibrations << @calibration
+      @calibrations.uniq!
       @start_wavelength, @end_wavelength = @calibration.wavelength_range if @calibration
     end
     @spectrums = Spectrum.find(:all, :limit => 12, :order => "id DESC")
@@ -98,8 +100,9 @@ class CaptureController < ApplicationController
 
   def recent_calibrations
     if logged_in?
-      #@offline = true
-      @spectrums = current_user.tag('calibration',20)
+      @spectrums = current_user.calibrations
+      # add the one that's being used in live display:
+      @spectrums = ([Spectrum.find(params[:calibration_id])] + @spectrums).uniq if params[:calibration_id]
       respond_to do |format|
         format.json { render :json => @spectrums.to_json(:methods => :created_at_in_words) }
       end
