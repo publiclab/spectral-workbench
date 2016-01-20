@@ -264,7 +264,7 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
       if (typeof flipping == "undefined") flipping = true; // deal with flipped images by default
 
       // account for reversed data:
-      if (flipping) {
+      if (flipping && _spectrum.graph) {
 
         if (x1 > x2) {
  

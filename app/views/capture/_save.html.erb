@@ -56,7 +56,7 @@
   <select name="spectrum[calibration_id]" id="calibration_id" style="width:100%;">
     <option value="calibration">[+] New calibration/uncalibrated</option>
     <% @calibrations.each do |spectrum| %>
-      <option <% if spectrum.id == @calibration.id %>selected <% end %>value="<%= spectrum.id %>">#<%= spectrum.id %>: <%= spectrum.title %> (<%= time_ago_in_words(spectrum.created_at) %> ago)</option>
+      <option <% if !@calibration.nil? && spectrum.id == @calibration.id %>selected <% end %>value="<%= spectrum.id %>">#<%= spectrum.id %>: <%= spectrum.title %> (<%= time_ago_in_words(spectrum.created_at) %> ago)</option>
     <% end %>
   </select>
   <% end %>

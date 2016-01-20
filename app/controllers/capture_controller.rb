@@ -9,10 +9,13 @@ class CaptureController < ApplicationController
   def index
     @offline = "flush"
     if logged_in?
-      @calibration = current_user.last_calibration
-      @calibration = Spectrum.find(params[:calibration_id]) if params[:calibration_id]
+      if params[:calibration_id]
+        @calibration = Spectrum.find(params[:calibration_id])
+      else
+        @calibration = current_user.last_calibration
+      end
       @calibrations = Spectrum.where(calibrated: true, user_id: current_user.id)
-      @calibrations << @calibration
+      @calibrations << @calibration if @calibration
       @calibrations.uniq!
       @start_wavelength, @end_wavelength = @calibration.wavelength_range if @calibration
     end
