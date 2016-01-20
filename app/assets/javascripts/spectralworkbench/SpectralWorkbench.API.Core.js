@@ -501,7 +501,7 @@ SpectralWorkbench.API.Core = {
     // only a temp calibration, so we can evaluate it before
     // committing. So we build our own little tools:
 
-    var tempCalibration = spectrum.calibrate(w1, w2, x1, x2); // returns a temp spectrum.json.data.lines
+    var tempCalibration = spectrum.calibrate(w1, w2, x1, x2, false); // returns a temp spectrum.json.data.lines, without flipping data or image (false)
 
     // create a custom intensity getter for not-yet-saved calibrations.
     var getIntensity = function(wavelength) {

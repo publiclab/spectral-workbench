@@ -137,30 +137,6 @@ class Spectrum < ActiveRecord::Base
     brightest_row
   end
 
-  def correct_reversed_image
-    pixels = []
-
-    image   = Magick::ImageList.new("public"+(self.photo.url.split('?')[0]).gsub('%20',' '))
-    row = image.export_pixels(0, self.sample_row, image.columns, 1, "RGB");
-    left_redness = 0
-    right_redness = 0
-    # sum redness for each half
-    (0..(row.length/3-1)).each do |i|
-      r = row[i*3]/255
-      b = row[i*3+2]/255
-      if i*3 > row.length/2
-        left_redness += r
-        left_redness -= b
-      else
-        right_redness += r
-        right_redness -= b
-      end
-    end
-    if left_redness < right_redness
-      self.reverse
-    end
-  end
-
   # extracts serialized data from the top row of the stored image
   def extract_data
     pixels = []
@@ -309,7 +285,6 @@ class Spectrum < ActiveRecord::Base
   # horizontally flips image to match reversed spectrum, toggles 'reversed' flag
   def reverse
     image   = Magick::ImageList.new("public"+(self.photo.url.split('?')[0]).gsub('%20',' '))
-puts "reversing"
     image.flop!
     image.write("public"+self.photo.url)
     self.reversed = !self.reversed
@@ -436,9 +411,11 @@ puts "reversing"
     scored
   end
 
+  # used in capture interface for displaying latest calibration
   def wavelength_range
-    d = ActiveSupport::JSON.decode(self.clean_json)
+    d = self.latest_json_data
     range = [d['lines'][0]['wavelength'],d['lines'][d['lines'].length-1]['wavelength']]
+    # always returns range in ascending order
     range.reverse! if range.first && (range.first > range.last)
     range
   end
@@ -531,16 +508,18 @@ puts "reversing"
     end
   end
 
+  def latest_json_data
+    if self.snapshots.length > 0
+      return ActiveSupport::JSON.decode(self.snapshots.last.data)
+    else
+      return ActiveSupport::JSON.decode(self.clean_json)
+    end
+  end
+
   # Generate the values hash for the processed spectrum
   def generate_hashed_values
 
-    if self.snapshots.length > 0
-      decoded = ActiveSupport::JSON.decode(self.snapshots.last.data)
-    else
-      decoded = ActiveSupport::JSON.decode(self.clean_json)
-    end
-
-    lines = decoded['lines']
+    lines = self.latest_json_data['lines']
 
     values = {}
     counts = {}

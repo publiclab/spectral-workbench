@@ -77,11 +77,14 @@ class User < ActiveRecord::Base
   end
 
   def last_calibration 
-    self.tag('calibration',20).first
+    self.calibrations.first
   end
 
   def calibrations
-    self.tag('calibration',20)
+    Spectrum.select("spectrums.id, spectrums.title, spectrums.created_at, spectrums.user_id, spectrums.author, spectrums.calibrated")
+            .joins(:tags)
+            .where('tags.name = (?) OR tags.name LIKE (?)', "calibration", "linearCalibration:%")
+            .order("spectrums.created_at DESC")
   end
 
   # find spectra by user, tagged with <name>

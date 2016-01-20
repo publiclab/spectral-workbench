@@ -45,19 +45,23 @@
 
 <div id="settings" class="tab-pane active">
 
-  <div id="heightIndicator" style="display:none;position:absolute;margin:0;z-index:999;border-right:0px solid #ff4;border-bottom:2px solid #ff4;height:1px;margin-top:120px;width:320px;"></div> 
+  <div id="heightIndicator" style="display:none;position:absolute;margin:0;z-index:999;border-right:0px solid #ff4;border-bottom:2px solid #ff4;height:1px;margin-top:120px;width:320px;font-weight:bold;">
+    <div class="vertical"   style="margin-top:3px;padding:2px;background:black;float:right;display:none;">BLUE</div>
+    <div class="horizontal" style="margin-top:3px;padding:2px;background:black;float:right;">RED</div>
+    <div class="horizontal" style="margin-top:3px;padding:2px;background:black;float:left;">BLUE</div>
+    <div class="vertical"   style="margin-top:3px;padding:2px;background:black;float:right;margin-top:200px;display:none;">RED</div>
+  </div> 
   <div id="webcam-msg"><p><b>Requesting camera access... <br />(<a href="https://play.google.com/store/apps/details?id=org.mozilla.firefox">Firefox</a>, <a href="https://play.google.com/store/apps/details?id=com.opera.browser">Opera</a> or Chrome on Android, or <a href="https://itunes.apple.com/us/app/bowser/id560478358">Bowser</a> on iOS). Please click "Allow" when prompted, or try the <a href="/upload">Upload interface</a>.</b></p></div> 
   <div style="" id="webcam"></div>
 
   <div style="padding-bottom:10px;padding-top:250px;">
-    <div class="visible-phone">
+    <div class="spectrum-example-vertical" style="display:none;">
       <p style="margin-top:4px;">Point your spectrometer at a light and click on the video above to choose a cross-section to sample. (<a href="http://publiclab.org/wiki/spectral-workbench-usage">Learn more &raquo;</a>)</p>
-      <img class="img-rounded" src="/images/example-cfl.jpg" style="width:100px;height:80px" />
-      <img class="img-rounded" src="/images/example-sky.jpg" style="width:100px;height:80px" />
+      <img src="/images/example-cfl-vertical.png" style="height:200px" />
     </div>
-    <div class="hidden-phone">
+    <div class="spectrum-example-horizontal">
       <p style="margin-top:4px;">Point your spectrometer at a light and click on the video above to choose a cross-section as shown below. (<a href="http://publiclab.org/wiki/spectral-workbench-usage">Learn more &raquo;</a>)</p>
-      <img src="/images/calibration-example.png" />
+      <img width="480px" src="/images/calibration-example.png" />
     </div>
 
   </div>
@@ -65,16 +69,18 @@
   <script>
     jQuery(document).ready(function() {
       $W.setSampleRowClickListener()
+
+      <% if ios? || (mobile? && !opera?) %>
+        $W.toggle_rotation();
+      <% end %>
+
     })
   </script>
 
-  <% if ios? || (mobile? && !opera?) %>
-  <% end %>
-
   <p style="padding-top:5px;">
-    <a rel="tooltip" title="" class="btn btn-inverse" onclick="$W.auto_detect_sample_row()" data-original-title="Auto select sample row"><i class="fa fa-white fa-arrows-h"></i> Auto-select Sample Row</a>
-    <a rel="tooltip" title="Flip video horizontally" class="btn btn-inverse" onClick="$W.flip_horizontal()"><i class="fa fa-white fa-arrows-h"></i> Flip</a>
-    <a rel="tooltip" title="Rotate video 90 &deg;" class="btn btn-inverse" onClick="$W.toggle_rotation()"><i class="fa fa-white fa-rotate-right"></i> Rotate</a>
+    <a rel="tooltip" title="" class="btn btn-inverse" onclick="$W.auto_detect_sample_row()" data-original-title="Auto select sample row"><i class="fa fa-white fa-arrows-v"></i> Auto-select Sample Row</a>
+    <a rel="tooltip" title="Flip video horizontally" class="btn btn-inverse btn-flip" onClick="$W.flip_horizontal()"><i class="fa fa-white fa-arrows-h"></i> Flip image</a>
+    <a rel="tooltip" title="Rotate video 90 &deg;" class="btn btn-inverse btn-rotate" onClick="$W.toggle_rotation()"><i class="fa fa-white fa-rotate-right"></i> Rotate</a>
     <% if params[:debug] || chrome? %><a rel="tooltip" title="Change camera" class="btn btn-inverse" onClick="$W.chromeCameraSwitch()"><i class="fa fa-white fa-camera"></i> Change Camera</a><% end %>
 
   </p>
@@ -84,7 +90,7 @@
 
   <% if @calibration %>
     <p class="calibration-used">Using spectrum "<a target="_blank" href="/spectrums/<%= @calibration.id %>"><%= @calibration.title %></a>" (captured <%= time_ago_in_words(@calibration.created_at) %> ago) as a calibration reference.</p>
-    <p>If this is incorrect, simply save your spectra uncalibrated and calibrate them later with the correct reference.</p>
+    <p>If this is incorrect, simply save your spectra uncalibrated and calibrate them later with the correct reference. Or create a new calibration and refresh this page.</p>
   <% end %>
 
   <a class="btn btn-large btn-primary" href="#capture" onClick="$('#capture-btn').addClass('active');$('#settings-btn').removeClass('active');" data-toggle="tab">Begin capturing &raquo;</a>

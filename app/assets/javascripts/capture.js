@@ -7,7 +7,6 @@ $W = {
   baseline: null,
   full_data: [],
   unflipped_data: [],
-  detect_flip: false,
   flipped: false,
   rotated: false,
   pos: 0,
@@ -236,8 +235,6 @@ $W = {
       var video = $('video')[0];
       // Grab the existing canvas:
       var saved = $W.excerptCanvas(0,0,$W.width,$W.height,$W.ctx).getImageData(0,0,$W.width,$W.height)
-      // check for flipped spectrum every 10th frame... deprecated
-      if ($W.detect_flip && ($W.frame/10 - parseInt($W.frame/10) == 0)) $W.autodetect_flipness()
 
       // manipulate the canvas to get the image to copy onto the canvas in the right orientation
       $W.ctx.save()
@@ -257,8 +254,12 @@ $W = {
       $W.preview_ctx.canvas.width = $('#preview').width()
       $W.preview_ctx.canvas.height = $('#preview').width()*0.75
       $('#preview').height($('#preview').width()*0.75)
+      if ($W.flipped) {
+        $W.preview_ctx.translate($('#preview').width(),0)
+        $W.preview_ctx.scale(-1,1)
+      }
       $W.preview_ctx.drawImage($('video')[0],0,0,$('#preview').width(),$('#preview').width()*0.75)
-      $("#heightIndicatorPrev").width($('#sidebar').width())
+      if ($W.rotated != true) $("#heightIndicatorPrev").width($('#sidebar').width())
       $W.resetHeightIndicators(false)
     }
 
@@ -574,6 +575,8 @@ $W = {
 
   flip_horizontal: function() {
     $W.flipped = !$W.flipped
+    if ($W.flipped == true) $('.btn-flip').addClass('active');
+    else                    $('.btn-flip').removeClass('active');
     $('#spectrum_reversed').val($('#spectrum_reversed').val() == 'false')
     var style = $('#webcam video')[0].style
     if ($W.flipped) {
@@ -595,6 +598,8 @@ $W = {
 
   toggle_rotation: function() {
     $W.rotated = !$W.rotated
+    if ($W.rotated == true) $('.btn-rotate').addClass('active');
+    else                    $('.btn-rotate').removeClass('active');
     var style = $('#heightIndicator')[0].style
     var stylePrev = $('#heightIndicatorPrev')[0].style
     if ($W.rotated) {
@@ -608,6 +613,10 @@ $W = {
       stylePrev.borderRightWidth = "2px"
       stylePrev.height = "100px"
       stylePrev.width = "0px"
+      $('#heightIndicator .vertical').show();
+      $('#heightIndicator .horizontal').hide();
+      $('.spectrum-example-horizontal').hide();
+      $('.spectrum-example-vertical').show();
     } else {
       style.marginLeft = '0px';
       style.borderBottomWidth = "2px"
@@ -619,19 +628,15 @@ $W = {
       stylePrev.borderRightWidth = "0px"
       stylePrev.width = "100%"
       stylePrev.height = "0px"
+      $('#heightIndicator .vertical').hide();
+      $('#heightIndicator .horizontal').show();
+      $('.spectrum-example-horizontal').show();
+      $('.spectrum-example-vertical').hide();
     }
     // reset the indicator to the correct sample row:
     $W.setSampleRows($W.sample_start_row,$W.sample_start_row)
   },
 
-  // poorly named; this actually toggles "flippedness detection"
-  toggle_flip: function() {
-    $W.detect_flip = !$W.detect_flip
-  },
-  // Changes $W.flipped based on detecting where the red end of the spectrum is
-  autodetect_flipness: function() {
-    if (!$W.mobile) $W.flipped = !$W.is_data_ascending_in_nm()
-  },
   is_data_ascending_in_nm: function() {
     var left_redness = 0, right_redness = 0
     // sum redness and unblueness for each half

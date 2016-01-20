@@ -226,7 +226,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
 
     title: "Choose cross section",
     dataType: "spectrum",
-    description: "Click the image to choose which row of pixels from the source image is used to generate your graph line.",
+    description: "Click the image to choose which row of pixels from the source image is used to generate your graph line. The default is 0, which is the line used if no crossSection operation is visible.",
     link: "//publiclab.org/wiki/spectral-workbench-operations#crossSection",
     apply: true,
     author: "warren",
@@ -236,7 +236,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
       form.formEl.hide();
       form.el.find('.results').html('');
 
-      form.customFormEl.html("<p>Click the spectrum image or enter a row number:</p><input class='cross-section' type='text' />");
+      form.customFormEl.html("<p>Click the spectrum image or enter a row number:</p><input class='cross-section' type='text' value='0' />");
 
       form.graph.image.click(function(x, y, e) {
 
@@ -259,20 +259,11 @@ SpectralWorkbench.UI.ToolPaneTypes = {
     },
     onApply: function(form) {
 
-      form.graph.datum.imgToJSON(+$('.cross-section').val());
-
-      form.graph.args.sample_row = +$('.cross-section').val();
-      form.graph.image.setLine(form.graph.args.sample_row);
-
-      form.graph.datum.getPowerTag('crossSection', function(tag) { tag.destroy() });
-
       form.graph.dim();
       form.graph.datum.addTag('crossSection:' + $('.cross-section').val(), function() {
 
         form.graph.datum.load();
         form.graph.reload_and_refresh();
-
-        alert('Now, calibrate your spectrum to save this cross section.');
 
       });
 
@@ -308,11 +299,18 @@ SpectralWorkbench.UI.ToolPaneTypes = {
     },
     setup: function(form) {
 
-      var blue2 = 435.83,
-          green2 = 546.07,
-          left2blue = 211,
-          blue2green = 743-211,
-          exampleImgWidth = 1390;
+      var blue2 = 435.83,           // in nanometers
+          green2 = 546.07,          // "
+          left2blue = 211,          // in example image pixels
+          right2green = 1390 - 743, // "
+          blue2green = 743-211,     // "
+          exampleImgWidth = 1390;   // "
+
+      if (form.graph.datum.getPowerTag('linearCalibration').length > 0) {
+
+        $('.datum-tool-pane .description').append("<span style='color:#900'>You have already calibrated this spectrum. We recommend clearing your previous calibration before re-calibrating.</span>");
+
+      }
 
       form.graph.imgContainer.height(180); // we should move away from hard-coded height, but couldn't make the below work:
       //form.graph.imgContainer.height(_graph.imgContainer.height() + 80);
@@ -407,9 +405,21 @@ SpectralWorkbench.UI.ToolPaneTypes = {
 
         }
 
-        // distance between blue2 and green2 in example spectrum image:
-        var exampleImgBlue2Green = parseInt((x2 - x1) / (blue2green / exampleImgWidth)), // in display pixels
-            leftPad = (-parseInt((left2blue / exampleImgWidth) * exampleImgBlue2Green) + x1); // in display pixels
+        // distance between blue2 and green2 in example spectrum image as displayed:
+        var exampleImgBlue2Green = parseInt(Math.abs(x2 - x1) / (blue2green / exampleImgWidth)); // in display pixels
+
+        if (x1 <= x2) {
+
+          var leftPad = (-parseInt((left2blue / exampleImgWidth) * exampleImgBlue2Green) + x1); // in display pixels
+          $('.calibration-pane .example img').removeClass('flipped');
+
+        } else {
+
+          // the image must be flipped as the spectrum is backwards
+          var leftPad = (-parseInt((right2green / exampleImgWidth) * exampleImgBlue2Green) + x2); // in display pixels
+          $('.calibration-pane .example img').addClass('flipped');
+
+        }
 
         $('.calibration-pane .example img').css('margin-left', leftPad);
         $('.calibration-pane .example img').css('width', exampleImgBlue2Green);

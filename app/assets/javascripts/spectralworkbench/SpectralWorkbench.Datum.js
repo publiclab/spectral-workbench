@@ -99,6 +99,31 @@ SpectralWorkbench.Datum = Class.extend({
 
 
     /* ======================================
+     * Return first powertag with given key, run 
+     * callback(tag) on the result.
+     */
+    _datum.getPowerTag = function(key, callback) {
+
+      var response = false;
+
+      _datum.tags.forEach(function(tag) {
+
+        if (tag.key == key) {
+
+          response = tag;
+
+        }
+
+      });
+
+      if (callback) callback(response);
+
+      return response;
+
+    }
+
+
+    /* ======================================
      * Find powertags by key, run callback(tag) on each if provided
      */
     _datum.getPowerTag = function(key, callback) {

@@ -254,13 +254,35 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
      * w1 and w2 are nanometer wavelength values, and x1 and x2 are 
      * corresponding pixel positions, measured from left.
      */
-    _spectrum.calibrate = function(w1, w2, x1, x2) {
+    _spectrum.calibrate = function(w1, w2, x1, x2, flipping) {
 
       var stepsize = (w2 - w1) / (x2 - x1),
           startwavelength = w1 - (stepsize * x1),
-          output = [];
+          output = [],
+          lines = _spectrum.json.data.lines;
 
-      _spectrum.json.data.lines.forEach(function(line, i) {
+      if (typeof flipping == "undefined") flipping = true; // deal with flipped images by default
+
+      // account for reversed data:
+      if (flipping) {
+
+        if (x1 > x2) {
+ 
+          console.log('flipping data and image due to x1/x2 reversal');
+
+          // I don't believe we *ever* want to actually reverse the data's order!
+          // lines = lines.reverse();
+          _spectrum.graph.imgEl.addClass('flipped');
+ 
+        } else {
+ 
+          _spectrum.graph.imgEl.removeClass('flipped');
+ 
+        }
+
+      }
+
+      lines.forEach(function(line, i) {
 
         output.push({
           'average': line.average,

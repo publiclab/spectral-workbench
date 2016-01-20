@@ -33,8 +33,11 @@
 
     <h5>Data extraction <a href="//publiclab.org/wiki/spectral-workbench-tools#Data+extraction"><i style="color:#aaa;" class="fa fa-question-circle"></i></a></h5>
     <p><a class="btn btn-small tool-cross-section">Set new cross-section</a></p>
-    <p><a class="btn btn-small" href="/spectra/reverse/<%= datum.id %>">Flip image</a> horizontally</p>
-    <p><a class="btn btn-small" href="/spectra/find_brightest_row/<%= datum.id %>">Set new cross-section</a> by %</p>
+    <p><a class="btn btn-small" data-confirm="Are you sure? You can calibrate a reversed spectrum without flipping it manually, and this can affect later calibrations based on this data." href="/spectra/reverse/<%= datum.id %>">Flip image</a> horizontally</p>
+
+    <hr />
+
+    <p><a class="btn btn-small" href="/spectrums/<%= @spectrum.id %>?v=1">Use legacy 1.0 interface</a></p>
 
     <p>Want a tool that's not listed here? <a href="//publiclab.org/wiki/spectral-workbench-wishlist">Add a request</a> to the Wishlist, or <a href="//publiclab.org/wiki/spectral-workbench-api">learn how to write a macro</a>.</p>
 
@@ -53,7 +56,7 @@
       <tr>
         <th style="width: 28px;"></th>
         <th>Operation</th>
-        <th>Date</i></th>
+        <th style="width: 70px;">Date</i></th>
         <th>Description</th>
         <th></th>
       </tr>

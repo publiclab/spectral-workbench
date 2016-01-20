@@ -128,6 +128,13 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
 
         success: function(response) {
 
+          if (SpectralWorkbench.API.Operations.hasOwnProperty(_tag.key) && SpectralWorkbench.API.Operations[_tag.key].clear) {
+       
+            console.log("cleaning up after tag", _tag.name);
+            SpectralWorkbench.API.Operations[_tag.key].clear(_tag);
+
+          }
+
           _tag.cleanUp(callback);
  
         },

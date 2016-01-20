@@ -18,8 +18,8 @@
 
         <a id="geotag-btn" rel="tooltip" title="Geocode" class="btn btn-inverse active" onClick="$('#geotag-btn').button('toggle');$('#geotag').val('true'!=$('#geotag').val());$W.geolocate()"><i class="fa fa-white fa-map-marker"></i></a>
 
-        <a rel="tooltip" title="Rotate video" class="btn btn-inverse" onClick="$W.toggle_rotation()"><i class="fa fa-white fa-repeat"></i></a>
-        <a rel="tooltip" title="Flip video horizontally" class="btn btn-inverse" onClick="$W.flip_horizontal()"><i class="fa fa-white fa-arrows-h"></i></a>
+        <a rel="tooltip" title="Rotate video" class="btn btn-inverse btn-rotate" onClick="$W.toggle_rotation()"><i class="fa fa-white fa-repeat"></i></a>
+        <a rel="tooltip" title="Flip video horizontally" class="btn btn-inverse btn-flip" onClick="$W.flip_horizontal()"><i class="fa fa-white fa-arrows-h"></i></a>
         <a rel="tooltip" title="Scale video" class="btn btn-inverse" onClick="$W.scale_h = parseFloat(prompt('Enter a horizontal scaling factor (default is 1):'))"><i class="fa fa-white fa-expand"></i></a>
       </div>
  

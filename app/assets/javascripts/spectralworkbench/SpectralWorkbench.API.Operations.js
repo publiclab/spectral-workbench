@@ -3,6 +3,8 @@
  * and description() and optional run() methods, which each accept parameter <tag>.
  * These are called from the PowerTag class.
  * Operations without a "run" method are passive and do not affect data.
+ * Operations with a "clean" method execute it when deleted. These need only be those which wouldn't be cleared by re-running all tags de novo.
+ * Code to parse and execute all this is in the PowerTag class. 
  * 
  *  'subtract': {
  *
@@ -13,6 +15,10 @@
  *    },
  * 
  *    run: function(tag) {
+ * 
+ *    },
+ * 
+ *    clean: function(tag) {
  * 
  *    }
  *
@@ -105,6 +111,12 @@ SpectralWorkbench.API.Operations = {
 
     run: function(tag) {
 
+      tag.datum.imgToJSON(tag.value);
+      tag.datum.load(); // reparse graph-format data
+
+      tag.datum.graph.args.sample_row = tag.value;
+      tag.datum.graph.image.setLine(tag.value);
+
     }
 
   },
@@ -148,8 +160,14 @@ SpectralWorkbench.API.Operations = {
 
     description: function(tag) {
 
-      var response = "Manually calibrated with two reference points.";
-      if (tag.datum.powertags.indexOf(tag) != 0) response += " <span style='color:#900'>Only a crossSection operation should precede this.</span>";
+      var response = "Manually calibrated with two reference points.",
+          x1 = +tag.value.split('-')[0],
+          x2 = +tag.value.split('-')[1];
+
+      if (tag.datum.powertags.indexOf(tag) != 0) response += " <span style='color:#900'>Only a <i>crossSection</i> or <i>forked</i> operation should precede this.</span>";
+
+      if (x1 > x2) response += " This spectrum was recorded flipped horizontally; the image has been flipped back to place blue at left and red at right.";
+
       return response;
 
     },
@@ -165,6 +183,19 @@ SpectralWorkbench.API.Operations = {
  
       // reload the spectrum data:
       tag.datum.load();
+
+    },
+
+    clear: function(tag) {
+
+      var x1 = +tag.value.split('-')[0],
+          x2 = +tag.value.split('-')[1];
+
+      if (x1 > x2) {
+
+        tag.datum.graph.imgEl.removeClass('flipped');
+
+      }
 
     }
 
