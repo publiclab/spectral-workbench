@@ -257,15 +257,14 @@ SpectralWorkbench.Graph = Class.extend({
       _graph.updateSize()();
  
       // actually add it to the display
-      nv.addGraph(_graph.chart);
+      nv.addGraph(function() { return _graph.chart; });
 
       _graph.loaded = true;
-      _graph.onComplete(_graph);
+      _graph.onComplete(_graph); // older than callback; DRY this up!
+      if (_graph.callback) _graph.callback();
  
       // hide loading spinner
       _graph.el.find('.fa-spinner').remove();
-
-      if (_graph.callback) _graph.callback();
 
     }
 
