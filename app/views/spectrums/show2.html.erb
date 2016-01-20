@@ -13,7 +13,7 @@
 
     <script type="text/javascript">
  
-    var graph; // for debugging, and currently, some ToolPane calls :-(
+    var graph, spectrum; // for debugging, and currently, some ToolPane calls :-(
     jQuery(document).ready(function($) {
       graph = new SpectralWorkbench.Graph({
         spectrum_id: <%= @spectrum.id %>,
@@ -21,8 +21,14 @@
         calibrated: <%= @spectrum.calibrated %>,
         range: <%= @spectrum.has_powertag('range') ? @spectrum.range : false %>,
         sample_row: <%= @spectrum.sample_row %>
+      }, function() {
+
+        // for console use
+        spectrum = graph.datum;
+
       });
-    })
+
+    });
  
     </script>
  
@@ -84,6 +90,7 @@
               <li>               <a href="#tab-sets"               data-toggle="tab"><i class="fa fa-list"></i> Sets</a></li>
               <li>               <a href="#tab-comments"           data-toggle="tab"><i class="fa fa-comments"></i> <%= @spectrum.comments.length %> Comments</a></li>
               <% if @spectrum.forks %><li><a href="#tab-forks"     data-toggle="tab"><i class="fa fa-code-fork"></i> <%= @spectrum.forks.length %> Forks</a></li><% end %>
+              <li>               <a href="#tab-scripting"          data-toggle="tab" onClick="init_terminal();"><i class="fa fa-terminal"></i> Scripting</a></li>
               <li class="comparisons" style="display:none;"><a href="#tab-comparisons" data-toggle="tab"><i class="fa fa-columns"></i> Comparisons</a></li>
             </ul>
            
@@ -119,6 +126,10 @@
              
               <div class="tab-pane" id="tab-forks">
                 <%= render partial: 'spectrums/list_table', locals: { spectrums: @spectrum.forks } %>
+              </div>
+             
+              <div class="tab-pane" id="tab-scripting">
+                <%= render partial: 'macros/scripting' %>
               </div>
            
             </div>

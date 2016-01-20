@@ -2,11 +2,12 @@ SpectralWorkbench.Graph = Class.extend({
 
   extent: [0,0],
 
-  init: function(args) {
+  init: function(args, callback) {
 
     var _graph = this;
 
     this.args = args;
+    this.callback = callback;
     this.loaded = false; // measure initial load completion
     this.onComplete = args['onComplete'] || function() { console.log('graph load complete'); };
     this.onImageComplete = args['onImageComplete'] || function() { console.log('image load complete'); };
@@ -264,6 +265,8 @@ SpectralWorkbench.Graph = Class.extend({
       // hide loading spinner
       _graph.el.find('.fa-spinner').remove();
 
+      if (_graph.callback) _graph.callback();
+
     }
 
 
@@ -376,7 +379,6 @@ SpectralWorkbench.Graph = Class.extend({
     
     if (_graph.embed) $(_graph.selector).on('resize', _graph.updateSize()); // if embed, update the chart when DOM element resizes
     else $(window).on('resize', _graph.updateSize()); // else resize when window resizes
-    
 
     return _graph;
 

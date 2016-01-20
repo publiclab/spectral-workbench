@@ -1,6 +1,6 @@
 {
   "name": "Spectral Workbench",
-  "version": "2.0.0-beta.1",
+  "version": "2.0.0-beta.2",
   "dependencies": {
     "d3": "~3.3.13",
     "nvd3": "~1.7.1",
@@ -12,6 +12,7 @@
     "jfeed": "mattmarcum/jFeed",
     "junction": "theleagueof/junction",
     "moment": "~2.10.6",
-    "jasmine-ajax": "jasmine/jasmine-ajax#v3.2.0"
+    "jasmine-ajax": "jasmine/jasmine-ajax#v3.2.0",
+    "jquery.terminal": "~0.9.3"
   }
 }
