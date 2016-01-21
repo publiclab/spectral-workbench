@@ -40,11 +40,11 @@ SpectralWorkbench.API.Core = {
   },
 
 
+  /* Will return a snapshot or spectrum depending on if snapshots exist. */
   fetchLatestSnapshot: function(id, callback) {
 
     // coerce into string:
-    url = "/spectrums/" + id + ".json?latest=true";
-    is_snapshot = true;
+    url = "/spectrums/latest/" + id + ".json";
 
     /* Fetch data */ 
     $.ajax({
@@ -54,11 +54,7 @@ SpectralWorkbench.API.Core = {
 
       success: function(data) {
 
-        if (is_snapshot) data.data = { lines: data.lines }; // doesn't receive a full Spectrum model, just the data, so we rearrange to match
-
         var spectrum = new SpectralWorkbench.Spectrum(data);
-
-        spectrum.snapshot = true;
 
         if (callback) callback(spectrum);
 
