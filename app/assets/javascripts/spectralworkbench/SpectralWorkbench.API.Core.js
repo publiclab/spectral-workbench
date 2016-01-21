@@ -40,6 +40,31 @@ SpectralWorkbench.API.Core = {
   },
 
 
+  /* Will return a snapshot or spectrum depending on if snapshots exist. */
+  fetchLatestSnapshot: function(id, callback) {
+
+    // coerce into string:
+    url = "/spectrums/latest/" + id + ".json";
+
+    /* Fetch data */ 
+    $.ajax({
+      url: url,
+      type: "GET",
+      dataType: "json",
+
+      success: function(data) {
+
+        var spectrum = new SpectralWorkbench.Spectrum(data);
+
+        if (callback) callback(spectrum);
+
+      }
+ 
+    });
+
+  },
+
+
   /* let's put it in Spectrum?: */
   exportSVG: function(name) {
 

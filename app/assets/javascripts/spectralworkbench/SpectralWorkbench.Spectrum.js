@@ -45,6 +45,34 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
 
 
     /* ======================================
+     * Prepares a server-ready formatted JSON string of 
+     * currently displayed data based on spectrum.average/red/green/blue
+     * UNTESTED IN JASMINE
+     */
+    _spectrum.encodeJSON = function() {
+
+      var lines = [];
+
+      _spectrum.average.forEach(function(line, i) {
+
+        lines.push({
+          average:    _spectrum.average[i].y * 255,
+          r:          _spectrum.red[i].y     * 255,
+          g:          _spectrum.green[i].y   * 255,
+          b:          _spectrum.blue[i].y    * 255
+        });
+
+        if (_spectrum.isCalibrated()) lines[lines.length-1].wavelength = _spectrum.average[i].x;
+        else                          lines[lines.length-1].pixel      = _spectrum.average[i].x;
+        
+      }); 
+
+      return lines;
+
+    }
+
+
+    /* ======================================
      * Returns closest intensity for a given wavelength,
      * from available wavelength/intensity pairs
      */

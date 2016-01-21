@@ -630,7 +630,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
 
       _graph.dim();
 
-      SpectralWorkbench.API.Core.fetchSpectrum(id, function(spectrum) {
+      SpectralWorkbench.API.Core.fetchLatestSnapshot(id, function(spectrum) {
 
         SpectralWorkbench.API.Core.compare(_graph, spectrum, function() {
 

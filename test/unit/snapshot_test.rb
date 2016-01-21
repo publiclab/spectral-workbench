@@ -17,6 +17,8 @@ class SnapshotTest < ActiveSupport::TestCase
     assert         snapshot
     assert         snapshot.is_latest?
     assert_not_nil snapshot.dependent_spectrum_ids
+    assert_not_nil snapshot.json
+    assert_not_nil snapshot.json['data']
     assert_equal   snapshot.dependent_spectrum_ids, []
     assert_not_nil snapshot.id
     assert_not_nil Snapshot.find snapshot.id

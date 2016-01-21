@@ -110,6 +110,27 @@ class SpectrumsController < ApplicationController
     end
   end
 
+  def latest
+    spectrum = Spectrum.find(params[:id])
+    if spectrum.snapshots.count > 0
+      @snapshot = spectrum.latest_snapshot
+      is_snapshot = true
+    else
+      @snapshot = spectrum
+      is_snapshot = false
+    end
+    respond_with(@snapshot) do |format|
+      format.xml  { render :xml => @snapshot }
+      format.csv  {
+        render :text => SpectrumsHelper.show_csv_snapshot(@snapshot) if is_snapshot
+        render :text => SpectrumsHelper.show_csv(@snapshot)          if !is_snapshot
+      }
+      format.json  {
+        render :json => @snapshot.json
+      }
+    end
+  end
+
   def show2
     show
   end
@@ -296,11 +317,15 @@ class SpectrumsController < ApplicationController
   def destroy
     @spectrum = Spectrum.find(params[:id])
     if require_ownership(@spectrum)
-      @spectrum.destroy
-      flash[:notice] = "Spectrum deleted."
-      respond_with(@spectrum) do |format|
-        format.html { redirect_to('/') }
-        format.xml  { head :ok }
+      if @spectrum.destroy
+        flash[:notice] = "Spectrum deleted."
+        respond_with(@spectrum) do |format|
+          format.html { redirect_to('/') }
+          format.xml  { head :ok }
+        end
+      else
+        flash[:error] = "Spectrum could not be deleted." # this is not displaying, not sure why
+        redirect_to spectrum_path(@spectrum)
       end
     end
   end

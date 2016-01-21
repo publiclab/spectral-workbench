@@ -79,9 +79,10 @@ class Spectrum < ActiveRecord::Base
     end
   end
 
+  # to output the text "data" field as json, not string data
   def json
     json = self.as_json(:except => [:data])
-    json[:data] = JSON.parse(self.data)
+    json['data'] = ActiveSupport::JSON.decode(self.clean_json)
     json
   end
 

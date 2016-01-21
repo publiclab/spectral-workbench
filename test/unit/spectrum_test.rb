@@ -57,6 +57,14 @@ class SpectrumTest < ActiveSupport::TestCase
     assert !s.save
   end
 
+  test "spectrum generates json" do
+    s = Spectrum.last
+    s.data = '{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}'
+    assert_not_nil s.json
+    assert_not_nil s.json['data']
+    assert_not_nil s.json['data']['lines']
+  end
+
   test "spectrum clone, copies tags & snapshots" do
 
     # create spectrums(:one).photo, so later validations work:

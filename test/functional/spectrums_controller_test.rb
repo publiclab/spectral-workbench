@@ -36,6 +36,31 @@ class SpectrumsControllerTest < ActionController::TestCase
     assert_response :success
   end
 
+  test "should show spectrum csv" do
+    get :show, :id => spectrums(:one).id, :format => :csv
+    assert_response :success
+  end
+
+  test "should show spectrum xml" do
+    get :show, :id => spectrums(:one).id, :format => :xml
+    assert_response :success
+  end
+
+  test "should show latest snapshot in json" do
+    get :latest, :id => snapshots(:one).id, :format => :json
+    assert_response :success
+  end
+
+  test "should show latest snapshot csv" do
+    get :latest, :id => snapshots(:one).id, :format => :csv
+    assert_response :success
+  end
+
+  test "should show latest snapshot xml" do
+    get :latest, :id => snapshots(:one).id, :format => :xml
+    assert_response :success
+  end
+
   test "should show spectrum embed" do
     get :embed, :id => spectrums(:one).id
     assert_response :success

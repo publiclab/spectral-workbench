@@ -13,4 +13,14 @@ class SnapshotsControllerTest < ActionController::TestCase
     assert_response :success
   end
 
+  test "should show snapshot csv" do
+    get :show, :id => snapshots(:one).id, :format => :csv
+    assert_response :success
+  end
+
+  test "should show snapshot xml" do
+    get :show, :id => snapshots(:one).id, :format => :xml
+    assert_response :success
+  end
+
 end

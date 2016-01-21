@@ -420,7 +420,18 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
       }
 
       // save the parsed tag data
-      if (_tag.needs_snapshot) _tag.data = JSON.stringify(_tag.datum.json.data);
+      // HMM: aren't we encoding and decoding here? We should try to deal only with 
+      // original data, and display at last possible moment.
+      if (_tag.needs_snapshot) {
+
+        // here we have to parse back from datum.average/red/green/blue into 
+        //_tag.datum.json.data.lines = _tag.datum.encodeJSON(); // this would be irreversible... unless we save and undo it on destroy
+        //_tag.data = JSON.stringify(_tag.datum.json.data);
+
+        // so instead we do this:
+        _tag.data = JSON.stringify({'lines': _tag.datum.encodeJSON()});
+
+      }
 
     }
 
