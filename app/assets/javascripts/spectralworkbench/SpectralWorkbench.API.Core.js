@@ -54,6 +54,11 @@ SpectralWorkbench.API.Core = {
 
       success: function(data) {
 
+        // this is messy, but fetchLatestSnapshot returns snapshots, not spectra. 
+        // SpectralWorkbench.Spectrum doesn't know.
+        data.snapshot_id = data.id;
+        data.id = id;
+
         var spectrum = new SpectralWorkbench.Spectrum(data);
 
         if (callback) callback(spectrum);
@@ -277,7 +282,11 @@ SpectralWorkbench.API.Core = {
   },
 
 
-  // display a spectrum by given id (and store in an array graph.comparisons)
+  /* 
+   * Display a spectrum by given id and store in an array graph.comparisons.
+   * Counterpart to API.Core.addComparison(), which adds a comparison to 
+   * the Comparisons table.
+   */
   compare: function(graph, datum, callback) {
 
     // standardize this! and reuse it in similar()
@@ -579,6 +588,10 @@ SpectralWorkbench.API.Core = {
   },
 
 
+  /*
+   * Adds a comparison to the Comparisons table; counterpart to API.Core.compare(),
+   * which actually adds it to the graph and displayed chart.
+   */
   addComparison: function(_graph, id, author, title) {
 
     $('li.comparisons').show();
