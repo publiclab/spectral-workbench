@@ -4,7 +4,8 @@ class SpectrumsController < ApplicationController
   # expand this:
   protect_from_forgery :only => [:clone_calibration, :extract, :calibrate, :save]
   # http://api.rubyonrails.org/classes/ActionController/RequestForgeryProtection/ClassMethods.html
-  before_filter :require_login,     :only => [ :new, :edit, :create, :upload, :save, :update, :destroy, :calibrate, :extract, :clone_calibration, :clone, :setsamplerow, :find_brightest_row, :rotate, :reverse, :choose ]
+  before_filter :require_login,     :only => [ :new, :edit, :create, :upload, :save, :update, :destroy, :calibrate, :extract, :clone_calibration, :fork, :setsamplerow, :find_brightest_row, :rotate, :reverse, :choose ]
+  # switch to -- :except => [ :index, :stats, :show, :show2, :anonymous, :embed, :embed2, :search, :recent, :all, :rss, :plots_rss, :match, :clone_search, :compare_search, :set_search
 
   def stats
   end
@@ -15,7 +16,10 @@ class SpectrumsController < ApplicationController
     if logged_in?
       redirect_to "/dashboard"
     else
-      @spectrums = Spectrum.select("title, created_at, id, user_id, author, photo_file_name, like_count, photo_content_type").order('created_at DESC').where('user_id != 0').paginate(:page => params[:page],:per_page => 24)
+      @spectrums = Spectrum.select("title, created_at, id, user_id, author, photo_file_name, like_count, photo_content_type")
+                           .order('created_at DESC')
+                           .where('user_id != 0')
+                           .paginate(:page => params[:page],:per_page => 24)
 
       @sets = SpectraSet.find(:all,:limit => 4,:order => "created_at DESC")
       @comments = Comment.all :limit => 12, :order => "id DESC"
@@ -29,13 +33,18 @@ class SpectrumsController < ApplicationController
     end
   end
 
-  # returns a list of spectrums by tag in a partial for use in macros and tools
+  # Returns a list of spectrums by tag, name, or id
+  # in a partial for use in macros and tools.
+  # ..can we merge this with search?
   def choose
     
     # accept wildcards
     if params[:id] && params[:id].last == "*"
       comparison = "LIKE"
       params[:id].chop!
+      params[:id] += "%"
+    elsif params[:partial]
+      comparison = "LIKE"
       params[:id] += "%"
     else
       comparison = "="
@@ -44,25 +53,27 @@ class SpectrumsController < ApplicationController
     # user's own spectra
     params[:author] = current_user.login if logged_in? && params[:own]
 
+# must re-craft this query to search spectra with no tags:
     @spectrums = Spectrum.order('spectrums.id DESC')
                          .select("DISTINCT(spectrums.id), spectrums.title, spectrums.created_at, spectrums.user_id, spectrums.author, spectrums.calibrated")
-                         .joins(:tags)
+                         .joins("LEFT OUTER JOIN tags ON tags.spectrum_id = spectrums.id")
+                         .joins("JOIN users ON users.id = spectrums.user_id")
                          .paginate(:page => params[:page],:per_page => 6)
 
     # exclude self:
     @spectrums = @spectrums.where('spectrums.id != ?', params[:not]) if params[:not]
-    unless params[:id] == "all" || params[:id].nil?
-      @spectrums = @spectrums.where('tags.name '+comparison+' (?)', params[:id])
-      if params[:author]
-        author = User.find_by_login params[:author]
-        @spectrums = @spectrums.where(user_id: author.id)
-      end
+
+    if params[:id] != "all" && !params[:id].nil?
+      @spectrums = @spectrums.where('tags.name ' + comparison + ' (?) OR spectrums.title ' + comparison + ' (?) OR spectrums.id = ? OR users.login = ?', 
+                                    params[:id], params[:id], params[:id].to_i, params[:id])
+      
+      @spectrums = @spectrums.where(user_id: User.find_by_login(params[:author]).id) if params[:author]
     end
 
-    if @spectrums.length > 0
-      render partial: "macros/spectra", locals: { spectrums: @spectrums }
-    else
-      render text: "<p>No results</p>"
+    respond_with(@spectrums) do |format|
+      format.html { render partial: "macros/spectra", locals: { spectrums: @spectrums } }
+      format.xml  { render :xml => @spectrums }
+      format.json  { render :json => @spectrums }
     end
   end
 
@@ -73,16 +84,21 @@ class SpectrumsController < ApplicationController
     @spectrum = Spectrum.find(params[:id])
     respond_with(@spectrum) do |format|
       format.html {
-        if logged_in?
-          @spectra = Spectrum.find(:all, :limit => 12, :order => "created_at DESC", :conditions => ["id != ? AND author = ?",@spectrum.id,current_user.login])
+        # temporary routing until we deprecate 1.0 paths to /legacy
+        if @spectrum.has_operations && params[:action] != 'show2' && params[:v] != '1'
+          redirect_to "/spectrums/show2/#{@spectrum.id}"
         else
-          @spectra = Spectrum.find(:all, :limit => 12, :order => "created_at DESC", :conditions => ["id != ?",@spectrum.id])
+          if logged_in?
+            @spectra = Spectrum.find(:all, :limit => 12, :order => "created_at DESC", :conditions => ["id != ? AND author = ?",@spectrum.id,current_user.login])
+          else
+            @spectra = Spectrum.find(:all, :limit => 12, :order => "created_at DESC", :conditions => ["id != ?",@spectrum.id])
+          end
+          @sets = @spectrum.sets
+          @user_sets = SpectraSet.where(author: current_user.login).limit(20).order("created_at DESC") if logged_in?
+          @macros = Macro.find :all, :conditions => {:macro_type => "analyze"}
+          @calibrations = current_user.calibrations.select { |s| s.id != @spectrum.id } if logged_in?
+          @comment = Comment.new
         end
-        @sets = @spectrum.sets
-        @user_sets = SpectraSet.where(author: current_user.login).limit(20).order("created_at DESC") if logged_in?
-        @macros = Macro.find :all, :conditions => {:macro_type => "analyze"}
-        @calibrations = current_user.calibrations.select { |s| s.id != @spectrum.id } if logged_in?
-        @comment = Comment.new
       }
       format.xml  { render :xml => @spectrum }
       format.csv  {
@@ -193,7 +209,6 @@ class SpectrumsController < ApplicationController
 
           if params[:spectrum][:calibration_id] && !params[:is_calibration] && params[:spectrum][:calibration_id] != "calibration" && params[:spectrum][:calibration_id] != "undefined"
             @spectrum.clone_calibration(params[:spectrum][:calibration_id])
-            @spectrum.tag("calibration:#{params[:spectrum][:calibration_id]}", current_user.id)
           end
 
           if params[:geotag]
@@ -280,13 +295,13 @@ class SpectrumsController < ApplicationController
   # DELETE /spectrums/1.xml
   def destroy
     @spectrum = Spectrum.find(params[:id])
-    require_ownership(@spectrum)
-    @spectrum.destroy
-
-    flash[:notice] = "Spectrum deleted."
-    respond_with(@spectrum) do |format|
-      format.html { redirect_to('/') }
-      format.xml  { head :ok }
+    if require_ownership(@spectrum)
+      @spectrum.destroy
+      flash[:notice] = "Spectrum deleted."
+      respond_with(@spectrum) do |format|
+        format.html { redirect_to('/') }
+        format.xml  { head :ok }
+      end
     end
   end
 
@@ -312,19 +327,10 @@ class SpectrumsController < ApplicationController
     redirect_to spectrum_path(@spectrum)
   end
 
-  def clone
+  def fork 
     @spectrum = Spectrum.find(params[:id])
-    @new = @spectrum.dup
-    @new.author = current_user.login
-    @new.user_id = current_user.id
-    @new.photo = @spectrum.photo
-    @new.save!
-    @new.tag("cloneOf:#{@spectrum.id}", current_user.id)
-    # now copy over all tags:
-    @spectrum.tags.each do |tag|
-      @new.tag(tag.name, tag.user_id) unless tag.name.split(':').first == "cloneOf"
-    end
-    flash[:notice] = "You successfully cloned <a href='#{spectrum_path(@spectrum)}'>Spectrum ##{@spectrum.id}</a>"
+    @new = @spectrum.fork(current_user)
+    flash[:notice] = "You successfully forked <a href='#{spectrum_path(@spectrum)}'>Spectrum ##{@spectrum.id}</a>"
     redirect_to spectrum_path(@new)
   end
 
@@ -337,7 +343,7 @@ class SpectrumsController < ApplicationController
     @spectrum.clone_calibration(@calibration_clone_source.id)
     @spectrum.save
     @spectrum.remove_powertags('calibration')
-    @spectrum.tag("calibration:#{@calibration_clone_source.id}", current_user.id)
+    @spectrum.tag("calibrate:#{@calibration_clone_source.id}", current_user.id)
     
     respond_with(@spectrums) do |format|
       format.html {

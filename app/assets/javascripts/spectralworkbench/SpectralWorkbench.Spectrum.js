@@ -19,21 +19,26 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
       _spectrum.blue    = [];
 
       // Set up x and y properties like data.x and data.y for d3
-      $.each(_spectrum.json.data.lines,function(i,line) {
+      _spectrum.json.data.lines.forEach(function(line, i) {
      
-        if (line.wavelength == null) {
-     
-          var x = line.pixel;
-          // change graph labels
-     
-        } else var x = line.wavelength;
+        if (line.wavelength == null) var x = line.pixel; // change graph labels
+        else                         var x = line.wavelength;
 
-        _spectrum.average.push({ y: parseInt(line.average / 2.55)/100, x: x })
+        // Only actually add it if it's in specified wavelength range ([start, end]), if any;
+        // or, if there's no graph at all, add it. Perhaps range should be stored in spectrum?
+        // But we need range in the graph to calculate viewport sizes.
+        // Tortured:
 
-        if (line.r != null) _spectrum.red.push(  { y: parseInt(line.r / 2.55)/100, x: x })
-        if (line.g != null) _spectrum.green.push({ y: parseInt(line.g / 2.55)/100, x: x })
-        if (line.b != null) _spectrum.blue.push( { y: parseInt(line.b / 2.55)/100, x: x })
-     
+        if (!_spectrum.graph || (!_spectrum.graph.range || (x >= _spectrum.graph.range[0] && x <= _spectrum.graph.range[1]))) {
+
+          _spectrum.average.push({ y: parseInt(line.average / 2.55)/100, x: x })
+ 
+          if (line.r != null) _spectrum.red.push(  { y: parseInt(line.r / 2.55)/100, x: x })
+          if (line.g != null) _spectrum.green.push({ y: parseInt(line.g / 2.55)/100, x: x })
+          if (line.b != null) _spectrum.blue.push( { y: parseInt(line.b / 2.55)/100, x: x })
+
+        }
+
       });
 
     }
@@ -95,7 +100,12 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
      */
     _spectrum.getExtentX = function() {
 
-      return d3.extent(_spectrum.d3()[0].values, function(d){ return d.x; });
+      var start =  _spectrum.average[0].x;
+      var end =  _spectrum.average[_spectrum.average.length - 1].x;
+
+      return [start, end];
+
+//      return d3.extent(_spectrum.d3()[0].values, function(d){ return d.x; }); // previous version, probably slower?
 
     }
 
@@ -176,7 +186,8 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
 
       if (compared > 0) {
 
-        if (plateau.length > 0) {
+        // don't allow plateaus at <3%
+        if (plateau.length > 0 && max.y > 0.03) {
 
           console.log('Found plateau ' + plateau.length + ' wide in given range; returned center.');
           return plateau[~~(plateau.length/2)].x; // the middle of the plateau
@@ -201,7 +212,7 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
       //return _spectrum.json.data.lines[0].hasOwnProperty('wavelength');
       // rewritten as above was not accounting for unsaved 
       // calibration; below can be wrong but it's very unlikely
-      return _spectrum.average[0].x != 0;
+      return _spectrum.average[0] && _spectrum.average[0].x != 0;
 
     }
 
@@ -229,7 +240,7 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
 
         if (_spectrum.getTag('calibration') == false) _spectrum.addTag('calibration');
 
-        SpectralWorkbench.API.Core.notify("Your new calibration has been saved.", "success");
+        _spectrum.graph.UI.notify("Your new calibration has been saved.", "success");
 
       });
 
@@ -243,13 +254,35 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
      * w1 and w2 are nanometer wavelength values, and x1 and x2 are 
      * corresponding pixel positions, measured from left.
      */
-    _spectrum.calibrate = function(w1, w2, x1, x2) {
+    _spectrum.calibrate = function(w1, w2, x1, x2, flipping) {
 
       var stepsize = (w2 - w1) / (x2 - x1),
           startwavelength = w1 - (stepsize * x1),
-          output = [];
+          output = [],
+          lines = _spectrum.json.data.lines;
 
-      _spectrum.json.data.lines.forEach(function(line, i) {
+      if (typeof flipping == "undefined") flipping = true; // deal with flipped images by default
+
+      // account for reversed data:
+      if (flipping && _spectrum.graph) {
+
+        if (x1 > x2) {
+ 
+          console.log('flipping data and image due to x1/x2 reversal');
+
+          // I don't believe we *ever* want to actually reverse the data's order!
+          // lines = lines.reverse();
+          _spectrum.graph.imgEl.addClass('flipped');
+ 
+        } else {
+ 
+          _spectrum.graph.imgEl.removeClass('flipped');
+ 
+        }
+
+      }
+
+      lines.forEach(function(line, i) {
 
         output.push({
           'average': line.average,
@@ -376,37 +409,10 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
 
 
     /* ======================================
-     * Fetch data to populate self, from server, using spectrum.id.
-     * Overwrites spectrum.json and runs spectrum.load().
-     */
-    _spectrum.fetch = function(url, callback) {
-
-      url = url || '/spectrums/' + _spectrum.id + '.json';
-
-      $.ajax({
-
-        url: url,
-        type: "GET",
-        dataType: "json",
-        success: function(response) {
-
-          _spectrum.json  = response;
-          _spectrum.load();
-
-        },
-        error: function(response) {
-
-          SpectralWorkbench.API.Core.notify(response['errors'], "error");
-
-        }
-      });
-      
-    }
-
-
-    /* ======================================
      * Upload a new json string to the server, overwriting the original. 
      * Not recommended without cloning! But recoverable from original image.
+     * Most uses of this function will be deprecated with the Snapshots system:
+     * https://publiclab.org/wiki/spectral-workbench-snapshots
      */
     _spectrum.upload = function(url, callback) {
 
@@ -432,8 +438,39 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
 
       }).fail(function(response) {
 
-        SpectralWorkbench.API.Core.notify(response['errors'], "error");
+        _spectrum.graph.UI.notify(response['errors'], "error");
 
+      });
+      
+    }
+
+
+    /* ======================================
+     * Fetch data to populate self, from server, using spectrum.id.
+     * Overwrites spectrum.json and runs spectrum.load().
+     */
+    _spectrum.fetch = function(url, callback) {
+
+      url = url || '/spectrums/' + _spectrum.id + '.json';
+
+      $.ajax({
+
+        url: url,
+        type: "GET",
+        dataType: "json",
+        success: function(response) {
+
+          _spectrum.json  = response;
+          _spectrum.load();
+
+          if (callback) callback();
+
+        },
+        error: function(response) {
+
+          _spectrum.graph.UI.notify(response['errors'], "error");
+
+        }
       });
       
     }

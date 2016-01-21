@@ -1,6 +1,6 @@
 <div class="toolbar">
   <p class="credit">
-    by <a target="_blank" href="/profile/<%= datum.author %>"><%= datum.author %></a> <% if type == :spectrum && datum.has_powertag('cloneOf') %>(<a href="/spectrums/<%= datum.powertag('cloneOf') %>">clone</a>)<% end %>
+    by <a target="_blank" href="/profile/<%= datum.author %>"><%= datum.author %></a> <% if type == :spectrum && datum.has_powertag('forked') %>(<a href="/spectrums/<%= datum.powertag('forked') %>">fork</a>)<% end %>
     <span class="site">
       on 
       <span class="spectral-workbench">
@@ -13,12 +13,12 @@
 
   <div class="tools">
 
-    <a target="_blank" href="http://twitter.com/share?text=<%= datum.title %> on @PublicLab's Spectral Workbench&url=https://spectralworkbench.org/<%= type %>s/<%= datum.id %>"><i class="icon icon-twitter"></i></a>
-    <a target="_blank" href="http://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fspectralworkbench.org%2F<%= type %>s%2F<%= datum.id %>"><i class="icon icon-facebook"></i></a>
-    <a href="#embed-modal" data-toggle="modal"><i class="icon icon-share"></i></a>
+    <a target="_blank" href="http://twitter.com/share?text=<%= datum.title %> on @PublicLab's Spectral Workbench&url=https://spectralworkbench.org/<%= type %>s/<%= datum.id %>"><i class="fa fa-twitter"></i></a>
+    <a target="_blank" href="http://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fspectralworkbench.org%2F<%= type %>s%2F<%= datum.id %>"><i class="fa fa-facebook"></i></a>
+    <a href="#embed-modal" data-toggle="modal"><i class="fa fa-share"></i></a>
 
     <% if type == :spectrum %>
-      <a target="_blank" href="/<%= type %>s/<%= datum.id %>"><i class="icon icon-comment"></i> <%= datum.comments.length %></a>
+      <a target="_blank" href="/<%= type %>s/<%= datum.id %>"><i class="fa fa-comment"></i> <%= datum.comments.length %></a>
     <% end %>
 
     <% unless is_embed? %>
@@ -28,13 +28,13 @@
          href="#notifications" 
          style="display:none;">
         <i style="color:orange;" 
-           class="icon icon-exclamation-sign"></i>
+           class="fa fa-exclamation-circle"></i>
         <span id="notification-count"></span>
       </a>
     <% end %>
 
     <div class="dropup"> 
-      <a data-toggle="dropdown" class="dropdown-toggle settings" href="#"><i class="icon icon-cog"></i></a>
+      <a data-toggle="dropdown" class="dropdown-toggle settings" href="#"><i class="fa fa-cog"></i></a>
       <ul class="dropdown-menu" role="menu">
         <li><a href="//publiclab.org/wiki/spectral-workbench-help">Help</a></li>
         <li class="divider"></li>

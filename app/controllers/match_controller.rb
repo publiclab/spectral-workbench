@@ -55,6 +55,7 @@ class MatchController < ApplicationController
     end
 
     @spectra = @spectrum.find_similar(@range)
+                        .paginate(:page => params[:page],:per_page => 24)
 
     @sets = @spectrum.sets
     @macros = Macro.find :all, :conditions => {:macro_type => "analyze"}

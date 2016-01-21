@@ -13,6 +13,7 @@ describe("API", function() {
       var response;
 
       if      (object.url == '/spectrums/9.json') response = object.success(TestResponses.spectrum.success.responseText);
+      else if (object.url == '/snapshots/1.json') response = object.success(TestResponses.snapshot.success.responseText);
       else if (object.url == '/spectrums/9/tags') response = object.success(TestResponses.tags.success.responseText);
       else if (object.url == '/spectrums/clone_calibration/9.json') response = object.success('success');
       else if (object.url == '/match/search/9.json') response = object.success([TestResponses.spectrum.success.responseText]); // return an array containing same spectrum
@@ -39,18 +40,59 @@ describe("API", function() {
   });
 
 
-  it("can create notifications in the DOM", function() {
+  var fetchSpectrumCallbackSpy;
 
-    var noticeEl = SpectralWorkbench.API.Core.notify('Hello, world!', 'success');
+  it("can fetch a spectrum with fetchSpectrum()", function(done) {
 
-    expect(noticeEl.html()).toBe('<b>Success:</b> Hello, world!');
-    expect(noticeEl.html()).not.toBe('Goodbye, world!');
-    expect(noticeEl.hasClass('alert-success')).toBe(true);
+    fetchSpectrumCallbackSpy = jasmine.createSpy('success');
 
-    var noticeEl = SpectralWorkbench.API.Core.notify('Hello, world!', 'error');
+    SpectralWorkbench.API.Core.fetchSpectrum(9, function(spectrum) {
 
-    expect($('.notifications-container p').length).toBe(2);
-    expect(noticeEl.hasClass('alert-error')).toBe(true);
+      expect(spectrum).toBeDefined();
+      expect(spectrum.average).toBeDefined();
+      expect(spectrum.average.length).toBe(spectrum.json.data.lines.length);
+      expect(spectrum.snapshot).toBe(false);
+
+      fetchSpectrumCallbackSpy();
+
+      done();
+
+    });
+
+  });
+
+
+  it("generates fetchSpectrum callback", function() {
+
+    expect(fetchSpectrumCallbackSpy).toHaveBeenCalled();
+
+  });
+
+
+  var fetchSnapshotCallbackSpy;
+
+  it("can fetch a snapshot with fetchSpectrum()", function(done) {
+
+    fetchSnapshotCallbackSpy = jasmine.createSpy('success');
+
+    SpectralWorkbench.API.Core.fetchSpectrum('9#1', function(spectrum) {
+
+      expect(spectrum).toBeDefined();
+      expect(spectrum.average).toBeDefined();
+      expect(spectrum.average.length).toBe(spectrum.json.data.lines.length);
+
+      fetchSnapshotCallbackSpy();
+
+      done();
+
+    });
+
+  });
+
+
+  it("generates fetchSpectrum callback for snapshots", function() {
+
+    expect(fetchSpectrumCallbackSpy).toHaveBeenCalled();
 
   });
 
@@ -66,6 +108,7 @@ describe("API", function() {
 
     expect(graph).toBeDefined();
     expect(graph.datum).toBeDefined();
+    expect(graph.datum instanceof SpectralWorkbench.Spectrum).toBe(true);
 
     var svgEl = SpectralWorkbench.API.Core.exportSVG('export');
 
@@ -82,9 +125,10 @@ describe("API", function() {
 
     copyCalibrationCallbackSpy = jasmine.createSpy('success');
 
-    SpectralWorkbench.API.Core.copyCalibration(9, graph.datum, function(response) {
+    SpectralWorkbench.API.Core.copyCalibration(graph.datum, 9, function(response) {
 
-      expect(response).toBe('success');
+      expect(response).toBeDefined();
+      expect(response instanceof SpectralWorkbench.Spectrum).toBe(true);
 
       copyCalibrationCallbackSpy();
 
@@ -109,7 +153,7 @@ describe("API", function() {
 
   it("can transform graph data", function() {
 
-    expect(graph.datum.average[100]).toEqual({ y: 0.21, x: 355.376 });
+    expect(graph.datum.average[100]).toEqual({ y: 0.21, x: 355.376});
 
     // uses function(R,G,B,A,X,Y,I,P,a,r,g,b)
     SpectralWorkbench.API.Core.transform(graph.datum, 'R+G*X'); // random transform
@@ -210,7 +254,7 @@ describe("API", function() {
 
   it("can compare graph data from another spectrum", function() {
 
-    SpectralWorkbench.API.Core.compare(graph, graph.datum.json); // just compare it to itself
+    SpectralWorkbench.API.Core.compare(graph, graph.datum); // just compare it to itself
 
     expect(graph.comparisons).toBeDefined();
     expect(graph.comparisons.length).toEqual(1);

@@ -1,3 +1,9 @@
+// this is a tough one to test, with lots of asynchronicity :-/
+// however, many errors can be avoided by testing pre-existing tags
+// to avoid needing to deal with asynchronicity.
+
+// for further refinement, we might begin nesting asynchronous calls as in https://github.com/jasmine/jasmine/issues/526
+// and nesting describe() and it() calls to break up long nested runs
 describe("Tag", function() {
 
   var graph, tag, ajaxSpy;
@@ -13,10 +19,18 @@ describe("Tag", function() {
 
       var response;
 
+      // object.method == "PUT" // object.method doesn't work :-/
       if      (object.url == '/spectrums/9.json') response = object.success(TestResponses.spectrum.success.responseText);
       else if (object.url == '/spectrums/9/tags') response = object.success(TestResponses.tags.success.responseText);
-      else if (object.url == '/tags')             response = object.success({'saved':[[1,1]]}); // && object.method == "PUT" // method doesn't work and isn't necessary as of yet
-      else if (object.url == '/tags/1')           response = object.success('success'); // && object.method == "DELETE"
+      // the following is only faked properly for the 'sodium' tag, of course:
+      else if (object.url == '/tags')             response = object.success({'saved':{'sodium':        {'id': 1}, 
+                                                                                      'subtract:3':    {'id': 2, 'snapshot_id': 5, 'name': 'subtract:3#4'},
+                                                                                      'smooth:3':      {'id': 2, 'snapshot_id': 5},
+                                                                                      'range:400-700': {'id': 3, 'snapshot_id': 6}
+                                                             }}); 
+      else if (object.url == '/snapshots/4.json') response = object.success(TestResponses.snapshot.success.responseText);
+      else if (object.url == '/tags/1' || object.url == '/tags/42') response = object.success('success'); // && object.method == "DELETE"
+      else if (object.url == '/tags/99') response = object.error({ responseJSON: { 'has_dependent_spectra': true } }); // && object.method == "DELETE"
       else response = 'none';
 
       // check this if you have trouble faking a server response: 
@@ -24,7 +38,6 @@ describe("Tag", function() {
       else console.log('Failed to fake response to:', object.url)
 
     });
-
 
   });
 
@@ -63,112 +76,62 @@ describe("Tag", function() {
   });
 
 
-  var addTagCallbackSpy = jasmine.createSpy('success');
+  it("creates properly for simple tagname like 'sodium', and returns with datum.getTag()", function() {
 
-  it("creates properly for simple tagname like 'sodium', and returns with datum.getTag()", function(done) {
+    // as of Snapshots, this is synchronous:
+    tag = graph.datum.addTag('sodium');
 
-    tag = graph.datum.addTag('sodium', function(tag, ajaxResponse) {
-
-      // beware; these can fail silently if this callback is not called; add a toHaveBeenCalled() test
-      expect(tag.json).toBeDefined();
-      expect(tag.id).toBeDefined();
-      expect(tag.id).toBe(1);
-
-      addTagCallbackSpy();
-
-      done();
-
-    });
+    expect(tag.json).toBeDefined();
+    expect(tag.id).not.toBeDefined(); // not defined (yet) because we're not waiting for it to be uploaded
 
     // tag should then be parsed
 
     expect(tag).toBeDefined();
-    expect(tag.isNew).toBe(true);
+    expect(tag.uploadable).toBe(true);
     expect(tag.json).toEqual({});
-    expect(tag.id).toBeDefined(); // once it's loaded...
-    expect(tag.id).toBe(1);
+
+    expect(graph.datum.tags.length).not.toBe(0);
 
     var gottenTag = graph.datum.getTag('sodium');
 
     expect(gottenTag).toBeDefined();
     expect(gottenTag).not.toBe(false);
-    expect(gottenTag.id).toBeDefined();
-    expect(gottenTag.id).toBe(1);
 
-  });
-
-
-  it("datum.addTag callback is called", function() {
-
-    expect(addTagCallbackSpy).toHaveBeenCalled();
-
-  });
-
-
-  var uploadCallbackSpy = jasmine.createSpy('success');
-
-  it("uploads and saves", function(done) {
-
-    // tag.upload() is failing because tag is undefined here. 
-    // so, we're making it again. But this time, unlike on line 87, we can't seem to get 
-    // a tag with getTag('sodium'). What gives? Asked on the Jasmine forum here: https://groups.google.com/forum/#!topic/jasmine-js/yfMjRSeerzE
-    //tag = graph.datum.getTag('sodium');
-    tag = graph.datum.getTag('upload');
-    expect(tag).toBeDefined();
-    expect(tag).not.toBe(false);
-
-    // this is already run in datum.addTag, but testing it again: 
-
-    var uploadCallback = function(response) {
-
-      expect(response).toBeDefined();
-
-      uploadCallbackSpy();
-
-      done();
-
-    }
-
-    tag.upload(uploadCallback);
-
-  });
-
-
-  it("upload callback is called", function() {
-
-    expect(uploadCallbackSpy).toHaveBeenCalled();
-
-  });
-
-
-  // strangely, by this point, getTag('sodium') DOES work... 
-
-  it("with tagname 'sodium' is not a powertag", function() {
-
-    var gottenTag = graph.datum.getTag('sodium');
-
-    // not to be a powertag:
-    expect(gottenTag).not.toBe(false);
+    // confirm it's not a powertag
     expect(gottenTag.key).not.toBeDefined();
     expect(gottenTag.value).not.toBeDefined();
-    expect(gottenTag.powertag).toEqual(false);
+    expect(gottenTag instanceof SpectralWorkbench.PowerTag).toEqual(false);
+    expect(gottenTag.snapshot_id).not.toBeDefined();
 
   });
 
 
   var deletionCallbackSpy = jasmine.createSpy('success');
 
-  it("deletes properly with datum.removeTag()", function(done) {
+  it("deletes pre-existing tag 'sodium' with datum.getTag().remove()", function(done) {
 
-    graph.datum.removeTag('sodium', function(tag) {
+    var taglength = graph.datum.tags.length;
 
-      expect(tag).toBeDefined(); // the removed tag is returned
+    graph.datum.getTags('sodium', function(tag) {
 
-      expect(graph.datum.getTag('sodium')).toBe(false);
+      tag.id = 1; // fake the id because normally this'd have been added upon creation response from server;
 
-      deletionCallbackSpy();
+      tag.destroy(function(deletedTag) {
 
-      done(); // complete asynchronous call
+        expect(deletedTag).toBeDefined(); // the removed tag is returned
+ 
+        expect(taglength - graph.datum.tags.length).toBe(1);
+        expect(graph.datum.getTag('sodium')).toBe(false); // this won't work if there's more than 1 'upload' tag
+
+        // explicitly check that this exact tag is no longer listed; 
+        // not just a tag with the same name:
+        expect(graph.datum.tags.indexOf(deletedTag)).toBe(-1); 
+
+        deletionCallbackSpy();
+
+        done(); // complete asynchronous call
+
+      });
 
     });
 
@@ -182,61 +145,161 @@ describe("Tag", function() {
   });
 
 
-  it("creates properly for powertag like 'range'", function() {
+  var errorDeletionCallbackSpy = jasmine.createSpy('success');
 
-    // test that the graph is not range-limited
-    tag = graph.datum.addTag('range:400-700');
+  it("indicates deletion failure of powertag 'smooth:3' due to server's finding that tag.has_dependent_spectra is true; another spectrum relies on it", function(done) {
 
-    // tag should then be parsed, but that happens after the callback, so can't test here
+    // first create the tag:
+    graph.datum.addTag('smooth:3', function() {
 
-    expect(tag).toBeDefined();
+      var taglength = graph.datum.tags.length;
 
-  });
+      graph.datum.getTags('smooth:3', function(tag) {
+ 
+        tag.id = 99; // fake the id to trigger rejected deletion
 
+        expect(tag.has_dependent_spectra).not.toBe(true); // this should not yet be set
 
-  it("with tag key 'range' is a powertag", function() {
+        var index = graph.datum.tags.indexOf(tag);
+ 
+        tag.destroy(function(response, deletedTag) {
 
-    // not to be a powertag:
-    expect(tag.key).toBeDefined();
-    expect(tag.key).toBe('range');
-    expect(tag.value).toBeDefined();
-    expect(tag.value).toBe('400-700');
-    expect(tag.powertag).toEqual(true);
+          expect(deletedTag).toBeDefined(); // the removed tag is returned
+          expect(deletedTag.has_dependent_spectra).toBe(true); // this should have blocked deletability
+          expect(taglength - graph.datum.tags.length).toBe(0); // no change
+          expect(graph.datum.getTag('smooth:3')).not.toBe(false); // should still be there
+ 
+          // explicitly check that this exact tag is still listed; 
+          expect(graph.datum.tags.indexOf(deletedTag)).toBe(index); 
+          expect(graph.datum.tags.indexOf(deletedTag)).not.toBe(-1); 
 
-  });
-
-
-  it("applies effect of powertag 'range' in graph data", function() {
-
-    // test that it's there and the graph is not range-limited
-    expect(graph.datum.getTag('range:400-700')).not.toBe(false);
-
-    // apply the powertag! It may have been parsed already but we try again to be sure. 
-    graph.datum.parseTag(tag);
-
-    expect(graph.datum.getExtentX()[0]).toBeGreaterThan(400); // only within 400-700 range
-    expect(graph.datum.getExtentX()[1]).toBeLessThan(700); // only within 400-700 range
-    expect(graph.datum.getExtentX()).toEqual([400.245, 697.935]); // only within 400-700 range
-
-  });
-
-
-  it("removes effect of powertag 'range' in graph data upon tag deletion", function() {
-
-    // test that it's there and the graph is not range-limited
-    expect(graph.datum.getTag('range:400-700')).not.toBe(false);
-
-    // apply the powertag! It may have been parsed already but we try again to be sure. 
-    graph.datum.removeTag('range:400-700', function() {
-
-      expect(graph.datum.getTag('range:400-700')).toBe(false);
-      expect(graph.datum.getExtentX()).not.toEqual([400.245, 697.935]); // only within 400-700 range
-      expect(graph.datum.getExtentX()[0]).not.toBeGreaterThan(400); // only within 400-700 range
-      expect(graph.datum.getExtentX()[1]).not.toBeLessThan(700); // only within 400-700 range
-      expect(graph.datum.getExtentX()).toEqual([269.089, 958.521]);
+          // check interface for spinner; 
+          // we can't do this because we've changed tag.id! 
+          /* 
+          expect($('tr#tag_' + tag.id + ' .label i.fa').length).not.toBe(0);
+          expect($('tr#tag_' + tag.id + ' .label i.fa').hasClass('fa-spinner')).toBe(false);
+          expect($('tr#tag_' + tag.id + ' .label i.fa').hasClass('fa-alert')).toBe(true);
+          */
+ 
+          errorDeletionCallbackSpy();
+ 
+          done(); // complete asynchronous call
+ 
+        });
+ 
+      });
 
     });
 
   });
+
+
+  it("errored deletion callback is called", function() {
+
+    expect(errorDeletionCallbackSpy).toHaveBeenCalled();
+
+  });
+
+
+  var creationCallbackSpy = jasmine.createSpy('success');
+
+  it("creates powertag 'subtract' and is aware of specified snapshot reference #4", function() {
+
+    tag = graph.datum.addTag('subtract:3', function(tag) {
+
+      expect(tag.key).toBeDefined();
+      expect(tag.key).toBe('subtract');
+      expect(tag.value).toBeDefined();
+      expect(tag.value).toBe('3');
+      expect(tag.has_reference).toBe(true);
+      expect(tag.reference_id).toBe(4);
+      expect(tag instanceof SpectralWorkbench.PowerTag).toEqual(true);
+      expect(tag.needs_snapshot).toBe(true);
+      expect(tag.snapshot_id).toBeDefined();
+      expect(tag.snapshot_id).toEqual(5);
+
+      // apply the powertag! It may have been parsed already but we try again to be sure. 
+      tag.parse();
+      expect(tag.data).not.toBeUndefined();
+      // should have cached a data snapshot locally:
+      expect(typeof tag.data).toBe('string');
+
+      creationCallbackSpy();
+
+    });
+
+  });
+
+
+  it("creation callback is called", function() {
+
+    expect(creationCallbackSpy).toHaveBeenCalled();
+
+  });
+
+
+  it("creates powertag 'range' and applies effect in graph data, then removes effect upon tag deletion", function(done) {
+
+    var operationTable = $('table.operations');
+
+    expect(operationTable.find('tr.operation-tag .operations-tools .operation-tag-delete').length).toBe(0);
+
+    // test that the graph is not range-limited
+    tag = graph.datum.addTag('range:400-700', function(tag) {
+
+      // not to be a powertag:
+      expect(tag.key).toBeDefined();
+      expect(tag.key).toBe('range');
+      expect(tag.value).toBeDefined();
+      expect(tag.value).toBe('400-700');
+      expect(tag instanceof SpectralWorkbench.PowerTag).toEqual(true);
+      expect(tag.needs_snapshot).toEqual(true);
+      expect(tag.snapshot_id).toBeDefined();
+      expect(tag.snapshot_id).toEqual(6);
+
+      // apply the powertag! It may have been parsed already but we try again to be sure. 
+      tag.parse();
+
+      // should have cached a data snapshot locally:
+      expect(tag.data).not.toBeUndefined();
+      expect(typeof tag.data).toBe('string');
+      expect(tag.has_dependent_spectra).not.toBe(true); // because we set this in the faked response, to test
+
+      expect(graph.datum.getExtentX()[0]).toBeGreaterThan(400); // only within 400-700 range
+      expect(graph.datum.getExtentX()[1]).toBeLessThan(700); // only within 400-700 range
+      expect(graph.datum.getExtentX()).toEqual([400.245, 697.935]); // only within 400-700 range
+
+      expect(operationTable.find('tr.operation-tag .operations-tools .operation-tag-delete').length).toBe(1);
+      expect(operationTable.find('tr.operation-tag:last .operations-tools .operation-tag-delete').css('display')).toBe('inline');
+
+      // in normal async in production, tag would've been added to graph.datum.tags, 
+      // but fake async is too fast and it's not there yet
+
+      // so we can't run removeTag without a slight delay: 
+      setTimeout(function() {
+
+        tag.id = 1; // fake the id because normally this'd be added but we're doing things too fast;
+        tag.destroy(function(tag) {
+ 
+          // test that the graph is not range-limited:
+    
+          expect(graph.datum.getTag('range:400-700')).toBe(false);
+          expect(graph.datum.getExtentX()).not.toEqual([400.245, 697.935]); // only within 400-700 range
+          expect(graph.datum.getExtentX()[0]).not.toBeGreaterThan(400); // only within 400-700 range
+          expect(graph.datum.getExtentX()[1]).not.toBeLessThan(700); // only within 400-700 range
+          expect(graph.datum.getExtentX()).toEqual([269.089, 958.521]);
+
+          expect(operationTable.find('tr.operation-tag .operations-tools .operation-tag-delete').length).toBe(0);
+  
+          done();
+    
+        });
+      }, 2000);
+
+    });
+
+    expect(tag).toBeDefined();
+
+  }, 10000); // extra wait for this mega nested spec
 
 });

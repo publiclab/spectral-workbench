@@ -1,0 +1,73 @@
+<% if current_user.spectrums.count < 2 && false %>
+
+<div class="modal hide fade" id="wizard" style="width:75%;left:33%;">
+
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h2>Looks like you're new here -- welcome!</h2>
+  </div>
+
+  <div class="modal-body" style="padding:10px 30px;">
+
+    <div class="container-fluid">
+      <div class="row">
+
+        <div class="span3">
+          <h3>Learn</h3>
+          <p>Learn about spectrometry</p>
+
+          <ul>
+            <li><a href="https://publiclab.org/wiki/">One</a></li>
+          </ul>
+        </div>
+
+        <div class="span3">
+          <h3>Analyze</h3>
+          <p>Analyze a sample I have</p>
+
+          <ul>
+            <li><a href="https://publiclab.org/wiki/">One</a></li>
+          </ul>
+        </div>
+
+        <div class="span3">
+          <h3>Examples</h3>
+          <p>See what others have done:</p>
+
+          <ul>
+            <li><a href="https://publiclab.org/wiki/">One</a></li>
+          </ul>
+        </div>
+
+        <div class="span3">
+          <h3>Documentation</h3>
+          <p>Learn about Spectral Workbench features:</p>
+
+          <ul>
+            <li><a href="https://publiclab.org/wiki/spectral-workbench-usage">Capture spectra</a></li>
+            <li><a href="https://publiclab.org/wiki/spectral-workbench-calibration">Calibrate and compare</a></li>
+            <li><a href="https://publiclab.org/wiki/spectral-workbench-operations">Smoothing, range, and other operations</li>
+            <li><a href="https://publiclab.org/wiki/spectral-workbench-usage#Sets">Collecting sets</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <div class="modal-footer">
+    <a data-dismiss="modal" data-toggle="modal" class="btn btn-large btn-primary">Begin</a>
+  </div>
+
+</div>
+
+<script>
+
+  jQuery(document).ready(function($) {
+    $('.modal#wizard').modal('show');
+  });
+
+</script>
+
+<% end %>

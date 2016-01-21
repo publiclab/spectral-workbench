@@ -18,7 +18,7 @@
 <form class="form" action="/spectrums" method="post" id="saveForm" target="_blank" onSubmit="$W.cancelSave();window.location='#page1'">
   <input placeholder="Title (required)" name="spectrum[title]" id="spectrum_notes" type="text" /><br />
         <div class="input-prepend">
-          <span class="add-on"><i class="icon-tags"></i></span>
+          <span class="add-on"><i class="fa fa-tags"></i></span>
           <input name="tags" id="spectrum_tags" type="text" placeholder="Tags: mobile, soil, sunlight" data-provide="typeahead" data-source="['calibration','soil','']">
         </div>
   <p>Recent tags:<span id="recent-tags"> 
@@ -53,10 +53,10 @@
   <input name="lon" type="hidden" id="lon" />
   <% if logged_in? %>
   <p><small>Choose a recent reference calibration, or use this as a new calibration.</small></p>
-  <select name="spectrum[calibration_id]" id="calibration_id">
+  <select name="spectrum[calibration_id]" id="calibration_id" style="width:100%;">
     <option value="calibration">[+] New calibration/uncalibrated</option>
     <% @calibrations.each do |spectrum| %>
-    <option value="<%= spectrum.id %>"><%= spectrum.title %> (<%= time_ago_in_words(spectrum.created_at) %> ago)</option>
+      <option <% if !@calibration.nil? && spectrum.id == @calibration.id %>selected <% end %>value="<%= spectrum.id %>">#<%= spectrum.id %>: <%= spectrum.title %> (<%= time_ago_in_words(spectrum.created_at) %> ago)</option>
     <% end %>
   </select>
   <% end %>

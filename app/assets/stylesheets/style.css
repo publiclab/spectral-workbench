@@ -45,11 +45,11 @@ h5 small {
   background: #a6c;
 }
 
-.icon {
+.fa {
   color:black;
 }
 
-.icon-white {
+.fa-white {
   color:white;
 }
 
@@ -73,6 +73,9 @@ h5 small {
 #header div.btn-group.mobile {
   padding-right:0px;
 }
+#header .fa-camera {
+  margin-right:6px;
+}
 #header ul.nav {
   margin:10px;
 }
@@ -81,6 +84,14 @@ h5 small {
 }
 #header h3 a:hover {
   color:#222;
+}
+
+.capture-navbar.red .navbar-inner {
+  background: #b00;
+}
+
+.capture-navbar.red .nav .active a {
+  background-color: #900; !important
 }
 
 #display {

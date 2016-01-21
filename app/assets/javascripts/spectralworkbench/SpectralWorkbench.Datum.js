@@ -1,7 +1,5 @@
 SpectralWorkbench.Datum = Class.extend({
 
-  tags: [],
-
   init: function(args, _graph) {
 
     this.args = args;
@@ -10,9 +8,10 @@ SpectralWorkbench.Datum = Class.extend({
     this.title = args.title;
     this.id    = args.id;
     this.graph = _graph;
+    this.tags = [];
+    this.powertags = [];
 
     var _datum = this;
-
 
     /* ======================================
      * Turns <a> link with specified selector into a download
@@ -31,52 +30,52 @@ SpectralWorkbench.Datum = Class.extend({
 
 
     /* ======================================
-     * Create a new tag and add it to self,
-     * then run it.
-     * This is a bit weird -- we want to parse the tag immediately, but 
-     * we actually do so asynchronously with the callback, which is called 
-     * when we get a response from the server. This causes some havoc with 
-     * our tests, but is a faster response for the user.
+     * Create a new Tag or PowerTag depending on name,
+     * upload it, parse it accordingly. 
      */
-    _datum.addTag = function(name, callback) {
+    _datum.addTag = function(name, callback, json) {
 
-      var tag = new SpectralWorkbench.Tag(_datum, name, false, callback);
+      json = json || false;
 
-      // we just do these before waiting to hear back from the above: 
+      // is it possible to have Tag constructor simply return a PowerTag if it matches?
+      // i.e. move this code into Tag?
 
-      _datum.tags.push(tag);
+      var type = SpectralWorkbench.Tag;
 
-      _datum.parseTag(tag);
+      if (name.match(/[\w\.]+:[\w0-9\-#\*\+\[\]\(\)]+/)) type = SpectralWorkbench.PowerTag;
 
-      return tag;
+      return new type(_datum, name, json, callback);
 
     }
 
 
     /* ======================================
-     * Cleanly removes tags with given name and refreshes graph, and 
-     * execute callback() on completion(s) if provided, because
-     * this is asynchronous! Callback is passed to .remove() which executes it.
+     * Return array of tags with given name, run 
+     * callback(tag), if provided, on each.
      */
-    _datum.removeTag = function(name, callback) {
+    _datum.getTags = function(name, callback) {
+
+      var response = [];
 
       _datum.tags.forEach(function(tag) {
 
         if (tag.name == name) {
 
-          // if it affected the datum display, tags are flushed and reloaded
-          // -- and tag is removed from _datum.tags after roundtrip
-          tag.destroy(callback); 
+          if (callback) callback(tag);
+          response.push(tag);
 
         }
 
       });
 
+      return response;
+
     }
 
 
     /* ======================================
-     * Find tags by name, run callback(tag) on each if provided
+     * Return first tag with given name, run 
+     * callback(tag) on the result.
      */
     _datum.getTag = function(name, callback) {
 
@@ -86,12 +85,38 @@ SpectralWorkbench.Datum = Class.extend({
 
         if (tag.name == name) {
 
-          if (callback) callback(tag);
           response = tag;
 
         }
 
       });
+
+      if (callback) callback(response);
+
+      return response;
+
+    }
+
+
+    /* ======================================
+     * Return first powertag with given key, run 
+     * callback(tag) on the result.
+     */
+    _datum.getPowerTag = function(key, callback) {
+
+      var response = false;
+
+      _datum.tags.forEach(function(tag) {
+
+        if (tag.key == key) {
+
+          response = tag;
+
+        }
+
+      });
+
+      if (callback) callback(response);
 
       return response;
 
@@ -105,7 +130,7 @@ SpectralWorkbench.Datum = Class.extend({
 
       var powertags = [];
       _datum.tags.forEach(function(tag) {
-        if (tag.powertag && tag.key == key) {
+        if (tag instanceof SpectralWorkbench.PowerTag && tag.key == key) {
 
           powertags.push(tag);
           if (callback) callback(tag);
@@ -142,7 +167,9 @@ SpectralWorkbench.Datum = Class.extend({
       // don't split here; specialize via inheritance
       if (_datum instanceof SpectralWorkbench.Spectrum) {
 
-        _datum.graph.opacity(0.5);
+        _datum.graph.dim();
+
+        console.log("fetching tags for spectrum", _datum.id);
 
         $.ajax({
 
@@ -152,13 +179,27 @@ SpectralWorkbench.Datum = Class.extend({
        
           success: function(response) {
 
-            response.forEach(function(tag) {
-
-              _datum.tags.push(new SpectralWorkbench.Tag(_datum, tag.name, tag));
-
+            response.sort(function(a, b) {
+              if (a.created_at && a.created_at < b.created_at) return -1;
+              else return 1;
             });
 
-            _datum.parseTags();
+            response.forEach(function(json, i) {
+
+              // only refresh the graph if this is the final tag:
+              if (i == response.length - 1) {
+
+                var callback = function() { 
+
+                  _datum.graph.reload_and_refresh();
+
+                }
+
+              } else callback = false;
+
+              _datum.addTag(json.name, callback, json);
+
+            });
 
           }
 
@@ -177,45 +218,11 @@ SpectralWorkbench.Datum = Class.extend({
 
       _datum.tags.forEach(function(tag) {
 
-        _datum.parseTag(tag);
+        if (tag instanceof SpectralWorkbench.PowerTag) tag.parse();
 
       });
 
-      _datum.graph.opacity(1);
-
-    }
-
-
-    _datum.parseTag = function(tag) {
-
-      if (tag.powertag) {
-
-        if (tag.key == "subtract") {
-
-          SpectralWorkbench.API.Core.subtract(_datum, tag.value);
-
-        } else if (tag.key == "transform") {
-
-          SpectralWorkbench.API.Core.transform(_datum, tag.value);
-
-        } else if (tag.key == "smooth") {
-
-          SpectralWorkbench.API.Core.smooth(_datum, tag.value);
-
-        } else if (tag.key == "blend") {
-
-          var blend_id = tag.value.split('#')[0],
-              expression = tag.value.split('#')[1];
-
-          SpectralWorkbench.API.Core.blend(_datum, blend_id, expression);
-
-        } else if (tag.key == "range") {
-
-          SpectralWorkbench.API.Core.range(_datum, +tag.value.split('-')[0], +tag.value.split('-')[1]);
-
-        }
-
-      }
+      _datum.graph.undim();
 
     }
 

@@ -25,7 +25,38 @@ class SpectraSet < ActiveRecord::Base
   def contains(spectrum)
     self.spectrums.include?(spectrum)
   end
-  
+
+  def as_json_with_snapshots
+    json = self.as_json.merge({spectra: []})
+    json[:spectra] = self.snapshots(false)
+    json
+  end
+
+  def as_json_with_calibrated_snapshots
+    json = self.as_json.merge({spectra: []})
+    json[:spectra] = self.snapshots(self.calibrated_spectrums)
+    json
+  end
+
+  # latest snapshots of all spectra, if exist, in JSON
+  # default to spectra themselves if not
+  def snapshots(spectrums)
+    spectrums = spectrums || self.spectrums
+    json = []
+    spectrums.each do |spectrum|
+      json << spectrum.as_json(:except => [:data])
+      if spectrum.snapshots.nil? || spectrum.snapshots.length == 0
+        json.last[:data] = JSON.parse(spectrum.data) 
+        json.last[:snapshot_id] = false
+      else
+        json.last[:data] = JSON.parse(spectrum.snapshots.last.data) 
+        json.last[:snapshot_id] = spectrum.snapshots.last.id
+      end
+    end
+# optimize and test this
+    json
+  end
+ 
   def match(spectrum)
     set = self.sort_set(spectrum)
     # find lowest score, return it

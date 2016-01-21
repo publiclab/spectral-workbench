@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20151106174921) do
+ActiveRecord::Schema.define(:version => 20151202002150) do
 
   create_table "comments", :force => true do |t|
     t.string   "author"
@@ -663,6 +663,16 @@ ActiveRecord::Schema.define(:version => 20151106174921) do
   end
 
   add_index "processed_spectrums", ["spectrum_id"], :name => "index_processed_spectrums_on_spectrum_id", :unique => true
+
+  create_table "snapshots", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "spectrum_id"
+    t.integer  "tag_id"
+    t.text     "description"
+    t.text     "data"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
 
   create_table "spectra_sets", :force => true do |t|
     t.string   "title",      :default => "", :null => false

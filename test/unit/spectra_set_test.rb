@@ -32,4 +32,32 @@ class SpectraSetTest < ActiveSupport::TestCase
     assert !s.save
   end
 
+  test "adds and removes spectrum from set" do
+    set = SpectraSet.last
+    assert_difference('set.spectrums.length', 1) do
+      set.add(Spectrum.last.id)
+    end
+    assert set.contains(Spectrum.last)
+    assert_difference('set.spectrums.length', -1) do
+      set.remove(Spectrum.last.id)
+    end
+  end
+
+  test "set.as_json_with_snapshots" do
+    set = SpectraSet.last
+    set.add(Spectrum.last.id)
+    json = set.as_json_with_snapshots
+    assert_not_nil json
+    assert_not_nil json[:spectra]
+    assert_equal json[:spectra].length, set.spectrums.length
+  end
+
+  # latest snapshots of all spectrums, if exist, in JSON
+  # default to spectrums themselves if not
+  test "set.snapshots" do
+    set = SpectraSet.last
+    set.add(Spectrum.last.id)
+    assert_not_nil set.snapshots(false)
+  end
+
 end

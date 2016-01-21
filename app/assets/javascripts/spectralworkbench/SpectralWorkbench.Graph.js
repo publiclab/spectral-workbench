@@ -2,11 +2,12 @@ SpectralWorkbench.Graph = Class.extend({
 
   extent: [0,0],
 
-  init: function(args) {
+  init: function(args, callback) {
 
     var _graph = this;
 
     this.args = args;
+    this.callback = callback;
     this.loaded = false; // measure initial load completion
     this.onComplete = args['onComplete'] || function() { console.log('graph load complete'); };
     this.onImageComplete = args['onImageComplete'] || function() { console.log('image load complete'); };
@@ -14,10 +15,12 @@ SpectralWorkbench.Graph = Class.extend({
     this.zooming = false;
     this.embed = args['embed'] || false;
     this.embedmargin = 10;
-    this.margin = { top: 10, right: 30, bottom: 20, left: 70 };
+    this.margin = { top: 10, right: 30, bottom: 20, left: 70 }; // this is used both for the d3 svg and for the imgContainer
     this.range = this.args.range || false;
     this.selector = this.args.selector || '#graph';
     this.el = $(this.selector);
+
+    // this could be moved into the graph.image Image object:
     this.imgSelector = this.args.imageSelector || 'div.spectrum-img-container';
     this.imgContainer = $(this.imgSelector);
     this.imgEl = this.imgContainer.find('img');
@@ -42,8 +45,8 @@ SpectralWorkbench.Graph = Class.extend({
     this.updateSize()();
  
     this.svg = d3.select(_graph.selector).append("svg")
-                                  .attr("width",  this.width  + this.margin.left + this.margin.right)
-                                  .attr("height", this.height + this.margin.top  + this.margin.bottom)
+                                         .attr("width",  this.width  + this.margin.left + this.margin.right)
+                                         .attr("height", this.height + this.margin.top  + this.margin.bottom);
 
 
     /* ======================================
@@ -67,6 +70,19 @@ SpectralWorkbench.Graph = Class.extend({
       _graph.setUnits();
       _graph.data.call(_graph.chart);
       _graph.updateSize()();
+      console.log('graph refreshed');
+
+    }
+
+
+    /* ======================================
+     * One-line "graph is ready" function
+     */
+    _graph.reload_and_refresh = function() {
+
+      _graph.reload();
+      _graph.refresh();
+      _graph.undim(); // for good measure
 
     }
 
@@ -79,9 +95,11 @@ SpectralWorkbench.Graph = Class.extend({
 
       // what proportion of the full image is being displayed?
       var proportion = x / _graph.image.width, // x position as a percent of original image
-          proportionDisplayed = (_graph.extent[1] -_graph.extent[0]) / (_graph.fullExtent[1] - _graph.fullExtent[0]); // account for out-of-range parts of image
+          scaledX = proportion * _graph.image.imgEl.width(), // that proportion of the displayed DOM image element;
+          displayPxPerNm = _graph.image.imgEl.width() / (_graph.fullExtent[1] - _graph.fullExtent[0]), 
+          leftXOffsetInDisplayPx = (_graph.extent[0] - _graph.fullExtent[0]) * displayPxPerNm;
 
-      return proportion * (_graph.width / proportionDisplayed);
+      return scaledX - leftXOffsetInDisplayPx;
 
     }
 
@@ -93,10 +111,13 @@ SpectralWorkbench.Graph = Class.extend({
     _graph.displayPxToImagePx = function(x) {
 
       // what proportion of the full image is being displayed?
-      var proportion = x / _graph.width, // x position as a percent of displayed graph
-          proportionDisplayed = (_graph.extent[1] -_graph.extent[0]) / (_graph.fullExtent[1] - _graph.fullExtent[0]); // account for out-of-range parts of image
+      var displayPxPerNm = _graph.image.imgEl.width() / (_graph.fullExtent[1] - _graph.fullExtent[0]), 
+          leftXOffsetInDisplayPx = (_graph.extent[0] - _graph.fullExtent[0]) * displayPxPerNm,
+          fullX = x + leftXOffsetInDisplayPx, // starting from true image DOM element zero
+          proportion = fullX / _graph.image.imgEl.width(), // x position as a percent of DOM image
+          scaledX = proportion * _graph.image.width; // that proportion of the original image
 
-      return proportion / proportionDisplayed * _graph.image.width;
+      return scaledX;
 
     }
 
@@ -108,8 +129,8 @@ SpectralWorkbench.Graph = Class.extend({
      */
     _graph.displayPxToNm = function(x) {
 
-      var proportion = x / _graph.width,
-          extentWidth = _graph.extent[1] - _graph.extent[0];
+      var proportion  = x / _graph.width,
+          extentWidth = _graph.extent[1] - _graph.extent[0]; // as displayed after range limiting, not fullExtent
 
       return _graph.extent[0] + (proportion * extentWidth);
 
@@ -123,36 +144,10 @@ SpectralWorkbench.Graph = Class.extend({
     _graph.nmToDisplayPx = function(nm) {
 
       var extentWidth = _graph.extent[1] - _graph.extent[0],
-          proportion = ((nm - _graph.extent[0]) / extentWidth);
+          proportion  = ((nm - _graph.extent[0]) / extentWidth);
+
 
       return proportion * _graph.width;
-
-    }
-
-
-    /* ======================================
-     * Accepts x,y in graph UI pixel space, returns
-     * {x: x, y: y} in data space in nanometers
-     * (or pixels if uncalibrated) -- note that
-     * that point may not exist in datum, but you can use
-     * datum.getNearestPoint(x) to find something close.
-     * Pass false for x or y to convert only one coordinate.
-     */
-    _graph.pxToNm = function(x, y) {
-
-      if (x) {
-        var percentX = x / _graph.width,
-            extentX = _graph.extent, // accounts for range limiting
-            dx      = percentX * (extentX[1] - extentX[0]) + extentX[0];
-      } else var dx = false;
-
-      if (y) {
-        var percentY = y / _graph.height,
-            extentY = _graph.extent, // accounts for range limiting
-            dy      = percentY * (extentY[1] - extentY[0]) + extentY[0];
-      } else var dy = false;
-
-      return { x: dx, y: dy };
 
     }
 
@@ -161,6 +156,7 @@ SpectralWorkbench.Graph = Class.extend({
      * Sets units for graph element in d3
      */
     _graph.setUnits = function() {
+
       if (!_graph.datum) {
 
         if (_graph.args.calibrated) _graph.xUnit = 'nanometers';
@@ -240,38 +236,35 @@ SpectralWorkbench.Graph = Class.extend({
           return 'spectrum-hover-' + id;
         });
 
-
       if (_graph.dataType == "spectrum") {
+
+        _graph.UI = new SpectralWorkbench.UI.Spectrum(_graph);
 
         // scan for helper tips
 
-        SpectralWorkbench.API.Core.alertOverexposure(_graph.datum);
+        _graph.UI.alertOverexposure(_graph.datum);
 
-        SpectralWorkbench.API.Core.alertTooDark(_graph.datum);
+        _graph.UI.alertTooDark(_graph.datum);
 
       } else if (_graph.dataType == "set") {
 
-        // table and graph hovers etc.
-        if (_graph.datum) _graph.datum.setupUI();
+        if (_graph.datum) _graph.UI = new SpectralWorkbench.UI.Set(_graph, _graph.args.set_id, _graph.datum.spectra);
 
       }
 
 
       // update graph size now that we have data and esp. range data
       _graph.updateSize()();
-
-      // set up all of UI -- tool panes, etc
-      if (_graph.embed == false) _graph.UI = new SpectralWorkbench.UI.Util(_graph);
  
       // actually add it to the display
-      nv.addGraph(_graph.chart);
+      nv.addGraph(function() { return _graph.chart; });
 
       _graph.loaded = true;
-      _graph.onComplete(_graph);
+      _graph.onComplete(_graph); // older than callback; DRY this up!
+      if (_graph.callback) _graph.callback();
  
-      // hide loading grey background
-      _graph.el.css('background','white');
-      _graph.el.find('.icon-spinner').remove();
+      // hide loading spinner
+      _graph.el.find('.fa-spinner').remove();
 
     }
 
@@ -291,8 +284,16 @@ SpectralWorkbench.Graph = Class.extend({
     /* ======================================
      * Dim graph, such as while it's loading
      */
-    _graph.opacity = function(amount) {
-      _graph.svg.style('opacity', amount);
+    _graph.dim = function() {
+      _graph.svg.style('opacity', 0.5);
+    }
+
+
+    /* ======================================
+     * Un-dim graph, such as while it's loading
+     */
+    _graph.undim = function() {
+      _graph.svg.style('opacity', 1);
     }
 
 
@@ -374,8 +375,9 @@ SpectralWorkbench.Graph = Class.extend({
     _graph.graphSetup();
     _graph.eventSetup();
 
-    // Update the chart when DOM element resizes
-    $(_graph.selector).on('resize', _graph.updateSize());
+    
+    if (_graph.embed) $(_graph.selector).on('resize', _graph.updateSize()); // if embed, update the chart when DOM element resizes
+    else $(window).on('resize', _graph.updateSize()); // else resize when window resizes
 
     return _graph;
 
@@ -391,26 +393,33 @@ SpectralWorkbench.Graph = Class.extend({
 
     _graph.chart = nv.models.lineWithFocusChart() // this sets up zooming behavior
                      .options({ useVoronoi: false })
-                     .height(_graph.height-_graph.margin.top-_graph.margin.bottom + 100) // 100 for zoom brush pane, hidden by default
+                     .height(_graph.height - _graph.margin.top - _graph.margin.bottom + 100) // 100 for zoom brush pane, hidden by default
                      .margin(_graph.margin)
                      .showLegend(false)       //Show the legend, allowing users to turn on/off line series.
     ;
 
+    _graph.margin.left += 10; // correction after chart init
+
     _graph.setUnits();
  
     if (_graph.dataType == "spectrum") {
+
       new SpectralWorkbench.Importer( "/spectrums/" 
                       + _graph.args.spectrum_id 
                       + ".json", 
                         _graph, 
                         _graph.load);
+
     } else if (_graph.dataType == "set") {
+
       new SpectralWorkbench.Importer( "/sets/calibrated/" 
                       + _graph.args.set_id 
                       + ".json", 
                         _graph, 
                         _graph.load);
+
     }
+
   },
 
 
@@ -423,8 +432,7 @@ SpectralWorkbench.Graph = Class.extend({
     var _graph = this;
 
     // Set up graph/table mouse events.
-    // ...break this up into two subclasses, 
-    // set and spectrum, with their own init sequences 
+    // Move this into Set, or Set UI
     if (_graph.dataType == "set") {
 
       // setup sets list of spectra
@@ -470,6 +478,13 @@ SpectralWorkbench.Graph = Class.extend({
  
     return (function() { 
 
+      if (_graph.datum) {
+
+        _graph.fullExtent = _graph.datum.getFullExtentX(); // store min/max of graph without range limits
+        _graph.extent = _graph.datum.getExtentX(); // store min/max of graph
+
+      }
+
       _graph.width  = newWidth || getUrlParameter('width')  || $(_graph.selector).width() || _graph.width;
  
       if (getUrlParameter('height')) {
@@ -483,7 +498,7 @@ SpectralWorkbench.Graph = Class.extend({
 
           // compact
           _graph.height = 180;
-          $('#embed').addClass('compact');
+          $('#embed').addClass('compact'); // hides image
  
         } else {
  
@@ -496,68 +511,25 @@ SpectralWorkbench.Graph = Class.extend({
         _graph.height = _graph.height - _graph.margin.top  - _graph.margin.bottom;
  
       }
- 
-      _graph.width  = _graph.width  
-                  - _graph.margin.left 
-                  - _graph.margin.right 
-                  - (_graph.embedmargin * 2);
-
-      // smaller width style change
-      if ($(_graph.selector).width() < 768) _graph.width -= 40;
 
       // make space for the zoom brushing pane
       if (_graph.zooming) _graph.height += 100;
 
       $(_graph.selector).height(_graph.height)
 
-      var extra = 0;
-      if (!_graph.embed) extra = 10;
-      _graph.imgContainer.width(_graph.width)
-                         .height(100)
-                         .css('margin-left', _graph.margin.left + extra) // not sure but there seems to be some extra margin in the chart
-                         .css('margin-right',_graph.margin.right);
+      _graph.width  = _graph.width  
+                    - _graph.margin.left 
+                    //- _graph.margin.right // right margin not required on image, for some reason
+                    - (_graph.embedmargin * 2); // this is 10 * 2
 
-      // Why would we even be running updateSize if datum is not yet loaded? Gah.
+      _graph.imgEl.height(100); // this isn't done later because we mess w/ height, in, for example, calibration
+
+      if (_graph.image) _graph.image.updateSize(); // adjust image element and imgContainer element
+
       if (_graph.datum) {
-        _graph.extent = _graph.datum.getFullExtentX(); // store min/max of graph without range limits
-        _graph.fullExtent = _graph.datum.getExtentX(); // store min/max of graph
-      }
 
-      if (_graph.range && _graph.datum) {
-
-        if (_graph.datum.isCalibrated()) {
-
-          // amount to mask out of image if there's a range tag
-          // this is measured in nanometers:
-          _graph.leftCrop =   _graph.range[0] - _graph.datum.json.data.lines[0].wavelength;
-          _graph.rightCrop = -_graph.range[1] + _graph.datum.json.data.lines[_graph.datum.json.data.lines.length-1].wavelength;
-         
-          _graph.pxPerNm = _graph.width / (_graph.range[1]-_graph.range[0]);
-         
-          _graph.leftCrop  *= _graph.pxPerNm;
-          _graph.rightCrop *= _graph.pxPerNm
-
-        } else {
-
-          // for uncalibrated, we still allow range, in case someone's doing purely comparative work:
-          _graph.leftCrop =   _graph.range[0] - _graph.datum.json.data.lines[0].pixel;
-          _graph.rightCrop = -_graph.range[1] + _graph.datum.json.data.lines[_graph.datum.json.data.lines.length-1].pixel;
-         
-          _graph.pxPerNm = 1; // a lie, but as there are no nanometers in an uncalibrated spectrum, i guess it's OK.
-
-        }
-
-        _graph.imgEl.width(_graph.width + _graph.leftCrop + _graph.rightCrop)
-                    .height(100)
-                    .css('max-width', 'none')
-                    .css('margin-left', -_graph.leftCrop);
-
-      } else {
-
-        _graph.imgEl.width(_graph.width)
-                    .height(100)
-                    .css('max-width', 'none')
-                    .css('margin-left', 0);
+        _graph.fullExtent = _graph.datum.getFullExtentX(); // store min/max of graph without range limits
+        _graph.extent = _graph.datum.getExtentX(); // store min/max of graph
 
       }
  

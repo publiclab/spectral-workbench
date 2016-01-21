@@ -8,7 +8,6 @@
     <p>You can use this with some limitations without logging in, but once you set up an account, you'll be able to:</p>
     <ul>
       <li>save and share data</li>
-      <li>compare live scans to stored spectra</li>
       <li>calibrate and process your data</li>
       <li>use this interface offline -- <a href="http://publiclab.org/wiki/spectral-workbench-usage#Offline">without an internet connection</a></li>
       <li>contribute to a growing open source database</li>
@@ -21,23 +20,24 @@
 </div>
 <% end %>
 
-<div id="header" class="navbar navbar-inverse navbar-static-top" style="padding-top:0;">
+<div id="header" class="navbar navbar-inverse navbar-static-top capture-navbar" style="padding-top:0;">
   <div class="navbar-inner" style="padding:0 10px;">
     <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-      <span class="icon-bar"></span>
-      <span class="icon-bar"></span>
-      <span class="icon-bar"></span>
+      <span class="fa fa-bar"></span>
+      <span class="fa fa-bar"></span>
+      <span class="fa fa-bar"></span>
     </a>
     <a class="brand" href="/"><img style="padding:-2px;width:20px;" src="/images/logo.png" /></a>
     <div class="pull-right">
       <% unless logged_in? %><a onClick="$('#loginmodal').modal('show');" class="btn">Log in</a><% end %>
-      <a class="btn btn-inverse" href="http://publiclab.org/wiki/spectral-workbench"><i class="icon icon-white icon-question-sign"></i></a>
-      <span class="tool-toggle"><a class="btn btn-inverse" onClick="$('#tool-pane').toggle()"><i class="icon-wrench"></i></a></span>
+      <a class="btn btn-inverse" href="http://publiclab.org/wiki/spectral-workbench"><i class="fa fa-white fa-question-circle"></i></a>
+      <span class="tool-toggle"><a class="btn btn-inverse" onClick="$('#tool-pane').toggle()"><i class="fa fa-white fa-wrench"></i></a></span>
     </div>
     <ul class="nav" style="margin:0">
-      <li id="capture-btn"><a href="#capture" data-toggle="tab"><i class="icon-camera"></i><span class="hidden-phone"> Capture</a></a></li>
-      <li id="settings-btn" class="active"><a href="#settings" data-toggle="tab"><i class="icon-cog"></i><span class="hidden-phone"> Settings</span></a></li>
+      <li id="capture-btn"><a href="#capture" data-toggle="tab"><i class="fa fa-white fa-camera"></i><span class="hidden-phone"> Capture</a></a></li>
+      <li id="settings-btn" class="active"><a href="#settings" data-toggle="tab"><i class="fa fa-white fa-cog"></i><span class="hidden-phone"> Settings</span></a></li>
     </ul>
+    <p class="capture-messages" style="float:left;padding:10px 16px 0;"></p>
   </div>
 </div>
 
@@ -45,19 +45,23 @@
 
 <div id="settings" class="tab-pane active">
 
-  <div id="heightIndicator" style="display:none;position:absolute;margin:0;z-index:999;border-right:0px solid #ff4;border-bottom:2px solid #ff4;height:1px;margin-top:120px;width:320px;"></div> 
+  <div id="heightIndicator" style="display:none;position:absolute;margin:0;z-index:999;border-right:0px solid #ff4;border-bottom:2px solid #ff4;height:1px;margin-top:120px;width:320px;font-weight:bold;">
+    <div class="vertical"   style="margin-top:3px;padding:2px;background:black;float:right;display:none;">BLUE</div>
+    <div class="horizontal" style="margin-top:3px;padding:2px;background:black;float:right;">RED</div>
+    <div class="horizontal" style="margin-top:3px;padding:2px;background:black;float:left;">BLUE</div>
+    <div class="vertical"   style="margin-top:3px;padding:2px;background:black;float:right;margin-top:200px;display:none;">RED</div>
+  </div> 
   <div id="webcam-msg"><p><b>Requesting camera access... <br />(<a href="https://play.google.com/store/apps/details?id=org.mozilla.firefox">Firefox</a>, <a href="https://play.google.com/store/apps/details?id=com.opera.browser">Opera</a> or Chrome on Android, or <a href="https://itunes.apple.com/us/app/bowser/id560478358">Bowser</a> on iOS). Please click "Allow" when prompted, or try the <a href="/upload">Upload interface</a>.</b></p></div> 
   <div style="" id="webcam"></div>
 
   <div style="padding-bottom:10px;padding-top:250px;">
-    <div class="visible-phone">
+    <div class="spectrum-example-vertical" style="display:none;">
       <p style="margin-top:4px;">Point your spectrometer at a light and click on the video above to choose a cross-section to sample. (<a href="http://publiclab.org/wiki/spectral-workbench-usage">Learn more &raquo;</a>)</p>
-      <img class="img-rounded" src="/images/example-cfl.jpg" style="width:100px;height:80px" />
-      <img class="img-rounded" src="/images/example-sky.jpg" style="width:100px;height:80px" />
+      <img src="/images/example-cfl-vertical.png" style="height:200px" />
     </div>
-    <div class="hidden-phone">
+    <div class="spectrum-example-horizontal">
       <p style="margin-top:4px;">Point your spectrometer at a light and click on the video above to choose a cross-section as shown below. (<a href="http://publiclab.org/wiki/spectral-workbench-usage">Learn more &raquo;</a>)</p>
-      <img src="/images/calibration-example.png" />
+      <img width="480px" src="/images/calibration-example.png" />
     </div>
 
   </div>
@@ -65,17 +69,19 @@
   <script>
     jQuery(document).ready(function() {
       $W.setSampleRowClickListener()
+
+      <% if ios? || (mobile? && !opera?) %>
+        $W.toggle_rotation();
+      <% end %>
+
     })
   </script>
 
-  <% if ios? || (mobile? && !opera?) %>
-  <% end %>
-
   <p style="padding-top:5px;">
-    <a rel="tooltip" title="" class="btn btn-inverse" onclick="$W.auto_detect_sample_row()" data-original-title="Auto select sample row"><i class="icon-white icon-resize-horizontal"></i> Auto-select Sample Row</a>
-    <a rel="tooltip" title="Flip video horizontally" class="btn btn-inverse" onClick="$W.flip_horizontal()"><i class="icon-resize-horizontal"></i> Flip</a>
-    <a rel="tooltip" title="Rotate video 90 &deg;" class="btn btn-inverse" onClick="$W.toggle_rotation()"><i class="icon-repeat"></i> Rotate</a>
-    <% if params[:debug] || chrome? %><a rel="tooltip" title="Change camera" class="btn btn-inverse" onClick="$W.chromeCameraSwitch()"><i class="icon-camera"></i> Change Camera</a><% end %>
+    <a rel="tooltip" title="" class="btn btn-inverse" onclick="$W.auto_detect_sample_row()" data-original-title="Auto select sample row"><i class="fa fa-white fa-arrows-v"></i> Auto-select Sample Row</a>
+    <a rel="tooltip" title="Flip video horizontally" class="btn btn-inverse btn-flip" onClick="$W.flip_horizontal()"><i class="fa fa-white fa-arrows-h"></i> Flip image</a>
+    <a rel="tooltip" title="Rotate video 90 &deg;" class="btn btn-inverse btn-rotate" onClick="$W.toggle_rotation()"><i class="fa fa-white fa-rotate-right"></i> Rotate</a>
+    <% if params[:debug] || chrome? %><a rel="tooltip" title="Change camera" class="btn btn-inverse" onClick="$W.chromeCameraSwitch()"><i class="fa fa-white fa-camera"></i> Change Camera</a><% end %>
 
   </p>
   <p style="padding-top:5px;">
@@ -84,7 +90,7 @@
 
   <% if @calibration %>
     <p class="calibration-used">Using spectrum "<a target="_blank" href="/spectrums/<%= @calibration.id %>"><%= @calibration.title %></a>" (captured <%= time_ago_in_words(@calibration.created_at) %> ago) as a calibration reference.</p>
-    <p>If this is incorrect, simply save your spectra uncalibrated and calibrate them later with the correct reference.</p>
+    <p>If this is incorrect, simply save your spectra uncalibrated and calibrate them later with the correct reference. Or create a new calibration and refresh this page.</p>
   <% end %>
 
   <a class="btn btn-large btn-primary" href="#capture" onClick="$('#capture-btn').addClass('active');$('#settings-btn').removeClass('active');" data-toggle="tab">Begin capturing &raquo;</a>
@@ -99,10 +105,6 @@
 
 <div id="save" class="tab-pane">
   <%= render :partial => "save" %>
-</div>
-
-<div id="compare" class="tab-pane">
-  <%= render :partial => "compare" %>
 </div>
 
 <div id="macros" class="tab-pane">
@@ -127,11 +129,17 @@
     calibrated: <%= !@calibration.nil? %>,
     interface:"capture",
     mode:"combined",
+    flipped: <%= @calibration && @calibration.is_flipped || params[:flipped] == 'true' %>,
     <% if @calibration && @calibration.has_powertag('video_row') %>
       video_row: <%= @calibration.powertag('video_row') %>,
     <% end %>
     width: 640
   }) 
+
+  <% if params[:debugChrome] %>
+    $W.debugChrome = true;
+  <% end %>
+
   setInterval($W.getRow,100)
   <% if @calibration %>
     $W.calibrated = true

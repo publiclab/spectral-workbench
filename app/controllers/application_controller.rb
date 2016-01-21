@@ -42,8 +42,12 @@ class ApplicationController < ActionController::Base
 
     unless logged_in? && (current_user.role == "admin" || current_user.id == datum.user_id)
       flash[:error] = "You must own this data to edit it."
-      redirect_to spectrum_path(datum) if dataType == :spectrum
-      redirect_to      set_path(datum) if dataType == :set
+      # without status 303, some browsers will redirect with request method DELETE
+      redirect_to spectrum_path(datum), status: :see_other if dataType == :spectrum
+      redirect_to      set_path(datum), status: :see_other if dataType == :set
+      return false
+    else
+      return true
     end
   end
 

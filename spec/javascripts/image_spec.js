@@ -10,7 +10,7 @@ describe("Image", function() {
 
   it("should not be undefined", function(done) {
 
-    image = new SpectralWorkbench.Image($('img'), false, done); // fake graph with 'false'
+    image = new SpectralWorkbench.Image($('img'), { args: {} }, done); // fake graph with empty object
 
     expect(image).toBeDefined();
 

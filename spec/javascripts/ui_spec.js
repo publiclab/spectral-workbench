@@ -78,6 +78,22 @@ describe("UI", function() {
   });
 
 
+  it("can create notifications in the DOM", function() {
+
+    var noticeEl = graph.UI.notify('Hello, world!', 'success');
+
+    expect(noticeEl.html()).toBe('<b>Success:</b> Hello, world!');
+    expect(noticeEl.html()).not.toBe('Goodbye, world!');
+    expect(noticeEl.hasClass('alert-success')).toBe(true);
+
+    var noticeEl = graph.UI.notify('Hello, world!', 'error');
+
+    expect($('.notifications-container p').length).toBe(2);
+    expect(noticeEl.hasClass('alert-error')).toBe(true);
+
+  });
+
+
   // test tag creation
   it("should generate a TagForm", function(done) {
 
@@ -180,7 +196,7 @@ describe("UI", function() {
     tagForm = new SpectralWorkbench.UI.TagForm(graph, function() {
 
       // be sure the tag is there now. 
-      expect($('.tags .list span:last a:first').html()).toBe('range:500-550');
+      expect($('.operations tr:last .label').html()).toBe('range:500-550');
 
       // datum.tags.push is run **after** the callback :-/
       //expect(graph.datum.getTag('range:500-550')).not.toBe(false);
@@ -215,34 +231,30 @@ describe("UI", function() {
     // so we need to be cleverer to delete via the interface:
     // $('.tags .list span:last .tagdelete').trigger('click');
 
-    tag = graph.datum.addTag('range:520-530', function(tag, ajaxResponse) {
+    tag = graph.datum.addTag('range:520-530');
 
-      graph.datum.tags.push(tag); // we have to fake this because of the weird ordering of Datum.addTag; it's done for us, but not til after we need it
+    // ensure it's there to be deleted:
+    expect(graph.datum.getTag('range:520-530')).not.toBe(false);
 
-      // ensure it's there to be deleted:
-      expect(graph.datum.getTag('range:520-530')).not.toBe(false);
+    // anyways we can do it manually:
+    graph.datum.getTag('range:520-530').destroy(function(tag) {
 
-      // anyways we can do it manually:
-      graph.datum.removeTag('range:520-530', function(tag) {
+      expect(tag).toBeDefined(); // the response
+    
+      expect(graph.datum.getTag('range:520-530')).toBe(false);
+    
+      expect($('.tags .list span.label a:first').html()).not.toBe('range:520-530');
 
-        expect(tag).toBeDefined(); // the response
-      
-        expect(graph.datum.getTag('range:520-530')).toBe(false);
-      
-        expect($('.tags .list span.label a:first').html()).not.toBe('range:520-530');
+      var el = $("span#tag_" + tag.id);
+      // display in Operations table;
+      var operationEl = $("tr#tag_" + tag.id);
 
-        var el = $("span#tag_" + tag.id);
-        // display in Operations table;
-        var operationEl = $("tr#tag_" + tag.id);
-
-        expect(el.length).toBe(0); // the tag DOM element
-        expect(operationEl.length).toBe(0); // the tag's DOM element in the Operations table
-       
-        tagDeletionCallbackSpy();
-       
-        done(); // complete asynchronous call
-
-      });
+      expect(el.length).toBe(0); // the tag DOM element
+      expect(operationEl.length).toBe(0); // the tag's DOM element in the Operations table
+     
+      tagDeletionCallbackSpy();
+     
+      done(); // complete asynchronous call
 
     });
 

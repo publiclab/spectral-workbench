@@ -1,3 +1,6 @@
+<% if spectrums.length == 0 %>
+<p>No results</p>
+<% else %>
 <div class="table-scroll-container list">
   <table class="table spectra">
     <% spectrums.each do |spectrum| %>
@@ -13,7 +16,7 @@
           <%# expensive, but worth it %>
           <td style="text-align:center;" class="like-container-<%= spectrum.id %>">
             <a class="btn-like" onClick="SpectralWorkbench.UI.Misc.toggleLike(<%= spectrum.id %>)">
-              <i style="color:#888;" class="icon icon-star<% unless spectrum.liked_by(current_user.id) %>-empty<% end %>"></i>
+              <i style="color:#888;" class="fa fa-star<% unless spectrum.liked_by(current_user.id) %>-o<% end %>"></i>
             </a>
           </td>
         <% end %>
@@ -23,7 +26,7 @@
             <i rel="tooltip" 
                title="This spectrum is wavelength calibrated!" 
                style="font-size:13px;vertical-align:middle;color:#0c5;" 
-               class='icon icon-check-sign'></i>
+               class='fa fa-check-sign'></i>
           <% end %>
 
         </td>
@@ -36,12 +39,35 @@
 
         <td><%= time_ago_in_words(spectrum.created_at) %> ago</td>
 
-        <td style="text-align:right;"><a class="btn btn-mini btn-spectrum-apply" data-title="<%= spectrum.title %>" data-author="<%= spectrum.author %>" data-id="<%= spectrum.id %>">Apply</a></td>
+        <td style="text-align:right;">
+          <a class="btn btn-mini btn-spectrum-apply" 
+             data-title="<%= spectrum.title %>" 
+             data-author="<%= spectrum.author %>"
+             <% if spectrum.snapshots.length > 0 %>data-snapshot="<%= spectrum.latest_snapshot.id %>"<% end %>
+             data-id="<%= spectrum.id %>">Apply
+          </a>
+        </td>
 
       </tr>
     <% end %>
   </table>
 
-  <%= will_paginate spectrums, renderer: BootstrapPagination::Rails if @match %>
+  <%= will_paginate spectrums, renderer: BootstrapPagination::Rails, inner_window: 1 %>
+
+  <script>
+
+    $(function () {
+      $('.pagination a').click(function () {
+        $.get(this.href, function(response) {
+
+          $('.results').html(response);
+
+        });
+        return false;
+      });
+    });
+
+  </script>
 
 </div>
+<% end %>

@@ -7,7 +7,7 @@
       <a name="c<%= comment.id %>"></a>
       <div class="header">
         <% if logged_in? && (current_user.role == "admin" || current_user.id == comment.user_id) %>
-          <p class="pull-right"><small><%= link_to '<i class="icon icon-remove-sign"></i>'.html_safe, "/comments/delete/"+comment.id.to_s, :confirm => 'Are you sure?' %></small></p>
+          <p class="pull-right"><small><%= link_to '<i class="fa fa-trash"></i>'.html_safe, "/comments/delete/"+comment.id.to_s, :confirm => 'Are you sure?' %></small></p>
         <% end %>
           <%= time_ago_in_words(comment.created_at) %> ago,
           <% if comment.has_user? %><a href="<%= profile_path(comment.user) %>"><%= comment.user.login %></a> <a class="anchor" href="#c<%= comment.id %>">wrote</a>:</b>

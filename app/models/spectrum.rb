@@ -6,9 +6,13 @@ class Spectrum < ActiveRecord::Base
 
   attr_accessible :title, :author, :user_id, :notes, :photo, :video_row
 
+  # place this before the has_one :snapshot so it runs before dependent => :destroy
+  before_destroy :is_deletable?
+
   has_many :comments, :dependent => :destroy
   has_many :likes, :dependent => :destroy
   has_many :tags, :dependent => :destroy
+  has_many :snapshots, :dependent => :destroy
   has_one :processed_spectrum, :dependent => :destroy
   has_and_belongs_to_many :spectra_sets
 
@@ -31,10 +35,33 @@ class Spectrum < ActiveRecord::Base
 
   after_save :generate_processed_spectrum
   before_save :update_calibrated
+  #before_create :rename_with_id
+
+  # validation: not allowed to destroy a spectrum someone else depends on
+  def is_deletable?
+    destroyable = true
+    self.tags.each do |tag|
+      destroyable = destroyable && tag.is_deletable?
+    end
+    errors[:base] << "spectrum is depended upon by other data"
+    destroyable
+  end
 
   def sets
     self.spectra_sets
   end
+
+  def latest_snapshot
+    Snapshot.where(spectrum_id: self.id)
+            .order("created_at DESC")
+            .limit(1)
+            .last
+  end
+
+#  def rename_with_id
+#    extension = File.extname(self.image_file_name).downcase
+#    self.image.instance_write(:file_name, "#{Time.now.to_i}#{extension}")
+#  end
 
   def validate_json
     if self.data.nil?
@@ -65,6 +92,14 @@ class Spectrum < ActiveRecord::Base
 
   def user
     User.find self.user_id
+  end
+
+  # this is used to determine if we should force user into 2.0 interface:
+  def has_operations
+    Tag.where(spectrum_id: self.id)
+       .collect(&:name)
+       .select { |s| !s.match(':').nil? }
+       .length > 0
   end
 
   def self.weekly_tallies
@@ -100,30 +135,6 @@ class Spectrum < ActiveRecord::Base
       end
     end
     brightest_row
-  end
-
-  def correct_reversed_image
-    pixels = []
-
-    image   = Magick::ImageList.new("public"+(self.photo.url.split('?')[0]).gsub('%20',' '))
-    row = image.export_pixels(0, self.sample_row, image.columns, 1, "RGB");
-    left_redness = 0
-    right_redness = 0
-    # sum redness for each half
-    (0..(row.length/3-1)).each do |i|
-      r = row[i*3]/255
-      b = row[i*3+2]/255
-      if i*3 > row.length/2
-        left_redness += r
-        left_redness -= b
-      else
-        right_redness += r
-        right_redness -= b
-      end
-    end
-    if left_redness < right_redness
-      self.reverse
-    end
   end
 
   # extracts serialized data from the top row of the stored image
@@ -172,11 +183,15 @@ class Spectrum < ActiveRecord::Base
     if self.data.nil?
       false
     else
-      begin
-        d = ActiveSupport::JSON.decode(self.clean_json)
-        !d.nil? && !d['lines'].nil? && !d['lines'].first['wavelength'].nil?
-      rescue
-        false
+      if self.tags.collect(&:key).include?('calibrate') || self.tags.collect(&:key).include?('linearCalibration')
+        true
+      else
+        begin
+          d = ActiveSupport::JSON.decode(self.clean_json)
+          !d.nil? && !d['lines'].nil? && !d['lines'].first['wavelength'].nil?
+        rescue
+          false
+        end
       end
     end
   end
@@ -202,13 +217,43 @@ class Spectrum < ActiveRecord::Base
     self.data.gsub("'",'"').gsub(/([a-z]+):/,'"\\1":')
   end
 
+  def forks
+    Tag.where('name LIKE (?)', 'forked:' + self.id.to_s + '%').collect(&:spectrum)
+  end
+
+  def fork(user)
+    new = self.dup
+    new.author = user.login
+    new.user_id = user.id
+    new.photo = self.photo
+    new.save!
+    new.tag("forked:#{self.id}", user.id)
+    # record "now" timestamp
+    now = Time.now
+    seconds = 0
+    # now copy over all tags, in order:
+    self.tags.each do |tag|
+      unless tag.key == "forked"
+        newtag = new.tag(tag.name, user.id) 
+        # preserve created_at, for tag ordering; we should be able to tell based on spectrum created_at
+        newtag.created_at = now + seconds.seconds # forward-date each by 1 second
+        seconds += 1
+        newtag.save
+        newtag.create_snapshot(tag.snapshot.data) if tag.needs_snapshot? && tag.snapshot && !tag.snapshot.data.nil?
+      end
+    end
+    Spectrum.find new.id # refetch it to get all the tags, for some reason needed by tests
+  end
+
   # clones calibration from another spectrum (preferably taken from the same device)
+  # deprecating in 2.0 in favor of client-side powertag-based cloneCalibration
   def clone_calibration(clone_id)
     clone_source = Spectrum.find clone_id
     d = ActiveSupport::JSON.decode(self.clean_json)
-    cd = ActiveSupport::JSON.decode(clone_source.clean_json)
+    cd = clone_source.latest_json_data
     # assume linear:
     lines = cd['lines']
+    lines = lines.reverse if clone_source.is_flipped
     length = lines.length
     startWavelength = lines[0]['wavelength'].to_f
     endWavelength = lines[length-1]['wavelength'].to_f
@@ -222,6 +267,7 @@ class Spectrum < ActiveRecord::Base
       end
       i += 1
     end
+    self.tag("calibrate:#{clone_id}", self.user_id)
     # figure out how to know when to reverse based on a cloned calibration... maybe we need to store reversal...
     #self.reverse if (wavelength1 < wavelength2 && x1 > x2) || (wavelength1 > wavelength2 && x1 < x2)
     self.data = ActiveSupport::JSON.encode(d)
@@ -240,7 +286,6 @@ class Spectrum < ActiveRecord::Base
   # horizontally flips image to match reversed spectrum, toggles 'reversed' flag
   def reverse
     image   = Magick::ImageList.new("public"+(self.photo.url.split('?')[0]).gsub('%20',' '))
-puts "reversing"
     image.flop!
     image.write("public"+self.photo.url)
     self.reversed = !self.reversed
@@ -261,6 +306,18 @@ puts "reversing"
     self.powertag('range').split('-').map { |s| s.to_i }
   end
 
+  def add_snapshot(tag, data)
+
+    self.snapshots << Snapshot.create({
+      user_id: tag.spectrum.user_id,
+      tag_id: tag.id,
+      data: data
+    })
+
+   self.snapshots.last
+
+  end
+
   # a string of either a single tag name or a series of comma-delimited tags
   def tag(tags, user_id)
     tags = tags.strip
@@ -270,12 +327,11 @@ puts "reversing"
         :name => tags.strip,
         :user_id => user_id,
       })
-      unless self.has_tag(tag.name) # duplicate
-        tag.save!
-      end     
+      tag.save
+      return tag
     else
       tags.split(',').each do |name|
-        self.tag(name, user_id)
+        return self.tag(name, user_id)
       end
     end
   end
@@ -356,9 +412,11 @@ puts "reversing"
     scored
   end
 
+  # used in capture interface for displaying latest calibration
   def wavelength_range
-    d = ActiveSupport::JSON.decode(self.clean_json)
+    d = self.latest_json_data
     range = [d['lines'][0]['wavelength'],d['lines'][d['lines'].length-1]['wavelength']]
+    # always returns range in ascending order
     range.reverse! if range.first && (range.first > range.last)
     range
   end
@@ -394,7 +452,7 @@ puts "reversing"
 
   # no colon required
   def has_powertag(name)
-    Tag.where('name LIKE (?)',name+':%').where(spectrum_id: self.id).length > 0
+    self.powertags(name).length > 0
   end
 
   # no colon required
@@ -408,10 +466,9 @@ puts "reversing"
   end
 
   # if it has horizontally flipped input image: red is at left
-  # here, we have made an assumption of ascending pixel values. Deprecate this.
+  # newly calculated based on linearCalibration tag having x1 > x2
   def is_flipped
-    d = ActiveSupport::JSON.decode(self.clean_json)
-    !d['lines'].nil? && !d['lines'][0].nil? && !d['lines'][0]['wavelength'].nil? && !d['lines'][d['lines'].length-1]['wavelength'].nil? && d['lines'][0]['wavelength'] > d['lines'][d['lines'].length-1]['wavelength']
+    self.has_powertag('linearCalibration') && self.powertag('linearCalibration').split('-')[0].to_f > self.powertag('linearCalibration').split('-')[1].to_f
   end
 
   def liked_by(user_id)
@@ -438,25 +495,31 @@ puts "reversing"
   end
 
   # Process the spectrum for the "Closest Match Module"
+  # -- run after_save
   def generate_processed_spectrum
-    id = self.id
     if self.calibrated
       if self.processed_spectrum
-        self.processed_spectrum.update_attributes(generate_hashed_values)
+        self.processed_spectrum.update_attributes(self.generate_hashed_values)
         self.processed_spectrum.save
       else
-        self.processed_spectrum = ProcessedSpectrum.new(generate_hashed_values)
+        self.processed_spectrum = ProcessedSpectrum.new(self.generate_hashed_values)
         self.processed_spectrum.save
       end
+    end
+  end
+
+  def latest_json_data
+    if self.snapshots.length > 0
+      return ActiveSupport::JSON.decode(self.snapshots.last.data)
+    else
+      return ActiveSupport::JSON.decode(self.clean_json)
     end
   end
 
   # Generate the values hash for the processed spectrum
   def generate_hashed_values
 
-    decoded = ActiveSupport::JSON.decode(self.clean_json)
-
-    lines = decoded['lines']
+    lines = self.latest_json_data['lines']
 
     values = {}
     counts = {}

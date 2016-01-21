@@ -33,7 +33,7 @@
     </td>
     <td>
       <% if logged_in? && comment.can_delete(current_user) %>
-        <a href="/comments/delete/<%= comment.id %>"><i class="icon icon-remove-sign"></i> Delete</a>
+        <a href="/comments/delete/<%= comment.id %>"><i class="fa fa-trash"></i> Delete</a>
       <% end %>
     </td>
   </tr>

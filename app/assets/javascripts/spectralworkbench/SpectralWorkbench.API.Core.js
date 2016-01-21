@@ -1,52 +1,42 @@
+/*
+ * General API methods.
+ */
+
 SpectralWorkbench.API.Core = {
 
 
-  // initiate a notification on the page, which fades after <expire> seconds, or doesn't if <expire> is not supplied
-  // also returns the notification element
-  notify: function(message, type, expire) {
+  fetchSpectrum: function(id, callback) {
 
-    expire = expire || false;
-
-    if (type) {
-      title = "<b>"+type[0].toUpperCase() + type.substr(1, type.length-1) + ":</b> ";
-    } else title = "";
-
-    if (expire == null) expire = true
-
-    var id = parseInt(Math.random()*100000)
-
-    $('.notifications-container').append("<p id='notify-" + id + "' class='alert'></p>")
-
-    $('#notify-' + id).html(title + message).addClass('alert-' + type)
-
-    $('#notification-count').html($('.notifications-container p').length);
-    $('.notification-count-icon').show();
-
-    if (expire) {
-
-      setTimeout(function() {
-
-        $('#notify-'+id).remove()
-
-        $('#notification-count').html($('.notifications-container p').length);
-        if ($('.notifications-container p').length == 0) $('.notification-count-icon').hide();
-        else $('.notification-count-icon').show();
-
-      }, expire*1000);
-
+    // coerce into string:
+    if (("" + id).match(/\#/)) {
+      snapshot_id = parseInt(("" + id).split('#')[1]);
+      url = "/snapshots/" + snapshot_id + ".json";
+      is_snapshot = true;
+    } else {
+      url = "/spectrums/" + id + ".json";
+      is_snapshot = false;
     }
 
-    return $('#notify-' + id);
+    /* Fetch data */ 
+    $.ajax({
+      url: url,
+      type: "GET",
+      dataType: "json",
 
-  },
+      success: function(data) {
 
+        if (is_snapshot) data.data = { lines: data.lines }; // doesn't receive a full Spectrum model, just the data, so we rearrange to match
 
-  // does this really belong here? No. 
-  initNotifications: function() {
+        var spectrum = new SpectralWorkbench.Spectrum(data);
 
-    $('#notification-count').html(+$('.notifications-container').html());
-    if (+$('#notification-count').html() > 0) $('#notifications').show();
-    
+        spectrum.snapshot = is_snapshot;
+
+        if (callback) callback(spectrum);
+
+      }
+ 
+    });
+
   },
 
 
@@ -62,42 +52,34 @@ SpectralWorkbench.API.Core = {
   },
 
 
-  // clone calibration from spectrum of id <from_id> to spectrum of id <to_id>
-  // -- this could be rewritten to be more client-sided
-  copyCalibration: function(from_id, datum, callback) {
+  // clone calibration from spectrum of id <from_id> to <spectrum>
+  copyCalibration: function(spectrum, from_id, callback) {
 
-    callback = callback || function(response) { SpectralWorkbench.API.Core.notify('Calibration cloned from spectrum #' + from_id); }
+    SpectralWorkbench.API.Core.fetchSpectrum(from_id, function(source) {
 
-    $.ajax({
-      url: "/spectrums/clone_calibration/" + datum.id + ".json",
-      type: "POST",
-
-      data: {
-        authenticity_token: $('meta[name=csrf-token]').attr('content'),
-        clone_id: from_id
-      },
-
-      success: function(response) {
-
-        // refresh data on client side
-        datum.fetch();
-
-        callback(response);
-
-      }
+        // what if the image sizes don't match? 
+        // well, they should, if they're from the same device.
+        spectrum.json.data.lines.forEach(function(line, i) {
+          line.wavelength = source.json.data.lines[i].wavelength;
+        });
+ 
+        // reload the spectrum data:
+        spectrum.load();
+         
+        if (callback) callback(spectrum);
 
     });
 
   },
 
 
-  // apply a provided expression on every pixel of this spectrum
-  transform: function(datum, expression) {
+  // apply a provided expression on every pixel of <spectrum>
+  transform: function(spectrum, expression) {
 
-    var red     = datum.red,
-        green   = datum.green,
-        blue    = datum.blue,
-        average = datum.average,
+    var red     = spectrum.red,
+        green   = spectrum.green,
+        blue    = spectrum.blue,
+        average = spectrum.average,
         r       = red.map(function(d){ return d.y }),
         g       = green.map(function(d){ return d.y }),
         b       = blue.map(function(d){ return d.y }),
@@ -126,13 +108,17 @@ SpectralWorkbench.API.Core = {
     });
 
     // some issue here on indexing...
-    datum.graph.refresh();
+    spectrum.graph.refresh();
 
   },
 
 
-  // clip out a given subset of wavelengths from this spectrum
-  // works for spectra, not sets
+  // Clip out a given subset of wavelengths from this spectrum.
+  // Works for spectra, not sets.
+  // Untested for multiple successive use on one Spectrum.
+  // Sets graph.range, which is used in Spectrum.load to change 
+  // spectrum.average, .red, .blue, .green, 
+  // but doesn't affect original spectrum.json.data.lines.
   range: function(datum, start, end) {
 
     // ensure start < end
@@ -164,13 +150,9 @@ SpectralWorkbench.API.Core = {
 
     });
 
-    // adjust the graph range directly:
+    // adjust the Graph range directly;
+    // this is used in graph and image DOM sizing and conversions
     datum.graph.range = [start, end];
-
-    // reload the graph data:
-    datum.graph.reload();
-    // refresh the graph:
-    datum.graph.refresh();
  
   },
 
@@ -182,55 +164,38 @@ SpectralWorkbench.API.Core = {
         green   = datum.green,
         blue    = datum.blue,
         average = datum.average,
-        url = "/spectrums/" + spectrum_id + ".json",
         blender;
 
-    /* Fetch data */ 
-    $.ajax({
-      url: url,
-      type: "GET",
-      dataType: "json",
+    SpectralWorkbench.API.Core.fetchSpectrum(spectrum_id, function(blender) {
 
-      success: function(data) {
- 
-        blender = new SpectralWorkbench.Spectrum(data);
-       
-        // we could parse this, actually...
-        eval('var blend = function(R1,G1,B1,A1,R2,G2,B2,A2,X,Y,P) { return ' + expression + '; }');
-      
-        average.forEach(function(P, i) { 
-      
-          if (red[i])   var R1 = +red[i].y;
-          else          var R1 = 0;
-          if (green[i]) var G1 = +green[i].y;
-          else          var G1 = 0;
-          if (blue[i])  var B1 = +blue[i].y;
-          else          var B1 = 0;
-      
-          var A1 = +average[i].y,
-              X = +average[i].x,
-              Y = +average[i].y;
-      
-          var R2 = +blender.getIntensity(i, 'red');
-              G2 = +blender.getIntensity(i, 'green');
-              B2 = +blender.getIntensity(i, 'blue');
-              A2 = +blender.getIntensity(i, 'average');
-       
-          P.y = +blend(R1,G1,B1,A1,R2,G2,B2,A2,X,Y,P);
-      
-        });
-       
-        // reload the graph data:
-        datum.graph.reload();
-        // refresh the graph:
-        datum.graph.refresh();
-       
-        if (callback) callback();
-
-      }
- 
-    });
+      // we could parse this, actually...
+      eval('var blend = function(R1,G1,B1,A1,R2,G2,B2,A2,X,Y,P) { return ' + expression + '; }');
     
+      average.forEach(function(P, i) { 
+    
+        if (red[i])   var R1 = +red[i].y;
+        else          var R1 = 0;
+        if (green[i]) var G1 = +green[i].y;
+        else          var G1 = 0;
+        if (blue[i])  var B1 = +blue[i].y;
+        else          var B1 = 0;
+    
+        var A1 = +average[i].y,
+            X = +average[i].x,
+            Y = +average[i].y;
+    
+        var R2 = +blender.getIntensity(i, 'red');
+            G2 = +blender.getIntensity(i, 'green');
+            B2 = +blender.getIntensity(i, 'blue');
+            A2 = +blender.getIntensity(i, 'average');
+     
+        P.y = +blend(R1,G1,B1,A1,R2,G2,B2,A2,X,Y,P);
+    
+      });
+     
+      if (callback) callback();
+
+    });
 
   },
 
@@ -240,38 +205,19 @@ SpectralWorkbench.API.Core = {
 
     var channels = [datum.red, datum.blue, datum.green, datum.average];
 
-    var url = "/spectrums/" + spectrum_id + ".json",
-        subtractor;
-
-
-    /* Fetch data */ 
-    $.ajax({
-      url: url,
-      type: "GET",
-      dataType: "json",
-
-      success: function(data) {
- 
-        subtractor = new SpectralWorkbench.Spectrum(data);
+    SpectralWorkbench.API.Core.fetchSpectrum(spectrum_id, function(subtractor) {
        
-        channels.forEach(function(_channel) {
-       
-          _channel = _channel.map(function(point) { 
-       
-            point.y -= +subtractor.getIntensity(point.x);
-       
-          });
-       
+      channels.forEach(function(_channel) {
+     
+        _channel = _channel.map(function(point) { 
+     
+          point.y -= +subtractor.getIntensity(point.x);
+     
         });
+     
+      });
        
-        // reload the graph data:
-        datum.graph.reload();
-        // refresh the graph:
-        datum.graph.refresh();
-         
-        if (callback) callback();
-
-      }
+      if (callback) callback();
  
     });
     
@@ -303,32 +249,11 @@ SpectralWorkbench.API.Core = {
 
     datum.average = average;
 
-    // reload the graph data:
-    datum.graph.reload();
-    // refresh the graph:
-    datum.graph.refresh();
-
-  },
-
-
-  // get a spectrum by its ID, pass it to callback(data)
-  fetch: function(graph, id, callback) {
-
-    var url = "/spectrums/" + id + ".json"; 
-
-    d3.json(url, function(error, data) {
-
-      callback(graph, data);
-
-    });
-
   },
 
 
   // display a spectrum by given id (and store in an array graph.comparisons)
-  compare: function(graph, data) {
-
-    var datum = new SpectralWorkbench.Spectrum(data, graph);
+  compare: function(graph, datum, callback) {
 
     // standardize this! and reuse it in similar()
     graph.comparisons = graph.comparisons || [];
@@ -350,6 +275,8 @@ SpectralWorkbench.API.Core = {
 
     // refresh the graph:
     graph.refresh();
+
+    if (callback) callback();
 
   },
 
@@ -420,8 +347,11 @@ SpectralWorkbench.API.Core = {
   },
 
 
-  // autodetect calibration
+  // Attempts to autodetect calibration,
   // adapted from https://gist.github.com/Sreyanth/8dcb8343e4770cd9d301
+  // returns [r, g, b] as original image pixel positions from stored json data
+  // -- a gotcha is that sometimes stored json pixel data is not full-width;
+  // we are transitioning to using native image widths instead of downscaled
   attemptCalibration: function(graph) {
 
     var green = SpectralWorkbench.API.Core.findMax(graph.datum.json.data.lines, 'g');
@@ -571,7 +501,7 @@ SpectralWorkbench.API.Core = {
     // only a temp calibration, so we can evaluate it before
     // committing. So we build our own little tools:
 
-    var tempCalibration = spectrum.calibrate(w1, w2, x1, x2); // returns a temp spectrum.json.data.lines
+    var tempCalibration = spectrum.calibrate(w1, w2, x1, x2, false); // returns a temp spectrum.json.data.lines, without flipping data or image (false)
 
     // create a custom intensity getter for not-yet-saved calibrations.
     var getIntensity = function(wavelength) {
@@ -624,44 +554,45 @@ SpectralWorkbench.API.Core = {
   },
 
 
-  // checks overexposure and displays an alert if it is so
-  // we might just want a class of alert filters separate from the API, or
-  // in a special zone
-  alertOverexposure: function(datum) {
+  addComparison: function(_graph, id, author, title) {
 
-    var overexposure = datum.getOverexposure();
+    $('li.comparisons').show();
 
-    if (datum instanceof SpectralWorkbench.Spectrum) {
+    $('table.comparisons').append('<tr class="spectrum spectrum-comparison-' + id + '"></tr>');
 
-      if (overexposure['r'] || overexposure['g'] || overexposure['b']) {
+    var compareEl = $('table.comparisons tr.spectrum-comparison-' + id);
+    compareEl.append('<td class="title"><a href="/spectrums/' + id + '">' + title + '</a></td>');
+    compareEl.append('<td class="author"><a href="/profile/' + author + '">' + author + '</a></td>');
+    compareEl.append('<td class="comparison-tools"></td>');
 
-        var msg = "This spectrum looks overexposed. <a href='//publiclab.org/wiki/spectral-workbench-usage#Overexposure'>Learn how to fix this</a>."
+    compareEl.find('td.comparison-tools').append('<a data-id="' + id + '" class="remove"><i class="fa fa-remove"></i></a>');
+    compareEl.find('.comparison-tools .remove').click(function(){
 
-        SpectralWorkbench.API.Core.notify(msg, "warning");
+      compareEl.remove();
 
-      }
+      var combined = _graph.datum.d3();
 
-    } else {
+      // get rid of self
+      _graph.comparisons.forEach(function(datum){
+        if (datum.id != +$(this).attr('data-id')) _graph.comparisons.splice(_graph.comparisons.indexOf(datum), 1);
+      });
 
-      // what? WHAT?
+      // re-assemble display data
+      _graph.comparisons.forEach(function(comparison) {
+     
+        comparison = comparison.d3()[0];
+        comparison.color = "red";
+        combined.push(comparison);
+     
+      });
 
-    }
+      _graph.data.datum(combined, _graph.idKey);
+      _graph.refresh();
 
-  },
+      // this isn't working...
+      $('li.comparisons a').tab('show');
 
-
-  // checks overexposure and displays an alert if it is so
-  // we might just want a class of alert filters separate from the API, or
-  // in a special zone
-  alertTooDark: function(datum) {
-
-    if (datum.getTooDark()) {
-
-      var msg = "This spectrum seems very dim. You may need to choose a new image cross section that intersects your spectrum data. <a href='//publiclab.org/wiki/spectral-workbench-calibration#Cross+section'>Learn how to fix this</a>."
-
-      SpectralWorkbench.API.Core.notify(msg, "warning")
-
-    }
+    });
 
   }
 

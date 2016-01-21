@@ -1,0 +1,55 @@
+<div id="term"></div>
+<p><small>Read about the <a href="https://publiclab.org/wiki/spectral-workbench-api">Spectral Workbench API</a></small></p>
+
+<script src="/lib/jquery.terminal/js/jquery.terminal-0.9.3.min.js"></script>
+<script src="/lib/jquery.terminal/js/jquery.mousewheel-min.js"></script>
+<link href="/lib/jquery.terminal/css/jquery.terminal-0.9.2.css" rel="stylesheet"/>
+
+<style>
+
+#term {
+
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  -moz-border-radius: 4px;
+  -moz-border-radius: 4px;
+
+}
+
+</style>
+
+<script>
+
+var init_terminal, terminal = false;
+
+jQuery(function($, undefined) {
+
+  init_terminal = function() {
+
+    if (terminal == false) {
+      $('#term').terminal(function(command, term) {
+          if (command !== '') {
+              try {
+                  var result = window.eval(command);
+                  if (result !== undefined) {
+                      term.echo(new String(result));
+                  }
+              } catch(e) {
+                  term.error(new String(e));
+              }
+          } else {
+             term.echo('');
+          }
+      }, {
+          greetings: 'Spectral Workbench JS scripting console:',
+          name: 'js',
+          height: 200,
+          prompt: 'js> '});
+    }
+
+    terminal = true;
+
+  }
+
+});
+</script>

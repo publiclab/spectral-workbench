@@ -1,26 +1,34 @@
 <%= render :partial => "embed/modal", :locals => { datum: @spectrum, type: :spectrum } %>
 
 <div class="spectrum-img-container">
-  <img class="spectrum" src="<%= @spectrum.photo.url(:large) %>" />
+  <img class="spectrum" src="<%= @spectrum.photo.url(:original) %>" />
 </div>
 
 <div id="graphing" class="spectrums">
 
   <div id="graph">
-    <div class="zoom"><a onClick="graph.zoom();" class="btn-zoom"><i class="icon icon-zoom-in"></i></a></div>
-    <i class="icon icon-spinner icon-spin"></i>
+    <div class="zoom"><a onClick="graph.zoom();" class="btn-zoom"><i class="fa fa-zoom-in"></i></a></div>
+    <i class="fa fa-spinner fa-spin"></i>
   </div>
 
     <script type="text/javascript">
  
-    var graph; // for debugging, and currently, some ToolPane calls :-(
+    var graph, spectrum; // for debugging, and currently, some ToolPane calls :-(
     jQuery(document).ready(function($) {
       graph = new SpectralWorkbench.Graph({
         spectrum_id: <%= @spectrum.id %>,
+        // the following will be deprecated for snapshot/tag-based metadata
         calibrated: <%= @spectrum.calibrated %>,
-        range: <%= @spectrum.has_powertag('range') ? @spectrum.range : false %>
+        range: <%= @spectrum.has_powertag('range') ? @spectrum.range : false %>,
+        sample_row: <%= @spectrum.sample_row %>
+      }, function() {
+
+        // for console use
+        spectrum = graph.datum;
+
       });
-    })
+
+    });
  
     </script>
  
@@ -42,13 +50,15 @@
             <% if logged_in? && current_user.login == @spectrum.author %>
   
               <div class="btn-group">
-                <a class="btn btn-small" href="/spectrums/<%= @spectrum.id %>/edit"><i class="icon icon-pencil"></i></a>
-                <%= link_to '<i class="icon icon-trash"></i>'.html_safe, "/spectrums/destroy/#{@spectrum.id}", :confirm => 'Are you sure?', :class => "btn btn-small" %>
+                <a class="btn btn-small" href="/spectrums/<%= @spectrum.id %>/edit"><i class="fa fa-pencil"></i></a>
+                <%= link_to '<i class="fa fa-trash"></i>'.html_safe, "/spectrums/destroy/#{@spectrum.id}", :confirm => 'Are you sure?', :class => "btn btn-small" %>
               </div>
   
             <% end %>
 
-            <p style="margin-top:10px;color:#888;"><i>Uploaded on <%= @spectrum.created_at.to_s(:long) %></i></p>
+            <p style="margin-top:10px;color:#888;"><small><i>Uploaded on <%= @spectrum.created_at.to_s(:long) %></i></small></p>
+
+            <p><% if @spectrum.notes %><%=raw RDiscount.new(@spectrum.notes).to_html %><% end %></p>
 
             <hr />
   
@@ -63,7 +73,7 @@
               <a target="_blank" rel="tooltip" title="Raw data before modifications" class="btn btn-small" href="/spectrums/<%= @spectrum.id %>.json"><b>raw JSON</b></a>
               <a target="_blank" class="btn btn-small" href="/spectrums/<%= @spectrum.id %>.csv"><b>CSV</b></a>
               <a target="_blank" class="btn btn-small" href="/spectrums/<%= @spectrum.id %>.xml"><b>XML</b></a>
-              <a rel="tooltip" class="btn btn-small" href="//publiclab.org/wiki/spectral-workbench-exporting" title="About export formats"><i class="icon icon-question-sign"></i></a>
+              <a rel="tooltip" class="btn btn-small" href="//publiclab.org/wiki/spectral-workbench-exporting" title="About export formats"><i class="fa fa-question-circle"></i></a>
   
             </div>
   
@@ -76,10 +86,12 @@
           <div class="span8">
   
             <ul class="nav nav-tabs">
-              <li class="active"><a href="#tab-tools"              data-toggle="tab"><i class="icon icon-cog"></i> Tools</a></li>
-              <li>               <a href="#tab-sets"               data-toggle="tab"><i class="icon icon-list"></i> Sets</a></li>
-              <li>               <a href="#tab-comments"           data-toggle="tab"><i class="icon icon-comments"></i> <%= @spectrum.comments.length %> Comments</a></li>
-              <li class="comparisons" style="display:none;"><a href="#tab-comparisons" data-toggle="tab"><i class="icon icon-columns"></i> Comparisons</a></li>
+              <li class="active"><a href="#tab-tools"              data-toggle="tab"><i class="fa fa-cog"></i> Tools</a></li>
+              <li>               <a href="#tab-sets"               data-toggle="tab"><i class="fa fa-list"></i> Sets</a></li>
+              <li>               <a href="#tab-comments"           data-toggle="tab"><i class="fa fa-comments"></i> <%= @spectrum.comments.length %> Comments</a></li>
+              <% if @spectrum.forks %><li><a href="#tab-forks"     data-toggle="tab"><i class="fa fa-code-fork"></i> <%= @spectrum.forks.length %> Forks</a></li><% end %>
+              <li>               <a href="#tab-scripting"          data-toggle="tab" onClick="init_terminal();"><i class="fa fa-terminal"></i> Scripting</a></li>
+              <li class="comparisons" style="display:none;"><a href="#tab-comparisons" data-toggle="tab"><i class="fa fa-columns"></i> Comparisons</a></li>
             </ul>
            
             <div class="tab-content">
@@ -110,6 +122,14 @@
              
               <div class="tab-pane" id="tab-comments">       
                 <%= render partial: 'comments/list', locals: { datum: @spectrum, comments: @spectrum.comments } %>
+              </div>
+             
+              <div class="tab-pane" id="tab-forks">
+                <%= render partial: 'spectrums/list_table', locals: { spectrums: @spectrum.forks } %>
+              </div>
+             
+              <div class="tab-pane" id="tab-scripting">
+                <%= render partial: 'macros/scripting' %>
               </div>
            
             </div>

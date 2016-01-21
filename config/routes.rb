@@ -52,6 +52,8 @@ SpectralWorkbench::Application.routes.draw do
 
   # See how all your routes lay out with 'rake routes'
 
+  mount JasmineRails::Engine => "/specs" if defined?(JasmineRails)
+
   get '/local/:login' => 'sessions#local'
   get '/logout' => 'sessions#logout'
   get '/login' => 'sessions#login'
@@ -88,6 +90,10 @@ SpectralWorkbench::Application.routes.draw do
 
   get '/upload' => 'spectrums#new'
 
+  get '/tags/change_reference/:id' => 'tags#change_reference'
+
+  get '/spectrums/choose' => 'spectrums#choose' # for pagination in adding spectrums to sets, for some reason needed to explicitly set this?
+
   resources :users do
     resources :spectrums
     resources :tags
@@ -95,14 +101,18 @@ SpectralWorkbench::Application.routes.draw do
     resources :sets
     resources :comments
   end
+  resources :snapshots
   resources :macros
   resources :session
-  resources :tags
+  resources :tags do
+    resources :snapshots
+  end
   resources :sets do 
     resources :comments
   end
   resources :comments, :belongs_to => :spectrums
   resources :spectrums do
+    resources :snapshots
     resources :comments
     resources :tags
     member do

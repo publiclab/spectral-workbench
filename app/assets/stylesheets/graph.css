@@ -11,11 +11,10 @@
 }
 
 #graphing #graph {
-  background: #eee;
   text-align: center;
 }
 
-#graphing #graph .icon-spinner {
+#graphing #graph .fa-spinner {
   font-size: 20px;
   color: #aaa;
   margin-top: 30px;
@@ -173,6 +172,9 @@ div.spectrum-img-container .alert-zooming div a {
   color: #888;
 }
 
+#graphing table .btn-link.disabled {
+  background: white;
+}
 
 #graphing svg .highlight {
   stroke: red !important;
@@ -309,6 +311,9 @@ div.spectrum-img-container .alert-zooming div a {
   background: #eee;
   text-align: center;
   padding: 14px;
+  -webkit-border-radius: 10px;
+  -moz-border-radius:    10px;
+  border-radius:         10px;
 }
 
 .datum-tool-pane .search {
@@ -337,4 +342,13 @@ div.spectrum-img-container .alert-zooming div a {
 
 .datum-tool-pane .spectra .spectrum.selected {
   background: #fff8dd;
+}
+
+.flipped {
+  transform: scale(-1, 1);
+  -moz-transform: scale(-1, 1);
+  -webkit-transform: scale(-1, 1);
+  -o-transform: scale(-1, 1);
+  -khtml-transform: scale(-1, 1);
+  -ms-transform: scale(-1, 1);
 }

@@ -1,7 +1,7 @@
 SpectralWorkbench.UI.ToolPane = Class.extend({
 
   form: {},
-  spinner: "<i class='disabled icon icon-spinner icon-spin'></i>",
+  spinner: "<i class='disabled fa fa-spinner fa-spin'></i>",
 
   init: function(toolType, _graph, selector, callback) {
 
@@ -41,7 +41,7 @@ SpectralWorkbench.UI.ToolPane = Class.extend({
       form.formEl.show();
       form.spectrumApplyEl.off('click');
       form.applyEl.off('click');
-      if (_tool.options.cleanUp) _tool.options.cleanUp();
+      if (_tool.options.cleanUp) _tool.options.cleanUp(form);
     }
 
     // close the tool pane AND clean up. runs on "cancel"
@@ -69,7 +69,7 @@ SpectralWorkbench.UI.ToolPane = Class.extend({
 
     if (_tool.options.onApply) { 
       form.applyEl.click(function(e) {
-        $(this).html(_tool.spinner);
+        form.applyEl.html("<i class='fa fa-spinner fa-spin fa-white'></i>");
         _tool.options.onApply.bind(this)(form);
         form.close();
       });

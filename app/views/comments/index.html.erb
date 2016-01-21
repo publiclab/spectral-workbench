@@ -15,7 +15,7 @@
     <td><%= comment.author %></td>
     <% end %>
     <td><%= time_ago_in_words(comment.created_at) %> ago</td>
-    <td><% if logged_in? && current_user.role == "admin" %><a class="btn btn-mini btn-error" href="/comments/delete/<%= comment.id %>?index=true"><i class="icon icon-trash"></i> Delete</a><% end %>&nbsp;</td>
+    <td><% if logged_in? && current_user.role == "admin" %><a class="btn btn-mini btn-error" href="/comments/delete/<%= comment.id %>?index=true"><i class="fa fa-trash"></i> Delete</a><% end %>&nbsp;</td>
     <td style="width:60%"><%= sanitize truncate(comment.body, length: 40, separator: "...") %> <br /><a href="/spectra/show/<%= comment.spectrum_id %>">Read more &raquo;</a></td>
   </tr>
   <% end %>

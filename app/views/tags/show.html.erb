@@ -7,7 +7,7 @@
 
   <ul class="nav nav-tabs">
     <li class="active"><a data-toggle="tab" href="#graph">Graph</a></li>
-    <li><a data-toggle="tab" href="#map_box" onClick="setTimeout(init_map,1000);is_initialized = true;"><i class="icon icon-globe"></i> Map (<span id="mapcount">0</span>)</a></li>
+    <li><a data-toggle="tab" href="#map_box" onClick="setTimeout(init_map,1000);is_initialized = true;"><i class="fa fa-globe"></i> Map (<span id="mapcount">0</span>)</a></li>
   </ul>
 
   <div class="tab-content">
@@ -37,13 +37,13 @@
   <div class="btn-group hidden-phone pull-right" style="padding-top:10px;">
     <a class="btn btn-small" href="<%=h tag_path(params[:id]) %>.json"><b>JSON</b></a>
     <a class="btn btn-small" href="<%=h tag_path(params[:id]) %>.xml"><b>XML</b></a>
-    <a rel="tooltip" class="btn btn-small" href="http://publiclab.org/wiki/spectral-workbench-exporting" title="About export formats"><i class="icon icon-question-sign"></i></a>
+    <a rel="tooltip" class="btn btn-small" href="http://publiclab.org/wiki/spectral-workbench-exporting" title="About export formats"><i class="fa fa-question-circle"></i></a>
   </div>
 
   <h2 style="margin-left:10px;">Spectra tagged with "<%=h params[:id] %>"</h2>
 
   <% if @tag %>
-    <%= render :partial => 'spectrums/list' %>
+    <%= render :partial => 'spectrums/list', locals: { spectrums: @spectrums } %>
     <%= will_paginate @spectrums, renderer: BootstrapPagination::Rails %>
   <% else %>
     <p>No results for tag "<%=h params[:id] %></p>
