@@ -40,6 +40,35 @@ SpectralWorkbench.API.Core = {
   },
 
 
+  fetchLatestSnapshot: function(id, callback) {
+
+    // coerce into string:
+    url = "/spectrums/" + id + ".json?latest=true";
+    is_snapshot = true;
+
+    /* Fetch data */ 
+    $.ajax({
+      url: url,
+      type: "GET",
+      dataType: "json",
+
+      success: function(data) {
+
+        if (is_snapshot) data.data = { lines: data.lines }; // doesn't receive a full Spectrum model, just the data, so we rearrange to match
+
+        var spectrum = new SpectralWorkbench.Spectrum(data);
+
+        spectrum.snapshot = true;
+
+        if (callback) callback(spectrum);
+
+      }
+ 
+    });
+
+  },
+
+
   /* let's put it in Spectrum?: */
   exportSVG: function(name) {
 

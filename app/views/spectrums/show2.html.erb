@@ -51,7 +51,11 @@
   
               <div class="btn-group">
                 <a class="btn btn-small" href="/spectrums/<%= @spectrum.id %>/edit"><i class="fa fa-pencil"></i></a>
-                <%= link_to '<i class="fa fa-trash"></i>'.html_safe, "/spectrums/destroy/#{@spectrum.id}", :confirm => 'Are you sure?', :class => "btn btn-small" %>
+                <% if @spectrum.is_deletable? %>
+                  <%= link_to '<i class="fa fa-trash"></i>'.html_safe, "/spectrums/destroy/#{@spectrum.id}", :confirm => 'Are you sure?', :class => "btn btn-small" %>
+                <% else %>
+                  <a class="btn btn-small disabled"><i class="fa fa-trash"></i></a>
+                <% end %>
               </div>
   
             <% end %>
