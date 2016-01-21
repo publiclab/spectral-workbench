@@ -429,7 +429,7 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
         //_tag.data = JSON.stringify(_tag.datum.json.data);
 
         // so instead we do this:
-        _tag.data = JSON.stringify(_tag.datum.encodeJSON());
+        _tag.data = JSON.stringify({'lines': _tag.datum.encodeJSON()});
 
       }
 
