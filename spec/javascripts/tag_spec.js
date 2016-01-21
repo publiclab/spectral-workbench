@@ -221,8 +221,14 @@ describe("Tag", function() {
       // apply the powertag! It may have been parsed already but we try again to be sure. 
       tag.parse();
       expect(tag.data).not.toBeUndefined();
+
       // should have cached a data snapshot locally:
       expect(typeof tag.data).toBe('string');
+      expect(JSON.parse(tag.data)['lines'][0]['wavelength']).toEqual(graph.datum.average[0].x);
+      expect(JSON.parse(tag.data)['lines'][0]['wavelength']).not.toEqual(graph.datum.average[0].x + 1);
+      expect(JSON.parse(tag.data)['lines'][0]['r']).toEqual(graph.datum.red[0].y * 255);
+      expect(JSON.parse(tag.data)['lines'][0]['r']).not.toEqual(graph.datum.red[0].y + 1);
+      expect(JSON.parse(tag.data)['lines'][0]['r']).not.toEqual(graph.datum.json.data.lines[0].r);
 
       creationCallbackSpy();
 
