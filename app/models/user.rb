@@ -77,7 +77,7 @@ class User < ActiveRecord::Base
   end
 
   def last_calibration 
-    self.calibrations.first
+    Spectrum.find self.calibrations.first.id
   end
 
   def calibrations

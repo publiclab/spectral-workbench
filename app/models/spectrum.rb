@@ -510,7 +510,7 @@ class Spectrum < ActiveRecord::Base
   end
 
   def latest_json_data
-    if self.snapshots.length > 0
+    if self.snapshots.count > 0
       return ActiveSupport::JSON.decode(self.snapshots.last.data)
     else
       return ActiveSupport::JSON.decode(self.clean_json)
