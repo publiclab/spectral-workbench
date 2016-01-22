@@ -11,7 +11,7 @@ class CaptureController < ApplicationController
     if logged_in?
       if params[:calibration_id]
         @calibration = Spectrum.find(params[:calibration_id])
-      else
+      elsif current_user.calibrations.count > 0
         @calibration = current_user.last_calibration
       end
       @calibrations = Spectrum.where(calibrated: true, user_id: current_user.id)
