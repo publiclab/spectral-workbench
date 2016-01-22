@@ -81,7 +81,7 @@ class User < ActiveRecord::Base
   end
 
   def calibrations
-    Spectrum.select("spectrums.id, spectrums.title, spectrums.created_at, spectrums.user_id, spectrums.author, spectrums.calibrated")
+    Spectrum.select("spectrums.id, spectrums.title, spectrums.created_at, spectrums.user_id, spectrums.author, spectrums.calibrated, spectrums.photo_file_name")
             .joins(:tags)
             .where(user_id: self.id)
             .where('tags.name = (?) OR tags.name LIKE (?)', "calibration", "linearCalibration:%")
