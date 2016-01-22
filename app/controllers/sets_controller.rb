@@ -16,7 +16,7 @@ class SetsController < ApplicationController
 
     # don't fetch the data here; but do get latest snapshot_ids
     @spectrums = Spectrum.select('DISTINCT(spectrums.id), spectrums.title, spectrums.created_at, spectrums.id, spectrums.calibrated, spectrums.user_id, like_count, snapshots.id AS snapshot_id')
-                         .joins('LEFT OUTER JOIN snapshots')
+                         .joins('LEFT OUTER JOIN snapshots ON snapshots.spectrum_id = spectrums.id')
                          .joins(:spectra_sets)
                          .where('spectra_sets.id = ?', @set.id)
                          .group('spectrums.id')
