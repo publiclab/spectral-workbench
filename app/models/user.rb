@@ -81,8 +81,9 @@ class User < ActiveRecord::Base
   end
 
   def calibrations
-    Spectrum.select("spectrums.id, spectrums.title, spectrums.created_at, spectrums.user_id, spectrums.author, spectrums.calibrated, spectrums.photo_file_name")
-            .joins(:tags)
+    # re-enable this optimization once we deprecate v1
+    #Spectrum.select("spectrums.id, spectrums.title, spectrums.created_at, spectrums.user_id, spectrums.author, spectrums.calibrated, spectrums.photo_file_name")
+    Spectrum.joins(:tags)
             .where(user_id: self.id)
             .where('tags.name = (?) OR tags.name LIKE (?)', "calibration", "linearCalibration:%")
             .order("spectrums.created_at DESC")
