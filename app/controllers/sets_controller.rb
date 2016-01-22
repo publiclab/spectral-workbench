@@ -15,10 +15,10 @@ class SetsController < ApplicationController
     @set = SpectraSet.find params[:id]
 
     # don't fetch the data here; but do get latest snapshot_ids
-    @spectrums = Spectrum.select('DISTINCT(spectrums.id), spectrums.title, spectrums.created_at, spectrums.id, spectrums.calibrated, spectrums.user_id, like_count, snapshots.id AS snapshot_id, spectra_sets.id AS set_id')
-                         .joins(:snapshots)
+    @spectrums = Spectrum.select('DISTINCT(spectrums.id), spectrums.title, spectrums.created_at, spectrums.id, spectrums.calibrated, spectrums.user_id, like_count, snapshots.id AS snapshot_id')
+                         .joins('LEFT OUTER JOIN snapshots')
                          .joins(:spectra_sets)
-                         .where('set_id = ?', @set.id)
+                         .where('spectra_sets.id = ?', @set.id)
                          .group('spectrums.id')
 
     respond_with(@set) do |format|
