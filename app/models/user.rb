@@ -83,6 +83,7 @@ class User < ActiveRecord::Base
   def calibrations
     Spectrum.select("spectrums.id, spectrums.title, spectrums.created_at, spectrums.user_id, spectrums.author, spectrums.calibrated")
             .joins(:tags)
+            .where(user_id: self.id)
             .where('tags.name = (?) OR tags.name LIKE (?)', "calibration", "linearCalibration:%")
             .order("spectrums.created_at DESC")
   end
