@@ -68,13 +68,49 @@
 
       <br />
       <form id="searchform" action="/spectra/search" method='get' class="form-search">
-  <input id="searchform_input" class='search-query input-medium' type='text' name='q' placeholder="Search spectra" value=''/>
-  <button class="btn btn-primary" type='submit'><i class="fa fa-search fa-white"></i></button>
+        <input id="searchform_input" class='search-query input-medium' type='text' name='q' placeholder="Search spectra" value=''/>
+        <button class="btn btn-primary" type='submit'><i class="fa fa-search fa-white"></i></button>
       </form>
       <br />
 
-      <h4>Troubleshooting</h4>
-      <p>If you believe there is a bug in the software, please <a href="https://github.com/publiclab/spectral-workbench">report it on Github</a> or <a href="mailto:web@publiclab.org">send a note to the Web Working Group</a> with a description of the bug, your username and browser version.</p>
+      <h2>Troubleshooting</h2>
+
+      <p>Please help us figure out what happened so we can fix it!</p>
+
+      <p>If possible, please describe:</p>
+
+      <ul>
+        <li>what you did just before the problem occurred</li>
+        <li>your browser and browser version</li>
+        <li>your operating system</li>
+        <li>any web addresses needed to see the problem (such as the URL of this page)</li>
+        <li>your PublicLab.org username (if you have one)</li>
+      </ul>
+
+      <p><a class="btn btn-primary" href="https://github.com/publiclab/spectral-workbench/issues/new">Report a bug on Github</a> or send an email to <a href="mailto:web@publiclab.org">web@publiclab.org</a> with the above information.</p>
+
+      <p>Thank you for helping to improve open source software!</p>
+
+      <hr />
+
+      <h2>Ask for help in the Public Lab chatroom</h2>
+
+      <p>Community members and staff may be able to help you in real time.</p>
+
+      <script>
+        chatroom = function() {
+          $('#chat').append('<iframe width="100%" height="300px" style="border:none;" src="https://webchat.oftc.net/?channels=publiclab"></iframe>')
+        }
+      </script>
+
+      <p><a class="btn btn-primary" onClick="chatroom()">Open chatroom</a></p>
+ 
+      <div id="chat"></div>
+
+      <hr />
+
+      <a class="twitter-timeline" href="https://twitter.com/SpectralWB" data-widget-id="691708587211673600">Tweets by @SpectralWB</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
 
       <br style="clear:both;" />
 

@@ -285,7 +285,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
 
     title: "Wavelength calibration",
     dataType: "spectrum",
-    description: "Follow the prompts to wavelength calibrate a fluorescent spectrum. Align B2 (which should be 435.83 nanometers) and G2 (which should be 546.07 nanometers) with their corresponding peaks in your calibration. It's best to calibrate before any other operations, especially before range limiting.",
+    description: "Follow the prompts to wavelength calibrate a fluorescent spectrum. Align B2 and G2 with their corresponding peaks in your calibration. It's best to calibrate before any other operations, especially before range limiting. Before calibrating, the horizontal axis lists the pixel position along the spectrum. After you calibrate and save, the B2 and G2 lines should appear at ~435 and ~546 nanometers, respectively, if you're aligned well with the reference spectrum.",
     link: "//publiclab.org/wiki/spectral-workbench-calibration",
     author: "warren",
     apply: true,
