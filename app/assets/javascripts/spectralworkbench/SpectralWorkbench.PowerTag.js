@@ -400,15 +400,15 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
 
     /*
      * Eventually create a collection keyed with _tag.key in API.Operations, 
-     * each of which has a run() method which accepts a _tag, 
+     * each of which has a run() method which accepts a _tag and optional callback, 
      * and a description() method which returns description
      */
-    _tag.parse = function() {
+    _tag.parse = function(callback) {
 
       if (SpectralWorkbench.API.Operations.hasOwnProperty(_tag.key) && SpectralWorkbench.API.Operations[_tag.key].run) {
 
         console.log("parsing tag", _tag.name);
-        SpectralWorkbench.API.Operations[_tag.key].run(_tag);
+        SpectralWorkbench.API.Operations[_tag.key].run(_tag, callback);
 
       } else {
 
@@ -503,18 +503,14 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
     }
 
 
-    _tag.parse();
-
     if (_tag.uploadable) {
 
       _tag.upload(callback);
- 
-      // render called after upload, in uploadSuccess
+      // render is called after upload, in uploadSuccess
  
     } else {
- 
-      if (callback) callback(); // callback directly, as we don't need to wait for an upload
 
+      _tag.parse(callback);
       _tag.render();
  
     }

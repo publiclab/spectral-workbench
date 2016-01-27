@@ -28,7 +28,6 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
         // or, if there's no graph at all, add it. Perhaps range should be stored in spectrum?
         // But we need range in the graph to calculate viewport sizes.
         // Tortured:
-
         if (!_spectrum.graph || (!_spectrum.graph.range || (x >= _spectrum.graph.range[0] && x <= _spectrum.graph.range[1]))) {
 
           _spectrum.average.push({ y: parseInt(line.average / 2.55)/100, x: x })
@@ -588,7 +587,8 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
 
 
     /* ======================================
-     * Returns a set of graph line datasets formatted for display in a d3 chart
+     * Returns a set of graph line datasets formatted for 
+     * display in a d3 chart, based on spectrum.average
      */
     _spectrum.d3 = function() {
 

@@ -11,6 +11,12 @@
   <div class="row">
 
     <form id="upload" action="/spectrums/create" class="form well span10" enctype="multipart/form-data" method="post">
+
+    <% if !params[:webrtc].nil? && params[:webrtc] == 'false' %>
+      <div class="alert alert-error">
+        Your browser <a href="http://caniuse.com/#search=webrtc">doesn't support live capture via USB</a>, so we've redirected you to the Upload page; if you believe you're seeing this message in error, please <a href="https://publiclab.org/wiki/issues">file an issue</a>.
+      </div>
+    <% end %>
  
     <% if @spectrum.errors.any? %>
       <div class="alert alert-error">

@@ -128,6 +128,7 @@ describe("Graph", function() {
 
   });
 
+
   var originalPxPerNm;
 
   it("imagePxToDisplayPx() converts an x-coordinate pixel value from image space to a display space pixel value", function() {

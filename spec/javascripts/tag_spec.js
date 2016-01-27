@@ -22,7 +22,7 @@ describe("Tag", function() {
       // object.method == "PUT" // object.method doesn't work :-/
       if      (object.url == '/spectrums/9.json') response = object.success(TestResponses.spectrum.success.responseText);
       else if (object.url == '/spectrums/9/tags') response = object.success(TestResponses.tags.success.responseText);
-      // the following is only faked properly for the 'sodium' tag, of course:
+      // the following faked response is shared among several specs:
       else if (object.url == '/tags')             response = object.success({'saved':{'sodium':        {'id': 1}, 
                                                                                       'subtract:3':    {'id': 2, 'snapshot_id': 5, 'name': 'subtract:3#4'},
                                                                                       'smooth:3':      {'id': 2, 'snapshot_id': 5},

@@ -130,12 +130,20 @@ describe("Spectrum", function() {
 
   // test spectrum.image, which the following method uses; here, we don't have an image. 
 
+
   /* ======================================
    * Overwrite spectrum.json.data.lines, the raw JSON of the spectrum
    * <y> is the y-position of the cross section of pixels, where 0 is the top row
    * <keepCalibrated> is a boolean which indicates whether to keep or flush the calibration
    * spectrum.imgToJSON = function(y, keepCalibrated) {
    */
+  xit("imgToJSON() extracts JSON data from an image", function() {
+
+    // check that we can extract image data
+    expect(graph.datum.imgToJSON(1)).toBe(64.3333);
+
+  });
+
 
   // relies on server fetch of own data; we're basing on a static fixture, so we can skip this:
 
