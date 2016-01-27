@@ -460,7 +460,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
 
       });
 
-      $('.btn-save-calibrate-2').click(function() {
+      var saveCalibration = function() {
 
         $('.btn-save-calibrate-2').html('<i class="fa fa-spinner fa-white fa-spin"></i>');
 
@@ -494,7 +494,10 @@ SpectralWorkbench.UI.ToolPaneTypes = {
        
         });
 
-      });
+      }
+
+      form.applyEl.click(saveCalibration);
+      $('.btn-save-calibrate-2').click(saveCalibration);
 
       // if these are outside the currently
       // displayed range, limit them:
