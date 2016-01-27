@@ -42,6 +42,8 @@ SpectralWorkbench.UI.ToolPane = Class.extend({
       form.spectrumApplyEl.off('click');
       form.applyEl.off('click');
       if (_tool.options.cleanUp) _tool.options.cleanUp(form);
+      // clean up the search form listener from SpectraPane:
+      if (form.formEl) $(form.formEl).off('submit');
     }
 
     // close the tool pane AND clean up. runs on "cancel"

@@ -43,6 +43,10 @@ SpectralWorkbench.UI.SpectraPane = SpectralWorkbench.UI.ToolPane.extend({
 
     // set up the search form
     $(form.formEl).on('submit',function() { 
+
+      // update formData with Your vs. All spectra select
+      _tool.options.formData.own = $('select.select-author').val();
+
       $(form.el).find('.results').html(_tool.spinner);
       $('.results').load(
         '/spectrums/choose/' + $(this).find('input.input-choose-spectrum').val(),

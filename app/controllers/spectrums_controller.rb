@@ -43,6 +43,9 @@ class SpectrumsController < ApplicationController
       comparison = "LIKE"
       params[:id].chop!
       params[:id] += "%"
+    elsif params[:id] == "calibration" # special case; include linearCalibration too
+      comparison = "LIKE 'linearCalibration' OR tags.name LIKE"
+      params[:id] += "%"
     elsif params[:partial]
       comparison = "LIKE"
       params[:id] += "%"
