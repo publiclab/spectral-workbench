@@ -72,24 +72,6 @@ class SpectraSet < ActiveRecord::Base
     scored
   end
 
-  # deprecate in favor of simply <<
-  def add(spectrum_id)
-    if spectrum = Spectrum.where(id: spectrum_id.to_i)
-      self.spectrums << spectrum.first
-    else
-      false
-    end
-  end
-
-  # deprecate in favor of delete
-  def remove(spectrum_id)
-    if spectrum = Spectrum.where(id: spectrum_id.to_i)
-      self.spectrums.delete(spectrum)
-    else
-      false
-    end
-  end
-
   # notify each commenter about a new comment 
   def notify_commenters(new_comment,current_user)
     emails = []

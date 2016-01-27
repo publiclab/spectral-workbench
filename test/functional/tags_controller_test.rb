@@ -3,8 +3,17 @@ require 'test_helper'
 class TagsControllerTest < ActionController::TestCase
 
   test "should show tag" do
+    tag = Tag.new({
+      name:        'cfl',
+      spectrum_id: spectrums(:one).id,
+      user_id:     users(:quentin).id
+    })
+    assert tag.save!
     get :show, :id => 'cfl'
     assert_response :success
+    assert_not_nil assigns(:spectrums).first.lat
+    assert_not_nil assigns(:spectrums).first.lon
+    assert_not_nil assigns(:spectrums).first.data
   end
 
   test "should show tag index for spectrum" do

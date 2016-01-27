@@ -1,7 +1,7 @@
 class SetsController < ApplicationController
 
   respond_to :html, :xml, :js #, :csv # not yet
-  before_filter :require_login, :only => [ :update, :edit, :delete, :remove, :new, :add ]
+  before_filter :require_login, :only => [ :update, :edit, :delete, :remove, :new, :add, :create ]
 
   def index
     @sets = SpectraSet.paginate(:order => "created_at DESC", :page => params[:page])
@@ -66,22 +66,6 @@ class SetsController < ApplicationController
     render :template => 'embed/set', :layout => 'embed'
   end
 
-  def add
-    @set = SpectraSet.find params[:id]
-    @spectrum = Spectrum.find params[:spectrum_id]
-    if @set.user_id == current_user.id
-      if @set.add(params[:spectrum_id])
-        flash[:notice] = "Added spectrum to set."
-      else
-        flash[:error] = "Failed to add to that set."
-      end
-      redirect_to "/sets/show2/#{@set.id}"
-    else
-      flash[:error] = "You must own that set to add to it."
-      redirect_to spectrum_path(@spectrum)
-    end
-  end
-
   def new
     @set = SpectraSet.new
     respond_to do |format|
@@ -90,6 +74,7 @@ class SetsController < ApplicationController
     end
   end
 
+  # accepts params[:id] of comma-delimited spectrum ids
   def create
     spectra = []
     params[:id].split(',').each do |s|
@@ -97,7 +82,8 @@ class SetsController < ApplicationController
         spectra << spectrum
       end
     end
-    @set = SpectraSet.new({:title => params[:spectra_set][:title],
+    @set = SpectraSet.new({
+      :title => params[:spectra_set][:title],
       :notes => params[:spectra_set][:notes],
       :user_id => current_user.id
     })
@@ -117,12 +103,30 @@ class SetsController < ApplicationController
     render :partial => "capture/results_sets.html.erb", :layout => false if params[:capture]
   end
 
+  # add spectrum to set with spectrum_id and id (of set)
+  def add
+    @set = SpectraSet.find params[:id]
+    @spectrum = Spectrum.find params[:spectrum_id]
+    if @set.user_id == current_user.id
+      if @set.spectrums << @spectrum
+        flash[:notice] = "Added spectrum to set."
+      else
+        flash[:error] = "Failed to add to that set."
+      end
+      redirect_to "/sets/show2/#{@set.id}"
+    else
+      flash[:error] = "You must own that set to add to it."
+      redirect_to spectrum_path(@spectrum)
+    end
+  end
+
   # Remove a spectrum with id params[:s] from the set
   def remove
     @set = SpectraSet.find params[:id]
+    @spectrum = Spectrum.find params[:s]
     if @set.user_id == current_user.id || current_user.role == "admin"
       if @set.spectrums.length > 1
-        @set.remove(params[:s])
+        @set.spectrums.delete(@spectrum)
         flash[:notice] = "Spectrum removed."
       else
         flash[:error] = "A set must have at least one spectrum."

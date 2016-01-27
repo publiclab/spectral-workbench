@@ -35,17 +35,17 @@ class SpectraSetTest < ActiveSupport::TestCase
   test "adds and removes spectrum from set" do
     set = SpectraSet.last
     assert_difference('set.spectrums.length', 1) do
-      set.add(Spectrum.last.id)
+      set.spectrums << Spectrum.last
     end
     assert set.contains(Spectrum.last)
     assert_difference('set.spectrums.length', -1) do
-      set.remove(Spectrum.last.id)
+      set.spectrums.delete(Spectrum.last)
     end
   end
 
   test "set.as_json_with_snapshots" do
     set = SpectraSet.last
-    set.add(Spectrum.last.id)
+    set.spectrums << Spectrum.last
     json = set.as_json_with_snapshots
     assert_not_nil json
     assert_not_nil json[:spectra]
@@ -56,7 +56,7 @@ class SpectraSetTest < ActiveSupport::TestCase
   # default to spectrums themselves if not
   test "set.snapshots" do
     set = SpectraSet.last
-    set.add(Spectrum.last.id)
+    set.spectrums << Spectrum.last
     assert_not_nil set.snapshots(false)
   end
 
