@@ -59,8 +59,9 @@ class TagsController < ApplicationController
 
 
   def show
-    @spectrums = Spectrum.select("spectrums.id, spectrums.title, spectrums.created_at, spectrums.user_id, spectrums.author, spectrums.calibrated")
-                         .joins(:tags)
+    # need spectrum.data for graph on this page
+    #@spectrums = Spectrum.select("spectrums.id, spectrums.title, spectrums.created_at, spectrums.user_id, spectrums.author, spectrums.calibrated, spectrums.lat, spectrums.lon")
+    @spectrums = Spectrum.joins(:tags)
                          .where('tags.name = (?)', params[:id])
                          .order("spectrums.id DESC")
                          .paginate(:page => params[:page], :per_page => 24)

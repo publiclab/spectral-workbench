@@ -124,6 +124,9 @@ SpectralWorkbench.Tag = Class.extend({
 
         }
 
+        // parse it once we hear back; powertags only
+        if (_tag.parse) _tag.parse();
+
         // render them!
         _tag.render();
 

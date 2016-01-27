@@ -13,8 +13,9 @@
  *      return "foo";
  * 
  *    },
- * 
- *    run: function(tag) {
+ *
+ *    // callback optional:
+ *    run: function(tag, callback) {
  * 
  *    },
  * 
@@ -105,7 +106,11 @@ SpectralWorkbench.API.Operations = {
 
     description: function(tag) {
 
-      return "Sets the row of pixels, counting from top row, used to generate the graph.";
+      var response = "Sets the row of pixels, counting from top row, used to generate the graph.";
+
+      if (tag.datum.powertags.indexOf(tag) != 0) response += " <span style='color:#900'>Do not use this after a <b>range</b> tag.</span>";
+
+      return response;
 
     },
 
@@ -244,22 +249,38 @@ SpectralWorkbench.API.Operations = {
   },
 
 
+  'calibrated': {
+
+    description: function(tag) {
+
+      return "Calibrated from the Capture interface using data from <a href='/spectrums/" + tag.value + "'>Spectrum " + tag.value + "</a>; but no snapshot generated. Re-calibrate to generate a snapshot; this will be resolved in an upcoming release.";
+
+    }
+
+  },
+
+
   'calibrate': {
 
     description: function(tag) {
 
       response = "Copies calibration from <a href='/spectrums/" + tag.value + "'>Spectrum " + tag.value + "</a>";
       if (tag.has_reference) response += ", snapshot #" + tag.reference_id;
-      else response += ", which has no snapshots -- this is not recommended.";
+      else response += ", which has no snapshots -- this is not recommended as the source may change!";
       return response;
 
     },
 
-    run: function(tag) {
+    run: function(tag, callback) {
 
-      // We only copy spectra if you refer to a snapshot of another spectrum; 
-      // no copying from original data as it should not have a calibration:
-      if (tag.has_reference) SpectralWorkbench.API.Core.copyCalibration(tag.datum, tag.value_with_snapshot);
+      // Consider only copying spectra if you refer to a snapshot of another spectrum; 
+      // and disallowing copying from original data as it should not have a calibration?
+      // But do calibrations done from capture interface have calibration? So then it would be allowed?
+
+      // anyways, for now, warn that it's not a good idea:
+      // if (tag.has_reference) {
+      SpectralWorkbench.API.Core.copyCalibration(tag.datum, tag.value_with_snapshot, callback);
+      // }
 
     }
 
