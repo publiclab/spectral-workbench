@@ -65,10 +65,12 @@ class TagsController < ApplicationController
                          .where('tags.name = (?)', params[:id])
                          .order("spectrums.id DESC")
                          .paginate(:page => params[:page], :per_page => 24)
+    # called from spectrum/show, but as JSON; we can limit the query there:
+    fields = "spectrums.id, spectrums.title, spectrums.created_at, spectrums.user_id, spectrums.author, spectrums.calibrated"
     respond_to do |format|
       format.html {} # show.html.erb
-      format.xml  { render :xml => @spectrums }
-      format.json  { render :json => @spectrums }
+      format.xml  { render :xml => @spectrums.select(fields) }
+      format.json  { render :json => @spectrums.select(fields) }
     end
   end
 
