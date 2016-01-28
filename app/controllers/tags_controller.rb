@@ -59,18 +59,21 @@ class TagsController < ApplicationController
 
 
   def show
-    # need spectrum.data for graph on this page
-    #@spectrums = Spectrum.select("spectrums.id, spectrums.title, spectrums.created_at, spectrums.user_id, spectrums.author, spectrums.calibrated, spectrums.lat, spectrums.lon")
-    @spectrums = Spectrum.joins(:tags)
+    @spectrums = Spectrum.select("spectrums.id, spectrums.title, spectrums.created_at, spectrums.user_id, spectrums.author, spectrums.calibrated, spectrums.lat, spectrums.lon, spectrums.photo_file_name, spectrums.like_count")
+                         .joins(:tags)
                          .where('tags.name = (?)', params[:id])
                          .order("spectrums.id DESC")
                          .paginate(:page => params[:page], :per_page => 24)
-    # called from spectrum/show, but as JSON; we can limit the query there:
-    fields = "spectrums.id, spectrums.title, spectrums.created_at, spectrums.user_id, spectrums.author, spectrums.calibrated"
+
     respond_to do |format|
-      format.html {} # show.html.erb
-      format.xml  { render :xml => @spectrums.select(fields) }
-      format.json  { render :json => @spectrums.select(fields) }
+      format.html { # show.html.erb
+        @mappable = []
+        @spectrums.each do |spectrum|
+          @mappable << spectrum if spectrum.lat != 0.0 && spectrum.lon != 0.0
+        end
+      }
+      format.xml  { render :xml => @spectrums }
+      format.json  { render :json => @spectrums }
     end
   end
 
