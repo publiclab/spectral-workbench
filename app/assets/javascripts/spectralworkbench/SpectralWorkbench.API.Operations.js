@@ -249,7 +249,7 @@ SpectralWorkbench.API.Operations = {
   },
 
 
-  'calibrated': {
+  'calibration': {
 
     description: function(tag) {
 
