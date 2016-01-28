@@ -13,7 +13,6 @@ class TagsControllerTest < ActionController::TestCase
     assert_response :success
     assert_not_nil assigns(:spectrums).first.lat
     assert_not_nil assigns(:spectrums).first.lon
-    assert_not_nil assigns(:spectrums).first.data
   end
 
   test "should show tag index for spectrum" do
