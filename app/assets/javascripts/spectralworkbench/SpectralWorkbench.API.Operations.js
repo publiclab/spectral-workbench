@@ -14,9 +14,10 @@
  * 
  *    },
  *
- *    // callback optional:
  *    run: function(tag, callback) {
  * 
+ *      callback(tag); // required upon completion
+ *
  *    },
  * 
  *    clean: function(tag) {
@@ -37,9 +38,11 @@ SpectralWorkbench.API.Operations = {
 
     },
 
-    run: function(tag) {
+    run: function(tag, callback) {
 
       SpectralWorkbench.API.Core.smooth(tag.datum, tag.value);
+
+      if (callback) callback(tag);
 
     }
 
@@ -54,9 +57,11 @@ SpectralWorkbench.API.Operations = {
 
     },
 
-    run: function(tag) {
+    run: function(tag, callback) {
 
       SpectralWorkbench.API.Core.range(tag.datum, +tag.value.split('-')[0], +tag.value.split('-')[1]);
+
+      if (callback) callback(tag);
 
     }
 
@@ -73,7 +78,9 @@ SpectralWorkbench.API.Operations = {
 
     },
 
-    run: function(tag) {
+    run: function(tag, callback) {
+
+      if (callback) callback(tag);
 
     }
 
@@ -114,13 +121,15 @@ SpectralWorkbench.API.Operations = {
 
     },
 
-    run: function(tag) {
+    run: function(tag, callback) {
 
       tag.datum.imgToJSON(tag.value);
       tag.datum.load(); // reparse graph-format data
 
       tag.datum.graph.args.sample_row = tag.value;
       tag.datum.graph.image.setLine(tag.value);
+
+      if (callback) callback(tag);
 
     }
 
@@ -135,9 +144,11 @@ SpectralWorkbench.API.Operations = {
 
     },
 
-    run: function(tag) {
+    run: function(tag, callback) {
 
       SpectralWorkbench.API.Core.flip(tag); // default 'horizontal'
+
+      if (callback) callback(tag);
 
     }
 
@@ -152,9 +163,11 @@ SpectralWorkbench.API.Operations = {
 
     },
 
-    run: function(tag) {
+    run: function(tag, callback) {
 
       SpectralWorkbench.API.Core.transform(tag.datum, tag.value_with_snapshot);
+
+      if (callback) callback(tag);
 
     }
 
@@ -177,7 +190,7 @@ SpectralWorkbench.API.Operations = {
 
     },
 
-    run: function(tag) {
+    run: function(tag, callback) {
 
       var blue2 = 435.83,
           green2 = 546.07,
@@ -188,6 +201,8 @@ SpectralWorkbench.API.Operations = {
  
       // reload the spectrum data:
       tag.datum.load();
+
+      if (callback) callback(tag);
 
     },
 
@@ -217,12 +232,12 @@ SpectralWorkbench.API.Operations = {
 
     },
 
-    run: function(tag) {
+    run: function(tag, callback) {
 
       var blend_id = tag.value_with_snapshot.split('$')[0],
           expression = tag.value_with_snapshot.split('$')[1];
 
-      SpectralWorkbench.API.Core.blend(tag.datum, blend_id, expression);
+      SpectralWorkbench.API.Core.blend(tag.datum, blend_id, expression, callback);
 
     }
 
@@ -240,9 +255,9 @@ SpectralWorkbench.API.Operations = {
 
     },
 
-    run: function(tag) {
+    run: function(tag, callback) {
 
-      SpectralWorkbench.API.Core.subtract(tag.datum, tag.value_with_snapshot);
+      SpectralWorkbench.API.Core.subtract(tag.datum, tag.value_with_snapshot, callback);
 
     }
 

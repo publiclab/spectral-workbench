@@ -124,9 +124,6 @@ SpectralWorkbench.Tag = Class.extend({
 
         }
 
-        // parse it once we hear back; powertags only
-        if (_tag.parse) _tag.parse();
-
         // render them!
         _tag.render();
 
@@ -229,7 +226,7 @@ SpectralWorkbench.Tag = Class.extend({
         // render called after upload, in uploadSuccess
  
       } else {
- 
+
         if (callback) callback(); // callback directly, as we don't need to wait for an upload
 
         _tag.render();

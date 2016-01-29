@@ -1,11 +1,8 @@
 <% if @mappable.length > 0 %>
 <div style="margin:0 10px;">
 
-  <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.4/leaflet.css" />
-  <!--[if lte IE 8]>
-    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.4/leaflet.ie.css" />
-  <![endif]-->
-  <script src="http://cdn.leafletjs.com/leaflet-0.4/leaflet.js"></script>
+  <link rel="stylesheet" href="/lib/leaflet/dist/leaflet.css" />
+  <script src="/lib/leaflet/dist/leaflet.js"></script>
 
   <div id="map_box">
 
@@ -16,7 +13,7 @@
       jQuery(document).ready(function() {
 
         var map = L.map('map').setView([0,20], 2);
-        L.tileLayer("http://a.tiles.mapbox.com/v3/jywarren.map-lmrwb2em/{z}/{x}/{y}.png").addTo(map);
+        L.tileLayer("https://a.tiles.mapbox.com/v3/jywarren.map-lmrwb2em/{z}/{x}/{y}.png").addTo(map);
     
         <% geolocated = 0 %>
         <% @mappable.each do |spectrum| %><% if spectrum.lat != 0 %>L.marker([<%= spectrum.lat %>, <%= spectrum.lon %>]).addTo(map).bindPopup("<a href='<%= spectrum_path(spectrum.id) %>'><%= spectrum.title %></a>");<% geolocated += 1 %><% end %><% end %>
