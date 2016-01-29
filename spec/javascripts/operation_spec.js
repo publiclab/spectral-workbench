@@ -13,7 +13,7 @@ describe("Operation", function() {
       var response;
 
       if      (object.url == '/spectrums/9.json') response = object.success(TestResponses.spectrum.success.responseText);
-      else if (object.url == '/spectrums/9/tags') response = object.success(TestResponses.tags.success.responseText);
+      else if (object.url == '/spectrums/9/tags') response = object.success(TestResponses.powertags.success.responseText);
       else if (object.url == '/snapshots/4.json') response = object.success(TestResponses.snapshot.success.responseText);
       else if (object.url == '/tags')             response = object.success({ 'saved': { 'sodium': { 'id': 1 } } });
       else response = 'none';
@@ -43,13 +43,21 @@ describe("Operation", function() {
     graph = new SpectralWorkbench.Graph({
       spectrum_id: 9,
       calibrated: true,
-      onComplete: operationInitCallbackSpy,
+      onComplete: function(_graph) {
+
+        expect(_graph.svg.style('opacity')).toBe('1');
+        operationInitCallbackSpy();
+
+      },
       onImageComplete: function() { done(); } // fires when graph.image is loaded, so that later tests can run
 
     });
 
     expect(graph).toBeDefined();
     expect(graph.datum).toBeDefined();
+
+    graph.dim();
+    expect(graph.svg.style('opacity')).toBe('0.5'); // dimmed
 
   });
 
