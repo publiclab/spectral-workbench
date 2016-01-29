@@ -102,7 +102,7 @@ class SpectrumsControllerTest < ActionController::TestCase
                          User.first.id )
     assert Tag.where('name LIKE (?)', 'calibration%')
 
-    get :choose, :id => 'calibration*'
+    get :choose, :id => 'calibration'
 
     assert_response :success
     assert_not_equal assigns(:spectrums), []
@@ -126,15 +126,15 @@ class SpectrumsControllerTest < ActionController::TestCase
     spectrums(:one).title = "Elephant spectrum"
     spectrums(:one).save
 
-    get :choose, :id => 'Elephant*'
+    get :choose, :id => 'Elephant'
     assert_response :success
     assert_not_equal assigns(:spectrums), []
     assert_equal assigns(:spectrums).first.id, spectrums(:one).id
   end
 
-  test "should respond to choose with wildcard" do
+  test "should respond to choose with no terms" do
     session[:user_id] = User.first.id # log in
-    get :choose, :id => '*'
+    get :choose, :id => ''
     assert_response :success
     assert_not_nil :spectrums
   end

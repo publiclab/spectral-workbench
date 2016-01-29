@@ -38,7 +38,9 @@ SpectralWorkbench.UI.Set = Class.extend({
 
       // fetch the spectrum choice list:
       $('.spectra-search .results').load("/spectrums/choose/", 
-        {}, 
+        { 
+          own: true
+        },
         connectResults
       );
  
@@ -48,7 +50,10 @@ SpectralWorkbench.UI.Set = Class.extend({
         $('.spectra-search .results').html("<i class='fa fa-spin fa-spinner'></i>");
         $('.spectra-search .results').load(
           '/spectrums/choose/' + $('.spectra-search input.input-choose-spectrum').val(),
-          {},
+          { 
+            // update formData with Your vs. All spectra select
+            own: $('select.select-author').val()
+          },
           connectResults
         );
  

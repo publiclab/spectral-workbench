@@ -37,26 +37,21 @@ class SpectrumsController < ApplicationController
   # in a partial for use in macros and tools.
   # ..can we merge this with search?
   def choose
-    
-    # accept wildcards
-    if params[:id] && params[:id].last == "*"
-      comparison = "LIKE"
-      params[:id].chop!
-      params[:id] += "%"
-    elsif params[:id] == "calibration" # special case; include linearCalibration too
+
+    params[:id] = params[:id].to_s
+
+    if params[:id] == "calibration" # special case; include linearCalibration too
       comparison = "LIKE 'linearCalibration' OR tags.name LIKE"
-      params[:id] += "%"
-    elsif params[:partial]
-      comparison = "LIKE"
-      params[:id] += "%"
     else
-      comparison = "="
+      # add wildcards
+      comparison = "LIKE"
     end
+    params[:id] += "%"
 
     # user's own spectra
-    params[:author] = current_user.login if logged_in? && params[:own]
+    params[:author] = current_user.login if logged_in? && params[:own] == 'true'
 
-# must re-craft this query to search spectra with no tags:
+    # must re-craft this query to search spectra with no tags:
     @spectrums = Spectrum.order('spectrums.id DESC')
                          .select("DISTINCT(spectrums.id), spectrums.title, spectrums.created_at, spectrums.user_id, spectrums.author, spectrums.calibrated")
                          .joins("LEFT OUTER JOIN tags ON tags.spectrum_id = spectrums.id")
@@ -67,7 +62,7 @@ class SpectrumsController < ApplicationController
     @spectrums = @spectrums.where('spectrums.id != ?', params[:not]) if params[:not]
 
     if params[:id] != "all" && !params[:id].nil?
-      @spectrums = @spectrums.where('tags.name ' + comparison + ' (?) OR spectrums.title ' + comparison + ' (?) OR spectrums.id = ? OR users.login = ?', 
+      @spectrums = @spectrums.where("tags.name #{comparison} (?) OR spectrums.title #{comparison} (?) OR spectrums.id = ? OR users.login = ?", 
                                     params[:id], params[:id], params[:id].to_i, params[:id])
       
       @spectrums = @spectrums.where(user_id: User.find_by_login(params[:author]).id) if params[:author]
