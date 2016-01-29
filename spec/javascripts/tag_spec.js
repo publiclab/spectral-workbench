@@ -6,7 +6,7 @@
 // and nesting describe() and it() calls to break up long nested runs
 describe("Tag", function() {
 
-  var graph, tag, ajaxSpy;
+  var graph, tag, ajaxSpy, request;
 
 
   beforeEach(function() {
@@ -21,6 +21,7 @@ describe("Tag", function() {
 
       // object.method == "PUT" // object.method doesn't work :-/
       if      (object.url == '/spectrums/9.json') response = object.success(TestResponses.spectrum.success.responseText);
+      else if (object.url == '/spectrums/3.json') response = object.success(TestResponses.spectrum.success.responseText); // duplicate for id=3
       else if (object.url == '/spectrums/9/tags') response = object.success(TestResponses.tags.success.responseText);
       // the following faked response is shared among several specs:
       else if (object.url == '/tags')             response = object.success({'saved':{'sodium':        {'id': 1}, 
@@ -201,11 +202,34 @@ describe("Tag", function() {
   });
 
 
+  it("creates powertag.data after creation", function() {
+
+    tag = graph.datum.addTag('subtract:3', function(tag) {
+
+      expect(tag.data).not.toBeUndefined();
+
+    });
+
+  });
+
+
   var creationCallbackSpy = jasmine.createSpy('success');
 
   it("creates powertag 'subtract' and is aware of specified snapshot reference #4", function() {
 
     tag = graph.datum.addTag('subtract:3', function(tag) {
+
+      var request = $.ajax.calls.mostRecent().args[0];
+ 
+      // check the outgoing request
+      expect(request.url).toEqual('/tags');
+      expect(request.type).toBe('POST');
+      // check for tag.data to be populated, so a snapshot can be made:
+      expect(request.data.tag.data).toBeDefined();
+      // data should be a string, actually, for the server:
+      var json = JSON.parse(request.data.tag.data);
+      expect(json.lines.length).toBeGreaterThan(1);
+      expect(json.lines[0].average).toEqual(36.42857142857142);
 
       expect(tag.key).toBeDefined();
       expect(tag.key).toBe('subtract');

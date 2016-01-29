@@ -223,6 +223,7 @@ SpectralWorkbench.Datum = Class.extend({
       });
 
       _datum.graph.undim();
+console.log('undimmed')
 
     }
 

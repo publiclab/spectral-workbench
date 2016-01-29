@@ -505,6 +505,7 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
 
     if (_tag.uploadable) {
 
+      _tag.parse();
       _tag.upload(callback);
       // render is called after upload, in uploadSuccess
  
