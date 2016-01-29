@@ -46,7 +46,8 @@ describe("Operation", function() {
       onComplete: function(_graph) {
 
         expect(_graph.svg.style('opacity')).toBe('1');
-        operationInitCallbackSpy();
+
+        operationInitCallbackSpy(); // ensure this was run all the way to the end
 
       },
       onImageComplete: function() { done(); } // fires when graph.image is loaded, so that later tests can run
@@ -65,6 +66,61 @@ describe("Operation", function() {
   it("spectrum init callback is called", function() {
 
     expect(operationInitCallbackSpy).toHaveBeenCalled();
+
+  });
+
+
+  it("undims/callbacks for passive powertags that are uploadable", function(done) {
+
+    graph = new SpectralWorkbench.Graph({
+      spectrum_id: 9,
+      calibrated: true,
+      onComplete: function(_graph) {
+
+        expect(_graph.svg.style('opacity')).toBe('1'); // undimmed
+
+        _graph.dim();
+        expect(_graph.svg.style('opacity')).toBe('0.5'); // dimmed
+  
+        tag = _graph.datum.addTag('error:1', function(tag) {
+    
+          expect(_graph.svg.style('opacity')).toBe('1'); // undimmed
+
+          done();
+
+        });
+
+      }
+
+    });
+
+  });
+
+
+  it("undims/callbacks for passive powertags that aren't uploadable", function(done) {
+
+    graph = new SpectralWorkbench.Graph({
+      spectrum_id: 9,
+      calibrated: true,
+      onComplete: function(_graph) {
+
+        expect(_graph.svg.style('opacity')).toBe('1'); // undimmed
+
+        _graph.dim();
+        expect(_graph.svg.style('opacity')).toBe('0.5'); // dimmed
+  
+        tag = _graph.datum.addTag('error:1', function(tag) {
+    
+          // here it would've undimmed but we supplied our own callback, so we're good.
+          //expect(_graph.svg.style('opacity')).toBe('1'); // undimmed
+
+          done();
+
+        }, {}); // add empty object as third arg to mark this as not-uploadable
+
+      }
+
+    });
 
   });
 
@@ -172,5 +228,6 @@ describe("Operation", function() {
 
   xit("properly clears after destroying crossSection operation", function(done) {
   });
+
 
 });

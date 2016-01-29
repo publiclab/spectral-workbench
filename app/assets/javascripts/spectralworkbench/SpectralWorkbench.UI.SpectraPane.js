@@ -48,6 +48,7 @@ SpectralWorkbench.UI.SpectraPane = SpectralWorkbench.UI.ToolPane.extend({
       _tool.options.formData.own = $('select.select-author').val();
 
       $(form.el).find('.results').html(_tool.spinner);
+
       $('.results').load(
         '/spectrums/choose/' + $(this).find('input.input-choose-spectrum').val(),
         _tool.options.formData,
