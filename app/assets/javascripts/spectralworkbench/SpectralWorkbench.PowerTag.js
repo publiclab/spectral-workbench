@@ -411,10 +411,10 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
 
       } else {
 
-        console.log("passive tag", _tag.name);
         // passive; no effect on data
         _tag.labelEl().removeClass('purple');
         _tag.labelEl().css('background', 'grey');
+        if (callback) callback(); // allow next tag to run
 
       }
 

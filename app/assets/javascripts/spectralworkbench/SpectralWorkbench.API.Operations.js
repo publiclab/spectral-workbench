@@ -6,6 +6,11 @@
  * Operations with a "clean" method execute it when deleted. These need only be those which wouldn't be cleared by re-running all tags de novo.
  * Code to parse and execute all this is in the PowerTag class. 
  * 
+ * Operations should take in data from spectrum.average and write it back in. 
+ * They should, in general, not need to update spectrum.json.data.lines, which
+ * should only have been modified by a crossSection, copyCalibration, or linearCalibration 
+ * operation. 
+ * 
  *  'subtract': {
  *
  *    description: function(tag) {
