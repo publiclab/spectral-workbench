@@ -407,7 +407,6 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
 
       if (SpectralWorkbench.API.Operations.hasOwnProperty(_tag.key) && SpectralWorkbench.API.Operations[_tag.key].run) {
 
-        console.log("parsing tag", _tag.name);
         SpectralWorkbench.API.Operations[_tag.key].run(_tag, callback);
 
       } else {

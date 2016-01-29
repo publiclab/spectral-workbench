@@ -192,6 +192,7 @@ SpectralWorkbench.Datum = Class.extend({
                 var callback = function() { 
 
                   _datum.graph.reload_and_refresh();
+                  _datum.graph.undim();
 
                 }
 
@@ -223,7 +224,6 @@ SpectralWorkbench.Datum = Class.extend({
       });
 
       _datum.graph.undim();
-console.log('undimmed')
 
     }
 

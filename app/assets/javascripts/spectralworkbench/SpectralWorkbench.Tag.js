@@ -226,7 +226,7 @@ SpectralWorkbench.Tag = Class.extend({
         // render called after upload, in uploadSuccess
  
       } else {
- 
+
         if (callback) callback(); // callback directly, as we don't need to wait for an upload
 
         _tag.render();
