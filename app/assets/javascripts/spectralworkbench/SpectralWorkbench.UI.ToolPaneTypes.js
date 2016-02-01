@@ -616,7 +616,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
     link: "//publiclab.org/wiki/spectral-workbench-operations#Compare",
     author: "warren",
     apply: false,
-    url: '/spectrums/choose/all', // default spectra to show, can use * and ?author=warren
+    url: '/spectrums/choose/?own=true', // default spectra to show, default yours and ?author=warren
     setup: function() {
 
       //$(form.el).find('.results').html('');

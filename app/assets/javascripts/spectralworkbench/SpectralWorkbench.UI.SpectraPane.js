@@ -23,11 +23,16 @@ SpectralWorkbench.UI.SpectraPane = SpectralWorkbench.UI.ToolPane.extend({
     var connectResults = function(result) {
 
       if (_tool.options.onSpectrumApply) { 
-        $(_tool.selector + ' .btn-spectrum-apply').click(function(e) {
+
+        // delegate, so that they get hooked up even to elements added by ajax later:
+        // http://stackoverflow.com/questions/18414695/attaching-events-after-dom-manipulation-using-jquery-ajax
+        $(_tool.selector).off('click'); // clear first
+        $(_tool.selector).on('click', '.btn-spectrum-apply', function(e) {
           $(this).html(_tool.spinner);
           _tool.options.onSpectrumApply.bind(this)(form, _graph);
           form.close();
         });
+
       }
   
       if (_tool.options.apply) form.applyEl.show();
