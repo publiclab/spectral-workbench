@@ -95,6 +95,7 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
 
       if (name.match("#")) {
 
+        _tag.value = name.split(':')[1];
         _tag.value_with_snapshot = _tag.value; // include snapshot syntax if exists
  
         _tag.has_reference = true;
@@ -256,7 +257,7 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
 
           _tag.operationEl.find(".snapshot").append('<i style="color:#999;" class="fa fa-chevron-circle-down" rel="popover" data-placement="bottom" data-html="true" data-title="Dependent spectra" data-content=""></i>');
 
-          var string = '<p><small>This <a href="https://publiclab.org/wiki/spectral-workbench-snapshots" target="_blank">snapshot</a> (ID #' + _tag.snapshot_id + ') is used by ' + _tag.dependent_spectra.length + ' other operations. You therefore cannot delete it, but you can fork this spectrum and revert this operation on the copy.</small></p><p>';
+          var string = '<p><small>This <a href="https://publiclab.org/wiki/spectral-workbench-snapshots" target="_blank">snapshot</a> (ID #' + _tag.snapshot_id + ') is used by ' + _tag.dependent_spectra.length + ' other operations, listed below. You therefore cannot delete it, but you can fork this spectrum and revert this operation on the copy.</small></p><p>';
           _tag.dependent_spectra.forEach(function(id) {
             string = string + '<a href="/spectrums/' + id + '">Spectrum ' + id + '</a> <i class="fa fa-external-link"></i><br />';
           });
@@ -487,6 +488,34 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
     /* ======================================
      * Send request to server to change the tag's reference
      */
+    _tag.fetchReference = function(callback) {
+
+      console.log('querying latest snapshot of', _tag.value, 'for tag.reference_id')
+
+      $.ajax({
+
+        url: "/spectrums/latest_snapshot_id/" + _tag.value,
+
+        success: function(response) {
+
+          if (response.responseText != "false") {
+
+            _tag.filterReferenceId(_tag.name + '#' + parseInt(response));
+
+          }
+
+          if (callback) callback(_tag);
+
+        }
+
+      });
+
+    }
+
+
+    /* ======================================
+     * Send request to server to change the tag's reference
+     */
     _tag.changeReference = function(reference_id) {
 
       $.ajax({
@@ -553,9 +582,14 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
       // non-powertags manage their own rendering
       _tag.render();
  
-    }
 
-    if (callback) callback(_tag);
+    // decide to request a snapshot_id if there's a reference
+    // but only if uploadable
+    } else if (_tag.needs_reference) {
+
+      _tag.fetchReference(callback);
+
+    } else if (callback) callback(_tag);
 
     return _tag;
 

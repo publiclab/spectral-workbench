@@ -21,6 +21,7 @@ describe("Tag", function() {
 
       // object.method == "PUT" // object.method doesn't work :-/
       if      (object.url == '/spectrums/9.json') response = object.success(TestResponses.spectrum.success.responseText);
+      else if (object.url == '/spectrums/latest_snapshot_id/3') response = object.success('4'); // duplicate for id=3
       else if (object.url == '/spectrums/3.json') response = object.success(TestResponses.spectrum.success.responseText); // duplicate for id=3
       else if (object.url == '/spectrums/9/tags') response = object.success(TestResponses.tags.success.responseText);
       // the following faked response is shared among several specs:
@@ -245,9 +246,8 @@ describe("Tag", function() {
       expect(tag.needs_snapshot).toBe(true);
       expect(tag.snapshot_id).toBeDefined();
       expect(tag.snapshot_id).toEqual(5);
-
       // apply the powertag! It may have been parsed already but we try again to be sure. 
-      tag.parse();
+//      tag.parse();
       expect(tag.data).not.toBeUndefined();
 
       // should have cached a data snapshot locally:
