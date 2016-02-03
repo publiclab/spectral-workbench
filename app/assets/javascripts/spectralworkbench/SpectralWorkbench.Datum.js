@@ -278,8 +278,8 @@ SpectralWorkbench.Datum = Class.extend({
      * proceeding to the next:
      * http://stackoverflow.com/questions/7743952/how-to-use-jquerys-deferred-object-with-custom-javascript-objects
      */
-    _datum.parseTags = function() {
-         
+    _datum.parseTags = function(callback) {
+
       _datum.tagQueue = new Array();
 
       _datum.powertags.forEach(function(tag, index) {
@@ -287,9 +287,12 @@ SpectralWorkbench.Datum = Class.extend({
         _datum.tagQueue.push(tag.deferredParse(_datum.tagQueue)
           .done(function() {
 
-             //console.log('end parsing', tag.name);
+             if (index == _datum.powertags.length - 1) {
 
-             if (index == _datum.tagQueue.length - 1) _datum.graph.reload_and_refresh();
+               _datum.graph.reload_and_refresh();
+               if (callback) callback();
+
+             }
 
           })
           .fail(function() {

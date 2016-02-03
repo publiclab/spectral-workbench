@@ -485,16 +485,6 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
 
 
     /* ======================================
-     * Should fail because powertags is not yet populated. 
-     */
-    _tag.isLastPowerTag = function() {
-
-      return _tag.datum.powertags.indexOf(_tag) == _tag.datum.powertags.length - 1;
-
-    }
-
-
-    /* ======================================
      * Send request to server to change the tag's reference
      */
     _tag.changeReference = function(reference_id) {
