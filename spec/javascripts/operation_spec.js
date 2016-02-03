@@ -70,7 +70,7 @@ describe("Operation", function() {
   });
 
 
-  it("undims/callbacks for passive powertags that are uploadable", function(done) {
+  it("calls back for passive powertags that are uploadable", function(done) {
 
     graph = new SpectralWorkbench.Graph({
       spectrum_id: 9,
@@ -78,13 +78,8 @@ describe("Operation", function() {
       onComplete: function(_graph) {
 
         expect(_graph.svg.style('opacity')).toBe('1'); // undimmed
-
-        _graph.dim();
-        expect(_graph.svg.style('opacity')).toBe('0.5'); // dimmed
-  
+ 
         tag = _graph.datum.addTag('error:1', function(tag) {
-    
-          expect(_graph.svg.style('opacity')).toBe('1'); // undimmed
 
           done();
 
@@ -97,7 +92,7 @@ describe("Operation", function() {
   });
 
 
-  it("undims/callbacks for passive powertags that aren't uploadable", function(done) {
+  it("calls back for passive powertags that aren't uploadable", function(done) {
 
     graph = new SpectralWorkbench.Graph({
       spectrum_id: 9,
@@ -105,18 +100,15 @@ describe("Operation", function() {
       onComplete: function(_graph) {
 
         expect(_graph.svg.style('opacity')).toBe('1'); // undimmed
-
-        _graph.dim();
-        expect(_graph.svg.style('opacity')).toBe('0.5'); // dimmed
   
-        tag = _graph.datum.addTag('error:1', function(tag) {
-    
-          // here it would've undimmed but we supplied our own callback, so we're good.
-          //expect(_graph.svg.style('opacity')).toBe('1'); // undimmed
+        tag = _graph.datum.addTag('error:1', false, {}); // add empty object as third arg to mark this as not-uploadable
+
+        // since this is ad-hoc, we must parse it and send the 
+        tag.parse(function(tag) {
 
           done();
 
-        }, {}); // add empty object as third arg to mark this as not-uploadable
+        });
 
       }
 
@@ -142,7 +134,7 @@ describe("Operation", function() {
     expect(graph.datum.json.data.lines[0].average).toBe(64.3333);
 
     // override the default crossSection for the 2nd row of pixels (example image should be 2px high)
-    tag = graph.datum.addTag('crossSection:1', function(tag) {
+    tag = graph.datum.addAndUploadTag('crossSection:1', function(tag) {
 
       // check that it's uncalibrated
       expect(graph.datum.average[0].x).not.toBe(269.089);
@@ -193,7 +185,7 @@ describe("Operation", function() {
 
     // If we switch to disallowing copying calibrations from un-snapshotted-spectra, 
     // we'll have to test the case where there's no snapshot on the copied in calibration.
-    tag = graph.datum.addTag('calibrate:9#4', function(tag) {
+    tag = graph.datum.addAndUploadTag('calibrate:9#4', function(tag) {
 
       // check that the calibration was applied
       // check datum.average

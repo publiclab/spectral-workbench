@@ -44,16 +44,12 @@ SpectralWorkbench.UI.ToolPaneTypes = {
     author: "warren",
     apply: false,
     formData: { own: true },
-    url: '/spectrums/choose/calibrat*', // default spectra to show, can use * and ?author=warren
+    url: '/spectrums/choose/', // default spectra to show, can use * and ?author=warren
     onSpectrumApply: function(form, _graph) {
 
       // provide better API for own-id:
       _graph.dim();
-      _graph.datum.addTag('subtract:' + $(this).attr('data-id'), function() {
-
-        _graph.reload_and_refresh();
-
-      });
+      _graph.datum.addAndUploadTag('subtract:' + $(this).attr('data-id'));
 
     }
 
@@ -78,9 +74,8 @@ SpectralWorkbench.UI.ToolPaneTypes = {
       if ($(this).attr('data-snapshot')) id = id + "#" + $(this).attr('data-snapshot');
 
       _graph.dim();
-      _graph.datum.addTag('calibrate:' + id, function() {
+      _graph.datum.addAndUploadTag('calibrate:' + id, function() {
 
-        _graph.reload_and_refresh();
         _graph.UI.notify('Spectrum calibration copied from <a href="/spectrums/' + id + '">Spectrum ' + id + '</a>');
 
       });
@@ -108,8 +103,10 @@ SpectralWorkbench.UI.ToolPaneTypes = {
       form.el.find('.expression').on('submit', function(e) {
 
         e.preventDefault();
-        form.graph.datum.addTag('transform:'+form.el.find('.expression input').val());
         form.formEl.show();
+        form.graph.dim();
+        form.graph.datum.addAndUploadTag('transform:'+form.el.find('.expression input').val());
+        form.close();
 
       });
 
@@ -119,14 +116,9 @@ SpectralWorkbench.UI.ToolPaneTypes = {
     onApply: function(form, callback) {
 
       form.formEl.show();
-
       form.graph.dim();
-      form.graph.datum.addTag('transform:'+form.el.find('.expression input').val(), function() {
-
-        form.graph.reload_and_refresh();
-        if (callback) callback();
-
-      });
+      form.graph.datum.addAndUploadTag('transform:'+form.el.find('.expression input').val());
+      form.close();
 
     }
 
@@ -168,11 +160,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
       form.formEl.show();
       
       form.graph.dim();
-      form.graph.datum.addTag('range:'+ start + '-' + end, function() {
-
-        form.graph.reload_and_refresh();
-
-      });
+      form.graph.datum.addAndUploadTag('range:'+ start + '-' + end);
 
     }
   },
@@ -210,11 +198,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
       form.applyEl.html('<i class="fa fa-spinner fa-spin fa-white"></i>'); // this isn't doing anything :-(
 
       form.graph.dim();
-      form.graph.datum.addTag('smooth:' + form.el.find('.distance').val(), function() {
-
-        form.graph.reload_and_refresh();
-
-      });
+      form.graph.datum.addAndUploadTag('smooth:' + form.el.find('.distance').val());
 
     }
 
@@ -260,10 +244,9 @@ SpectralWorkbench.UI.ToolPaneTypes = {
     onApply: function(form) {
 
       form.graph.dim();
-      form.graph.datum.addTag('crossSection:' + $('.cross-section').val(), function() {
+      form.graph.datum.addAndUploadTag('crossSection:' + $('.cross-section').val(), function() {
 
         form.graph.datum.load();
-        form.graph.reload_and_refresh();
 
       });
 
@@ -472,13 +455,12 @@ SpectralWorkbench.UI.ToolPaneTypes = {
         _graph.datum.getPowerTag('linearCalibration', function(tag) { tag.destroy() });
 
         _graph.dim();
-        _graph.datum.addTag('linearCalibration:' + 
+        _graph.datum.addAndUploadTag('linearCalibration:' + 
           $('.input-wavelength-1').val() + '-' + 
           $('.input-wavelength-2').val(),
           function() {
 
             _graph.datum.load();
-            _graph.reload_and_refresh();
 
             _graph.UI.notify("Your new calibration has been saved.", "success");
 
@@ -616,7 +598,7 @@ SpectralWorkbench.UI.ToolPaneTypes = {
     link: "//publiclab.org/wiki/spectral-workbench-operations#Compare",
     author: "warren",
     apply: false,
-    url: '/spectrums/choose/all', // default spectra to show, can use * and ?author=warren
+    url: '/spectrums/choose/?own=true', // default spectra to show, default yours and ?author=warren
     setup: function() {
 
       //$(form.el).find('.results').html('');
@@ -689,13 +671,12 @@ SpectralWorkbench.UI.ToolPaneTypes = {
   },
 
 
-  /*
   // incomplete, works through tag form: 
   blend: {
 
     title: "Blend",
     dataType: "any",
-    description: "Blends this spectrum with a second spectrum, using a JavaScript math expression (such as 'R*G+B') to each point in the two spectra, as described in the documentation",
+    description: "Blends this spectrum with a second spectrum, using a JavaScript math expression (such as 'R*G+B') to each point in the two spectra, using the syntax described in the documentation",
     link: "//publiclab.org/wiki/spectral-workbench-operations#blend",
     author: "warren",
     apply: true,
@@ -704,12 +685,13 @@ SpectralWorkbench.UI.ToolPaneTypes = {
       form.formEl.hide();
       $(form.el).find('.results').html('');
       // create custom form
-      form.customFormEl.html("<p>Enter an expression to apply to the spectrum:</p><form class='expression'><input type='text'></input></form><p><a href='//publiclab.org/wiki/spectral-workbench-tools#Transform'>Read about transforms &raquo;</a>");
+      form.customFormEl.html("<p>Enter a spectrum id:</p><form class='blend-form'><input type='text' class='spectrum_id'></input><p>Enter an expression with which to blend it with this spectrum:</p><input type='text' class='expression'></input></form><p><a href='//publiclab.org/wiki/spectral-workbench-tools#Blend'>Read about blends &raquo;</a>");
 
-      form.el.find('.expression').on('submit', function(e) {
+      // is this not working? not submit... inputs need to submit
+      form.el.find('.blend-form').on('submit', function(e) {
 
         e.preventDefault();
-        form.graph.datum.addTag('transform:'+form.el.find('.expression input').val());
+        form.graph.datum.addAndUploadTag('blend:' + form.el.find('.blend-form .spectrum_id').val() + '$' + form.el.find('.blend-form .expression').val());
         form.formEl.show();
 
       });
@@ -722,16 +704,10 @@ SpectralWorkbench.UI.ToolPaneTypes = {
       form.formEl.show();
 
       form.graph.dim();
-      form.graph.datum.addTag('transform:'+form.el.find('.expression input').val(), function() {
-
-        form.graph.reload_and_refresh();
-        if (callback) callback();
-
-      });
+      form.graph.datum.addAndUploadTag('blend:' + form.el.find('.blend-form .spectrum_id').val() + '$' + form.el.find('.blend-form .expression').val());
 
     }
 
-  },
-  */
+  }
 
 }

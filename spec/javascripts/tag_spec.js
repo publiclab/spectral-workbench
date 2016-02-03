@@ -21,6 +21,7 @@ describe("Tag", function() {
 
       // object.method == "PUT" // object.method doesn't work :-/
       if      (object.url == '/spectrums/9.json') response = object.success(TestResponses.spectrum.success.responseText);
+      else if (object.url == '/spectrums/latest_snapshot_id/3') response = object.success('4'); // duplicate for id=3
       else if (object.url == '/spectrums/3.json') response = object.success(TestResponses.spectrum.success.responseText); // duplicate for id=3
       else if (object.url == '/spectrums/9/tags') response = object.success(TestResponses.tags.success.responseText);
       // the following faked response is shared among several specs:
@@ -151,7 +152,7 @@ describe("Tag", function() {
   it("indicates deletion failure of powertag 'smooth:3' due to server's finding that tag.has_dependent_spectra is true; another spectrum relies on it", function(done) {
 
     // first create the tag:
-    graph.datum.addTag('smooth:3', function() {
+    graph.datum.addAndUploadTag('smooth:3', function() {
 
       var taglength = graph.datum.tags.length;
 
@@ -202,11 +203,15 @@ describe("Tag", function() {
   });
 
 
-  it("creates powertag.data after creation", function() {
+  it("creates powertag.data after creation, and preps correct version for upload", function() {
 
-    tag = graph.datum.addTag('subtract:3', function(tag) {
+    var data = JSON.stringify({'lines': graph.datum.encodeJSON()});
 
+    tag = graph.datum.addAndUploadTag('subtract:3', function(tag) {
+
+      // _tag.data = JSON.stringify({'lines': _tag.datum.encodeJSON()});
       expect(tag.data).not.toBeUndefined();
+      expect(tag.data).not.toEqual(data); // it should've changed from the subtraction
 
     });
 
@@ -217,7 +222,7 @@ describe("Tag", function() {
 
   it("creates powertag 'subtract' and is aware of specified snapshot reference #4", function() {
 
-    tag = graph.datum.addTag('subtract:3', function(tag) {
+    tag = graph.datum.addAndUploadTag('subtract:3', function(tag) {
 
       var request = $.ajax.calls.mostRecent().args[0];
  
@@ -241,9 +246,8 @@ describe("Tag", function() {
       expect(tag.needs_snapshot).toBe(true);
       expect(tag.snapshot_id).toBeDefined();
       expect(tag.snapshot_id).toEqual(5);
-
       // apply the powertag! It may have been parsed already but we try again to be sure. 
-      tag.parse();
+//      tag.parse();
       expect(tag.data).not.toBeUndefined();
 
       // should have cached a data snapshot locally:
@@ -275,7 +279,7 @@ describe("Tag", function() {
     expect(operationTable.find('tr.operation-tag .operations-tools .operation-tag-delete').length).toBe(0);
 
     // test that the graph is not range-limited
-    tag = graph.datum.addTag('range:400-700', function(tag) {
+    tag = graph.datum.addAndUploadTag('range:400-700', function(tag) {
 
       // not to be a powertag:
       expect(tag.key).toBeDefined();

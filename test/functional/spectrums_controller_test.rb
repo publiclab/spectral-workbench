@@ -46,6 +46,11 @@ class SpectrumsControllerTest < ActionController::TestCase
     assert_response :success
   end
 
+  test "should respond to latest_snapshot_id" do
+    get :latest_snapshot_id, :id => spectrums(:one).id
+    assert_response :success
+  end
+
   test "should show latest snapshot in json" do
     get :latest, :id => snapshots(:one).id, :format => :json
     assert_response :success

@@ -20,24 +20,26 @@
     <div class="owner-tools">
 
       <h5>Data processing and display <a href="//publiclab.org/wiki/spectral-workbench-tools#Data+processing+and+display"><i style="color:#aaa;" class="fa fa-question-circle"></i></a></h5>
-      <p><a class="btn btn-small tool-calibrate<%= ' btn-primary' unless @spectrum.calibrated %>"><i class="fa fa-crosshairs<%= ' fa-white' unless @spectrum.calibrated %>"></i> Calibrate</a> this spectrum</p>
-      <p><a class="btn btn-small tool-copy-calibration">Copy calibration</a></p>
-      <p><a class="btn btn-small tool-subtraction">Subtract</a> a spectrum</p>
-      <p><a class="btn btn-small tool-range">Limit wavelength range</a></p>
-      <p><a class="btn btn-small tool-transform">Transform</a></p>
-      <p><a class="btn btn-small tool-smooth">Smooth</a></p>
+
+      <p><a class="btn btn-small tool-calibrate<%= ' btn-primary' unless @spectrum.calibrated %>"><i class="fa fa-crosshairs<%= ' fa-white' unless @spectrum.calibrated %>"></i> Calibrate</a></p>
+      <p><a class="btn btn-small tool-copy-calibration"><i class="fa fa-copy"></i>           Copy calibration</a></p>
+      <p><a class="btn btn-small tool-subtraction">     <i class="fa fa-minus-circle"></i> Subtract spectrum</a></p>
+      <p><a class="btn btn-small tool-range">           <i class="fa fa-arrows-h"></i>       Limit wavelength range</a></p>
+      <p><a class="btn btn-small tool-smooth">          Smooth</a></p>
+      <p><a class="btn btn-small tool-transform">       Transform</a></p>
+      <p><a class="btn btn-small tool-blend">           Blend</a></p>
 
     </div>
 
     <h5>Comparison &amp; Sets <a href="//publiclab.org/wiki/spectral-workbench-tools#Comparisons+&amp;+Sets"><i style="color:#aaa;" class="fa fa-question-circle"></i></a></h5>
-    <p><a class="btn btn-small tool-compare">Compare</a> with another spectrum</p>
-    <p><a class="btn btn-small tool-similar">Find similar</a></p>
-    <p><a class="btn btn-small tool-similar-legacy" href="/match/search/<%= @spectrum.id %>">Find similar</a> (legacy)</p>
-    <p><a class="btn btn-small disabled">Add to a set</a></p>
+
+    <p><a class="btn btn-small tool-compare"><i class="fa fa-balance-scale"></i> Compare</a></p>
+    <p><a class="btn btn-small tool-similar"><i class="fa fa-magnet"></i>        Find similar</a></p>
 
     <div class="owner-tools">
 
       <h5>Data extraction <a href="//publiclab.org/wiki/spectral-workbench-tools#Data+extraction"><i style="color:#aaa;" class="fa fa-question-circle"></i></a></h5>
+
       <p><a class="btn btn-small tool-cross-section">Set new cross-section</a></p>
       <p><a class="btn btn-small" data-confirm="Are you sure? You can calibrate a reversed spectrum without flipping it manually, and this can affect later calibrations based on this data." href="/spectra/reverse/<%= datum.id %>">Flip image</a> horizontally</p>
 

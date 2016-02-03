@@ -28,6 +28,7 @@ class Tag < ActiveRecord::Base
                           'linearCalibration', # manual calibration
                           'subtract',
                           'transform',
+                          'blend',
                           'range',
                           'crossSection',  
                           'flip',  
@@ -38,7 +39,7 @@ class Tag < ActiveRecord::Base
     self.is_powertag? && ['calibrate', # calibration clone
                           'subtract',
                           'forked',
-                          'transform'].include?(self.key)
+                          'blend'].include?(self.key)
   end
 
   def powertags_by_owner
@@ -110,7 +111,7 @@ class Tag < ActiveRecord::Base
   end
 
   def value
-    self.name.split(':').last
+    self.name.split(':').last.split('$').first # $ is used in blend ops, not common
   end
 
   def has_reference?
@@ -119,7 +120,7 @@ class Tag < ActiveRecord::Base
 
   def reference_id
     if self.has_reference?
-      self.value.split('#').last.to_i
+      self.name.split('#').last.to_i
     else
       nil
     end

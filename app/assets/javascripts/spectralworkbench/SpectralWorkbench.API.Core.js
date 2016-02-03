@@ -85,6 +85,7 @@ SpectralWorkbench.API.Core = {
   // clone calibration from spectrum of id <from_id> to <spectrum>
   copyCalibration: function(spectrum, from_id, callback) {
 
+// this needs to be compatible with snapshot responses
     SpectralWorkbench.API.Core.fetchSpectrum(from_id, function(source) {
 
         // what if the image sizes don't match? 
@@ -95,7 +96,7 @@ SpectralWorkbench.API.Core = {
  
         // reload the spectrum data:
         spectrum.load();
-         
+
         if (callback) callback(spectrum);
 
     });
@@ -187,6 +188,28 @@ SpectralWorkbench.API.Core = {
   },
 
 
+  // fetch data from a URL
+  // this is redundant ish with jQuery:
+  // $.get('/spectrums/show2/47.json',function(r) { console.log(r); }); // => {}
+  // $.get('/spectrums/show2/47.csv',function(r) { console.log(r); });  // => String
+  // replace with blendURL(spectrum, url), based on blend, below?
+  fetchUrl: function(url, callback) {
+
+    $.ajax({
+      url: url,
+      dataType: "json",
+      //data: {},
+      success: function(response) {
+
+        if (callback) callback(response);
+
+      }
+
+    });
+    
+  },
+
+
   // fetch another spectrum, blend it with this one according to expression
   blend: function(datum, spectrum_id, expression, callback) {
 
@@ -213,17 +236,17 @@ SpectralWorkbench.API.Core = {
         var A1 = +average[i].y,
             X = +average[i].x,
             Y = +average[i].y;
-    
-        var R2 = +blender.getIntensity(i, 'red');
-            G2 = +blender.getIntensity(i, 'green');
-            B2 = +blender.getIntensity(i, 'blue');
-            A2 = +blender.getIntensity(i, 'average');
+
+        var R2 = +blender.getIntensity(X, 'red');
+            G2 = +blender.getIntensity(X, 'green');
+            B2 = +blender.getIntensity(X, 'blue');
+            A2 = +blender.getIntensity(X, 'average');
      
-        P.y = +blend(R1,G1,B1,A1,R2,G2,B2,A2,X,Y,P);
+        P.y = +blend(R1,G1,B1,A1,R2,G2,B2,A2,X,Y,P).toPrecision(datum.sigDigits);
     
       });
      
-      if (callback) callback();
+      if (callback) callback(blender);
 
     });
 

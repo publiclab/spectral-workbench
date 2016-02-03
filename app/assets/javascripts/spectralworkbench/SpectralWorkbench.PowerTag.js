@@ -19,6 +19,7 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
     "linearCalibration",
     "subtract",
     "transform",
+    "blend",
     "range",
     "crossSection",
     "smooth",
@@ -31,7 +32,7 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
     "calibration",
     "subtract",
     "forked",
-    "transform"
+    "blend"
 
   ],
 
@@ -66,8 +67,10 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
     }
 
 
-    // in a new tag, we rely on parent class's tag.upload() to copy 
-    // these over, but for existing tags, we have to do it manually:
+    /* ======================================
+     * In a new tag, we rely on parent class's tag.upload() to copy 
+     * these over, but for existing tags, we have to do it manually:
+     */
     _tag.parseSnapshotResponse = function(json) {
 
       // has it generated a snapshot?
@@ -85,17 +88,24 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
     _tag.parseSnapshotResponse(_tag.json);
 
 
-    // intercept and deal with the appended key:value#<snapshot_id>
+    /* ======================================
+     * Intercept and deal with the appended key:value#<snapshot_id>
+     */
     _tag.filterReferenceId = function(name) {
 
-      _tag.value_with_snapshot = _tag.value; // include snapshot syntax if exists
-
       if (name.match("#")) {
+
+        _tag.value = name.split(':')[1];
+        _tag.value_with_snapshot = _tag.value; // include snapshot syntax if exists
  
         _tag.has_reference = true;
         _tag.reference_id = parseInt(name.split('#')[1]);
         _tag.name = name.split('#')[0];
         _tag.value = _tag.name.split(':')[1];
+
+      } else {
+
+        _tag.value_with_snapshot = _tag.value; // we use this value later even if there's no snapshot ref
 
       }
 
@@ -111,7 +121,9 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
     }
 
 
-    // Delete it from the server, then from the DOM;
+    /* ======================================
+     * Delete it from the server, then from the DOM;
+     */
     _tag.destroy = function(callback) {
 
       _tag.labelEl().css('background', '#bbb')
@@ -180,8 +192,12 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
     }
 
 
-    // scrubs local tag data; for use after deletion
-    // note: overriding superclass
+    /* ======================================
+     * Scrubs local tag data; for use after deletion.
+     * We dump everything, re-fetch spectrum remote data, 
+     * and re-run datum.parseTags() from scratch.
+     * Note: overriding superclass
+     */
     _tag.cleanUp = function(callback) {
 
         _tag.datum.graph.dim();
@@ -206,9 +222,6 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
         _tag.datum.fetch(false, function() {
 
           _tag.datum.parseTags();
-          _tag.datum.graph.reload();
-          _tag.datum.graph.refresh();
-          _tag.datum.graph.undim();
 
           if (callback) callback(_tag);
 
@@ -217,6 +230,9 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
     }
 
 
+    /* ======================================
+     * Write DOM elements into Operations table
+     */
     _tag.render = function() {
 
       // Do additional snapshot_id processing again 
@@ -241,7 +257,7 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
 
           _tag.operationEl.find(".snapshot").append('<i style="color:#999;" class="fa fa-chevron-circle-down" rel="popover" data-placement="bottom" data-html="true" data-title="Dependent spectra" data-content=""></i>');
 
-          var string = '<p><small>This <a href="https://publiclab.org/wiki/spectral-workbench-snapshots" target="_blank">snapshot</a> (ID #' + _tag.snapshot_id + ') is used by ' + _tag.dependent_spectra.length + ' other operations. You therefore cannot delete it, but you can fork this spectrum and revert this operation on the copy.</small></p><p>';
+          var string = '<p><small>This <a href="https://publiclab.org/wiki/spectral-workbench-snapshots" target="_blank">snapshot</a> (ID #' + _tag.snapshot_id + ') is used by ' + _tag.dependent_spectra.length + ' other operations, listed below. You therefore cannot delete it, but you can fork this spectrum and revert this operation on the copy.</small></p><p>';
           _tag.dependent_spectra.forEach(function(id) {
             string = string + '<a href="/spectrums/' + id + '">Spectrum ' + id + '</a> <i class="fa fa-external-link"></i><br />';
           });
@@ -378,7 +394,9 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
     }
 
 
-    // only final operation should have deletion button
+    /* ======================================
+     * Only final operation should have deletion button
+     */
     _tag.showLastOperationDeleteButtonOnly = function() {
 
       var operationTable = $('table.operations');
@@ -398,52 +416,106 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
     }
 
 
-    /*
-     * Eventually create a collection keyed with _tag.key in API.Operations, 
-     * each of which has a run() method which accepts a _tag and optional callback, 
-     * and a description() method which returns description
+    /* ======================================
+     * Parsing wrapper function which can be queued with jQuery's 
+     * Deferred object API; returns a deferred. Used by Datum.parseTags; see:
+     * http://stackoverflow.com/questions/7743952/how-to-use-jquerys-deferred-object-with-custom-javascript-objects
+     */
+    _tag.deferredParse = function(queue) {
+
+      var deferred = $.Deferred();
+
+      //only execute this when everything else in the queue has finished and succeeded
+      $.when.apply(jQuery, queue).done(function() { 
+
+        _tag.parse(function() {
+          deferred.resolve();
+          // deferred.reject(); // can accommodate parse failures too
+        }); 
+
+      });
+
+      return deferred;
+
+    }
+
+
+    /* ======================================
+     * References a listing from API.Operations, 
+     * each of which has a run() method which accepts a _tag 
+     * and optional callback, and a description() method 
+     * which returns description; see there for complete spec.
      */
     _tag.parse = function(callback) {
 
+      console.log('parsing', _tag.name);
+
       if (SpectralWorkbench.API.Operations.hasOwnProperty(_tag.key) && SpectralWorkbench.API.Operations[_tag.key].run) {
 
-        SpectralWorkbench.API.Operations[_tag.key].run(_tag, callback);
+        var parseCallback = function() {
+ 
+          // save the parsed tag data when we're going to upload
+          // this should run after parse but before upload
+          if (_tag.needs_snapshot && _tag.uploadable) {
+         
+            // here we have to parse back from datum.average/red/green/blue into 
+            //_tag.datum.json.data.lines = _tag.datum.encodeJSON(); // this would be irreversible... unless we save and undo it on destroy
+            //_tag.data = JSON.stringify(_tag.datum.json.data);
+         
+            // so instead we do this:
+            _tag.data = JSON.stringify({'lines': _tag.datum.encodeJSON()});
+         
+          }
+
+          if (callback) callback(_tag);
+ 
+        }
+
+        SpectralWorkbench.API.Operations[_tag.key].run(_tag, parseCallback);
 
       } else {
 
         // passive; no effect on data
         _tag.labelEl().removeClass('purple');
         _tag.labelEl().css('background', 'grey');
-        if (callback) callback(); // allow next tag to run
-
-      }
-
-      // save the parsed tag data
-      // HMM: aren't we encoding and decoding here? We should try to deal only with 
-      // original data, and display at last possible moment.
-      if (_tag.needs_snapshot) {
-
-        // here we have to parse back from datum.average/red/green/blue into 
-        //_tag.datum.json.data.lines = _tag.datum.encodeJSON(); // this would be irreversible... unless we save and undo it on destroy
-        //_tag.data = JSON.stringify(_tag.datum.json.data);
-
-        // so instead we do this:
-        _tag.data = JSON.stringify({'lines': _tag.datum.encodeJSON()});
+        if (callback) callback(_tag); // allow next tag to run
 
       }
 
     }
 
 
-    // fails because powertags is not yet populated. 
-    _tag.isLastPowerTag = function() {
+    /* ======================================
+     * Send request to server to change the tag's reference
+     */
+    _tag.fetchReference = function(callback) {
 
-      return _tag.datum.powertags.indexOf(_tag) == _tag.datum.powertags.length - 1;
+      console.log('querying latest snapshot of', _tag.value, 'for tag.reference_id')
+
+      $.ajax({
+
+        url: "/spectrums/latest_snapshot_id/" + _tag.value,
+
+        success: function(response) {
+
+          if (response.responseText != "false") {
+
+            _tag.filterReferenceId(_tag.name + '#' + parseInt(response));
+
+          }
+
+          if (callback) callback(_tag);
+
+        }
+
+      });
 
     }
 
 
-    // send request to server to change the tag's reference
+    /* ======================================
+     * Send request to server to change the tag's reference
+     */
     _tag.changeReference = function(reference_id) {
 
       $.ajax({
@@ -502,18 +574,22 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
     }
 
 
-    if (_tag.uploadable) {
+    // uploadable is if it's just been created and has to be uploaded; 
+    // based on if it was initialied with a json options object:
+    if (!_tag.uploadable) {
 
-      _tag.parse();
-      _tag.upload(callback);
-      // render is called after upload, in uploadSuccess
- 
-    } else {
-
-      _tag.parse(callback);
+      // For uploadable powertags, render is called in tag.uploadSuccess() callback;
+      // non-powertags manage their own rendering
       _tag.render();
  
-    }
+
+    // decide to request a snapshot_id if there's a reference
+    // but only if uploadable
+    } else if (_tag.needs_reference) {
+
+      _tag.fetchReference(callback);
+
+    } else if (callback) callback(_tag);
 
     return _tag;
 

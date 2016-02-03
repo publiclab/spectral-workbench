@@ -108,6 +108,20 @@ class SpectrumsController < ApplicationController
     end
   end
 
+  # used when referencing a snapshot
+  def latest_snapshot_id
+    spectrum = Spectrum.select(:id).find(params[:id])
+    if spectrum.snapshots.count > 0
+      snap = Snapshot.where(spectrum_id: spectrum.id)
+                     .select('spectrum_id, created_at, id')
+                     .order("created_at DESC")
+                     .limit(1)
+      render :text => spectrum.latest_snapshot.id
+    else
+      render :text => false
+    end
+  end
+
   def latest
     spectrum = Spectrum.find(params[:id])
     if spectrum.snapshots.count > 0
