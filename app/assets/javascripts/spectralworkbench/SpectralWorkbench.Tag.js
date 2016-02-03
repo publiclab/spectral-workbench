@@ -53,11 +53,16 @@ SpectralWorkbench.Tag = Class.extend({
       // grey out graph during load
       _tag.datum.graph.dim();
 
+      var name = _tag.name;
+
+      // we add reference_id in case it's a PowerTag with one:
+      if (_tag.reference_id) name += "#" + _tag.reference_id;
+
       var data = {
         authenticity_token: $('meta[name=csrf-token]').attr('content'),
         tag: {
           spectrum_id: _tag.datum.id,
-          name: _tag.name
+          name: name
         }
       };
 

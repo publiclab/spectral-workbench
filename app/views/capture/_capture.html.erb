@@ -37,6 +37,19 @@
         <a rel="tooltip" id="cfl-detect" title="Detected fluorescent light" class="btn btn-inverse" onClick=""><i class="fa fa-white fa-lightbulb-o"></i></a>
       </div>
 
+      <hr />
+
+      <div>
+
+        <p><small>Using calibration:</small></p>
+
+        <select name="spectrum[calibration_id]" class="select-calibration select-calibration-capture span2">
+          <%= render partial: 'capture/calibrations', locals: { calibrations: @calibrations, calibration: @calibration } %>
+        </select>
+        <a class="btn btn-inverse btn-switch-calibration-capture">Switch calibration</a>
+
+      </div>
+
       <script>
   
         jQuery(document).ready(function() {

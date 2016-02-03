@@ -58,7 +58,21 @@ $W = {
       this.preview_ctx = $('#preview')[0].getContext('2d')
     }
 
-    setInterval($W.alert_overexposure,500)
+    setInterval($W.alert_overexposure, 500); // every 0.5 seconds
+    setInterval(function() {
+
+      $W.getRecentCalibrations('.select-calibration');
+
+    }, 10000); // every 10 seconds
+
+    $('.btn-switch-calibration-configure').click(function() {
+      window.location = "/capture?calibration_id=" + $('.select-calibration-configure').val()
+    });
+
+    $('.btn-switch-calibration-capture').click(function() {
+      window.location = "/capture?calibration_id=" + $('.select-calibration-capture').val()
+    });
+
     $W.data = [{label: "webcam",data:[]}]
     if ($('video')[0]) {
       $('video')[0].width = "320"
@@ -391,10 +405,10 @@ $W = {
     $('#video_row').val($W.sample_start_row)
     if ($('#geotag-toggle').length > 0) $('#geotag').val($('#geotag-toggle')[0].checked)
     setTimeout(function() { if ($('#geotag').val() == "true") $W.geolocate() },500)
-    this_.getRecentCalibrations()
+    this_.getRecentCalibrations("#calibration_id");
   },
 
-  getRecentCalibrations: function() {
+  getRecentCalibrations: function(selector) {
     $.ajax({
       url: "/capture/recent_calibrations?calibration_id=" + $W.calibration_id,
       type: "GET",
@@ -405,7 +419,7 @@ $W = {
           if ($W.calibration_id == spectrum.id) html += "selected "
           html += "value="+spectrum.id+">#"+spectrum.id+": "+spectrum.title+" ("+spectrum.created_at_in_words+" ago)</option>"
         });
-        $("#calibration_id").html(html);
+        $(selector).html(html);
       }
     })
   },

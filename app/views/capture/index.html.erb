@@ -89,8 +89,16 @@
   </p>
 
   <% if @calibration %>
-    <p class="calibration-used">Using spectrum "<a target="_blank" href="/spectrums/<%= @calibration.id %>"><%= @calibration.title %></a>" (captured <%= time_ago_in_words(@calibration.created_at) %> ago) as a calibration reference.</p>
-    <p>If this is incorrect, simply save your spectra uncalibrated and calibrate them later with the correct reference. Or create a new calibration and refresh this page.</p>
+    <p class="calibration-used">Using spectrum <%= @calibration.id %> "<a target="_blank" href="/spectrums/<%= @calibration.id %>"><%= @calibration.title %></a>" (captured <%= time_ago_in_words(@calibration.created_at) %> ago) as a calibration reference.</p>
+    <p>If that's wrong, you can ignore this, and calibrate later with the correct reference. Or choose a new calibration:</p>
+    <div>
+    <form class="form-inline">
+      <select name="spectrum[calibration_id]" class="select-calibration select-calibration-configure">
+        <%= render partial: 'capture/calibrations', locals: { calibrations: @calibrations, calibration: @calibration } %>
+      </select>
+      <a class="btn btn-inverse btn-switch-calibration-configure">Switch calibration</a>
+    <form>
+    </div>
   <% end %>
 
   <a class="btn btn-large btn-primary" href="#capture" onClick="$('#capture-btn').addClass('active');$('#settings-btn').removeClass('active');" data-toggle="tab">Begin capturing &raquo;</a>
