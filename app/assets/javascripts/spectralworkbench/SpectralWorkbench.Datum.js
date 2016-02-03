@@ -31,7 +31,8 @@ SpectralWorkbench.Datum = Class.extend({
 
     /* ======================================
      * Create a new Tag or PowerTag depending on name,
-     * upload it, parse it accordingly. 
+     * upload it (if Tag), and run a callback. See addAndParseTag() and
+     * addAndUploadTag() for PowerTag options.
      */
     _datum.addTag = function(name, callback, json) {
 
@@ -45,6 +46,68 @@ SpectralWorkbench.Datum = Class.extend({
       if (name.match(/[\w\.]+:[\w0-9\-#\*\+\[\]\(\)]+/)) type = SpectralWorkbench.PowerTag;
 
       return new type(_datum, name, json, callback);
+
+    }
+
+
+    /* ======================================
+     * Create a new Tag or PowerTag, parse it (if PowerTag), 
+     * then refresh and reload the graph (if PowerTag). This
+     * does not upload PowerTags; see addAndUploadTag().
+     */
+    _datum.addAndParseTag = function(name, callback, json) {
+
+      var parseCallback = function(tag) {
+
+        tag.parse(function(tag) { 
+
+          if (callback) callback(tag);
+
+          _datum.graph.reload_and_refresh();
+
+        });
+
+      }
+
+      return _datum.addTag(name, parseCallback, json);
+
+    }
+
+
+    /* ======================================
+     * Create a new Tag or PowerTag, parse it (if PowerTag), 
+     * upload it, then refresh and reload the graph (if PowerTag). 
+     * This is more commonly used than addAndParseTag(), as it
+     * manages the required parsing before uploading, in order
+     * to generate an up-to-date snapshot on the server side.
+     */
+    _datum.addAndUploadTag = function(name, callback, json) {
+
+      var parseCallback = function(tag) {
+
+        if (tag instanceof SpectralWorkbench.PowerTag) {
+
+          tag.parse(function(tag) { 
+ 
+            tag.upload(function(tag) {
+ 
+              if (callback) callback(tag);
+ 
+              _datum.graph.reload_and_refresh();
+ 
+            });
+ 
+          });
+
+        } else {
+
+          if (callback) callback(tag);
+
+        }
+
+      }
+
+      return _datum.addTag(name, parseCallback, json);
 
     }
 
@@ -144,7 +207,7 @@ SpectralWorkbench.Datum = Class.extend({
 
 
     /* ======================================
-     * Get tags from server, populate datum.tags
+     * Get tags from server, populate datum.tags, run them
      */
     _datum.fetchTags = function() {
 
@@ -152,7 +215,7 @@ SpectralWorkbench.Datum = Class.extend({
       _datum.tags.forEach(function(tag) {
 
         // this only removes those by the TagForm, not in the Operations table
-        tag.el.remove();
+        if (tag.el) tag.el.remove();
 
         // also remove them from the Operations table:
         if (tag.operationEl) tag.operationEl.remove();
@@ -184,23 +247,15 @@ SpectralWorkbench.Datum = Class.extend({
               else return 1;
             });
 
+            // just add, don't parse:
             response.forEach(function(json, i) {
 
-              // only refresh the graph if this is the final tag:
-              if (i == response.length - 1) {
-
-                var callback = function() { 
-
-                  _datum.graph.reload_and_refresh();
-                  _datum.graph.undim();
-
-                }
-
-              } else callback = false;
-
-              _datum.addTag(json.name, callback, json);
+              _datum.addTag(json.name, false, json);
 
             });
+
+            // now rely on parseTags to chain them and parse
+            _datum.parseTags();
 
           }
 
@@ -215,15 +270,36 @@ SpectralWorkbench.Datum = Class.extend({
     }
 
 
+    /* ======================================
+     * Parses tags sequentially; this may involve
+     * asynchronous calls, so we queue them. 
+     * We use jQuery $.Deferred to wait for each to
+     * to complete its asynchronous requests before 
+     * proceeding to the next:
+     * http://stackoverflow.com/questions/7743952/how-to-use-jquerys-deferred-object-with-custom-javascript-objects
+     */
     _datum.parseTags = function() {
+         
+      _datum.tagQueue = new Array();
 
-      _datum.tags.forEach(function(tag) {
+      _datum.powertags.forEach(function(tag, index) {
 
-        if (tag instanceof SpectralWorkbench.PowerTag) tag.parse();
+        _datum.tagQueue.push(tag.deferredParse(_datum.tagQueue)
+          .done(function() {
+
+             //console.log('end parsing', tag.name);
+
+             if (index == _datum.tagQueue.length - 1) _datum.graph.reload_and_refresh();
+
+          })
+          .fail(function() {
+
+             console.log('failed to parse' + tag.name);
+
+          })
+        );
 
       });
-
-      _datum.graph.undim();
 
     }
 

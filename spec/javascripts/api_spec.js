@@ -183,15 +183,19 @@ describe("API", function() {
 
     blendCallbackSpy = jasmine.createSpy('success');
 
-    expect(graph.datum.average[100].y).toEqual(405.64124999999996);
+    expect(graph.datum.average[12].y).toEqual(245.37216); // we're actually looking after a bunch of operations above; transform, for example
+    expect(graph.datum.average[12].x).toEqual(510.692); // look above 500nm, since we just range-limited above
 
     // uses function(R1,G1,B1,A1,R2,G2,B2,A2,X,Y,P)
-    SpectralWorkbench.API.Core.blend(graph.datum, 9, 'R1+G2*X', function() { // random transform
+    SpectralWorkbench.API.Core.blend(graph.datum, 9, 'R1+G2*100*X', function(blender) { // random transform
 
       blendCallbackSpy();
 
-      expect(graph.datum.average[100].y).not.toEqual(405.64124999999996);
-      expect(graph.datum.average[100].y).toEqual(0.87);
+      expect(blender.average[280].y).toEqual(0.38);
+      expect(blender.average[280].x).toEqual(510.692);
+
+      expect(parseInt(graph.datum.average[12].y)).not.toEqual(245);
+      expect(parseInt(graph.datum.average[12].y)).toEqual(24513);
 
       done();
 
@@ -213,14 +217,14 @@ describe("API", function() {
 
     subtractCallbackSpy = jasmine.createSpy('success');
 
-    expect(graph.datum.average[100].y).toEqual(0.87);
+    expect(graph.datum.average[100].y).toEqual(40478);
 
     // uses function(R1,G1,B1,A1,R2,G2,B2,A2,X,Y,P)
     SpectralWorkbench.API.Core.subtract(graph.datum, 9, function() { // random transform
 
       subtractCallbackSpy();
 
-      expect(graph.datum.average[100].y).toEqual(0.18999999999999995); // not quite zero, but close
+      expect(graph.datum.average[100].y).toEqual(40477.32); // not quite zero, but close
       expect(graph.datum.average[100].y).not.toEqual(400);
 
       done();
@@ -239,11 +243,11 @@ describe("API", function() {
 
   it("can smooth graph data", function() {
 
-    expect(graph.datum.average[100].y).toEqual(0.18999999999999995);
+    expect(graph.datum.average[100].y).toEqual(40477.32);
 
     SpectralWorkbench.API.Core.smooth(graph.datum, 20); // random transform
 
-    expect(graph.datum.average[100].y).toEqual(0.12281591779711726);
+    expect(graph.datum.average[100].y).toEqual(28429.954816175807);
 
   });
 

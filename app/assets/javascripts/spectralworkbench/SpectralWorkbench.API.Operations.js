@@ -239,8 +239,11 @@ SpectralWorkbench.API.Operations = {
 
     run: function(tag, callback) {
 
+      // ugly, but we snip out the expression from the <id>#<snapshot_id>:
       var blend_id = tag.value_with_snapshot.split('$')[0],
-          expression = tag.value_with_snapshot.split('$')[1];
+          expression = tag.value_with_snapshot.split('$')[1].split('#')[0];
+
+      if (tag.has_reference) blend_id += "#" + tag.reference_id;
 
       SpectralWorkbench.API.Core.blend(tag.datum, blend_id, expression, callback);
 

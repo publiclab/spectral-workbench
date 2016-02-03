@@ -231,7 +231,7 @@ describe("UI", function() {
     // so we need to be cleverer to delete via the interface:
     // $('.tags .list span:last .tagdelete').trigger('click');
 
-    tag = graph.datum.addTag('range:520-530');
+    tag = graph.datum.addAndParseTag('range:520-530');
 
     // ensure it's there to be deleted:
     expect(graph.datum.getTag('range:520-530')).not.toBe(false);

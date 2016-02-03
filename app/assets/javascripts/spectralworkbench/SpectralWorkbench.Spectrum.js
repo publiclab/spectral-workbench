@@ -18,6 +18,9 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
       _spectrum.green   = [];
       _spectrum.blue    = [];
 
+      // Rearrange in case we got a Snapshot response (which is more minimal) instead of a Spectrum response
+      if (_spectrum.json.lines) _spectrum.json.data = { 'lines': _spectrum.json.lines };
+
       // Set up x and y properties like data.x and data.y for d3
       _spectrum.json.data.lines.forEach(function(line, i) {
      
@@ -80,6 +83,9 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
       channel = channel || "average";
 
       channel = _spectrum[channel];
+
+      // reverse it if need be
+      if (channel[0].x > channel[channel.length - 1].x) channel.reverse();
 
       var stepsize        = (channel[channel.length-1].x - channel[0].x) / channel.length,
           startWavelength = channel[0].x,
