@@ -272,6 +272,17 @@ SpectralWorkbench.API.Operations = {
   },
 
 
+  'video_row': {
+
+    description: function(tag) {
+
+      return "The row of pixels from the webcam capture used to generate a graph line; used in setting up captures based on this data.";
+
+    }
+
+  },
+
+
   'calibration': {
 
     description: function(tag) {
