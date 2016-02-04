@@ -255,7 +255,7 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
         // display referring spectra in a popover
         if (_tag.dependent_spectra) {
 
-          _tag.operationEl.find(".snapshot").append('<i style="color:#999;" class="fa fa-chevron-circle-down" rel="popover" data-placement="bottom" data-html="true" data-title="Dependent spectra" data-content=""></i>');
+          _tag.operationEl.find(".snapshot").append(' <i style="color:#999;" class="fa fa-chevron-circle-down" rel="popover" data-placement="bottom" data-html="true" data-title="Dependent spectra" data-content=""></i>');
 
           var string = '<p><small>This <a href="https://publiclab.org/wiki/spectral-workbench-snapshots" target="_blank">snapshot</a> (ID #' + _tag.snapshot_id + ') is used by ' + _tag.dependent_spectra.length + ' other operations, listed below. You therefore cannot delete it, but you can fork this spectrum and revert this operation on the copy.</small></p><p>';
           _tag.dependent_spectra.forEach(function(id) {
@@ -276,7 +276,7 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
           // indicate that there is no reference, which is unusual
           if (_tag.needs_reference && _tag.has_reference != true) {
   
-            _tag.operationEl.find(".snapshot").append('<i style="color:#ed0;" class="fa fa-exclamation-triangle" rel="popover" data-placement="bottom" data-html="true" data-title="No snapshot" data-content=""></i>');
+            _tag.operationEl.find(".snapshot").append(' <i style="color:#ed0;" class="fa fa-exclamation-triangle" rel="popover" data-placement="bottom" data-html="true" data-title="No snapshot" data-content=""></i>');
             var string = "<p>The spectrum this operation refers to does not have any snapshots, which means it may be uncalibrated, and/or be created using Spectral Workbench 1.0, an old version. Be aware that this may affect your use of this spectrum.</p>";
             _tag.operationEl.find(".snapshot i").attr('data-content', string);
             _tag.operationEl.find(".snapshot i").popover();
@@ -288,12 +288,12 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
 
             if (_tag.refers_to_latest_snapshot) {
 
-              _tag.operationEl.find(".snapshot").append('<i style="color:#999;" class="fa fa-chevron-down" rel="popover" data-placement="bottom" data-html="true" data-title="Updates" data-content=""></i>');
+              _tag.operationEl.find(".snapshot").append(' <i style="color:#999;" class="fa fa-chevron-down" rel="popover" data-placement="bottom" data-html="true" data-title="Updates" data-content=""></i>');
               string += "<p>The spectrum this operation refers to has other snapshots which you can refer to instead.</p>";
 
             } else {
 
-              _tag.operationEl.find(".snapshot").append('<i style="color:#ed0;" class="fa fa-exclamation-triangle" rel="popover" data-placement="bottom" data-html="true" data-title="Updates" data-content=""></i>');
+              _tag.operationEl.find(".snapshot").append(' <i style="color:#ed0;" class="fa fa-exclamation-triangle" rel="popover" data-placement="bottom" data-html="true" data-title="Updates" data-content=""></i>');
               string += "<p>The spectrum this operation refers to has been edited since the reference was made, and this operation no longer refers to the most recent snapshot of the spectrum.</p>";
 
             }
@@ -539,6 +539,15 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
           $('tr#tag_' + _tag.id + ' .description .alert-change-reference').remove();
           _tag.labelEl().html(_tag.name + "#" + _tag.reference_id);
           $('.snapshot i').popover('hide');
+
+          _tag.datum.graph.dim();
+
+          // re-fetch spectrum data, re-parseTags
+          _tag.datum.fetch(false, function() {
+ 
+            _tag.datum.parseTags();
+ 
+          });
  
         },
 
@@ -584,8 +593,8 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
  
 
     // decide to request a snapshot_id if there's a reference
-    // but only if uploadable
-    } else if (_tag.needs_reference) {
+    // but only if uploadable and only if it doesn't already have one
+    } else if (_tag.needs_reference && !_tag.has_reference) {
 
       _tag.fetchReference(callback);
 
