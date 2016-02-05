@@ -81,7 +81,6 @@
     <a rel="tooltip" title="" class="btn btn-inverse" onclick="$W.auto_detect_sample_row()" data-original-title="Auto select sample row"><i class="fa fa-white fa-arrows-v"></i> Auto-select Sample Row</a>
     <a rel="tooltip" title="Flip video horizontally" class="btn btn-inverse btn-flip" onClick="$W.flip_horizontal()"><i class="fa fa-white fa-arrows-h"></i> Flip image</a>
     <a rel="tooltip" title="Rotate video 90 &deg;" class="btn btn-inverse btn-rotate" onClick="$W.toggle_rotation()"><i class="fa fa-white fa-rotate-right"></i> Rotate</a>
-    <% if params[:debug] || chrome? %><a rel="tooltip" title="Change camera" class="btn btn-inverse" onClick="$W.chromeCameraSwitch()"><i class="fa fa-white fa-camera"></i> Change Camera</a><% end %>
 
   </p>
   <p style="padding-top:5px;">
@@ -97,7 +96,7 @@
         <%= render partial: 'capture/calibrations', locals: { calibrations: @calibrations, calibration: @calibration } %>
       </select>
       <a class="btn btn-inverse btn-switch-calibration-configure">Switch calibration</a>
-    <form>
+    </form>
     </div>
   <% end %>
 
