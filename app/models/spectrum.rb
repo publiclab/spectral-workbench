@@ -238,9 +238,10 @@ class Spectrum < ActiveRecord::Base
         newtag = new.tag(tag.name, user.id) 
         # preserve created_at, for tag ordering; we should be able to tell based on spectrum created_at
         newtag.created_at = now + seconds.seconds # forward-date each by 1 second
-        seconds += 1
-        newtag.save
         newtag.create_snapshot(tag.snapshot.data) if tag.needs_snapshot? && tag.snapshot && !tag.snapshot.data.nil?
+        newtag.snapshot.created_at = newtag.created_at
+        newtag.save
+        seconds += 1
       end
     end
     Spectrum.find new.id # refetch it to get all the tags, for some reason needed by tests
