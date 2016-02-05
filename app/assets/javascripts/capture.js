@@ -2,8 +2,6 @@
 // window.webcam.getCameraList()
 $W = {
   data: null,
-  chrome_cameras: [],
-  chrome_current_camera: 0,
   baseline: null,
   full_data: [],
   unflipped_data: [],
@@ -64,7 +62,6 @@ $W = {
       $W.getRecentCalibrations('.select-calibration');
 
     }, 10000); // every 10 seconds
-
     $('.btn-switch-calibration-configure').click(function() {
       window.location = "/capture?calibration_id=" + $('.select-calibration-configure').val()
     });
@@ -101,7 +98,6 @@ $W = {
         stream.stop();
       };
       //video.play()
-      $W.chromeCameraSelect()
       // flip image horiz. based on init terms
       if ($W.flipped == true) {
         $W.flipped = false; // <= turn it false because f_h() will toggle it. messy.
@@ -179,40 +175,6 @@ $W = {
 
     },
     onLoad: function () {}
-  },
-
-  chromeCameraSwitch: function() {
-    $W.chrome_current_camera += 1
-    if ($W.chrome_current_camera > $W.chrome_cameras.length-1) $W.chrome_current_camera = 0
-    var id = $W.chrome_cameras[$W.chrome_current_camera].id
-    var options = {
-      el: $W.options.el,
-      audio: {
-      },
-      video: {
-        optional: [{sourceId: id}]
-      }
-    }
-    // skipping the shim here... couldn't get it to work, and this switcher is Chrome-only
-    navigator.getUserMedia_(options, $W.success, $W.deviceError);
-  },
-
-  chromeCameraSelect: function() {
-
-    var v = parseInt(navigator.userAgent.match(/Chrom(e|ium)\/([0-9]+)\./)[2], 10)
-    // if chrome v30+
-    if (navigator.webkitGetUserMedia && v >= 30) {
-      MediaStreamTrack.getSources(function(a){
-        $.each(a,function(i,source) {
-          if ($W.debugChrome) alert(source.id + '//' + source.label + '//' + source.kind)
-          console.log(source)
-          if (source.kind == "video") $W.chrome_cameras.push(source)
-        })
-      });
-
-    }
-
-
   },
 
   // Draws the appropriate pixels onto the top row of the waterfall.
