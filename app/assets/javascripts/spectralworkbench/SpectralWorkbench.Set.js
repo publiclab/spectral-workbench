@@ -28,7 +28,7 @@ SpectralWorkbench.Set = SpectralWorkbench.Datum.extend({
         data = data.concat([
           {
             values: spectrum.average,
-            key:    spectrum.title,
+            key:    '#' + spectrum.id + ': ' + spectrum.title,
             id:     spectrum.id
           }
         ]);

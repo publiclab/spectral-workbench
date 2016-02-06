@@ -253,21 +253,19 @@ SpectralWorkbench.API.Core = {
   },
 
 
-  // fetch another spectrum, subtract it from this one
-  subtract: function(datum, spectrum_id, callback) {
+  // fetch another spectrum, subtract the given 
+  // channel (default 'average') from this one
+  subtract: function(datum, spectrum_id, callback, channel) {
 
-    var channels = [datum.red, datum.blue, datum.green, datum.average];
+    channel = channel || "average";
 
     SpectralWorkbench.API.Core.fetchSpectrum(spectrum_id, function(subtractor) {
-       
-      channels.forEach(function(_channel) {
-     
-        _channel = _channel.map(function(point) { 
-     
-          point.y -= +subtractor.getIntensity(point.x);
-     
-        });
-     
+
+      datum[channel] = datum[channel].map(function(point) { 
+
+        point.y -= +subtractor.getIntensity(point.x, channel);
+        return point;
+
       });
        
       if (callback) callback();

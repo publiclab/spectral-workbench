@@ -8,7 +8,7 @@ class SetsController < ApplicationController
   end
 
   def show2
-    show
+    redirect_to "/sets/#{params[:id]}"
   end
 
   def show
@@ -107,13 +107,18 @@ class SetsController < ApplicationController
   def add
     @set = SpectraSet.find params[:id]
     @spectrum = Spectrum.find params[:spectrum_id]
-    if @set.user_id == current_user.id
-      if @set.spectrums << @spectrum
-        flash[:notice] = "Added spectrum to set."
+    if @set.user_id == current_user.id || current_user.role == "admin"
+      # be sure it's not already included:
+      if !@set.contains(@spectrum)
+        if @set.spectrums << @spectrum
+          flash[:notice] = "Added spectrum to set."
+        else
+          flash[:error] = "Failed to add to that set."
+        end
       else
-        flash[:error] = "Failed to add to that set."
+        flash[:error] = "Sets may not contain a spectrum more than once."
       end
-      redirect_to "/sets/show2/#{@set.id}"
+      redirect_to "/sets/#{@set.id}"
     else
       flash[:error] = "You must own that set to add to it."
       redirect_to spectrum_path(@spectrum)
