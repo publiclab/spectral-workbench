@@ -232,7 +232,9 @@ class SpectrumsController < ApplicationController
 
           @spectrum.rotate if params[:vertical] == "on"
           @spectrum.tag("iOS",current_user.id) if ios?
-          @spectrum.tag(params[:tags],current_user.id) if params[:tags] && params[:tags] != ""
+          params[:tags].to_s.split(',').each do |tag|
+            @spectrum.tag(tag, current_user.id)
+          end
           @spectrum.tag("upload",current_user.id) if params[:upload]
           @spectrum.tag(params[:device],current_user.id) if params[:device] && params[:device] != "none"
           @spectrum.tag("video_row:#{params[:video_row]}", current_user.id) if params[:video_row]
@@ -284,7 +286,9 @@ class SpectrumsController < ApplicationController
       :data => params[:data],
       :photo => params[:photo]})
     @spectrum.save!
-    @spectrum.tag(params[:tags], current_user.id) if params[:tags]
+    params[:tags].to_s.split(',').each do |tag|
+      @spectrum.tag(tag, current_user.id)
+    end
     redirect_to spectrum_path(@spectrum)
   end
 
@@ -293,7 +297,9 @@ class SpectrumsController < ApplicationController
     @spectrum = Spectrum.find(params[:id])
     require_ownership(@spectrum)
     @spectrum.data = params[:data]
-    @spectrum.tag(params[:tags],current_user.id) if params[:tags]
+    params[:tags].to_s.split(',').each do |tag|
+      @spectrum.tag(tag, current_user.id)
+    end
     render :text => @spectrum.save
   end
 

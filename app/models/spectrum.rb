@@ -41,7 +41,7 @@ class Spectrum < ActiveRecord::Base
   def is_deletable?
     destroyable = true
     self.tags.each do |tag|
-      destroyable = destroyable && tag.is_deletable?
+      destroyable = destroyable && (tag.snapshot.nil? || tag.snapshot.has_no_dependent_spectra?)
     end
     errors[:base] << "spectrum is depended upon by other data"
     destroyable
@@ -322,22 +322,14 @@ class Spectrum < ActiveRecord::Base
 
   end
 
-  # a string of either a single tag name or a series of comma-delimited tags
-  def tag(tags, user_id)
-    tags = tags.strip
-    if tags.match(',').nil?
-      tag = Tag.new({
-        :spectrum_id => self.id,
-        :name => tags.strip,
-        :user_id => user_id,
-      })
-      tag.save
-      return tag
-    else
-      tags.split(',').each do |name|
-        return self.tag(name, user_id)
-      end
-    end
+  def tag(name, user_id)
+    tag = Tag.new({
+      :name => name.strip,
+      :user_id => user_id,
+      :spectrum_id => self.id
+    })
+    tag.save
+    tag
   end
 
   def normaltags

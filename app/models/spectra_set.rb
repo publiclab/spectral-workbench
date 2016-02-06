@@ -11,7 +11,7 @@ class SpectraSet < ActiveRecord::Base
   validates :title, :format => { with: /\A[\w\ -\'\"]+\z/, message: "can contain only letters, numbers, and spaces." }
 
   def calibrated_spectrums
-    self.spectrums.where(calibrated: true)
+    self.spectrums.where(calibrated: true).uniq
   end
 
   def all_calibrated

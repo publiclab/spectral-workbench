@@ -54,7 +54,7 @@
                 <% if @spectrum.is_deletable? %>
                   <%= link_to '<i class="fa fa-trash"></i>'.html_safe, "/spectrums/destroy/#{@spectrum.id}", :confirm => 'Are you sure?', :class => "btn btn-small" %>
                 <% else %>
-                  <a class="btn btn-small disabled"><i rel="tooltip" title="You cannot delete this because other spectra rely upon its data. Remove these dependencies and this will be enabled." class="fa fa-trash"></i></a>
+                  <a rel="tooltip" title="You cannot delete this because other spectra rely upon its data. Remove these dependencies and this will be enabled." class="btn btn-small disabled"><i class="fa fa-trash"></i></a>
                 <% end %>
               </div>
   

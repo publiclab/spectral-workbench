@@ -84,7 +84,9 @@ class CaptureController < ApplicationController
       # @spectrum.tag("lat:xxx",current_user.id)
       # @spectrum.tag("lon:xxx",current_user.id)
 
-      @spectrum.tag(params[:tags], current_user.id) unless params[:tags] == ""
+      params[:tags].to_s.split(',').each do |tag|
+        @spectrum.tag(tag, current_user.id)
+      end
 
       flash[:notice] = 'Spectrum was successfully created.'
       format.html {
