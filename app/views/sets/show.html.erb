@@ -25,8 +25,9 @@
       <div class="col span12">
  
         <ul class="nav nav-tabs">
-          <li class="active"><a href="#tab-spectra"  data-toggle="tab"><i  class="fa fa-list"></i>     Spectra</a></li>
-          <li>               <a href="#tab-comments" data-toggle="tab"><i class="fa fa-comments"></i> <%= @set.comments.length %> Comments</a></li>
+          <li class="active"><a href="#tab-spectra"     data-toggle="tab"><i  class="fa fa-list"></i>     Spectra</a></li>
+          <li>               <a href="#tab-description" data-toggle="tab">Description</a></li>
+          <li>               <a href="#tab-comments"    data-toggle="tab"><i class="fa fa-comments"></i> <%= @set.comments.length %> Comments</a></li>
         </ul>
  
         <div class="tab-content">
@@ -91,6 +92,29 @@
  
             <%= render partial: 'graph/notifications', locals: { type: :set } %>
  
+          </div>
+  
+          <div class="tab-pane" id="tab-description">       
+            <div class="row-fluid">
+            
+              <div class="span2">
+                <% @set.spectrums.each do |spectrum| %>
+                  <a href="<%= spectrum.photo.url(:original) %>"><img src="<%= spectrum.photo.url(:thumb) %>" style="width:100%" /></a>
+                <% end %>
+              </div>
+            
+              <div class="span8">
+                <h3>Description &nbsp; <small><a href="/set/edit/<%= @set.id %>"><i class="fa fa-pencil"></i></a></small></h3>
+                <p>
+                  <% if @set.notes %>
+                    <%=raw RDiscount.new(@set.notes).to_html %>
+                  <% else %>
+                    No description. 
+                  <% end %>
+                </p>
+              </div>
+      
+            </div>
           </div>
   
           <div class="tab-pane" id="tab-comments">       

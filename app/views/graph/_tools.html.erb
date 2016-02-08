@@ -41,6 +41,7 @@
         <% if type == :set %>
           <li><a onClick="$W.run_macro('warren','equalize-height');">Equalize height</a></li>
           <li><a onClick="$W.run_macro('warren','equalize_area');">Equalize area</a></li>
+          <li><a href="/set/edit/<%= datum.id %>">Edit set</a></li>
         <% end %>
         <li><a href="/<%= type %>/<%= datum.id %>">Comment</a></li>
       </ul>

@@ -22,8 +22,6 @@ SpectralWorkbench.UI.TagForm = Class.extend({
 
           if (callback) callback();
 
-          _graph.reload_and_refresh();
-
         });
 
       });
