@@ -103,7 +103,7 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
         _tag.name = name.split('#')[0];
         _tag.value = _tag.name.split(':')[1];
 
-      } else {
+      } else if (!_tag.value_with_snapshot) {
 
         _tag.value_with_snapshot = _tag.value; // we use this value later even if there's no snapshot ref
 
