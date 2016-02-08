@@ -41,7 +41,7 @@ class Spectrum < ActiveRecord::Base
   def is_deletable?
     destroyable = true
     self.tags.each do |tag|
-      destroyable = destroyable && tag.is_deletable?
+      destroyable = destroyable && (tag.snapshot.nil? || tag.snapshot.has_no_dependent_spectra?)
     end
     errors[:base] << "spectrum is depended upon by other data"
     destroyable
@@ -238,9 +238,12 @@ class Spectrum < ActiveRecord::Base
         newtag = new.tag(tag.name, user.id) 
         # preserve created_at, for tag ordering; we should be able to tell based on spectrum created_at
         newtag.created_at = now + seconds.seconds # forward-date each by 1 second
-        seconds += 1
+        if tag.needs_snapshot? && tag.snapshot && !tag.snapshot.data.nil?
+          newtag.create_snapshot(tag.snapshot.data) 
+          newtag.snapshot.created_at = newtag.created_at
+        end
         newtag.save
-        newtag.create_snapshot(tag.snapshot.data) if tag.needs_snapshot? && tag.snapshot && !tag.snapshot.data.nil?
+        seconds += 1
       end
     end
     Spectrum.find new.id # refetch it to get all the tags, for some reason needed by tests
@@ -319,22 +322,14 @@ class Spectrum < ActiveRecord::Base
 
   end
 
-  # a string of either a single tag name or a series of comma-delimited tags
-  def tag(tags, user_id)
-    tags = tags.strip
-    if tags.match(',').nil?
-      tag = Tag.new({
-        :spectrum_id => self.id,
-        :name => tags.strip,
-        :user_id => user_id,
-      })
-      tag.save
-      return tag
-    else
-      tags.split(',').each do |name|
-        return self.tag(name, user_id)
-      end
-    end
+  def tag(name, user_id)
+    tag = Tag.new({
+      :name => name.strip,
+      :user_id => user_id,
+      :spectrum_id => self.id
+    })
+    tag.save
+    tag
   end
 
   def normaltags

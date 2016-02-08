@@ -12,18 +12,18 @@ class SetsControllerTest < ActionController::TestCase
     get :show, :id => spectra_sets(:one).id
     assert_response :success
     assert_not_nil assigns(:set)
-  end
-
-  test "should show2 spectra_set" do
-    get :show2, :id => spectra_sets(:one).id
-    assert_response :success
-    assert_not_nil assigns(:set)
     assert_not_nil assigns(:spectrums)
   end
 
-  test "should show2 spectra_set with spectra" do
-    spectra_sets(:one).spectrums << spectrums(:one)
+  test "should redirect show2 spectra_set" do
     get :show2, :id => spectra_sets(:one).id
+    assert_response :redirect
+    assert_redirected_to "/sets/#{spectra_sets(:one).id}"
+  end
+
+  test "should spectra_set with spectra" do
+    spectra_sets(:one).spectrums << spectrums(:one)
+    get :show, :id => spectra_sets(:one).id
     assert_response :success
     assert_not_nil assigns(:set)
     assert_not_nil assigns(:spectrums)
@@ -67,45 +67,72 @@ class SetsControllerTest < ActionController::TestCase
   end
 
   test "should not create spectra_set unless logged in" do
-    get :create, :id => "#{spectrums(:one).id},#{spectrums(:two).id}"
+    assert_difference('SpectraSet.count', 0) do
+      get :create, :id => "#{spectrums(:one).id},#{spectrums(:two).id}"
+    end
     assert_response :redirect
   end
 
   test "should create spectra_set from comma-delimited ids" do
     session[:user_id] = User.first.id # log in
-    get :create, :id => "#{spectrums(:one).id},#{spectrums(:two).id}",
-                 :spectra_set => { 
-                   :title => "My set",
-                   :notes => "Hey" 
-                 }
-    assert_response :redirect
-    assert_redirected_to set_path(assigns(:set))
+    assert_difference('SpectraSet.count', 1) do
+      get :create, :id => "#{spectrums(:one).id},#{spectrums(:two).id}",
+                   :spectra_set => { 
+                     :title => "My set",
+                     :notes => "Hey" 
+                   }
+      assert_response :redirect
+      assert_redirected_to set_path(assigns(:set))
+    end
     assert_not_nil assigns(:set)
-    assert SpectraSet.find(assigns(:set).id).spectrums.length > 0
+    assert SpectraSet.find(assigns(:set).id).spectrums.count > 0
   end
 
   test "should not add spectrum to spectra_set unless logged in" do
-    get :add, :spectrum_id => spectrums(:one).id, :id => spectra_sets(:one).id
+    assert_difference('spectra_sets(:one).spectrums.length', 0) do
+      get :add, :spectrum_id => spectrums(:one).id, :id => spectra_sets(:one).id
+    end
     assert_response :redirect
   end
 
   test "should not add spectrum to spectra_set if not owner" do
     assert_not_equal User.last.id, spectra_sets(:one).user_id
     session[:user_id] = User.last.id # log in
-    get :add, :spectrum_id => spectrums(:one).id, :id => spectra_sets(:one).id
-    assert_response :redirect
-  end
-
-#################
-test "should add spectrum to spectra_set" do
-    session[:user_id] = spectra_sets(:one).user_id # log in
-    assert_difference('spectra_sets(:one).spectrums.count', 1) do
+    assert_difference('spectra_sets(:one).spectrums.length', 0) do
       get :add, :spectrum_id => spectrums(:one).id, :id => spectra_sets(:one).id
     end
     assert_response :redirect
-    #assert_redirected_to set_path(assigns(:set))
-    assert_redirected_to "/sets/show2/#{assigns(:set).id}"
-    assert spectra_sets(:one).spectrums.include?(spectrums(:one))
+  end
+
+  test "should allow adding spectrum to spectra_set if admin" do
+    assert_not_equal User.last.id, spectra_sets(:one).user_id
+    session[:user_id] = users(:admin).id # log in
+    assert_difference('spectra_sets(:one).spectrums.count', 1) do
+      get :add, :spectrum_id => spectrums(:one).id, :id => spectra_sets(:one).id
+      assert_response :redirect
+    end
+  end
+
+  test "should not add spectrum to spectra_set if already added that spectrum" do
+    assert_not_equal User.last.id, spectra_sets(:one).user_id
+    session[:user_id] = User.last.id # log in
+    spectra_sets(:one).spectrums << spectrums(:one)
+    assert spectra_sets(:one).contains(spectrums(:one))
+    assert_difference('spectra_sets(:one).spectrums.count', 0) do
+      get :add, :spectrum_id => spectrums(:one).id, :id => spectra_sets(:one).id
+    end
+    assert_response :redirect
+  end
+
+  test "should add spectrum to spectra_set" do
+    session[:user_id] = spectra_sets(:one).user_id # log in
+    assert !spectra_sets(:one).contains(spectrums(:two))
+    assert_difference('spectra_sets(:one).spectrums.count', 1) do
+      get :add, :spectrum_id => spectrums(:two).id, :id => spectra_sets(:one).id
+    end
+    assert_response :redirect
+    assert_redirected_to "/sets/#{assigns(:set).id}"
+    assert spectra_sets(:one).contains(spectrums(:two))
   end
 
   test "should not remove spectrum from spectra_set unless logged in" do

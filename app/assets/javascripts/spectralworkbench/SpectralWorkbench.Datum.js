@@ -13,6 +13,7 @@ SpectralWorkbench.Datum = Class.extend({
 
     var _datum = this;
 
+
     /* ======================================
      * Turns <a> link with specified selector into a download
      * link for the currently viewed data, as a JSON file
@@ -93,7 +94,8 @@ SpectralWorkbench.Datum = Class.extend({
  
               if (callback) callback(tag);
  
-              _datum.graph.reload_and_refresh();
+              if (tag.passive) _datum.graph.undim();
+              else _datum.graph.reload_and_refresh();
  
             });
  
@@ -101,7 +103,7 @@ SpectralWorkbench.Datum = Class.extend({
 
         } else {
 
-          if (callback) callback(tag);
+          tag.upload(callback);
 
         }
 

@@ -255,15 +255,6 @@ SpectralWorkbench.UI.ToolPaneTypes = {
   },
 
 
-  /*
-
-  To do:
-
-  * spectrum reversal mgmnt
-  * debug actual calibration to be sure
-  * account for page resizing
-
-  */
   calibrate2: {
 
     title: "Wavelength calibration",

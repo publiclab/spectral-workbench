@@ -32,6 +32,12 @@ class SpectraSetTest < ActiveSupport::TestCase
     assert !s.save
   end
 
+  test "creating new set" do
+    assert SpectraSet.create({
+      title: ""
+    })
+  end
+
   test "adds and removes spectrum from set" do
     set = SpectraSet.last
     assert_difference('set.spectrums.length', 1) do
@@ -42,6 +48,18 @@ class SpectraSetTest < ActiveSupport::TestCase
       set.spectrums.delete(Spectrum.last)
     end
   end
+
+# We'd like to make this reject, but not sure how to structure such a 
+# validation at the model level
+#  test "rejecting duplicate spectrum" do
+#    set = SpectraSet.last
+#    set.spectrums << Spectrum.last
+#    assert set.contains(Spectrum.last)
+#    assert_difference('set.spectrums.length', 0) do
+#      set.spectrums << Spectrum.last
+#    end
+#    assert_equal set.spectrums, []
+#  end
 
   test "set.as_json_with_snapshots" do
     set = SpectraSet.last

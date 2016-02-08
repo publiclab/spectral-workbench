@@ -1,179 +1,136 @@
-<div class="container-fluid" style="clear:both;">
+<%= render :partial => "embed/modal", :locals => { datum: @set, type: :set } %>
 
-  <ul class="breadcrumb">
-    <li><a href="/">Home</a> <span class="divider">/</span></li>
-    <li><a href="/sets/">Sets</a></li>
-  </ul>
+<div id="graphing" class="sets">
 
-  <div class="row-fluid" id="display">
-
-    <div id="graph" style="width:98%;height:200px;"></div>
-
-    <div class="navbar navbar-inverse navbar-static-bottom" style="margin:0;">
-      <div class="navbar-inner">
-        <a href="#embed-modal" class="btn btn-inverse hidden-phone" data-toggle="modal"><i class="fa fa-white fa-share"></i><span class="hidden-phone"> Embed</span></a>
-        <%= render :partial => "embed/modal", :locals => { datum: @set, type: :set } %>
-
-        <a class="btn btn-inverse hidden-phone" onClick="$W.run_macro('warren','equalize_area')">Equalize area</a>
-        <a class="btn btn-inverse hidden-phone" onClick="$W.run_macro('warren','equalize-height')">Equalize height</a>
-        <a class="btn btn-inverse hidden-phone" onClick="$W.run_macro('warren','subset')">Crop view</a>
-        <a class="btn btn-inverse" href="/sets/show2/<%= @set.id %>">Preview 2.0 beta</a>
-        <div class="btn-group dropup pull-right">
-          <a data-toggle="dropdown" class="btn btn-inverse"><i class="fa fa-white fa-briefcase"></i><span class="hidden-phone"> More tools</span></a>
-          <ul class="dropdown-menu">
-            <li><a onClick="$W.run_macro('warren','equalize_area')">Equalize area</a></li>
-            <li><a onClick="$W.run_macro('warren','equalize-height')">Equalize height</a></li>
-            <li><a onClick="$W.run_macro('warren','centroidish')">Find graph "centers"</a></li>
-            <li><a onClick="$W.run_macro('warren','centroidish_cutoff')">Find graph "centers" only between 410-700nm</a></li>
-            <li><a href="#macrosmodal" data-toggle="modal"><i class="fa fa-forward"></i> Macros/scripting</a></li>
-          </ul>
-        </div>
-
-        <b class="pull-right" style="padding-top:10px;margin-right:10px;"><span id="wavelength"></span> <span id="#unit_label">nm</span></b>
-
-      </div>
-    </div>
-
+  <div id="graph">
+    <div class="zoom"><a onClick="graph.zoom();" class="btn-zoom"><i class="fa fa-zoom-in"></i></a></div>
+    <i class="fa fa-spinner fa-spin"></i>
   </div>
 
-  <div class="row-fluid">
-    <div class="span3">
-      <h3 style="margin-bottom:0px;"><%= @set.title %></h3>
-      <p>uploaded by <a href="<%= profile_path(@set.author) %>"><%= @set.author %></a></p>
+    <script type="text/javascript">
+ 
+      var graph;
+      jQuery(document).ready(function($) {
+        graph = new SpectralWorkbench.Graph({
+          set_id: <%= @set.id %>,
+          calibrated: <%= @set.some_calibrated %>
+        });
+      });
+ 
+    </script>
+ 
+    <%= render :partial => "graph/header", :locals => {type: :set, datum: @set } %>
+ 
+    <div class="row-fluid below">
+      <div class="col span12">
+ 
+        <ul class="nav nav-tabs">
+          <li class="active"><a href="#tab-spectra"     data-toggle="tab"><i  class="fa fa-list"></i>     Spectra</a></li>
+          <li>               <a href="#tab-description" data-toggle="tab">Description</a></li>
+          <li>               <a href="#tab-comments"    data-toggle="tab"><i class="fa fa-comments"></i> <%= @set.comments.length %> Comments</a></li>
+        </ul>
+ 
+        <div class="tab-content">
+ 
+          <div class="tab-pane active" id="tab-spectra">       
 
-      <hr />
-      <h4>Spectra in this set</h4>
-      <%= render :partial => "spectra" %>
-      <hr style="clear:both;" />
+            <%= render partial: 'graph/spectra', locals: { datum: @set, spectrums: @spectrums } %>
+ 
+            <hr />
+ 
+            <div style="width:100%;text-align:center;">
 
-      <div xmlns:dct="http://purl.org/dc/terms/" xmlns:vcard="http://www.w3.org/2001/vcard-rdf/3.0#">
-        <p><a rel="license" href="http://creativecommons.org/publicdomain/zero/1.0/"><img src="http://i.creativecommons.org/p/zero/1.0/88x31.png" style="border-style: none;" alt="CC0" /></a></p>
-        <p class="hidden-phone"><small>
-        To the extent possible under law,
-        <%# if @set.author.url %><a rel="dct:publisher" href="//publiclab.org"><%# end %>
-        <span property="dct:title"><%= @set.author %></span><%# if @set.author.url %></a><%# end %>
-        has waived all copyright and related or neighboring rights to
-        "<span property="dct:title"><%= @set.title %></span>".
-        </small></p>
-      </div>
-    </div>
+              <div class="btn-group export">
+             
+                <a target="_blank" class="btn btn-small svg" onClick="SpectralWorkbench.API.Core.exportSVG('set-<%= @set.id %>');"><b>SVG</b></a>
+                <a target="_blank" rel="tooltip" title="Currently displayed data" class="btn btn-small btn-download-json"><b>JSON</b></a>
+                <a target="_blank" rel="tooltip" title="Raw data before modifications" class="btn btn-small" href="/sets/<%= @set.id %>.json"><b>raw JSON</b></a>
+                <!--
+                <a target="_blank" class="btn btn-small disabled" href="/sets/<%= @set.id %>.csv"><b>CSV</b></a>
+                <a target="_blank" class="btn btn-small disabled" href="/sets/<%= @set.id %>.xml"><b>XML</b></a>
+                -->
+                <a rel="tooltip" class="btn btn-small" href="//publiclab.org/wiki/spectral-workbench-exporting" title="About export formats"><i class="fa fa-question-circle"></i></a>
+             
+              </div>
 
-    <div class="span9">
-      <% if logged_in? && current_user.login == @set.author %>
-        <div class="btn-group pull-right" style="margin-top:10px;">
-          <a class="btn btn-small" href="/sets/edit/<%= @set.id %>"><i class="fa fa-pencil"></i> Edit</a>
-          <%= link_to '<i class="fa fa-trash"></i> Delete'.html_safe, "/sets/delete/"+@set.id.to_s, :confirm => 'Are you sure?', :class => "btn btn-small" %>
-        </div>
-      <% end %>
+              <% if logged_in? %>
+                <div class="btn-group">
+                  <a class="btn btn-small btn-add-spectra"><i class="fa fa-plus-circle"></i> Add spectra</a>
+                </div>
+              <% end %>
 
-      <div id="share" class="pull-right" style="margin-top:14px;">
-        <div class="fb-like" data-send="false" data-layout="button_count" data-width="50" data-show-faces="false" style="vertical-align:top;zoom:1;*display:inline"></div>
-        <a href="https://twitter.com/share" class="twitter-share-button">Tweet</a>
-      </div>
+            </div>
 
-      <h3>Notes</h3>
+            <div class="spectra-search" style="display:none;margin-left:20px;">
 
-      <p><%= RDiscount.new(@set.notes).to_html %></p>
+              <form class="form-search">
+                <div class="pull-right">
+                  <select name="own" class="select-author">
+                    <option value="true" selected>Your spectra</option>
+                    <option value="false">All spectra</option>
+                  </select>
+                </div>
+                <input type="text" class="input-medium input-choose-spectrum" placeholder="search">
+                <button type="submit" class="btn"><i class="fa fa-search"></i></button>
+              </form>
+      
+              <div class="results">
+              </div>
 
-      <a name="comments"></a>
-      <h3>Comments (<%= @set.comments.length %>)</h3>
+              <hr />
 
-      <div class="row-fluid">
+            </div>
+
+
+            <% if logged_in? && current_user.login == @set.author || logged_in? && current_user.role == "admin" %>
+            <div class="btn-group export" style="width:100%;text-align:center; margin-top: 20px;">
+ 
+              <%= link_to '<i class="fa fa-trash"></i> Delete'.html_safe, "/sets/delete/"+@set.id.to_s, :confirm => 'Are you sure?', :class => "btn btn-small" %>
+ 
+            </div>
+            <% end %>
+ 
+            <%= render partial: 'graph/notifications', locals: { type: :set } %>
+ 
+          </div>
   
-        <div class="span8">
-          <%= render partial: 'comments/list', locals: { datum: @set, comments: @set.comments } %>
-        </div>
+          <div class="tab-pane" id="tab-description">       
+            <div class="row-fluid">
+            
+              <div class="span2">
+                <% @set.spectrums.each do |spectrum| %>
+                  <a href="<%= spectrum.photo.url(:original) %>"><img src="<%= spectrum.photo.url(:thumb) %>" style="width:100%" /></a>
+                <% end %>
+              </div>
+            
+              <div class="span8">
+                <h3>Description &nbsp; <small><a href="/set/edit/<%= @set.id %>"><i class="fa fa-pencil"></i></a></small></h3>
+                <p>
+                  <% if @set.notes %>
+                    <%=raw RDiscount.new(@set.notes).to_html %>
+                  <% else %>
+                    No description. 
+                  <% end %>
+                </p>
+              </div>
+      
+            </div>
+          </div>
   
-      </div>
-
+          <div class="tab-pane" id="tab-comments">       
+            <div class="row-fluid">
+            
+              <div class="span2">
+              </div>
+            
+              <div class="span8">
+                <%= render partial: 'comments/list', locals: { datum: @set, comments: @set.comments } %>
+              </div>
+      
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-
 </div>
-<script type="text/javascript">
-
-(function () {
-
-$W = {
-  updateLegend: function() {
-    $W.updateLegendTimeout = null;
-
-    var pos = $W.latestPosition;
-
-    var axes = $W.plot.getAxes();
-    if (pos.x < axes.xaxis.min || pos.x > axes.xaxis.max ||
-      pos.y < axes.yaxis.min || pos.y > axes.yaxis.max)
-      return;
-
-    var i, j, dataset = $W.plot.getData();
-    for (i = 0; i < dataset.length; ++i) {
-      var series = dataset[i];
-
-      // find the nearest points, x-wise
-      for (j = 0; j < series.data.length; ++j)
-        if (series.data[j][0] > pos.x)
-        break;
-
-      // now interpolate
-      var y, p1 = series.data[j - 1], p2 = series.data[j];
-      if (p1 == null)
-        y = p2[1];
-      else if (p2 == null)
-        y = p1[1];
-      else
-        y = p1[1] + (p2[1] - p1[1]) * (pos.x - p1[0]) / (p2[0] - p1[0]);
-
-      $('#wavelength').html(parseInt(pos.x))
-      legends = $("#graph .legendLabel");
-      legends.eq(i).html(series.label.replace(/=.*%/, "= " + parseInt(y) + "%"));
-    }
-  }
-}
-
-$("#graph").bind("plothover",  function (event, pos, item) {
-  $W.latestPosition = pos;
-  if (!$W.updateLegendTimeout)
-    $W.updateLegendTimeout = setTimeout($W.updateLegend, 50);
-});
-
-$W.data = []
-<% @set.spectrums.each do |spectrum| %>
-<% if spectrum.data == "" || spectrum.data.nil? %>
-  spectrum = <%=raw spectrum.extract_data %>
-<% else %>
-  spectrum = <%=raw spectrum.data.chomp(",") %>
-<% end %>
-  $W.data.push({label: "<%= spectrum.title %> = 0% ",data:[]})
-  scaled = true
-  $.each(spectrum.lines,function(index,line) {
-    if (line.wavelength == null) {
-line.wavelength = index
-scaled = false
-    }
-    $W.data[$W.data.length-1].data.push([line.wavelength,line.average/(2.55)])
-  })
-<% end %>
-flotoptions.xaxis.show = scaled
-$W.plot = $.plot($("#graph"),$W.data,flotoptions);
-  $('#embedcode').click(function() {
-    this.focus()
-    this.select()
-  })
-  $('#embed').click(function() {
-    var size = prompt("What size, in WIDTHxHEIGHT?","500x150")
-    var width = size.split('x')[0]
-    var height = size.split('x')[1]
-    $('#embedcode').val("<iframe width='"+width+"px' height='"+height+"px' border='0' src='//spectralworkbench.org/sets/embed/<%= @set.id %>?width="+width+"&height="+height+"'></iframe>")
-    $('#embedcode').focus()
-    $('#embedcode').select()
-  })
-})()
-
-$('#wavenumber').click(function() {
-  flotoptions.xaxis.tickFormatter = wavenumbers
-  flotoptions.xaxis.tickSize = wavenumber_tickSize
-  $W.plot($("#graph"),$W.data,flotoptions);
-})
-
-</script>

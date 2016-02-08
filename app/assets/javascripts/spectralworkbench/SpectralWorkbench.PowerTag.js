@@ -167,7 +167,7 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
           _tag.has_subsequent_depended_on_snapshots = response.responseJSON.has_subsequent_depended_on_snapshots;
           _tag.is_latest = response.responseJSON.is_latest;
 
-          console.log('Deletion of tag ' + _tag.id + ' rejected.', response, _tag)
+          console.log('deletion of tag ' + _tag.id + ' rejected', response, _tag)
 
           if (_tag.has_dependent_spectra == true) {
 
@@ -476,6 +476,7 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
       } else {
 
         // passive; no effect on data
+        _tag.passive = true;
         _tag.labelEl().removeClass('purple');
         _tag.labelEl().css('background', 'grey');
         if (callback) callback(_tag); // allow next tag to run
