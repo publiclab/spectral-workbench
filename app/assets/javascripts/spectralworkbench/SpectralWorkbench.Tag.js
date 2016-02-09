@@ -113,9 +113,10 @@ SpectralWorkbench.Tag = Class.extend({
       if (response['saved']) {
 
         // response is a JSON object whose keys are tagnames
-        if (response['saved'][_tag.name]) {
+        if (response['saved'][_tag.name] || _tag.reference_id && response['saved'][_tag.name_with_reference]) {
 
-          var tag_response = response['saved'][_tag.name];
+          if (_tag.reference_id && response['saved'][_tag.name_with_reference]) var tag_response = response['saved'][_tag.name_with_reference];
+          else var tag_response = response['saved'][_tag.name];
 
           // this will typically copy in .id, .snapshot_id, .created_at, 
           // and .has_dependent_spectra (some for powertags)

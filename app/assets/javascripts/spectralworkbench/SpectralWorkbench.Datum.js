@@ -115,8 +115,58 @@ SpectralWorkbench.Datum = Class.extend({
 
 
     /* ======================================
+     * Create a new Tag or PowerTag, fetch latest 
+     * reference snapshot, then parse it (if PowerTag), 
+     * upload it, then refresh and reload the graph (if PowerTag). 
+     * This is more commonly used than addAndParseTag(), as it
+     * manages the required parsing before uploading, in order
+     * to generate an up-to-date snapshot on the server side.
+     */
+    _datum.addAndUploadTagWithReference = function(name, callback, json) {
+
+      var parseCallback = function(tag) {
+
+        if (tag instanceof SpectralWorkbench.PowerTag) {
+
+          // here we do something different from addAndUploadTag;
+          // we first fetch the latest reference (if any):
+          tag.fetchReference(function() {
+
+            tag.parse(function(tag) { 
+  
+              tag.upload(function(tag) {
+  
+                if (callback) callback(tag);
+  
+                if (tag.passive) _datum.graph.undim();
+                else _datum.graph.reload_and_refresh();
+  
+              });
+
+            });
+ 
+          });
+
+        } else {
+
+          tag.upload(callback);
+
+        }
+
+      }
+
+      return _datum.addTag(name, parseCallback, json);
+
+    }
+
+
+    /* ======================================
      * Return array of tags with given name, run 
      * callback(tag), if provided, on each.
+     * Supplying no reference snapshot returns
+     * snapshotted tags; i.e. getTag('calibrate:1') 
+     * will return tag 'calibrate:1#2', but getTag('calibrate:1#2')
+     * will not return 'calibrate:1' or 'calibrate:1#3'.
      */
     _datum.getTags = function(name, callback) {
 
@@ -124,7 +174,8 @@ SpectralWorkbench.Datum = Class.extend({
 
       _datum.tags.forEach(function(tag) {
 
-        if (tag.name == name) {
+        // test against snapshot-referencing tags too:
+        if (tag.name == name || (tag.key + ':' + tag.value) == name) {
 
           if (callback) callback(tag);
           response.push(tag);
@@ -141,6 +192,10 @@ SpectralWorkbench.Datum = Class.extend({
     /* ======================================
      * Return first tag with given name, run 
      * callback(tag) on the result.
+     * Supplying no reference snapshot returns
+     * snapshotted tags; i.e. getTag('calibrate:1') 
+     * will return tag 'calibrate:1#2', but getTag('calibrate:1#2')
+     * will not return 'calibrate:1' or 'calibrate:1#3'.
      */
     _datum.getTag = function(name, callback) {
 
@@ -148,7 +203,8 @@ SpectralWorkbench.Datum = Class.extend({
 
       _datum.tags.forEach(function(tag) {
 
-        if (tag.name == name) {
+        // test against snapshot-referencing tags too:
+        if (tag.name == name || (tag.key + ':' + tag.value) == name) {
 
           response = tag;
 
@@ -257,7 +313,14 @@ SpectralWorkbench.Datum = Class.extend({
             });
 
             // now rely on parseTags to chain them and parse
-            _datum.parseTags();
+            _datum.parseTags(function() {
+
+              // Check the URL hash for directives, such
+              // as `calibrate:foo` from the original page load;
+              // these should clear out the first time they're checked.
+              _datum.graph.readHashDirectives();
+
+            });
 
           }
 

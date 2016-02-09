@@ -187,6 +187,11 @@ describe("Operation", function() {
     // we'll have to test the case where there's no snapshot on the copied in calibration.
     tag = graph.datum.addAndUploadTag('calibrate:9#4', function(tag) {
 
+      // test that addTags fetches a snapshot
+      expect(tag.value_with_snapshot).toEqual("9#4");
+      expect(tag.name_with_reference).toEqual("calibrate:9#4");
+      expect(tag.value).toEqual("9");
+
       // check that the calibration was applied
       // check datum.average
       expect(graph.datum.average[0].x).not.toEqual(0);

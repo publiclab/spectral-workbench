@@ -28,7 +28,7 @@ class TagsController < ApplicationController
         # look for enclosed data in the tag request if 
         # it's the kind of powertag that should create a snapshot
         # the enclosed data is not required; but the client side will do it automatically
-        old_name = tag.name
+        old_name = tag.name.split('#')[0]
         tag.save
         @response[:saved][old_name] = { id: tag.id, created_at: tag.created_at }
         # send updated name to client if any:

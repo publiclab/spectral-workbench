@@ -287,7 +287,7 @@ SpectralWorkbench.API.Operations = {
 
     description: function(tag) {
 
-      return "Calibrated from the Capture interface using data from <a href='/spectrums/" + tag.value + "'>Spectrum " + tag.value + "</a>; but no snapshot generated. Re-calibrate to generate a snapshot; this will be resolved in an upcoming release.";
+      return "Calibrated from the Capture interface using data from <a href='/spectrums/" + tag.value + "'>Spectrum " + tag.value + "</a>; but no snapshot generated. Re-calibrate to migrate to full v2 functionality, using the Copy Calibration tool.";
 
     }
 
