@@ -9,9 +9,9 @@ SpectralWorkbench.Graph = Class.extend({
     this.args = args;
     this.callback = callback;
     this.loaded = false; // measure initial load completion
-    this.onComplete = args['onComplete'] || function() { console.log('graph load complete'); };
     this.onImageComplete = args['onImageComplete'] || function() { console.log('image load complete'); };
-    this.width = 600;
+    this.onComplete = args['onComplete'] || function() { console.log('graph load complete'); };
+    this.width = 600; // what this is is unclear :-(
     this.zooming = false;
     this.embed = args['embed'] || false;
     this.embedmargin = 10;
@@ -76,13 +76,40 @@ SpectralWorkbench.Graph = Class.extend({
 
 
     /* ======================================
-     * One-line "graph is ready" function
+     * One-line "graph is ready" function;
+     * should change to camel case in next API
      */
     _graph.reload_and_refresh = function() {
 
       _graph.reload();
       _graph.refresh();
       _graph.undim(); // for good measure
+
+    }
+
+
+    /* ======================================
+     * Reads URL hash (after '#') for addTag 
+     * directives, then clears hash so it's not
+     * copied into URLs by user.
+     */
+    _graph.readHashDirectives = function() {
+
+      var tagname = getUrlHashParameter('addTag');
+
+      // this cannot be run before datum.tags is populated.
+      if (tagname) {
+
+        console.log('found addTag URL directive, adding', tagname);
+
+        _graph.datum.addAndUploadTagWithReference(tagname, function() {
+
+          // clear the directive
+          window.location.hash = '';
+
+        });
+
+      }
 
     }
 

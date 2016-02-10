@@ -75,6 +75,10 @@ class SpectrumsController < ApplicationController
     end
   end
 
+  def show2
+    redirect_to spectrum_path(params[:id]), status: 301
+  end
+
   # eventually start selecting everything but spectrum.data, as show2 
   # doesn't use this to fetch data, but makes a 2nd call. 
   # However, format.json does use it!
@@ -84,7 +88,7 @@ class SpectrumsController < ApplicationController
       format.html {
         # temporary routing until we deprecate 1.0 paths to /legacy
         if @spectrum.has_operations && params[:action] != 'show2' && params[:v] != '1'
-          redirect_to "/spectrums/show2/#{@spectrum.id}"
+          render template: 'spectrums/show2'
         else
           if logged_in?
             @spectra = Spectrum.find(:all, :limit => 12, :order => "created_at DESC", :conditions => ["id != ? AND author = ?",@spectrum.id,current_user.login])
@@ -141,10 +145,6 @@ class SpectrumsController < ApplicationController
         render :json => @snapshot.json
       }
     end
-  end
-
-  def show2
-    show
   end
 
   def anonymous
@@ -243,7 +243,11 @@ class SpectrumsController < ApplicationController
           @spectrum.extract_data
 
           if params[:spectrum][:calibration_id] && !params[:is_calibration] && params[:spectrum][:calibration_id] != "calibration" && params[:spectrum][:calibration_id] != "undefined"
-            @spectrum.clone_calibration(params[:spectrum][:calibration_id])
+            #@spectrum.clone_calibration(params[:spectrum][:calibration_id])
+            # instead, append params[:spectrum][:calibration_id] to "#addTag=calibrate:#{params[:spectrum][:calibration_id].to_i}"
+            calibration_param = "#addTag=calibrate:#{params[:spectrum][:calibration_id].to_i}"
+          else
+            calibration_param = ''
           end
 
           if params[:geotag]
@@ -256,7 +260,7 @@ class SpectrumsController < ApplicationController
           if @spectrum.save!
             flash[:notice] = 'Spectrum was successfully created.'
             format.html {
-              redirect_to spectrum_path(@spectrum)
+              redirect_to spectrum_path(@spectrum) + calibration_param
             }
             format.xml  { render :xml => @spectrum, :status => :created, :location => @spectrum }
           else

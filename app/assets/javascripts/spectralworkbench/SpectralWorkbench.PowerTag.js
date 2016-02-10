@@ -95,9 +95,10 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
 
       if (name.match("#")) {
 
+        _tag.name_with_reference = _tag.name;
         _tag.value = name.split(':')[1];
-        _tag.value_with_snapshot = _tag.value; // include snapshot syntax if exists
- 
+        _tag.value_with_snapshot = _tag.value; // include snapshot syntax if exists; this should really be _with_reference
+
         _tag.has_reference = true;
         _tag.reference_id = parseInt(name.split('#')[1]);
         _tag.name = name.split('#')[0];
@@ -487,29 +488,42 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
 
 
     /* ======================================
-     * Send request to server to change the tag's reference
+     * Send request to server to get the tag's 
+     * latest reference and update it, unless
+     * the tag already has a reference, in which 
+     * case just execute the callback.
      */
     _tag.fetchReference = function(callback) {
 
       console.log('querying latest snapshot of', _tag.value, 'for tag.reference_id')
 
-      $.ajax({
+      // we can't rely on tag.has_reference, as this 
+      // may not have been called yet in datum.addAndUploadTagWithReference()
+      if (_tag.name.match("#") || !_tag.needs_reference) {
 
-        url: "/spectrums/latest_snapshot_id/" + _tag.value,
+        if (callback) callback(_tag);
 
-        success: function(response) {
+      } else {
 
-          if (response.responseText != "false") {
-
-            _tag.filterReferenceId(_tag.name + '#' + parseInt(response));
-
+        $.ajax({
+       
+          url: "/spectrums/latest_snapshot_id/" + _tag.value,
+       
+          success: function(response) {
+       
+            if (response.responseText != "false") {
+       
+              _tag.filterReferenceId(_tag.name + '#' + parseInt(response));
+       
+            }
+       
+            if (callback) callback(_tag);
+       
           }
+       
+        });
 
-          if (callback) callback(_tag);
-
-        }
-
-      });
+      }
 
     }
 

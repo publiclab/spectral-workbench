@@ -8,7 +8,7 @@ class SetsController < ApplicationController
   end
 
   def show2
-    redirect_to "/sets/#{params[:id]}"
+    redirect_to "/sets/#{params[:id]}", status: 301
   end
 
   def show

@@ -18,7 +18,7 @@ SpectralWorkbench.UI.TagForm = Class.extend({
 
         tagForm.input.val('');
 
-        _graph.datum.addAndUploadTag(tagname, function() {
+        _graph.datum.addAndUploadTagWithReference(tagname, function() {
 
           if (callback) callback();
 
