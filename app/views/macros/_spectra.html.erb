@@ -58,9 +58,14 @@
 
     $(function () {
       $('.pagination a').click(function () {
-        $.get(this.href, function(response) {
+        $.get(
+          this.href,
+          {
+            own: <%= params[:own] == 'true' %>
+          }
+        ).done(function(response) {
 
-          $('.results').html(response);
+            $('.results').html(response);
 
         });
         return false;
