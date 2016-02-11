@@ -109,7 +109,7 @@ class CaptureController < ApplicationController
       # add the one that's being used in live display:
       @spectrums = ([Spectrum.find(params[:calibration_id])] + @spectrums).uniq if params[:calibration_id]
       respond_to do |format|
-        format.json { render :json => @spectrums.to_json(:methods => :created_at_in_words) }
+        format.json { render :json => @spectrums.to_json(methods: [:created_at_in_words, :forked]) }
       end
     else
       respond_to do |format|

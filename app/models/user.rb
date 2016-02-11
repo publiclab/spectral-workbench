@@ -76,8 +76,11 @@ class User < ActiveRecord::Base
     write_attribute :email, (value ? value.downcase : nil)
   end
 
+  # most recent;
+  # by default, don't return forked calibrations
   def last_calibration 
-    Spectrum.find self.calibrations.first.id
+    self.calibrations.where('tags.name NOT LIKE (?)', "forked:%")
+                     .first
   end
 
   def calibrations
