@@ -379,7 +379,9 @@ $W = {
         $.each(data, function(index, spectrum) {
           html += "<option "
           if ($W.calibration_id == spectrum.id) html += "selected "
-          html += "value="+spectrum.id+">#"+spectrum.id+": "+spectrum.title+" ("+spectrum.created_at_in_words+" ago)</option>"
+          html += "value="+spectrum.id+">#"+spectrum.id+": "+spectrum.title+" (";
+          if (spectrum.forked) html += "forked ";
+          html += spectrum.created_at_in_words+" ago)</option>";
         });
         $(selector).html(html);
       }

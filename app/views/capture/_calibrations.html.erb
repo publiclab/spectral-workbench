@@ -1,5 +1,5 @@
   <option value="calibration">[+] New calibration/uncalibrated</option>
   <% calibrations ||= [] %>
   <% calibrations.each do |spectrum| %>
-    <option <% if !calibration.nil? && spectrum.id == calibration.id %>selected <% end %>value="<%= spectrum.id %>">#<%= spectrum.id %>: <%= spectrum.title %> (<%= time_ago_in_words(spectrum.created_at) %> ago)</option>
+    <option <% if !calibration.nil? && spectrum.id == calibration.id %>selected <% end %>value="<%= spectrum.id %>">#<%= spectrum.id %>: <%= spectrum.title %> (<% if spectrum.has_powertag('forked') %>forked <% end %><%= time_ago_in_words(spectrum.created_at) %> ago)</option>
   <% end %>

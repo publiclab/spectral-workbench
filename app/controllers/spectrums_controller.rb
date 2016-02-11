@@ -87,7 +87,7 @@ class SpectrumsController < ApplicationController
     respond_with(@spectrum) do |format|
       format.html {
         # temporary routing until we deprecate 1.0 paths to /legacy
-        if @spectrum.has_operations && params[:action] != 'show2' && params[:v] != '1'
+        if params[:v] != '1'
           render template: 'spectrums/show2'
         else
           if logged_in?

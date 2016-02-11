@@ -33,6 +33,9 @@
 
         <td>
           <b>#<%= spectrum.id %>:</b> <a href="/spectrums/<%= spectrum.id %>"><%= spectrum.title %></a>
+          <% if spectrum.has_powertag('forked') %>
+            (<a href='/spectrums/<%= spectrum.powertag('forked') %>'>fork</a>)
+          <% end %>
         </td>
 
         <td>by <a href="/profile/<%= spectrum.user.login %>"><%= spectrum.user.login %></a></td>

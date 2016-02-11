@@ -342,6 +342,10 @@ class Spectrum < ActiveRecord::Base
     end
   end
 
+  def forked
+    self.has_powertag('forked')
+  end
+
   def created_at_in_words
     time_ago_in_words(self.created_at)
   end
