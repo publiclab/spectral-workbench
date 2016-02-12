@@ -372,7 +372,7 @@ $W = {
 
   getRecentCalibrations: function(selector) {
     $.ajax({
-      url: "/capture/recent_calibrations?calibration_id=" + $W.calibration_id,
+      url: "/capture/recent_calibrations.json?calibration_id=" + $W.calibration_id,
       type: "GET",
       success: function(data) {
         var html = "<option value='calibration'>[+] New calibration/uncalibrated</option>"

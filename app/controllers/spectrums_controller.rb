@@ -230,12 +230,20 @@ class SpectrumsController < ApplicationController
             #@spectrum.tag("mobile",current_user.id)
           end
 
-          @spectrum.rotate if params[:vertical] == "on"
+          if params[:vertical] == "on"
+            @spectrum.rotate 
+          end
+
           @spectrum.tag("iOS",current_user.id) if ios?
+
           params[:tags].to_s.split(',').each do |tag|
             @spectrum.tag(tag, current_user.id)
           end
-          @spectrum.tag("upload",current_user.id) if params[:upload]
+ 
+          if params[:upload]
+            @spectrum.tag("upload",current_user.id) 
+          end
+
           @spectrum.tag(params[:device],current_user.id) if params[:device] && params[:device] != "none"
           @spectrum.tag("video_row:#{params[:video_row]}", current_user.id) if params[:video_row]
           #@spectrum.tag("sample_row:#{params[:video_row]}", current_user.id) if params[:video_row]

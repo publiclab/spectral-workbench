@@ -9,8 +9,11 @@ class CaptureController < ApplicationController
   def index
     @offline = "flush"
     if logged_in?
-      if params[:calibration_id]
-        @calibration = Spectrum.find(params[:calibration_id])
+      if params[:calibration_id] == 'calibration'
+        @calibration = nil
+      elsif params[:calibration_id]
+        cal = Spectrum.where(id: params[:calibration_id])
+        @calibration = cal.last if cal.length > 0
       elsif current_user.calibrations.count > 0
         @calibration = current_user.last_calibration
       end
@@ -105,9 +108,13 @@ class CaptureController < ApplicationController
 
   def recent_calibrations
     if logged_in?
-      @spectrums = current_user.calibrations
+      @spectrums = current_user.calibrations.limit(20)
       # add the one that's being used in live display:
-      @spectrums = ([Spectrum.find(params[:calibration_id])] + @spectrums).uniq if params[:calibration_id]
+      if params[:calibration_id] && params[:calibration_id] != 'undefined'
+        new = Spectrum.where(id: params[:calibration_id])
+        @spectrums = new + @spectrums
+      end
+      @spectrums = @spectrums.uniq
       respond_to do |format|
         format.json { render :json => @spectrums.to_json(methods: [:created_at_in_words, :forked]) }
       end

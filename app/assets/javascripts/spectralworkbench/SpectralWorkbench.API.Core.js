@@ -653,6 +653,50 @@ SpectralWorkbench.API.Core = {
 
     });
 
+  },
+
+
+  // temporary name; we'll want to generalize this method
+  useReference: function(url, spectrum, callback) {
+
+    url = url || "/references/solux-4700K-stoft.csv";
+
+    $.get(url, function(response) {
+
+      var reference = []; 
+
+      response.split('\n').forEach(function(line, i) {
+
+        reference.push(line.split(','));
+
+      });
+
+      var closest = 0;
+
+      var getRefIntensity = function(nm) {
+
+        reference.forEach(function(line, i) {
+
+          if (nm - line[0] < nm - reference[closest][0]) closest = i;
+
+        });
+
+        return reference[closest][1];
+
+      }
+
+      spectrum.average.forEach(function(line, i) {
+
+        // subtract the reference
+        line.y = line.y * getRefIntensity(line.x);
+
+      });
+
+      if (callback) callback(reference);
+
+    });
+
   }
+
 
 }
