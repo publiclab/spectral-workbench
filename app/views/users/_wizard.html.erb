@@ -1,4 +1,4 @@
-<% if current_user.spectrums.count < 2 && false %>
+<% if (current_user.spectrums.count < 2 && false) || params[:wizard] %>
 
 <div class="modal hide fade" id="wizard" style="width:75%;left:33%;">
 

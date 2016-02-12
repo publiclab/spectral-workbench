@@ -20,14 +20,16 @@
 
 <script>
 
-var init_terminal, terminal = false;
+var init_terminal, 
+    terminal = false, 
+    term;
 
 jQuery(function($, undefined) {
 
   init_terminal = function() {
 
     if (terminal == false) {
-      $('#term').terminal(function(command, term) {
+      term = $('#term').terminal(function(command, term) {
           if (command !== '') {
               try {
                   var result = window.eval(command);
