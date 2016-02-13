@@ -29,7 +29,8 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
 
   reference_tagnames: [
 
-    "calibration",
+    "calibration", // maybe not
+    "calibrate",
     "subtract",
     "forked",
     "blend"
@@ -56,8 +57,7 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
 
     // scan for tags that require snapshots, but this isn't the right place to save it -- we need to parse it!
     if (_tag.snapshot_tagnames.indexOf(_tag.key) != -1)  _tag.needs_snapshot  = true;
-    if (_tag.reference_tagnames.indexOf(_tag.key) != -1) _tag.needs_reference = true;
-
+    if (_tag.reference_tagnames.indexOf(_tag.key) != -1) _tag.needs_reference = true; // only that this tagname typically does need it, not whether it's been made yet
 
     _tag.description = function() {
 
@@ -89,13 +89,25 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
 
 
     /* ======================================
-     * Intercept and deal with the appended key:value#<snapshot_id>
+     * Intercept and deal with the appended key:value#<snapshot_id>.
+     * This can be run multiple times to extract snapshot id,
+     * for example if the tag reference is updated from 
+     * the server and has changed.
      */
     _tag.filterReferenceId = function(name) {
 
+      // ensure we're not overwriting anything
+      if (!_tag.has_reference) {
+
+        _tag.name_with_reference = name;
+        _tag.value_with_snapshot = name.split(':')[1]; // include snapshot syntax if exists; this should really be _with_reference
+
+      }
+
       if (name.match("#")) {
 
-        _tag.name_with_reference = _tag.name;
+        _tag.name_with_reference = name;
+
         _tag.value = name.split(':')[1];
         _tag.value_with_snapshot = _tag.value; // include snapshot syntax if exists; this should really be _with_reference
 
@@ -103,10 +115,6 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
         _tag.reference_id = parseInt(name.split('#')[1]);
         _tag.name = name.split('#')[0];
         _tag.value = _tag.name.split(':')[1];
-
-      } else if (!_tag.value_with_snapshot) {
-
-        _tag.value_with_snapshot = _tag.value; // we use this value later even if there's no snapshot ref
 
       }
 
@@ -449,7 +457,7 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
      */
     _tag.parse = function(callback) {
 
-      console.log('parsing', _tag.name);
+      console.log('parsing', _tag.name_with_reference);
 
       if (SpectralWorkbench.API.Operations.hasOwnProperty(_tag.key) && SpectralWorkbench.API.Operations[_tag.key].run) {
 
@@ -510,8 +518,8 @@ SpectralWorkbench.PowerTag = SpectralWorkbench.Tag.extend({
           url: "/spectrums/latest_snapshot_id/" + _tag.value,
        
           success: function(response) {
-       
-            if (response.responseText != "false") {
+
+            if (response != "false") {
        
               _tag.filterReferenceId(_tag.name + '#' + parseInt(response));
        
