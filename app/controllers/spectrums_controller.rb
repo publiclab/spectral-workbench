@@ -6,6 +6,7 @@ class SpectrumsController < ApplicationController
   # http://api.rubyonrails.org/classes/ActionController/RequestForgeryProtection/ClassMethods.html
   before_filter :require_login,     :only => [ :new, :edit, :create, :upload, :save, :update, :destroy, :calibrate, :extract, :clone_calibration, :fork, :setsamplerow, :find_brightest_row, :rotate, :reverse, :choose ]
   # switch to -- :except => [ :index, :stats, :show, :show2, :anonymous, :embed, :embed2, :search, :recent, :all, :rss, :plots_rss, :match, :clone_search, :compare_search, :set_search
+  before_filter :no_cache, :only => [ :show, :latest, :latest_snapshot_id, :embed, :embed2 ]
 
   def stats
   end
@@ -19,7 +20,7 @@ class SpectrumsController < ApplicationController
       @spectrums = Spectrum.select("title, created_at, id, user_id, author, photo_file_name, like_count, photo_content_type")
                            .order('created_at DESC')
                            .where('user_id != 0')
-                           .paginate(:page => params[:page],:per_page => 24)
+                           .paginate(:page => params[:page], :per_page => 24)
 
       @sets = SpectraSet.find(:all,:limit => 4,:order => "created_at DESC")
       @comments = Comment.all :limit => 12, :order => "id DESC"

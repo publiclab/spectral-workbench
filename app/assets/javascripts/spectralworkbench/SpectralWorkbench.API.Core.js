@@ -667,7 +667,8 @@ SpectralWorkbench.API.Core = {
 
       response.split('\n').forEach(function(line, i) {
 
-        reference.push(line.split(','));
+        line = line.split(',');
+        reference.push([parseFloat(line[0]),parseFloat(line[1])]);
 
       });
 
@@ -677,7 +678,7 @@ SpectralWorkbench.API.Core = {
 
         reference.forEach(function(line, i) {
 
-          if (nm - line[0] < nm - reference[closest][0]) closest = i;
+          if (Math.abs(nm - line[0]) < Math.abs(nm - reference[closest][0])) closest = i;
 
         });
 
