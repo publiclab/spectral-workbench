@@ -433,7 +433,7 @@ SpectralWorkbench.Graph = Class.extend({
 
       new SpectralWorkbench.Importer( "/spectrums/" 
                       + _graph.args.spectrum_id 
-                      + ".json", 
+                      + ".json",
                         _graph, 
                         _graph.load);
 
@@ -441,7 +441,7 @@ SpectralWorkbench.Graph = Class.extend({
 
       new SpectralWorkbench.Importer( "/sets/calibrated/" 
                       + _graph.args.set_id 
-                      + ".json", 
+                      + ".json?t=" + parseInt(Math.random()*10000), // prevent caching set data 
                         _graph, 
                         _graph.load);
 
