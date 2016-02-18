@@ -11,13 +11,14 @@ describe("Set", function() {
 
     ajaxSpy = spyOn($, "ajax").and.callFake(function(object) {
 
-      var response;
+      var response, 
+          url = object.url.split('?')[0]; // remove cache-clearing additions
 
-      if      (object.url == '/spectrums/9.json') response = object.success(TestResponses.spectrum.success.responseText);
-      else if (object.url == '/sets/calibrated/1.json') response = object.success(setJSON); // faking with JSON fixture
-      else if (object.url == '/spectrums/9/tags') response = object.success(TestResponses.tags.success.responseText);
-      else if (object.url == '/spectrums/clone_calibration/9.json') response = object.success('success');
-      else if (object.url == '/match/search/9.json') response = object.success([TestResponses.spectrum.success.responseText]); // return an array containing same spectrum
+      if      (url == '/spectrums/9.json') response = object.success(TestResponses.spectrum.success.responseText);
+      else if (url == '/sets/calibrated/1.json') response = object.success(setJSON); // faking with JSON fixture
+      else if (url == '/spectrums/9/tags') response = object.success(TestResponses.tags.success.responseText);
+      else if (url == '/spectrums/clone_calibration/9.json') response = object.success('success');
+      else if (url == '/match/search/9.json') response = object.success([TestResponses.spectrum.success.responseText]); // return an array containing same spectrum
       else response = 'none';
 
       // check this if you have trouble faking a server response: 
