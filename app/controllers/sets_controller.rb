@@ -2,6 +2,7 @@ class SetsController < ApplicationController
 
   respond_to :html, :xml, :js #, :csv # not yet
   before_filter :require_login, :only => [ :update, :edit, :delete, :remove, :new, :add, :create ]
+  before_filter :no_cache, :only => [ :show, :calibrated, :search ]
 
   def index
     @sets = SpectraSet.paginate(:order => "created_at DESC", :page => params[:page])
