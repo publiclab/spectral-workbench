@@ -1,7 +1,7 @@
 SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
 
   sigFigWavelength: 4, // currently used in calibrate() for wavelength
-  sigFigIntensity: 3, // since image channel data is 0-255
+  sigFigIntensity: 4, // since image channel data is 0-255, or 000.4-100.0
   channels: ["average", "red", "green", "blue"],
 
   /* ======================================
