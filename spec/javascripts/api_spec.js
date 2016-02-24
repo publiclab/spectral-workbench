@@ -217,14 +217,14 @@ describe("API", function() {
 
     subtractCallbackSpy = jasmine.createSpy('success');
 
-    expect(graph.datum.average[100].y).toEqual(40478);
+    expect(graph.datum.average[100].y).toEqual(40477.995);
 
     // uses function(R1,G1,B1,A1,R2,G2,B2,A2,X,Y,P)
     SpectralWorkbench.API.Core.subtract(graph.datum, 9, function() { // random transform
 
       subtractCallbackSpy();
 
-      expect(graph.datum.average[100].y).toEqual(40477.32); // not quite zero, but close
+      expect(graph.datum.average[100].y).toEqual(40477.315); // not quite zero, but close
       expect(graph.datum.average[100].y).not.toEqual(400);
 
       done();
@@ -243,11 +243,11 @@ describe("API", function() {
 
   it("can smooth graph data", function() {
 
-    expect(graph.datum.average[100].y).toEqual(40477.32);
+    expect(graph.datum.average[100].y).toEqual(40477.315);
 
     SpectralWorkbench.API.Core.smooth(graph.datum, 20); // random transform
 
-    expect(graph.datum.average[100].y).toEqual(28429.954816175807);
+    expect(graph.datum.average[100].y).toEqual(28429.958321588158);
 
   });
 
@@ -346,7 +346,7 @@ describe("API", function() {
     expect(parseInt(SpectralWorkbench.API.Core.rmseCalibration(graph.datum, 435.83, 546.07, 193.24, 358.45))).toBe(25);
     expect(parseInt(SpectralWorkbench.API.Core.rmseCalibration(graph.datum, 435.83, 546.07, 183.23, 358.45))).toBe(27);
     expect(parseInt(SpectralWorkbench.API.Core.rmseCalibration(graph.datum, 435.83, 546.07, 193.24, 440.55))).toBe(30);
-    expect(parseInt(SpectralWorkbench.API.Core.rmseCalibration(graph.datum, 435.83, 546.07, 102.13, 504.63))).toBe(146);
+    expect(parseInt(SpectralWorkbench.API.Core.rmseCalibration(graph.datum, 435.83, 546.07, 102.13, 504.63))).toBe(147);
 
   });
 

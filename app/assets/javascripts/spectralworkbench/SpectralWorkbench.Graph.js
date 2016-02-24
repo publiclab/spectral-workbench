@@ -54,6 +54,7 @@ SpectralWorkbench.Graph = Class.extend({
      */
     _graph.reload = function() {
 
+      if (_graph.datum instanceof SpectralWorkbench.Spectrum) _graph.datum.setSigFigures();
       // populate the <svg> element with chart data 
       // and provide a binding key
       _graph.data.datum(_graph.datum.d3);
@@ -202,6 +203,8 @@ SpectralWorkbench.Graph = Class.extend({
       _graph.chart.yAxis     //Chart y-axis settings
                   .axisLabel('Intensity (%)')
                   .tickFormat(d3.format('%'));
+      // we should link to:
+                  //.axisLabel('<a href="https://publiclab.org/wiki/spectral-workbench-usage#Axes">Intensity</a> (%)')
 
     }
 

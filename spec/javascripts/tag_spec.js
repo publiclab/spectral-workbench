@@ -234,7 +234,7 @@ describe("Tag", function() {
       // data should be a string, actually, for the server:
       var json = JSON.parse(request.data.tag.data);
       expect(json.lines.length).toBeGreaterThan(1);
-      expect(json.lines[0].average).toEqual(36.42857142857142);
+      expect(json.lines[0].average).toEqual(36.44);
 
       expect(tag.key).toBeDefined();
       expect(tag.key).toBe('subtract');
@@ -254,7 +254,7 @@ describe("Tag", function() {
       expect(typeof tag.data).toBe('string');
       expect(JSON.parse(tag.data)['lines'][0]['wavelength']).toEqual(graph.datum.average[0].x);
       expect(JSON.parse(tag.data)['lines'][0]['wavelength']).not.toEqual(graph.datum.average[0].x + 1);
-      expect(JSON.parse(tag.data)['lines'][0]['r']).toEqual(graph.datum.red[0].y * 255);
+      expect(JSON.parse(tag.data)['lines'][0]['r']).toEqual(+(graph.datum.red[0].y * 255).toPrecision(4));
       expect(JSON.parse(tag.data)['lines'][0]['r']).not.toEqual(graph.datum.red[0].y + 1);
       expect(JSON.parse(tag.data)['lines'][0]['r']).not.toEqual(graph.datum.json.data.lines[0].r);
 
@@ -301,7 +301,7 @@ describe("Tag", function() {
 
       expect(graph.datum.getExtentX()[0]).toBeGreaterThan(400); // only within 400-700 range
       expect(graph.datum.getExtentX()[1]).toBeLessThan(700); // only within 400-700 range
-      expect(graph.datum.getExtentX()).toEqual([400.245, 697.935]); // only within 400-700 range
+      expect(graph.datum.getExtentX()).toEqual([400.2, 697.9]); // only within 400-700 range, and 4 sig figs
 
       expect(operationTable.find('tr.operation-tag .operations-tools .operation-tag-delete').length).toBe(1);
       expect(operationTable.find('tr.operation-tag:last .operations-tools .operation-tag-delete').css('display')).toBe('inline');
@@ -321,7 +321,7 @@ describe("Tag", function() {
           expect(graph.datum.getExtentX()).not.toEqual([400.245, 697.935]); // only within 400-700 range
           expect(graph.datum.getExtentX()[0]).not.toBeGreaterThan(400); // only within 400-700 range
           expect(graph.datum.getExtentX()[1]).not.toBeLessThan(700); // only within 400-700 range
-          expect(graph.datum.getExtentX()).toEqual([269.089, 958.521]);
+          expect(graph.datum.getExtentX()).toEqual([269.1, 958.5]);
 
           expect(operationTable.find('tr.operation-tag .operations-tools .operation-tag-delete').length).toBe(0);
   

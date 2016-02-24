@@ -60,7 +60,7 @@
   
             <% end %>
 
-            <p style="margin-top:10px;color:#888;"><small><i>Uploaded on <%= @spectrum.created_at.to_s(:long) %></i></small></p>
+            <p style="margin-top:10px;color:#888;"><small><i>Uploaded on <%= @spectrum.created_at.to_s(:long) %> UTC</i></small></p>
 
             <p><% if @spectrum.notes %><%=raw RDiscount.new(@spectrum.notes).to_html %><% end %></p>
 

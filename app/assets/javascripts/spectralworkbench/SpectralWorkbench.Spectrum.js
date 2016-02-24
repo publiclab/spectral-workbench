@@ -1,6 +1,8 @@
 SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
 
-  sigDigits: 6,
+  sigFigWavelength: 4, // currently used in calibrate() for wavelength
+  sigFigIntensity: 4, // since image channel data is 0-255, or 000.4-100.0
+  channels: ["average", "red", "green", "blue"],
 
   /* ======================================
    * <data> is a JSON object as it arrives from the server
@@ -58,10 +60,10 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
       _spectrum.average.forEach(function(line, i) {
 
         lines.push({
-          average:    _spectrum.average[i].y * 255,
-          r:          _spectrum.red[i].y     * 255,
-          g:          _spectrum.green[i].y   * 255,
-          b:          _spectrum.blue[i].y    * 255
+          average:    +(_spectrum.average[i].y * 255).toPrecision(_spectrum.sigFigIntensity),
+          r:          +(_spectrum.red[i].y     * 255).toPrecision(_spectrum.sigFigIntensity),
+          g:          +(_spectrum.green[i].y   * 255).toPrecision(_spectrum.sigFigIntensity),
+          b:          +(_spectrum.blue[i].y    * 255).toPrecision(_spectrum.sigFigIntensity)
         });
 
         if (_spectrum.isCalibrated()) lines[lines.length-1].wavelength = _spectrum.average[i].x;
@@ -322,7 +324,7 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
           'r': line.r,
           'g': line.g,
           'b': line.b,
-          'wavelength': +(startwavelength + (i * stepsize)).toPrecision(_spectrum.sigDigits)
+          'wavelength': +(startwavelength + (i * stepsize)).toPrecision(_spectrum.sigFigWavelength)
         });
 
       });
@@ -414,6 +416,29 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
 
 
     /* ======================================
+     * Iterate through channel data and set precision of 
+     * each entry to sigFigures>, but defaulting to
+     * _spectrum.sigFigIntensity which is 3.
+     */
+    _spectrum.setSigFigures = function(sigFigures) {
+
+       sigFigures = sigFigures || _spectrum.sigFigIntensity;
+
+       _spectrum.channels.forEach(function(channel, i) {
+
+         _spectrum[channel].forEach(function(point, i) {
+
+           if (point.y) point.y = +point.y.toPrecision(sigFigures);
+           if (point.x) point.x = +point.x.toPrecision(_spectrum.sigFigWavelength);
+
+         });
+
+       });
+
+    }
+
+
+    /* ======================================
      * Overwrite spectrum.json.data.lines, the raw JSON of the spectrum
      * <y> is the y-position of the cross section of pixels, where 0 is the top row
      * <keepCalibrated> is a boolean which indicates whether to keep or flush the calibration
@@ -425,7 +450,7 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
       _spectrum.graph.image.getLine(y).forEach(function(pixel, index) {
 
         lines.push({
-          'average': +((pixel[0] + pixel[1] + pixel[2]) / 3).toPrecision(_spectrum.sigDigits),
+          'average': +((pixel[0] + pixel[1] + pixel[2]) / 3).toPrecision(_spectrum.sigFigIntensity),
           'r': pixel[0],
           'g': pixel[1],
           'b': pixel[2],
@@ -570,14 +595,13 @@ SpectralWorkbench.Spectrum = SpectralWorkbench.Datum.extend({
      */
     _spectrum.getTooDark = function(threshold) {
 
-      var _tooDark = true,
-          _channels = ["average", "red","green","blue"];
+      var _tooDark = true;
 
       // by percent!
       threshold = threshold || 0.05;
 
       // check each channel for plateaus at 100%:
-      _channels.forEach(function(_channel) {
+      _spectrum.channels.forEach(function(_channel) {
 
         for (var i = 0; i < _spectrum[_channel].length; i += 1) {
 

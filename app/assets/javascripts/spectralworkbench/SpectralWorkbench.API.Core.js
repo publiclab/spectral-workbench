@@ -159,9 +159,7 @@ SpectralWorkbench.API.Core = {
       start = tmp;
     }
 
-    var channels = ['red', 'blue', 'green', 'average'];
-
-    channels.forEach(function(_channel, i) {
+    datum.channels.forEach(function(_channel, i) {
 
       var startIndex = 0, endIndex = datum[_channel].length - 1;
 
