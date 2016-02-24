@@ -234,7 +234,7 @@ describe("Tag", function() {
       // data should be a string, actually, for the server:
       var json = JSON.parse(request.data.tag.data);
       expect(json.lines.length).toBeGreaterThan(1);
-      expect(json.lines[0].average).toEqual(36.5);
+      expect(json.lines[0].average).toEqual(36.44);
 
       expect(tag.key).toBeDefined();
       expect(tag.key).toBe('subtract');
@@ -254,7 +254,7 @@ describe("Tag", function() {
       expect(typeof tag.data).toBe('string');
       expect(JSON.parse(tag.data)['lines'][0]['wavelength']).toEqual(graph.datum.average[0].x);
       expect(JSON.parse(tag.data)['lines'][0]['wavelength']).not.toEqual(graph.datum.average[0].x + 1);
-      expect(JSON.parse(tag.data)['lines'][0]['r']).toEqual(+(graph.datum.red[0].y * 255).toPrecision(3));
+      expect(JSON.parse(tag.data)['lines'][0]['r']).toEqual(+(graph.datum.red[0].y * 255).toPrecision(4));
       expect(JSON.parse(tag.data)['lines'][0]['r']).not.toEqual(graph.datum.red[0].y + 1);
       expect(JSON.parse(tag.data)['lines'][0]['r']).not.toEqual(graph.datum.json.data.lines[0].r);
 
