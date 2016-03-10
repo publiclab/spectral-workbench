@@ -53,11 +53,13 @@
 
       <%= render :partial => 'users/wizard' %>
 
-      <div class="alert">Learn more about the new <a href="https://publiclab.org/notes/warren/02-10-2016/announcing-spectral-workbench-2">Spectral Workbench 2</a>.</div>
+      <!--<div class="alert">Learn more about the new <a href="https://publiclab.org/notes/warren/02-10-2016/announcing-spectral-workbench-2">Spectral Workbench 2</a>.</div>-->
 
       <div class="hidden-phone">
         <h3>Recent community research <small>| <a href="https://publiclab.org/tag/spectrometer">More</a> | <a href="http://publiclab.org/post">Share your own work &raquo;</a></small></h3>
-        <iframe style="margin-bottom:20px;height:350px;width:100%;border:none;" src="https://publiclab.org/widget/spectrometer"></iframe>
+
+        <%= render :partial => 'users/research_notes' %>
+
       </div>
 
       <ul class="nav nav-tabs">

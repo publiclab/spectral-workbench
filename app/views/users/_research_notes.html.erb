@@ -1,0 +1,52 @@
+<div style="margin-bottom:20px;width:100%;" class="research-notes container">
+
+  <i style="margin-left:45%;" class="fa fa-spinner fa-spin"></i>
+
+</div>
+
+<script>
+
+(function() {
+
+$.get('https://publiclab.org/feed/tag/spectrometer.rss', function (feed) {
+
+  $('.research-notes i').remove();
+
+  $.each($(feed).find('channel item').slice(0, 4), function (i, item) { 
+
+    $('.research-notes').append('<div class="span3 feed-item-' + i + '"></div>');
+
+    var itemEl       = $('.research-notes .feed-item-' + i),
+        title        = $(item).find('title').html(),
+        link         = $(item).find('link').html(),
+        author       = $(item).find('author').html(),
+        pubDate      = $(item).find('pubDate').html(),
+        id           = $(item).find('guid').html().split('notes/show/')[1],
+        description  = $(item).find('description').html();
+
+    pubDate = moment(new Date(pubDate)).format("MMM Do");
+
+    itemEl.append('<a class="img"><img style="width:100%;" src="https://publiclab.org/notes/image/' + id + '?size=medium" /></a>')
+    itemEl.find('a.img').attr('href', link);
+
+    itemEl.append('<h4 class="title"></h4>');
+    itemEl.find('.title').append('<a></a>');
+    itemEl.find('.title a').attr('href', link);
+    itemEl.find('.title a').append(title);
+
+    var metaEl = itemEl.append('<p class="meta"></p>');
+
+    metaEl.append('by <a class="author"></a>');
+    metaEl.find('.author').attr('href', 'https://publiclab.org/profile/' + author);
+    metaEl.find('.author').append(author);
+
+    metaEl.append(' on <span class="date"></span>');
+    metaEl.find('.date').append(pubDate);
+
+  });
+
+});
+
+})();
+
+</script>
