@@ -23,3 +23,4 @@
 //= require d3/d3.js
 //= require nvd3/build/nv.d3.js
 //= require moment/moment.js
+//= require spectral-workbench/dist/spectral-workbench.js

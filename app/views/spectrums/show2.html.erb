@@ -1,10 +1,10 @@
 <%= render :partial => "embed/modal", :locals => { datum: @spectrum, type: :spectrum } %>
 
-<div class="spectrum-img-container">
+<div class="swb-spectrum-img-container">
   <img class="spectrum" src="<%= @spectrum.photo.url(:original) %>" />
 </div>
 
-<div id="graphing" class="spectrums">
+<div id="graphing" class="swb-graphing spectrums">
 
   <div id="graph">
     <div class="zoom"><a onClick="graph.zoom();" class="btn-zoom"><i class="fa fa-zoom-in"></i></a></div>

@@ -1,63 +1,62 @@
-#graphing {
+.swb-graphing {
   padding: 10px;
 }
 
-#graphing h2 {
+.swb-graphing h2 {
   text-align: center;
 }
 
-#graphing h2 a {
+.swb-graphing h2 a {
   color: #444;
 }
 
-#graphing #graph {
+.swb-graphing #graph {
   text-align: center;
 }
 
-#graphing #graph .fa-spinner {
+.swb-graphing #graph .fa-spinner {
   font-size: 20px;
   color: #aaa;
   margin-top: 30px;
 }
 
 /* zoom brushing */
-#graphing #graph .nv-context {
-  display: none;
+.swb-graphing #graph .nv-context {
+  display: none !important;
 }
 
-#graphing .zoom {
+.swb-graphing .zoom {
   position: absolute; 
   right: 0;
 }
 
-#graphing .btn-zoom {
+.swb-graphing .btn-zoom {
   display: block;
   margin: 14px 50px;
 }
 
 @media (max-width: 768px) {
 
-  #graphing .btn-zoom {
+  .swb-graphing .btn-zoom {
     margin: 14px 66px;
   }
 
 }
 
-#graphing .nvtooltip {
+.swb-graphing .nvtooltip {
   padding: 4px;
 }
 
-#graphing .nvtooltip h3 {
+.swb-graphing .nvtooltip h3 {
   font-size: 12px;
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-weight: bold;
 }
 
-div.spectrum-img-container {
-  overflow: hidden;
+div.swb-spectrum-img-container {
 }
 
-div.spectrum-img-container .alert-zooming {
+div.swb-spectrum-img-container .alert-zooming {
   position: absolute;
   left: 0;
   height: 100px;
@@ -67,33 +66,33 @@ div.spectrum-img-container .alert-zooming {
   text-align: center;
 }
 
-div.spectrum-img-container .alert-zooming div {
+div.swb-spectrum-img-container .alert-zooming div {
   position: relative;
   margin:20px 20%;
 }
 
-div.spectrum-img-container .alert-zooming div a {
+div.swb-spectrum-img-container .alert-zooming div a {
   font-weight: bold;
 }
 
-#graphing a.btn-link {
+.swb-graphing a.btn-link {
   text-decoration: none;
 }
 
-#graphing tr.spectrum-tools {
+.swb-graphing tr.spectrum-tools {
   border-top: none;
 }
 
 @media (max-width: 400px) {
 
-  #graphing .credit {
+  .swb-graphing .credit {
     float: none;
   }
 
-  #graphing.embed .credit .spectral-workbench {
+  .swb-graphing.embed .credit .spectral-workbench {
   }
 
-  #graphing .tools {
+  .swb-graphing .tools {
     width: 50%;
   }
 
@@ -102,54 +101,54 @@ div.spectrum-img-container .alert-zooming div a {
 /*@media (max-height: 300px) and (max-width:500px) {*/
 @media (max-width:500px) {
 
-  #graphing .credit {
+  .swb-graphing .credit {
     float: right;
   }
 
-  #graphing .credit .spectral-workbench .super-tiny {
+  .swb-graphing .credit .spectral-workbench .super-tiny {
     display: inline;
   }
 
-  #graphing .credit .spectral-workbench .normal {
+  .swb-graphing .credit .spectral-workbench .normal {
     display: none;
   }
 
-  #graphing .credit .spectral-workbench {
+  .swb-graphing .credit .spectral-workbench {
     display: inline;
   }
 
 }
 
-#graphing .below {
+.swb-graphing .below {
   margin-top:20px;
 }
 
-#graphing .tools {
+.swb-graphing .tools {
   padding: 20px 0 0;
   font-size: 14px;
 }
 
-#graphing .tools a {
+.swb-graphing .tools a {
   padding: 0 5px;
 }
 
-#graphing .tools a {
+.swb-graphing .tools a {
   text-decoration: none;
 }
 
-#graphing .tools a:hover .icon {
+.swb-graphing .tools a:hover .icon {
   color: #88f;
 }
 
-#graphing .tools div.dropup {
+.swb-graphing .tools div.dropup {
   display: inline;
 }
 
-#graphing table th {
+.swb-graphing table th {
   border-top: 0;
 }
 
-#graphing table div.key {
+.swb-graphing table div.key {
   width: 10px;
   height: 10px;
   margin-top: 5px;
@@ -159,79 +158,79 @@ div.spectrum-img-container .alert-zooming div a {
   border-radius:         10px;
 }
 
-#graphing table tr.highlight {
+.swb-graphing table tr.highlight {
   background: #fff8dd;
 }
 
-#graphing table a.btn-link {
+.swb-graphing table a.btn-link {
   font-size: 12px;
   padding: 0 4px;
 }
 
-#graphing table a.btn-link:hover .icon {
+.swb-graphing table a.btn-link:hover .icon {
   color: #888;
 }
 
-#graphing table .btn-link.disabled {
+.swb-graphing table .btn-link.disabled {
   background: white;
 }
 
-#graphing svg .highlight {
+.swb-graphing svg .highlight {
   stroke: red !important;
 }
 
-#graphing svg .dimmed {
+.swb-graphing svg .dimmed {
   stroke-opacity: 0.3 !important;
 }
 
-#graphing .toolbar {
+.swb-graphing .toolbar {
   margin-bottom: 10px;
   text-align: center;
 }
 
-#graphing .credit, #graphing .tools {
+.swb-graphing .credit, .swb-graphing .tools {
   display: inline;
 }
 
-#graphing .credit .site {
+.swb-graphing .credit .site {
   display:none;
 }
 
 /* Embed styles */
 
-#graphing.embed .toolbar {
+.swb-graphing.embed .toolbar {
   text-align: left;
 }
 
-#graphing.embed .credit {
+.swb-graphing.embed .credit {
   float: right;
   padding: 20px 10px 0 0;
 }
 
-#graphing.embed .credit .spectral-workbench a {
+.swb-graphing.embed .credit .spectral-workbench a {
   color: #444;
   font-size: 15px;
   font-family: Junction Light;
 }
-#graphing.embed .credit .spectral-workbench a:hover {
+.swb-graphing.embed .credit .spectral-workbench a:hover {
   color: #888;
 }
 
-#graphing.embed .credit img {
+.swb-graphing.embed .credit img {
   height: 16px;
   display: inline-block;
   padding-bottom: 4px;
 }
 
-#graphing.embed .credit .super-tiny {
+.swb-graphing.embed .credit .super-tiny {
   display: none;
 }
 
-#graphing.embed .tools {
+.swb-graphing.embed .tools {
   display:block;
 }
 
-#graphing.embed {
+.swb-graphing.embed {
   font-size: 12px;
   border: 1px solid #ddd;
   -webkit-border-radius: 10px;
@@ -240,11 +239,11 @@ div.spectrum-img-container .alert-zooming div a {
   padding: 30px 10px 10px;
 }
 
-#graphing.embed .credit .site {
+.swb-graphing.embed .credit .site {
   display: inline;
 }
 
-#graphing.embed .table-scroll-container {
+.swb-graphing.embed .table-scroll-container {
   height: 200px;
   overflow-y: scroll;
   overflow-x: hidden;
@@ -253,34 +252,34 @@ div.spectrum-img-container .alert-zooming div a {
 
 /* Hide the embed-only compact title for all 
    displays, not just the embed */
-#graphing h3.compact {
+.swb-graphing h3.compact {
   display: none;
 }
 
-#graphing.embed.compact img {
+.swb-graphing.embed.compact img {
   display: none;
 }
 
-#graphing.embed.compact h2 {
+.swb-graphing.embed.compact h2 {
   display: none;
 }
 
-#graphing.embed.compact h3.compact {
+.swb-graphing.embed.compact h3.compact {
   display: block;
   float: left;
   margin-top: 12px;
   padding-right: 12px;
 }
 
-#graphing.embed.compact .table-scroll-container {
+.swb-graphing.embed.compact .table-scroll-container {
   display: none;
 }
 
-#graphing.embed .settings {
+.swb-graphing.embed .settings {
   margin-left: 4px;
 }
 
-#graphing.embed .settings .icon {
+.swb-graphing.embed .settings .icon {
   color: #aaa;
 }
 
@@ -290,11 +289,7 @@ div.spectrum-img-container .alert-zooming div a {
   margin-top:20px;
 }
 
-.datum-spectrum {
-
-}
-
-#embed-modal {
+.swb-embed-modal {
   position: fixed;
   top: 50px;
   right: 50px;
@@ -303,11 +298,11 @@ div.spectrum-img-container .alert-zooming div a {
   margin: 0;
 }
 
-#tags span.label {
+.swb-tags span.label {
   margin-right:4px;
 }
 
-.datum-tool-pane {
+.swb-datum-tool-pane {
   background: #eee;
   text-align: center;
   padding: 14px;
@@ -316,35 +311,35 @@ div.spectrum-img-container .alert-zooming div a {
   border-radius:         10px;
 }
 
-.datum-tool-pane .search {
+.swb-datum-tool-pane .search {
   text-align: left;
 }
 
-.datum-tool-pane hr {
+.swb-datum-tool-pane hr {
   border-top-color: #ddd;
 }
 
-.datum-tool-pane .description {
+.swb-datum-tool-pane .description {
   font-style: italic;
 }
 
-.datum-tool-pane .actions * {
+.swb-datum-tool-pane .actions * {
   margin-right: 6px;
 }
 
-.datum-tool-pane .spectra .spectrum {
+.swb-datum-tool-pane .spectra .spectrum {
   background: #f8f8f8;
 }
 
-.datum-tool-pane .spectra .spectrum td a.btn-like {
+.swb-datum-tool-pane .spectra .spectrum td a.btn-like {
   text-decoration: none;
 }
 
-.datum-tool-pane .spectra .spectrum.selected {
+.swb-datum-tool-pane .spectra .spectrum.selected {
   background: #fff8dd;
 }
 
-.flipped {
+.swb-flipped {
   transform: scale(-1, 1);
   -moz-transform: scale(-1, 1);
   -webkit-transform: scale(-1, 1);
