@@ -26,7 +26,6 @@ class Spectrum < ActiveRecord::Base
 
   validates_presence_of :title, :on => :create, :message => "can't be blank"
   validates_presence_of :author, :on => :create, :message => "can't be blank"
-  validates_presence_of :photo, :on => :create, :message => "can't be blank"
   validates :title, length: { maximum: 60 }
   validates :title, format: { with: /\A[\w\ -\'\"]+\z/, message: "can contain only letters, numbers, and spaces." }
   validates :author, :format => { with: /\A\w[\w\.\-_@]+\z/, message: "can contain only letters, numbers, hyphens, underscores and periods." }

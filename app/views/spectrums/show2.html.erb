@@ -1,7 +1,11 @@
 <%= render :partial => "embed/modal", :locals => { datum: @spectrum, type: :spectrum } %>
 
 <div class="swb-spectrum-img-container">
-  <img class="spectrum" src="<%= @spectrum.photo.url(:original) %>" />
+  <% if @spectrum.photo_file_name %>
+    <img class="spectrum" src="<%= @spectrum.photo.url(:original) %>" />
+  <% else %>
+    <p style="color:#888;padding:20px 0 0;text-align:center;"><small>No image for this spectrum.</small></p>
+  <% end %>
 </div>
 
 <div id="graphing" class="swb-graphing spectrums">

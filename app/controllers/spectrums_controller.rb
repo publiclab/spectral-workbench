@@ -203,19 +203,19 @@ class SpectrumsController < ApplicationController
   # replacing this with capture/save soon
   def create
 
+    @spectrum = Spectrum.new({
+      :title => params[:spectrum][:title],
+      :author => current_user.login,
+      :user_id => current_user.id,
+      :notes => params[:spectrum][:notes]
+    })
+
     if params[:dataurl] # mediastream webclient
-      @spectrum = Spectrum.new({:title => params[:spectrum][:title],
-        :author => current_user.login,
-        :video_row => params[:spectrum][:video_row],
-        :notes => params[:spectrum][:notes]})
-      @spectrum.user_id = current_user.id
       @spectrum.image_from_dataurl(params[:dataurl])
-    else # upload form at /upload
-      @spectrum = Spectrum.new({:title => params[:spectrum][:title],
-        :author => current_user.login,
-        :user_id => current_user.id,
-        :notes => params[:spectrum][:notes],
-        :photo => params[:spectrum][:photo]})
+    elsif params[:spectrum][:data] # upload json
+      @spectrum.data = '{ "lines": ' + params[:spectrum][:data] + " }"
+    elsif params[:spectrum][:photo] # upload form at /upload
+      @spectrum.photo = params[:spectrum][:photo]
     end
 
     if @spectrum.save
@@ -231,7 +231,7 @@ class SpectrumsController < ApplicationController
             #@spectrum.tag("mobile",current_user.id)
           end
 
-          if params[:vertical] == "on"
+          if params[:spectrum][:data].nil? && params[:vertical] == "on"
             @spectrum.rotate 
           end
 
@@ -249,7 +249,7 @@ class SpectrumsController < ApplicationController
           @spectrum.tag("video_row:#{params[:video_row]}", current_user.id) if params[:video_row]
           #@spectrum.tag("sample_row:#{params[:video_row]}", current_user.id) if params[:video_row]
 
-          @spectrum.extract_data
+          @spectrum.extract_data unless params[:spectrum][:data]
 
           if params[:spectrum][:calibration_id] && !params[:is_calibration] && params[:spectrum][:calibration_id] != "calibration" && params[:spectrum][:calibration_id] != "undefined"
             #@spectrum.clone_calibration(params[:spectrum][:calibration_id])

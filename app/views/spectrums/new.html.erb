@@ -4,7 +4,9 @@
 
     <h1>Upload a spectrum</h1>
  
-    <p>Take a picture through <a href="http://publiclab.org/tool/spectrometer">your spectrometer</a> and upload it. (Android or iOS 6+)</p> 
+    <% unless params[:json] %>
+      <p>Take a picture through <a href="http://publiclab.org/tool/spectrometer">your spectrometer</a> and upload it. (Android or iOS 6+)</p> 
+    <% end %>
 
   </div>
 
@@ -32,38 +34,32 @@
     <div class="row-fluid">
  
       <div class="span6">
-   
-        <h3>Choose an image to upload</h3>
- 
-        <div class="control-group" id="photo">
-          <input id="inputPhoto" name="spectrum[photo]" size="30" type="file" />
-          <span class="help-inline"></span>
-        </div>
 
-        <p>
-          <label rel="tooltip" title="Are colors arrayed vertically as in the examples, or horizontally?" class="checkbox inline">
-            <input type="checkbox" id="vertical" name="vertical" checked="true" /> Spectrum is vertical (see examples below)
-          </label>
-        </p>
+        <ul class="nav nav-tabs">
+          <li class="active"><a href="#tab-image"              data-toggle="tab"><i class="fa fa-camera"></i> Choose an image</a></li>
+          <li>               <a href="#tab-json"               data-toggle="tab"><i class="fa fa-code"></i> Upload data (beta)</a></li>
+        </ul>
+           
+        <div class="tab-content">
 
-        <p><a href="http://publiclab.org/wiki/spectral-workbench-usage">Learn more &raquo;</a></p>
-
-        <div class="row-fluid">
-
-          <div class="span7">
-            <p><b>Vertical, blue on top:</b></p>
-            <img class="img-rounded" src="/images/example-cfl.jpg" style="width:100px;height:80px" />
-            <img class="img-rounded" src="/images/example-sky.jpg" style="width:100px;height:80px" />
+          <div class="tab-pane active" id="tab-image">
+            <%= render partial: 'spectrums/new_image' %>
           </div>
 
-          <div class="span5">
-            <p><b>Horizontal, blue left:</b></p>
-            <img class="img-rounded" src="/images/example-cfl-horizontal.jpg" style="width:100px;height:80px" />
+          <div class="tab-pane" id="tab-json">
+
+            <h4>Paste in valid JSON</h4>
+
+            <p>Please use <a href="https://publiclab.org/wiki/spectral-workbench-api#Uploading+data">this format</a>.</p>
+
+            <textarea class="spectrum-json" name="spectrum[data]" style="width:90%;height:200px;" placeholder="[
+{'average': 35.1, 'wavelength': 453.3}, 
+{'average': 49.1, 'wavelength': 458.6}
+]"></textarea>
+            
           </div>
 
         </div>
-    
-        <p><i>Be sure your flash is off!</i></p>
 
       </div>
   
@@ -115,8 +111,8 @@
         <input name="lat" type="hidden" id="lat" />
         <input name="lon" type="hidden" id="lon" />
 
-        <a href="javascript:void();" data-loading-text="Saving..." id="uploadBtn" class="btn btn-primary btn-large" onClick="$W.save(true)">Upload with selected calibration</a>
-        <a href="javascript:void();" data-loading-text="Saving..." id="uploadUncalibrated" class="btn btn-large" onClick="$W.save(false)">Upload &amp; calibrate later</a>
+        <a href="#" data-loading-text="Saving..." id="uploadBtn" class="btn btn-primary btn-large" onClick="$W.save(true)">Upload with selected calibration</a>
+        <a href="#" data-loading-text="Saving..." id="uploadUncalibrated" class="btn btn-large" onClick="$W.save(false)">Upload &amp; calibrate later</a>
 
         <label rel="tooltip" title="Detect your location and tag this data?" class="checkbox inline" style="margin-left:10px;">
           <input type="checkbox" style="display:none;" id="geotagInput" value="geotag" checked="true" /> Geotag
@@ -171,8 +167,12 @@
       }
 
       if ($('#inputPhoto').val() == '') {
-        $('#photo').addClass('error');
-        $('#photo .help-inline').html('You must select an image.');
+        if ($('.spectrum-json')) {
+          $('#upload').submit();
+        } else {
+          $('#photo').addClass('error');
+          $('#photo .help-inline').html('You must select an image.');
+        }
       } else if ($('#inputTitle').val() == '') {
         $('#title').addClass('error');
         $('#title .help-inline').html('You must enter a title, using only letters, numbers, and spaces.');
