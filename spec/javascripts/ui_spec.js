@@ -114,13 +114,13 @@ describe("UI", function() {
       expect($('.tags .list span').length).toBe(1); 
       */
 
-      expect($('.tags .list span:last a:first').html()).toBe('myTag');
+      expect($('.swb-tags .list span:last a:first').html()).toBe('myTag');
 
       done();
 
     });
 
-    expect($("#tag-form-" + graph.datum.id).length).toBe(1);
+    expect($("#swb-tag-form-" + graph.datum.id).length).toBe(1);
 
     expect(tagForm.el).toBeDefined();
 
@@ -170,7 +170,7 @@ describe("UI", function() {
     // tagform is submitted, string is split by ',' and each tag is sent to addTag
     tagForm.el.on('submit', function(e) {
 
-      expect($('.tags .list span:last a:last').html()).toBe('my-tag-with-spaces');
+      expect($('.swb-tags .list span:last a:last').html()).toBe('my-tag-with-spaces');
 
       e.preventDefault(); // stop actual request
 
@@ -243,7 +243,7 @@ describe("UI", function() {
     
       expect(graph.datum.getTag('range:520-530')).toBe(false);
     
-      expect($('.tags .list span.label a:first').html()).not.toBe('range:520-530');
+      expect($('.swb-tags .list span.label a:first').html()).not.toBe('range:520-530');
 
       var el = $("span#tag_" + tag.id);
       // display in Operations table;
@@ -272,7 +272,7 @@ describe("UI", function() {
 
     var toolPane = new SpectralWorkbench.UI.ToolPane('transform', graph);
 
-    expect($('.datum-tool-pane').is(':visible')).toBe(true);
+    expect($('.swb-datum-tool-pane').is(':visible')).toBe(true);
     expect(toolPane).toBeDefined();
     expect(toolPane.options).toBeDefined();
 
@@ -297,7 +297,7 @@ describe("UI", function() {
     expect(toolPane.form.closeEl.length).toBe(1);
 
     toolPane.form.close();
-    expect($('.datum-tool-pane').is(':visible')).toBe(false);
+    expect($('.swb-datum-tool-pane').is(':visible')).toBe(false);
     expect($(toolPane.form.el).find('.custom').html()).toBe('');
     expect(toolPane.form.formEl.is(':visible')).toBe(false);
     expect(toolPane.form.applyEl.html()).toBe('Apply');

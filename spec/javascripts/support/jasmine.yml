@@ -14,7 +14,6 @@ src_files:
   - assets/capture.js
   - assets/analyze.js
   - assets/application.js
-  - assets/spectralworkbench/SpectralWorkbench.js
   - assets/jasmine-jquery.js
   - assets/jasmine-ajax/lib/mock-ajax.js
 

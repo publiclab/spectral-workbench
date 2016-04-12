@@ -1,4 +1,4 @@
-<p id="tags" class="tags">
+<p id="tags" class="swb-tags tags">
   <b>Tags:</b> 
   <span class="list">
     <% if legacy %>
@@ -9,7 +9,7 @@
   </span>
 </p>
 
-<form id="tag-form-<%= datum.id %>" class="form tag-form" action="/tags">
+<form id="swb-tag-form-<%= datum.id %>" class="swb-tag-form form tag-form" action="/tags">
   <input type="hidden" name="tag[<%= datum.class.name.downcase %>_id]" value="<%= datum.id %>" />
   <div class="control-group">
     <div class="input-prepend">
@@ -23,7 +23,7 @@
 
 <script>
   jQuery(document).ready(function() {
-    SpectralWorkbench.UI.initTagForm('#tag-form-<%= datum.id %>', <%= datum.id %>);
+    SpectralWorkbench.UI.initTagForm('#swb-tag-form-<%= datum.id %>', <%= datum.id %>);
   });
 </script>
 
