@@ -94,12 +94,12 @@
           <div class="span8">
   
             <ul class="nav nav-tabs">
-              <li class="active"><a href="#tab-tools"              data-toggle="tab"><i class="fa fa-cog"></i> Tools</a></li>
-              <li>               <a href="#tab-sets"               data-toggle="tab"><i class="fa fa-list"></i> Sets</a></li>
-              <li>               <a href="#tab-comments"           data-toggle="tab"><i class="fa fa-comments"></i> <%= @spectrum.comments.length %> Comments</a></li>
-              <% if @spectrum.forks %><li><a href="#tab-forks"     data-toggle="tab"><i class="fa fa-code-fork"></i> <%= @spectrum.forks.length %> Forks</a></li><% end %>
-              <li>               <a href="#tab-scripting"          data-toggle="tab" onClick="init_terminal();"><i class="fa fa-terminal"></i> Scripting</a></li>
-              <li class="comparisons" style="display:none;"><a href="#tab-comparisons" data-toggle="tab"><i class="fa fa-columns"></i> Comparisons</a></li>
+              <li class="active"><a class="tab-tab-tools"    href="#tab-tools"              data-toggle="tab"><i class="fa fa-cog"></i> Tools</a></li>
+              <li>               <a class="tab-tab-sets"     href="#tab-sets"               data-toggle="tab"><i class="fa fa-list"></i> Sets</a></li>
+              <li>               <a class="tab-tab-comments" href="#tab-comments"           data-toggle="tab"><i class="fa fa-comments"></i> <%= @spectrum.comments.length %> Comments</a></li>
+              <% if @spectrum.forks %><li><a class="tab-tab-forks" href="#tab-forks"     data-toggle="tab"><i class="fa fa-code-fork"></i> <%= @spectrum.forks.length %> Forks</a></li><% end %>
+              <li>               <a class="tab-tab-scripting" href="#tab-scripting"          data-toggle="tab"><i class="fa fa-terminal"></i> Scripting</a></li>
+              <li class="comparisons" style="display:none;"><a class="tab-tab-comparisons" href="#tab-comparisons" data-toggle="tab"><i class="fa fa-columns"></i> Comparisons</a></li>
             </ul>
            
             <div class="tab-content">
