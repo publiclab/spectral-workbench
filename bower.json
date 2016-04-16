@@ -2,7 +2,7 @@
   "name": "Spectral Workbench",
   "version": "2.0.0-beta.2",
   "dependencies": {
-    "spectral-workbench": "~0.0.5",
+    "spectral-workbench": "~0.0.7",
     "d3": "~3.3.13",
     "nvd3": "~1.7.1",
     "fontawesome": "~4.5.0",
@@ -15,7 +15,7 @@
     "moment": "~2.10.6",
     "jasmine-ajax": "jasmine/jasmine-ajax#v3.2.0",
     "leaflet": "0.7.3",
-    "jquery.terminal": "~0.9.3"
+    "ace-builds": "~1.2.3"
   },
   "resolutions": {
     "d3": "^3.4.4",

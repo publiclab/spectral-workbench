@@ -1,57 +1,58 @@
-<div id="term"></div>
-<p><small>Read about the <a href="https://publiclab.org/wiki/spectral-workbench-api">Spectral Workbench API</a></small></p>
+<pre id="editor" style="height:200px;">
+spectrum.addAndParseTag('smooth:10'); // Smooth the spectrum
 
-<script src="/lib/jquery.terminal/js/jquery.terminal-0.9.3.min.js"></script>
-<script src="/lib/jquery.terminal/js/jquery.mousewheel-min.js"></script>
-<link href="/lib/jquery.terminal/css/jquery.terminal-0.9.2.css" rel="stylesheet"/>
+// spectrum.addAndUploadTag('smooth:10'); // <== to save </pre>
 
-<style>
+<p>
+  <a class="btn-editor-run btn btn-lg btn-primary">Run</a>
+  <a class="btn-editor-save btn btn-lg">Save as Gist</a>
+  <small>Read about the <a href="https://publiclab.org/wiki/spectral-workbench-api">Spectral Workbench API</a></small>
+</p>
 
-#term {
-
-  -webkit-border-radius: 4px;
-  border-radius: 4px;
-  -moz-border-radius: 4px;
-  -moz-border-radius: 4px;
-
-}
-
-</style>
+<script src="/lib/ace-builds/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
 
 <script>
 
-var init_terminal, 
-    terminal = false, 
-    term;
+var editor = ace.edit("editor");
+editor.setTheme("ace/theme/twilight");
+editor.session.setMode("ace/mode/javascript");
 
 jQuery(function($, undefined) {
 
-  init_terminal = function() {
+  $('.btn-editor-run').click(function() {
 
-    if (terminal == false) {
-      term = $('#term').terminal(function(command, term) {
-          if (command !== '') {
-              try {
-                  var result = window.eval(command);
-                  if (result !== undefined) {
-                      term.echo(new String(result));
-                  }
-              } catch(e) {
-                  term.error(new String(e));
-              }
-          } else {
-             term.echo('');
-          }
-      }, {
-          greetings: 'Spectral Workbench JS scripting console:',
-          name: 'js',
-          height: 200,
-          prompt: 'js> '});
+    eval(editor.getValue());
+
+  });
+
+  $('.btn-editor-save').click(function() {
+
+    var data = {
+      "description": "A script saved from https://spectralworkbench.org",
+      "public": true,
+      "files": {
+        "main.js": {
+          "content": editor.getValue()
+        }
+      }
     }
+    $.ajax({
+      url: 'https://api.github.com/gists',
+      type: 'POST',
+      dataType: 'json',
+      data: JSON.stringify(data)
+    })
+    .success( function(e) {
+      window.open(e.html_url);
+      $('.tab-tab-comments').click();
+      $('#comment-body').val("Script [saved as a Gist](" + e.html_url + ") from the scripting tab. Fork it to continue working on it!");
+      $('#comment-submit').click();
+    })
+    .error( function(e) {
+      console.warn("gist save error", e);
+    });
 
-    terminal = true;
-
-  }
+  });
 
 });
 </script>
