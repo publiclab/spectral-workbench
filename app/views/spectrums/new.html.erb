@@ -3,10 +3,6 @@
   <div class="">
 
     <h1>Upload a spectrum</h1>
- 
-    <% unless params[:json] %>
-      <p>Take a picture through <a href="http://publiclab.org/tool/spectrometer">your spectrometer</a> and upload it. (Android or iOS 6+)</p> 
-    <% end %>
 
   </div>
 
@@ -35,9 +31,12 @@
  
       <div class="span6">
 
-        <ul class="nav nav-tabs">
-          <li class="active"><a href="#tab-image"              data-toggle="tab"><i class="fa fa-camera"></i> Choose an image</a></li>
-          <li>               <a href="#tab-json"               data-toggle="tab"><i class="fa fa-code"></i> Upload data (beta)</a></li>
+        <input name="spectrum[data_type]" type="hidden" id="spectrum_upload_type" value="image" />
+
+        <ul class="nav nav-tabs nav-upload-types">
+          <li class="active"><a data-upload-type="image" href="#tab-image" data-toggle="tab"><i class="fa fa-camera"></i> Choose an image</a></li>
+          <li>               <a data-upload-type="json"  href="#tab-json"  data-toggle="tab"><i class="fa fa-code"></i> Upload json (beta)</a></li>
+          <li>               <a data-upload-type="csv"   href="#tab-csv"   data-toggle="tab"><i class="fa fa-code"></i> Upload csv (beta)</a></li>
         </ul>
            
         <div class="tab-content">
@@ -48,14 +47,29 @@
 
           <div class="tab-pane" id="tab-json">
 
-            <h4>Paste in valid JSON</h4>
+            <h4>Paste in valid JSON data</h4>
 
             <p>Please use <a href="https://publiclab.org/wiki/spectral-workbench-api#Uploading+data">this format</a>.</p>
 
-            <textarea class="spectrum-json" name="spectrum[data]" style="width:90%;height:200px;" placeholder="[
-{'average': 35.1, 'wavelength': 453.3}, 
-{'average': 49.1, 'wavelength': 458.6}
-]"></textarea>
+            <textarea class="spectrum-json" name="spectrum[json]" style="width:90%;height:200px;" placeholder='[
+{ "average": 64.3333, "r": 69, "g": 46, "b": 78, "wavelength":269.089 }, 
+{ "average": 35, "r": 33, "g": 19, "b": 41, "wavelength":432.241 }, 
+{ "average": 31, "r": 33, "g": 19, "b": 41, "wavelength":958.521 }
+]'></textarea>
+            
+          </div>
+
+          <div class="tab-pane" id="tab-csv">
+
+            <h4>Paste in valid CSV data</h4>
+
+            <p>Please use <code>wavelength (in nanometers),intensity (0-255)</code> as <a href="https://publiclab.org/wiki/spectral-workbench-api#Uploading+data">shown here</a>.</p>
+
+            <textarea class="spectrum-csv" name="spectrum[csv]" style="width:90%;height:200px;" placeholder='400,24
+410,44
+420,42
+430,45
+440,20'></textarea>
             
           </div>
 
@@ -130,63 +144,4 @@
 
 </div>
 
-<script>
-
-  var $W = {};
-
-  (function(){
-
-    if (navigator.geolocation) {
-      $('#geotagInput').show();
-    }
-
-    $W.setGeolocation = function(loc) {
-
-      if (loc.coords) {
-        $('#lat').val(loc.coords.latitude)
-        $('#lon').val(loc.coords.longitude)
-      } else {
-        $('#lat').val(loc.latitude)
-        $('#lon').val(loc.longitude)
-      }
-
-      $('#geotag').val($('#geotagInput').is(":checked"))
-
-      $('#upload').submit()
-
-    }
-
-    $W.save = function(calibration) {
-
-      if (!calibration) {
-        $("#calibration_id").val("calibration"); // calibrate later
-        $('#uploadUncalibrated').button('loading');
-        $('#uploadUncalibrated').prepend('<i class="fa fa-circle-o-notch fa-spin"></i> ')
-      } else {
-        $('#uploadBtn').button('loading');
-      }
-
-      if ($('#inputPhoto').val() == '') {
-        if ($('.spectrum-json')) {
-          $('#upload').submit();
-        } else {
-          $('#photo').addClass('error');
-          $('#photo .help-inline').html('You must select an image.');
-        }
-      } else if ($('#inputTitle').val() == '') {
-        $('#title').addClass('error');
-        $('#title .help-inline').html('You must enter a title, using only letters, numbers, and spaces.');
-      } else {
-
-        if (navigator.geolocation && $('#geotagInput').is(':checked')) {
-          navigator.geolocation.getCurrentPosition($W.setGeolocation);
-        } else {
-          $('#upload').submit();
-        } 
-      } 
-
-    }
-
-  })()
-
-</script>
+<%= javascript_include_tag "upload" %>

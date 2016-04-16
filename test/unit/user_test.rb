@@ -28,4 +28,16 @@ class UserTest < ActiveSupport::TestCase
     assert_not_nil u.last_calibration
   end
 
+  test "user token" do
+    u = User.first
+    token = u.created_at.to_i.to_s.each_byte.map { |b| b.to_s(16) }.join
+    assert_equal token, u.token
+  end
+
+  test "user lookup by token" do
+    u = User.first
+    u2 = User.find_by_token(u.token)
+    assert_equal u, u2
+  end
+
 end

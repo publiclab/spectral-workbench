@@ -100,4 +100,14 @@ class User < ActiveRecord::Base
     spectra.reverse ||= []
   end  
 
+  # for API use; add regeneration later
+  def token
+    self.created_at.to_i.to_s.each_byte.map { |b| b.to_s(16) }.join
+  end
+
+  def self.find_by_token(token)
+    t = Time.at(token.scan(/../).map { |x| x.hex.chr }.join.to_i)
+    User.where("created_at > ? AND created_at < ?", t - 1.second, t + 1.second).first
+  end
+
 end

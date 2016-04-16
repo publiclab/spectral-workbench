@@ -4,7 +4,7 @@ class SpectrumsController < ApplicationController
   # expand this:
   protect_from_forgery :only => [:clone_calibration, :extract, :calibrate, :save]
   # http://api.rubyonrails.org/classes/ActionController/RequestForgeryProtection/ClassMethods.html
-  before_filter :require_login,     :only => [ :new, :edit, :create, :upload, :save, :update, :destroy, :calibrate, :extract, :clone_calibration, :fork, :setsamplerow, :find_brightest_row, :rotate, :reverse, :choose ]
+  before_filter :require_login,     :only => [ :new, :edit, :upload, :save, :update, :destroy, :calibrate, :extract, :clone_calibration, :fork, :setsamplerow, :find_brightest_row, :rotate, :reverse, :choose ]
   # switch to -- :except => [ :index, :stats, :show, :show2, :anonymous, :embed, :embed2, :search, :recent, :all, :rss, :plots_rss, :match, :clone_search, :compare_search, :set_search
   before_filter :no_cache, :only => [ :show, :latest, :latest_snapshot_id, :embed, :embed2 ]
 
@@ -202,91 +202,112 @@ class SpectrumsController < ApplicationController
   # ?spectrum[title]=TITLE&spectrum[author]=anonymous&startWavelength=STARTW&endWavelength=ENDW;
   # replacing this with capture/save soon
   def create
+    if logged_in? || params[:token] && User.find_by_token(params[:token])
 
-    @spectrum = Spectrum.new({
-      :title => params[:spectrum][:title],
-      :author => current_user.login,
-      :user_id => current_user.id,
-      :notes => params[:spectrum][:notes]
-    })
+      user = current_user || User.find_by_token(params[:token])
 
-    if params[:dataurl] # mediastream webclient
-      @spectrum.image_from_dataurl(params[:dataurl])
-    elsif params[:spectrum][:data] # upload json
-      @spectrum.data = '{ "lines": ' + params[:spectrum][:data] + " }"
-    elsif params[:spectrum][:photo] # upload form at /upload
-      @spectrum.photo = params[:spectrum][:photo]
-    end
-
-    if @spectrum.save
-
-      respond_with(@spectrum) do |format|
-
-        if (APP_CONFIG["local"] || logged_in?)
-
-          if mobile? || ios?
-            @spectrum.save
-            @spectrum = Spectrum.find @spectrum.id
-            @spectrum.sample_row = @spectrum.find_brightest_row
-            #@spectrum.tag("mobile",current_user.id)
-          end
-
-          if params[:spectrum][:data].nil? && params[:vertical] == "on"
-            @spectrum.rotate 
-          end
-
-          @spectrum.tag("iOS",current_user.id) if ios?
-
-          params[:tags].to_s.split(',').each do |tag|
-            @spectrum.tag(tag, current_user.id)
+      @spectrum = Spectrum.new({
+        :title => params[:spectrum][:title],
+        :author => user.login,
+        :user_id => user.id,
+        :notes => params[:spectrum][:notes]
+      })
+ 
+      if params[:dataurl] # mediastream webclient
+        @spectrum.image_from_dataurl(params[:dataurl])
+      elsif params[:spectrum][:data_type] == "csv" || params[:spectrum][:data_type] == "json" # upload json; CSV is converted to JSON before upload in upload.js
+        @spectrum.data = '{ "lines": ' + params[:spectrum][:json] + " }"
+      elsif params[:spectrum][:data_type] == "image" # upload form at /upload
+        @spectrum.photo = params[:spectrum][:photo]
+      end
+ 
+      if @spectrum.save
+ 
+        respond_with(@spectrum) do |format|
+ 
+          if (APP_CONFIG["local"] || logged_in?)
+ 
+            if mobile? || ios?
+              @spectrum.save
+              @spectrum = Spectrum.find @spectrum.id
+              @spectrum.sample_row = @spectrum.find_brightest_row
+              #@spectrum.tag("mobile", user.id)
+            end
+ 
+            if params[:spectrum][:json].nil? && params[:vertical] == "on"
+              @spectrum.rotate 
+            end
+ 
+            @spectrum.tag("iOS", user.id) if ios?
+ 
+            @spectrum.tag("json", user.id) if params[:spectrum][:data_type] == "json"
+            @spectrum.tag("csv", user.id) if params[:spectrum][:data_type] == "csv"
+ 
+            params[:tags].to_s.split(',').each do |tag|
+              @spectrum.tag(tag, user.id)
+            end
+  
+            if params[:upload]
+              @spectrum.tag("upload", user.id) 
+            end
+ 
+            @spectrum.tag(params[:device], user.id) if params[:device] && params[:device] != "none"
+            @spectrum.tag("video_row:#{params[:video_row]}", user.id) if params[:video_row]
+            #@spectrum.tag("sample_row:#{params[:video_row]}", user.id) if params[:video_row]
+ 
+            @spectrum.extract_data unless params[:spectrum][:json]
+ 
+            if params[:spectrum][:calibration_id] && !params[:is_calibration] && params[:spectrum][:calibration_id] != "calibration" && params[:spectrum][:calibration_id] != "undefined"
+              #@spectrum.clone_calibration(params[:spectrum][:calibration_id])
+              # instead, append params[:spectrum][:calibration_id] to "#addTag=calibrate:#{params[:spectrum][:calibration_id].to_i}"
+              calibration_param = "#addTag=calibrate:#{params[:spectrum][:calibration_id].to_i}"
+            else
+              calibration_param = ''
+            end
+ 
+            if params[:geotag]
+              @spectrum.lat = params[:lat]
+              @spectrum.lon = params[:lon]
+            end
+ 
+            @spectrum.reversed = true if params[:spectrum][:reversed] == "true"
+ 
+            if @spectrum.save!
+              flash[:notice] = 'Spectrum was successfully created.'
+              format.html {
+                redirect_to spectrum_path(@spectrum) + calibration_param
+              }
+              format.xml  { render :xml => @spectrum, :status => :created, :location => @spectrum }
+            else
+              render "spectrums/new"
+            end
+ 
+          else
+ 
+            format.html { render :action => "new" }
+            format.xml  { render :xml => @spectrum.errors, :status => :unprocessable_entity }
+ 
           end
  
-          if params[:upload]
-            @spectrum.tag("upload",current_user.id) 
-          end
-
-          @spectrum.tag(params[:device],current_user.id) if params[:device] && params[:device] != "none"
-          @spectrum.tag("video_row:#{params[:video_row]}", current_user.id) if params[:video_row]
-          #@spectrum.tag("sample_row:#{params[:video_row]}", current_user.id) if params[:video_row]
-
-          @spectrum.extract_data unless params[:spectrum][:data]
-
-          if params[:spectrum][:calibration_id] && !params[:is_calibration] && params[:spectrum][:calibration_id] != "calibration" && params[:spectrum][:calibration_id] != "undefined"
-            #@spectrum.clone_calibration(params[:spectrum][:calibration_id])
-            # instead, append params[:spectrum][:calibration_id] to "#addTag=calibrate:#{params[:spectrum][:calibration_id].to_i}"
-            calibration_param = "#addTag=calibrate:#{params[:spectrum][:calibration_id].to_i}"
-          else
-            calibration_param = ''
-          end
-
-          if params[:geotag]
-            @spectrum.lat = params[:lat]
-            @spectrum.lon = params[:lon]
-          end
-
-          @spectrum.reversed = true if params[:spectrum][:reversed] == "true"
-
-          if @spectrum.save!
-            flash[:notice] = 'Spectrum was successfully created.'
-            format.html {
-              redirect_to spectrum_path(@spectrum) + calibration_param
-            }
-            format.xml  { render :xml => @spectrum, :status => :created, :location => @spectrum }
-          else
-            render "spectrums/new"
-          end
-
-        else
-
-          format.html { render :action => "new" }
-          format.xml  { render :xml => @spectrum.errors, :status => :unprocessable_entity }
-
         end
-
+ 
+      else
+        render "spectrums/new"
       end
 
     else
-      render "spectrums/new"
+      respond_to do |format|
+        if request.xhr?
+          format.json  { 
+            render :text => 'Token required for unauthenticated API usage.'
+          }
+        else
+          format.html { 
+            flash[:error] = "You must be logged in to upload data."
+            redirect_to "/"
+          }
+        end
+      end
     end
   end
 

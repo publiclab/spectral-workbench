@@ -55,12 +55,14 @@
 
       <!--<div class="alert">Learn more about the new <a href="https://publiclab.org/notes/warren/02-10-2016/announcing-spectral-workbench-2">Spectral Workbench 2</a>.</div>-->
 
-      <div class="hidden-phone">
-        <h3>Recent community research <small>| <a href="https://publiclab.org/tag/spectrometer">More</a> | <a href="http://publiclab.org/post">Share your own work &raquo;</a></small></h3>
-
-        <%= render :partial => 'users/research_notes' %>
-
-      </div>
+      <% if Rails.env == "production" %>
+        <div class="hidden-phone">
+          <h3>Recent community research <small>| <a href="https://publiclab.org/tag/spectrometer">More</a> | <a href="http://publiclab.org/post">Share your own work &raquo;</a></small></h3>
+ 
+          <%= render :partial => 'users/research_notes' %>
+ 
+        </div>
+      <% end %>
 
       <ul class="nav nav-tabs">
         <li class="active"><a data-toggle="tab" href="#spectra"><i class="fa fa-signal"></i><span class="hidden-phone"> Spectra</span></a></li>

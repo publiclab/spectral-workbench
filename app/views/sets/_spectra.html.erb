@@ -1,15 +1,19 @@
 <% @set.spectrums.each do |spectrum| %>
 <div id="spectrum_<%= spectrum.id %>">
-<a href="<%= spectrum_path(spectrum.id) %>"><img style="height:50px;width:100%" class="img" src="<%= spectrum.photo.url(:thumb) %>" /></a>
-<p>
-  <b><a href="<%= spectrum_path(spectrum.id) %>"><%= spectrum.title %></a></b>
-  <br />
-  by <a href="<%= profile_path(spectrum.author) %>"><%= spectrum.author %></a>, <%= spectrum.created_at.to_s(:short) %>
-</p>
-<% if logged_in? && current_user.login == @set.author %>
-  <div class="btn-group pull-right" style="margin:10px 0;">
-    <%= link_to '<i class="fa fa-trash"></i> Remove from set'.html_safe, "/sets/remove/"+@set.id.to_s+"?s="+spectrum.id.to_s, :confirm => 'Are you sure?', :class => "btn btn-small" %>
-  </div>
-<% end %>
+  <% if spectrum.photo_file_name %>
+    <a href="<%= spectrum_path(spectrum.id) %>">
+      <img style="height:50px;width:100%" class="img" src="<%= spectrum.photo.url(:thumb) %>" />
+    </a>
+  <% end %>
+  <p>
+    <b><a href="<%= spectrum_path(spectrum.id) %>"><%= spectrum.title %></a></b>
+    <br />
+    by <a href="<%= profile_path(spectrum.author) %>"><%= spectrum.author %></a>, <%= spectrum.created_at.to_s(:short) %>
+  </p>
+  <% if logged_in? && current_user.login == @set.author %>
+    <div class="btn-group pull-right" style="margin:10px 0;">
+      <%= link_to '<i class="fa fa-trash"></i> Remove from set'.html_safe, "/sets/remove/"+@set.id.to_s+"?s="+spectrum.id.to_s, :confirm => 'Are you sure?', :class => "btn btn-small" %>
+    </div>
+  <% end %>
 </div>
 <% end %>
