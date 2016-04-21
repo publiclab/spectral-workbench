@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20151202002150) do
+ActiveRecord::Schema.define(:version => 20160421084510) do
 
   create_table "comments", :force => true do |t|
     t.string   "author"
@@ -673,6 +673,8 @@ ActiveRecord::Schema.define(:version => 20151202002150) do
     t.datetime "created_at",  :null => false
     t.datetime "updated_at",  :null => false
   end
+
+  add_index "snapshots", ["tag_id"], :name => "index_snapshots_on_tag_id"
 
   create_table "spectra_sets", :force => true do |t|
     t.string   "title",      :default => "", :null => false
