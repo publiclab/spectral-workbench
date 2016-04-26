@@ -54,6 +54,7 @@
 }
 
 div.swb-spectrum-img-container {
+  overflow: hidden;
 }
 
 div.swb-spectrum-img-container .alert-zooming {
