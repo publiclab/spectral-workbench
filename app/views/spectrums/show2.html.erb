@@ -24,6 +24,7 @@
         // the following will be deprecated for snapshot/tag-based metadata
         calibrated: <%= @spectrum.calibrated %>,
         range: <%= @spectrum.has_powertag('range') ? @spectrum.range : false %>,
+        <% if @spectrum.photo_file_name %>image_url: "<%= @spectrum.photo.url(:original) %>",<% end %>
         sample_row: <%= @spectrum.sample_row %>
       }, function() {
 
