@@ -2,7 +2,7 @@
   "name": "Spectral Workbench",
   "version": "2.1.1",
   "dependencies": {
-    "spectral-workbench": "~0.0.9",
+    "spectral-workbench": "~0.0.10",
     "d3": "~3.3.13",
     "nvd3": "~1.7.1",
     "fontawesome": "~4.5.0",

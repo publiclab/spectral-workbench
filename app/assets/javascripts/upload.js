@@ -73,16 +73,8 @@ var $W = {};
  
       } else if ($('#spectrum_upload_type').val() == "csv") {
  
-        // convert CSV to JSON:
-        var csv = $('.spectrum-csv').val();
- 
-        var points = csv.split('\n')
-
-        points.forEach(function(point, i) { 
-          points[i] = [ point.split(',')[0], point.split(',')[1] ];
-        });
- 
-        var spectrum = new SpectralWorkbench.Spectrum(points);
+        // SWB.js will convert CSV to JSON:
+        var spectrum = new SpectralWorkbench.Spectrum($('.spectrum-csv').val());
  
         $('.spectrum-json').val(JSON.stringify(spectrum.encodeJSON()));
  
