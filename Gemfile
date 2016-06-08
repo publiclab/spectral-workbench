@@ -13,8 +13,7 @@ group :sqlite do
 end
 
 group :mysql do
-  gem 'mysql2'
-  gem 'activerecord-mysql-adapter'
+  gem 'mysql2', '~> 0.3.10'
 end
 
 # Gems used only for assets and not required
