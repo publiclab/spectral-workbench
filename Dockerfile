@@ -23,8 +23,11 @@ ADD Gemfile.lock /tmp/Gemfile.lock
 # Add the Rails app
 WORKDIR /app
 ADD . /app
+ENV GIT_DIR=/app
 RUN bower install --allow-root
+COPY config/database.yml.example config/database.yml
+COPY config/config.yml.example config/config.yml
 
 RUN bundle exec rake db:setup
 RUN bundle exec rake db:seed
-RUN bundle exec rake assets:precompile # NEEDS DB?
+RUN bundle exec rake db:migrate

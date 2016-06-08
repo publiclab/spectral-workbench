@@ -148,7 +148,7 @@ DEPENDENCIES
   rack-offline (>= 0.6.4)
   rails (~> 3.2)
   rdiscount (= 1.6.8)
-  recaptcha
+  recaptcha (= 3.0.0)
   redcarpet (= 2.1.1)
   rmagick
   ruby-openid
