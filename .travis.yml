@@ -1,0 +1,14 @@
+sudo: required
+
+services:
+  - docker
+
+install:
+  - cp config/database.yml.example config/database.yml
+  - cp config/config.yml.example config/config.yml
+  - docker-compose build
+  - docker-compose run web bundle exec bower install --allow-root
+  - docker-compose run web bundle exec rake assets:precompile --trace
+
+script:
+  - docker-compose run web bundle exec rake jasmine:ci
