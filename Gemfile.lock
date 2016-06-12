@@ -102,7 +102,7 @@ GEM
       rake (>= 0.8.7)
       rdoc (~> 3.4)
       thor (>= 0.14.6, < 2.0)
-    rake (11.1.2)
+    rake (11.2.2)
     rdiscount (1.6.8)
     rdoc (3.12.2)
       json (~> 1.4)
@@ -127,7 +127,7 @@ GEM
     tzinfo (0.3.49)
     uglifier (3.0.0)
       execjs (>= 0.3.0, < 3)
-    will_paginate (3.1.0)
+    will_paginate (3.0.7)
     will_paginate-bootstrap (0.2.5)
       will_paginate (>= 3.0.3)
 
@@ -154,5 +154,5 @@ DEPENDENCIES
   ruby-openid
   sqlite3
   uglifier (>= 1.0.3)
-  will_paginate
+  will_paginate (= 3.0.7)
   will_paginate-bootstrap (= 0.2.5)
