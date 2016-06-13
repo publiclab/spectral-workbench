@@ -104,7 +104,7 @@
               </div>
             
               <div class="span8">
-                <h3>Description &nbsp; <small><a href="/set/edit/<%= @set.id %>"><i class="fa fa-pencil"></i></a></small></h3>
+                <h3>Description &nbsp; <small><a href="/sets/edit/<%= @set.id %>"><i class="fa fa-pencil"></i></a></small></h3>
                 <p>
                   <% if @set.notes %>
                     <%=raw RDiscount.new(@set.notes).to_html %>
