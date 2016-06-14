@@ -100,8 +100,21 @@ describe("Set", function() {
   it("should highlight table row when hovering over graph line ", function() {
 */
 
+    // Manual event triggering uses selection.dispatch in d3 4.0: 
+    // https://github.com/d3/d3-selection#selection_dispatch
+    // in the meantime, we create a one-off trigger():
+    // https://github.com/d3/d3/issues/100
+    d3.selection.prototype.trigger = function( event ) {
+      var e = document.createEvent('Event');
+      e.initEvent( event, true, true);
+      this.each( function( d ) {
+        this.dispatchEvent( e );    
+      });    
+      return this;
+    }
+
     // this syntax is to trigger an SVG mouseover using D3:
-    d3.select('g.nv-scatterWrap g#spectrum-hover-1')[0][0].dispatchEvent(new MouseEvent('mouseover'));
+    d3.select('g.nv-scatterWrap g#spectrum-hover-1').trigger('mouseover');
 
     expect($('tr.spectrum-1').hasClass('highlight')).toBe(true);
     expect($('tr.spectrum-2').hasClass('highlight')).toBe(false);
