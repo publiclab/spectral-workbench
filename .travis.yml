@@ -9,6 +9,7 @@ install:
   - docker-compose build
   - docker-compose run web bundle exec bower install --allow-root
   - docker-compose run web bundle exec rake assets:precompile --trace
+  - docker-compose run web bundle exec rake db:setup
 
 script:
   - docker-compose run web bundle exec rake test_all
