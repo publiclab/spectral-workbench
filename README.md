@@ -1,7 +1,9 @@
 #Spectral Workbench
 
-Copyright 2011-2015 Public Lab
+Copyright 2011-2016 Public Lab
 publiclab.org | spectralworkbench.org
+
+![tests](https://travis-ci.org/publiclab/spectral-workbench.svg)
 
 Spectral Workbench is an open-source tool to perform low-cost spectral analysis and to share those results online. It consists of a Ruby on Rails web application for publishing, archiving, discussing, and analyzing spectra online -- running at http://spectralworkbench.org
 
