@@ -153,6 +153,7 @@ DEPENDENCIES
   rmagick
   ruby-openid
   sqlite3
+  tzinfo (= 0.3.49)
   uglifier (>= 1.0.3)
   will_paginate (= 3.0.7)
   will_paginate-bootstrap (= 0.2.5)
