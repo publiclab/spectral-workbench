@@ -199,12 +199,14 @@ class SpectrumsController < ApplicationController
 
   # POST /spectrums
   # POST /spectrums.xml
+  # POST /spectrums.json
   # ?spectrum[title]=TITLE&spectrum[author]=anonymous&startWavelength=STARTW&endWavelength=ENDW;
   # replacing this with capture/save soon
   def create
     if logged_in? || params[:token] && User.find_by_token(params[:token])
 
       user = current_user || User.find_by_token(params[:token])
+      params[:spectrum][:json] = params[:spectrum][:data] if (params[:spectrum] && params[:spectrum][:data])
 
       @spectrum = Spectrum.new({
         :title => params[:spectrum][:title],
@@ -215,8 +217,10 @@ class SpectrumsController < ApplicationController
  
       if params[:dataurl] # mediastream webclient
         @spectrum.image_from_dataurl(params[:dataurl])
-      elsif params[:spectrum][:data_type] == "csv" || params[:spectrum][:data_type] == "json" # upload json; CSV is converted to JSON before upload in upload.js
-        @spectrum.data = '{ "lines": ' + params[:spectrum][:json] + " }"
+      # upload json; CSV is converted to JSON before upload in upload.js
+      elsif params[:spectrum][:data_type] == "csv" || params[:spectrum][:data_type] == "json" || params[:format] == 'json'
+        lines = params[:spectrum][:json]
+        @spectrum.data = '{ "lines": ' + lines.to_s + " }"
       elsif params[:spectrum][:data_type] == "image" # upload form at /upload
         @spectrum.photo = params[:spectrum][:photo]
       end
@@ -225,7 +229,7 @@ class SpectrumsController < ApplicationController
  
         respond_with(@spectrum) do |format|
  
-          if (APP_CONFIG["local"] || logged_in?)
+          if (APP_CONFIG["local"] || logged_in? || User.find_by_token(params[:token]))
  
             if mobile? || ios?
               @spectrum.save
@@ -274,25 +278,31 @@ class SpectrumsController < ApplicationController
  
             if @spectrum.save!
               flash[:notice] = 'Spectrum was successfully created.'
-              format.html {
-                redirect_to spectrum_path(@spectrum) + calibration_param
-              }
-              format.xml  { render :xml => @spectrum, :status => :created, :location => @spectrum }
+              format.html  { redirect_to spectrum_path(@spectrum) + calibration_param }
+              format.xml   { render :xml => @spectrum, :status => :created, :location => @spectrum }
+              format.json  { render :text => spectrum_path(@spectrum), :status => :created, :location => @spectrum }
             else
               render "spectrums/new"
             end
  
           else
  
-            format.html { render :action => "new" }
-            format.xml  { render :xml => @spectrum.errors, :status => :unprocessable_entity }
+            format.html  { render :action => "new" }
+            format.xml   { render :xml => @spectrum.errors, :status => :unprocessable_entity }
+            format.json  { render :json => @spectrum.errors, :status => :unprocessable_entity }
  
           end
  
         end
  
       else
-        render "spectrums/new"
+
+        respond_to do |format|
+          format.html  { render :action => "new" }
+          format.xml   { render :xml => @spectrum.errors, :status => :unprocessable_entity }
+          format.json  { render :json => @spectrum.errors, :status => :unprocessable_entity }
+        end
+
       end
 
     else

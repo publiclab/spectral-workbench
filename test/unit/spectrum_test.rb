@@ -12,13 +12,55 @@ class SpectrumTest < ActiveSupport::TestCase
     })
     s.image_from_dataurl("data:image/gif;base64,R0lGODdhMAAwAPAAAAAAAP///ywAAAAAMAAwAAAC8IyPqcvt3wCcDkiLc7C0qwyGHhSWpjQu5yqmCYsapyuvUUlvONmOZtfzgFzByTB10QgxOR0TqBQejhRNzOfkVJ+5YiUqrXF5Y5lKh/DeuNcP5yLWGsEbtLiOSpa/TPg7JpJHxyendzWTBfX0cxOnKPjgBzi4diinWGdkF8kjdfnycQZXZeYGejmJlZeGl9i2icVqaNVailT6F5iJ90m6mvuTS4OK05M0vDk0Q4XUtwvKOzrcd3iq9uisF81M1OIcR7lEewwcLp7tuNNkM3uNna3F2JQFo97Vriy/Xl4/f1cf5VWzXyym7PHhhx4dbgYKAAA7")
     assert !s.has_operations
-    assert s.save!
+    assert s.save
+  end
+
+  test "spectrum creation using just a JSON string" do 
+    s = Spectrum.new({
+      title:     "A new spectrum",
+      author:    "warren",
+      notes:     "This was nice, wasn't it.",
+      user_id:   1,
+      "data" => "{\"lines\":[{\"average\":64.3333,\"r\":69,\"g\":46,\"b\":78,\"wavelength\":269.089},{\"average\":63.3333,\"r\":71,\"g\":45,\"b\":74,\"wavelength\":277.718},{\"average\":64,\"r\":71,\"g\":47,\"b\":74,\"wavelength\":291.524},{\"average\":64,\"r\":68,\"g\":49,\"b\":75,\"wavelength\":303.604}]}"
+    })
+    assert s.valid?
+  end
+
+  test "spectrum creation using just JSON, improperly formatted (nonstring)" do 
+    s = Spectrum.new({
+      title:     "A new spectrum",
+      author:    "warren",
+      notes:     "This was nice, wasn't it.",
+      user_id:   1,
+      data: {
+        lines: [
+          { average: 64.3, r: 69, g: 46, b: 78, wavelength: 269.089 },
+          { average: 63.3, r: 71, g: 45, b: 74, wavelength: 277.718 },
+          { average: 64,   r: 71, g: 47, b: 74, wavelength: 291.524 },
+          { average: 64,   r: 68, g: 49, b: 75, wavelength: 303.604 }
+        ]
+      }
+    })
+    assert !s.valid?
+  end
+
+  test "spectrum creation using just JSON, improperly formatted as a string" do 
+    s = Spectrum.new({
+      title:     "A new spectrum",
+      author:    "warren",
+      notes:     "This was nice, wasn't it.",
+      user_id:   1,
+      data:      {
+        lines: "[{\"average\":0,\"r\":0,\"g\":0,\"b\":0,\"pixel\":0},{\"average\":2.55,\"r\":2.55,\"g\":2.55,\"b\":2.55,\"pixel\":1},{\"average\":0,\"r\":0,\"g\":0,\"b\":0,\"pixel\":2}]"
+      }
+    })
+    assert !s.valid?
   end
 
   test "spectrum title length short enough" do
     s = Spectrum.last
     s.title = "A short title"
-    assert s.save!
+    assert s.save
   end
 
   test "spectrum title length too long" do
@@ -30,13 +72,13 @@ class SpectrumTest < ActiveSupport::TestCase
   test "spectrum title with single quotations" do
     s = Spectrum.last
     s.title = "A 'title' with single quotes"
-    assert s.save!
+    assert s.save
   end
 
   test "spectrum title with double quotations" do
     s = Spectrum.last
     s.title = 'A "title" with double quotes'
-    assert s.save!
+    assert s.save
   end
 
   test "spectrum author with single quotations" do
@@ -77,7 +119,7 @@ class SpectrumTest < ActiveSupport::TestCase
       name:        "smooth:2"
     })
 
-    assert tag.save!
+    assert tag.save
     assert spectrums(:one).has_operations
 
     data = '{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}'

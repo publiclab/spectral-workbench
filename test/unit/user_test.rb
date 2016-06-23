@@ -25,7 +25,7 @@ class UserTest < ActiveSupport::TestCase
 
     assert u.calibrations.count > 0
     assert_not_nil u.last_calibration
-    assert_not_nil u.last_calibration
+    assert_not_nil u.token
   end
 
   test "user token" do

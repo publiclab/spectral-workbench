@@ -4,7 +4,7 @@ require 'rmagick'
 class Spectrum < ActiveRecord::Base
   include ActionView::Helpers::DateHelper
 
-  attr_accessible :title, :author, :user_id, :notes, :photo, :video_row
+  attr_accessible :title, :author, :user_id, :notes, :photo, :video_row, :data
 
   # place this before the has_one :snapshot so it runs before dependent => :destroy
   before_destroy :is_deletable?
