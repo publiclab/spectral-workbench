@@ -1,6 +1,5 @@
 GEM
   remote: https://rubygems.org/
-  remote: https://rails-assets.org/
   specs:
     actionmailer (3.2.22.2)
       actionpack (= 3.2.22.2)
@@ -59,7 +58,7 @@ GEM
       cocaine (~> 0.5.5)
       mime-types
       mimemagic (= 0.3.0)
-    passenger (5.0.28)
+    passenger (5.0.29)
       rack
       rake (>= 0.8.1)
     polyglot (0.3.5)

@@ -32,11 +32,30 @@ var $W = {};
 
   }
 
+  var error = function() {
+
+    if (confirm('There was an error with geocoding; upload proceeding without ')) {
+
+      $('#upload').submit()
+
+    } else {
+
+      $('#uploadBtn').button('default').html('Upload');
+      $('#uploadUncalibrated').button('default').html('Upload &amp; calibrate later');
+      $('#geotagInput').prop('checked',false);
+
+    }
+
+  }
+
   var geotag_or_submit = function() {
 
     if (navigator.geolocation && $('#geotagInput').is(':checked')) {
 
-      navigator.geolocation.getCurrentPosition(setGeolocation);
+      navigator.geolocation.getCurrentPosition(
+        setGeolocation,
+        error
+      );
 
     } else {
 

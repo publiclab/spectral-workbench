@@ -1,4 +1,4 @@
-#Spectral Workbench
+# Spectral Workbench
 
 Copyright 2011-2016 Public Lab
 publiclab.org | spectralworkbench.org
@@ -9,25 +9,10 @@ Spectral Workbench is an open-source tool to perform low-cost spectral analysis 
 
 Read about how to build and use your own spectrometer with this software here: http://publiclab.org/wiki/spectrometer
 
-##License
 
-Spectral Workbench is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+****
 
-Spectral Workbench is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Spectral Workbench.  If not, see <http://www.gnu.org/licenses/>.
-
-
-====
-
-##Simple installation with Cloud9
+## Simple installation with Cloud9
 
 1. If you have a GitHub account, visit https://c9.io and log in with the GitHub button.
 2. Fork this repository to your own GitHub account, creating a `yourname/spectral-workbench` project.
@@ -36,14 +21,15 @@ along with Spectral Workbench.  If not, see <http://www.gnu.org/licenses/>.
 5. Enter your username when prompted, and click "Run Project" when it's done.
 6. You're done! Go to the URL shown!
 
-====
 
+****
 
-##Installation
+## Installation
 
 The app now runs on Ruby 1.9.3 up to Ruby 2.1.2 (preferred), and Rails 3.2.x, and uses Bundler for gem management and Bower for static asset management.  
 
-###Prerequisites:
+
+### Prerequisites:
 
 Recommended; for an Ubuntu/Debian system. Varies slightly for mac/fedora/etc
 
@@ -83,7 +69,7 @@ Once NPM is installed, you should be able to run:
 `sudo npm install -g bower`
 
 
-###Installation steps:
+### Installation steps:
 
 1. Download a copy of the source with `git clone https://github.com/publiclab/spectral-workbench.git` 
 2. Install gems with `bundle install` from the rails root folder. You may need to run `bundle update` if you have older gems in your environment.
@@ -98,7 +84,8 @@ Sign in instructions:
 *  Then you will be redirected to publiclab.org to "approve" a use of the openid identity.
 *  Note that this applies for development environment as well. 
 
-##Bugs and support
+
+## Bugs and support
 
 To report bugs and request features, please use the GitHub issue tracker provided at http://github.com/publiclab/spectral-workbench/issues 
 
@@ -106,16 +93,62 @@ For additional support, join the Public Laboratory website and mailing list at h
 
 For questions related to the use of this software and your open source spectrometer, the same page links to the "plots-spectrometry" group. 
 
-##Developers
+
+## API
+
+Using your secret API token on your SpectralWorkbench.org profile, you can submit spectral via the API in JSON format:
+
+POST to "https://spectralworkbench.org/spectrums.json"
+
+The required parameters are: 
+
+```json
+{"spectrum": {
+  "title": "Test spectrum",
+  "data_type": "json",
+  "data": [
+    {"average": 64.3, "r": 69, "g": 46, "b": 78, "wavelength": 269.089 },
+    {"average": 63.3, "r": 71, "g": 45, "b": 74, "wavelength": 277.718 },
+    {"average": 64,   "r": 71, "g": 47, "b": 74, "wavelength": 291.524 },
+    {"average": 64,   "r": 68, "g": 49, "b": 75, "wavelength": 303.604 }
+  ]},
+  "token": "00000000"
+}
+```
+
+This will return a path (from the root URL by default) to the spectrum, as in: `/spectrums/12345`
+
+
+
+## Developers
 
 Development is occurring at https://github.com/publiclab/spectral-workbench/; please fork and submit pull requests; for more guidelines on contributing to Public Lab projects, see http://publiclab.org/wiki/contributing-to-public-lab-software
 
 If you're a developer, consider joining the Public Lab developer list, also at http://publiclab.org/wiki/developers
 
-###Testing
+
+### Testing
 
 Before submitting changes, please run tests with `rake test` to ensure that your code passes.
 
 Also run `rake jasmine` and navigate to http://localhost:8888 to check client-side tests.
 
 New tests are also appreciated to increase coverage; Rails tests are in /test and Jasmine tests (JavaScript tests) are in /spec.
+
+
+****
+
+## License
+
+Spectral Workbench is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Spectral Workbench is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Spectral Workbench.  If not, see <http://www.gnu.org/licenses/>.

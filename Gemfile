@@ -1,11 +1,8 @@
 source 'https://rubygems.org'
-source 'https://rails-assets.org'
+#source 'https://rails-assets.org'
 
 ruby '2.1.2'
 gem 'rails', '~>3.2'
-
-# Bundle edge Rails instead:
-# gem 'rails', :git => 'git://github.com/rails/rails.git'
 
 # Database handling
 group :sqlite do
@@ -19,9 +16,6 @@ end
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
-  #gem 'sass-rails',   '~> 3.2.3'
-  #gem 'coffee-rails', '~> 3.2.1'
-
   # See https://github.com/sstephenson/execjs#readme for more supported runtimes
   # gem 'therubyracer', :platforms => :ruby
 
@@ -48,11 +42,6 @@ gem 'open_id_authentication'
 
 gem 'rack-offline', '>=0.6.4'
 
-group :development, :test do
-  #gem 'rspec-rails'
-  #gem 'factory_girl_rails'
-end
-
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
 
@@ -64,5 +53,3 @@ end
 
 # Deploy with Capistrano
 # gem 'capistrano'
-
-#gem "mocha", :group => :test
