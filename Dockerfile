@@ -17,8 +17,8 @@ RUN npm install -g bower
 # Install bundle of gems
 WORKDIR /tmp
 ADD Gemfile /tmp/Gemfile
-RUN bundle install 
 ADD Gemfile.lock /tmp/Gemfile.lock
+RUN bundle install 
 
 # Add the Rails app
 WORKDIR /app
