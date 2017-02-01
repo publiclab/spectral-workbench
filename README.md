@@ -7,6 +7,8 @@ publiclab.org | spectralworkbench.org
 
 Spectral Workbench is an open-source tool to perform low-cost spectral analysis and to share those results online. It consists of a Ruby on Rails web application for publishing, archiving, discussing, and analyzing spectra online -- running at http://spectralworkbench.org
 
+The core library for analyzing and manipulating spectral data has been spun out into its own self-contained JavaScript module, at https://github.com/publiclab/spectral-workbench.js, which is then included into this application. To use Spectral Workbench on the commandline, try that out!
+
 Read about how to build and use your own spectrometer with this software here: http://publiclab.org/wiki/spectrometer
 
 
