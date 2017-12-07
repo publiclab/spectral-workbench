@@ -13,7 +13,7 @@ class Comment < ActiveRecord::Base
   end
 
   def spectrum
-    Spectrum.find self.spectrum_id
+    Spectrum.where(id: self.spectrum_id).first
   end
 
   def has_set?
