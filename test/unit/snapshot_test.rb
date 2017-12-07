@@ -382,4 +382,25 @@ class SnapshotTest < ActiveSupport::TestCase
 
   end
 
+
+  test "creating a really huge snapshot" do
+
+    snapshot = Snapshot.new({
+                 spectrum_id: Spectrum.last.id,
+                 user_id:     User.first.id,
+                 tag_id:      Tag.first.id
+               })
+
+    snapshot.data = '{"lines":['
+    3200.times do
+      snapshot.data += '{"r":10,"g":10,"b":10,"average":10,"wavelength":400}'
+    end
+    snapshot.data = ']}'
+
+    snapshot.save!
+
+    assert         snapshot.spectrum.latest_json_data
+
+  end
+
 end
