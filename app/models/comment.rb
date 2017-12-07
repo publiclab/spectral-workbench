@@ -13,7 +13,7 @@ class Comment < ActiveRecord::Base
   end
 
   def spectrum
-    Spectrum.find self.spectrum_id
+    Spectrum.where(id: self.spectrum_id).first
   end
 
   def has_set?
@@ -21,7 +21,7 @@ class Comment < ActiveRecord::Base
   end
 
   def has_spectrum?
-    self.spectrum_id != 0 && !self.spectrum_id.nil?
+    self.spectrum_id != 0 && !self.spectrum_id.nil? && Spectrum.where(id: self.spectrum_id).count != 0
   end
 
   def has_user?
