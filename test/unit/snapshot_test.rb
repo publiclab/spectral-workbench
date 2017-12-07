@@ -395,7 +395,7 @@ class SnapshotTest < ActiveSupport::TestCase
     2.times do
       snapshot.data += '{"r":10,"g":10,"b":10,"average":10,"wavelength":400},'
     end
-    snapshot.data = '{"r":10,"g":10,"b":10,"average":10,"wavelength":400}]}'
+    snapshot.data += '{"r":10,"g":10,"b":10,"average":10,"wavelength":400}]}'
 
     puts snapshot.data = ']}'
 
