@@ -393,9 +393,9 @@ class SnapshotTest < ActiveSupport::TestCase
 
     snapshot.data = '{"lines":['
     3200.times do
-      snapshot.data += '{"r":10,"g":10,"b":10,"average":10,"wavelength":400}'
+      snapshot.data += '{"r":10,"g":10,"b":10,"average":10,"wavelength":400},'
     end
-    snapshot.data = ']}'
+    snapshot.data = '{"r":10,"g":10,"b":10,"average":10,"wavelength":400}]}'
 
     snapshot.save!
 
