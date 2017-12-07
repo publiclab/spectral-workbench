@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20160421084510) do
+ActiveRecord::Schema.define(:version => 20171207204101) do
 
   create_table "comments", :force => true do |t|
     t.string   "author"
@@ -669,9 +669,9 @@ ActiveRecord::Schema.define(:version => 20160421084510) do
     t.integer  "spectrum_id"
     t.integer  "tag_id"
     t.text     "description"
-    t.text     "data"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
+    t.text     "data",        :limit => 4294967295
+    t.datetime "created_at",                        :null => false
+    t.datetime "updated_at",                        :null => false
   end
 
   add_index "snapshots", ["tag_id"], :name => "index_snapshots_on_tag_id"
