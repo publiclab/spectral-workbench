@@ -22,7 +22,10 @@ group :assets do
   gem 'uglifier', '>= 1.0.3'
 end
 
-gem 'rmagick'#, :require => "RMagick"
+group :production do
+  gem 'rmagick'#, :require => "RMagick"
+end
+
 gem 'mime-types'#, '1.18'
 gem 'jquery-rails'
 gem 'passenger'
@@ -33,7 +36,7 @@ gem 'redcarpet', '2.1.1'
 gem 'rdiscount', '1.6.8'
 gem 'will_paginate', '3.0.7'
 gem 'will_paginate-bootstrap', '0.2.5'
-gem 'paperclip', '>= 4.1.1'
+gem 'paperclip', '~> 4.2.2'
 
 gem 'tzinfo', '0.3.49'
 
