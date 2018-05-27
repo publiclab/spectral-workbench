@@ -1,0 +1,20 @@
+version: "2"
+services:
+  db:
+    image: mariadb:10.2
+    ports:
+      - "127.0.0.1:3307:3306"
+    restart: unless-stopped
+    environment:
+      - MYSQL_DATABASE=spectralworkbench_production
+      - MYSQL_USER=spectralwb
+      - MYSQL_PASSWORD=spectralwb
+      - MYSQL_RANDOM_ROOT_PASSWORD=true
+    volumes:
+      # - ./config/my.cnf:/etc/mysql/my.cnf
+      # for configuration 
+      - ../mysql:/var/lib/mysql
+      # for persistence
+      - ../dump:/docker-entrypoint-initdb.d
+      # for importing a dump
+      # if you want to re-import simply put away ../mysql/*
