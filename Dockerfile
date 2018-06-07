@@ -2,9 +2,9 @@
 # https://github.com/publiclab/spectral-workbench
 
 FROM ruby:2.1.2
-MAINTAINER Sebastian Silva "sebastian@fuentelibre.org"
 
-LABEL "This image deploys Spectral Worbench!"
+LABEL maintainer="Sebastian Silva <sebastian@fuentelibre.org>"
+LABEL description="This image deploys Spectral Worbench!"
 
 # Set correct environment variables.
 RUN mkdir -p /app
