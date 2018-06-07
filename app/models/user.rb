@@ -90,7 +90,7 @@ class User < ActiveRecord::Base
       .where('tags.name = (?) OR tags.name LIKE (?)', "calibration", "linearCalibration:%")
       .order("spectrums.created_at DESC")
       .collect(&:id)
-    Spectrum.find ids
+    Spectrum.where(id: ids)
   end
 
   # find spectra by user, tagged with <name>
