@@ -84,12 +84,13 @@ class User < ActiveRecord::Base
   end
 
   def calibrations
-    # re-enable this optimization once we deprecate v1
-    #Spectrum.select("spectrums.id, spectrums.title, spectrums.created_at, spectrums.user_id, spectrums.author, spectrums.calibrated, spectrums.photo_file_name")
-    Spectrum.joins(:tags)
-            .where(user_id: self.id)
-            .where('tags.name = (?) OR tags.name LIKE (?)', "calibration", "linearCalibration:%")
-            .order("spectrums.created_at DESC")
+    ids = Spectrum.select("spectrums.id, spectrums.created_at, spectrums.user_id")
+      .joins(:tags)
+      .where(user_id: self.id)
+      .where('tags.name = (?) OR tags.name LIKE (?)', "calibration", "linearCalibration:%")
+      .order("spectrums.created_at DESC")
+      .collect(&:id)
+    Spectrum.find ids
   end
 
   # find spectra by user, tagged with <name>
