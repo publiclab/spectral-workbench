@@ -91,6 +91,7 @@ class User < ActiveRecord::Base
       .order("spectrums.created_at DESC")
       .collect(&:id)
     Spectrum.where(id: ids)
+      .joins(:tags)
   end
 
   # find spectra by user, tagged with <name>
