@@ -26,7 +26,7 @@ $.get('https://publiclab.org/feed/tag/spectrometer.rss', function (feed) {
 
     pubDate = moment(new Date(pubDate)).format("MMM Do");
 
-    itemEl.append('<a class="img"><img style="width:100%;" src="https://publiclab.org/notes/image/' + id + '?size=medium" /></a>')
+    itemEl.append('<a class="img"><img style="width:100%;" src="https://publiclab.org/i/' + id + '?size=medium" /></a>')
     itemEl.find('a.img').attr('href', link);
 
     itemEl.append('<h4 class="title"></h4>');
