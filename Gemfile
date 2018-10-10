@@ -43,6 +43,8 @@ gem 'open_id_authentication'
 
 gem 'rack-offline', '>=0.6.4'
 
+gem 'minitest-reporters', '~> 1.1.19'
+
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
 
