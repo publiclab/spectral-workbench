@@ -12,8 +12,6 @@
 
 <div class="row-fluid">
   <div class="span4">
-    <%= render :partial => 'search' %>
-    <hr />
     <h3>Related sets</h3>
     <%= render :partial => 'sets' %>
     <%= will_paginate @sets, :param_name => :set_page, renderer: BootstrapPagination::Rails %>
@@ -25,3 +23,4 @@
   </div>
 </div>
 </div>
+<script>document.onload = $('#searchbar').toggle()</script>
