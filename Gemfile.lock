@@ -97,6 +97,8 @@ GEM
     redcarpet (2.1.1)
     rmagick (2.15.4)
     ruby-openid (2.7.0)
+    skylight (1.7.2)
+      activesupport (>= 3.0.0)
     sprockets (2.2.3)
       hike (~> 1.2)
       multi_json (~> 1.0)
@@ -112,7 +114,7 @@ GEM
     uglifier (3.0.0)
       execjs (>= 0.3.0, < 3)
     will_paginate (3.0.7)
-    will_paginate-bootstrap (0.2.5)
+    will_paginate-bootstrap (1.0.1)
       will_paginate (>= 3.0.3)
 
 PLATFORMS
@@ -133,11 +135,12 @@ DEPENDENCIES
   redcarpet (= 2.1.1)
   rmagick
   ruby-openid
+  skylight
   sqlite3
   tzinfo (= 0.3.49)
   uglifier (>= 1.0.3)
   will_paginate (= 3.0.7)
-  will_paginate-bootstrap (= 0.2.5)
+  will_paginate-bootstrap (= 1.0.1)
 
 BUNDLED WITH
    1.11.2
