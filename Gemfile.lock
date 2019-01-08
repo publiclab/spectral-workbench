@@ -110,7 +110,7 @@ GEM
     treetop (1.4.15)
       polyglot
       polyglot (>= 0.3.1)
-    tzinfo (0.3.49)
+    tzinfo (0.3.55)
     uglifier (3.0.0)
       execjs (>= 0.3.0, < 3)
     will_paginate (3.0.7)
@@ -137,7 +137,7 @@ DEPENDENCIES
   ruby-openid
   skylight
   sqlite3
-  tzinfo (= 0.3.49)
+  tzinfo (= 0.3.55)
   uglifier (>= 1.0.3)
   will_paginate (= 3.0.7)
   will_paginate-bootstrap (= 0.2.5)
