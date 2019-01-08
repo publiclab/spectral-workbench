@@ -94,7 +94,7 @@ GEM
       json (~> 1.4)
     recaptcha (3.0.0)
       json
-    redcarpet (2.1.1)
+    redcarpet (3.4.0)
     rmagick (2.15.4)
     ruby-openid (2.7.0)
     skylight (1.7.2)
@@ -132,7 +132,7 @@ DEPENDENCIES
   rails (~> 3.2)
   rdiscount (= 1.6.8)
   recaptcha (= 3.0.0)
-  redcarpet (= 2.1.1)
+  redcarpet (= 3.4.0)
   rmagick
   ruby-openid
   skylight
