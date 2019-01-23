@@ -88,12 +88,8 @@ $W = {
       var video = $W.options.videoEl, vendorURL = window.URL || window.webkitURL;
       window.stream = stream
       window.video = video
-      //if (!!stream) {
-      //  video.src = null;
-      //  stream.stop();
-      //}
       if (navigator.mozGetUserMedia) video.mozSrcObject = stream;
-      else video.src = vendorURL ? vendorURL.createObjectURL(stream) : stream;
+      else video.srcObject = stream;
       video.onerror = function (e) {
         stream.stop();
       };
