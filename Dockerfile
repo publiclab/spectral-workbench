@@ -11,7 +11,8 @@ RUN mkdir -p /app
 ENV HOME /root
 
 # Install dependencies
-RUN apt-get update -qq && apt-get install -y imagemagick ruby-rmagick libmagickwand-dev libmagick++-dev bundler libmysqlclient-dev ruby-rmagick libfreeimage3 libfreeimage-dev ruby-dev gdal-bin python-gdal curl libcurl4-openssl-dev libssl-dev zip nodejs-legacy npm
+RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
+RUN apt-get update -qq && apt-get install -y imagemagick default-libmysqlclient-dev curl nodejs npm build-essential
 RUN npm install -g bower
 
 # Install bundle of gems
