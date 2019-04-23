@@ -7,6 +7,7 @@ gem 'rails', '~>3.2'
 # Database handling
 group :sqlite do
   gem 'sqlite3'
+  gem 'activerecord-sqlite3-adapter'
 end
 
 group :mysql do
