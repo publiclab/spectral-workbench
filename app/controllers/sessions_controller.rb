@@ -2,7 +2,7 @@ require 'uri'
 
 class SessionsController < ApplicationController
 
-  @@openid_url_base  = "localhost:3000/people/"
+  @@openid_url_base  = "https://publiclab.org/people/"
   @@openid_url_suffix = "/identity"
 
 
@@ -105,7 +105,6 @@ class SessionsController < ApplicationController
           begin
             @user.save!
           rescue ActiveRecord::RecordInvalid => invalid
-            flash[:error] = "oh nooooooooooooooo"
             puts invalid
             failed_login "User can not be associated to local account. Probably the account already exists with different case!"
             return
