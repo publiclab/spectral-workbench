@@ -1,5 +1,5 @@
 <p><i>
-  Use your <a href="http://publiclab.org" target="_blank">PublicLab.org</a> username to log in. 
+  Use your <a href="http://publiclab.org" target="_blank">PublicLab.org</a> username to log in.
   <br />
   If you do not yet have one, <a href="http://publiclab.org/signup">sign up there</a> first!
 </i></p>
@@ -11,8 +11,11 @@
 
   <input tabindex="1" placeholder="username" id="username" name="open_id" type="text" /></p>
   <input type="hidden" name="return_to" value="<%= params[:back_to] || request.env['PATH_INFO'] %>" />
-
   <button tabindex="2" class="btn btn-large btn-primary" type="submit">Log in</button>
+  <button tabindex="2" class="btn btn-large btn-primary" type="submit" name="subaction", value="google_oauth2">Google</button>
+  <button tabindex="2" class="btn btn-large btn-primary" type="submit" name="subaction", value="twitter">Twitter</button>
+  <button tabindex="2" class="btn btn-large btn-primary" type="submit" name="subaction", value="facebook">Facebook</button>
+  <button tabindex="2" class="btn btn-large btn-primary" type="submit" name="subaction", value="github">Github</button>
   &nbsp;
   <label class="checkbox inline" for="remember_me">
     <input tabIndex="3" id="remember_me" name="remember_me" type="checkbox" value="1" />
