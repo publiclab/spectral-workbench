@@ -2,7 +2,7 @@ require 'uri'
 
 class SessionsController < ApplicationController
 
-  @@openid_url_base  = "https://publiclab.org/people/"
+  @@openid_url_base  = "localhost:3000/people/"
   @@openid_url_suffix = "/identity"
 
 
@@ -14,13 +14,28 @@ class SessionsController < ApplicationController
     back_to = params[:back_to]
     open_id = params[:open_id]
     openid_url = URI.decode(open_id)
+    # here it is localhost:3000/people/admin/identity for admin
     #possibly user is providing the whole URL
     if openid_url.include? "publiclab"
       if openid_url.include? "http"
-        url = openid_url
+        # params[:subaction] contains the value of the provider
+        # provider implies ['github', 'google_oauth2', 'twitter', 'facebook']
+        if params[:subaction]
+          # provider based authentication
+          url = openid_url + "/" + params[:subaction]
+        else
+          # form based authentication
+          url = openid_url
+        end
       end
     else
-      url = @@openid_url_base + openid_url + @@openid_url_suffix
+      if params[:subaction]
+        # provider based authentication
+        url = @@openid_url_base + openid_url + @@openid_url_suffix + "/" + params[:subaction]
+      else
+        # form based authentication
+        url = @@openid_url_base + openid_url + @@openid_url_suffix
+      end
     end
     openid_authentication(url, back_to)
   end
@@ -66,6 +81,11 @@ class SessionsController < ApplicationController
   def openid_authentication(openid_url, back_to)
     #puts openid_url
     authenticate_with_open_id(openid_url, :required => [:nickname, :email]) do |result, identity_url, registration|
+      dummy_identity_url = identity_url
+      dummy_identity_url = dummy_identity_url.split('/')
+      if dummy_identity_url.include?('github') || dummy_identity_url.include?('google_oauth2') || dummy_identity_url.include?('facebook') || dummy_identity_url.include?('twitter')
+        identity_url = dummy_identity_url[0..-2].join('/')
+      end
       if result.successful?
         @user = User.find_by_identity_url(identity_url)
         if not @user
