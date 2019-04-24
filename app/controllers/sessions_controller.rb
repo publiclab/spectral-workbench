@@ -7,7 +7,11 @@ class SessionsController < ApplicationController
 
 
   def login
-    @referer = params[:back_to]
+    if logged_in?
+      redirect_to "/"
+    else
+      @referer = params[:back_to]
+    end
   end
 
   def new
@@ -15,7 +19,7 @@ class SessionsController < ApplicationController
     open_id = params[:open_id]
     openid_url = URI.decode(open_id)
     # here it is localhost:3000/people/admin/identity for admin
-    #possibly user is providing the whole URL
+    # possibly user is providing the whole URL
     if openid_url.include? "publiclab"
       if openid_url.include? "http"
         # params[:subaction] contains the value of the provider
@@ -80,27 +84,34 @@ class SessionsController < ApplicationController
 
   def openid_authentication(openid_url, back_to)
     #puts openid_url
-    authenticate_with_open_id(openid_url, :required => [:nickname, :email]) do |result, identity_url, registration|
+    authenticate_with_open_id(openid_url, :required => [:nickname, :email, :fullname]) do |result, identity_url, registration|
       dummy_identity_url = identity_url
       dummy_identity_url = dummy_identity_url.split('/')
       if dummy_identity_url.include?('github') || dummy_identity_url.include?('google_oauth2') || dummy_identity_url.include?('facebook') || dummy_identity_url.include?('twitter')
         identity_url = dummy_identity_url[0..-2].join('/')
       end
+
       if result.successful?
         @user = User.find_by_identity_url(identity_url)
+
         if not @user
           @user = User.new
           @user.login = registration['nickname']
           @user.email = registration['email']
           @user.identity_url = identity_url
+          hash = registration['fullname'].split(':')
+          @user.role =  hash[1].split('=')[1]
+
           begin
             @user.save!
           rescue ActiveRecord::RecordInvalid => invalid
+            flash[:error] = "oh nooooooooooooooo"
             puts invalid
             failed_login "User can not be associated to local account. Probably the account already exists with different case!"
             return
           end
         end
+
         nonce = params[:n]
         if nonce
           tmp = Sitetmp.find_by nonce: nonce
