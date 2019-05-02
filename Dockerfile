@@ -1,7 +1,7 @@
 # Dockerfile # Spectral Workbench 
 # https://github.com/publiclab/spectral-workbench
 
-FROM ruby:2.1.2
+FROM ruby:2.1-slim
 
 LABEL maintainer="Sebastian Silva <sebastian@fuentelibre.org>"
 LABEL description="This image deploys Spectral Worbench!"
@@ -11,6 +11,7 @@ RUN mkdir -p /app
 ENV HOME /root
 
 # Install dependencies
+RUN sed '/jessie-updates/d' /etc/apt/sources.list
 RUN apt-get update -qq && apt-get install -y imagemagick ruby-rmagick libmagickwand-dev libmagick++-dev bundler libmysqlclient-dev ruby-rmagick libfreeimage3 libfreeimage-dev ruby-dev gdal-bin python-gdal curl libcurl4-openssl-dev libssl-dev zip nodejs-legacy npm
 RUN npm install -g bower
 
