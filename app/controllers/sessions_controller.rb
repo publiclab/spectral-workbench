@@ -2,7 +2,7 @@ require 'uri'
 
 class SessionsController < ApplicationController
 
-  @@openid_url_base  = "https://publiclab.org/people/"
+  @@openid_url_base  = "localhost:3000/people/"
   @@openid_url_suffix = "/identity"
 
 
@@ -16,7 +16,8 @@ class SessionsController < ApplicationController
 
   def new
     back_to = params[:back_to]
-    open_id = params[:open_id]
+     # we pass a temp username; it'll be overwritten by the real one in PublicLab.org's response:
+    open_id = 'x'
     openid_url = URI.decode(open_id)
     # here it is localhost:3000/people/admin/identity for admin
     # possibly user is providing the whole URL
@@ -90,7 +91,8 @@ class SessionsController < ApplicationController
       if dummy_identity_url.include?('github') || dummy_identity_url.include?('google_oauth2') || dummy_identity_url.include?('facebook') || dummy_identity_url.include?('twitter')
         identity_url = dummy_identity_url[0..-2].join('/')
       end
-
+      # we splice back in the real username from PublicLab.org's response
+      identity_url = identity_url.split('/')[0..-2].join('/') + '/' + registration['nickname']
       if result.successful?
         @user = User.find_by_identity_url(identity_url)
 
