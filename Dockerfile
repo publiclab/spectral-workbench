@@ -11,7 +11,7 @@ RUN mkdir -p /app
 ENV HOME /root
 
 # Install dependencies
-RUN sed '/.*jessie-updates.*/d' /etc/apt/sources.list
+RUN sed -i '/.*jessie-updates.*/d' /etc/apt/sources.list
 RUN apt-get update -qq && apt-get install -y imagemagick ruby-rmagick libmagickwand-dev libmagick++-dev bundler libmysqlclient-dev ruby-rmagick libfreeimage3 libfreeimage-dev ruby-dev gdal-bin python-gdal curl libcurl4-openssl-dev libssl-dev zip nodejs-legacy npm
 RUN npm install -g bower
 
