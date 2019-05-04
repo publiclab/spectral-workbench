@@ -13,11 +13,10 @@
     <%= hidden_field_tag :back_to, (params[:back_to] || request.env['PATH_INFO']) -%>
     
     <div>
-      <input  style="width: 250px; height: 25px;" tabindex="1" placeholder="Username" id="username" name="open_id" type="text" /></p>
       <input type="hidden" name="return_to" value="<%= params[:back_to] || request.env['PATH_INFO'] %>" />
     </div>
     <div style="width: 35%; margin: 0 auto;">
-      <button tabindex="2" class="btn btn-large btn-primary" type="submit">Log in</button>
+      <button tabindex="2" type="submit" style="background-color: #EDEDEE"> <img src="https://user-images.githubusercontent.com/20972099/57176435-b34e6880-6e75-11e9-8f1b-cf083967f122.png" style="width: 70px;"></button>
     </div>
 
     <div class='hr-or'></div>
