@@ -1,22 +1,58 @@
-<p><i>
-  Use your <a href="http://publiclab.org" target="_blank">PublicLab.org</a> username to log in. 
-  <br />
-  If you do not yet have one, <a href="http://publiclab.org/signup">sign up there</a> first!
-</i></p>
+<div style="width: 50%; margin: 0 auto;">
+  <p style="text-align: center;font-family:'Junction Light','lucida grande','lucida sans console',sans-serif;">
+    Login with your <a href="http://publiclab.org" target="_blank">PublicLab.org</a> username
+  </p>
+  <div class='hr-or' style="font-size: 10px;"></div>
+  <p style="text-align: center;font-family:'Junction Light','lucida grande','lucida sans console',sans-serif;">
+    Create a <a href="http://publiclab.org/signup">Public Lab account</a>
+  </p>
 
-<form id="open_id_form" method="GET" action="/session/new">
+  <form id="open_id_form" method="GET" action="/session/new">
 
-  <%= hidden_field_tag :authenticity_token, form_authenticity_token -%>
-  <%= hidden_field_tag :back_to, (params[:back_to] || request.env['PATH_INFO']) -%>
+    <%= hidden_field_tag :authenticity_token, form_authenticity_token -%>
+    <%= hidden_field_tag :back_to, (params[:back_to] || request.env['PATH_INFO']) -%>
+    
+    <div>
+      <input  style="width: 250px; height: 25px;" tabindex="1" placeholder="Username" id="username" name="open_id" type="text" /></p>
+      <input type="hidden" name="return_to" value="<%= params[:back_to] || request.env['PATH_INFO'] %>" />
+    </div>
+    <div style="width: 35%; margin: 0 auto;">
+      <button tabindex="2" class="btn btn-large btn-primary" type="submit">Log in</button>
+    </div>
 
-  <input tabindex="1" placeholder="username" id="username" name="open_id" type="text" /></p>
-  <input type="hidden" name="return_to" value="<%= params[:back_to] || request.env['PATH_INFO'] %>" />
+    <div class='hr-or'></div>
 
-  <button tabindex="2" class="btn btn-large btn-primary" type="submit">Log in</button>
-  &nbsp;
-  <label class="checkbox inline" for="remember_me">
-    <input tabIndex="3" id="remember_me" name="remember_me" type="checkbox" value="1" />
-    Remember me
-  </label>
+    <div style="width: 400px;margin-top: 15px;margin-bottom: 5px;">
+      <button tabindex="2" class="btn btn-large btn-danger" type="submit" name="subaction", value="google_oauth2"><i class="fa fa-google fa-fw" style="font-size:20px;color:white;"></i></button>
+      <button tabindex="2" class="btn btn-large btn-info" type="submit" name="subaction", value="twitter"><i class="fa fa-twitter fa-fw" style="font-size:20px;color:white;margin-left:2px;"></i></button>
+      <button tabindex="2" class="btn btn-large btn-primary" type="submit" name="subaction", value="facebook"><i class="fa fa-facebook fa-fw" style="font-size:20px;color:white;"></i></button>
+      <button tabindex="2" class="btn btn-large btn-dark" type="submit" name="subaction", value="github"><i class="fa fa-github fa-fw" style="font-size:20px;color:black;"></i></button>
+    </div>
+    &nbsp;
+    <label class="checkbox inline" for="remember_me">
+      <input tabIndex="3" id="remember_me" name="remember_me" type="checkbox" value="1" />
+      Remember me
+    </label>
 
-</form>
+  </form>
+</div>
+
+<style>
+  div.hr-or {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border: 0;
+    border-top: 1px solid #eee;
+    text-align: center;
+    height: 0px;
+    line-height: 0px;
+    font-family:"Junction Light", lucida grande,lucida sans console,sans-serif;
+    font-weight:normal;
+  }
+  
+  div.hr-or:before {
+    content: 'OR';
+    padding:5px;
+    background-color: #fff;
+  }
+</style>
