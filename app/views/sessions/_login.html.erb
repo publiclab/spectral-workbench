@@ -1,25 +1,27 @@
-<p><i>
-  Use your <a href="http://publiclab.org" target="_blank">PublicLab.org</a> username to log in.
-  <br />
-  If you do not yet have one, <a href="http://publiclab.org/signup">sign up there</a> first!
-</i></p>
 
-<form id="open_id_form" method="GET" action="/session/new">
+<div>
+  <p style="text-align: center;font-family:'Junction Light','lucida grande','lucida sans console',sans-serif;font-size: 20px; margin-top: 10px;">
+      Log In via Public Lab
+  </p>
+  <div style="display: flex;justify-content: center;align-items: center;">
+    <form id="open_id_form" method="GET" action="/session/new">
 
-  <%= hidden_field_tag :authenticity_token, form_authenticity_token -%>
-  <%= hidden_field_tag :back_to, (params[:back_to] || request.env['PATH_INFO']) -%>
-  <input type="hidden" name="return_to" value="<%= params[:back_to] || request.env['PATH_INFO'] %>" />
-  <p><button tabindex="2" class="btn btn-large btn-primary" type="submit">Log in via Public Lab</button> OR:</p>
-  <p>
-    <button tabindex="2" class="btn btn-large btn-default" type="submit" name="subaction", value="google_oauth2">Google</button>
-    <button tabindex="2" class="btn btn-large btn-default" type="submit" name="subaction", value="twitter">Twitter</button>
-    <button tabindex="2" class="btn btn-large btn-default" type="submit" name="subaction", value="facebook">Facebook</button>
-    <button tabindex="2" class="btn btn-large btn-default" type="submit" name="subaction", value="github">Github</button>
-  </p>
-  <p>
-  <label class="checkbox inline" for="remember_me">
-    <input tabIndex="3" id="remember_me" name="remember_me" type="checkbox" value="1" />
-    Remember me
-  </label>
-  </p>
-</form>
+      <%= hidden_field_tag :authenticity_token, form_authenticity_token -%>
+      <%= hidden_field_tag :back_to, (params[:back_to] || request.env['PATH_INFO']) -%>
+      <input type="hidden" name="return_to" value="<%= params[:back_to] || request.env['PATH_INFO'] %>" />
+
+      <div style="display: flex;flex-direction: row;justify-content: space-around;width: 400px;margin-top: 30px;">
+        <button tabindex="2" type="submit" style="background-color: #EDEDEE"> <img src="https://i.publiclab.org/system/images/photos/000/000/354/medium/Boots-ground-02.png" style="width: 50px; height: 50px;"></button>
+        <button tabindex="2" class="btn btn-large btn-danger" type="submit" name="subaction", value="google_oauth2"><i class="fa fa-google fa-fw" style="font-size:20px;color:white;"></i></button>
+        <button tabindex="2" class="btn btn-large btn-info" type="submit" name="subaction", value="twitter"><i class="fa fa-twitter fa-fw" style="font-size:20px;color:white;margin-left:2px;"></i></button>
+        <button tabindex="2" class="btn btn-large btn-primary" type="submit" name="subaction", value="facebook"><i class="fa fa-facebook fa-fw" style="font-size:20px;color:white;"></i></button>
+        <button tabindex="2" class="btn btn-large btn-dark" type="submit" name="subaction", value="github"><i class="fa fa-github fa-fw" style="font-size:20px;color:black;"></i></button>
+      </div>
+      &nbsp;
+      <label class="checkbox inline" for="remember_me">
+        <input tabIndex="3" class="hidden" id="remember_me" name="remember_me" type="checkbox" value="1" checked />
+      </label>
+    </form>
+  </div>
+</div>
+
