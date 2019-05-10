@@ -7,20 +7,40 @@ class SessionsController < ApplicationController
 
 
   def login
-    @referer = params[:back_to]
+    if logged_in?
+      redirect_to "/"
+    else
+      @referer = params[:back_to]
+    end
   end
 
   def new
     back_to = params[:back_to]
-    open_id = params[:open_id]
+     # we pass a temp username; it'll be overwritten by the real one in PublicLab.org's response:
+    open_id = 'x'
     openid_url = URI.decode(open_id)
-    #possibly user is providing the whole URL
+    # here it is localhost:3000/people/admin/identity for admin
+    # possibly user is providing the whole URL
     if openid_url.include? "publiclab"
       if openid_url.include? "http"
-        url = openid_url
+        # params[:subaction] contains the value of the provider
+        # provider implies ['github', 'google_oauth2', 'twitter', 'facebook']
+        if params[:subaction]
+          # provider based authentication
+          url = openid_url + "/" + params[:subaction]
+        else
+          # form based authentication
+          url = openid_url
+        end
       end
     else
-      url = @@openid_url_base + openid_url + @@openid_url_suffix
+      if params[:subaction]
+        # provider based authentication
+        url = @@openid_url_base + openid_url + @@openid_url_suffix + "/" + params[:subaction]
+      else
+        # form based authentication
+        url = @@openid_url_base + openid_url + @@openid_url_suffix
+      end
     end
     openid_authentication(url, back_to)
   end
@@ -65,14 +85,25 @@ class SessionsController < ApplicationController
 
   def openid_authentication(openid_url, back_to)
     #puts openid_url
-    authenticate_with_open_id(openid_url, :required => [:nickname, :email]) do |result, identity_url, registration|
+    authenticate_with_open_id(openid_url, :required => [:nickname, :email, :fullname]) do |result, identity_url, registration|
+      dummy_identity_url = identity_url
+      dummy_identity_url = dummy_identity_url.split('/')
+      if dummy_identity_url.include?('github') || dummy_identity_url.include?('google_oauth2') || dummy_identity_url.include?('facebook') || dummy_identity_url.include?('twitter')
+        identity_url = dummy_identity_url[0..-2].join('/')
+      end
+      # we splice back in the real username from PublicLab.org's response
+      identity_url = identity_url.split('/')[0..-2].join('/') + '/' + registration['nickname']
       if result.successful?
         @user = User.find_by_identity_url(identity_url)
+
         if not @user
           @user = User.new
           @user.login = registration['nickname']
           @user.email = registration['email']
           @user.identity_url = identity_url
+          hash = registration['fullname'].split(':')
+          @user.role =  hash[1].split('=')[1]
+
           begin
             @user.save!
           rescue ActiveRecord::RecordInvalid => invalid
@@ -81,6 +112,7 @@ class SessionsController < ApplicationController
             return
           end
         end
+
         nonce = params[:n]
         if nonce
           tmp = Sitetmp.find_by nonce: nonce
