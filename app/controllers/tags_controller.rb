@@ -138,7 +138,7 @@ class TagsController < ApplicationController
         # may be able to append this information in the model, tuck it away
         hash[:refers_to_latest_snapshot] = tag.has_reference? && tag.reference.is_latest?
         if tag.needs_reference?
-          ids = tag.reference_spectrum.snapshots.select(:id, :spectrum_id).collect(&:id)
+          ids = tag.reference_spectrum.snapshots.select("id, spectrum_id").collect(&:id)
           hash[:reference_spectrum_snapshots] = ids
         end
         if tag.snapshot
