@@ -96,7 +96,7 @@ GEM
       json
     redcarpet (2.1.1)
     rmagick (2.15.4)
-    ruby-openid (2.7.0)
+    ruby-openid (2.8.0)
     skylight (1.7.2)
       activesupport (>= 3.0.0)
     sprockets (2.2.3)
