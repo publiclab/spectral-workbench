@@ -10,7 +10,7 @@ group :sqlite do
 end
 
 group :mysql do
-  gem 'mysql2', '~> 0.3.10'
+  gem 'mysql2', '~> 0.5.3'
 end
 
 # Gems used only for assets and not required
