@@ -1,12 +1,24 @@
+default: &default
+  encoding: utf8
+  adapter: mysql2
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  port: 3306
+  socket: /var/run/mysqld/mysqld.sock
+
 development:
-  adapter: sqlite3
-  database: production.db
+  <<: *default
+  host: db
+  username: root 
+  password: root
+  database: swbench_development
 
 production:
   adapter: sqlite3
-  #adapter: mysql2
   database: production.db
 
 test:
-  adapter: sqlite3
-  database: test.db
+  <<: *default
+  host: db
+  username: root 
+  password: root
+  database: swbench_test
