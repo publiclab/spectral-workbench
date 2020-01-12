@@ -113,6 +113,8 @@ h5 small {
 footer {
   padding-bottom:200px;
   color:#777;
+  margin: auto;
+  width: 90%;
 }
 
 footer b {
