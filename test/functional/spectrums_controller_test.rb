@@ -142,6 +142,17 @@ class SpectrumsControllerTest < ActionController::TestCase
     assert_not_nil :sets
   end
 
+  test "should show search results for similarities with author name and spectrum title" do
+    get :search, :id => spectrums(:one).title
+    assert_response :success
+    assert_not_nil :spectrums
+    assert_not_nil :sets
+    get :search, :id => spectrums(:one).author
+    assert_response :success
+    assert_not_nil :spectrums
+    assert_not_nil :sets
+  end
+  
   test "should respond to choose" do
     session[:user_id] = User.first.id # log in
     get :choose, :id => 'calibration'
