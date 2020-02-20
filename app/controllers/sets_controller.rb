@@ -92,7 +92,9 @@ class SetsController < ApplicationController
       @set.spectrums << spectra
       redirect_to "/sets/"+@set.id.to_s
     else
-      flash[:error] = "Failed to save set."
+      @set.errors.full_messages.each do |err|
+        flash[:error] = err 
+      end
       render :action => "new", :id => params[:id]
     end
   end

@@ -8,7 +8,7 @@ class SpectraSet < ActiveRecord::Base
   has_and_belongs_to_many :spectrums
   belongs_to :user
 
-  validates :title, :format => { with: /\A[\w\ -\'\"]+\z/, message: "can contain only letters, numbers, and spaces." }
+  validates :title, :format => { with: /\A[\w\ -\@"^\[\]]+\z/, message: "can contain only letters, numbers, and spaces." }
 
   def calibrated_spectrums
     self.spectrums.where(calibrated: true).uniq
