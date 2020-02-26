@@ -1,15 +1,41 @@
-sudo: required
+language: ruby
+
+dist: trusty
+
+rvm:
+  - 2.1.2
+
+node_js:
+  - "0.10.29"
 
 services:
   - docker
+  - mysql
 
 install:
   - cp config/database.yml.example config/database.yml
   - cp config/config.yml.example config/config.yml
-  - docker-compose build
-  - docker-compose run web bundle exec bower install --allow-root
-  - docker-compose run web bundle exec rake assets:precompile --trace
-  - docker-compose run web bundle exec rake db:setup
+  - bundle install
+  - if [ $RAILS_ENV == 'production' ]; then
+      mysql -e "CREATE DATABASE swbench;";
+      mysql -e "CREATE USER 'swbench'@'%' IDENTIFIED BY 'swbench';";
+      mysql -e "GRANT ALL PRIVILEGES ON *.* TO 'swbench'@'%';";
+      bundle exec rake db:schema:load;
+      npm install -g bower;
+      bower install --allow-root;
+    else
+      bundle exec rake db:create;
+      bundle exec rake db:schema:load || bundle exec rake db:migrate;
+    fi
 
-script:
-  - docker-compose run web bundle exec rake test_all
+jobs:
+  include:
+    - name: "All Tests"
+      script: bundle exec bundle exec rake test_all
+    - name: "Docker Builds"
+      script: docker build -t swbench .
+    - name: "Asset Precompilation"
+      env:
+        - RAILS_ENV=production
+      script:
+        - bundle exec rake assets:precompile
