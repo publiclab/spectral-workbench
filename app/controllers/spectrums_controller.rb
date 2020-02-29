@@ -238,7 +238,7 @@ class SpectrumsController < ApplicationController
               #@spectrum.tag("mobile", user.id)
             end
  
-            if params[:spectrum][:json].nil? && params[:vertical] == "on"
+            if params[:spectrum][:json] == "" && params[:vertical]
               @spectrum.rotate 
             end
  
