@@ -30,16 +30,16 @@ ActiveRecord::Schema.define(:version => 20190513143943) do
 
   create_table "devices", :force => true do |t|
     t.string   "name"
-    t.string   "description",    :limit => 100, :default => "", :null => false
+    t.string   "description",    :limit => 100,                                :default => "", :null => false
     t.integer  "height"
     t.integer  "width"
     t.integer  "calibration_id"
     t.integer  "user_id"
-    t.decimal  "range_start"
-    t.decimal  "range_end"
+    t.decimal  "range_start",                   :precision => 10, :scale => 0
+    t.decimal  "range_end",                     :precision => 10, :scale => 0
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "key",                           :default => "", :null => false
+    t.string   "key",                                                          :default => "", :null => false
   end
 
   create_table "likes", :force => true do |t|
@@ -682,7 +682,7 @@ ActiveRecord::Schema.define(:version => 20190513143943) do
     t.string   "author",     :default => "", :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.text     "notes",      :default => "", :null => false
+    t.text     "notes",                      :null => false
     t.integer  "user_id",    :default => 0
   end
 
@@ -698,7 +698,7 @@ ActiveRecord::Schema.define(:version => 20190513143943) do
     t.string   "title"
     t.string   "author"
     t.string   "set"
-    t.text     "data",                  :limit => 4294967295
+    t.text     "data",                  :limit => 2147483647
     t.text     "notes"
     t.integer  "version"
     t.integer  "parent_id"
@@ -707,22 +707,22 @@ ActiveRecord::Schema.define(:version => 20190513143943) do
     t.string   "photo_file_size"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "photo_position",                              :default => "false"
-    t.string   "baseline_position",                           :default => "false"
+    t.string   "photo_position",                                                             :default => "false"
+    t.string   "baseline_position",                                                          :default => "false"
     t.string   "baseline_file_name"
     t.string   "baseline_content_type"
     t.string   "baseline_file_size"
     t.string   "control_points"
     t.string   "slice_data_url"
-    t.string   "client_code",                                 :default => "",      :null => false
-    t.integer  "user_id",                                     :default => 0,       :null => false
-    t.decimal  "lat",                                         :default => 0.0,     :null => false
-    t.decimal  "lon",                                         :default => 0.0,     :null => false
-    t.integer  "sample_row",                                  :default => 1,       :null => false
-    t.integer  "like_count",                                  :default => 0,       :null => false
-    t.integer  "video_row",                                   :default => 0
-    t.boolean  "reversed",                                    :default => false,   :null => false
-    t.boolean  "calibrated",                                  :default => false,   :null => false
+    t.string   "client_code",                                                                :default => "",      :null => false
+    t.integer  "user_id",                                                                    :default => 0,       :null => false
+    t.decimal  "lat",                                         :precision => 10, :scale => 0, :default => 0,       :null => false
+    t.decimal  "lon",                                         :precision => 10, :scale => 0, :default => 0,       :null => false
+    t.integer  "sample_row",                                                                 :default => 1,       :null => false
+    t.integer  "like_count",                                                                 :default => 0,       :null => false
+    t.integer  "video_row",                                                                  :default => 0
+    t.boolean  "reversed",                                                                   :default => false,   :null => false
+    t.boolean  "calibrated",                                                                 :default => false,   :null => false
   end
 
   add_index "spectrums", ["author"], :name => "index_spectrums_on_author"
@@ -732,7 +732,7 @@ ActiveRecord::Schema.define(:version => 20190513143943) do
   add_index "spectrums", ["user_id"], :name => "index_spectrums_on_user_id"
 
   create_table "tags", :force => true do |t|
-    t.integer  "user_id",     :limit => 255
+    t.integer  "user_id"
     t.string   "name"
     t.integer  "spectrum_id"
     t.integer  "set_id"

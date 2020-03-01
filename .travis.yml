@@ -1,12 +1,14 @@
 language: ruby
 
-dist: trusty
-
 rvm:
   - 2.1.2
 
 node_js:
   - "0.10.29"
+
+env:
+  global:
+    - RAILS_ENV=test
 
 services:
   - docker

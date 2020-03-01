@@ -301,4 +301,34 @@ class SpectrumsControllerTest < ActionController::TestCase
     assert_redirected_to '/'
   end
 
+  test "should save spectrum if vertical" do
+    session[:user_id] = User.first.id
+    post :create, dataurl: "data:image/gif;base64,R0lGODdhMAAwAPAAAAAAAP///ywAAAAAMAAwAAAC8IyPqcvt3wCcDkiLc7C0qwyGHhSWpjQu5yqmCYsapyuvUUlvONmOZtfzgFzByTB10QgxOR0TqBQejhRNzOfkVJ+5YiUqrXF5Y5lKh/DeuNcP5yLWGsEbtLiOSpa/TPg7JpJHxyendzWTBfX0cxOnKPjgBzi4diinWGdkF8kjdfnycQZXZeYGejmJlZeGl9i2icVqaNVailT6F5iJ90m6mvuTS4OK05M0vDk0Q4XUtwvKOzrcd3iq9uisF81M1OIcR7lEewwcLp7tuNNkM3uNna3F2JQFo97Vriy/Xl4/f1cf5VWzXyym7PHhhx4dbgYKAAA7",
+      spectrum: {
+        user_id: session[:user_id],
+        author: User.first.login,
+        title: "Another vertical spectrum",
+        notes: "It is vertical"
+    },
+    vertical: true
+
+    assert_equal "Spectrum was successfully created.", flash[:notice]
+    assert_response :redirect
+  end
+
+  test "should save spectrum if not vertical" do
+    session[:user_id] = User.first.id
+    post :create, dataurl: "data:image/gif;base64,R0lGODdhMAAwAPAAAAAAAP///ywAAAAAMAAwAAAC8IyPqcvt3wCcDkiLc7C0qwyGHhSWpjQu5yqmCYsapyuvUUlvONmOZtfzgFzByTB10QgxOR0TqBQejhRNzOfkVJ+5YiUqrXF5Y5lKh/DeuNcP5yLWGsEbtLiOSpa/TPg7JpJHxyendzWTBfX0cxOnKPjgBzi4diinWGdkF8kjdfnycQZXZeYGejmJlZeGl9i2icVqaNVailT6F5iJ90m6mvuTS4OK05M0vDk0Q4XUtwvKOzrcd3iq9uisF81M1OIcR7lEewwcLp7tuNNkM3uNna3F2JQFo97Vriy/Xl4/f1cf5VWzXyym7PHhhx4dbgYKAAA7",
+      spectrum: {
+        user_id: session[:user_id],
+        author: User.first.login,
+        title: "Another horizontal spectrum",
+        notes: "It is horizontal"
+    },
+    vertical: false
+
+    assert_equal "Spectrum was successfully created.", flash[:notice]
+    assert_response :redirect
+  end
+
 end
