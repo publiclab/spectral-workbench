@@ -37,3 +37,4 @@ Gemfile.lock
 public/lib
 public/assets
 vendor/
+db/schema.rb

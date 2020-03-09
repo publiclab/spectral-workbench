@@ -24,7 +24,8 @@ services:
 install:
   - cp config/database.yml.example config/database.yml
   - cp config/config.yml.example config/config.yml
-  - bundle config set path 'vendor/.bundle/' && bundle install
+  - cp db/schema.rb.example db/schema.rb
+  - bundle config set path './vendor/.bundle/' && bundle install
   - if [ $RAILS_ENV == 'production' ]; then
       mysql -e "CREATE DATABASE swbench;";
       mysql -e "CREATE USER 'swbench'@'%' IDENTIFIED BY 'swbench';";

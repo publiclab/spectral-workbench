@@ -5,6 +5,7 @@ pidfile=/app/tmp/pids/server.pid
 bower install --allow-root
 cp config/database.yml.example config/database.yml
 cp config/config.yml.example config/config.yml
+cp db/schema.rb.example db/schema.rb
 
 until nc -z -v -w30 db 3306; do
  echo 'Waiting for MySQL...'
