@@ -41,13 +41,15 @@ install:
 jobs:
   include:
     - name: "Unit Tests"
-      script: ruby -I test test/unit/**/*.rb
+      script: ruby -I test test/unit/*.rb
+    - name: "Helpers Tests"
+      script: ruby -I test test/unit/helpers/*.rb
     - name: "Functional Tests"
-      script: ruby -I test test/functional/**/*.rb
+      script: ruby -I test test/functional/*.rb
     - name: "Integration Tests"
-      script: ruby -I test test/integration/**/*.rb
+      script: ruby -I test test/integration/*.rb
     - name: "Performance Tests"
-      script: ruby -I test test/performance/**/*.rb
+      script: ruby -I test test/performance/*.rb
     - name: "Docker Builds"
       script: docker build -t swbench .
     - name: "Asset Precompilation"
