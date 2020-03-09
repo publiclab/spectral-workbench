@@ -8,6 +8,11 @@ rvm:
 node_js:
   - "0.10.29"
 
+cache:
+  directories:
+   - $PWD/vendor/.bundle/
+   - $PWD/public/lib/
+
 services:
   - docker
   - mysql
@@ -15,7 +20,7 @@ services:
 install:
   - cp config/database.yml.example config/database.yml
   - cp config/config.yml.example config/config.yml
-  - bundle install
+  - bundle config set path 'vendor/.bundle/' && bundle install
   - if [ $RAILS_ENV == 'production' ]; then
       mysql -e "CREATE DATABASE swbench;";
       mysql -e "CREATE USER 'swbench'@'%' IDENTIFIED BY 'swbench';";
@@ -24,14 +29,21 @@ install:
       npm install -g bower;
       bower install --allow-root;
     else
+      bower install --allow-root;
       bundle exec rake db:create;
       bundle exec rake db:schema:load || bundle exec rake db:migrate;
     fi
 
 jobs:
   include:
-    - name: "All Tests"
-      script: bundle exec bundle exec rake test_all
+    - name: "Unit Tests"
+      script: bundle exec bundle exec rake test test/unit
+    - name: "Functional Tests"
+      script: bundle exec bundle exec rake test test/functional
+    - name: "Integration Tests"
+      script: bundle exec bundle exec rake test test/integration
+    - name: "Performance Tests"
+      script: bundle exec bundle exec rake test test/performance
     - name: "Docker Builds"
       script: docker build -t swbench .
     - name: "Asset Precompilation"
