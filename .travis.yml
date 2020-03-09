@@ -1,5 +1,7 @@
 language: ruby
 
+dist: trusty
+
 rvm:
   - 2.1.2
 
@@ -10,6 +12,11 @@ env:
   global:
     - RAILS_ENV=test
 
+cache:
+  directories:
+   - $PWD/vendor/.bundle/
+   - $PWD/public/lib/
+
 services:
   - docker
   - mysql
@@ -17,7 +24,7 @@ services:
 install:
   - cp config/database.yml.example config/database.yml
   - cp config/config.yml.example config/config.yml
-  - bundle install
+  - bundle config set path 'vendor/.bundle/' && bundle install
   - if [ $RAILS_ENV == 'production' ]; then
       mysql -e "CREATE DATABASE swbench;";
       mysql -e "CREATE USER 'swbench'@'%' IDENTIFIED BY 'swbench';";
@@ -26,14 +33,21 @@ install:
       npm install -g bower;
       bower install --allow-root;
     else
+      bower install --allow-root;
       bundle exec rake db:create;
       bundle exec rake db:schema:load || bundle exec rake db:migrate;
     fi
 
 jobs:
   include:
-    - name: "All Tests"
-      script: bundle exec bundle exec rake test_all
+    - name: "Unit Tests"
+      script: ruby -I test test/unit/**/*.rb
+    - name: "Functional Tests"
+      script: ruby -I test test/functional/**/*.rb
+    - name: "Integration Tests"
+      script: ruby -I test test/integration/**/*.rb
+    - name: "Performance Tests"
+      script: ruby -I test test/performance/**/*.rb
     - name: "Docker Builds"
       script: docker build -t swbench .
     - name: "Asset Precompilation"
