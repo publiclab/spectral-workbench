@@ -213,7 +213,8 @@ class SetsControllerTest < ActionController::TestCase
     assert_difference('SpectraSet.count', -1) do
       delete :delete, :id => set.id
     end
-    assert_equal "Deleted set.",flash[:notice]
+    assert_equal "Deleted set.", flash[:notice]
+    assert_response :redirect
   end
 
   test "should not delete set if not owner" do
@@ -223,7 +224,8 @@ class SetsControllerTest < ActionController::TestCase
     assert_difference('SpectraSet.count', 0) do
       delete :delete, :id => set.id
     end
-    assert_equal "You must own the set to edit it.",flash[:error]
+    assert_equal "You must own the set to edit it.", flash[:error]
+    assert_response :redirect
   end
 
 end
