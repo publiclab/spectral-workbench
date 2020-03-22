@@ -1,6 +1,6 @@
 # Spectral Workbench
 
-Copyright 2011-2018 Public Lab
+Copyright 2011-2020 Public Lab
 publiclab.org | spectralworkbench.org
 
 [![tests](https://travis-ci.org/publiclab/spectral-workbench.svg?branch=master)](https://travis-ci.org/publiclab/spectral-workbench) [![View performance data on Skylight](https://badges.skylight.io/typical/Wnv2jzIUWl5x.svg)](https://oss.skylight.io/app/applications/Wnv2jzIUWl5x)
