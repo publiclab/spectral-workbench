@@ -8,6 +8,10 @@ rvm:
 node_js:
   - "0.10.29"
 
+env:
+  global:
+    - RAILS_ENV=test
+
 cache:
   directories:
    - $PWD/vendor/.bundle/
@@ -20,7 +24,8 @@ services:
 install:
   - cp config/database.yml.example config/database.yml
   - cp config/config.yml.example config/config.yml
-  - bundle config set path 'vendor/.bundle/' && bundle install
+  - cp db/schema.rb.example db/schema.rb
+  - bundle config set path './vendor/.bundle/' && bundle install
   - if [ $RAILS_ENV == 'production' ]; then
       mysql -e "CREATE DATABASE swbench;";
       mysql -e "CREATE USER 'swbench'@'%' IDENTIFIED BY 'swbench';";
@@ -37,13 +42,15 @@ install:
 jobs:
   include:
     - name: "Unit Tests"
-      script: bundle exec bundle exec rake test test/unit
+      script: ruby -I test test/unit/*.rb
+    - name: "Helpers Tests"
+      script: ruby -I test test/unit/helpers/*.rb
     - name: "Functional Tests"
-      script: bundle exec bundle exec rake test test/functional
+      script: ruby -I test test/functional/*.rb
     - name: "Integration Tests"
-      script: bundle exec bundle exec rake test test/integration
+      script: ruby -I test test/integration/*.rb
     - name: "Performance Tests"
-      script: bundle exec bundle exec rake test test/performance
+      script: ruby -I test test/performance/*.rb
     - name: "Docker Builds"
       script: docker build -t swbench .
     - name: "Asset Precompilation"

@@ -7,12 +7,29 @@ LABEL maintainer="Sebastian Silva <sebastian@fuentelibre.org>"
 LABEL description="This image deploys Spectral Worbench!"
 
 # Set correct environment variables.
-RUN mkdir -p /app
 ENV HOME /root
 
 # Install dependencies
 RUN sed -i '/.*jessie-updates.*/d' /etc/apt/sources.list
-RUN apt-get update -qq && apt-get install -y imagemagick ruby-rmagick libmagickwand-dev libmagick++-dev bundler libmysqlclient-dev ruby-rmagick libfreeimage3 libfreeimage-dev ruby-dev gdal-bin python-gdal curl libcurl4-openssl-dev libssl-dev zip nodejs-legacy npm
+RUN apt-get update -qq && \
+    apt-get install -y --no-install-recommends \
+                       imagemagick \
+                       ruby-rmagick \
+                       libmagickwand-dev \
+                       libmagick++-dev \
+                       ruby-rmagick \
+                       libfreeimage3 \
+                       libfreeimage-dev \
+                       gdal-bin \
+                       python-gdal \
+                       curl \
+                       libcurl4-openssl-dev \
+                       libssl-dev \
+                       zip \
+                       nodejs-legacy \
+                       npm \
+                       netcat
+
 RUN npm install -g bower
 
 # Install bundle of gems
@@ -23,12 +40,10 @@ RUN bundle install
 
 # Add the Rails app
 WORKDIR /app
-ADD . /app
+COPY . /app
 ENV GIT_DIR=/app
-RUN bower install --allow-root
-COPY config/database.yml.example config/database.yml
-COPY config/config.yml.example config/config.yml
 
-RUN bundle exec rake db:setup
-RUN bundle exec rake db:seed
-RUN bundle exec rake db:migrate
+RUN apt-get remove -y zip \
+                      curl
+
+ENTRYPOINT ["sh", "script/start.sh"]

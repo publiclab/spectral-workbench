@@ -59,7 +59,7 @@ module SpectralWorkbench
 
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.1'
-    config.assets.paths << Rails.root.join("public","lib")
+    config.assets.paths << Rails.root.join("public", "lib")
     config.assets.precompile += ['capture.js','analyze.js']
 
     # pluralization options, but unneccessary due to:
