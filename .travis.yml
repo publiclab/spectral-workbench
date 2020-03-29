@@ -42,13 +42,13 @@ install:
 jobs:
   include:
     - name: "Unit Tests"
-      script: ruby -I test test/unit/*.rb
+      script: rake test:units
     - name: "Helpers Tests"
       script: ruby -I test test/unit/helpers/*.rb
     - name: "Functional Tests"
-      script: ruby -I test test/functional/*.rb
+      script: rake test:functionals
     - name: "Integration Tests"
-      script: ruby -I test test/integration/*.rb
+      script: rake test:integration
     - name: "Performance Tests"
       script: ruby -I test test/performance/*.rb
     - name: "Docker Builds"
