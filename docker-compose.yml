@@ -1,7 +1,8 @@
-version: '3.3'
+version: '3.5'
 services:
 
   db:
+    container_name: spectral-db
     image: mysql:5.6
     environment:
       - MYSQL_ROOT_PASSWORD=root
@@ -11,14 +12,17 @@ services:
       - mysql-data:/var/lib/mysql
 
   web:
+    container_name: spectral-web
     build: .
     volumes:
       - .:/app
+      - bundle_cache:/usr/local/bundle
     ports:
-      - "127.0.0.1:5000:5000"
-      - "127.0.0.1:8888:8888"
+      - 5000:5000
+      - 8888:8888
     depends_on:
       - db
 
 volumes:
   mysql-data:
+  bundle_cache:
