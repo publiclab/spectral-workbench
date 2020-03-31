@@ -682,7 +682,7 @@ ActiveRecord::Schema.define(:version => 20190513143943) do
     t.string   "author",     :default => "", :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.text     "notes",      :default => "", :null => false
+    t.text     "notes",      :null => false
     t.integer  "user_id",    :default => 0
   end
 
@@ -732,7 +732,7 @@ ActiveRecord::Schema.define(:version => 20190513143943) do
   add_index "spectrums", ["user_id"], :name => "index_spectrums_on_user_id"
 
   create_table "tags", :force => true do |t|
-    t.integer  "user_id",     :limit => 255
+    t.integer  "user_id"
     t.string   "name"
     t.integer  "spectrum_id"
     t.integer  "set_id"

@@ -75,8 +75,8 @@ SpectralWorkbench::Application.routes.draw do
   get '/capture/recent_calibrations' => 'capture#recent_calibrations'
 
   # Registered user pages:
-  get '/profile', to: 'users#show', :as => 'profile'
-  get '/profile/:id', to: 'users#show', :as => 'profile'
+  get '/profile', to: 'users#show'
+  get '/profile/:id', to: 'users#show'
 
   get '/macro/edit/:id' => 'macros#edit'
   get '/macro/update/:id' => 'macros#update'
@@ -178,7 +178,7 @@ SpectralWorkbench::Application.routes.draw do
     fallback "/" => "/offline"
     fallback "/dashboard" => "/offline"
   end
-  match "/index.manifest" => offline
+  get "/index.manifest" => offline
 
   root to: 'spectrums#index'
 
@@ -187,8 +187,8 @@ SpectralWorkbench::Application.routes.draw do
   # match ':controller(/:action(/:id))(.:format)'
 
   # See how all your routes lay out with 'rake routes'
-  match ':controller/:action'
-  match ':controller/:action/:id'
-  match ':controller/:action/:id.:format'
+  get ':controller/:action'
+  get ':controller/:action/:id'
+  get ':controller/:action/:id.:format'
 
 end
