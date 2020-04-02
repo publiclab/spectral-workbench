@@ -6,6 +6,9 @@ Rails.application.configure do
   # since you don't have to restart the web server when you make code changes.
   config.cache_classes = false
 
+  # Log error messages when you accidentally call methods on nil.
+  config.whiny_nils = true
+
   # Do not eager load code on boot.
   config.eager_load = false
 
@@ -18,6 +21,9 @@ Rails.application.configure do
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
+
+  # Only use best-standards-support built into browsers
+  config.action_dispatch.best_standards_support = :builtin
 
   # Raise an error on page load if there are pending migrations.
   config.active_record.migration_error = :page_load
@@ -35,6 +41,16 @@ Rails.application.configure do
   # Checks for improperly declared sprockets dependencies.
   # Raises helpful error messages.
   config.assets.raise_runtime_errors = true
+
+  # Raise exception on mass assignment protection for Active Record models
+  config.active_record.mass_assignment_sanitizer = :strict
+
+  # Log the query plan for queries taking more than this (works
+  # with SQLite, MySQL, and PostgreSQL)
+  config.active_record.auto_explain_threshold_in_seconds = 0.5
+
+  # Do not compress assets
+  config.assets.compress = false
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true

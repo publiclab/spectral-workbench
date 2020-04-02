@@ -21,22 +21,24 @@ services:
   - docker
   - mysql
 
-install:
+before_install:
   - cp config/database.yml.example config/database.yml
   - cp config/config.yml.example config/config.yml
   - cp db/schema.rb.example db/schema.rb
-  - bundle config set path './vendor/.bundle/' && bundle install
+  - bundle config set path 'vendor/.bundle/'
+
+install:
+  - bundle install
+  - npm install -g bower
+  - bower install --allow-root
   - if [ $RAILS_ENV == 'production' ]; then
       mysql -e "CREATE DATABASE swbench;";
       mysql -e "CREATE USER 'swbench'@'%' IDENTIFIED BY 'swbench';";
       mysql -e "GRANT ALL PRIVILEGES ON *.* TO 'swbench'@'%';";
       bundle exec rake db:schema:load;
-      npm install -g bower;
-      bower install --allow-root;
     else
-      bower install --allow-root;
       bundle exec rake db:create;
-      bundle exec rake db:schema:load || bundle exec rake db:migrate;
+      bundle exec rake db:migrate;
     fi
 
 jobs:
@@ -49,8 +51,6 @@ jobs:
       script: rake test:functionals
     - name: "Integration Tests"
       script: rake test:integration
-    - name: "Performance Tests"
-      script: ruby -I test test/performance/*.rb
     - name: "Docker Builds"
       script: docker build -t swbench .
     - name: "Asset Precompilation"
