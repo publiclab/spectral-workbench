@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ExceptionsTest < ActionController::IntegrationTest
+class ExceptionsTest < ActionDispatch::IntegrationTest
   fixtures :all
 
   #test "POST /products" do

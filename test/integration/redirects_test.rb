@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class RedirectsTest < ActionController::IntegrationTest
+class RedirectsTest < ActionDispatch::IntegrationTest
   fixtures :all
 
   test "GET /sets/show/#" do
