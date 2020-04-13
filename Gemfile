@@ -22,6 +22,10 @@ group :assets do
   gem 'uglifier', '>= 1.0.3'
 end
 
+group :test do
+	gem 'simplecov', require: false
+end
+
 gem 'rmagick'#, :require => "RMagick"
 gem 'mime-types'#, '1.18'
 gem 'jquery-rails'
