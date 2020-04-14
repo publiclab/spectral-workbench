@@ -5,7 +5,7 @@ class SetsController < ApplicationController
   before_filter :no_cache, :only => [ :show, :calibrated, :search ]
 
   def index
-    @sets = SpectraSet.paginate(:order => "created_at DESC", :page => params[:page])
+    @sets = SpectraSet.order(created_at: :desc).paginate(:page => params[:page])
   end
 
   def show2

@@ -48,7 +48,7 @@
       <%=h time_ago_in_words(@user.created_at) %> ago
       <br />
       <b>Tags added:</b>
-      <%=h Tag.count :all, :conditions => {:user_id => @user.id} %>
+      <%=h Tag.where(:user_id => @user.id).count %>
     </div>
     <hr />
 
