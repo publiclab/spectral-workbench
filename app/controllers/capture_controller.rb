@@ -22,7 +22,7 @@ class CaptureController < ApplicationController
       @calibrations.uniq!
       @start_wavelength, @end_wavelength = @calibration.wavelength_range if @calibration
     end
-    @spectrums = Spectrum.find(:all, :limit => 12, :order => "id DESC")
+    @spectrums = Spectrum.where(:limit => 12).order(id: :desc)
     render :template => "capture/index", :layout => "application"
   end
 

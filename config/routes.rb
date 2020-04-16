@@ -89,6 +89,7 @@ SpectralWorkbench::Application.routes.draw do
   get '/popular/recent' => 'likes#recent'
 
   get '/upload' => 'spectrums#new'
+  post '/spectrums/create' => 'spectrums#create'
 
   get '/tags/change_reference/:id' => 'tags#change_reference'
 

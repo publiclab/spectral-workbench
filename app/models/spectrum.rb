@@ -471,7 +471,7 @@ class Spectrum < ActiveRecord::Base
   end
 
   def liked_by(user_id)
-    Like.find_by_user_id(user_id,:conditions => {:spectrum_id => self.id})
+    Like.where(:spectrum_id => self.id).find_by_user_id(user_id)
   end
 
   # notify each commenter about a new comment
