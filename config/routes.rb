@@ -90,6 +90,7 @@ SpectralWorkbench::Application.routes.draw do
 
   get '/upload' => 'spectrums#new'
   post '/spectrums/create' => 'spectrums#create'
+  post '/comments/spectrum/:id' => 'comments#spectrum'
 
   get '/tags/change_reference/:id' => 'tags#change_reference'
 
