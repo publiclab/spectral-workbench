@@ -26,13 +26,13 @@ class ExceptionsTest < ActionDispatch::IntegrationTest
   end
 
   test "GET /spectrums/#" do
-    spectrum = Spectrum.find :first
+    spectrum = Spectrum.first
     get "/spectrums/#{spectrum.id}"
     assert_response :success
   end
 
   test "GET /sets/#" do
-    set = SpectraSet.find :first
+    set = SpectraSet.first
     get "/sets/#{set.id}"
     assert_response :success
   end
