@@ -230,19 +230,18 @@ class Spectrum < ActiveRecord::Base
     new.tag("forked:#{self.id}", user.id)
     # record "now" timestamp
     now = Time.now
-    seconds = 0
     # now copy over all tags, in order:
     self.tags.each do |tag|
       unless tag.key == "forked"
-        newtag = new.tag(tag.name, user.id) 
+        newtag = new.tag(tag.name, user.id)
+        now = now + 1 #increment now by one second per tag
         # preserve created_at, for tag ordering; we should be able to tell based on spectrum created_at
-        newtag.created_at = now + seconds.seconds # forward-date each by 1 second
+        newtag.created_at = now # forward-date each by 1 second
         if tag.needs_snapshot? && tag.snapshot && !tag.snapshot.data.nil?
           newtag.create_snapshot(tag.snapshot.data) 
           newtag.snapshot.created_at = newtag.created_at
         end
         newtag.save
-        seconds += 1
       end
     end
     Spectrum.find new.id # refetch it to get all the tags, for some reason needed by tests

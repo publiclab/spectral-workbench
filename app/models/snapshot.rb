@@ -63,6 +63,7 @@ class Snapshot < ActiveRecord::Base
                  .order(created_at: :desc)
                  .limit(1)
                  .last
+
     latest.id == self.id
   end
 

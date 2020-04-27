@@ -124,6 +124,7 @@ class TagsControllerTest < ActionController::TestCase
     assert_equal tag.name, 'smooth:1'
     assert tag.create_snapshot('{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}')
 
+    sleep 1 #to preserve created_at
     # create a snapshot which will refer to the same spectrum, and be the latest:
     tag2 = Tag.new({
       user_id:     tag.user_id,
@@ -232,6 +233,7 @@ class TagsControllerTest < ActionController::TestCase
     assert tag.save!
     data = '{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}'
     tag.create_snapshot(data)
+    sleep 1 #to preserve created_at
     # create an operation which will refer to the snapshot:
     tag2 = Tag.new({
       user_id:     spectrums(:one).user_id,
@@ -258,6 +260,8 @@ class TagsControllerTest < ActionController::TestCase
     assert_equal     tag['reference_spectrum_snapshots'].length, spectrums(:two).snapshots.length
 
     # create a new snapshot, making our tag no longer pointed at the most recent snapshot
+    sleep 1 #to preserve created_at
+
     tag = Tag.new({
       user_id:     spectrums(:two).user_id,
       spectrum_id: spectrums(:two).id,
