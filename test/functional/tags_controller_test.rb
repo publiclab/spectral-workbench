@@ -25,10 +25,11 @@ class TagsControllerTest < ActionController::TestCase
     get :create, tag: { name: 'mytag',
                         spectrum_id: Spectrum.first.id }
     assert_response :redirect
+
     assert_not_nil assigns(:response)[:saved]['mytag']
-    assert_not_nil assigns(:response)[:saved]['mytag']['id']
-    assert_not_nil assigns(:response)[:saved]['mytag']['name']
-    assert_not_nil assigns(:response)[:saved]['mytag']['created_at']
+    assert_not_nil assigns(:response)[:saved]['mytag'][:id]
+    assert_not_nil assigns(:response)[:saved]['mytag'][:name]
+    assert_not_nil assigns(:response)[:saved]['mytag'][:created_at]
     assert_equal "Tag(s) added.", flash[:notice]
     assert_redirected_to spectrum_path(Spectrum.first.id)
   end
@@ -81,7 +82,7 @@ class TagsControllerTest < ActionController::TestCase
     session[:user_id] = users(:aaron).id # log in
 
     @request.headers["Content-Type"] = "application/json"
-    @request.headers["Accept"] = "application/javascript"
+    @request.headers["Accept"] = "application/json"
     xhr :post, :create, tag: { name: 'range:400-500',
                         spectrum_id: users(:quentin).spectrums.first.id }
 
@@ -93,7 +94,7 @@ class TagsControllerTest < ActionController::TestCase
     session[:user_id] = users(:admin).id # log in
 
     @request.headers["Content-Type"] = "application/json"
-    @request.headers["Accept"] = "application/javascript"
+    @request.headers["Accept"] = "application/json"
     xhr :post, :create, tag: { 
       name: 'range:100-500',
       spectrum_id: spectrums(:one).id
@@ -204,7 +205,7 @@ class TagsControllerTest < ActionController::TestCase
 
     # now refer to it:
     @request.headers["Content-Type"] = "application/json"
-    @request.headers["Accept"] = "application/javascript"
+    @request.headers["Accept"] = "application/json"
     tagname = "subtract:#{spectrums(:two).id}"
     xhr :post, :create, tag: { 
       name: tagname,
@@ -231,7 +232,6 @@ class TagsControllerTest < ActionController::TestCase
     assert tag.save!
     data = '{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}'
     tag.create_snapshot(data)
-
     # create an operation which will refer to the snapshot:
     tag2 = Tag.new({
       user_id:     spectrums(:one).user_id,
@@ -277,7 +277,7 @@ class TagsControllerTest < ActionController::TestCase
     assert_not_equal tag['name'], "subtract:#{spectrums(:two).id}"
     assert_equal     tag['name'], "subtract:#{spectrums(:two).id}##{spectrums(:two).snapshots.first.id}"
     assert_not_nil   tag['refers_to_latest_snapshot']
-    assert_equal     tag['refers_to_latest_snapshot'], false
+    assert_equal     false, tag['refers_to_latest_snapshot']
 
   end
 
