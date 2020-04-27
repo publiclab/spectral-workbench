@@ -1,3 +1,4 @@
+//= link embed.css
 //= link application.css
 //= link application.js
 //= link capture.css

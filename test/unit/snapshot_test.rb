@@ -200,6 +200,8 @@ class SnapshotTest < ActiveSupport::TestCase
     data = '{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}'
     tag1.create_snapshot(data)
 
+    sleep 1 #so that created_by desc gets different created_by s
+
     tag = Tag.new({
       user_id:     users(:quentin).id,
       spectrum_id: spectrums(:one).id,
@@ -353,7 +355,7 @@ class SnapshotTest < ActiveSupport::TestCase
     snapshot1 = tag1.create_snapshot(data)
 
     assert snapshot1.valid?
-
+    sleep 1
     tag2 = Tag.new({
       user_id:     users(:quentin).id,
       spectrum_id: spectrums(:one).id,
