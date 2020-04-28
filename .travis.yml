@@ -11,6 +11,10 @@ node_js:
 env:
   global:
     - RAILS_ENV=test
+    - DB_HOST='127.0.0.1'
+    - DB_USER='swbench'
+    - DB_PASS='swbench'
+    - DB_NAME='swbench'
 
 cache:
   directories:
@@ -36,6 +40,7 @@ install:
       mysql -e "CREATE USER 'swbench'@'%' IDENTIFIED BY 'swbench';";
       mysql -e "GRANT ALL PRIVILEGES ON *.* TO 'swbench'@'%';";
       bundle exec rake db:schema:load;
+      bundle exec rake db:migrate;
     else
       bundle exec rake db:create;
       bundle exec rake db:migrate;

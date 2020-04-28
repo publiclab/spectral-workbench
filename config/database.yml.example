@@ -9,8 +9,15 @@ development:
   database: swbench_development
 
 production:
+  encoding: utf8
   adapter: mysql2
-  database: production.db
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  host: <%= ENV['DB_HOST'] || 'production.db' %>
+  username: <%= ENV['DB_USER'] || 'swbench' %>
+  password: <%= ENV['DB_PASS'] || 'swbench' %>
+  database: <%= ENV['DB_NAME'] || 'swbench' %>
+  socket: <%= ENV['DB_SOCKET'] %>
+  timeout: 5000
 
 test:
   <<: *default
