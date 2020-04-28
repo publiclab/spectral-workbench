@@ -22,8 +22,8 @@ class SpectrumsController < ApplicationController
                            .where('user_id != 0')
                            .paginate(:page => params[:page], :per_page => 24)
 
-      @sets = SpectraSet.find(:all,:limit => 4,:order => "created_at DESC")
-      @comments = Comment.all :limit => 12, :order => "id DESC"
+      @sets = SpectraSet.all
+      @comments = Comment.all
 
       respond_with(@spectrums) do |format|
         format.html {
@@ -451,7 +451,8 @@ class SpectrumsController < ApplicationController
 
   def rss
     if params[:author]
-      @spectrums = Spectrum.find_all_by_author(params[:author],:order => "created_at DESC",:limit => 12).paginate(:page => params[:page])
+      Spectrum.where(author: params[:author])
+      @spectrums = Spectrum.where(author: params[:author]).paginate(:page => params[:page])
     else
       @spectrums = Spectrum.find(:all,:order => "created_at DESC",:limit => 12).paginate(:page => params[:page])
     end

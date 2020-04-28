@@ -1,6 +1,6 @@
 class AddSpectrumsSampleRow < ActiveRecord::Migration
   def self.up
-      add_column :spectrums, :sample_row, :integer, :default => 1, :null => false
+      add_column :spectrums, :sample_row, :integer, null: false, default: 1
   end
 
   def self.down

@@ -1,5 +1,6 @@
 <% row = 1 if row.nil? %>
 <div id="sets" class="row-fluid">
+
 <% @sets.each_with_index do |set,index| %>
 <div class="span<%= 12/row %>">
     <a class="graph_set" id="graph_set_<%= set.id %>" style="height:100px;width:250px;display:block;"></a>
@@ -8,7 +9,9 @@
       <p><a href="<%= profile_path(set.author) %>"><%= set.author %></a> | <%= set.spectrums.length %> spectra |
         <a href="/sets/show/<%= set.id %>#comments"><i class="fa fa-comment"></i> <%= set.comments.length %></a>
       </p>
+      <% if !set.notes.blank? %>
       <p class="notes"><%= set.notes.truncate(200) %></p>
+      <% end %>
     </div>
 
 <script type="text/javascript">

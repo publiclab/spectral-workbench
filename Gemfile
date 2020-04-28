@@ -1,14 +1,10 @@
 source 'https://rubygems.org'
 #source 'https://rails-assets.org'
 
-ruby '~>2.1.2'
-gem 'rails', '~>3.2'
+ruby '~>2.6.5'
+gem 'rails', '~>4.2.8'
 
 # Database handling
-group :sqlite do
-  gem 'sqlite3'
-end
-
 group :mysql do
   gem 'mysql2', '~> 0.3.10'
 end
@@ -22,6 +18,7 @@ group :assets do
   gem 'uglifier', '>= 1.0.3'
 end
 
+gem 'responders', '~> 2.0'
 gem 'rmagick'#, :require => "RMagick"
 gem 'mime-types'#, '1.18'
 gem 'jquery-rails'
@@ -29,15 +26,16 @@ gem 'passenger'
 gem 'recaptcha', '3.0.0', :require => "recaptcha/rails"
 gem 'cocaine', '~>0.5.3'
 gem 'redcarpet', '2.1.1'
-gem "skylight" # performance tracking via skylight.io
+gem 'skylight' # performance tracking via skylight.io
 
 gem 'rdiscount', '1.6.8'
-gem 'will_paginate', '3.0.7'
-gem 'will_paginate-bootstrap', '0.2.5'
+gem 'will_paginate', '~>3.3.0'
+gem 'will_paginate-bootstrap', '~>1.0.2'
 gem 'paperclip', '>= 4.1.1'
 
-gem 'tzinfo', '0.3.49'
+gem 'tzinfo', '~>1.1'
 
+gem 'protected_attributes', '~>1.1.4'
 gem 'ruby-openid'
 gem 'open_id_authentication'
 
