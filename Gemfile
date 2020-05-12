@@ -18,6 +18,10 @@ group :assets do
   gem 'uglifier', '>= 1.0.3'
 end
 
+group :test do
+	gem 'simplecov', require: false
+end
+
 gem 'responders', '~> 2.0'
 gem 'rmagick'#, :require => "RMagick"
 gem 'mime-types'#, '1.18'
