@@ -2,7 +2,8 @@ class DeviceController < ApplicationController
 
   def index
     if logged_in?
-      @devices = Device.find_all_by_user_id current_user.id, :order => "id DESC"
+      @devices = Device.where(user_id: current_user.id)  
+
     else
       flash[:error] = "You must be logged in to view that page."
       redirect_to "/login"

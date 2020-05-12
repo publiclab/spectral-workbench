@@ -23,7 +23,7 @@
 
     <h3>Recent authors</h3>
     <ul class="nav">
-    <% User.find_all_by_login(@spectrums.collect(&:author).uniq).each do |user| %>
+    <% User.where(login: @spectrums.collect(&:author).uniq).each do |user| %>
       <li><a href="<%= profile_path(user.login) %>"><i class="fa fa-user"></i> <%= user.login %></a></li>
     <% end %>
     </ul>

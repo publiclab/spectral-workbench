@@ -60,9 +60,10 @@ class Snapshot < ActiveRecord::Base
 
   def is_latest?
     latest = self.spectrum.snapshots
-                 .order('created_at DESC')
+                 .order(created_at: :desc)
                  .limit(1)
                  .last
+
     latest.id == self.id
   end
 

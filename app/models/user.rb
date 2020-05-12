@@ -19,7 +19,7 @@ class User < ActiveRecord::Base
   # HACK HACK HACK -- how to do attr_accessible from here?
   # prevents a user from submitting a crafted form that bypasses activation
   # anything else you want your user to change should be added here.
-  attr_accessible :login, :email, :name, :password, :password_confirmation
+  attr_accessible :login, :email, :name, :password, :password_confirmation, :email_preferences
 
   def after_create
     UserMailer.google_groups_email(self)
@@ -40,20 +40,20 @@ class User < ActiveRecord::Base
   end
 
   def spectrum_count
-    Spectrum.count(:all, :conditions => {:user_id => self.id})
+    Spectrum.where(:user_id => self.id).count
   end
 
   def set_count
-    SpectraSet.count(:all, :conditions => {:user_id => self.id})
+    SpectraSet.where(:user_id => self.id).count
   end
 
   def received_comments
-    spectrums = Spectrum.find_all_by_user_id self.id, :limit => 20
+    spectrums = Spectrum.where(user_id: self.id)
     spectrum_ids = []
     spectrums.each do |spectrum|
       spectrum_ids << spectrum.id
     end
-    Comment.find_all_by_spectrum_id(spectrum_ids.uniq).where("user_id != ?",self.id).limit(10).order("id DESC")
+    Comment.where(spectrum_id: spectrum_ids.uniq).where("user_id != ?",self.id).limit(10).order("id DESC")
   end
 
   # Authenticates a user by their login name and unencrypted password.  Returns the user or nil.

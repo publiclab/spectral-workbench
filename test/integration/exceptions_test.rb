@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ExceptionsTest < ActionController::IntegrationTest
+class ExceptionsTest < ActionDispatch::IntegrationTest
   fixtures :all
 
   #test "POST /products" do
@@ -26,13 +26,13 @@ class ExceptionsTest < ActionController::IntegrationTest
   end
 
   test "GET /spectrums/#" do
-    spectrum = Spectrum.find :first
+    spectrum = Spectrum.first
     get "/spectrums/#{spectrum.id}"
     assert_response :success
   end
 
   test "GET /sets/#" do
-    set = SpectraSet.find :first
+    set = SpectraSet.first
     get "/sets/#{set.id}"
     assert_response :success
   end

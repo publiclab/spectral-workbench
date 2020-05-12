@@ -110,7 +110,7 @@ class TagTest < ActiveSupport::TestCase
 
     assert_not_nil tag.dependent_spectrum_ids
     assert_equal tag.dependent_spectrum_ids, []
-
+    sleep 1
     # create a snapshot which will refer to the same spectrum, and be the latest:
     tag2 = Tag.new({
       user_id:     tag.user_id,
@@ -120,8 +120,7 @@ class TagTest < ActiveSupport::TestCase
     assert tag2.save!
     assert_equal tag2.name, 'smooth:3'
     tag2.create_snapshot('{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}')
-
-    assert !tag.is_deletable?
+    assert !tag.is_deletable? #latest tag is smooth:1 till here
     assert tag.snapshot
     assert !tag.snapshot.is_latest?
     assert !tag.snapshot.has_dependent_spectra?
@@ -181,6 +180,8 @@ class TagTest < ActiveSupport::TestCase
     assert tag.create_snapshot('{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}')
     assert tag.snapshot.is_latest?
 
+    sleep 1
+
     tag2 = Tag.new({
       user_id:     users(:aaron).id,
       spectrum_id: users(:aaron).spectrums.last.id,
@@ -191,6 +192,7 @@ class TagTest < ActiveSupport::TestCase
     assert tag2.create_snapshot('{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}')
     assert tag2.snapshot.is_latest?
 
+    sleep 1
     # create a snapshot which will reference this snapshot, and be dependent on it:
     tag3 = Tag.new({
       user_id:     Spectrum.last.user_id,
