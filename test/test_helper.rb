@@ -1,4 +1,9 @@
+require 'simplecov'
 ENV["RAILS_ENV"] = "test"
+SimpleCov.start do 
+  add_filter "test/"
+  add_filter "config/"
+end
 require File.expand_path('../../config/environment', __FILE__)
 require 'rails/test_help'
 
