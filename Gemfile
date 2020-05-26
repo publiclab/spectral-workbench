@@ -40,7 +40,7 @@ gem 'will_paginate', '3.0.7'
 gem 'will_paginate-bootstrap', '0.2.5'
 gem 'paperclip', '>= 4.1.1'
 
-gem 'tzinfo', '0.3.49'
+gem 'tzinfo', '0.3.57'
 
 gem 'ruby-openid'
 gem 'open_id_authentication'
