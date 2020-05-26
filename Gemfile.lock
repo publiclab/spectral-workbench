@@ -117,7 +117,7 @@ GEM
       polyglot
       polyglot (>= 0.3.1)
     tzinfo (0.3.49)
-    uglifier (3.0.0)
+    uglifier (4.2.0)
       execjs (>= 0.3.0, < 3)
     will_paginate (3.0.7)
     will_paginate-bootstrap (0.2.5)
