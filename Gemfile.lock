@@ -120,7 +120,7 @@ GEM
     uglifier (3.0.0)
       execjs (>= 0.3.0, < 3)
     will_paginate (3.0.7)
-    will_paginate-bootstrap (0.2.5)
+    will_paginate-bootstrap (1.0.2)
       will_paginate (>= 3.0.3)
 
 PLATFORMS
@@ -147,7 +147,7 @@ DEPENDENCIES
   tzinfo (= 0.3.49)
   uglifier (>= 1.0.3)
   will_paginate (= 3.0.7)
-  will_paginate-bootstrap (= 0.2.5)
+  will_paginate-bootstrap (= 1.0.2)
 
 RUBY VERSION
    ruby 2.1.10p492
