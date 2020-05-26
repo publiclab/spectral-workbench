@@ -96,7 +96,7 @@ GEM
     recaptcha (3.0.0)
       json
     redcarpet (2.1.1)
-    rmagick (2.15.4)
+    rmagick (2.16.0)
     ruby-openid (2.7.0)
     simplecov (0.17.1)
       docile (~> 1.1)
