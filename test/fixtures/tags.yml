@@ -6,12 +6,12 @@
 #
 one: {
  name: 'cfl',
- spectrum_id: 1,
+ spectrum_id: 298486374,
  user_id: 2
 }
 
 two: {
  name: 'led',
- spectrum_id: 1,
+ spectrum_id: 298486374,
  user_id: 1
 }
