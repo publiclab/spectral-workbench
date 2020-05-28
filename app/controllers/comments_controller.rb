@@ -3,7 +3,7 @@ class CommentsController < ApplicationController
   before_filter :require_login, :only => [:spectrum, :spectra_set, :delete]
 
   def index
-    @comments = Comment.find :all, :order => "id DESC"
+    @comments = Comment.all.order(id: :desc)
   end
 
   def spectrum

@@ -29,9 +29,25 @@ class UsersControllerTest < ActionController::TestCase
   end
 
   test "should get top contributors" do
-    get :contributors
+    get :top_contributors
+
     assert_response :success
     assert_not_nil :users
   end
 
+  test "should get user list if admin" do
+    session[:user_id] = users(:admin).id
+    get :index
+
+    assert_response :success
+  end
+
+  test "should not get user list if not admin" do
+    session[:user_id] = users(:quentin).id
+    get :index
+
+    assert_equal "You must be an admin to view the users listing.", flash[:error]
+    assert_response :redirect
+    assert_redirected_to "/login"
+  end
 end
