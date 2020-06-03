@@ -18,6 +18,11 @@ group :assets do
   gem 'uglifier', '>= 1.0.3'
 end
 
+group :development, :test do
+  gem 'capybara'
+  gem 'selenium-webdriver'
+end
+
 group :test do
 	gem 'simplecov', require: false
 end
