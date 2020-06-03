@@ -106,7 +106,7 @@ class Spectrum < ActiveRecord::Base
     # past 52 weeks of data
     weeks = {}
     (0..52).each do |week|
-      weeks[52-week] = Spectrum.count :all, :select => :created_at, :conditions => {:created_at => Time.now-week.weeks..Time.now-(week-1).weeks}
+      weeks[52-week] = Spectrum.select(:created_at).where(created_at: Time.now-week.weeks..Time.now-(week-1).weeks).count
     end
     weeks
   end

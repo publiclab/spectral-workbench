@@ -379,4 +379,71 @@ class SpectrumsControllerTest < ActionController::TestCase
     assert_response :redirect
     assert_redirected_to spectrum_path(spectrum)
   end
+
+  test "should do clone search" do
+    get :clone_search,
+    id: Spectrum.first.id,
+    #search by author name
+    q: "quentin"
+
+    assert_not_nil assigns(:calibrations)
+    assert_response :success
+  end
+
+  test "should do compare search" do
+    get :compare_search,
+    id: Spectrum.first.id,
+    #search by author name
+    q: "quentin"
+
+    assert_not_nil assigns(:spectra)
+    assert_response :success
+  end
+
+  test "should do set search" do
+    session[:user_id] = users(:quentin).id
+    get :set_search,
+    id: Spectrum.first.id,
+    #search by set name
+    q: "Rad"
+
+
+    assert_not_nil assigns(:user_sets)
+    assert_response :success
+
+  end
+
+  test "should get all spectra as JSON" do
+    get :all,
+    format: "json"
+
+    assert_response :success
+  end
+
+  test "should get all spectra as XML" do
+    get :all,
+    format: "xml"
+
+    assert_response :success
+  end
+
+  test "should get recent spectra" do
+    get :recent,
+    capture: true
+
+    assert_not_nil assigns(:spectrums)
+    assert_response :success
+  end
+
+  test "should save modified spectrum" do
+    session[:user_id] = Spectrum.first.user_id
+    post :save,
+    id: Spectrum.first.id,
+    data: '{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}'
+
+    assert_not_nil assigns(:spectrum)
+    assert_response :success
+
+  end
+
 end
