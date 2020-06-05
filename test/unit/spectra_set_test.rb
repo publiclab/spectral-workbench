@@ -78,4 +78,11 @@ class SpectraSetTest < ActiveSupport::TestCase
     assert_not_nil set.snapshots(false)
   end
 
+  test "json parsable with title" do
+    set = SpectraSet.last
+    set.title = "./!@$%^&*)_+-=HEllo123`~?<>{}[]#,,.\""
+    json = set.to_json
+    parsed = JSON.parse(json).with_indifferent_access
+    assert parsed[:title].eql? "./!@$%^&*)_+-=HEllo123`~?<>{}[]#,,.\""
+  end
 end
