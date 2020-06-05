@@ -40,4 +40,52 @@ class UserTest < ActiveSupport::TestCase
     assert_equal u, u2
   end
 
+  test "user received comments" do
+    user = User.first
+    comments = user.received_comments
+
+    assert_not_nil comments
+  end
+
+  test "user spectrum count" do
+    user = User.first
+    count = user.spectrum_count
+
+    assert_not_nil count
+  end
+
+  test "user set count" do
+    user = User.first
+    count = user.set_count
+
+    assert_not_nil count
+  end
+
+  test "user sets" do
+    user = User.first
+    sets = user.sets
+
+    assert_not_nil sets
+  end
+
+  test "weekly tallies" do
+    tally = User.weekly_tallies
+
+    assert_not_nil tally
+  end
+
+  test "setter for login" do
+    user = User.first
+    user.login = "newname"
+
+    assert_equal "newname", user.login
+  end
+
+  test "setter for email" do
+    user = User.first
+    user.email = "thisnewemail@ifound.com"
+
+    assert_equal "thisnewemail@ifound.com", user.email
+  end
+  
 end

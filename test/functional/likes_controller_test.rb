@@ -29,4 +29,20 @@ class LikesControllerTest < ActionController::TestCase
     assert_response :redirect
   end
 
+  test "should delete like if author" do
+  	session[:user_id] = Like.first.user_id
+  	get :delete,
+  	id: Like.first.id
+
+  	assert_response :redirect
+  end
+
+  test "should get recent likes" do
+  	get :recent,
+  	page: 1
+
+  	assert_response :success
+  	assert_not_nil assigns(:spectrums)
+  end
+
 end

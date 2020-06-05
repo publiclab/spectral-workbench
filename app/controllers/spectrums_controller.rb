@@ -92,9 +92,9 @@ class SpectrumsController < ApplicationController
           render template: 'spectrums/show2'
         else
           if logged_in?
-            @spectra = Spectrum.find(:all, :limit => 12, :order => "created_at DESC", :conditions => ["id != ? AND author = ?",@spectrum.id,current_user.login])
+            @spectra = Spectrum.where("id != ? AND author = ?",@spectrum.id,current_user.login).order(created_at: :desc).limit(12)
           else
-            @spectra = Spectrum.find(:all, :limit => 12, :order => "created_at DESC", :conditions => ["id != ?",@spectrum.id])
+            @spectra = Spectrum.where("id != ?",@spectrum.id).order(created_at: :desc).limit(12)
           end
           @sets = @spectrum.sets
           @user_sets = SpectraSet.where(author: current_user.login).limit(20).order("created_at DESC") if logged_in?
@@ -149,7 +149,7 @@ class SpectrumsController < ApplicationController
   end
 
   def anonymous
-    @spectrums = Spectrum.paginate(:order => "created_at DESC", :conditions => {:author => "anonymous"}, :page => params[:page])
+    @spectrums = Spectrum.where(author: "anonymous").order(created_at: :desc).paginate(page: params[:page])
     render :template => "spectrums/search"
   end
 
@@ -176,7 +176,7 @@ class SpectrumsController < ApplicationController
   end
 
   def recent
-    @spectrums = Spectrum.find(:all, :limit => 10, :order => "id DESC")
+    @spectrums = Spectrum.all.order(id: :desc).limit(10)
     render :partial => "capture/results", :layout => false if params[:capture]
   end
 
@@ -442,7 +442,7 @@ class SpectrumsController < ApplicationController
   end
 
   def all
-    @spectrums = Spectrum.find(:all).paginate(:page => params[:page])
+    @spectrums = Spectrum.all.paginate(:page => params[:page])
     respond_with(@spectrums) do |format|
       format.xml  { render :xml => @spectrums }
       format.json  { render :json => @spectrums }
@@ -525,7 +525,7 @@ class SpectrumsController < ApplicationController
     @spectrum = Spectrum.find(params[:id])
     @calibrations = Spectrum.where(calibrated: true)
                             .where('id != ?',@spectrum.id)
-                            .where('title LIKE ? OR notes LIKE ? OR author LIKE ?)',"%#{params[:q]}%", "%#{params[:q]}%","%#{params[:q]}%")
+                            .where('title LIKE ? OR notes LIKE ? OR author LIKE ?',"%#{params[:q]}%", "%#{params[:q]}%","%#{params[:q]}%")
                             .limit(20)
                             .order("created_at DESC")
     render :partial => "spectrums/show/clone_results", :layout => false
@@ -535,7 +535,7 @@ class SpectrumsController < ApplicationController
     @spectrum = Spectrum.find(params[:id])
     @spectra = Spectrum.where(calibrated: true)
                             .where('id != ?',@spectrum.id)
-                            .where('title LIKE ? OR notes LIKE ? OR author LIKE ?)',"%#{params[:q]}%", "%#{params[:q]}%","%#{params[:q]}%")
+                            .where('title LIKE ? OR notes LIKE ? OR author LIKE ?',"%#{params[:q]}%", "%#{params[:q]}%","%#{params[:q]}%")
                             .limit(20)
                             .order("created_at DESC")
     render :partial => "spectrums/show/compare_search", :layout => false

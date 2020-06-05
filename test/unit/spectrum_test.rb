@@ -155,4 +155,10 @@ class SpectrumTest < ActiveSupport::TestCase
 
   end
 
+  test "weekly tallies" do
+    tallies = Spectrum.weekly_tallies
+
+    assert_not_nil tallies
+  end
+
 end
