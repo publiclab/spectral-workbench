@@ -41,7 +41,7 @@ class UsersController < ApplicationController
 
   def index
     if logged_in? && current_user.role == "admin"
-      @users = User.find :all
+      @users = User.all
     else
       flash[:error] = "You must be an admin to view the users listing."
       redirect_to "/login"

@@ -3,7 +3,7 @@ class CommentsController < ApplicationController
   before_filter :require_login, :only => [:spectrum, :spectra_set, :delete]
 
   def index
-    @comments = Comment.find :all, :order => "id DESC"
+    @comments = Comment.all.order(id: :desc)
   end
 
   def spectrum
@@ -27,12 +27,13 @@ class CommentsController < ApplicationController
         }
         format.json  {
           @comment.body = RDiscount.new(@comment.body).to_html
+          flash[:notice] = "Comment saved."
           render :json => @comment
         }
       end
 
     else
-      flash[:error] == "There was an error creating your comment."
+      flash[:error] = "There was an error creating your comment."
       redirect_to spectrum_path(@spectrum)
     end
   end
@@ -51,16 +52,17 @@ class CommentsController < ApplicationController
 
       respond_to do |format|
         format.html {
-          flash[:notice] == "Comment saved."
+          flash[:notice] = "Comment saved."
           redirect_to sets_path(@set)+"#c"+@comment.id.to_s
         }
         format.json  {
           @comment.body = RDiscount.new(@comment.body).to_html
+          flash[:notice] = "Comment saved."
           render :json => @comment
         }
       end
     else
-      flash[:error] == "There was an error creating your comment."
+      flash[:error] = "There was an error creating your comment."
       render :action => "show", :id => params[:id]
     end
   end
