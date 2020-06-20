@@ -16,12 +16,11 @@ production:
   encoding: utf8
   adapter: mysql2
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  host: <%= ENV['DATABASE_HOST'] || 'db' %>
-  username: <%= ENV['DATABASE_USER'] || 'swbench' %>
-  password: <%= ENV['DATABASE_PASSWORD'] || 'swbench' %>
-  database: <%= ENV['DATABASE_NAME'] || 'swbench' %>
-  socket: <%= ENV['DB_SOCKET'] %>
-  timeout: 5000
+  host: <%= ENV['MYSQL_HOST'] || 'db' %>
+  username: <%= ENV['MYSQL_USER'] || 'root' %>
+  password: <%= ENV['MYSQL_PASSWORD'] || 'root' %>
+  database: <%= ENV['MYSQL_DATABASE'] || 'root' %>
+  socket: <%= ENV['MYSQL_SOCKET'] || '/var/run/mysqld/mysqld.sock' %>
 
 test:
   <<: *default
