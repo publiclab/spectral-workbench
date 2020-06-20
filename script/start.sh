@@ -6,7 +6,6 @@ bundle check || bundle install
 bower install --allow-root
 cp config/database.yml.docker.example config/database.yml
 cp config/config.yml.example config/config.yml
-# cp db/schema.rb.example db/schema.rb
 
 until nc -z -v -w30 db 3306; do
  echo 'Waiting for MySQL...'
@@ -16,7 +15,6 @@ done
 echo "MySQL is up and running!"
 
 bundle exec rake db:create
-# bundle exec rake db:schema:load
 bundle exec rake db:migrate
 bundle exec rake db:seed
 
