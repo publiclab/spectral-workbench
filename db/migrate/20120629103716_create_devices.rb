@@ -1,4 +1,4 @@
-class CreateDevices < ActiveRecord::Migration
+class CreateDevices < ActiveRecord::Migration[5.2]
   def self.up
 
     create_table "devices" do |t|

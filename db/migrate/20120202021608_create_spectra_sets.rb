@@ -1,4 +1,4 @@
-class CreateSpectraSets < ActiveRecord::Migration
+class CreateSpectraSets < ActiveRecord::Migration[5.2]
   def self.up
     create_table :spectra_sets do |t|
       t.string :title, :default => "", :null => false

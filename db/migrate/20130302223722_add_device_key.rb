@@ -1,4 +1,4 @@
-class AddDeviceKey < ActiveRecord::Migration
+class AddDeviceKey < ActiveRecord::Migration[5.2]
   def self.up
       add_column :devices, :key, :string, null: false, default: ''
   end

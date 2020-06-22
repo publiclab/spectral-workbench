@@ -1,4 +1,4 @@
-class AddIndexLikesCount < ActiveRecord::Migration
+class AddIndexLikesCount < ActiveRecord::Migration[5.2]
   def up
     add_index("spectrums", "like_count")
     add_index("spectrums", "created_at")

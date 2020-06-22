@@ -1,4 +1,4 @@
-class AddIndexTagSpectrumId < ActiveRecord::Migration
+class AddIndexTagSpectrumId < ActiveRecord::Migration[5.2]
   def up
     add_index("tags", "spectrum_id")
   end

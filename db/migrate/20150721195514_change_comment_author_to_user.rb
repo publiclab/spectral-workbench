@@ -1,4 +1,4 @@
-class ChangeCommentAuthorToUser < ActiveRecord::Migration
+class ChangeCommentAuthorToUser < ActiveRecord::Migration[5.2]
   def up
     change_column_null :comments, :spectra_set_id, true
 

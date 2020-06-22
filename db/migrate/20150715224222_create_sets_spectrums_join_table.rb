@@ -1,4 +1,4 @@
-class CreateSetsSpectrumsJoinTable < ActiveRecord::Migration
+class CreateSetsSpectrumsJoinTable < ActiveRecord::Migration[5.2]
   def up
     create_table :spectra_sets_spectrums, id: false do |t|
       t.integer :spectrum_id
