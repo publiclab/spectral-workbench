@@ -24,4 +24,4 @@ if [ -f $pidfile ] ; then
 	rm $pidfile;
 fi
 
-passenger start --port $PORT
+bundle exec passenger start --port $PORT
