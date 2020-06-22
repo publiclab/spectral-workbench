@@ -23,4 +23,4 @@ if [ -f $pidfile ] ; then
 	rm $pidfile;
 fi
 
-bundle exec rails s -p 5000 -b '127.0.0.1'
+bundle exec passenger start --port $PORT
