@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
 
-  before_filter :require_login, :except => [:show, :contributors, :top_contributors]
+  before_action :require_login, except: [:show, :contributors, :top_contributors]
 
   def message
     @user = User.find params[:user_id]

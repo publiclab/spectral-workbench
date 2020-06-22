@@ -1,6 +1,6 @@
 class SnapshotsController < ApplicationController
   respond_to :json
-  before_filter :no_cache, :only => [ :show ]
+  before_action :no_cache, :only => [ :show ]
 
   def create
 

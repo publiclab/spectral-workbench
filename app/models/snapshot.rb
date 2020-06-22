@@ -27,7 +27,7 @@ class Snapshot < ActiveRecord::Base
 
   # to output the text "data" field as json, not string data
   def json
-    json = self.as_json(:except => [:data])
+    json = self.as_json(except: [:data])
     json['data'] = ActiveSupport::JSON.decode(self.data)
     json
   end

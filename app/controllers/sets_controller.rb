@@ -1,8 +1,8 @@
 class SetsController < ApplicationController
 
   respond_to :html, :xml, :js #, :csv # not yet
-  before_filter :require_login, :only => [ :update, :edit, :delete, :remove, :new, :add, :create ]
-  before_filter :no_cache, :only => [ :show, :calibrated, :search ]
+  before_action :require_login, :only => [ :update, :edit, :delete, :remove, :new, :add, :create ]
+  before_action :no_cache, :only => [ :show, :calibrated, :search ]
 
   def index
     @sets = SpectraSet.order(created_at: :desc).paginate(:page => params[:page])
@@ -100,7 +100,7 @@ class SetsController < ApplicationController
   # non REST
   def search
     params[:id] = params[:q].to_s if params[:id].nil?
-    @sets = SpectraSet.paginate(:conditions => ['title LIKE ? OR notes LIKE ?',"%"+params[:id]+"%", "%"+params[:id]+"%"],:limit => 100, :order => "id DESC", :page => params[:page])
+    @sets = SpectraSet.paginate(conditions: ['title LIKE ? OR notes LIKE ?',"%"+params[:id]+"%", "%"+params[:id]+"%"],limit: 100, :order => "id DESC", :page => params[:page])
     render :partial => "capture/results_sets.html.erb", :layout => false if params[:capture]
   end
 

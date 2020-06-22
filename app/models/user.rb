@@ -11,10 +11,10 @@ class User < ActiveRecord::Base
   validates_length_of       :email,    :within => 6..100 #r@a.wk
   validates_uniqueness_of   :email
 
-  has_many :macros,       :dependent => :destroy
-  has_many :spectrums,    :dependent => :destroy
-  has_many :spectra_sets, :dependent => :destroy
-  has_many :comments,     :dependent => :destroy
+  has_many :macros,       dependent: :destroy
+  has_many :spectrums,    dependent: :destroy
+  has_many :spectra_sets, dependent: :destroy
+  has_many :comments,     dependent: :destroy
 
   # HACK HACK HACK -- how to do attr_accessible from here?
   # prevents a user from submitting a crafted form that bypasses activation
@@ -96,7 +96,7 @@ class User < ActiveRecord::Base
 
   # find spectra by user, tagged with <name>
   def tag(name,count)
-    tags = Tag.find :all, :conditions => {:user_id => self.id, :name => name}, :include => :spectrum, :limit => count, :order => "id DESC"
+    tags = Tag.find :all, conditions: {:user_id => self.id, :name => name}, :include => :spectrum, limit: count, :order => "id DESC"
     spectrum_ids = tags.collect(&:spectrum_id)
     spectra = Spectrum.find spectrum_ids
     spectra.reverse ||= []

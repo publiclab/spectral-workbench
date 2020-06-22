@@ -1,6 +1,6 @@
 class TagsController < ApplicationController
 
-  before_filter :require_login, :only => [ :create, :destroy, :change_reference ]
+  before_action :require_login, :only => [ :create, :destroy, :change_reference ]
 
 
   # FYI, we've stopped accepting requests with multiple comma-delimited tags
@@ -87,7 +87,7 @@ class TagsController < ApplicationController
           respond_to do |format|
             format.html do
               if request.xhr?
-                render :json => { :message => "success" }
+                render :json => { message: "success" }
               else
                 flash[:notice] = "Tag '#{@tag.name}' deleted."
                 redirect_to spectrum_path(@tag.spectrum_id)

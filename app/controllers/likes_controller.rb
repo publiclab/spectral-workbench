@@ -1,6 +1,6 @@
 class LikesController < ApplicationController
 
-  before_filter :require_login, :only => [ :toggle, :delete ]
+  before_action :require_login, :only => [ :toggle, :delete ]
 
   def index
     @spectrums = Spectrum.select("title, created_at, id, user_id, author, photo_file_name, like_count, photo_content_type").order('like_count DESC').where('user_id != 0').paginate(:page => params[:page], :per_page => 24)
@@ -17,7 +17,7 @@ class LikesController < ApplicationController
   def toggle
     @spectrum = Spectrum.find params[:id]
     if @spectrum.liked_by(current_user.id)
-      Like.find_by_user_id(current_user.id,:conditions => {:spectrum_id => @spectrum.id}).delete
+      Like.find_by_user_id(current_user.id,conditions: {:spectrum_id => @spectrum.id}).delete
       render :text => "unliked"
     else
       @like = Like.new({

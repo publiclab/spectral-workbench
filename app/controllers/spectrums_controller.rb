@@ -4,9 +4,9 @@ class SpectrumsController < ApplicationController
   # expand this:
   protect_from_forgery :only => [:clone_calibration, :extract, :calibrate, :save]
   # http://api.rubyonrails.org/classes/ActionController/RequestForgeryProtection/ClassMethods.html
-  before_filter :require_login,     :only => [ :new, :edit, :upload, :save, :update, :destroy, :calibrate, :extract, :clone_calibration, :fork, :setsamplerow, :find_brightest_row, :rotate, :reverse, :choose ]
-  # switch to -- :except => [ :index, :stats, :show, :show2, :anonymous, :embed, :embed2, :search, :recent, :all, :rss, :plots_rss, :match, :clone_search, :compare_search, :set_search
-  before_filter :no_cache, :only => [ :show, :latest, :latest_snapshot_id, :embed, :embed2 ]
+  before_action :require_login,     :only => [ :new, :edit, :upload, :save, :update, :destroy, :calibrate, :extract, :clone_calibration, :fork, :setsamplerow, :find_brightest_row, :rotate, :reverse, :choose ]
+  # switch to -- except: [ :index, :stats, :show, :show2, :anonymous, :embed, :embed2, :search, :recent, :all, :rss, :plots_rss, :match, :clone_search, :compare_search, :set_search
+  before_action :no_cache, :only => [ :show, :latest, :latest_snapshot_id, :embed, :embed2 ]
 
   def stats
   end
@@ -98,7 +98,7 @@ class SpectrumsController < ApplicationController
           end
           @sets = @spectrum.sets
           @user_sets = SpectraSet.where(author: current_user.login).limit(20).order("created_at DESC") if logged_in?
-          @macros = Macro.find :all, :conditions => {:macro_type => "analyze"}
+          @macros = Macro.find :all, conditions: {:macro_type => "analyze"}
           @calibrations = current_user.calibrations.select { |s| s.id != @spectrum.id } if logged_in?
           @comment = Comment.new
         end
@@ -454,7 +454,7 @@ class SpectrumsController < ApplicationController
       Spectrum.where(author: params[:author])
       @spectrums = Spectrum.where(author: params[:author]).paginate(:page => params[:page])
     else
-      @spectrums = Spectrum.find(:all,:order => "created_at DESC",:limit => 12).paginate(:page => params[:page])
+      @spectrums = Spectrum.find(:all,:order => "created_at DESC",limit: 12).paginate(:page => params[:page])
     end
     respond_to do |format|
       format.xml
@@ -462,7 +462,7 @@ class SpectrumsController < ApplicationController
   end
 
   def plots_rss
-    @spectrums = Spectrum.find(:all,:order => "created_at DESC",:limit => 12, :conditions => ["author != ?","anonymous"]).paginate(:page => params[:page])
+    @spectrums = Spectrum.find(:all,:order => "created_at DESC",limit: 12, conditions: ["author != ?","anonymous"]).paginate(:page => params[:page])
     render :layout => false
     response.headers["Content-Type"] = "application/xml; charset=utf-8"
   end

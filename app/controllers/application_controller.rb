@@ -5,7 +5,7 @@ class ApplicationController < ActionController::Base
 
   helper :all # include all helpers, all the time
 
-  before_filter :current_user, :check_subdomain
+  before_action :current_user, :check_subdomain
   helper_method :logged_in?
 
   def check_subdomain

@@ -9,11 +9,11 @@ class Spectrum < ActiveRecord::Base
   # place this before the has_one :snapshot so it runs before dependent => :destroy
   before_destroy :is_deletable?
 
-  has_many :comments, :dependent => :destroy
-  has_many :likes, :dependent => :destroy
-  has_many :tags, :dependent => :destroy
-  has_many :snapshots, :dependent => :destroy
-  has_one :processed_spectrum, :dependent => :destroy
+  has_many :comments, dependent: :destroy
+  has_many :likes, dependent: :destroy
+  has_many :tags, dependent: :destroy
+  has_many :snapshots, dependent: :destroy
+  has_one :processed_spectrum, dependent: :destroy
   has_and_belongs_to_many :spectra_sets
 
   # Paperclip
@@ -24,12 +24,12 @@ class Spectrum < ActiveRecord::Base
       :thumb=> "300x100!",
       :large =>   "800x200!" }
 
-  validates_presence_of :title, :on => :create, :message => "can't be blank"
-  validates_presence_of :author, :on => :create, :message => "can't be blank"
+  validates_presence_of :title, on: :create, message: "can't be blank"
+  validates_presence_of :author, on: :create, message: "can't be blank"
   validates :title, length: { maximum: 60 }
   validates :title, format: { with: /\A[\w\ -\'\"]+\z/, message: "can contain only letters, numbers, and spaces." }
   validates :author, :format => { with: /\A\w[\w\.\-_@]+\z/, message: "can contain only letters, numbers, hyphens, underscores and periods." }
-  validates_attachment_content_type :photo, :content_type => ["image/jpg", "image/jpeg", "image/png", "image/gif"]
+  validates_attachment_content_type :photo, content_type: ["image/jpg", "image/jpeg", "image/png", "image/gif"]
   validate :validate_json
 
   after_save :generate_processed_spectrum
@@ -80,7 +80,7 @@ class Spectrum < ActiveRecord::Base
 
   # to output the text "data" field as json, not string data
   def json
-    json = self.as_json(:except => [:data])
+    json = self.as_json(except: [:data])
     json['data'] = ActiveSupport::JSON.decode(self.clean_json)
     json
   end
