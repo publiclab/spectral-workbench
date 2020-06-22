@@ -1,6 +1,6 @@
 # Spectral Workbench
 
-Copyright 2011-2018 Public Lab
+Copyright 2011-2020 Public Lab
 publiclab.org | spectralworkbench.org
 
 [![tests](https://travis-ci.org/publiclab/spectral-workbench.svg?branch=master)](https://travis-ci.org/publiclab/spectral-workbench) [![View performance data on Skylight](https://badges.skylight.io/typical/Wnv2jzIUWl5x.svg)](https://oss.skylight.io/app/applications/Wnv2jzIUWl5x)
@@ -10,7 +10,6 @@ Spectral Workbench is an open-source tool to perform low-cost spectral analysis 
 The core library for analyzing and manipulating spectral data **has been spun out into its own self-contained JavaScript module**, at https://github.com/publiclab/spectral-workbench.js, which is then included into this application. To use Spectral Workbench on the commandline, try that out!
 
 Read about how to build and use your own spectrometer with this software here: http://publiclab.org/wiki/spectrometer
-
 
 ****
 
@@ -23,13 +22,11 @@ Read about how to build and use your own spectrometer with this software here: h
 5. Enter your username when prompted, and click "Run Project" when it's done.
 6. You're done! Go to the URL shown!
 
-
 ****
 
 ## Installation
 
 The app now runs on Ruby 1.9.3 up to Ruby 2.1.2 (preferred), and Rails 3.2.x, and uses Bundler for gem management and Bower for static asset management.  
-
 
 ### Prerequisites:
 
@@ -70,7 +67,6 @@ Once NPM is installed, you should be able to run:
 
 `sudo npm install -g bower`
 
-
 ### Installation steps:
 
 1. Download a copy of the source with `git clone https://github.com/publiclab/spectral-workbench.git` 
@@ -86,7 +82,6 @@ Sign in instructions:
 *  Then you will be redirected to publiclab.org to "approve" a use of the openid identity.
 *  Note that this applies for development environment as well. 
 
-
 ## Bugs and support
 
 To report bugs and request features, please use the GitHub issue tracker provided at http://github.com/publiclab/spectral-workbench/issues 
@@ -94,7 +89,6 @@ To report bugs and request features, please use the GitHub issue tracker provide
 For additional support, join the Public Laboratory website and mailing list at http://publiclab.org/lists or for urgent requests, email web@publiclab.org
 
 For questions related to the use of this software and your open source spectrometer, the same page links to the "plots-spectrometry" group. 
-
 
 ## API
 
@@ -120,14 +114,11 @@ The required parameters are:
 
 This will return a path (from the root URL by default) to the spectrum, as in: `/spectrums/12345`
 
-
-
 ## Developers
 
 Development is occurring at https://github.com/publiclab/spectral-workbench/; please fork and submit pull requests; for more guidelines on contributing to Public Lab projects, see http://publiclab.org/wiki/contributing-to-public-lab-software
 
 If you're a developer, consider joining the Public Lab developer list, also at http://publiclab.org/wiki/developers
-
 
 ### Testing
 
@@ -136,7 +127,6 @@ Before submitting changes, please run tests with `rake test` to ensure that your
 Also run `rake jasmine` and navigate to http://localhost:8888 to check client-side tests.
 
 New tests are also appreciated to increase coverage; Rails tests are in /test and Jasmine tests (JavaScript tests) are in /spec.
-
 
 ****
 

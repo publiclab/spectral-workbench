@@ -3,11 +3,11 @@ services:
 
   db:
     container_name: spectral-db
-    image: mysql:5.6
+    image: mysql:5.7
     env_file:
       - spectral.env
     volumes:
-      - mysql:/var/lib/mysql
+      - mysql_data_new:/var/lib/mysql
 
   web:
     container_name: spectral-web
@@ -23,5 +23,5 @@ services:
       - db
 
 volumes:
-  mysql:
+  mysql_data_new:
   bundle_cache:

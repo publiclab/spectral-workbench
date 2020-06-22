@@ -62,7 +62,7 @@ GEM
       railties (>= 4.2.0)
       thor (>= 0.14, < 2.0)
     json (2.3.0)
-    loofah (2.5.0)
+    loofah (2.6.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
     mail (2.7.1)
@@ -93,7 +93,9 @@ GEM
       etc
       rack
       rake (>= 0.8.1)
-    rack (2.2.2)
+    protected_attributes_continued (1.5.0)
+      activemodel (>= 5.0)
+    rack (2.2.3)
     rack-offline (0.6.4)
     rack-openid (1.4.2)
       rack (>= 1.1.0)
@@ -168,7 +170,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  actionpack (~> 5.2.4.3)
   cocaine (~> 0.6.0)
   jquery-rails
   mime-types
@@ -176,6 +177,7 @@ DEPENDENCIES
   open_id_authentication
   paperclip (>= 4.1.1)
   passenger
+  protected_attributes_continued (~> 1.5.0)
   rack-offline (>= 0.6.4)
   rails (~> 5.2.4.3)
   rdiscount (= 2.2.0.1)
@@ -195,4 +197,4 @@ RUBY VERSION
    ruby 2.6.5p114
 
 BUNDLED WITH
-   2.1.4
+   1.17.2
