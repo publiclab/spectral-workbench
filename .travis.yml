@@ -49,14 +49,14 @@ install:
 
 jobs:
   include:
-    - name: "Unit Tests"
-      script: rake test:units
+    - name: "Models Tests"
+      script: rails test:models
     - name: "Helpers Tests"
       script: ruby -I test test/unit/helpers/*.rb
     - name: "Functional Tests"
       script: rake test:functionals
     - name: "Integration Tests"
-      script: rake test:integration
+      script: rails test:integration
     - name: "Docker Builds"
       script: docker build -t swbench .
     - name: "Asset Precompilation"
