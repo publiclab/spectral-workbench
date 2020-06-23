@@ -53,8 +53,8 @@ jobs:
       script: rails test:models
     - name: "Helpers Tests"
       script: ruby -I test test/unit/helpers/*.rb
-    - name: "Functional Tests"
-      script: rake test:functionals
+    - name: "Controllers Tests"
+      script: rails test:controllers
     - name: "Integration Tests"
       script: rails test:integration
     - name: "Docker Builds"
