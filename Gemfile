@@ -21,6 +21,8 @@ group :test do
 	gem 'simplecov', require: false
 end
 
+gem 'bootsnap', '~> 1.4.6'
+gem 'listen', '~> 3.2.1'
 gem 'responders', '~> 3.0.1'
 gem 'rmagick'#, :require => "RMagick"
 gem 'mime-types'#, '1.18'
