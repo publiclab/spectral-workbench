@@ -4,10 +4,9 @@
 Rails.application do |config|
     config.assets.version = '1.1'
 
-    # Add additional assets to the asset load path
+    # Add additional assets to the asset load path.
     # Rails.application.config.assets.paths << Emoji.images_path
-        # Version of your assets, change this if you want to expire all your assets
-    config.assets.version = '1.1'
+    # Version of your assets, change this if you want to expire all your assets
     config.assets.paths << Rails.root.join("public/lib")
     config.assets.precompile += ['capture.js','analyze.js']
 
