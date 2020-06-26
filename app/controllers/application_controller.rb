@@ -9,9 +9,9 @@ class ApplicationController < ActionController::Base
   helper_method :logged_in?
 
   def check_subdomain
-    if request.subdomain.present? && Rails.env == 'production'
-      redirect_to 'http://' + request.domain + request.port_string + request.fullpath
-    end
+    # if request.subdomain.present? && Rails.env == 'production'
+    #   redirect_to 'http://' + request.domain + request.port_string + request.fullpath
+    # end
   end
 
   def mobile?
