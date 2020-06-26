@@ -34,7 +34,7 @@ class CaptureController < ApplicationController
       @calibrations = Spectrum.where(calibrated: true, user_id: current_user.id)
       @start_wavelength,@end_wavelength = @calibration.wavelength_range if @calibration
     end
-    @spectrums = Spectrum.find(:all, :limit => 12, :order => "id DESC")
+    @spectrums = Spectrum.all.order(id: :desc).limit(12)
     render :template => "capture/index", :layout => "application"
   end
 
@@ -92,10 +92,13 @@ class CaptureController < ApplicationController
       end
 
       flash[:notice] = 'Spectrum was successfully created.'
-      format.html {
-        redirect_to spectrum_path(@spectrum)
-      }
-      format.xml  { render :xml => @spectrum, :status => :created, :location => @spectrum }
+
+      respond_to do |format|
+        format.html {
+          redirect_to spectrum_path(@spectrum)
+        }
+        format.xml  { render :xml => @spectrum, :status => :created, :location => @spectrum }
+      end
 
     else
 
