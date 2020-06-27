@@ -161,4 +161,24 @@ class SpectrumTest < ActiveSupport::TestCase
     assert_not_nil tallies
   end
 
+  test "compare" do
+  	spectrum1 = Spectrum.first
+  	spectrum2 = Spectrum.second
+	similarity = spectrum1.compare(spectrum2)
+
+	assert_not_nil spectrum1
+	assert_not_nil spectrum2
+	assert_not_nil similarity
+
+  end
+
+  test "find similar" do
+  	spectrum = Spectrum.first
+	similar = spectrum.find_similar(100)
+
+	assert_not_nil spectrum
+	assert_not_nil similar
+
+  end
+
 end
