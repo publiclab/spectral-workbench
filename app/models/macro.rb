@@ -10,6 +10,10 @@ class Macro < ActiveRecord::Base
                       on: :create
   validates_format_of :url, with: /\A(http|https):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?\z/ix
 
-  attr_accessible :title, :description, :code, :macro_type, :url, :user_id
+  private 
+
+  def macro_params
+    params.require(:macro).permit(:title, :description, :code, :macro_type, :url, :user_id)
+  end
 
 end

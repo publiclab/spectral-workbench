@@ -3,17 +3,15 @@ require 'rmagick'
 
 class Spectrum < ActiveRecord::Base
   include ActionView::Helpers::DateHelper
-
-  attr_accessible :title, :author, :user_id, :notes, :photo, :video_row, :data
-
+  
   # place this before the has_one :snapshot so it runs before dependent => :destroy
   before_destroy :is_deletable?
 
-  has_many :comments, :dependent => :destroy
-  has_many :likes, :dependent => :destroy
-  has_many :tags, :dependent => :destroy
-  has_many :snapshots, :dependent => :destroy
-  has_one :processed_spectrum, :dependent => :destroy
+  has_many :comments, dependent: :destroy
+  has_many :likes, dependent: :destroy
+  has_many :tags, dependent: :destroy
+  has_many :snapshots, dependent: :destroy
+  has_one :processed_spectrum, dependent: :destroy
   has_and_belongs_to_many :spectra_sets
 
   # Paperclip
@@ -24,8 +22,8 @@ class Spectrum < ActiveRecord::Base
       :thumb=> "300x100!",
       :large =>   "800x200!" }
 
-  validates_presence_of :title, :on => :create, :message => "can't be blank"
-  validates_presence_of :author, :on => :create, :message => "can't be blank"
+  validates_presence_of :title, on: :create, message: "can't be blank"
+  validates_presence_of :author, on: :create, message: "can't be blank"
   validates :title, length: { maximum: 60 }
   validates :title, format: { with: /\A[\w\ -\'\"]+\z/, message: "can contain only letters, numbers, and spaces." }
   validates :author, :format => { with: /\A\w[\w\.\-_@]+\z/, message: "can contain only letters, numbers, hyphens, underscores and periods." }
@@ -637,5 +635,12 @@ class Spectrum < ActiveRecord::Base
     spectra
 
   end
+
+  private
+
+  def spectrum_params
+    params.require(:spectrum).permit(:title, :author, :user_id, :notes, :photo, :video_row, :data)
+  end
+
 
 end

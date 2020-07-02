@@ -11,15 +11,14 @@ class User < ActiveRecord::Base
   validates_length_of       :email,    :within => 6..100 #r@a.wk
   validates_uniqueness_of   :email
 
-  has_many :macros,       :dependent => :destroy
-  has_many :spectrums,    :dependent => :destroy
-  has_many :spectra_sets, :dependent => :destroy
-  has_many :comments,     :dependent => :destroy
+  has_many :macros,       dependent: :destroy
+  has_many :spectrums,    dependent: :destroy
+  has_many :spectra_sets, dependent: :destroy
+  has_many :comments,     dependent: :destroy
 
   # HACK HACK HACK -- how to do attr_accessible from here?
   # prevents a user from submitting a crafted form that bypasses activation
   # anything else you want your user to change should be added here.
-  attr_accessible :login, :email, :name, :password, :password_confirmation, :email_preferences
 
   def after_create
     UserMailer.google_groups_email(self)
@@ -110,6 +109,12 @@ class User < ActiveRecord::Base
   def self.find_by_token(token)
     t = Time.at(token.scan(/../).map { |x| x.hex.chr }.join.to_i)
     User.where("created_at > ? AND created_at < ?", t - 1.second, t + 1.second).first
+  end
+
+  private
+
+  def user_params
+    params.require(:user).permit(:login, :email, :name, :password, :password_confirmation, :email_preferences)
   end
 
 end
