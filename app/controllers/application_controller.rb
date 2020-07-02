@@ -68,7 +68,7 @@ class ApplicationController < ActionController::Base
           login_prompt = "You must be <a href='#{login_link}'>logged in to do this</a>."
           format.json { render :json => { :errors => [ login_prompt ] } }
           format.html do
-            render :text => login_prompt # halts request cycle
+            render html: login_prompt # halts request cycle
           end
         else
           format.html do

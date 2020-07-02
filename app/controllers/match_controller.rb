@@ -66,7 +66,7 @@ class MatchController < ApplicationController
       format.html { render partial: "macros/spectra", locals: { spectrums: @spectra } if params[:toolPane] }
       format.xml  { render :xml => @spectra }
       format.csv  {
-        render :text => SpectrumsHelper.show_csv(@spectrum)
+        render html: SpectrumsHelper.show_csv(@spectrum)
       }
       format.json  { render :json => @spectra.map { |s| s.json } } # actually flatten in the json of each spectrum; kind of messy
     end

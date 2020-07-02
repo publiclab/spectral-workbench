@@ -115,8 +115,8 @@ class CaptureController < ApplicationController
       @spectrums = current_user.calibrations.limit(20)
       # add the one that's being used in live display:
       if params[:calibration_id] && params[:calibration_id] != 'undefined'
-        new = Spectrum.where(id: params[:calibration_id])
-        @spectrums = new + @spectrums
+        new_spectrum = Spectrum.where(id: params[:calibration_id])
+        @spectrums = new_spectrum + @spectrums
       end
       @spectrums = @spectrums.uniq
       respond_to do |format|

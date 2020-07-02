@@ -52,7 +52,7 @@ class SetsController < ApplicationController
     range = @calibration.wavelength_range
     @spectrum.scale_data(range[0],range[1])
     @match = Spectrum.find(@set.match(@spectrum))
-    render :text => "Matched: <a href='/spectra/"+@match.id.to_s+"'>"+@match.title+"</a>"
+    render plain: "Matched: <a href='/spectra/"+@match.id.to_s+"'>"+@match.title+"</a>"
   end
 
   def embed
