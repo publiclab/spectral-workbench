@@ -11,15 +11,14 @@ class User < ActiveRecord::Base
   validates_length_of       :email,    :within => 6..100 #r@a.wk
   validates_uniqueness_of   :email
 
-  has_many :macros,       :dependent => :destroy
-  has_many :spectrums,    :dependent => :destroy
-  has_many :spectra_sets, :dependent => :destroy
-  has_many :comments,     :dependent => :destroy
+  has_many :macros,       dependent: :destroy
+  has_many :spectrums,    dependent: :destroy
+  has_many :spectra_sets, dependent: :destroy
+  has_many :comments,     dependent: :destroy
 
   # HACK HACK HACK -- how to do attr_accessible from here?
   # prevents a user from submitting a crafted form that bypasses activation
   # anything else you want your user to change should be added here.
-  attr_accessible :login, :email, :name, :password, :password_confirmation
 
   def after_create
     UserMailer.google_groups_email(self)
@@ -34,26 +33,26 @@ class User < ActiveRecord::Base
     # past 52 weeks of data
     weeks = {}
     (0..52).each do |week|
-      weeks[52-week] = User.count :all, :select => :created_at, :conditions => {:created_at => Time.now-week.weeks..Time.now-(week-1).weeks}
+      weeks[52-week] = User.select(:created_at).where(created_at: Time.now-week.weeks..Time.now-(week-1).weeks).count
     end
     weeks
   end
 
   def spectrum_count
-    Spectrum.count(:all, :conditions => {:user_id => self.id})
+    Spectrum.where(:user_id => self.id).count
   end
 
   def set_count
-    SpectraSet.count(:all, :conditions => {:user_id => self.id})
+    SpectraSet.where(:user_id => self.id).count
   end
 
   def received_comments
-    spectrums = Spectrum.find_all_by_user_id self.id, :limit => 20
+    spectrums = Spectrum.where(user_id: self.id)
     spectrum_ids = []
     spectrums.each do |spectrum|
       spectrum_ids << spectrum.id
     end
-    Comment.find_all_by_spectrum_id(spectrum_ids.uniq).where("user_id != ?",self.id).limit(10).order("id DESC")
+    Comment.where(spectrum_id: spectrum_ids.uniq).where("user_id != ?",self.id).limit(10).order("id DESC")
   end
 
   # Authenticates a user by their login name and unencrypted password.  Returns the user or nil.
@@ -110,6 +109,12 @@ class User < ActiveRecord::Base
   def self.find_by_token(token)
     t = Time.at(token.scan(/../).map { |x| x.hex.chr }.join.to_i)
     User.where("created_at > ? AND created_at < ?", t - 1.second, t + 1.second).first
+  end
+
+  private
+
+  def user_params
+    params.require(:user).permit(:login, :email, :name, :password, :password_confirmation, :email_preferences)
   end
 
 end

@@ -18,16 +18,16 @@ class LikesController < ApplicationController
     @spectrum = Spectrum.find params[:id]
     if @spectrum.liked_by(current_user.id)
       Like.find_by_user_id(current_user.id,:conditions => {:spectrum_id => @spectrum.id}).delete
-      render :text => "unliked"
+      render plain: "unliked"
     else
       @like = Like.new({
         :user_id => current_user.id,
         :spectrum_id => params[:id]
       })
       if @like.save
-        render :text => @spectrum.likes.length
+        render html: @spectrum.likes.length
       else
-        render :text => "error"
+        render plain: "error"
       end
     end
   end

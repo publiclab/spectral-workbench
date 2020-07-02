@@ -5,7 +5,7 @@ class SetsController < ApplicationController
   before_filter :no_cache, :only => [ :show, :calibrated, :search ]
 
   def index
-    @sets = SpectraSet.paginate(:order => "created_at DESC", :page => params[:page])
+    @sets = SpectraSet.order(created_at: :desc).paginate(:page => params[:page])
   end
 
   def show2
@@ -52,7 +52,7 @@ class SetsController < ApplicationController
     range = @calibration.wavelength_range
     @spectrum.scale_data(range[0],range[1])
     @match = Spectrum.find(@set.match(@spectrum))
-    render :text => "Matched: <a href='/spectra/"+@match.id.to_s+"'>"+@match.title+"</a>"
+    render plain: "Matched: <a href='/spectra/"+@match.id.to_s+"'>"+@match.title+"</a>"
   end
 
   def embed
@@ -163,7 +163,7 @@ class SetsController < ApplicationController
   def edit
     @set = SpectraSet.find params[:id]
     if @set.user_id == current_user.id || current_user.role == "admin"
-      @spectrums = Spectrum.find(:all, :limit => 4, :order => "created_at DESC")
+      @spectrums = Spectrum.all.order(created_at: :desc).limit(4)
     else
       flash[:error] = "You must own the set to edit it."
       redirect_to "/sets/#{@set.id}"

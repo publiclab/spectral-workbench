@@ -19,7 +19,7 @@ class CreateSetsSpectrumsJoinTable < ActiveRecord::Migration
   end
 
   def down
-    add_column :spectrums, :spectra_string, :string, :default => "", :null => false
+    add_column :spectrums, :spectra_string, :string, null: false, default: ''
     remove_table :spectra_sets_spectrums
   end
 

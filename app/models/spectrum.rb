@@ -3,17 +3,15 @@ require 'rmagick'
 
 class Spectrum < ActiveRecord::Base
   include ActionView::Helpers::DateHelper
-
-  attr_accessible :title, :author, :user_id, :notes, :photo, :video_row, :data
-
+  
   # place this before the has_one :snapshot so it runs before dependent => :destroy
   before_destroy :is_deletable?
 
-  has_many :comments, :dependent => :destroy
-  has_many :likes, :dependent => :destroy
-  has_many :tags, :dependent => :destroy
-  has_many :snapshots, :dependent => :destroy
-  has_one :processed_spectrum, :dependent => :destroy
+  has_many :comments, dependent: :destroy
+  has_many :likes, dependent: :destroy
+  has_many :tags, dependent: :destroy
+  has_many :snapshots, dependent: :destroy
+  has_one :processed_spectrum, dependent: :destroy
   has_and_belongs_to_many :spectra_sets
 
   # Paperclip
@@ -24,8 +22,8 @@ class Spectrum < ActiveRecord::Base
       :thumb=> "300x100!",
       :large =>   "800x200!" }
 
-  validates_presence_of :title, :on => :create, :message => "can't be blank"
-  validates_presence_of :author, :on => :create, :message => "can't be blank"
+  validates_presence_of :title, on: :create, message: "can't be blank"
+  validates_presence_of :author, on: :create, message: "can't be blank"
   validates :title, length: { maximum: 60 }
   validates :title, format: { with: /\A[\w\ -\'\"]+\z/, message: "can contain only letters, numbers, and spaces." }
   validates :author, :format => { with: /\A\w[\w\.\-_@]+\z/, message: "can contain only letters, numbers, hyphens, underscores and periods." }
@@ -106,7 +104,7 @@ class Spectrum < ActiveRecord::Base
     # past 52 weeks of data
     weeks = {}
     (0..52).each do |week|
-      weeks[52-week] = Spectrum.count :all, :select => :created_at, :conditions => {:created_at => Time.now-week.weeks..Time.now-(week-1).weeks}
+      weeks[52-week] = Spectrum.select(:created_at).where(created_at: Time.now-week.weeks..Time.now-(week-1).weeks).count
     end
     weeks
   end
@@ -230,19 +228,18 @@ class Spectrum < ActiveRecord::Base
     new.tag("forked:#{self.id}", user.id)
     # record "now" timestamp
     now = Time.now
-    seconds = 0
     # now copy over all tags, in order:
     self.tags.each do |tag|
       unless tag.key == "forked"
-        newtag = new.tag(tag.name, user.id) 
+        newtag = new.tag(tag.name, user.id)
+        now = now + 1 #increment now by one second per tag
         # preserve created_at, for tag ordering; we should be able to tell based on spectrum created_at
-        newtag.created_at = now + seconds.seconds # forward-date each by 1 second
+        newtag.created_at = now # forward-date each by 1 second
         if tag.needs_snapshot? && tag.snapshot && !tag.snapshot.data.nil?
           newtag.create_snapshot(tag.snapshot.data) 
           newtag.snapshot.created_at = newtag.created_at
         end
         newtag.save
-        seconds += 1
       end
     end
     Spectrum.find new.id # refetch it to get all the tags, for some reason needed by tests
@@ -471,7 +468,7 @@ class Spectrum < ActiveRecord::Base
   end
 
   def liked_by(user_id)
-    Like.find_by_user_id(user_id,:conditions => {:spectrum_id => self.id})
+    Like.where(:spectrum_id => self.id).find_by_user_id(user_id)
   end
 
   # notify each commenter about a new comment
@@ -638,5 +635,12 @@ class Spectrum < ActiveRecord::Base
     spectra
 
   end
+
+  private
+
+  def spectrum_params
+    params.require(:spectrum).permit(:title, :author, :user_id, :notes, :photo, :video_row, :data)
+  end
+
 
 end

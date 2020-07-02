@@ -2,6 +2,10 @@ require File.expand_path('../boot', __FILE__)
 
 require 'rails/all'
 
+# Require the gems listed in Gemfile, including any gems
+# you've limited to :test, :development, or :production.
+Bundler.require(*Rails.groups)
+
 if defined?(Bundler)
   # If you precompile assets before deploying to production, use this line
   Bundler.require(*Rails.groups(:assets => %w(development test)))
@@ -56,17 +60,13 @@ module SpectralWorkbench
 
     # Enable the asset pipeline
     config.assets.enabled = true
-
-    # Version of your assets, change this if you want to expire all your assets
-    config.assets.version = '1.1'
-    config.assets.paths << Rails.root.join("public", "lib")
-    config.assets.precompile += ['capture.js','analyze.js']
+    config.assets.paths << Rails.root.join("public/lib")
 
     # pluralization options, but unneccessary due to:
     # http://dictionary.reference.com/browse/spectrum
     #ActiveSupport::Inflector.inflections do |inflect|
     #  inflect.irregular 'spectrum', 'spectra'
     #end
-
+    config.active_record.raise_in_transactional_callbacks = true
   end
 end

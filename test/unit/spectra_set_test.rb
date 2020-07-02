@@ -78,4 +78,16 @@ class SpectraSetTest < ActiveSupport::TestCase
     assert_not_nil set.snapshots(false)
   end
 
+  test "match" do
+    set = SpectraSet.first
+    spectrum = Spectrum.first
+    #add spectrum to the set
+    set.spectrums << spectrum
+    score = set.match(spectrum)
+
+    assert_not_nil set
+    assert_not_nil spectrum
+    assert_not_nil score
+  end
+
 end

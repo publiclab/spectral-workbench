@@ -9,9 +9,9 @@ class ApplicationController < ActionController::Base
   helper_method :logged_in?
 
   def check_subdomain
-    if request.subdomain.present? && Rails.env == 'production'
-      redirect_to 'http://' + request.domain + request.port_string + request.fullpath
-    end
+    # if request.subdomain.present? && Rails.env == 'production'
+    #   redirect_to 'http://' + request.domain + request.port_string + request.fullpath
+    # end
   end
 
   def mobile?
@@ -68,7 +68,7 @@ class ApplicationController < ActionController::Base
           login_prompt = "You must be <a href='#{login_link}'>logged in to do this</a>."
           format.json { render :json => { :errors => [ login_prompt ] } }
           format.html do
-            render :text => login_prompt # halts request cycle
+            render html: login_prompt # halts request cycle
           end
         else
           format.html do

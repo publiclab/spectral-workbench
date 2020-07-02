@@ -5,6 +5,7 @@ one:
   email: MyString
   body: MyText
   wavelength: 1.5
+  user_id: 1
   x: 1
   y: 1
 
@@ -13,5 +14,7 @@ two:
   email: MyString
   body: MyText
   wavelength: 1.5
+  user_id: 2
   x: 1
   y: 1
+  
