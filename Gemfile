@@ -31,6 +31,7 @@ gem 'recaptcha', '3.0.0', :require => "recaptcha/rails"
 gem 'cocaine', '~>0.5.3'
 gem 'redcarpet', '2.1.1'
 gem 'skylight' # performance tracking via skylight.io
+gem 'activerecord-deprecated_finders', require: 'active_record/deprecated_finders'
 
 gem 'rdiscount', '1.6.8'
 gem 'will_paginate', '~>3.3.0'

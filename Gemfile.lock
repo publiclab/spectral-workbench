@@ -30,6 +30,7 @@ GEM
       activemodel (= 4.2.11.3)
       activesupport (= 4.2.11.3)
       arel (~> 6.0)
+    activerecord-deprecated_finders (1.0.4)
     activesupport (4.2.11.3)
       i18n (~> 0.7)
       minitest (~> 5.1)
@@ -156,6 +157,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  activerecord-deprecated_finders
   cocaine (~> 0.5.3)
   jquery-rails
   mime-types
