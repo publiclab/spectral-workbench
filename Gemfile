@@ -27,7 +27,7 @@ gem 'rmagick'#, :require => "RMagick"
 gem 'mime-types'#, '1.18'
 gem 'jquery-rails'
 gem 'passenger'
-gem 'recaptcha', '3.0.0', :require => "recaptcha/rails"
+gem 'recaptcha', '5.5.0', :require => "recaptcha/rails"
 gem 'cocaine', '~>0.5.3'
 gem 'redcarpet', '2.1.1'
 gem 'skylight' # performance tracking via skylight.io
