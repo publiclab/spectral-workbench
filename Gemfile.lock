@@ -120,7 +120,7 @@ GEM
     rdiscount (1.6.8)
     recaptcha (3.0.0)
       json
-    redcarpet (2.1.1)
+    redcarpet (3.2.3)
     responders (2.4.1)
       actionpack (>= 4.2.0, < 6.0)
       railties (>= 4.2.0, < 6.0)
@@ -170,7 +170,7 @@ DEPENDENCIES
   rails (~> 4.2.8)
   rdiscount (= 1.6.8)
   recaptcha (= 3.0.0)
-  redcarpet (= 2.1.1)
+  redcarpet (= 3.2.3)
   responders (~> 2.0)
   rmagick
   ruby-openid
