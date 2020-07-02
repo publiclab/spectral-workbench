@@ -117,7 +117,7 @@ GEM
       rake (>= 0.8.7)
       thor (>= 0.18.1, < 2.0)
     rake (13.0.1)
-    rdiscount (1.6.8)
+    rdiscount (2.2.0.1)
     recaptcha (3.0.0)
       json
     redcarpet (2.1.1)
@@ -168,7 +168,7 @@ DEPENDENCIES
   protected_attributes (~> 1.1.4)
   rack-offline (>= 0.6.4)
   rails (~> 4.2.8)
-  rdiscount (= 1.6.8)
+  rdiscount (= 2.2.0.1)
   recaptcha (= 3.0.0)
   redcarpet (= 2.1.1)
   responders (~> 2.0)
