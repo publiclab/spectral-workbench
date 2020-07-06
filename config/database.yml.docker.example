@@ -8,17 +8,23 @@ default: &default
 development:
   <<: *default
   host: db
-  username: root 
+  username: root
   password: root
   database: swbench_development
 
 production:
-  adapter: sqlite3
-  database: production.db
+  encoding: utf8
+  adapter: mysql2
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  host: <%= ENV['MYSQL_HOST'] || 'db' %>
+  username: <%= ENV['MYSQL_USER'] || 'root' %>
+  password: <%= ENV['MYSQL_PASSWORD'] || 'root' %>
+  database: <%= ENV['MYSQL_DATABASE'] || 'root' %>
+  socket: <%= ENV['MYSQL_SOCKET'] || '/var/run/mysqld/mysqld.sock' %>
 
 test:
   <<: *default
-  host: 127.0.0.1
+  host: db
   username: root 
-  password:
+  password: root
   database: swbench_test

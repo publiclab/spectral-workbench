@@ -10,7 +10,6 @@ class ChangeCommentAuthorToUser < ActiveRecord::Migration
         end
       end
     end
-    add_column :comments, :wavelength, :integer
     add_column :comments, :intensity,  :integer
   end
 

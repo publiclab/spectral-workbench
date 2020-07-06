@@ -22,8 +22,8 @@ class SpectrumsController < ApplicationController
                            .where('user_id != 0')
                            .paginate(:page => params[:page], :per_page => 24)
 
-      @sets = SpectraSet.find(:all,:limit => 4,:order => "created_at DESC")
-      @comments = Comment.all :limit => 12, :order => "id DESC"
+      @sets = SpectraSet.all
+      @comments = Comment.all
 
       respond_with(@spectrums) do |format|
         format.html {
@@ -92,9 +92,9 @@ class SpectrumsController < ApplicationController
           render template: 'spectrums/show2'
         else
           if logged_in?
-            @spectra = Spectrum.find(:all, :limit => 12, :order => "created_at DESC", :conditions => ["id != ? AND author = ?",@spectrum.id,current_user.login])
+            @spectra = Spectrum.where("id != ? AND author = ?",@spectrum.id,current_user.login).order(created_at: :desc).limit(12)
           else
-            @spectra = Spectrum.find(:all, :limit => 12, :order => "created_at DESC", :conditions => ["id != ?",@spectrum.id])
+            @spectra = Spectrum.where("id != ?",@spectrum.id).order(created_at: :desc).limit(12)
           end
           @sets = @spectrum.sets
           @user_sets = SpectraSet.where(author: current_user.login).limit(20).order("created_at DESC") if logged_in?
@@ -105,7 +105,7 @@ class SpectrumsController < ApplicationController
       }
       format.xml  { render :xml => @spectrum }
       format.csv  {
-        render :text => SpectrumsHelper.show_csv(@spectrum)
+        render html: SpectrumsHelper.show_csv(@spectrum)
       }
       format.json  {
         render :json => @spectrum.json
@@ -121,9 +121,9 @@ class SpectrumsController < ApplicationController
                      .select('spectrum_id, created_at, id')
                      .order("created_at DESC")
                      .limit(1)
-      render :text => spectrum.latest_snapshot.id
+      render html: spectrum.latest_snapshot.id
     else
-      render :text => false
+      render html: false
     end
   end
 
@@ -139,8 +139,8 @@ class SpectrumsController < ApplicationController
     respond_with(@snapshot) do |format|
       format.xml  { render :xml => @snapshot }
       format.csv  {
-        render :text => SpectrumsHelper.show_csv_snapshot(@snapshot) if is_snapshot
-        render :text => SpectrumsHelper.show_csv(@snapshot)          if !is_snapshot
+        render html: SpectrumsHelper.show_csv_snapshot(@snapshot) if is_snapshot
+        render html: SpectrumsHelper.show_csv(@snapshot)          if !is_snapshot
       }
       format.json  {
         render :json => @snapshot.json
@@ -149,7 +149,7 @@ class SpectrumsController < ApplicationController
   end
 
   def anonymous
-    @spectrums = Spectrum.paginate(:order => "created_at DESC", :conditions => {:author => "anonymous"}, :page => params[:page])
+    @spectrums = Spectrum.where(author: "anonymous").order(created_at: :desc).paginate(page: params[:page])
     render :template => "spectrums/search"
   end
 
@@ -176,7 +176,7 @@ class SpectrumsController < ApplicationController
   end
 
   def recent
-    @spectrums = Spectrum.find(:all, :limit => 10, :order => "id DESC")
+    @spectrums = Spectrum.all.order(id: :desc).limit(10)
     render :partial => "capture/results", :layout => false if params[:capture]
   end
 
@@ -280,7 +280,7 @@ class SpectrumsController < ApplicationController
               flash[:notice] = 'Spectrum was successfully created.'
               format.html  { redirect_to spectrum_path(@spectrum) + calibration_param }
               format.xml   { render :xml => @spectrum, :status => :created, :location => @spectrum }
-              format.json  { render :text => spectrum_path(@spectrum), :status => :created, :location => @spectrum }
+              format.json  { render html: spectrum_path(@spectrum), :status => :created, :location => @spectrum }
             else
               render "spectrums/new"
             end
@@ -309,7 +309,7 @@ class SpectrumsController < ApplicationController
       respond_to do |format|
         if request.xhr?
           format.json  { 
-            render :text => 'Token required for unauthenticated API usage.'
+            render html: 'Token required for unauthenticated API usage.'
           }
         else
           format.html { 
@@ -344,7 +344,7 @@ class SpectrumsController < ApplicationController
     params[:tags].to_s.split(',').each do |tag|
       @spectrum.tag(tag, current_user.id)
     end
-    render :text => @spectrum.save
+    render html: @spectrum.save
   end
 
   # PUT /spectrums/1
@@ -442,7 +442,7 @@ class SpectrumsController < ApplicationController
   end
 
   def all
-    @spectrums = Spectrum.find(:all).paginate(:page => params[:page])
+    @spectrums = Spectrum.all.paginate(:page => params[:page])
     respond_with(@spectrums) do |format|
       format.xml  { render :xml => @spectrums }
       format.json  { render :json => @spectrums }
@@ -451,7 +451,8 @@ class SpectrumsController < ApplicationController
 
   def rss
     if params[:author]
-      @spectrums = Spectrum.find_all_by_author(params[:author],:order => "created_at DESC",:limit => 12).paginate(:page => params[:page])
+      Spectrum.where(author: params[:author])
+      @spectrums = Spectrum.where(author: params[:author]).paginate(:page => params[:page])
     else
       @spectrums = Spectrum.find(:all,:order => "created_at DESC",:limit => 12).paginate(:page => params[:page])
     end
@@ -468,7 +469,7 @@ class SpectrumsController < ApplicationController
 
   def match
     @spectrum = Spectrum.find params[:id]
-    render :text => @spectrum.find_match_in_set(params[:set]).to_json
+    render html: @spectrum.find_match_in_set(params[:set]).to_json
   end
 
   # Start doing this client side!
@@ -524,7 +525,7 @@ class SpectrumsController < ApplicationController
     @spectrum = Spectrum.find(params[:id])
     @calibrations = Spectrum.where(calibrated: true)
                             .where('id != ?',@spectrum.id)
-                            .where('title LIKE ? OR notes LIKE ? OR author LIKE ?)',"%#{params[:q]}%", "%#{params[:q]}%","%#{params[:q]}%")
+                            .where('title LIKE ? OR notes LIKE ? OR author LIKE ?',"%#{params[:q]}%", "%#{params[:q]}%","%#{params[:q]}%")
                             .limit(20)
                             .order("created_at DESC")
     render :partial => "spectrums/show/clone_results", :layout => false
@@ -534,7 +535,7 @@ class SpectrumsController < ApplicationController
     @spectrum = Spectrum.find(params[:id])
     @spectra = Spectrum.where(calibrated: true)
                             .where('id != ?',@spectrum.id)
-                            .where('title LIKE ? OR notes LIKE ? OR author LIKE ?)',"%#{params[:q]}%", "%#{params[:q]}%","%#{params[:q]}%")
+                            .where('title LIKE ? OR notes LIKE ? OR author LIKE ?',"%#{params[:q]}%", "%#{params[:q]}%","%#{params[:q]}%")
                             .limit(20)
                             .order("created_at DESC")
     render :partial => "spectrums/show/compare_search", :layout => false

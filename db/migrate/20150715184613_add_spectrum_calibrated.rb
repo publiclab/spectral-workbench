@@ -1,6 +1,6 @@
 class AddSpectrumCalibrated < ActiveRecord::Migration
   def up
-    add_column :spectrums, :calibrated, :boolean, :default => false, :null => false
+    add_column :spectrums, :calibrated, :boolean, null: false, default: false
     count = Spectrum.count
     Spectrum.select('id').each do |spectrum|
       Spectrum.find(spectrum.id).save

@@ -1,12 +1,10 @@
 class Tag < ActiveRecord::Base
 
-  attr_accessible :spectrum_id, :name, :user_id
+  validates_presence_of :name, on: :create, message: "can't be blank"
+  validates_presence_of :user_id, on: :create, message: "can't be blank"
+  validates_presence_of :spectrum_id, on: :create, message: "can't be blank"
 
-  validates_presence_of :name, :on => :create, :message => "can't be blank"
-  validates_presence_of :user_id, :on => :create, :message => "can't be blank"
-  validates_presence_of :spectrum_id, :on => :create, :message => "can't be blank"
-
-  validates :name, :format => {:with => /[\w\.:\,\-\*\+\[\]\(\)\#\$]+/, :message => "can only include letters, numbers, and dashes, or mathematical expressions"}
+  validates :name, :format => {:with => /[\w\.:\,\-\*\+\[\]\(\)\#\$]+/, message: "can only include letters, numbers, and dashes, or mathematical expressions"}
 
   validate :powertags_by_owner
 
@@ -16,7 +14,7 @@ class Tag < ActiveRecord::Base
 
   belongs_to :spectrum
   belongs_to :user
-  has_one :snapshot, :dependent => :destroy
+  has_one :snapshot, dependent: :destroy
 
   before_save :scan_powertags
   after_save :scan_powertags_after_save
@@ -178,6 +176,12 @@ class Tag < ActiveRecord::Base
     colors = ""
     colors = " purple" if self.is_powertag?
     colors
+  end
+
+  private
+
+  def tag_params
+    params.require(:tag).permit(:spectrum_id, :name, :user_id)
   end
 
 end

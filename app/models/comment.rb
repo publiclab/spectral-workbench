@@ -1,6 +1,4 @@
 class Comment < ActiveRecord::Base
-  attr_accessible :spectrum_id, :body, :author, :email, :spectra_set_id, :user_id
-
   belongs_to :user
   validates_presence_of :user_id, :body
 
@@ -30,6 +28,12 @@ class Comment < ActiveRecord::Base
 
   def can_delete(user)
     (self.has_set? && self.set.author == user.login) || (self.has_spectrum? && self.spectrum.author == user.login) || self.author == user.login || user.role == "admin"
+  end
+
+  private
+
+  def comment_params
+    params.require(:comment).permit(:spectrum_id, :body, :author, :email, :spectra_set_id, :user_id)
   end
 
 end

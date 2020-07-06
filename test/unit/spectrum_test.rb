@@ -169,6 +169,7 @@ class SpectrumTest < ActiveSupport::TestCase
     assert_not_nil spectrum1
     assert_not_nil spectrum2
     assert_not_nil similarity
+
   end
 
   test "find similar" do
@@ -177,6 +178,7 @@ class SpectrumTest < ActiveSupport::TestCase
 
     assert_not_nil spectrum
     assert_not_nil similar
+
   end
 
 end

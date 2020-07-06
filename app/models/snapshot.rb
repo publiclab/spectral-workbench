@@ -4,8 +4,6 @@ class Snapshot < ActiveRecord::Base
   belongs_to :user
   belongs_to :tag
 
-  attr_accessible :id, :user_id, :spectrum_id, :description, :data, :tag_id
-
   validates_presence_of :user_id
   validates_presence_of :tag_id
   validates_presence_of :spectrum_id
@@ -60,9 +58,10 @@ class Snapshot < ActiveRecord::Base
 
   def is_latest?
     latest = self.spectrum.snapshots
-                 .order('created_at DESC')
+                 .order(created_at: :desc)
                  .limit(1)
                  .last
+
     latest.id == self.id
   end
 
@@ -85,6 +84,12 @@ class Snapshot < ActiveRecord::Base
       depended_on_snapshots = depended_on_snapshots || snapshot.has_dependent_spectra?
     end
     depended_on_snapshots
+  end
+
+  private 
+
+  def snapshot_params
+    params.require(:snapshot).permit(:id, :user_id, :spectrum_id, :description, :data, :tag_id)
   end
 
 end

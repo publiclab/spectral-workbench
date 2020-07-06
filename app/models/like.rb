@@ -1,7 +1,5 @@
 class Like < ActiveRecord::Base
 
-  attr_accessible :spectrum_id, :user_id
-
   validates_presence_of :user_id, :spectrum_id
   belongs_to :user
   belongs_to :spectrum
@@ -18,6 +16,10 @@ class Like < ActiveRecord::Base
   def decrement_likes
     self.spectrum.like_count -= 1
     self.spectrum.save
+  end
+
+  def like_params
+    params.require(:like).permit(:spectrum_id, :user_id)
   end
 
 end
