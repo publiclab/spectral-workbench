@@ -1,7 +1,5 @@
 class Tag < ActiveRecord::Base
 
-  attr_accessible :spectrum_id, :name, :user_id
-
   validates_presence_of :name, on: :create, message: "can't be blank"
   validates_presence_of :user_id, on: :create, message: "can't be blank"
   validates_presence_of :spectrum_id, on: :create, message: "can't be blank"
@@ -178,6 +176,12 @@ class Tag < ActiveRecord::Base
     colors = ""
     colors = " purple" if self.is_powertag?
     colors
+  end
+
+  private
+
+  def tag_params
+    params.require(:tag).permit(:spectrum_id, :name, :user_id)
   end
 
 end

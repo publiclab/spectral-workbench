@@ -35,7 +35,7 @@ class CaptureController < ApplicationController
       @calibrations = Spectrum.where(calibrated: true, user_id: current_user.id)
       @start_wavelength,@end_wavelength = @calibration.wavelength_range if @calibration
     end
-    @spectrums = Spectrum.find(:all, limit: 12, :order => "id DESC")
+    @spectrums = Spectrum.all.order(id: :desc).limit(12)
     render :template => "capture/index", :layout => "application"
   end
 
@@ -93,10 +93,13 @@ class CaptureController < ApplicationController
       end
 
       flash[:notice] = 'Spectrum was successfully created.'
-      format.html {
-        redirect_to spectrum_path(@spectrum)
-      }
-      format.xml  { render :xml => @spectrum, :status => :created, :location => @spectrum }
+
+      respond_to do |format|
+        format.html {
+          redirect_to spectrum_path(@spectrum)
+        }
+        format.xml  { render :xml => @spectrum, :status => :created, :location => @spectrum }
+      end
 
     else
 
@@ -112,8 +115,8 @@ class CaptureController < ApplicationController
       @spectrums = current_user.calibrations.limit(20)
       # add the one that's being used in live display:
       if params[:calibration_id] && params[:calibration_id] != 'undefined'
-        new = Spectrum.where(id: params[:calibration_id])
-        @spectrums = new + @spectrums
+        new_spectrum = Spectrum.where(id: params[:calibration_id])
+        @spectrums = new_spectrum + @spectrums
       end
       @spectrums = @spectrums.uniq
       respond_to do |format|

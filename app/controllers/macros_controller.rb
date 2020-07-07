@@ -17,9 +17,9 @@ class MacrosController < ApplicationController
       format.html {}
       format.js  { 
         if params[:run]
-          render :text => "$W.macro = {"+@macro.code+"};$W.macro.setup()" 
+          render plain: "$W.macro = {"+@macro.code+"};$W.macro.setup()" 
         else
-          render :text => "{"+@macro.code+"}" 
+          render plain: "{"+@macro.code+"}" 
         end
       }
     end

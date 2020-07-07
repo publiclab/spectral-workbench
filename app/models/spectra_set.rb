@@ -1,7 +1,5 @@
 class SpectraSet < ActiveRecord::Base
 
-  attr_accessible :title, :notes, :spectrums_string, :author, :user_id
-
   validates_presence_of :title, :user_id
   validates :title, length: { maximum: 60 }
   has_many :comments, dependent: :destroy
@@ -89,6 +87,12 @@ class SpectraSet < ActiveRecord::Base
         UserMailer.unregistered_set_commenter_notification(self,new_comment,email)
       end
     end
+  end
+
+  private 
+
+  def spectra_set_params
+    params.require(:spectra_set).permit(:title, :notes, :spectrums_string, :author, :user_id)
   end
 
 end

@@ -105,7 +105,7 @@ class SpectrumsController < ApplicationController
       }
       format.xml  { render :xml => @spectrum }
       format.csv  {
-        render :text => SpectrumsHelper.show_csv(@spectrum)
+        render html: SpectrumsHelper.show_csv(@spectrum)
       }
       format.json  {
         render :json => @spectrum.json
@@ -121,9 +121,9 @@ class SpectrumsController < ApplicationController
                      .select('spectrum_id, created_at, id')
                      .order("created_at DESC")
                      .limit(1)
-      render :text => spectrum.latest_snapshot.id
+      render html: spectrum.latest_snapshot.id
     else
-      render :text => false
+      render html: false
     end
   end
 
@@ -139,8 +139,8 @@ class SpectrumsController < ApplicationController
     respond_with(@snapshot) do |format|
       format.xml  { render :xml => @snapshot }
       format.csv  {
-        render :text => SpectrumsHelper.show_csv_snapshot(@snapshot) if is_snapshot
-        render :text => SpectrumsHelper.show_csv(@snapshot)          if !is_snapshot
+        render html: SpectrumsHelper.show_csv_snapshot(@snapshot) if is_snapshot
+        render html: SpectrumsHelper.show_csv(@snapshot)          if !is_snapshot
       }
       format.json  {
         render :json => @snapshot.json
@@ -280,7 +280,7 @@ class SpectrumsController < ApplicationController
               flash[:notice] = 'Spectrum was successfully created.'
               format.html  { redirect_to spectrum_path(@spectrum) + calibration_param }
               format.xml   { render :xml => @spectrum, :status => :created, :location => @spectrum }
-              format.json  { render :text => spectrum_path(@spectrum), :status => :created, :location => @spectrum }
+              format.json  { render html: spectrum_path(@spectrum), :status => :created, :location => @spectrum }
             else
               render "spectrums/new"
             end
@@ -309,7 +309,7 @@ class SpectrumsController < ApplicationController
       respond_to do |format|
         if request.xhr?
           format.json  { 
-            render :text => 'Token required for unauthenticated API usage.'
+            render html: 'Token required for unauthenticated API usage.'
           }
         else
           format.html { 
@@ -344,7 +344,7 @@ class SpectrumsController < ApplicationController
     params[:tags].to_s.split(',').each do |tag|
       @spectrum.tag(tag, current_user.id)
     end
-    render :text => @spectrum.save
+    render html: @spectrum.save
   end
 
   # PUT /spectrums/1
@@ -469,7 +469,7 @@ class SpectrumsController < ApplicationController
 
   def match
     @spectrum = Spectrum.find params[:id]
-    render :text => @spectrum.find_match_in_set(params[:set]).to_json
+    render html: @spectrum.find_match_in_set(params[:set]).to_json
   end
 
   # Start doing this client side!
