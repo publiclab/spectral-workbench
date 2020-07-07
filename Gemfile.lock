@@ -33,7 +33,6 @@ GEM
       activemodel (= 5.2.4.3)
       activesupport (= 5.2.4.3)
       arel (>= 9.0)
-    activerecord-deprecated_finders (1.0.4)
     activestorage (5.2.4.3)
       actionpack (= 5.2.4.3)
       activerecord (= 5.2.4.3)
@@ -181,7 +180,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  activerecord-deprecated_finders
   bootsnap (~> 1.4.6)
   cocaine (~> 0.6.0)
   jquery-rails
