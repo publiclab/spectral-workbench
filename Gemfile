@@ -18,7 +18,8 @@ group :assets do
 end
 
 group :test do
-	gem 'simplecov', require: false
+  gem 'simplecov', require: false
+  gem 'rails-controller-testing', '~> 1.0.5'
 end
 
 gem 'bootsnap', '~> 1.4.6'
@@ -29,7 +30,7 @@ gem 'mime-types'#, '1.18'
 gem 'jquery-rails'
 gem 'passenger'
 gem 'recaptcha', '5.5.0', require: "recaptcha/rails"
-gem 'cocaine', '~> 0.6.0'
+gem 'terrapin', '~> 0.6.0'
 gem 'redcarpet', '~> 3.5.0'
 gem 'skylight' # performance tracking via skylight.io
 
