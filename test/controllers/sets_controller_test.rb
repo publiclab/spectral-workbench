@@ -9,21 +9,21 @@ class SetsControllerTest < ActionController::TestCase
   end
 
   test "should show spectra_set" do
-    get :show, :id => spectra_sets(:one).id
+    get :show, params: { id: spectra_sets(:one).id }
     assert_response :success
     assert_not_nil assigns(:set)
     assert_not_nil assigns(:spectrums)
   end
 
   test "should redirect show2 spectra_set" do
-    get :show2, :id => spectra_sets(:one).id
+    get :show2, params: { id: spectra_sets(:one).id }
     assert_response :redirect
     assert_redirected_to "/sets/#{spectra_sets(:one).id}"
   end
 
   test "should spectra_set with spectra" do
     spectra_sets(:one).spectrums << spectrums(:one)
-    get :show, :id => spectra_sets(:one).id
+    get :show, params: { id: spectra_sets(:one).id }
     assert_response :success
     assert_not_nil assigns(:set)
     assert_not_nil assigns(:spectrums)
@@ -31,44 +31,44 @@ class SetsControllerTest < ActionController::TestCase
   end
 
   test "should show spectra_set json" do
-    get :show, :id => spectra_sets(:one).id, :format => :json
+    get :show, params: { id: spectra_sets(:one).id, format: :json }
     assert_response :success
     assert_not_nil assigns(:set)
   end
 
   test "should show calibrated spectra_set json" do
-    get :calibrated, :id => spectra_sets(:one).id, :format => :json
+    get :calibrated, params: { id: spectra_sets(:one).id, format: :json }
     assert_response :success
     assert_not_nil assigns(:set)
   end
 
   test "should show spectra_set embed" do
-    get :embed, :id => spectra_sets(:one).id
+    get :embed, params: { id: spectra_sets(:one).id }
     assert_response :success
     assert_not_nil assigns(:set)
   end
 
   test "should show spectra_set new embed" do
-    get :embed2, :id => spectra_sets(:one).id
+    get :embed2, params: { id: spectra_sets(:one).id }
     assert_response :success
     assert_not_nil assigns(:set)
   end
 
   test "should not display new spectra_set action if not logged in" do
-    get :new, :id => spectrums(:one).id.to_s + "," + spectrums(:two).id.to_s
+    get :new, params: { id: spectrums(:one).id.to_s + "," + spectrums(:two).id.to_s }
     assert_response :redirect
   end
 
   test "should display new spectra_set action" do
     session[:user_id] = User.first.id # log in
-    get :new, :id => spectrums(:one).id.to_s + "," + spectrums(:two).id.to_s
+    get :new, params: { id: spectrums(:one).id.to_s + "," + spectrums(:two).id.to_s }
     assert_response :success
     assert_not_nil assigns(:set)
   end
 
   test "should not create spectra_set unless logged in" do
     assert_difference('SpectraSet.count', 0) do
-      get :create, :id => "#{spectrums(:one).id},#{spectrums(:two).id}"
+      get :create, params: { id: "#{spectrums(:one).id},#{spectrums(:two).id}" }
     end
     assert_response :redirect
   end
@@ -76,11 +76,12 @@ class SetsControllerTest < ActionController::TestCase
   test "should create spectra_set from comma-delimited ids" do
     session[:user_id] = User.first.id # log in
     assert_difference('SpectraSet.count', 1) do
-      get :create, :id => "#{spectrums(:one).id},#{spectrums(:two).id}",
-                   :spectra_set => { 
-                     :title => "My set",
-                     :notes => "Hey" 
-                   }
+      get :create, params: { id: "#{spectrums(:one).id},#{spectrums(:two).id}",
+                             spectra_set: { 
+                                title: "My set",
+                                notes: "Hey" 
+                             }
+                           }  
       assert_response :redirect
       assert_redirected_to set_path(assigns(:set))
     end
@@ -90,7 +91,7 @@ class SetsControllerTest < ActionController::TestCase
 
   test "should not add spectrum to spectra_set unless logged in" do
     assert_difference('spectra_sets(:one).spectrums.length', 0) do
-      get :add, :spectrum_id => spectrums(:one).id, :id => spectra_sets(:one).id
+      get :add, params: { spectrum_id: spectrums(:one).id, id: spectra_sets(:one).id }
     end
     assert_response :redirect
   end
@@ -99,7 +100,7 @@ class SetsControllerTest < ActionController::TestCase
     assert_not_equal User.last.id, spectra_sets(:one).user_id
     session[:user_id] = User.last.id # log in
     assert_difference('spectra_sets(:one).spectrums.length', 0) do
-      get :add, :spectrum_id => spectrums(:one).id, :id => spectra_sets(:one).id
+      get :add, params: { spectrum_id: spectrums(:one).id, id: spectra_sets(:one).id }
     end
     assert_response :redirect
   end
@@ -108,7 +109,7 @@ class SetsControllerTest < ActionController::TestCase
     assert_not_equal User.last.id, spectra_sets(:one).user_id
     session[:user_id] = users(:admin).id # log in
     assert_difference('spectra_sets(:one).spectrums.count', 1) do
-      get :add, :spectrum_id => spectrums(:one).id, :id => spectra_sets(:one).id
+      get :add, params: { spectrum_id: spectrums(:one).id, id: spectra_sets(:one).id }
       assert_response :redirect
     end
   end
@@ -119,7 +120,7 @@ class SetsControllerTest < ActionController::TestCase
     spectra_sets(:one).spectrums << spectrums(:one)
     assert spectra_sets(:one).contains(spectrums(:one))
     assert_difference('spectra_sets(:one).spectrums.count', 0) do
-      get :add, :spectrum_id => spectrums(:one).id, :id => spectra_sets(:one).id
+      get :add, params: { spectrum_id: spectrums(:one).id, id: spectra_sets(:one).id }
     end
     assert_response :redirect
   end
@@ -128,7 +129,7 @@ class SetsControllerTest < ActionController::TestCase
     session[:user_id] = spectra_sets(:one).user_id # log in
     assert !spectra_sets(:one).contains(spectrums(:two))
     assert_difference('spectra_sets(:one).spectrums.count', 1) do
-      get :add, :spectrum_id => spectrums(:two).id, :id => spectra_sets(:one).id
+      get :add, params: { spectrum_id: spectrums(:two).id, id: spectra_sets(:one).id }
     end
     assert_response :redirect
     assert_redirected_to "/sets/#{assigns(:set).id}"
@@ -136,14 +137,14 @@ class SetsControllerTest < ActionController::TestCase
   end
 
   test "should not remove spectrum from spectra_set unless logged in" do
-    get :remove, :s => spectrums(:one).id, :id => spectra_sets(:one).id
+    get :remove, params: { s: spectrums(:one).id, id: spectra_sets(:one).id }
     assert_response :redirect
   end
 
   test "should not remove spectrum from spectra_set if not owner" do
     assert_not_equal User.last.id, spectra_sets(:one).user_id
     session[:user_id] = User.last.id # log in
-    get :remove, :s => spectrums(:one).id, :id => spectra_sets(:one).id
+    get :remove, params: { s: spectrums(:one).id, id: spectra_sets(:one).id }
     assert_response :redirect
   end
 
@@ -152,7 +153,7 @@ class SetsControllerTest < ActionController::TestCase
     session[:user_id] = set.user_id # log in
     set.spectrums << spectrums(:one)
     assert_difference('set.spectrums.count', 0) do
-      get :remove, :s => spectrums(:one).id, :id => set.id
+      get :remove, params: { s: spectrums(:one).id, id: set.id }
     end
     assert_response :redirect
     assert_equal "A set must have at least one spectrum.", flash[:error]
@@ -165,7 +166,7 @@ class SetsControllerTest < ActionController::TestCase
     set.spectrums << spectrums(:one)
     set.spectrums << spectrums(:two)
     assert_difference('set.spectrums.count', -1) do
-      get :remove, :s => spectrums(:one).id, :id => set.id
+      get :remove, params: { s: spectrums(:one).id, id: set.id }
     end
     assert_response :redirect
     assert_redirected_to set_path(assigns(:set))
@@ -174,7 +175,7 @@ class SetsControllerTest < ActionController::TestCase
 
   test "should get edit spectra_set" do
     session[:user_id] = spectra_sets(:one).user_id # log in
-    get :edit, :id => spectra_sets(:three).id
+    get :edit, params: { id: spectra_sets(:three).id }
     assert_response :success
   end
 
@@ -182,7 +183,7 @@ class SetsControllerTest < ActionController::TestCase
     session[:user_id] = users(:aaron).id # log in
     assert_not_equal users(:aaron).id, spectra_sets(:one).user_id
     assert_not_equal users(:aaron).role, "admin"
-    get :edit, :id => spectra_sets(:one).id
+    get :edit, params: { id: spectra_sets(:one).id }
     assert_response :redirect
     assert_redirected_to set_path(assigns(:set))
     assert_equal "You must own the set to edit it.", flash[:error]
@@ -190,7 +191,7 @@ class SetsControllerTest < ActionController::TestCase
 
   test "should update user's spectra_set" do
     session[:user_id] = spectra_sets(:one).user_id # log in
-    put :update, :id => spectra_sets(:three).id, :spectra_set => {:title => "New title"}
+    put :update, params: { id: spectra_sets(:three).id, spectra_set: {title: "New title"} }
     assert_response :redirect
     assert_equal 'Set was successfully updated.', flash[:notice]
     assert_redirected_to set_path(assigns(:set))
@@ -200,7 +201,7 @@ class SetsControllerTest < ActionController::TestCase
     session[:user_id] = users(:aaron).id # log in
     assert_not_equal users(:aaron).id, spectra_sets(:one).user_id
     assert_not_equal users(:aaron).role, "admin"
-    put :update, :id => spectra_sets(:one).id, :spectra_set => {:title => "New title"}
+    put :update, params: { id: spectra_sets(:one).id, spectra_set: {title: "New title"} }
     assert_response :redirect
     assert_equal "You must own the set to edit it.", flash[:error]
     assert_redirected_to set_path(assigns(:set))
@@ -211,7 +212,7 @@ class SetsControllerTest < ActionController::TestCase
     session[:user_id] = set.user_id
     assert_not_equal User.find(session[:user_id]).role, "admin"
     assert_difference('SpectraSet.count', -1) do
-      delete :delete, :id => set.id
+      delete :delete, params: { id: set.id }
     end
     assert_equal "Deleted set.", flash[:notice]
     assert_response :redirect
@@ -222,7 +223,7 @@ class SetsControllerTest < ActionController::TestCase
     session[:user_id] = users(:aaron).id
     assert_not_equal User.find(session[:user_id]).role, "admin"
     assert_difference('SpectraSet.count', 0) do
-      delete :delete, :id => set.id
+      delete :delete, params: { id: set.id }
     end
     assert_equal "You must own the set to edit it.", flash[:error]
     assert_response :redirect

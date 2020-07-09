@@ -9,21 +9,23 @@ class TagsControllerTest < ActionController::TestCase
       user_id:     users(:quentin).id
     })
     assert tag.save!
-    get :show, :id => 'cfl'
+    get :show, params: { id: 'cfl' }
     assert_response :success
     assert_not_nil assigns(:spectrums).first.lat
     assert_not_nil assigns(:spectrums).first.lon
   end
 
   test "should show tag index for spectrum" do
-    get :index, :spectrum_id => spectrums(:one).id
+    get :index, params: { spectrum_id: spectrums(:one).id }
     assert_response :success
   end
 
   test "should create tag" do
     session[:user_id] = User.first.id # log in
-    get :create, tag: { name: 'mytag',
+    get :create, params: { 
+                        tag: { name: 'mytag',
                         spectrum_id: Spectrum.first.id }
+                      }
     assert_response :redirect
 
     assert_not_nil assigns(:response)[:saved]['mytag']
@@ -35,8 +37,9 @@ class TagsControllerTest < ActionController::TestCase
   end
 
   test "should not create tag if not logged in" do
-    get :create, tag: { name: 'mytag',
-                        spectrum_id: Spectrum.first.id }
+    get :create, params: { tag: { name: 'mytag',
+                           spectrum_id: Spectrum.first.id }
+                         }
     assert_response :redirect
     assert_equal "You must be logged in to access this function.", flash[:error]
     assert_redirected_to "/login?back_to=/tags"
@@ -46,7 +49,7 @@ class TagsControllerTest < ActionController::TestCase
 
   test "should delete tag" do
     session[:user_id] = tags(:one).user_id # log in
-    post :destroy, :id => tags(:one).id
+    post :destroy, params: { id: tags(:one).id }
     assert_response :redirect
     assert_equal nil, flash[:error]
     assert_equal "Tag 'cfl' deleted.", flash[:notice]
@@ -55,7 +58,7 @@ class TagsControllerTest < ActionController::TestCase
 
   test "should not delete tag if not owner" do
     session[:user_id] = tags(:two).user_id # log in
-    post :destroy, :id => tags(:one).id
+    post :destroy, params: { id: tags(:one).id }
     assert_response :redirect
     assert_equal "You must have authored a tag or own its spectrum to delete it.", flash[:error]
     assert_equal nil, flash[:notice]
@@ -63,7 +66,7 @@ class TagsControllerTest < ActionController::TestCase
   end
 
   test "should not delete tag if not logged in" do
-    post :destroy, :id => 'cfl'
+    post :destroy, params: { id: 'cfl' }
     assert_response :redirect
     assert_equal "You must be logged in to access this function.", flash[:error]
     assert_redirected_to "/login?back_to=/tags/cfl"
@@ -71,8 +74,8 @@ class TagsControllerTest < ActionController::TestCase
 
   test "should delete tag if admin" do
     session[:user_id] = users(:admin).id # log in as admin
-    tag = Tag.find_by_name('cfl')
-    post :destroy, :id => tag.id
+    tag = Tag.where(name: 'cfl')
+    post :destroy, params: { id: tag.id }
     assert_response :redirect
     assert_equal "Tag 'cfl' deleted.", flash[:notice]
     assert_redirected_to spectrum_path(tag.spectrum_id)
@@ -83,8 +86,11 @@ class TagsControllerTest < ActionController::TestCase
 
     @request.headers["Content-Type"] = "application/json"
     @request.headers["Accept"] = "application/json"
-    xhr :post, :create, tag: { name: 'range:400-500',
-                        spectrum_id: users(:quentin).spectrums.first.id }
+    post :create, xhr: true, params: { tag: { 
+                                              name: 'range:400-500',
+                                              spectrum_id: users(:quentin).spectrums.first.id 
+                                            }
+                                     }
 
     assert_equal ActiveSupport::JSON.decode(@response.body)['errors'].last, "Error: You must own the spectrum to add powertags"
     assert_response :success
@@ -95,10 +101,11 @@ class TagsControllerTest < ActionController::TestCase
 
     @request.headers["Content-Type"] = "application/json"
     @request.headers["Accept"] = "application/json"
-    xhr :post, :create, tag: { 
-      name: 'range:100-500',
-      spectrum_id: spectrums(:one).id
-    }
+    post :create, xhr: true, params: { tag: {
+                                              name: 'range:100-500',
+                                              spectrum_id: spectrums(:one).id
+                                            }
+                                     }
 
     response = ActiveSupport::JSON.decode(@response.body)
     assert_not_nil response
@@ -135,7 +142,8 @@ class TagsControllerTest < ActionController::TestCase
     assert_equal tag2.name, 'smooth:3'
     tag2.create_snapshot('{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}')
 
-    xhr :post, :destroy, :id => tag.id # we do this instead of :format => :json, for some reason
+    # we do this instead of :format => :json, for some reason
+    post :destroy, xhr: true, params: { id: tag.id }
 
     assert_response 422 # rejected
     assert_nil flash[:error]
@@ -174,7 +182,8 @@ class TagsControllerTest < ActionController::TestCase
     tag2.create_snapshot('{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}')
     assert_equal tag2.name, "subtract:#{tag.spectrum_id}##{tag.snapshot.id}"
 
-    xhr :post, :destroy, :id => tag.id # we do this instead of :format => :json, for some reason
+    # we do this instead of :format => :json, for some reason
+    post :destroy, xhr: true, params: { id: tag.id }
 
     assert_response 422 # rejected
     assert_nil flash[:error]
@@ -208,10 +217,11 @@ class TagsControllerTest < ActionController::TestCase
     @request.headers["Content-Type"] = "application/json"
     @request.headers["Accept"] = "application/json"
     tagname = "subtract:#{spectrums(:two).id}"
-    xhr :post, :create, tag: { 
-      name: tagname,
-      spectrum_id: spectrums(:one).id
-    }
+    post :create, xhr: true, params: { tag: { 
+                                              name: tagname,
+                                              spectrum_id: spectrums(:one).id
+                                            }
+                                     }
     assert_response :success
     response = ActiveSupport::JSON.decode(@response.body)
     assert_not_nil response
@@ -245,7 +255,7 @@ class TagsControllerTest < ActionController::TestCase
     @request.headers["Content-Type"] = "application/json"
     @request.headers["Accept"] = "application/javascript"
 
-    xhr :get, :index, spectrum_id: spectrums(:one).id, :format => :json
+    get :index, xhr: true, params: { spectrum_id: spectrums(:one).id, format: :json }
 
     assert_response :success
     response = ActiveSupport::JSON.decode(@response.body)
@@ -271,7 +281,7 @@ class TagsControllerTest < ActionController::TestCase
     data = '{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}'
     tag.create_snapshot(data)
 
-    xhr :get, :index, spectrum_id: spectrums(:one).id, :format => :json
+    get :index, xhr: true, params: { spectrum_id: spectrums(:one).id, format: :json }
     assert_response :success
     response = ActiveSupport::JSON.decode(@response.body)
     assert_not_nil response
@@ -289,7 +299,7 @@ class TagsControllerTest < ActionController::TestCase
     session[:user_id] = nil # ensure not logged in
 
     # try while not logged in
-    xhr :post, :change_reference, id: tags(:one).id, snapshot_id: -1
+    post :change_reference, xhr: true, params: { id: tags(:one).id, snapshot_id: -1 }
 
     # not 422, because we're prompted to log in;
     # it's JSON, so we're given a string back, not redirected 
@@ -305,7 +315,6 @@ class TagsControllerTest < ActionController::TestCase
     #assert_response 422
 
     # remainder is well-tested in tag unit test... 
-
 
     # try invalid snapshot_id
     # xhr :post, :change_reference, id: tags(:one).id, snapshot_id: -1

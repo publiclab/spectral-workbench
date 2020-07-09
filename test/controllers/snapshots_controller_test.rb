@@ -9,17 +9,17 @@ class SnapshotsControllerTest < ActionController::TestCase
 #  end
 
   test "should show snapshot in json" do
-    get :show, :id => snapshots(:one).id, :format => :json
+    get :show, params: { id: snapshots(:one).id, format: :json }
     assert_response :success
   end
 
   test "should show snapshot csv" do
-    get :show, :id => snapshots(:one).id, :format => :csv
+    get :show, params: { id: snapshots(:one).id, format: :csv }
     assert_response :success
   end
 
   test "should show snapshot xml" do
-    get :show, :id => snapshots(:one).id, :format => :xml
+    get :show, params: { id: snapshots(:one).id, format: :xml }
     assert_response :success
   end
 
