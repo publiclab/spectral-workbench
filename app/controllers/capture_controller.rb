@@ -17,7 +17,7 @@ class CaptureController < ApplicationController
       elsif current_user.calibrations.count > 0
         @calibration = current_user.last_calibration
       end
-      @calibrations = Spectrum.where(calibrated: true, user_id: current_user.id).uniq!
+      @calibrations = Spectrum.where(calibrated: true, user_id: current_user.id).uniq
       if @calibration && !@calibrations.include?(@calibration)
         @calibrations << @calibration
       end

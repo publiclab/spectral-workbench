@@ -2,11 +2,11 @@ require 'will_paginate/array'
 class SpectrumsController < ApplicationController
   respond_to :html, :xml, :js, :csv, :json
   # expand this:
-  protect_from_forgery :only => [:clone_calibration, :extract, :calibrate, :save]
+  protect_from_forgery only: [:clone_calibration, :extract, :calibrate, :save]
   # http://api.rubyonrails.org/classes/ActionController/RequestForgeryProtection/ClassMethods.html
-  before_action :require_login,     :only => [ :new, :edit, :upload, :save, :update, :destroy, :calibrate, :extract, :clone_calibration, :fork, :setsamplerow, :find_brightest_row, :rotate, :reverse, :choose ]
+  before_action :require_login, only: [ :new, :edit, :upload, :save, :update, :destroy, :calibrate, :extract, :clone_calibration, :fork, :setsamplerow, :find_brightest_row, :rotate, :reverse, :choose ]
   # switch to -- except: [ :index, :stats, :show, :show2, :anonymous, :embed, :embed2, :search, :recent, :all, :rss, :plots_rss, :match, :clone_search, :compare_search, :set_search
-  before_action :no_cache, :only => [ :show, :latest, :latest_snapshot_id, :embed, :embed2 ]
+  before_action :no_cache, only: [ :show, :latest, :latest_snapshot_id, :embed, :embed2 ]
 
   def stats
   end
@@ -27,9 +27,9 @@ class SpectrumsController < ApplicationController
 
       respond_with(@spectrums) do |format|
         format.html {
-          render :template => "spectrums/index"
+          render template: "spectrums/index"
         } # show.html.erb
-        format.xml  { render :xml => @spectrums }
+        format.xml  { render xml: @spectrums }
       end
     end
   end
@@ -475,7 +475,7 @@ class SpectrumsController < ApplicationController
   # Start doing this client side!
   def setsamplerow
     require 'rubygems'
-    require 'RMagick'
+    require 'rmagick'
     @spectrum = Spectrum.find params[:id]
     require_ownership(@spectrum)
     image = Magick::ImageList.new("public"+(@spectrum.photo.url.split('?')[0]).gsub('%20',' '))
