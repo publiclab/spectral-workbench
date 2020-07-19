@@ -103,7 +103,9 @@ class SpectrumsController < ApplicationController
           @comment = Comment.new
         end
       }
-      format.xml  { render :xml => @spectrum }
+      format.xml  { 
+        render xml: @spectrum.data
+      }
       format.csv  {
         render html: SpectrumsHelper.show_csv(@spectrum)
       }
@@ -137,13 +139,15 @@ class SpectrumsController < ApplicationController
       is_snapshot = false
     end
     respond_with(@snapshot) do |format|
-      format.xml  { render :xml => @snapshot }
+      format.xml  { 
+        render xml: @snapshot.data
+      }
       format.csv  {
         render html: SpectrumsHelper.show_csv_snapshot(@snapshot) if is_snapshot
         render html: SpectrumsHelper.show_csv(@snapshot)          if !is_snapshot
       }
       format.json  {
-        render :json => @snapshot.json
+        render json: @snapshot.json
       }
     end
   end
@@ -287,9 +291,9 @@ class SpectrumsController < ApplicationController
  
           else
  
-            format.html  { render :action => "new" }
-            format.xml   { render :xml => @spectrum.errors, :status => :unprocessable_entity }
-            format.json  { render :json => @spectrum.errors, :status => :unprocessable_entity }
+            format.html  { render action: "new" }
+            format.xml   { render xml: @spectrum.errors, status: :unprocessable_entity }
+            format.json  { render json: @spectrum.errors, status: :unprocessable_entity }
  
           end
  
@@ -353,9 +357,9 @@ class SpectrumsController < ApplicationController
     @spectrum = Spectrum.find(params[:id])
     require_ownership(@spectrum)
 
-    @spectrum.title = params[:spectrum][:title] unless params[:spectrum][:title].nil?
-    @spectrum.notes = params[:spectrum][:notes] unless params[:spectrum][:notes].nil?
-    @spectrum.data  = params[:spectrum][:data] unless params[:spectrum][:data].nil?
+    @spectrum.title = params[:title] unless params[:title].nil?
+    @spectrum.notes = params[:notes] unless params[:notes].nil?
+    @spectrum.data  = params[:data] unless params[:data].nil?
 
     # clean this up
     respond_to do |format|

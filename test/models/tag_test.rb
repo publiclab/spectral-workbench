@@ -120,10 +120,10 @@ class TagTest < ActiveSupport::TestCase
     assert tag2.save!
     assert_equal tag2.name, 'smooth:3'
     tag2.create_snapshot('{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}')
-    assert !tag.is_deletable? #latest tag is smooth:1 till here
+    assert_not tag.is_deletable? #latest tag is smooth:1 till here
     assert tag.snapshot
-    assert !tag.snapshot.is_latest?
-    assert !tag.snapshot.has_dependent_spectra?
+    assert_not tag.snapshot.is_latest?
+    assert_not tag.snapshot.has_dependent_spectra?
 
     # ensure no change:
     assert_difference('Tag.count', 0) do
@@ -142,6 +142,7 @@ class TagTest < ActiveSupport::TestCase
     assert tag.save!
     assert_equal tag.name, 'smooth:1'
     assert tag.create_snapshot('{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}')
+    assert tag.snapshot
     assert tag.snapshot.is_latest?
 
     # create a snapshot which will reference this snapshot, and be dependent on it:
@@ -155,11 +156,11 @@ class TagTest < ActiveSupport::TestCase
     tag2.create_snapshot('{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}')
     assert_equal tag2.name, "subtract:#{tag.spectrum_id}##{tag.snapshot.id}"
 
-    assert !tag.is_deletable?
-    assert tag.snapshot
-    assert tag.snapshot.is_latest?
+    assert_not tag.is_deletable?
+    assert tag2.snapshot
+    assert tag2.snapshot.is_latest?
     assert tag.snapshot.has_dependent_spectra?
-    assert !tag.snapshot.has_subsequent_depended_on_snapshots?
+    assert_not tag.snapshot.has_subsequent_depended_on_snapshots?
 
     # ensure no change:
     assert_difference('Tag.count', 0) do

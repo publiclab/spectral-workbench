@@ -51,7 +51,7 @@ class SpectrumsControllerTest < ActionController::TestCase
         title: "One nice spectrum",
         notes: "A test spectrum.",
         data_type: "json",
-        data: false # bad data
+        data: ''
       },
       format: 'json'
     }
@@ -234,7 +234,8 @@ class SpectrumsControllerTest < ActionController::TestCase
 
   test "should update spectrum" do
     session[:user_id] = User.first.id # log in
-    put :update, params: { id: spectrums(:one).id, spectrum: {} }
+    patch :update, params: { id: spectrums(:one).id, spectrum: {} }
+    
     assert_response :redirect
     assert_equal 'Spectrum was successfully updated.', flash[:notice]
     assert_not_nil :spectrum

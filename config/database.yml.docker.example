@@ -4,6 +4,7 @@ default: &default
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   port: 3306
   socket: /var/run/mysqld/mysqld.sock
+  init_command: "SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));"
 
 development:
   <<: *default
@@ -21,6 +22,7 @@ production:
   password: <%= ENV['MYSQL_PASSWORD'] || 'root' %>
   database: <%= ENV['MYSQL_DATABASE'] || 'root' %>
   socket: <%= ENV['MYSQL_SOCKET'] || '/var/run/mysqld/mysqld.sock' %>
+  init_command: "SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));"
 
 test:
   <<: *default

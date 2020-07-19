@@ -320,11 +320,14 @@ class SnapshotTest < ActiveSupport::TestCase
 
     # reject deletion of a referred_to snapshot:
     assert referred_spectrum.latest_snapshot.has_dependent_spectra?
-    assert_difference 'Snapshot.count', 0 do
-      referred_spectrum.latest_snapshot.destroy
-    end
+
+    # pp referred_spectrum.latest_snapshot.tag.is_deletable? 
+
     assert_difference 'Snapshot.count', 0 do
       referred_spectrum.latest_snapshot.tag.destroy
+    end
+    assert_difference 'Snapshot.count', 0 do
+      referred_spectrum.latest_snapshot.destroy
     end
     assert_difference 'Snapshot.count', 0 do
       referred_spectrum.destroy
@@ -368,9 +371,8 @@ class SnapshotTest < ActiveSupport::TestCase
     snapshot2 = tag2.create_snapshot(data)
 
     assert snapshot2.valid?
-
-    assert !snapshot1.is_latest?
-    assert !snapshot1.is_deletable?
+    assert_not snapshot1.is_latest?
+    assert_not snapshot1.is_deletable?
     assert_difference 'Snapshot.count', 0 do
       snapshot1.destroy
     end

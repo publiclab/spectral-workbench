@@ -9,7 +9,7 @@ class LikesControllerTest < ActionController::TestCase
   end
 
   test "should not get toggle like if not logged in" do
-    get :toggle, params: { id => spectrums(:one).id }
+    get :toggle, params: { id: spectrums(:one).id }
     assert_response :redirect
     assert_equal "You must be logged in to access this function.", flash[:error]
     assert_redirected_to "/login?back_to=/likes/toggle/#{spectrums(:one).id}"

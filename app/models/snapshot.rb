@@ -12,7 +12,10 @@ class Snapshot < ActiveRecord::Base
   validate :validate_json, :validate_author
 
   # is_latest is also used by the parent tag's before_destroy
-  before_destroy :is_latest?, :has_no_dependent_spectra?
+  before_destroy do
+    is_deletable?
+    throw(:abort) if errors.present?
+  end
   after_save :generate_processed_spectrum
 
   def validate_author
@@ -53,7 +56,9 @@ class Snapshot < ActiveRecord::Base
   # rescind requirement of is_latest
   # but must use self.has_subsequent_depended_on_snapshots?
   def is_deletable?
-    self.is_latest? && self.has_no_dependent_spectra?
+    return true if self.is_latest? && self.has_no_dependent_spectra?
+    errors.add(:base, 'It is not the latest and has dependent spectra')
+    false
   end
 
   def is_latest?

@@ -51,7 +51,7 @@ class TagsControllerTest < ActionController::TestCase
     session[:user_id] = tags(:one).user_id # log in
     post :destroy, params: { id: tags(:one).id }
     assert_response :redirect
-    assert_equal nil, flash[:error]
+    assert_nil flash[:error]
     assert_equal "Tag 'cfl' deleted.", flash[:notice]
     assert_redirected_to spectrum_path(tags(:one).spectrum_id)
   end
@@ -61,7 +61,7 @@ class TagsControllerTest < ActionController::TestCase
     post :destroy, params: { id: tags(:one).id }
     assert_response :redirect
     assert_equal "You must have authored a tag or own its spectrum to delete it.", flash[:error]
-    assert_equal nil, flash[:notice]
+    assert_nil flash[:notice]
     assert_redirected_to spectrum_path(tags(:one).spectrum_id)
   end
 
@@ -74,7 +74,7 @@ class TagsControllerTest < ActionController::TestCase
 
   test "should delete tag if admin" do
     session[:user_id] = users(:admin).id # log in as admin
-    tag = Tag.where(name: 'cfl')
+    tag = Tag.find_by(name: 'cfl')
     post :destroy, params: { id: tag.id }
     assert_response :redirect
     assert_equal "Tag 'cfl' deleted.", flash[:notice]
