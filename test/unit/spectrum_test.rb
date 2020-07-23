@@ -164,7 +164,7 @@ class SpectrumTest < ActiveSupport::TestCase
   test "compare" do
   	spectrum1 = Spectrum.first
   	spectrum2 = Spectrum.second
-	similarity = spectrum1.compare(spectrum2)
+	similarity = spectrum1.compare(spectrum2.id)
 
 	assert_not_nil spectrum1
 	assert_not_nil spectrum2

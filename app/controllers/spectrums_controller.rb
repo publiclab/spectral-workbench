@@ -475,7 +475,7 @@ class SpectrumsController < ApplicationController
   # Start doing this client side!
   def setsamplerow
     require 'rubygems'
-    require 'RMagick'
+    require 'rmagick'
     @spectrum = Spectrum.find params[:id]
     require_ownership(@spectrum)
     image = Magick::ImageList.new("public"+(@spectrum.photo.url.split('?')[0]).gsub('%20',' '))
