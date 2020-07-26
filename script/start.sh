@@ -2,9 +2,8 @@
 
 pidfile=/app/tmp/pids/server.pid
 
-bundle update --bundler
 bundle check || bundle install
-bower install --allow-root
+yarn check || yarn install
 
 cp db/schema.rb.example db/schema.rb
 cp config/database.yml.docker.example config/database.yml

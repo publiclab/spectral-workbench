@@ -29,7 +29,7 @@ RUN sed -i '/.*jessie-updates.*/d' /etc/apt/sources.list && \
 
 RUN curl -sL https://deb.nodesource.com/setup_13.x | bash - && \
     apt-get install -y nodejs npm && \
-    npm install -g bower
+    npm install -g yarn
 
 # Add the Rails app
 WORKDIR /app
