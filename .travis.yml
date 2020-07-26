@@ -33,8 +33,6 @@ before_install:
 
 install:
   - bundle install
-  - npm install -g bower
-  - bower install --allow-root
   - if [ $RAILS_ENV == 'production' ]; then
       mysql -e "CREATE DATABASE swbench;";
       mysql -e "CREATE USER 'swbench'@'%' IDENTIFIED BY 'swbench';";
@@ -42,6 +40,7 @@ install:
       bundle exec rake db:schema:load;
       bundle exec rake db:migrate;
     else
+      yarn check || yarn install;
       bundle exec rake db:create;
       bundle exec rake db:schema:load;
       bundle exec rake db:migrate;

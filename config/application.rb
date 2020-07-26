@@ -52,6 +52,7 @@ module SpectralWorkbench
 
     # Enable the asset pipeline
     config.assets.enabled = true
+    config.assets.paths << Rails.root.join("public/lib")
 
     # pluralization options, but unneccessary due to:
     # http://dictionary.reference.com/browse/spectrum
