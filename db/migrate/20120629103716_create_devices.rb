@@ -1,9 +1,10 @@
+# frozen_string_literal: true
+
 class CreateDevices < ActiveRecord::Migration[5.2]
   def self.up
-
-    create_table "devices" do |t|
+    create_table 'devices' do |t|
       t.string   :name
-      t.string   :description,              default: '', limit: 100, null: false
+      t.string   :description, default: '', limit: 100, null: false
       t.integer  :height
       t.integer  :width
       t.integer  :calibration_id
@@ -16,6 +17,6 @@ class CreateDevices < ActiveRecord::Migration[5.2]
   end
 
   def self.down
-    drop_table "devices"
+    drop_table 'devices'
   end
 end

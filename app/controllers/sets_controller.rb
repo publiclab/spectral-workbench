@@ -1,11 +1,12 @@
-class SetsController < ApplicationController
+# frozen_string_literal: true
 
-  respond_to :html, :xml, :js #, :csv # not yet
-  before_action :require_login, :only => [ :update, :edit, :delete, :remove, :new, :add, :create ]
-  before_action :no_cache, :only => [ :show, :calibrated, :search ]
+class SetsController < ApplicationController
+  respond_to :html, :xml, :js # , :csv # not yet
+  before_action :require_login, only: %i(update edit delete remove new add create)
+  before_action :no_cache, only: %i(show calibrated search)
 
   def index
-    @sets = SpectraSet.order(created_at: :desc).paginate(:page => params[:page])
+    @sets = SpectraSet.order(created_at: :desc).paginate(page: params[:page])
   end
 
   def show2
@@ -23,13 +24,13 @@ class SetsController < ApplicationController
                          .group('spectrums.id')
 
     respond_with(@set) do |format|
-      format.html {
+      format.html do
         @comment = Comment.new
-      }
-      format.xml  { render :xml => @set }
-      format.json  {
-        render :json => @set.as_json_with_snapshots
-      }
+      end
+      format.xml { render xml: @set }
+      format.json do
+        render json: @set.as_json_with_snapshots
+      end
     end
   end
 
@@ -38,10 +39,10 @@ class SetsController < ApplicationController
     @set = SpectraSet.find params[:id]
     respond_with(@set) do |format|
       # format.html {}
-      format.xml  { render :xml => @set }
-      format.json  {
-        render :json => @set.as_json_with_calibrated_snapshots
-      }
+      format.xml { render xml: @set }
+      format.json do
+        render json: @set.as_json_with_calibrated_snapshots
+      end
     end
   end
 
@@ -50,28 +51,28 @@ class SetsController < ApplicationController
     @calibration = Spectrum.find params[:calibration]
     @set = SpectraSet.find params[:id]
     range = @calibration.wavelength_range
-    @spectrum.scale_data(range[0],range[1])
+    @spectrum.scale_data(range[0], range[1])
     @match = Spectrum.find(@set.match(@spectrum))
-    render plain: "Matched: <a href='/spectra/"+@match.id.to_s+"'>"+@match.title+"</a>"
+    render plain: "Matched: <a href='/spectra/" + @match.id.to_s + "'>" + @match.title + '</a>'
   end
 
   def embed
     @set = SpectraSet.find params[:id]
     @width = (params[:width] || 500).to_i
     @height = (params[:height] || 200).to_i
-    render :layout => false
+    render layout: false
   end
 
   def embed2
     show
-    render :template => 'embed/set', :layout => 'embed'
+    render template: 'embed/set', layout: 'embed'
   end
 
   def new
     @set = SpectraSet.new
     respond_to do |format|
       format.html {} # new.html.erb
-      format.xml  { render :xml => @set }
+      format.xml  { render xml: @set }
     end
   end
 
@@ -83,45 +84,45 @@ class SetsController < ApplicationController
         spectra << spectrum
       end
     end
-    @set = SpectraSet.new({
-      :title => params[:spectra_set][:title],
-      :notes => params[:spectra_set][:notes],
-      :user_id => current_user.id
-    })
+    @set = SpectraSet.new(
+      title: params[:spectra_set][:title],
+      notes: params[:spectra_set][:notes],
+      user_id: current_user.id
+    )
     if @set.save
       @set.spectrums << spectra
-      redirect_to "/sets/"+@set.id.to_s
+      redirect_to '/sets/' + @set.id.to_s
     else
-      flash[:error] = "Failed to save set."
-      render :action => "new", :id => params[:id]
+      flash[:error] = 'Failed to save set.'
+      render action: 'new', id: params[:id]
     end
   end
 
   # non REST
   def search
     params[:id] = params[:q].to_s if params[:id].nil?
-    @sets = SpectraSet.paginate(conditions: ['title LIKE ? OR notes LIKE ?',"%"+params[:id]+"%", "%"+params[:id]+"%"],limit: 100, :order => "id DESC", :page => params[:page])
-    render :partial => "capture/results_sets.html.erb", :layout => false if params[:capture]
+    @sets = SpectraSet.paginate(conditions: ['title LIKE ? OR notes LIKE ?', '%' + params[:id] + '%', '%' + params[:id] + '%'], limit: 100, order: 'id DESC', page: params[:page])
+    render partial: 'capture/results_sets.html.erb', layout: false if params[:capture]
   end
 
   # add spectrum to set with spectrum_id and id (of set)
   def add
     @set = SpectraSet.find params[:id]
     @spectrum = Spectrum.find params[:spectrum_id]
-    if @set.user_id == current_user.id || current_user.role == "admin"
+    if @set.user_id == current_user.id || current_user.role == 'admin'
       # be sure it's not already included:
       if !@set.contains(@spectrum)
         if @set.spectrums << @spectrum
-          flash[:notice] = "Added spectrum to set."
+          flash[:notice] = 'Added spectrum to set.'
         else
-          flash[:error] = "Failed to add to that set."
+          flash[:error] = 'Failed to add to that set.'
         end
       else
-        flash[:error] = "Sets may not contain a spectrum more than once."
+        flash[:error] = 'Sets may not contain a spectrum more than once.'
       end
       redirect_to "/sets/#{@set.id}"
     else
-      flash[:error] = "You must own that set to add to it."
+      flash[:error] = 'You must own that set to add to it.'
       redirect_to spectrum_path(@spectrum)
     end
   end
@@ -130,62 +131,61 @@ class SetsController < ApplicationController
   def remove
     @set = SpectraSet.find params[:id]
     @spectrum = Spectrum.find params[:s]
-    if @set.user_id == current_user.id || current_user.role == "admin"
+    if @set.user_id == current_user.id || current_user.role == 'admin'
       if @set.spectrums.length > 1
         @set.spectrums.delete(@spectrum)
-        flash[:notice] = "Spectrum removed."
+        flash[:notice] = 'Spectrum removed.'
       else
-        flash[:error] = "A set must have at least one spectrum."
+        flash[:error] = 'A set must have at least one spectrum.'
       end
       redirect_to "/sets/#{@set.id}"
     else
-      flash[:error] = "You must own the set to edit it."
+      flash[:error] = 'You must own the set to edit it.'
       redirect_to "/sets/#{@set.id}"
     end
   end
 
   def delete
     @set = SpectraSet.find params[:id]
-    if @set.user_id == current_user.id || current_user.role == "admin"
+    if @set.user_id == current_user.id || current_user.role == 'admin'
       if @set.delete
-        flash[:notice] = "Deleted set."
-        redirect_to "/sets/"
+        flash[:notice] = 'Deleted set.'
+        redirect_to '/sets/'
       else
-        flash[:error] = "Failed to save set."
-        redirect_to "/sets/edit/"+@set.id.to_s
+        flash[:error] = 'Failed to save set.'
+        redirect_to '/sets/edit/' + @set.id.to_s
       end
     else
-      flash[:error] = "You must own the set to edit it."
+      flash[:error] = 'You must own the set to edit it.'
       redirect_to "/sets/#{@set.id}"
     end
   end
 
   def edit
     @set = SpectraSet.find params[:id]
-    if @set.user_id == current_user.id || current_user.role == "admin"
+    if @set.user_id == current_user.id || current_user.role == 'admin'
       @spectrums = Spectrum.all.order(created_at: :desc).limit(4)
     else
-      flash[:error] = "You must own the set to edit it."
+      flash[:error] = 'You must own the set to edit it.'
       redirect_to "/sets/#{@set.id}"
     end
   end
 
   def update
     @set = SpectraSet.find params[:id]
-    if @set.user_id == current_user.id || current_user.role == "admin"
+    if @set.user_id == current_user.id || current_user.role == 'admin'
       @set.notes = params[:notes] if params[:notes]
       @set.title = params[:title] if params[:title]
       if @set.save!
         flash[:notice] = 'Set was successfully updated.'
-        redirect_to "/sets/"+@set.id.to_s
+        redirect_to '/sets/' + @set.id.to_s
       else
-        flash[:error] = "Failed to save set."
-        redirect_to "/sets/edit/"+@set.id.to_s
+        flash[:error] = 'Failed to save set.'
+        redirect_to '/sets/edit/' + @set.id.to_s
       end
     else
-      flash[:error] = "You must own the set to edit it."
+      flash[:error] = 'You must own the set to edit it.'
       redirect_to "/sets/#{@set.id}"
     end
   end
-
 end

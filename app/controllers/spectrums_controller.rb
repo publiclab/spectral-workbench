@@ -1,35 +1,36 @@
+# frozen_string_literal: true
+
 require 'will_paginate/array'
 class SpectrumsController < ApplicationController
   respond_to :html, :xml, :js, :csv, :json
   # expand this:
-  protect_from_forgery only: [:clone_calibration, :extract, :calibrate, :save]
+  protect_from_forgery only: %i(clone_calibration extract calibrate save)
   # http://api.rubyonrails.org/classes/ActionController/RequestForgeryProtection/ClassMethods.html
-  before_action :require_login, only: [ :new, :edit, :upload, :save, :update, :destroy, :calibrate, :extract, :clone_calibration, :fork, :setsamplerow, :find_brightest_row, :rotate, :reverse, :choose ]
+  before_action :require_login, only: %i(new edit upload save update destroy calibrate extract clone_calibration fork setsamplerow find_brightest_row rotate reverse choose)
   # switch to -- except: [ :index, :stats, :show, :show2, :anonymous, :embed, :embed2, :search, :recent, :all, :rss, :plots_rss, :match, :clone_search, :compare_search, :set_search
-  before_action :no_cache, only: [ :show, :latest, :latest_snapshot_id, :embed, :embed2 ]
+  before_action :no_cache, only: %i(show latest latest_snapshot_id embed embed2)
 
-  def stats
-  end
+  def stats; end
 
   # GET /spectrums
   # GET /spectrums.xml
   def index
     if logged_in?
-      redirect_to "/dashboard"
+      redirect_to '/dashboard'
     else
-      @spectrums = Spectrum.select("title, created_at, id, user_id, author, photo_file_name, like_count, photo_content_type")
+      @spectrums = Spectrum.select('title, created_at, id, user_id, author, photo_file_name, like_count, photo_content_type')
                            .order('created_at DESC')
                            .where('user_id != 0')
-                           .paginate(:page => params[:page], :per_page => 24)
+                           .paginate(page: params[:page], per_page: 24)
 
       @sets = SpectraSet.all
       @comments = Comment.all
 
       respond_with(@spectrums) do |format|
-        format.html {
-          render template: "spectrums/index"
-        } # show.html.erb
-        format.xml  { render xml: @spectrums }
+        format.html do
+          render template: 'spectrums/index'
+        end # show.html.erb
+        format.xml { render xml: @spectrums }
       end
     end
   end
@@ -38,41 +39,40 @@ class SpectrumsController < ApplicationController
   # in a partial for use in macros and tools.
   # ..can we merge this with search?
   def choose
-
     params[:id] = params[:id].to_s
 
-    if params[:id] == "calibration" # special case; include linearCalibration too
-      comparison = "LIKE 'linearCalibration' OR tags.name LIKE"
-    else
-      # add wildcards
-      comparison = "LIKE"
-    end
-    params[:id] += "%"
+    comparison = if params[:id] == 'calibration' # special case; include linearCalibration too
+                   "LIKE 'linearCalibration' OR tags.name LIKE"
+                 else
+                   # add wildcards
+                   'LIKE'
+                 end
+    params[:id] += '%'
 
     # user's own spectra
     params[:author] = current_user.login if logged_in? && params[:own] == 'true'
 
     # must re-craft this query to search spectra with no tags:
     @spectrums = Spectrum.order('spectrums.id DESC')
-                         .select("DISTINCT(spectrums.id), spectrums.title, spectrums.created_at, spectrums.user_id, spectrums.author, spectrums.calibrated")
-                         .joins("LEFT OUTER JOIN tags ON tags.spectrum_id = spectrums.id")
-                         .joins("JOIN users ON users.id = spectrums.user_id")
-                         .paginate(:page => params[:page],:per_page => 6)
+                         .select('DISTINCT(spectrums.id), spectrums.title, spectrums.created_at, spectrums.user_id, spectrums.author, spectrums.calibrated')
+                         .joins('LEFT OUTER JOIN tags ON tags.spectrum_id = spectrums.id')
+                         .joins('JOIN users ON users.id = spectrums.user_id')
+                         .paginate(page: params[:page], per_page: 6)
 
     # exclude self:
     @spectrums = @spectrums.where('spectrums.id != ?', params[:not]) if params[:not]
 
-    if params[:id] != "all" && !params[:id].nil?
-      @spectrums = @spectrums.where("tags.name #{comparison} (?) OR spectrums.title #{comparison} (?) OR spectrums.id = ? OR users.login = ?", 
+    if params[:id] != 'all' && !params[:id].nil?
+      @spectrums = @spectrums.where("tags.name #{comparison} (?) OR spectrums.title #{comparison} (?) OR spectrums.id = ? OR users.login = ?",
                                     params[:id], params[:id], params[:id].to_i, params[:id])
-      
+
       @spectrums = @spectrums.where(user_id: User.find_by_login(params[:author]).id) if params[:author]
     end
 
     respond_with(@spectrums) do |format|
-      format.html { render partial: "macros/spectra", locals: { spectrums: @spectrums } }
-      format.xml  { render :xml => @spectrums }
-      format.json  { render :json => @spectrums }
+      format.html { render partial: 'macros/spectra', locals: { spectrums: @spectrums } }
+      format.xml  { render xml: @spectrums }
+      format.json { render json: @spectrums }
     end
   end
 
@@ -80,38 +80,38 @@ class SpectrumsController < ApplicationController
     redirect_to spectrum_path(params[:id]), status: 301
   end
 
-  # eventually start selecting everything but spectrum.data, as show2 
-  # doesn't use this to fetch data, but makes a 2nd call. 
+  # eventually start selecting everything but spectrum.data, as show2
+  # doesn't use this to fetch data, but makes a 2nd call.
   # However, format.json does use it!
   def show
     @spectrum = Spectrum.find(params[:id])
     respond_with(@spectrum) do |format|
-      format.html {
+      format.html do
         # temporary routing until we deprecate 1.0 paths to /legacy
         if params[:v] != '1'
           render template: 'spectrums/show2'
         else
-          if logged_in?
-            @spectra = Spectrum.where("id != ? AND author = ?",@spectrum.id,current_user.login).order(created_at: :desc).limit(12)
-          else
-            @spectra = Spectrum.where("id != ?",@spectrum.id).order(created_at: :desc).limit(12)
-          end
+          @spectra = if logged_in?
+                       Spectrum.where('id != ? AND author = ?', @spectrum.id, current_user.login).order(created_at: :desc).limit(12)
+                     else
+                       Spectrum.where('id != ?', @spectrum.id).order(created_at: :desc).limit(12)
+                     end
           @sets = @spectrum.sets
-          @user_sets = SpectraSet.where(author: current_user.login).limit(20).order("created_at DESC") if logged_in?
-          @macros = Macro.find :all, conditions: {:macro_type => "analyze"}
-          @calibrations = current_user.calibrations.select { |s| s.id != @spectrum.id } if logged_in?
+          @user_sets = SpectraSet.where(author: current_user.login).limit(20).order('created_at DESC') if logged_in?
+          @macros = Macro.find :all, conditions: { macro_type: 'analyze' }
+          @calibrations = current_user.calibrations.reject { |s| s.id == @spectrum.id } if logged_in?
           @comment = Comment.new
         end
-      }
-      format.xml  { 
+      end
+      format.xml do
         render xml: @spectrum.data
-      }
-      format.csv  {
+      end
+      format.csv do
         render html: SpectrumsHelper.show_csv(@spectrum)
-      }
-      format.json  {
-        render :json => @spectrum.json
-      }
+      end
+      format.json do
+        render json: @spectrum.json
+      end
     end
   end
 
@@ -121,7 +121,7 @@ class SpectrumsController < ApplicationController
     if spectrum.snapshots.count > 0
       snap = Snapshot.where(spectrum_id: spectrum.id)
                      .select('spectrum_id, created_at, id')
-                     .order("created_at DESC")
+                     .order('created_at DESC')
                      .limit(1)
       render html: spectrum.latest_snapshot.id
     else
@@ -139,59 +139,59 @@ class SpectrumsController < ApplicationController
       is_snapshot = false
     end
     respond_with(@snapshot) do |format|
-      format.xml  { 
+      format.xml  do
         render xml: @snapshot.data
-      }
-      format.csv  {
+      end
+      format.csv do
         render html: SpectrumsHelper.show_csv_snapshot(@snapshot) if is_snapshot
-        render html: SpectrumsHelper.show_csv(@snapshot)          if !is_snapshot
-      }
-      format.json  {
+        render html: SpectrumsHelper.show_csv(@snapshot)          unless is_snapshot
+      end
+      format.json do
         render json: @snapshot.json
-      }
+      end
     end
   end
 
   def anonymous
-    @spectrums = Spectrum.where(author: "anonymous").order(created_at: :desc).paginate(page: params[:page])
-    render :template => "spectrums/search"
+    @spectrums = Spectrum.where(author: 'anonymous').order(created_at: :desc).paginate(page: params[:page])
+    render template: 'spectrums/search'
   end
 
   def embed
     @spectrum = Spectrum.find(params[:id])
     @width = (params[:width] || 500).to_i
     @height = (params[:height] || 300).to_i
-    render :layout => false
+    render layout: false
   end
 
   def embed2
     @spectrum = Spectrum.find(params[:id])
-    render :template => 'embed/spectrum', :layout => 'embed'
+    render template: 'embed/spectrum', layout: 'embed'
   end
 
   def search
     params[:id] = params[:q].to_s if params[:id].nil?
-    @spectrums = Spectrum.where('title LIKE ? OR author LIKE ?',"%#{params[:id]}%", "%#{params[:id]}%").order("id DESC").paginate(:page => params[:page], :per_page => 24)
+    @spectrums = Spectrum.where('title LIKE ? OR author LIKE ?', "%#{params[:id]}%", "%#{params[:id]}%").order('id DESC').paginate(page: params[:page], per_page: 24)
     if params[:capture]
-      render :partial => "capture/results", :layout => false
+      render partial: 'capture/results', layout: false
     else
-      @sets = SpectraSet.where('title LIKE ? OR author LIKE ?',"%#{params[:id]}%", "%#{params[:id]}%").order("id DESC").paginate(:page => params[:set_page])
+      @sets = SpectraSet.where('title LIKE ? OR author LIKE ?', "%#{params[:id]}%", "%#{params[:id]}%").order('id DESC').paginate(page: params[:set_page])
     end
   end
 
   def recent
     @spectrums = Spectrum.all.order(id: :desc).limit(10)
-    render :partial => "capture/results", :layout => false if params[:capture]
+    render partial: 'capture/results', layout: false if params[:capture]
   end
 
   # GET /spectrums/new
   # GET /spectrums/new.xml
   def new
     @spectrum = Spectrum.new
- 
+
     respond_with(@spectrum) do |format|
       format.html {}
-      format.xml  { render :xml => @spectrum }
+      format.xml  { render xml: @spectrum }
     end
   end
 
@@ -210,101 +210,95 @@ class SpectrumsController < ApplicationController
     if logged_in? || params[:token] && User.find_by_token(params[:token])
 
       user = current_user || User.find_by_token(params[:token])
-      params[:spectrum][:json] = params[:spectrum][:data] if (params[:spectrum] && params[:spectrum][:data])
+      params[:spectrum][:json] = params[:spectrum][:data] if params[:spectrum] && params[:spectrum][:data]
 
-      @spectrum = Spectrum.new({
-        :title => params[:spectrum][:title],
-        :author => user.login,
-        :user_id => user.id,
-        :notes => params[:spectrum][:notes]
-      })
- 
+      @spectrum = Spectrum.new(
+        title: params[:spectrum][:title],
+        author: user.login,
+        user_id: user.id,
+        notes: params[:spectrum][:notes]
+      )
+
       if params[:dataurl] # mediastream webclient
         @spectrum.image_from_dataurl(params[:dataurl])
       # upload json; CSV is converted to JSON before upload in upload.js
-      elsif params[:spectrum][:data_type] == "csv" || params[:spectrum][:data_type] == "json" || params[:format] == 'json'
+      elsif params[:spectrum][:data_type] == 'csv' || params[:spectrum][:data_type] == 'json' || params[:format] == 'json'
         lines = params[:spectrum][:json]
-        @spectrum.data = '{ "lines": ' + lines.to_s + " }"
-      elsif params[:spectrum][:data_type] == "image" # upload form at /upload
+        @spectrum.data = '{ "lines": ' + lines.to_s + ' }'
+      elsif params[:spectrum][:data_type] == 'image' # upload form at /upload
         @spectrum.photo = params[:spectrum][:photo]
       end
- 
+
       if @spectrum.save
- 
+
         respond_with(@spectrum) do |format|
- 
-          if (APP_CONFIG["local"] || logged_in? || User.find_by_token(params[:token]))
- 
+          if APP_CONFIG['local'] || logged_in? || User.find_by_token(params[:token])
+
             if mobile? || ios?
               @spectrum.save
               @spectrum = Spectrum.find @spectrum.id
               @spectrum.sample_row = @spectrum.find_brightest_row
-              #@spectrum.tag("mobile", user.id)
+              # @spectrum.tag("mobile", user.id)
             end
- 
-            if params[:spectrum][:json] == "" && params[:vertical]
-              @spectrum.rotate 
-            end
- 
-            @spectrum.tag("iOS", user.id) if ios?
- 
-            @spectrum.tag("json", user.id) if params[:spectrum][:data_type] == "json"
-            @spectrum.tag("csv", user.id) if params[:spectrum][:data_type] == "csv"
- 
+
+            @spectrum.rotate if params[:spectrum][:json] == '' && params[:vertical]
+
+            @spectrum.tag('iOS', user.id) if ios?
+
+            @spectrum.tag('json', user.id) if params[:spectrum][:data_type] == 'json'
+            @spectrum.tag('csv', user.id) if params[:spectrum][:data_type] == 'csv'
+
             params[:tags].to_s.split(',').each do |tag|
               @spectrum.tag(tag, user.id)
             end
-  
-            if params[:upload]
-              @spectrum.tag("upload", user.id) 
-            end
- 
-            @spectrum.tag(params[:device], user.id) if params[:device] && params[:device] != "none"
+
+            @spectrum.tag('upload', user.id) if params[:upload]
+
+            @spectrum.tag(params[:device], user.id) if params[:device] && params[:device] != 'none'
             @spectrum.tag("video_row:#{params[:video_row]}", user.id) if params[:video_row]
-            #@spectrum.tag("sample_row:#{params[:video_row]}", user.id) if params[:video_row]
- 
+            # @spectrum.tag("sample_row:#{params[:video_row]}", user.id) if params[:video_row]
+
             @spectrum.extract_data if !params[:spectrum][:json] || params[:spectrum][:json].empty?
- 
-            if params[:spectrum][:calibration_id] && !params[:is_calibration] && params[:spectrum][:calibration_id] != "calibration" && params[:spectrum][:calibration_id] != "undefined"
-              #@spectrum.clone_calibration(params[:spectrum][:calibration_id])
-              # instead, append params[:spectrum][:calibration_id] to "#addTag=calibrate:#{params[:spectrum][:calibration_id].to_i}"
-              calibration_param = "#addTag=calibrate:#{params[:spectrum][:calibration_id].to_i}"
-            else
-              calibration_param = ''
-            end
- 
+
+            calibration_param = if params[:spectrum][:calibration_id] && !params[:is_calibration] && params[:spectrum][:calibration_id] != 'calibration' && params[:spectrum][:calibration_id] != 'undefined'
+                                  # @spectrum.clone_calibration(params[:spectrum][:calibration_id])
+                                  # instead, append params[:spectrum][:calibration_id] to "#addTag=calibrate:#{params[:spectrum][:calibration_id].to_i}"
+                                  "#addTag=calibrate:#{params[:spectrum][:calibration_id].to_i}"
+                                else
+                                  ''
+                                end
+
             if params[:geotag]
               @spectrum.lat = params[:lat]
               @spectrum.lon = params[:lon]
             end
- 
-            @spectrum.reversed = true if params[:spectrum][:reversed] == "true"
- 
+
+            @spectrum.reversed = true if params[:spectrum][:reversed] == 'true'
+
             if @spectrum.save!
               flash[:notice] = 'Spectrum was successfully created.'
               format.html  { redirect_to spectrum_path(@spectrum) + calibration_param }
-              format.xml   { render :xml => @spectrum, :status => :created, :location => @spectrum }
-              format.json  { render html: spectrum_path(@spectrum), :status => :created, :location => @spectrum }
+              format.xml   { render xml: @spectrum, status: :created, location: @spectrum }
+              format.json  { render html: spectrum_path(@spectrum), status: :created, location: @spectrum }
             else
-              render "spectrums/new"
+              render 'spectrums/new'
             end
- 
+
           else
- 
-            format.html  { render action: "new" }
+
+            format.html  { render action: 'new' }
             format.xml   { render xml: @spectrum.errors, status: :unprocessable_entity }
             format.json  { render json: @spectrum.errors, status: :unprocessable_entity }
- 
+
           end
- 
         end
- 
+
       else
 
         respond_to do |format|
-          format.html  { render :action => "new" }
-          format.xml   { render :xml => @spectrum.errors, :status => :unprocessable_entity }
-          format.json  { render :json => @spectrum.errors, :status => :unprocessable_entity }
+          format.html  { render action: 'new' }
+          format.xml   { render xml: @spectrum.errors, status: :unprocessable_entity }
+          format.json  { render json: @spectrum.errors, status: :unprocessable_entity }
         end
 
       end
@@ -312,14 +306,14 @@ class SpectrumsController < ApplicationController
     else
       respond_to do |format|
         if request.xhr?
-          format.json  { 
+          format.json  do
             render html: 'Token required for unauthenticated API usage.'
-          }
+          end
         else
-          format.html { 
-            flash[:error] = "You must be logged in to upload data."
-            redirect_to "/"
-          }
+          format.html do
+            flash[:error] = 'You must be logged in to upload data.'
+            redirect_to '/'
+          end
         end
       end
     end
@@ -327,12 +321,12 @@ class SpectrumsController < ApplicationController
 
   # used to upload numerical spectrum data as a new spectrum (untested, no image??)
   def upload
-    @spectrum = Spectrum.new({:title => params[:spectrum][:title],
-      :author => author,
-      :user_id => user_id,
-      :notes => params[:spectrum][:notes],
-      :data => params[:data],
-      :photo => params[:photo]})
+    @spectrum = Spectrum.new(title: params[:spectrum][:title],
+                             author: author,
+                             user_id: user_id,
+                             notes: params[:spectrum][:notes],
+                             data: params[:data],
+                             photo: params[:photo])
     @spectrum.save!
     params[:tags].to_s.split(',').each do |tag|
       @spectrum.tag(tag, current_user.id)
@@ -365,15 +359,15 @@ class SpectrumsController < ApplicationController
     respond_to do |format|
       if @spectrum.save
         if request.xhr?
-          format.json  { render :json => @spectrum }
+          format.json { render json: @spectrum }
         else
           flash[:notice] = 'Spectrum was successfully updated.'
           format.html { redirect_to(@spectrum) }
           format.xml  { head :ok }
         end
       else
-        format.html { render :action => "edit" }
-        format.xml  { render :xml => @spectrum.errors, :status => :unprocessable_entity }
+        format.html { render action: 'edit' }
+        format.xml  { render xml: @spectrum.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -384,13 +378,13 @@ class SpectrumsController < ApplicationController
     @spectrum = Spectrum.find(params[:id])
     if require_ownership(@spectrum)
       if @spectrum.destroy
-        flash[:notice] = "Spectrum deleted."
+        flash[:notice] = 'Spectrum deleted.'
         respond_with(@spectrum) do |format|
           format.html { redirect_to('/') }
           format.xml  { head :ok }
         end
       else
-        flash[:error] = "Spectrum could not be deleted." # this is not displaying, not sure why
+        flash[:error] = 'Spectrum could not be deleted.' # this is not displaying, not sure why
         redirect_to spectrum_path(@spectrum)
       end
     end
@@ -418,7 +412,7 @@ class SpectrumsController < ApplicationController
     redirect_to spectrum_path(@spectrum)
   end
 
-  def fork 
+  def fork
     @spectrum = Spectrum.find(params[:id])
     @new = @spectrum.fork(current_user)
     flash[:notice] = "You successfully forked <a href='#{spectrum_path(@spectrum)}'>Spectrum ##{@spectrum.id}</a>"
@@ -435,30 +429,30 @@ class SpectrumsController < ApplicationController
     @spectrum.save
     @spectrum.remove_powertags('calibration')
     @spectrum.tag("calibrate:#{@calibration_clone_source.id}", current_user.id)
-    
+
     respond_with(@spectrums) do |format|
-      format.html {
+      format.html do
         flash[:notice] = 'Spectrum was successfully calibrated.'
         redirect_to spectrum_path(@spectrum)
-      }
-      format.json  { render :json => @spectrum }
+      end
+      format.json { render json: @spectrum }
     end
   end
 
   def all
-    @spectrums = Spectrum.all.paginate(:page => params[:page])
+    @spectrums = Spectrum.all.paginate(page: params[:page])
     respond_with(@spectrums) do |format|
-      format.xml  { render :xml => @spectrums }
-      format.json  { render :json => @spectrums }
+      format.xml { render xml: @spectrums }
+      format.json { render json: @spectrums }
     end
   end
 
   def rss
     if params[:author]
       Spectrum.where(author: params[:author])
-      @spectrums = Spectrum.where(author: params[:author]).paginate(:page => params[:page])
+      @spectrums = Spectrum.where(author: params[:author]).paginate(page: params[:page])
     else
-      @spectrums = Spectrum.find(:all,:order => "created_at DESC",limit: 12).paginate(:page => params[:page])
+      @spectrums = Spectrum.find(:all, order: 'created_at DESC', limit: 12).paginate(page: params[:page])
     end
     respond_to do |format|
       format.xml
@@ -466,9 +460,9 @@ class SpectrumsController < ApplicationController
   end
 
   def plots_rss
-    @spectrums = Spectrum.find(:all,:order => "created_at DESC",limit: 12, conditions: ["author != ?","anonymous"]).paginate(:page => params[:page])
-    render :layout => false
-    response.headers["Content-Type"] = "application/xml; charset=utf-8"
+    @spectrums = Spectrum.find(:all, order: 'created_at DESC', limit: 12, conditions: ['author != ?', 'anonymous']).paginate(page: params[:page])
+    render layout: false
+    response.headers['Content-Type'] = 'application/xml; charset=utf-8'
   end
 
   def match
@@ -482,8 +476,8 @@ class SpectrumsController < ApplicationController
     require 'rmagick'
     @spectrum = Spectrum.find params[:id]
     require_ownership(@spectrum)
-    image = Magick::ImageList.new("public"+(@spectrum.photo.url.split('?')[0]).gsub('%20',' '))
-    @spectrum.sample_row = (params[:row].to_f*image.rows)
+    image = Magick::ImageList.new('public' + (@spectrum.photo.url.split('?')[0]).gsub('%20', ' '))
+    @spectrum.sample_row = (params[:row].to_f * image.rows)
     @spectrum.extract_data
     @spectrum.save
     flash[:warning] = "If this spectrum image is not perfectly vertical, you may need to recalibrate after <a href='//publiclab.org/wiki/spectral-workbench-calibration#Cross+section'>setting a new cross-section</a>."
@@ -528,30 +522,29 @@ class SpectrumsController < ApplicationController
   def clone_search
     @spectrum = Spectrum.find(params[:id])
     @calibrations = Spectrum.where(calibrated: true)
-                            .where('id != ?',@spectrum.id)
-                            .where('title LIKE ? OR notes LIKE ? OR author LIKE ?',"%#{params[:q]}%", "%#{params[:q]}%","%#{params[:q]}%")
+                            .where('id != ?', @spectrum.id)
+                            .where('title LIKE ? OR notes LIKE ? OR author LIKE ?', "%#{params[:q]}%", "%#{params[:q]}%", "%#{params[:q]}%")
                             .limit(20)
-                            .order("created_at DESC")
-    render :partial => "spectrums/show/clone_results", :layout => false
+                            .order('created_at DESC')
+    render partial: 'spectrums/show/clone_results', layout: false
   end
 
   def compare_search
     @spectrum = Spectrum.find(params[:id])
     @spectra = Spectrum.where(calibrated: true)
-                            .where('id != ?',@spectrum.id)
-                            .where('title LIKE ? OR notes LIKE ? OR author LIKE ?',"%#{params[:q]}%", "%#{params[:q]}%","%#{params[:q]}%")
-                            .limit(20)
-                            .order("created_at DESC")
-    render :partial => "spectrums/show/compare_search", :layout => false
+                       .where('id != ?', @spectrum.id)
+                       .where('title LIKE ? OR notes LIKE ? OR author LIKE ?', "%#{params[:q]}%", "%#{params[:q]}%", "%#{params[:q]}%")
+                       .limit(20)
+                       .order('created_at DESC')
+    render partial: 'spectrums/show/compare_search', layout: false
   end
 
   def set_search
     @spectrum = Spectrum.find(params[:id])
-    @user_sets = SpectraSet.where('author = ? AND (title LIKE ? OR notes LIKE ?)',current_user.login,"%#{params[:q]}%", "%#{params[:q]}%")
+    @user_sets = SpectraSet.where('author = ? AND (title LIKE ? OR notes LIKE ?)', current_user.login, "%#{params[:q]}%", "%#{params[:q]}%")
                            .limit(20)
                            .order('created_at DESC')
     @user_sets = current_user.sets if logged_in?
-    render :partial => "spectrums/show/set_results", :layout => false
+    render partial: 'spectrums/show/set_results', layout: false
   end
-
 end

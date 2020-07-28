@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 SpectralWorkbench::Application.routes.draw do
   # The priority is based upon order of creation:
   # first created -> highest priority.
@@ -52,13 +54,13 @@ SpectralWorkbench::Application.routes.draw do
 
   # See how all your routes lay out with 'rake routes'
 
-  mount JasmineRails::Engine => "/specs" if defined?(JasmineRails)
+  mount JasmineRails::Engine => '/specs' if defined?(JasmineRails)
 
   get '/local/:login' => 'sessions#local'
   get '/logout' => 'sessions#logout'
   get '/login' => 'sessions#login'
   get '/session/new' => 'sessions#new'
-  get '/session' => 'session#create', conditions: { :method => :get }
+  get '/session' => 'session#create', conditions: { method: :get }
 
   get '/register' => 'users#create'
   get '/signup' => 'users#new'
@@ -109,7 +111,7 @@ SpectralWorkbench::Application.routes.draw do
   resources :tags do
     resources :snapshots
   end
-  resources :sets do 
+  resources :sets do
     resources :comments
   end
   resources :comments, belongs_to: :spectrums
@@ -155,33 +157,33 @@ SpectralWorkbench::Application.routes.draw do
   # cache_interval is how often the cache is recalculated
   # but if nothing changes, the checksum will not change
   # and the manifest will not trigger a re-download
-  offline = Rack::Offline.configure :cache_interval => 120 do
-    cache ActionController::Base.helpers.asset_path("application.css")
-    cache ActionController::Base.helpers.asset_path("application.js")
-    cache ActionController::Base.helpers.asset_path("capture.css")
-    cache ActionController::Base.helpers.asset_path("capture.js")
-    cache ActionController::Base.helpers.asset_path("analyze.js")
+  offline = Rack::Offline.configure cache_interval: 120 do
+    cache ActionController::Base.helpers.asset_path('application.css')
+    cache ActionController::Base.helpers.asset_path('application.js')
+    cache ActionController::Base.helpers.asset_path('capture.css')
+    cache ActionController::Base.helpers.asset_path('capture.js')
+    cache ActionController::Base.helpers.asset_path('analyze.js')
 
-    #cache "/capture"
-    cache "/capture/offline"
-    cache "/offline"
+    # cache "/capture"
+    cache '/capture/offline'
+    cache '/offline'
 
-    cache "/images/spectralworkbench.png"
-    cache "/images/example-sky.jpg"
-    cache "/images/example-cfl.jpg"
-    cache "/images/calibration-example.png"
-    cache "/images/logo.png"
-    cache "/lib/junction/webfonts/junction-regular.eot"
-    cache "/lib/junction/webfonts/junction-regular.woff"
-    cache "/lib/junction/webfonts/junction-regular.ttf"
-    cache "/lib/junction/webfonts/junction-regular.svg"
-    cache "/lib/fontawesome/css/font-awesome.min.css"
+    cache '/images/spectralworkbench.png'
+    cache '/images/example-sky.jpg'
+    cache '/images/example-cfl.jpg'
+    cache '/images/calibration-example.png'
+    cache '/images/logo.png'
+    cache '/lib/junction/webfonts/junction-regular.eot'
+    cache '/lib/junction/webfonts/junction-regular.woff'
+    cache '/lib/junction/webfonts/junction-regular.ttf'
+    cache '/lib/junction/webfonts/junction-regular.svg'
+    cache '/lib/fontawesome/css/font-awesome.min.css'
 
-    network "/"
-    fallback "/" => "/offline"
-    fallback "/dashboard" => "/offline"
+    network '/'
+    fallback '/' => '/offline'
+    fallback '/dashboard' => '/offline'
   end
-  get "/index.manifest" => offline
+  get '/index.manifest' => offline
 
   root to: 'spectrums#index'
 
@@ -193,5 +195,4 @@ SpectralWorkbench::Application.routes.draw do
   get ':controller/:action'
   get ':controller/:action/:id'
   get ':controller/:action/:id.:format'
-
 end

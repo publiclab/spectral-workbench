@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class DeprecateSpectraSetAuthor < ActiveRecord::Migration[5.2]
   def up
     SpectraSet.all.each do |set|

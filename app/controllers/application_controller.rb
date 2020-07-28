@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ApplicationController < ActionController::Base
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
@@ -15,19 +17,19 @@ class ApplicationController < ActionController::Base
   end
 
   def mobile?
-    ((request.env['HTTP_USER_AGENT'] && request.env['HTTP_USER_AGENT'].match("Mobi")) || params[:format] == "mobile") && params[:format] != "html" && params[:m] != "false" || params[:m] == "true"
+    ((request.env['HTTP_USER_AGENT']&.match('Mobi')) || params[:format] == 'mobile') && params[:format] != 'html' && params[:m] != 'false' || params[:m] == 'true'
   end
 
   def ios?
-    ((request.env['HTTP_USER_AGENT'] && request.env['HTTP_USER_AGENT'].match("iPad")) || (request.env['HTTP_USER_AGENT'] && request.env['HTTP_USER_AGENT'].match("iPhone")) || params[:ios] == "true")
+    ((request.env['HTTP_USER_AGENT']&.match('iPad')) || (request.env['HTTP_USER_AGENT']&.match('iPhone')) || params[:ios] == 'true')
   end
 
   def current_user
-    user_id = session[:user_id] 
+    user_id = session[:user_id]
     if user_id
       begin
         user = User.find(user_id)
-      rescue
+      rescue StandardError
         user = nil
       end
     else
@@ -38,22 +40,22 @@ class ApplicationController < ActionController::Base
   private
 
   def no_cache
-    response.headers["Cache-Control"] = "no-cache, no-store, max-age=0, must-revalidate"
-    response.headers["Pragma"] = "no-cache"
-    response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
+    response.headers['Cache-Control'] = 'no-cache, no-store, max-age=0, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = 'Fri, 01 Jan 1990 00:00:00 GMT'
   end
 
   def require_ownership(datum)
-    dataType = (self.class.name == "SpectrumsController") ? :spectrum : :set
+    dataType = self.class.name == 'SpectrumsController' ? :spectrum : :set
 
-    unless logged_in? && (current_user.role == "admin" || current_user.id == datum.user_id)
-      flash[:error] = "You must own this data to edit it."
+    if logged_in? && (current_user.role == 'admin' || current_user.id == datum.user_id)
+      return true
+    else
+      flash[:error] = 'You must own this data to edit it.'
       # without status 303, some browsers will redirect with request method DELETE
       redirect_to spectrum_path(datum), status: :see_other if dataType == :spectrum
-      redirect_to      set_path(datum), status: :see_other if dataType == :set
+      redirect_to set_path(datum), status: :see_other if dataType == :set
       return false
-    else
-      return true
     end
   end
 
@@ -66,13 +68,13 @@ class ApplicationController < ActionController::Base
       respond_to do |format|
         if request.xhr? # ajax
           login_prompt = "You must be <a href='#{login_link}'>logged in to do this</a>."
-          format.json { render :json => { :errors => [ login_prompt ] } }
+          format.json { render json: { errors: [login_prompt] } }
           format.html do
             render html: login_prompt # halts request cycle
           end
         else
           format.html do
-            flash[:error] = "You must be logged in to access this function."
+            flash[:error] = 'You must be logged in to access this function.'
             redirect_to login_link # halts request cycle
           end
         end
@@ -84,14 +86,13 @@ class ApplicationController < ActionController::Base
   def logged_in?
     user_id = session[:user_id]
     begin
-      if user_id and User.find(user_id)
+      if user_id && User.find(user_id)
         return true
       else
         return false
       end
-    rescue
+    rescue StandardError
       return false
     end
   end
-
 end

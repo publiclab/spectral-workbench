@@ -1,11 +1,12 @@
-# Indicate location of "identify" command: 
-#Paperclip.options[:command_path] = "/usr/bin/identify"
-#Paperclip.options[:command_path] = "/usr/local/bin"
+# frozen_string_literal: true
+
+# Indicate location of "identify" command:
+# Paperclip.options[:command_path] = "/usr/bin/identify"
+# Paperclip.options[:command_path] = "/usr/local/bin"
 
 # Thank you to http://bendangelo.me/?p=60
 module Paperclip
- 
-  #converts a string into a file for paperclip to save
+  # converts a string into a file for paperclip to save
   # useage
   # self.avatar = Paperclip::string_to_file('bob.png', 'image/png', 'BASE64 here')
   def self.string_to_file(name, type, data)
@@ -14,8 +15,6 @@ module Paperclip
 
     image.original_filename = name
     image.content_type = type
-    return image
+    image
   end
- 
 end
-

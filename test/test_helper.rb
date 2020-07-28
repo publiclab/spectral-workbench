@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 require 'simplecov'
-ENV["RAILS_ENV"] = "test"
-SimpleCov.start do 
-  add_filter "test/"
-  add_filter "config/"
+ENV['RAILS_ENV'] = 'test'
+SimpleCov.start do
+  add_filter 'test/'
+  add_filter 'config/'
 end
-require File.expand_path('../../config/environment', __FILE__)
+require File.expand_path('../config/environment', __dir__)
 require 'rails/test_help'
 require 'support/ruby_2_6_rails_4_2_patch'
 
