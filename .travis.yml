@@ -55,11 +55,7 @@ jobs:
     - name: "Controllers Tests"
       script: rails test:controllers
     - name: "Integration Tests"
-<<<<<<< HEAD
       script: rails test:integration
-=======
-      script: rake test:integration
->>>>>>> 0581703407b27d313c210f2d63ffc6cd125d1e1a
     - name: "Docker Builds"
       script: docker build -t swbench .
     - name: "Asset Precompilation"
