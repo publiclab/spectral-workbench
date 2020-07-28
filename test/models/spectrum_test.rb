@@ -162,13 +162,13 @@ class SpectrumTest < ActiveSupport::TestCase
   end
 
   test "compare" do
-  	spectrum1 = Spectrum.first
-  	spectrum2 = Spectrum.second
-	similarity = spectrum1.compare(spectrum2)
+    spectrum1 = Spectrum.first
+    spectrum2 = Spectrum.second
+    similarity = spectrum1.compare(spectrum2.id)
 
-	assert_not_nil spectrum1
-	assert_not_nil spectrum2
-	assert_not_nil similarity
+    assert_not_nil spectrum1
+    assert_not_nil spectrum2
+    assert_not_nil similarity
 
   end
 

@@ -3,7 +3,7 @@
 pidfile=/app/tmp/pids/server.pid
 
 bundle check || bundle install
-bower install --allow-root
+yarn check || yarn install
 
 cp db/schema.rb.example db/schema.rb
 cp config/database.yml.docker.example config/database.yml
@@ -16,9 +16,10 @@ done
 
 echo "MySQL is up and running!"
 
-bundle exec rake db:create
-bundle exec rake db:migrate
-bundle exec rake db:seed
+bundle exec rails db:create
+bundle exec rails db:schema:load
+bundle exec rails db:migrate
+# bundle exec rails db:seed
 
 if [ -f $pidfile ] ; then
 	>&2 echo 'Server PID file already exists. Removing it...';

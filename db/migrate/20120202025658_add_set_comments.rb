@@ -1,4 +1,4 @@
-class AddSetComments < ActiveRecord::Migration
+class AddSetComments < ActiveRecord::Migration[5.2]
   def self.up
       add_column :spectrums, :client_code, :string, default: '', null: false
       add_column :comments, :spectra_set_id, :integer, :default => 0, :null => false 

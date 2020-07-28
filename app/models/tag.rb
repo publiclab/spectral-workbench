@@ -9,7 +9,10 @@ class Tag < ActiveRecord::Base
   validate :powertags_by_owner
 
   # place this before the has_one :snapshot so it runs before dependent => :destroy
-  before_destroy :is_deletable?
+  before_destroy do
+    is_deletable?
+    throw(:abort) if errors.present?
+  end
   after_destroy :scan_powertags_destroy
 
   belongs_to :spectrum
@@ -80,14 +83,15 @@ class Tag < ActiveRecord::Base
   def is_deletable?
     if self.is_powertag? && self.needs_snapshot?
       if self.snapshot.nil?
-        return true
+        true
       elsif self.snapshot.is_deletable? # includes snapshot.is_latest?
-        return true
+        true
       else
-        return false
+        errors.add :base, "Powertags/operations may not be deleted if other data relies upon it."
+        false
       end
     else
-      return true
+      true
     end
   end
 

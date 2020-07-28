@@ -33,8 +33,6 @@ before_install:
 
 install:
   - bundle install
-  - npm install -g bower
-  - bower install --allow-root
   - if [ $RAILS_ENV == 'production' ]; then
       mysql -e "CREATE DATABASE swbench;";
       mysql -e "CREATE USER 'swbench'@'%' IDENTIFIED BY 'swbench';";
@@ -42,6 +40,7 @@ install:
       bundle exec rake db:schema:load;
       bundle exec rake db:migrate;
     else
+      yarn check || yarn install;
       bundle exec rake db:create;
       bundle exec rake db:schema:load;
       bundle exec rake db:migrate;
@@ -49,14 +48,14 @@ install:
 
 jobs:
   include:
-    - name: "Unit Tests"
-      script: rake test:units
+    - name: "Models Tests"
+      script: rails test:models
     - name: "Helpers Tests"
-      script: ruby -I test test/unit/helpers/*.rb
-    - name: "Functional Tests"
-      script: rake test:functionals
+      script: ruby -I test test/models/helpers/*.rb
+    - name: "Controllers Tests"
+      script: rails test:controllers
     - name: "Integration Tests"
-      script: rake test:integration
+      script: rails test:integration
     - name: "Docker Builds"
       script: docker build -t swbench .
     - name: "Asset Precompilation"

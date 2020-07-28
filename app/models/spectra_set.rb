@@ -42,7 +42,7 @@ class SpectraSet < ActiveRecord::Base
     spectrums = spectrums || self.spectrums
     json = []
     spectrums.each do |spectrum|
-      json << spectrum.as_json(:except => [:data])
+      json << spectrum.as_json(except: [:data])
       if spectrum.snapshots.nil? || spectrum.snapshots.length == 0
         json.last[:data] = JSON.parse(spectrum.data) 
         json.last[:snapshot_id] = false

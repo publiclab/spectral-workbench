@@ -1,4 +1,4 @@
-class ConvertSpectrumDescriptionCalibrationToTag < ActiveRecord::Migration
+class ConvertSpectrumDescriptionCalibrationToTag < ActiveRecord::Migration[5.2]
   def up
     Spectrum.select('id,notes,user_id').each do |spectrum|
       unless spectrum.notes.nil?

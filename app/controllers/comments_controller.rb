@@ -1,6 +1,6 @@
 class CommentsController < ApplicationController
 
-  before_filter :require_login, :only => [:spectrum, :spectra_set, :delete]
+  before_action :require_login, :only => [:spectrum, :spectra_set, :delete]
 
   def index
     @comments = Comment.all.order(id: :desc)

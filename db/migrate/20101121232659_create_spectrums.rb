@@ -1,4 +1,4 @@
-class CreateSpectrums < ActiveRecord::Migration
+class CreateSpectrums < ActiveRecord::Migration[5.2]
   def self.up
     create_table :spectrums do |t|
       t.string :title

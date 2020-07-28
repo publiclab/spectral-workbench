@@ -7,7 +7,7 @@ endef
 
 redeploy-container:
 	# docker-compose down --volumes
-	docker-compose up --force-recreate -d
+	docker-compose up -d
 	# $(call wait_for_container)
 	sleep 30
 	docker-compose logs

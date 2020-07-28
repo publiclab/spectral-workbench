@@ -1,6 +1,6 @@
 class MatchController < ApplicationController
 
-  skip_before_filter :verify_authenticity_token
+  skip_before_action :verify_authenticity_token
 
   def index
     id = params[:id]
@@ -58,7 +58,7 @@ class MatchController < ApplicationController
                         .paginate(:page => params[:page],:per_page => 24)
 
     @sets = @spectrum.sets
-    @macros = Macro.find :all, :conditions => {:macro_type => "analyze"}
+    @macros = Macro.find :all, conditions: {:macro_type => "analyze"}
     @calibrations = current_user.calibrations if logged_in?
     @comment = Comment.new
 
@@ -79,7 +79,7 @@ class MatchController < ApplicationController
     range = 50
     ids = []
 
-    matches = ProcessedSpectrum.find(:all, :conditions => [get_conditions(d, bins, types, range)])
+    matches = ProcessedSpectrum.find(:all, conditions: [get_conditions(d, bins, types, range)])
 
     range_visits = [range] # To check the ranges visited
 
@@ -96,7 +96,7 @@ class MatchController < ApplicationController
       end
 
       range_visits.push(range)
-      matches = ProcessedSpectrum.find(:all, :conditions => [get_conditions(d, bins, types, range)])
+      matches = ProcessedSpectrum.find(:all, conditions: [get_conditions(d, bins, types, range)])
     end
 
     matches.each do |match|
@@ -107,7 +107,7 @@ class MatchController < ApplicationController
       @error = "Sorry, No Matches found!"
     else
       id_string = ids.join(" OR ")
-      @spectra = Spectrum.find(:all, :order => "created_at DESC", :conditions => [id_string], :limit => 2)
+      @spectra = Spectrum.find(:all, :order => "created_at DESC", conditions: [id_string], limit: 2)
     end
 
     render :partial => "livesearch", :layout => false

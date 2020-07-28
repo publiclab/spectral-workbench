@@ -33,9 +33,10 @@ class SessionsControllerTest < ActionController::TestCase
   		successful_login(params[:back_to], nil)
   	end
 
-  	post :new, 
-  	subaction: "github",
-  	back_to: "/dashboard"
+  	post :new, params: {
+		subaction: "github",
+		back_to: "/dashboard"
+	  }
 
   	assert_equal "You have successfully logged in.", flash[:success]
   	assert_response :redirect
@@ -53,9 +54,10 @@ class SessionsControllerTest < ActionController::TestCase
   		failed_login("Something went wrong")
   	end
 
-  	post :new, 
-  	subaction: "github",
-  	back_to: "/dashboard"
+  	post :new, params: {
+		subaction: "github",
+		back_to: "/dashboard"
+	}
 
   	assert_equal "Something went wrong", flash[:danger]
   	assert_response :redirect
@@ -76,8 +78,7 @@ class SessionsControllerTest < ActionController::TestCase
   test "should login locally" do 
   	session[:user_id] = User.first.login
   	APP_CONFIG["local"] = true
-  	post :local,
-  	login: session[:user_id]
+  	post :local, params: { login: session[:user_id] }
 
 	assert_equal "You have successfully logged in.", flash[:success]
   	assert_response :redirect  	
@@ -86,8 +87,7 @@ class SessionsControllerTest < ActionController::TestCase
   test "should not initiate local login if not local" do 
   	session[:user_id] = User.first.login
   	APP_CONFIG["local"] = false
-  	post :local,
-  	login: session[:user_id]
+  	post :local, params: { login: session[:user_id] }
 
 	assert_equal "Forbidden", flash[:error]
   	assert_response :redirect  	

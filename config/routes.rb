@@ -58,7 +58,7 @@ SpectralWorkbench::Application.routes.draw do
   get '/logout' => 'sessions#logout'
   get '/login' => 'sessions#login'
   get '/session/new' => 'sessions#new'
-  get '/session' => 'session#create', :conditions => { :method => :get }
+  get '/session' => 'session#create', conditions: { :method => :get }
 
   get '/register' => 'users#create'
   get '/signup' => 'users#new'
@@ -112,7 +112,7 @@ SpectralWorkbench::Application.routes.draw do
   resources :sets do 
     resources :comments
   end
-  resources :comments, :belongs_to => :spectrums
+  resources :comments, belongs_to: :spectrums
   resources :spectrums do
     resources :snapshots
     resources :comments
@@ -134,6 +134,7 @@ SpectralWorkbench::Application.routes.draw do
   get '/spectra/show/:id', to: redirect('/spectrums/%{id}')
   get '/sets/show/:id.:format', to: redirect('/sets/%{id}.%{format}')
   get '/sets/show/:id', to: redirect('/sets/%{id}')
+  get '/sets/:id' => 'sets#show'
 
   get '/spectra/assign' => 'spectrums#assign'
   get '/spectra/feed' => 'spectrums#rss', defaults: { format: 'xml' }

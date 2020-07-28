@@ -10,13 +10,13 @@ class UsersControllerTest < ActionController::TestCase
 
   test "should get profile" do
     session[:user_id] = users(:quentin).id # log in
-    get :show, :id => users(:quentin).login
+    get :show, params: { id: users(:quentin).login }
     assert_response :success
   end
 
   test "should get dashboard" do
     session[:user_id] = users(:quentin).id # log in
-    get :dashboard, :id => users(:quentin).login
+    get :dashboard, params: { id: users(:quentin).login }
     assert_response :success
     assert_not_nil :spectrums
     assert_not_nil :sets

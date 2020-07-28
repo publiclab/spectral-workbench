@@ -1,4 +1,4 @@
-class AddBaselineAndControlPoints < ActiveRecord::Migration
+class AddBaselineAndControlPoints < ActiveRecord::Migration[5.2]
   def self.up
       add_column :spectrums, :baseline_position, :string, :default => 'false' # x,y,scale,rotation,amplification
       # attachment (paperclip) - optional

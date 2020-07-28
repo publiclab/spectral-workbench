@@ -12,7 +12,7 @@ class MacrosController < ApplicationController
 
   def show
     @user = User.find_by_login params[:author]
-    @macro = Macro.find_by_title params[:id], :conditions => {:user_id => @user.id}, :order => "id DESC"
+    @macro = Macro.find_by_title params[:id], conditions: {:user_id => @user.id}, :order => "id DESC"
     respond_to do |format|
       format.html {}
       format.js  { 

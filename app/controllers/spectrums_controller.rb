@@ -2,11 +2,11 @@ require 'will_paginate/array'
 class SpectrumsController < ApplicationController
   respond_to :html, :xml, :js, :csv, :json
   # expand this:
-  protect_from_forgery :only => [:clone_calibration, :extract, :calibrate, :save]
+  protect_from_forgery only: [:clone_calibration, :extract, :calibrate, :save]
   # http://api.rubyonrails.org/classes/ActionController/RequestForgeryProtection/ClassMethods.html
-  before_filter :require_login,     :only => [ :new, :edit, :upload, :save, :update, :destroy, :calibrate, :extract, :clone_calibration, :fork, :setsamplerow, :find_brightest_row, :rotate, :reverse, :choose ]
-  # switch to -- :except => [ :index, :stats, :show, :show2, :anonymous, :embed, :embed2, :search, :recent, :all, :rss, :plots_rss, :match, :clone_search, :compare_search, :set_search
-  before_filter :no_cache, :only => [ :show, :latest, :latest_snapshot_id, :embed, :embed2 ]
+  before_action :require_login, only: [ :new, :edit, :upload, :save, :update, :destroy, :calibrate, :extract, :clone_calibration, :fork, :setsamplerow, :find_brightest_row, :rotate, :reverse, :choose ]
+  # switch to -- except: [ :index, :stats, :show, :show2, :anonymous, :embed, :embed2, :search, :recent, :all, :rss, :plots_rss, :match, :clone_search, :compare_search, :set_search
+  before_action :no_cache, only: [ :show, :latest, :latest_snapshot_id, :embed, :embed2 ]
 
   def stats
   end
@@ -27,9 +27,9 @@ class SpectrumsController < ApplicationController
 
       respond_with(@spectrums) do |format|
         format.html {
-          render :template => "spectrums/index"
+          render template: "spectrums/index"
         } # show.html.erb
-        format.xml  { render :xml => @spectrums }
+        format.xml  { render xml: @spectrums }
       end
     end
   end
@@ -98,12 +98,14 @@ class SpectrumsController < ApplicationController
           end
           @sets = @spectrum.sets
           @user_sets = SpectraSet.where(author: current_user.login).limit(20).order("created_at DESC") if logged_in?
-          @macros = Macro.find :all, :conditions => {:macro_type => "analyze"}
+          @macros = Macro.find :all, conditions: {:macro_type => "analyze"}
           @calibrations = current_user.calibrations.select { |s| s.id != @spectrum.id } if logged_in?
           @comment = Comment.new
         end
       }
-      format.xml  { render :xml => @spectrum }
+      format.xml  { 
+        render xml: @spectrum.data
+      }
       format.csv  {
         render html: SpectrumsHelper.show_csv(@spectrum)
       }
@@ -137,13 +139,15 @@ class SpectrumsController < ApplicationController
       is_snapshot = false
     end
     respond_with(@snapshot) do |format|
-      format.xml  { render :xml => @snapshot }
+      format.xml  { 
+        render xml: @snapshot.data
+      }
       format.csv  {
         render html: SpectrumsHelper.show_csv_snapshot(@snapshot) if is_snapshot
         render html: SpectrumsHelper.show_csv(@snapshot)          if !is_snapshot
       }
       format.json  {
-        render :json => @snapshot.json
+        render json: @snapshot.json
       }
     end
   end
@@ -287,9 +291,9 @@ class SpectrumsController < ApplicationController
  
           else
  
-            format.html  { render :action => "new" }
-            format.xml   { render :xml => @spectrum.errors, :status => :unprocessable_entity }
-            format.json  { render :json => @spectrum.errors, :status => :unprocessable_entity }
+            format.html  { render action: "new" }
+            format.xml   { render xml: @spectrum.errors, status: :unprocessable_entity }
+            format.json  { render json: @spectrum.errors, status: :unprocessable_entity }
  
           end
  
@@ -353,9 +357,9 @@ class SpectrumsController < ApplicationController
     @spectrum = Spectrum.find(params[:id])
     require_ownership(@spectrum)
 
-    @spectrum.title = params[:spectrum][:title] unless params[:spectrum][:title].nil?
-    @spectrum.notes = params[:spectrum][:notes] unless params[:spectrum][:notes].nil?
-    @spectrum.data  = params[:spectrum][:data] unless params[:spectrum][:data].nil?
+    @spectrum.title = params[:title] unless params[:title].nil?
+    @spectrum.notes = params[:notes] unless params[:notes].nil?
+    @spectrum.data  = params[:data] unless params[:data].nil?
 
     # clean this up
     respond_to do |format|
@@ -454,7 +458,7 @@ class SpectrumsController < ApplicationController
       Spectrum.where(author: params[:author])
       @spectrums = Spectrum.where(author: params[:author]).paginate(:page => params[:page])
     else
-      @spectrums = Spectrum.find(:all,:order => "created_at DESC",:limit => 12).paginate(:page => params[:page])
+      @spectrums = Spectrum.find(:all,:order => "created_at DESC",limit: 12).paginate(:page => params[:page])
     end
     respond_to do |format|
       format.xml
@@ -462,7 +466,7 @@ class SpectrumsController < ApplicationController
   end
 
   def plots_rss
-    @spectrums = Spectrum.find(:all,:order => "created_at DESC",:limit => 12, :conditions => ["author != ?","anonymous"]).paginate(:page => params[:page])
+    @spectrums = Spectrum.find(:all,:order => "created_at DESC",limit: 12, conditions: ["author != ?","anonymous"]).paginate(:page => params[:page])
     render :layout => false
     response.headers["Content-Type"] = "application/xml; charset=utf-8"
   end
@@ -475,7 +479,7 @@ class SpectrumsController < ApplicationController
   # Start doing this client side!
   def setsamplerow
     require 'rubygems'
-    require 'RMagick'
+    require 'rmagick'
     @spectrum = Spectrum.find params[:id]
     require_ownership(@spectrum)
     image = Magick::ImageList.new("public"+(@spectrum.photo.url.split('?')[0]).gsub('%20',' '))

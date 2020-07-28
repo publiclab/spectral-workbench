@@ -1,6 +1,6 @@
 class TagsController < ApplicationController
 
-  before_filter :require_login, :only => [ :create, :destroy, :change_reference ]
+  before_action :require_login, :only => [ :create, :destroy, :change_reference ]
 
 
   # FYI, we've stopped accepting requests with multiple comma-delimited tags
@@ -95,6 +95,7 @@ class TagsController < ApplicationController
             end
           end
         else
+
           respond_to do |format|
             format.html do
               if request.xhr?
@@ -105,6 +106,7 @@ class TagsController < ApplicationController
                                 },
                        :status => :unprocessable_entity
               else
+                raise "Powertags/operations may not be deleted if other data relies upon it."
                 flash[:error] = "Powertags/operations may not be deleted if other data relies upon it."
                 # OMG, without status 303, some browsers will redirect with request method DELETE and delete the spectrum!
                 # http://api.rubyonrails.org/classes/ActionController/Redirecting.html

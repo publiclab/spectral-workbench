@@ -1,4 +1,4 @@
-class ClosestMatch < ActiveRecord::Migration
+class ClosestMatch < ActiveRecord::Migration[5.2]
   def self.up
     create_table "processed_spectrums" do |t|
       t.integer   :spectrum_id
