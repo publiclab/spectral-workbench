@@ -2,9 +2,9 @@
 require 'will_paginate/array'
 
 class CaptureController < ApplicationController
-  skip_before_filter :verify_authenticity_token
+  skip_before_action :verify_authenticity_token
 
-  before_filter :require_login, :except => [:index, :recent_calibrations]
+  before_action :require_login, except: [:index, :recent_calibrations]
 
   def index
     @offline = "flush"
@@ -17,13 +17,13 @@ class CaptureController < ApplicationController
       elsif current_user.calibrations.count > 0
         @calibration = current_user.last_calibration
       end
-      @calibrations = Spectrum.where(calibrated: true, user_id: current_user.id).uniq!
+      @calibrations = Spectrum.where(calibrated: true, user_id: current_user.id).uniq
       if @calibration && !@calibrations.include?(@calibration)
         @calibrations << @calibration
       end
       @start_wavelength, @end_wavelength = @calibration.wavelength_range if @calibration
     end
-    @spectrums = Spectrum.where(:limit => 12).order(id: :desc)
+    @spectrums = Spectrum.where(limit: 12).order(id: :desc)
     render :template => "capture/index", :layout => "application"
   end
 

@@ -1,4 +1,4 @@
-class AddTagsAndLinkedSpectra < ActiveRecord::Migration
+class AddTagsAndLinkedSpectra < ActiveRecord::Migration[5.2]
   def self.up
     create_table :tags do |t|
       t.string :user_id

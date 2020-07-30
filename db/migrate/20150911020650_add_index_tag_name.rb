@@ -1,4 +1,4 @@
-class AddIndexTagName < ActiveRecord::Migration
+class AddIndexTagName < ActiveRecord::Migration[5.2]
   def up
     add_index("tags", "name")
   end

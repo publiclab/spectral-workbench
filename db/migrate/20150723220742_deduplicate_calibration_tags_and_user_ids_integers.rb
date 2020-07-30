@@ -1,4 +1,4 @@
-class DeduplicateCalibrationTagsAndUserIdsIntegers < ActiveRecord::Migration
+class DeduplicateCalibrationTagsAndUserIdsIntegers < ActiveRecord::Migration[5.2]
   def up
     change_column :tags, :user_id, :integer
 

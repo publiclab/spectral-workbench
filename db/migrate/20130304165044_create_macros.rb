@@ -1,4 +1,4 @@
-class CreateMacros < ActiveRecord::Migration
+class CreateMacros < ActiveRecord::Migration[5.2]
   def self.up
     create_table "macros" do |t|
       t.integer   :user_id

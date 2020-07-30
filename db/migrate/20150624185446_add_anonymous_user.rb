@@ -1,4 +1,4 @@
-class AddAnonymousUser < ActiveRecord::Migration
+class AddAnonymousUser < ActiveRecord::Migration[5.2]
   def up
 
     # create an "anonymous" user:

@@ -23,7 +23,7 @@ class ProcessedSpectrum < ActiveRecord::Base
     end
     
     condition_string = conditions.join(" AND ")
-    matches = ProcessedSpectrum.find(:all, :conditions => [condition_string],:limit => limit)
+    matches = ProcessedSpectrum.find(:all, conditions: [condition_string],limit: limit)
       
     ids = []
     matches.each do |match|
@@ -33,7 +33,7 @@ class ProcessedSpectrum < ActiveRecord::Base
     id_string = ids.join(" OR ")
     id_string += " AND id != #{self.spectrum_id}"
 
-    Spectrum.find(:all, :conditions => [id_string])
+    Spectrum.find(:all, conditions: [id_string])
   end
 
 end

@@ -1,4 +1,4 @@
-class DeprecateSpectraSetAuthor < ActiveRecord::Migration
+class DeprecateSpectraSetAuthor < ActiveRecord::Migration[5.2]
   def up
     SpectraSet.all.each do |set|
       if set.author != '' && set.user_id == 0 && user = User.find_by_login(set.author)

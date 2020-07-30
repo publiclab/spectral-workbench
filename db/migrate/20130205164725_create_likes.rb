@@ -1,4 +1,4 @@
-class CreateLikes < ActiveRecord::Migration
+class CreateLikes < ActiveRecord::Migration[5.2]
   def self.up
     create_table "likes" do |t|
       t.integer  :spectrum_id
