@@ -97,9 +97,10 @@ class SpectrumsController < ApplicationController
                        Spectrum.where('id != ?', @spectrum.id).order(created_at: :desc).limit(12)
                      end
           @sets = @spectrum.sets
-          @user_sets = SpectraSet.where(author: current_user.login).limit(20).order('created_at DESC') if logged_in?
-          @macros = Macro.find :all, conditions: { macro_type: 'analyze' }
-          @calibrations = current_user.calibrations.reject { |s| s.id == @spectrum.id } if logged_in?
+          @user_sets = SpectraSet.where(author: current_user.login).limit(20).order("created_at DESC") if logged_in?
+          # @macros = Macro.find :all, conditions: {:macro_type => "analyze"}
+          @macros  = Macro.where(macro_type: "analyze")
+          @calibrations = current_user.calibrations.select { |s| s.id != @spectrum.id } if logged_in?
           @comment = Comment.new
         end
       end
