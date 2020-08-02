@@ -77,6 +77,8 @@ SpectralWorkbench::Application.routes.draw do
   resources :devices
   resources :matches
   resources :likes
+  resources :comments
+  resources :sets
 
   post '/message' => 'users#message'
   get '/stats' => 'spectrums#stats'
@@ -84,17 +86,20 @@ SpectralWorkbench::Application.routes.draw do
   # legacy; permanent redirect:
 
   get 'capture/offline' => 'capture#offline' 
+  post 'capture/save' => 'capture#save' 
   get 'capture/recent_calibrations' => 'capture#recent_calibrations' 
 
   get 'comments/spectraset' => 'comments#spectraset' 
   get 'comments/spectrum' => 'comments#spectrum' 
+  delete 'comments/delete' => 'comments#delete' 
 
   post 'devices/create_key' => 'devices#create_key' 
   get 'devices/lookup' => 'devices#lookup' 
   get 'devices/claim' => 'devices#claim' 
 
-  get 'likes/toggle' => 'likes#toggle' 
+  get 'likes/toggle/:id' => 'likes#toggle' 
   get 'likes/recent' => 'likes#recent' 
+  delete 'likes/delete' => 'likes#delete' 
 
   get 'macros/author' => 'macros#author' 
 
@@ -111,6 +116,7 @@ SpectralWorkbench::Application.routes.draw do
 
   get 'sets/search' => 'sets#search' 
   delete 'sets/remove' => 'sets#remove'
+  delete 'sets/delete' => 'sets#delete'
   get 'sets/embed' => 'sets#embed' 
   post 'sets/add' => 'sets#add' 
   get 'sets/calibrated' => 'sets#calibrated' 
