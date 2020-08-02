@@ -16,7 +16,7 @@ class CaptureController < ApplicationController
       elsif params[:calibration_id]
         cal = Spectrum.where(id: params[:calibration_id])
         @calibration = cal.last unless cal.empty?
-      elsif current_user.calibrations.count > 0
+      elsif current_user.calibrations.count.positive?
         @calibration = current_user.last_calibration
       end
       @calibrations = Spectrum.where(calibrated: true, user_id: current_user.id).uniq

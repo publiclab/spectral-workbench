@@ -282,7 +282,6 @@ class TagsControllerTest < ActionController::TestCase
     response = ActiveSupport::JSON.decode(@response.body)
     assert_not_nil response
     tag = response.last
-    index = response.length - 1
     assert_not_nil tag
     assert_not_equal tag['name'], "subtract:#{spectrums(:two).id}"
     assert_equal     tag['name'], "subtract:#{spectrums(:two).id}##{spectrums(:two).snapshots.first.id}"

@@ -113,8 +113,6 @@ class Spectrum < ActiveRecord::Base
 
   # finds the brightest row of the image and uses that as its sample row
   def find_brightest_row
-    pixels = []
-
     image = Magick::ImageList.new('public' + (photo.url.split('?')[0]).gsub('%20', ' '))
     brightest_row = 0
     brightest = 0
@@ -363,7 +361,7 @@ class Spectrum < ActiveRecord::Base
     end
     result = {}
     bins.each_with_index do |bin, i|
-      bin[1] = bin[1] / count[i] if count[i].to_i > 0
+      bin[1] = bin[1] / count[i] if count[i].to_i.positive?
       result[bin[0].to_i * binsize] = bin[1]
     end
     result
@@ -385,7 +383,6 @@ class Spectrum < ActiveRecord::Base
       difference_sum += 1
       difference += (other[bin[1]] - data[bin[1]])**2 unless other[bin[1]].nil? || data[bin[1]].nil?
     end
-    average = sum / data.length
 
     # can we generate a "score" of the match? how close it was?
     difference
@@ -503,7 +500,7 @@ class Spectrum < ActiveRecord::Base
   end
 
   def latest_json_data
-    if snapshots.count > 0
+    if snapshots.count.positive?
       ActiveSupport::JSON.decode(snapshots.last.data)
     else
       ActiveSupport::JSON.decode(clean_json)
@@ -555,7 +552,7 @@ class Spectrum < ActiveRecord::Base
     # Time to average the values and return
 
     bins.each do |bin|
-      next unless counts[bin] > 0
+      next unless (counts[bin]).positive?
 
       types.each do |type|
         values["#{type}#{bin}"] /= counts[bin]
@@ -576,18 +573,18 @@ class Spectrum < ActiveRecord::Base
 
     if diff > 6 # This is in the next bin
       if base + 10 > 1490
-        return [] # Falls into 1500. So, Skip
+        [] # Falls into 1500. So, Skip
       else
-        return [base + 10]
+        [base + 10]
       end
     elsif diff < 4 # This is in this bin
-      return [base]
+      [base]
     else
       # This is in both the present and next bin
       if base + 10 > 1490
-        return [base] # 1500 again. Skip
+        [base] # 1500 again. Skip
       else
-        return [base, base + 10]
+        [base, base + 10]
       end
     end
   end

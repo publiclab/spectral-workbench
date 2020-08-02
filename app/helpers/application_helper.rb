@@ -25,12 +25,10 @@ module ApplicationHelper
     user_id = session[:user_id]
     if user_id
       begin
-        user = User.find(user_id)
+        User.find(user_id)
       rescue StandardError
-        user = nil
+        nil
       end
-    else
-      user = nil
     end
   end
 

@@ -96,8 +96,6 @@ class SnapshotTest < ActiveSupport::TestCase
   end
 
   test 'creating a snapshot with non-JSON data should fail' do
-    data = 'data'
-
     snapshot = Snapshot.new(
       spectrum_id: Spectrum.last.id,
       user_id: User.first.id,
@@ -195,10 +193,6 @@ class SnapshotTest < ActiveSupport::TestCase
     assert_equal tag.value, "#{spectrums(:one).id}##{reference_id}"
     assert_not_nil tag.reference
     assert_not_nil tag.reference_spectrum
-
-    data = '{"lines":[{"r":10,"g":10,"b":10,"average":10,"wavelength":400},{"r":10,"g":10,"b":10,"average":10,"wavelength":700}]}'
-    snapshot = tag.create_snapshot(data)
-
     assert_not_nil tag.snapshot
     assert_not_nil tag.reference
     # ensure same author:

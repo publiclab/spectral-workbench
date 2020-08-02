@@ -25,7 +25,7 @@ class UserTest < ActiveSupport::TestCase
     assert s.save!
     assert s.tag('linearCalibration:0-1', User.first.id)
 
-    assert u.calibrations.count > 0
+    assert u.calibrations.count.positive?
     assert_not_nil u.last_calibration
     assert_not_nil u.token
   end

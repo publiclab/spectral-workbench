@@ -17,23 +17,21 @@ class ApplicationController < ActionController::Base
   end
 
   def mobile?
-    ((request.env['HTTP_USER_AGENT']&.match('Mobi')) || params[:format] == 'mobile') && params[:format] != 'html' && params[:m] != 'false' || params[:m] == 'true'
+    (request.env['HTTP_USER_AGENT']&.match('Mobi') || params[:format] == 'mobile') && params[:format] != 'html' && params[:m] != 'false' || params[:m] == 'true'
   end
 
   def ios?
-    ((request.env['HTTP_USER_AGENT']&.match('iPad')) || (request.env['HTTP_USER_AGENT']&.match('iPhone')) || params[:ios] == 'true')
+    (request.env['HTTP_USER_AGENT']&.match('iPad') || request.env['HTTP_USER_AGENT']&.match('iPhone') || params[:ios] == 'true')
   end
 
   def current_user
     user_id = session[:user_id]
     if user_id
       begin
-        user = User.find(user_id)
+        User.find(user_id)
       rescue StandardError
-        user = nil
+        nil
       end
-    else
-      user = nil
     end
   end
 
@@ -49,13 +47,13 @@ class ApplicationController < ActionController::Base
     dataType = self.class.name == 'SpectrumsController' ? :spectrum : :set
 
     if logged_in? && (current_user.role == 'admin' || current_user.id == datum.user_id)
-      return true
+      true
     else
       flash[:error] = 'You must own this data to edit it.'
       # without status 303, some browsers will redirect with request method DELETE
       redirect_to spectrum_path(datum), status: :see_other if dataType == :spectrum
       redirect_to set_path(datum), status: :see_other if dataType == :set
-      return false
+      false
     end
   end
 
@@ -87,12 +85,12 @@ class ApplicationController < ActionController::Base
     user_id = session[:user_id]
     begin
       if user_id && User.find(user_id)
-        return true
+        true
       else
-        return false
+        false
       end
     rescue StandardError
-      return false
+      false
     end
   end
 end

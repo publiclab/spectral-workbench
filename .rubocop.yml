@@ -11,7 +11,17 @@ AllCops:
   Exclude:
     - 'spec/*'
     - 'views/*'
-    - 'vendor/*'
+    - 'bin/'
+    - 'db/schema.rb'
+    - 'public/lib/*.rb'
+    - 'public/lib/*/*.rb'
+    - 'public/lib/*/*/*.rb'
+    - 'public/lib/*/*/*/*.rb'
+    - 'public/lib/*/*/*/*/*.rb'
+    - 'vendor/*/*/*.rb'
+    - 'vendor/*/*/*/*.rb'
+    - 'vendor/*/*/*/*/*.rb'
+    - 'vendor/*/*/*/*/*/*.rb'
   TargetRubyVersion: '2.4'
 
 # Offense count: 180

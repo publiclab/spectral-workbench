@@ -9,7 +9,7 @@ class MatchController < ApplicationController
     if id.nil? # No need to search anything
       flash[:error] = 'ID is required for matching'
       redirect_to '/dashboard/'
-      return
+      nil
 
     else
       @proc_spectrum = ProcessedSpectrum.find_by_spectrum_id(id)
@@ -20,16 +20,16 @@ class MatchController < ApplicationController
 
         if params[:c] # Flag to check if the rendering is for comparing or displaying
           render partial: 'match_results', layout: false
-          return
+          nil
         else
           render partial: 'list_results', layout: false
-          return
+          nil
         end
 
       else # Didnt find a spectrum with specified id
         flash[:error] = 'A spectrum with the specified ID is not found'
         redirect_to '/dashboard/'
-        return
+        nil
       end
     end
   end
@@ -41,7 +41,7 @@ class MatchController < ApplicationController
 
     @range = range.to_i
 
-    if @range < 0 || @range > 150
+    if @range.negative? || @range > 150
       @range = 100
       @err = 'The fit input must be between 0 and 150'
     end
@@ -91,7 +91,7 @@ class MatchController < ApplicationController
                 range + 10
               end
 
-      break if range_visits.member?(range) || (range < 0) || (range > 80)
+      break if range_visits.member?(range) || range.negative? || (range > 80)
 
       range_visits.push(range)
       matches = ProcessedSpectrum.find(:all, conditions: [get_conditions(d, bins, types, range)])

@@ -99,7 +99,7 @@ class SpectrumsController < ApplicationController
           @sets = @spectrum.sets
           @user_sets = SpectraSet.where(author: current_user.login).limit(20).order("created_at DESC") if logged_in?
           # @macros = Macro.find :all, conditions: {:macro_type => "analyze"}
-          @macros  = Macro.where(macro_type: "analyze")
+          @macros = Macro.where(macro_type: "analyze")
           @calibrations = current_user.calibrations.select { |s| s.id != @spectrum.id } if logged_in?
           @comment = Comment.new
         end
@@ -119,11 +119,7 @@ class SpectrumsController < ApplicationController
   # used when referencing a snapshot
   def latest_snapshot_id
     spectrum = Spectrum.select(:id).find(params[:id])
-    if spectrum.snapshots.count > 0
-      snap = Snapshot.where(spectrum_id: spectrum.id)
-                     .select('spectrum_id, created_at, id')
-                     .order('created_at DESC')
-                     .limit(1)
+    if spectrum.snapshots.count.positive?
       render html: spectrum.latest_snapshot.id
     else
       render html: false
@@ -132,7 +128,7 @@ class SpectrumsController < ApplicationController
 
   def latest
     spectrum = Spectrum.find(params[:id])
-    if spectrum.snapshots.count > 0
+    if spectrum.snapshots.count.positive?
       @snapshot = spectrum.latest_snapshot
       is_snapshot = true
     else
