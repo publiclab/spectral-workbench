@@ -86,7 +86,8 @@ class SetsController < ApplicationController
     @set = SpectraSet.new({
       :title => params[:spectra_set][:title],
       :notes => params[:spectra_set][:notes],
-      :user_id => current_user.id
+      :user_id => current_user.id,
+      :author => current_user.login
     })
     if @set.save
       @set.spectrums << spectra
