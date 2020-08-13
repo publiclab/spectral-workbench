@@ -22,6 +22,12 @@ group :test do
   gem 'rails-controller-testing', '~> 1.0.5'
 end
 
+group :development, :test do
+  gem 'rack_session_access'
+  gem 'capybara'
+  gem 'selenium-webdriver'
+end
+
 gem 'bootsnap', '~> 1.4.6'
 gem 'listen', '~> 3.2.1'
 gem 'responders', '~> 3.0.1'
