@@ -10,7 +10,7 @@ require File.expand_path('../config/environment', __dir__)
 require 'rails/test_help'
 require 'support/ruby_2_6_rails_4_2_patch'
 
-class ActiveSupport
+module ActiveSupport
   class TestCase
     # Setup all fixtures in test/fixtures/*.(yml|csv) for all tests in alphabetical order.
     #
