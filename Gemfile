@@ -20,6 +20,7 @@ end
 group :test do
   gem 'simplecov', require: false
   gem 'rails-controller-testing', '~> 1.0.5'
+  gem 'puma'
 end
 
 group :development, :test do
