@@ -348,9 +348,9 @@ class SpectrumsController < ApplicationController
     @spectrum = Spectrum.find(params[:id])
     require_ownership(@spectrum)
 
-    @spectrum.title = params[:title] unless params[:title].nil?
-    @spectrum.notes = params[:notes] unless params[:notes].nil?
-    @spectrum.data  = params[:data] unless params[:data].nil?
+    @spectrum.title = params[:spectrum][:title] unless params[:spectrum][:title].nil?
+    @spectrum.notes = params[:spectrum][:notes] unless params[:spectrum][:notes].nil?
+    @spectrum.data  = params[:spectrum][:data] unless params[:spectrum][:data].nil?
 
     # clean this up
     respond_to do |format|

@@ -235,8 +235,8 @@ class SpectrumsControllerTest < ActionController::TestCase
 
   test 'should update spectrum' do
     session[:user_id] = User.first.id # log in
-    patch :update, params: { id: spectrums(:one).id, spectrum: {} }
-
+    patch :update, params: { id: spectrums(:one).id, spectrum: {title: "really nice spectrum"} }
+    
     assert_response :redirect
     assert_equal 'Spectrum was successfully updated.', flash[:notice]
     assert_not_nil :spectrum
