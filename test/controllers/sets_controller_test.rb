@@ -86,7 +86,7 @@ class SetsControllerTest < ActionController::TestCase
       assert_redirected_to set_path(assigns(:set))
     end
     assert_not_nil assigns(:set)
-    assert SpectraSet.find(assigns(:set).id).spectrums.count > 0
+    assert SpectraSet.find(assigns(:set).id).spectrums.count.positive?
   end
 
   test 'should not add spectrum to spectra_set unless logged in' do

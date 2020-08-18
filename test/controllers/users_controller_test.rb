@@ -5,8 +5,8 @@ require 'users_controller'
 
 # Re-raise errors caught by the controller.
 class UsersController
-  def rescue_action(e)
-    raise e
+  def rescue_action(exception)
+    raise exception
                        end; end
 
 class UsersControllerTest < ActionController::TestCase

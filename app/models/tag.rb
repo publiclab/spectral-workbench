@@ -154,10 +154,10 @@ class Tag < ActiveRecord::Base
   def change_reference(snapshot_id)
     # only free, un-depended-on tags can do this
     if snapshot.has_no_dependent_spectra? && !snapshot.has_subsequent_depended_on_snapshots?
-      oldName = name
-      oldName = oldName.split('#')[0] if has_reference?
+      old_name = name
+      old_name = old_name.split('#')[0] if has_reference?
       snapshots = Snapshot.where(id: snapshot_id).where(spectrum_id: reference_spectrum.id)
-      self.name = oldName + '#' + snapshot_id.to_s unless snapshots.empty?
+      self.name = old_name + '#' + snapshot_id.to_s unless snapshots.empty?
       save
     end
   end

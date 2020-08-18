@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ClosestMatch < ActiveRecord::Migration[5.2]
-  def self.up
+  def self.up # rubocop:disable Metrics/MethodLength
     create_table 'processed_spectrums' do |t|
       t.integer :spectrum_id
 

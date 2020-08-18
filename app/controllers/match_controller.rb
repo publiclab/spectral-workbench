@@ -20,10 +20,8 @@ class MatchController < ApplicationController
 
         if params[:c] # Flag to check if the rendering is for comparing or displaying
           render partial: 'match_results', layout: false
-          nil
         else
           render partial: 'list_results', layout: false
-          nil
         end
 
       else # Didnt find a spectrum with specified id
@@ -73,13 +71,13 @@ class MatchController < ApplicationController
   end
 
   def livesearch
-    d = ActiveSupport::JSON.decode('{' + params[:data] + '}')
+    data = ActiveSupport::JSON.decode('{' + params[:data] + '}')
     bins = (10...640).step(10)
     types = %w(a r g b)
     range = 50
     ids = []
 
-    matches = ProcessedSpectrum.find(:all, conditions: [get_conditions(d, bins, types, range)])
+    matches = ProcessedSpectrum.find(:all, conditions: [get_conditions(data, bins, types, range)])
 
     range_visits = [range] # To check the ranges visited
 
@@ -94,7 +92,7 @@ class MatchController < ApplicationController
       break if range_visits.member?(range) || range.negative? || (range > 80)
 
       range_visits.push(range)
-      matches = ProcessedSpectrum.find(:all, conditions: [get_conditions(d, bins, types, range)])
+      matches = ProcessedSpectrum.find(:all, conditions: [get_conditions(data, bins, types, range)])
     end
 
     matches.each do |match|
@@ -111,14 +109,14 @@ class MatchController < ApplicationController
     render partial: 'livesearch', layout: false
   end
 
-  def get_conditions(d, bins, types, range)
+  def get_conditions(data, bins, types, range)
     conditions = []
     bins.each do |bin|
       types.each do |type|
         bin_string = "#{type}#{bin}"
 
-        low = d[bin_string].to_i - range
-        high = d[bin_string].to_i + range
+        low = data[bin_string].to_i - range
+        high = data[bin_string].to_i + range
         conditions += ["#{bin_string} BETWEEN #{low} AND #{high}"]
       end
     end

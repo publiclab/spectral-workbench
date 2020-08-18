@@ -5,8 +5,8 @@ require 'capture_controller'
 
 # Re-raise errors caught by the controller.
 class CaptureController
-  def rescue_action(e)
-    raise e
+  def rescue_action(exception)
+    raise exception
                          end; end
 
 class CaptureControllerTest < ActionController::TestCase

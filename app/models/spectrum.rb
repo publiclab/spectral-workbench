@@ -194,18 +194,18 @@ class Spectrum < ActiveRecord::Base
     end
   end
 
-  def calibrate(x1, wavelength1, x2, wavelength2)
+  def calibrate(axis_one, wavelength1, axis_two, wavelength2)
     extract_data
     d = ActiveSupport::JSON.decode(clean_json)
     i = 0
-    stepsize = ((wavelength2.to_f - wavelength1.to_f) * 1.00 / (x2.to_f - x1.to_f))
-    startwavelength = wavelength1.to_f - (stepsize * x1.to_f)
+    stepsize = ((wavelength2.to_f - wavelength1.to_f) * 1.00 / (axis_two.to_f - axis_one.to_f))
+    startwavelength = wavelength1.to_f - (stepsize * axis_one.to_f)
     d['lines'].each do |line|
       line['wavelength'] = (startwavelength + i * stepsize).round(2)
       i += 1
     end
     # this may cause trouble:
-    reverse if (wavelength1 < wavelength2 && x1 > x2) || (wavelength1 > wavelength2 && x1 < x2)
+    reverse if (wavelength1 < wavelength2 && axis_one > axis_two) || (wavelength1 > wavelength2 && axis_one < axis_two)
     self.data = ActiveSupport::JSON.encode(d)
     self
   end
@@ -255,15 +255,15 @@ class Spectrum < ActiveRecord::Base
     lines = cd['lines']
     lines = lines.reverse if clone_source.is_flipped
     length = lines.length
-    startWavelength = lines[0]['wavelength'].to_f
-    endWavelength = lines[length - 1]['wavelength'].to_f
-    stepsize = (endWavelength - startWavelength) / d['lines'].length
+    start_wave_length = lines[0]['wavelength'].to_f
+    end_wave_length = lines[length - 1]['wavelength'].to_f
+    stepsize = (end_wave_length - start_wave_length) / d['lines'].length
     i = 0
     d['lines'].each do |line|
       line['wavelength'] = if cd['lines'][i] && d['lines'].length == length # if they're the same size, exactly
                              lines[i]['wavelength']
                            else
-                             (startWavelength + (i * stepsize)).round(2)
+                             (start_wave_length + (i * stepsize)).round(2)
                            end
       i += 1
     end
@@ -330,9 +330,9 @@ class Spectrum < ActiveRecord::Base
     tags.select { |tag| tag.name.match(':').nil? }
   end
 
-  def remove_powertags(tagPrefix)
+  def remove_powertags(tag_prefix)
     tags.each do |tag|
-      tag.delete if tag.name.split(':').first == tagPrefix
+      tag.delete if tag.name.split(':').first == tag_prefix
     end
   end
 

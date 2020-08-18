@@ -110,7 +110,7 @@ class SpectrumTest < ActiveSupport::TestCase
 
   test 'spectrum clone, copies tags & snapshots' do
     # create spectrums(:one).photo, so later validations work:
-    spectrums(:one).image_from_dataurl('data:image/gif;base64,R0lGODdhMAAwAPAAAAAAAP///ywAAAAAMAAwAAAC8IyPqcvt3wCcDkiLc7C0qwyGHhSWpjQu5yqmCYsapyuvUUlvONmOZtfzgFzByTB10QgxOR0TqBQejhRNzOfkVJ+5YiUqrXF5Y5lKh/DeuNcP5yLWGsEbtLiOSpa/TPg7JpJHxyendzWTBfX0cxOnKPjgBzi4diinWGdkF8kjdfnycQZXZeYGejmJlZeGl9i2icVqaNVailT6F5iJ90m6mvuTS4OK05M0vDk0Q4XUtwvKOzrcd3iq9uisF81M1OIcR7lEewwcLp7tuNNkM3uNna3F2JQFo97Vriy/Xl4/f1cf5VWzXyym7PHhhx4dbgYKAAA7')
+    spectrums(:one).image_from_dataurl('data:image/gif;base64,R0lGODdhMAAwAPAAAAAAAP///ywAAAAAMAAwAAAC8IyPqcvt3wCcDkiLc7C0qwyGHhSWpjQu5yqmCYsapyuvUUlvONmOZtfzgFzByTB10QgxOR0TqBQejhRNzOfkVJ+5YiUqrXF5Y5lKh/DeuNcP5yLWGsEbtLiOSpa/TPg7JpJHxyendzWTBfX0cxOnKPjgBzi4diinWGdkF8kjdfnycQZXZeYGejmJlZeGl9i2icVqaNVailT6F5iJ90m6mvuTS4OK05M0vDk0Q4XUtwvKOzrcd3iq9uisF81M1OIcR7lEewwcLp7tuNNkM3uNna3F2JQFo97Vriy/Xl4/f1cf5VWzXyym7PHhhx4dbgYKAAA7') # rubocop:disable Layout/LineLength
 
     # trigger a snapshot to be generated:
     tag = Tag.new(
@@ -146,8 +146,8 @@ class SpectrumTest < ActiveSupport::TestCase
     assert_equal s.tags[0].name, "forked:#{spectrums(:one).id}##{snapshot.id}"
     assert_equal s.tags[1].name, 'smooth:2'
     # ensure sorted by created_at:
-    sortedTags = s.tags.sort_by(&:created_at)
-    assert_equal s.tags.collect(&:name).join(','), sortedTags.collect(&:name).join(',')
+    sorted_tags = s.tags.sort_by(&:created_at)
+    assert_equal s.tags.collect(&:name).join(','), sorted_tags.collect(&:name).join(',')
     # ensure all same tags as original, plus "forked":
     assert_equal s.tags.collect(&:name).join(','), "forked:#{spectrums(:one).id}##{snapshot.id}," + spectrums(:one).tags.collect(&:name).join(',')
     assert_not_equal s.tags.first.user_id, spectrums(:one).tags.first.user_id

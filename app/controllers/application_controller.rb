@@ -44,15 +44,15 @@ class ApplicationController < ActionController::Base
   end
 
   def require_ownership(datum)
-    dataType = self.class.name == 'SpectrumsController' ? :spectrum : :set
+    data_type = self.class.name == 'SpectrumsController' ? :spectrum : :set
 
     if logged_in? && (current_user.role == 'admin' || current_user.id == datum.user_id)
       true
     else
       flash[:error] = 'You must own this data to edit it.'
       # without status 303, some browsers will redirect with request method DELETE
-      redirect_to spectrum_path(datum), status: :see_other if dataType == :spectrum
-      redirect_to set_path(datum), status: :see_other if dataType == :set
+      redirect_to spectrum_path(datum), status: :see_other if data_type == :spectrum
+      redirect_to set_path(datum), status: :see_other if data_type == :set
       false
     end
   end

@@ -12,6 +12,7 @@ AllCops:
     - 'spec/*'
     - 'views/*'
     - 'bin/'
+    - 'bin/*'
     - 'db/schema.rb'
     - 'public/lib/*.rb'
     - 'public/lib/*/*.rb'
@@ -22,6 +23,7 @@ AllCops:
     - 'vendor/*/*/*/*.rb'
     - 'vendor/*/*/*/*/*.rb'
     - 'vendor/*/*/*/*/*/*.rb'
+    - config/*
   TargetRubyVersion: '2.4'
 
 # Offense count: 180
