@@ -98,7 +98,6 @@ class SpectrumsController < ApplicationController
           end
           @sets = @spectrum.sets
           @user_sets = SpectraSet.where(author: current_user.login).limit(20).order("created_at DESC") if logged_in?
-          # @macros = Macro.find :all, conditions: {:macro_type => "analyze"}
           @macros  = Macro.where(macro_type: "analyze")
           @calibrations = current_user.calibrations.select { |s| s.id != @spectrum.id } if logged_in?
           @comment = Comment.new
@@ -358,9 +357,9 @@ class SpectrumsController < ApplicationController
     @spectrum = Spectrum.find(params[:id])
     require_ownership(@spectrum)
 
-    @spectrum.title = params[:spectrum][:title] unless params[:spectrum][:title].nil?
-    @spectrum.notes = params[:spectrum][:notes] unless params[:spectrum][:notes].nil?
-    @spectrum.data  = params[:spectrum][:data] unless params[:spectrum][:data].nil?
+    @spectrum.title = params[:title] unless params[:title].nil?
+    @spectrum.notes = params[:notes] unless params[:notes].nil?
+    @spectrum.data  = params[:data] unless params[:data].nil?
 
     # clean this up
     respond_to do |format|

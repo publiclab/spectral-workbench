@@ -20,6 +20,13 @@ end
 group :test do
   gem 'simplecov', require: false
   gem 'rails-controller-testing', '~> 1.0.5'
+  gem 'puma'
+end
+
+group :development, :test do
+  gem 'rack_session_access'
+  gem 'capybara'
+  gem 'selenium-webdriver'
 end
 
 gem 'bootsnap', '~> 1.4.6'
