@@ -9,7 +9,8 @@ tasks:
         cp config/database.yml.gitpod config/database.yml &&
         mysql -e "CREATE DATABASE swbench;" &&
         cp db/schema.rb.example db/schema.rb &&
-        rake db:setup &&
+        rails db:migrate &&
+        rails db:setup &&
         yarn install
       command: >
         passenger start 
