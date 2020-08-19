@@ -1,20 +1,20 @@
 image:
     file: .gitpod.dockerfile
 ports:
-    - port: 3000
+    - port: 5000
       onOpen: open-preview
 tasks:
     - init: >
-        bundle install --without production &&
-        cp config/database.yml.gitpod config/database.yml &&
+        cp config/database.yml.docker.example config/database.yml &&
         cp config/config.yml.example config/config.yml &&
-        mysql -e "CREATE DATABASE swbench;" &&
         cp db/schema.rb.example db/schema.rb &&
-        rails db:migrate &&
-        rails db:setup &&
-        yarn install
+        bundle install --without production &&
+        yarn install &&
+        rails db:create &&
+        rails db:schema:load &&
+        rails db:migrate
       command: >
-        passenger start 
+        passenger start --port 5000
         
     - command: redis-server
     - command: rails c

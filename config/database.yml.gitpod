@@ -1,18 +1,32 @@
-development:
-  adapter: mysql2
-  username: root
-  password: 
+default: &default
   encoding: utf8
-  database: swbench
-  strict: false
+  adapter: mysql2
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  port: 3306
+  socket: /var/run/mysqld/mysqld.sock
+  init_command: "SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));"
+
+development:
+  <<: *default
+  host: db
+  username: root
+  password: root
+  database: swbench_development
 
 production:
-  adapter: sqlite3
-  database: production.sqlite
+  encoding: utf8
+  adapter: mysql2
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  host: <%= ENV['MYSQL_HOST'] || '127.0.0.1' %>
+  username: <%= ENV['MYSQL_USER'] || 'root' %>
+  password: <%= ENV['MYSQL_PASSWORD'] || 'root' %>
+  database: <%= ENV['MYSQL_DATABASE'] || 'root' %>
+  socket: <%= ENV['MYSQL_SOCKET'] || '/var/run/mysqld/mysqld.sock' %>
+  init_command: "SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));"
 
-# Warning: The contents of the database defined as "test" will be erased and
-# re-generated from your development database when you run "rake".
-# Do not set this db to the same as development or production.
 test:
-  adapter: sqlite3
-  database: test.sqlite
+  <<: *default
+  host: db
+  username: root 
+  password: root
+  database: swbench_test
