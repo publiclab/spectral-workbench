@@ -7,6 +7,7 @@ tasks:
     - init: >
         bundle install --without production &&
         cp config/database.yml.gitpod config/database.yml &&
+        cp config/config.yml.example config/config.yml &&
         mysql -e "CREATE DATABASE swbench;" &&
         cp db/schema.rb.example db/schema.rb &&
         rails db:migrate &&
