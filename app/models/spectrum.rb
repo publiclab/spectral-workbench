@@ -20,6 +20,7 @@ class Spectrum < ActiveRecord::Base
   has_attached_file :photo,
                     path: ':rails_root/public/system/:attachment/:id/:style/:filename',
                     url: '/system/:attachment/:id/:style/:filename',
+                    default_url: "/images/spectral-workbench-256.png",
                     styles: {
                       thumb: '300x100!',
                       large: '800x200!'

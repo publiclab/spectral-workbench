@@ -24,6 +24,13 @@ group :test do
   gem 'rubocop', '~> 0.87.1'
   gem 'rubocop-performance'
   gem 'simplecov', require: false
+  gem 'puma'
+end
+
+group :development, :test do
+  gem 'rack_session_access'
+  gem 'capybara'
+  gem 'selenium-webdriver'
 end
 
 gem 'bootsnap', '~> 1.4.6'

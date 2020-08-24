@@ -6,7 +6,9 @@ SimpleCov.start do
   add_filter 'test/'
   add_filter 'config/'
 end
-require File.expand_path('../config/environment', __dir__)
+
+require 'rack_session_access/capybara'
+require File.expand_path('../../config/environment', __FILE__)
 require 'rails/test_help'
 require 'support/ruby_2_6_rails_4_2_patch'
 

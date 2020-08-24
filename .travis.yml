@@ -26,6 +26,7 @@ services:
   - mysql
 
 before_install:
+  - ./script/dependencies.sh > /dev/null 2>&1
   - cp config/database.yml.example config/database.yml
   - cp config/config.yml.example config/config.yml
   - cp db/schema.rb.example db/schema.rb
@@ -58,6 +59,8 @@ jobs:
       script: rails test:integration
     - name: "Rubocop Lint"
       script: rubocop
+    - name: "System Tests"
+      script: rails test:system
     - name: "Docker Builds"
       script: docker build -t swbench .
     - name: "Asset Precompilation"
