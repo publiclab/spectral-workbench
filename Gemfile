@@ -30,7 +30,7 @@ end
 group :development, :test do
   gem 'rack_session_access'
   gem 'capybara'
-  gem 'selenium-webdriver'
+  gem 'selenium-webdriver', '~> 3.12.0'
 end
 
 gem 'bootsnap', '~> 1.4.6'

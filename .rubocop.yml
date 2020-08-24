@@ -20,11 +20,13 @@ AllCops:
     - 'public/lib/*/*/*.rb'
     - 'public/lib/*/*/*/*.rb'
     - 'public/lib/*/*/*/*/*.rb'
+    - 'public/lib/*/*/*/*/*/*.rb'
+    - 'public/lib/*/*/*/*/*/*/*.rb'
     - 'vendor/*/*/*.rb'
     - 'vendor/*/*/*/*.rb'
     - 'vendor/*/*/*/*/*.rb'
     - 'vendor/*/*/*/*/*/*.rb'
-    - config/*
+    - 'config/*'
   TargetRubyVersion: '2.6'
 
 # Offense count: 180
