@@ -87,7 +87,7 @@ class SetsController < ApplicationController
     @set = SpectraSet.new(
       title: params[:spectra_set][:title],
       notes: params[:spectra_set][:notes],
-      user_id: current_user.id
+      user_id: current_user.id,
       author: current_user.login
     )
     if @set.save
@@ -139,11 +139,10 @@ class SetsController < ApplicationController
       else
         flash[:error] = 'A set must have at least one spectrum.'
       end
-      redirect_to "/sets/#{@set.id}"
     else
       flash[:error] = 'You must own the set to edit it.'
-      redirect_to "/sets/#{@set.id}"
     end
+    redirect_to "/sets/#{@set.id}"
   end
 
   def delete

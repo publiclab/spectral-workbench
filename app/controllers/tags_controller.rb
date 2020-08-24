@@ -18,11 +18,11 @@ class TagsController < ApplicationController
     # is it a powertag? only owners or admins can make those:
     if params[:tag][:name].match(':').nil? || @spectrum.user_id == current_user.id || current_user.role == 'admin'
       name = params[:tag][:name].strip # clean whitespace
-      tag = Tag.new(
+      tag = Tag.new({
         name: name,
         spectrum_id: params[:tag][:spectrum_id],
         user_id: current_user.id
-      )
+      })
       tag.created_at = DateTime.parse(params[:tag][:created_at]) if params[:tag][:created_at]
       if tag.valid?
         # look for enclosed data in the tag request if
@@ -45,15 +45,13 @@ class TagsController < ApplicationController
       @response[:errors] << 'Error: You must own the spectrum to add powertags'
     end
     respond_to do |format|
-      if request.xhr? # ajax
-        format.json { render json: @response }
-      else
+      unless request.xhr? # ajax
         format.html do
-          flash[:notice] = 'Tag(s) added.'
-          redirect_to '/spectrums/' + params[:tag][:spectrum_id]
+          flash[:notice] = "Tag(s) added."
+          redirect_to "/spectrums/" + params[:tag][:spectrum_id]
         end
-        format.json { render json: @response }
       end
+      format.json { render json: @response }
     end
   end
 
@@ -104,7 +102,7 @@ class TagsController < ApplicationController
                        status: :unprocessable_entity
               else
                 raise 'Powertags/operations may not be deleted if other data relies upon it.'
-                flash[:error] = 'Powertags/operations may not be deleted if other data relies upon it.'
+                flash[:error] = 'Powertags/operations may not be deleted if other data relies upon it.' # rubocop:disable Lint/UnreachableCode
                 # OMG, without status 303, some browsers will redirect with request method DELETE and delete the spectrum!
                 # http://api.rubyonrails.org/classes/ActionController/Redirecting.html
                 redirect_to spectrum_path(@tag.spectrum_id), status: :see_other # i.e. 303 to force GET. VERY DANGEROUS, RAILS!

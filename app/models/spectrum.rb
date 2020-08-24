@@ -492,11 +492,10 @@ class Spectrum < ActiveRecord::Base
     if calibrated
       if processed_spectrum
         processed_spectrum.update_attributes(generate_hashed_values)
-        processed_spectrum.save
       else
         self.processed_spectrum = ProcessedSpectrum.new(generate_hashed_values)
-        processed_spectrum.save
       end
+      processed_spectrum.save
     end
   end
 

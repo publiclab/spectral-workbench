@@ -13,6 +13,7 @@ AllCops:
     - 'views/*'
     - 'bin/'
     - 'bin/*'
+    - 'db/migrate/*'
     - 'db/schema.rb'
     - 'public/lib/*.rb'
     - 'public/lib/*/*.rb'
@@ -24,7 +25,7 @@ AllCops:
     - 'vendor/*/*/*/*/*.rb'
     - 'vendor/*/*/*/*/*/*.rb'
     - config/*
-  TargetRubyVersion: '2.4'
+  TargetRubyVersion: '2.6'
 
 # Offense count: 180
 Metrics/AbcSize:
@@ -66,6 +67,27 @@ Style/RegexpLiteral:
   Enabled: false
 
 Style/IfInsideElse:
+  Enabled: false
+
+Style/GuardClause:
+  Enabled: false
+
+Naming/PredicateName:
+  Enabled: false
+
+Metrics/CyclomaticComplexity:
+  Enabled: false
+
+Metrics/PerceivedComplexity:
+  Enabled: false
+
+Style/DoubleNegation:
+  Enabled: false
+
+Style/ClassVars:
+  Enabled: false
+
+Lint/UriEscapeUnescape:
   Enabled: false
 
 Style/DateTime:

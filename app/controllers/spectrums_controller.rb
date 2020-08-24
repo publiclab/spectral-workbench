@@ -29,7 +29,7 @@ class SpectrumsController < ApplicationController
       respond_with(@spectrums) do |format|
         format.html do
           render template: 'spectrums/index'
-        end # show.html.erb
+        end
         format.xml { render xml: @spectrums }
       end
     end
@@ -98,8 +98,8 @@ class SpectrumsController < ApplicationController
                      end
           @sets = @spectrum.sets
           @user_sets = SpectraSet.where(author: current_user.login).limit(20).order("created_at DESC") if logged_in?
-          @macros  = Macro.where(macro_type: "analyze")
-          @calibrations = current_user.calibrations.select { |s| s.id != @spectrum.id } if logged_in?
+          @macros = Macro.where(macro_type: "analyze")
+          @calibrations = current_user.calibrations.reject { |s| s.id = @spectrum.id } if logged_in?
           @comment = Comment.new
         end
       end
@@ -202,7 +202,7 @@ class SpectrumsController < ApplicationController
   # POST /spectrums.json
   # ?spectrum[title]=TITLE&spectrum[author]=anonymous&startWavelength=STARTW&endWavelength=ENDW;
   # replacing this with capture/save soon
-  def create
+  def create # rubocop:disable Metrics/AbcSize
     if logged_in? || params[:token] && User.find_by_token(params[:token])
 
       user = current_user || User.find_by_token(params[:token])

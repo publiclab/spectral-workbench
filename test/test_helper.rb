@@ -8,7 +8,7 @@ SimpleCov.start do
 end
 
 require 'rack_session_access/capybara'
-require File.expand_path('../../config/environment', __FILE__)
+require File.expand_path('../config/environment', __dir__)
 require 'rails/test_help'
 require 'support/ruby_2_6_rails_4_2_patch'
 
