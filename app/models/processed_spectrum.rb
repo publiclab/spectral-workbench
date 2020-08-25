@@ -1,16 +1,17 @@
-class ProcessedSpectrum < ActiveRecord::Base
+# frozen_string_literal: true
 
+class ProcessedSpectrum < ActiveRecord::Base
   # we allow this here due to line 389 of spectrum.rb
   columns.each do |column|
     attr_accessible column.name.to_sym
-  end 
+  end
 
-  def closest_match(range,limit)
+  def closest_match(range, limit)
     bins = (10...1500).step(10)
-    types = ['a', 'r', 'g', 'b']
-    
-    #range = 100 # Earlier it was only 100. Now, we can read it from user.
-    
+    types = %w(a r g b)
+
+    # range = 100 # Earlier it was only 100. Now, we can read it from user.
+
     conditions = []
 
     bins.each do |bin|
@@ -21,19 +22,18 @@ class ProcessedSpectrum < ActiveRecord::Base
         conditions += ["#{bin_string} BETWEEN #{low} AND #{high}"]
       end
     end
-    
-    condition_string = conditions.join(" AND ")
-    matches = ProcessedSpectrum.find(:all, conditions: [condition_string],limit: limit)
-      
+
+    condition_string = conditions.join(' AND ')
+    matches = ProcessedSpectrum.find(:all, conditions: [condition_string], limit: limit)
+
     ids = []
     matches.each do |match|
       ids += ["id = #{match.spectrum_id}"]
     end
 
-    id_string = ids.join(" OR ")
-    id_string += " AND id != #{self.spectrum_id}"
+    id_string = ids.join(' OR ')
+    id_string += " AND id != #{spectrum_id}"
 
     Spectrum.find(:all, conditions: [id_string])
   end
-
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddSpectrumsIndex < ActiveRecord::Migration[5.2]
   def up
     add_index(:spectrums, :user_id)

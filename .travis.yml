@@ -57,6 +57,8 @@ jobs:
       script: rails test:controllers
     - name: "Integration Tests"
       script: rails test:integration
+    - name: "Rubocop Lint"
+      script: rubocop
     - name: "System Tests"
       script: rails test:system
     - name: "Docker Builds"

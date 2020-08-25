@@ -1,0 +1,135 @@
+require: rubocop-performance
+
+# Start with Spotifys style guide as a base then customize from there
+inherit_from:
+  - .rubocop_shopify_styleguide.yml
+
+# Apply rule to all cops
+AllCops:
+  Include:
+    - '*/**/*.rb'
+  Exclude:
+    - 'spec/*'
+    - 'views/*'
+    - 'bin/'
+    - 'bin/*'
+    - 'db/migrate/*'
+    - 'db/schema.rb'
+    - 'public/lib/*.rb'
+    - 'public/lib/*/*.rb'
+    - 'public/lib/*/*/*.rb'
+    - 'public/lib/*/*/*/*.rb'
+    - 'public/lib/*/*/*/*/*.rb'
+    - 'public/lib/*/*/*/*/*/*.rb'
+    - 'public/lib/*/*/*/*/*/*/*.rb'
+    - 'vendor/*/*/*.rb'
+    - 'vendor/*/*/*/*.rb'
+    - 'vendor/*/*/*/*/*.rb'
+    - 'vendor/*/*/*/*/*/*.rb'
+    - 'config/*'
+  TargetRubyVersion: '2.6'
+
+# Offense count: 180
+Metrics/AbcSize:
+  Max: 178
+
+# Offense count: 13
+# Configuration parameters: CountComments, ExcludedMethods.
+# ExcludedMethods: refine
+Metrics/BlockLength:
+  Max: 257
+
+# Offense count: 24
+# Configuration parameters: CountBlocks.
+Metrics/BlockNesting:
+  Max: 6
+
+# Offense count: 50
+Metrics/CyclomaticComplexity:
+  Max: 28
+
+# Offense count: 171
+# Configuration parameters: CountComments, ExcludedMethods.
+Metrics/MethodLength:
+  Max: 86
+
+# Offense count: 2
+# Configuration parameters: CountComments.
+Metrics/ModuleLength:
+  Max: 347
+
+# Offense count: 60
+Metrics/PerceivedComplexity:
+  Max: 33
+
+Layout/MultilineMethodCallIndentation:
+  Enabled: false
+
+Style/RegexpLiteral:
+  Enabled: false
+
+Style/IfInsideElse:
+  Enabled: false
+
+Style/GuardClause:
+  Enabled: false
+
+Naming/PredicateName:
+  Enabled: false
+
+Metrics/CyclomaticComplexity:
+  Enabled: false
+
+Metrics/PerceivedComplexity:
+  Enabled: false
+
+Style/DoubleNegation:
+  Enabled: false
+
+Style/ClassVars:
+  Enabled: false
+
+Lint/UriEscapeUnescape:
+  Enabled: false
+
+Style/DateTime:
+  Enabled: false
+
+Style/CaseEquality:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Lint/ParenthesesAsGroupedExpression:
+  Enabled: false
+
+Layout/EndAlignment:
+  Enabled: false
+
+Layout/DefEndAlignment:
+  Enabled: false
+
+Lint/SafeNavigationChain:
+  Enabled: false
+
+Lint/AssignmentInCondition:
+  Enabled: false
+
+Naming/AccessorMethodName:
+  Enabled: false
+
+Metrics/ClassLength:
+  Enabled: false
+
+Metrics/ParameterLists:
+  Enabled: false
+
+Style/StringLiterals:
+  Enabled: false
+
+Metrics/LineLength:
+  Max: 423
+
+Style/Documentation:
+  Enabled: false

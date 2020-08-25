@@ -1,33 +1,35 @@
+# frozen_string_literal: true
+
 class Comment < ActiveRecord::Base
   belongs_to :user
   validates_presence_of :user_id, :body
 
   def spectra_set
-    self.set
+    set
   end
 
   def set
-    SpectraSet.find self.spectra_set_id
+    SpectraSet.find spectra_set_id
   end
 
   def spectrum
-    Spectrum.where(id: self.spectrum_id).first
+    Spectrum.where(id: spectrum_id).first
   end
 
   def has_set?
-    self.spectra_set_id != 0 && !self.spectra_set_id.nil?
+    spectra_set_id != 0 && !spectra_set_id.nil?
   end
 
   def has_spectrum?
-    self.spectrum_id != 0 && !self.spectrum_id.nil? && Spectrum.where(id: self.spectrum_id).count != 0
+    spectrum_id != 0 && !spectrum_id.nil? && Spectrum.where(id: spectrum_id).count != 0
   end
 
   def has_user?
-    self.user_id != 0 && !self.user_id.nil?
+    user_id != 0 && !user_id.nil?
   end
 
   def can_delete(user)
-    (self.has_set? && self.set.author == user.login) || (self.has_spectrum? && self.spectrum.author == user.login) || self.author == user.login || user.role == "admin"
+    (has_set? && set.author == user.login) || (has_spectrum? && spectrum.author == user.login) || author == user.login || user.role == 'admin'
   end
 
   private
@@ -35,5 +37,4 @@ class Comment < ActiveRecord::Base
   def comment_params
     params.require(:comment).permit(:spectrum_id, :body, :author, :email, :spectra_set_id, :user_id)
   end
-
 end

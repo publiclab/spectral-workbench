@@ -1,30 +1,30 @@
+# frozen_string_literal: true
+
 # get rid of this with better ActiveRecord 3 calls:
 require 'will_paginate/array'
 
 class CaptureController < ApplicationController
   skip_before_action :verify_authenticity_token
 
-  before_action :require_login, except: [:index, :recent_calibrations]
+  before_action :require_login, except: %i(index recent_calibrations)
 
   def index
-    @offline = "flush"
+    @offline = 'flush'
     if logged_in?
       if params[:calibration_id] == 'calibration'
         @calibration = nil
       elsif params[:calibration_id]
         cal = Spectrum.where(id: params[:calibration_id])
-        @calibration = cal.last if cal.length > 0
-      elsif current_user.calibrations.count > 0
+        @calibration = cal.last unless cal.empty?
+      elsif current_user.calibrations.count.positive?
         @calibration = current_user.last_calibration
       end
       @calibrations = Spectrum.where(calibrated: true, user_id: current_user.id).uniq
-      if @calibration && !@calibrations.include?(@calibration)
-        @calibrations << @calibration
-      end
+      @calibrations << @calibration if @calibration && !@calibrations.include?(@calibration)
       @start_wavelength, @end_wavelength = @calibration.wavelength_range if @calibration
     end
     @spectrums = Spectrum.where(limit: 12).order(id: :desc)
-    render :template => "capture/index", :layout => "application"
+    render template: 'capture/index', layout: 'application'
   end
 
   def offline
@@ -33,10 +33,10 @@ class CaptureController < ApplicationController
       @calibration = current_user.last_calibration
       @calibration = Spectrum.find(params[:calibration_id]) if params[:calibration_id]
       @calibrations = Spectrum.where(calibrated: true, user_id: current_user.id)
-      @start_wavelength,@end_wavelength = @calibration.wavelength_range if @calibration
+      @start_wavelength, @end_wavelength = @calibration.wavelength_range if @calibration
     end
     @spectrums = Spectrum.all.order(id: :desc).limit(12)
-    render :template => "capture/index", :layout => "application"
+    render template: 'capture/index', layout: 'application'
   end
 
   # designed to replace the spectrums_controller method "create" with a
@@ -46,14 +46,13 @@ class CaptureController < ApplicationController
   # NOT ACTIVE YET
 
   def save
-
     # be sure there's a "login" field here too, so users don't lose data when they're required to log in.
-    @spectrum = Spectrum.new({
-      :title => params[:title],
-      :author => current_user.login,
-      :notes => params[:notes],
-      :user_id => current_user.id
-    })
+    @spectrum = Spectrum.new(
+      title: params[:title],
+      author: current_user.login,
+      notes: params[:notes],
+      user_id: current_user.id
+    )
 
     # save everything in an error block or transaction?
 
@@ -69,7 +68,7 @@ class CaptureController < ApplicationController
         @spectrum.data = params[:data]
       else # server-side extract:
         @spectrum.extract_data
-        @spectrum.scale_data(params[:endWavelength],params[:startWavelength]) if (params[:endWavelength] && params[:startWavelength])
+        @spectrum.scale_data(params[:endWavelength], params[:startWavelength]) if params[:endWavelength] && params[:startWavelength]
       end
 
       # clone calibration? Do it based on a tag.
@@ -95,19 +94,18 @@ class CaptureController < ApplicationController
       flash[:notice] = 'Spectrum was successfully created.'
 
       respond_to do |format|
-        format.html {
+        format.html do
           redirect_to spectrum_path(@spectrum)
-        }
-        format.xml  { render :xml => @spectrum, :status => :created, :location => @spectrum }
+        end
+        format.xml { render xml: @spectrum, status: :created, location: @spectrum }
       end
 
     else
 
       # this isn't quite right. Also let's do ajax errors.
-      render "spectrums/new-errors"
+      render 'spectrums/new-errors'
 
     end
-
   end
 
   def recent_calibrations
@@ -120,13 +118,12 @@ class CaptureController < ApplicationController
       end
       @spectrums = @spectrums.uniq
       respond_to do |format|
-        format.json { render :json => @spectrums.to_json(methods: [:created_at_in_words, :forked]) }
+        format.json { render json: @spectrums.to_json(methods: %i(created_at_in_words forked)) }
       end
     else
       respond_to do |format|
-        format.json { render :json => { :errors => "You must be logged in to get recent calibrations."}, :status => 422 }
+        format.json { render json: { errors: 'You must be logged in to get recent calibrations.' }, status: 422 }
       end
     end
   end
-
 end
