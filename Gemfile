@@ -45,7 +45,7 @@ gem 'skylight' # performance tracking via skylight.io
 gem 'terrapin', '~> 0.6.0'
 
 gem 'paperclip', '>= 4.1.1'
-gem 'rdiscount', '2.2.0.1'
+gem 'rdiscount', '2.2.0.2'
 gem 'will_paginate', '~> 3.3.0'
 gem 'will_paginate-bootstrap', '~> 1.0.2'
 
