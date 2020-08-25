@@ -46,7 +46,7 @@ GEM
       public_suffix (>= 2.0.2, < 5.0)
     arel (9.0.0)
     ast (2.4.1)
-    bootsnap (1.4.7)
+    bootsnap (1.4.8)
       msgpack (~> 1.0)
     builder (3.2.4)
     capybara (3.33.0)
@@ -226,7 +226,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  bootsnap (~> 1.4.6)
+  bootsnap (~> 1.4.8)
   capybara
   jquery-rails
   listen (~> 3.2.1)
