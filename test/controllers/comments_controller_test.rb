@@ -1,48 +1,49 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 
 class CommentsControllerTest < ActionController::TestCase
-
-  test "should post comment on spectra HTML" do
-  	session[:user_id] = User.first.id
-  	post :spectrum, params: {
+  test 'should post comment on spectra HTML' do
+    session[:user_id] = User.first.id
+    post :spectrum, params: {
       id: Spectrum.first.id,
       comment: {
-        body: "Great job with this spectrum!",
+        body: 'Great job with this spectrum!'
       }
     }
     assert_equal 'Comment saved.', flash[:notice]
     assert_response :redirect
   end
 
-  test "should post comment on spectra JSON" do
-  	session[:user_id] = User.first.id
-  	post :spectrum, params: {
+  test 'should post comment on spectra JSON' do
+    session[:user_id] = User.first.id
+    post :spectrum, params: {
       id: Spectrum.first.id,
       comment: {
-        body: "Great job with this spectrum!",
+        body: 'Great job with this spectrum!'
       },
-      format: "json"
+      format: 'json'
     }
     assert_equal 'Comment saved.', flash[:notice]
   end
 
-  test "should not post comment on spectra if body absent" do
-  	session[:user_id] = User.first.id
-  	post :spectrum, params: {
+  test 'should not post comment on spectra if body absent' do
+    session[:user_id] = User.first.id
+    post :spectrum, params: {
       id: Spectrum.first.id,
       comment: {
-      	body: ""
+        body: ''
       }
     }
-    assert_equal "There was an error creating your comment.", flash[:error]
+    assert_equal 'There was an error creating your comment.', flash[:error]
   end
 
-  test "should post comment on sets HTML" do
-  	session[:user_id] = User.first.id
-  	post :spectraset, params: {
+  test 'should post comment on sets HTML' do
+    session[:user_id] = User.first.id
+    post :spectraset, params: {
       id: SpectraSet.first.id,
       comment: {
-        body: "Great job with this set!",
+        body: 'Great job with this set!'
       }
     }
 
@@ -50,36 +51,35 @@ class CommentsControllerTest < ActionController::TestCase
     assert_response :redirect
   end
 
-  test "should post comment as on sets JSON" do
-  	session[:user_id] = User.first.id
-  	post :spectraset, params: {
+  test 'should post comment as on sets JSON' do
+    session[:user_id] = User.first.id
+    post :spectraset, params: {
       id: SpectraSet.first.id,
       comment: {
-        body: "Great job with this set!",
+        body: 'Great job with this set!'
       },
-      format: "json"
+      format: 'json'
     }
 
     assert_equal 'Comment saved.', flash[:notice]
   end
 
-  test "should delete comment if author" do
-  	comment = Comment.first
-  	session[:user_id] = comment.user_id
-  	delete :delete, params: {
+  test 'should delete comment if author' do
+    comment = Comment.first
+    session[:user_id] = comment.user_id
+    delete :delete, params: {
       id: comment.id,
       index: true
     }
     # assertion fails because of problematic fixtures
-  	# assert_equal "Comment deleted.", flash[:notice]
-  	assert_response :redirect
+    # assert_equal "Comment deleted.", flash[:notice]
+    assert_response :redirect
   end
 
-  test "should index comments" do
+  test 'should index comments' do
     session[:user_id] = User.first.id
     get :index
 
     assert_response :success
   end
-
 end

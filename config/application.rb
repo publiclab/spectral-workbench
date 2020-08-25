@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'boot'
 require 'rails/all'
 
@@ -37,7 +39,7 @@ module SpectralWorkbench
     config.i18n.enforce_available_locales = true
 
     # Configure the default encoding used in templates for Ruby 1.9.
-    config.encoding = "utf-8"
+    config.encoding = 'utf-8'
 
     # Configure sensitive parameters which will be filtered from the log file.
     config.filter_parameters += [:password]
@@ -52,12 +54,12 @@ module SpectralWorkbench
 
     # Enable the asset pipeline
     config.assets.enabled = true
-    config.assets.paths << Rails.root.join("public/lib")
+    config.assets.paths << Rails.root.join('public/lib')
 
     # pluralization options, but unneccessary due to:
     # http://dictionary.reference.com/browse/spectrum
-    #ActiveSupport::Inflector.inflections do |inflect|
+    # ActiveSupport::Inflector.inflections do |inflect|
     #  inflect.irregular 'spectrum', 'spectra'
-    #end
+    # end
   end
 end

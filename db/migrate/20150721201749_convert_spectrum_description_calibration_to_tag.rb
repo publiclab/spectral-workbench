@@ -1,20 +1,21 @@
+# frozen_string_literal: true
+
 class ConvertSpectrumDescriptionCalibrationToTag < ActiveRecord::Migration[5.2]
   def up
     Spectrum.select('id,notes,user_id').each do |spectrum|
-      unless spectrum.notes.nil?
-        clones = spectrum.notes.scan(/-- \(Cloned calibration from <a href='\/spectra\/show\/(\d+)'>[\w ]+<\/a>\)/)
-        if clones.length > 0
-          spectrum.remove_tags('calibration:')
-          Tag.new({
-            :spectrum_id => spectrum.id,
-            :name =>        "calibration:" + clones.last.first.to_s,
-            :user_id =>     spectrum.user_id
-          }).save!
-        end
-      end
+      next if spectrum.notes.nil?
+
+      clones = spectrum.notes.scan(%r{-- \(Cloned calibration from <a href='/spectra/show/(\d+)'>[\w ]+</a>\)})
+      next if clones.empty?
+
+      spectrum.remove_tags('calibration:')
+      Tag.new(
+        spectrum_id: spectrum.id,
+        name: 'calibration:' + clones.last.first.to_s,
+        user_id: spectrum.user_id
+      ).save!
     end
   end
 
-  def down
-  end
+  def down; end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 source 'https://rubygems.org'
 
 gem 'rails', '~> 5.2.4.3'
@@ -17,39 +19,41 @@ group :assets do
 end
 
 group :test do
-  gem 'simplecov', require: false
   gem 'rails-controller-testing', '~> 1.0.5'
+  gem 'rubocop', '~> 0.87.1'
+  gem 'rubocop-performance'
+  gem 'simplecov', require: false
   gem 'puma'
 end
 
 group :development, :test do
   gem 'rack_session_access'
   gem 'capybara'
-  gem 'selenium-webdriver'
+  gem 'selenium-webdriver', '~> 3.12.0'
 end
 
 gem 'bootsnap', '~> 1.4.6'
-gem 'listen', '~> 3.2.1'
-gem 'responders', '~> 3.0.1'
-gem 'rmagick'#, :require => "RMagick"
-gem 'mime-types'#, '1.18'
 gem 'jquery-rails'
+gem 'listen', '~> 3.2.1'
+gem 'mime-types' # , '1.18'
 gem 'passenger'
-gem 'recaptcha', '5.5.0', require: "recaptcha/rails"
-gem 'terrapin', '~> 0.6.0'
+gem 'recaptcha', '5.5.0', require: 'recaptcha/rails'
 gem 'redcarpet', '~> 3.5.0'
+gem 'responders', '~> 3.0.1'
+gem 'rmagick' # , :require => "RMagick"
 gem 'skylight' # performance tracking via skylight.io
+gem 'terrapin', '~> 0.6.0'
 
+gem 'paperclip', '>= 4.1.1'
 gem 'rdiscount', '2.2.0.1'
 gem 'will_paginate', '~> 3.3.0'
 gem 'will_paginate-bootstrap', '~> 1.0.2'
-gem 'paperclip', '>= 4.1.1'
 
 gem 'tzinfo', '~> 1.1'
 
+gem 'open_id_authentication'
 gem 'protected_attributes_continued', '~> 1.5.0'
 gem 'ruby-openid'
-gem 'open_id_authentication'
 
 gem 'rack-offline', '>= 0.6.4'
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Macro < ActiveRecord::Base
   belongs_to :user
 
@@ -8,12 +10,11 @@ class Macro < ActiveRecord::Base
                       with: /\A[\w-]*\z/,
                       message: " must not include spaces and must be alphanumeric, as it'll be used in the URL of your macro. You may use dashes and underscores.",
                       on: :create
-  validates_format_of :url, with: /\A(http|https):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?\z/ix
+  validates_format_of :url, with: %r{\A(http|https)://[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(/.*)?\z}ix
 
-  private 
+  private
 
   def macro_params
     params.require(:macro).permit(:title, :description, :code, :macro_type, :url, :user_id)
   end
-
 end

@@ -22,12 +22,12 @@
     </tr>
     <% @users.each do |user| %>
     <tr>
-      <td><% if user.spectrum_count > 0 %><img width="120px" class="img" src="<%= user.spectrums.order('id DESC').limit(1).last.photo.url(:thumb) %>" /><% end %></td>
+      <td><% if user.spectrum_count.positive? %><img width="120px" class="img" src="<%= user.spectrums.order('id DESC').limit(1).last.photo.url(:thumb) %>" /><% end %></td>
       <td><a href="/profile/<%= user.login %>"><%= user.login %></a> 
         | <a href="http://publiclab.org/profile/<%= user.login %>">Public Lab profile</a></td>
       <td><%= user.spectrum_count %> spectra</td>
       <td><%= user.comments.length %> comments</td>
-      <td><% if user.spectrum_count > 0 %>Last uploaded <%= time_ago_in_words(user.spectrums.order('id DESC').limit(1).last.created_at) %> ago<% end %></td>
+      <td><% if user.spectrum_count.positive? %>Last uploaded <%= time_ago_in_words(user.spectrums.order('id DESC').limit(1).last.created_at) %> ago<% end %></td>
     </tr>
     <% end %>
   </table>
