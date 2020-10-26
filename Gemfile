@@ -52,7 +52,7 @@ gem 'will_paginate-bootstrap', '~> 1.0.2'
 gem 'tzinfo', '~> 1.1'
 
 gem 'open_id_authentication'
-gem 'protected_attributes_continued', '~> 1.5.0'
+gem 'protected_attributes_continued', '~> 1.7.0'
 gem 'ruby-openid'
 
 gem 'rack-offline', '>= 0.6.4'
