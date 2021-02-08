@@ -37,7 +37,7 @@ gem 'jquery-rails'
 gem 'listen', '~> 3.2.1'
 gem 'mime-types' # , '1.18'
 gem 'passenger'
-gem 'recaptcha', '5.5.0', require: 'recaptcha/rails'
+gem 'recaptcha', '5.7.0', require: 'recaptcha/rails'
 gem 'redcarpet', '~> 3.5.0'
 gem 'responders', '~> 3.0.1'
 gem 'rmagick' # , :require => "RMagick"
