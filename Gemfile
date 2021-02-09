@@ -32,7 +32,7 @@ group :development, :test do
   gem 'selenium-webdriver', '~> 3.12.0'
 end
 
-gem 'bootsnap', '~> 1.4.6'
+gem 'bootsnap', '~> 1.7.2'
 gem 'jquery-rails'
 gem 'listen', '~> 3.2.1'
 gem 'mime-types' # , '1.18'
