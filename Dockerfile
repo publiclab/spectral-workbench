@@ -10,7 +10,7 @@ LABEL description="This image deploys Spectral Workbench!"
 ENV HOME /root
 
 # Install dependencies
-RUN sed -i '/.*jessie-updates.*/d' /etc/apt/sources.list && \
+RUN sed -i '/.*stretch-updates.*/d' /etc/apt/sources.list && \
     apt-get update -qq && \
     apt-get install -y --no-install-recommends \
                        imagemagick \
