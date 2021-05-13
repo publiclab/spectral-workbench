@@ -2,7 +2,6 @@ version: '3.5'
 services:
 
   db:
-    container_name: spectral-db
     image: mysql:5.7
     env_file:
       - spectral.env
@@ -10,15 +9,16 @@ services:
       - mysql_data:/var/lib/mysql
 
   web:
-    container_name: spectral-web
     build: .
     volumes:
       - .:/app
       - bundle_cache:/usr/local/bundle
     env_file:
       - spectral.env
+    environment:
+      - PORT=${PORT}    
     ports:
-      - ${PORT:-5000}:${PORT:-5000}
+      - 127.0.0.1:${PORT:-5000}:${PORT:-5000}
     depends_on:
       - db
 
