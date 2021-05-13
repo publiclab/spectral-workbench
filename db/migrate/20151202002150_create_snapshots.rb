@@ -1,7 +1,8 @@
-class CreateSnapshots < ActiveRecord::Migration
+# frozen_string_literal: true
 
+class CreateSnapshots < ActiveRecord::Migration[5.2]
   def up
-    create_table "snapshots" do |t|
+    create_table 'snapshots' do |t|
       t.integer   :user_id
       t.integer   :spectrum_id
       t.integer   :tag_id
@@ -13,7 +14,6 @@ class CreateSnapshots < ActiveRecord::Migration
   end
 
   def down
-    drop_table "snapshots"
+    drop_table 'snapshots'
   end
-
 end

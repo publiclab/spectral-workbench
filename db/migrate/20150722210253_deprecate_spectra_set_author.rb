@@ -1,7 +1,9 @@
-class DeprecateSpectraSetAuthor < ActiveRecord::Migration
+# frozen_string_literal: true
+
+class DeprecateSpectraSetAuthor < ActiveRecord::Migration[5.2]
   def up
     SpectraSet.all.each do |set|
-      if set.author != '' && set.user_id == 0 && user = User.find_by_login(set.author)
+      if set.author != '' && set.user_id.zero? && user = User.find_by_login(set.author)
         set.user_id = user.id
         set.save
       end

@@ -1,16 +1,12 @@
-source 'https://rubygems.org'
-#source 'https://rails-assets.org'
+# frozen_string_literal: true
 
-ruby '~>2.1.2'
-gem 'rails', '~>3.2'
+source 'https://rubygems.org'
+
+gem 'rails', '~> 5.2.4.3'
 
 # Database handling
-group :sqlite do
-  gem 'sqlite3'
-end
-
 group :mysql do
-  gem 'mysql2', '~> 0.3.10'
+  gem 'mysql2', '~> 0.5.3'
 end
 
 # Gems used only for assets and not required
@@ -22,26 +18,44 @@ group :assets do
   gem 'uglifier', '>= 1.0.3'
 end
 
-gem 'rmagick'#, :require => "RMagick"
-gem 'mime-types'#, '1.18'
+group :test do
+  gem 'rails-controller-testing', '~> 1.0.5'
+  gem 'rubocop', '~> 0.87.1'
+  gem 'rubocop-performance'
+  gem 'simplecov', require: false
+  gem 'puma'
+end
+
+group :development, :test do
+  gem 'rack_session_access'
+  gem 'capybara'
+  gem 'selenium-webdriver', '~> 3.12.0'
+end
+
+gem 'bootsnap', '~> 1.4.6'
 gem 'jquery-rails'
+gem 'listen', '~> 3.2.1'
+gem 'mime-types' # , '1.18'
 gem 'passenger'
-gem 'recaptcha', '3.0.0', :require => "recaptcha/rails"
-gem 'cocaine', '~>0.5.3'
-gem 'redcarpet', '2.1.1'
-gem "skylight" # performance tracking via skylight.io
+gem 'recaptcha', '5.5.0', require: 'recaptcha/rails'
+gem 'redcarpet', '~> 3.5.0'
+gem 'responders', '~> 3.0.1'
+gem 'rmagick' # , :require => "RMagick"
+gem 'skylight' # performance tracking via skylight.io
+gem 'terrapin', '~> 0.6.0'
 
-gem 'rdiscount', '1.6.8'
-gem 'will_paginate', '3.0.7'
-gem 'will_paginate-bootstrap', '0.2.5'
 gem 'paperclip', '>= 4.1.1'
+gem 'rdiscount', '2.2.0.1'
+gem 'will_paginate', '~> 3.3.0'
+gem 'will_paginate-bootstrap', '~> 1.0.2'
 
-gem 'tzinfo', '0.3.49'
+gem 'tzinfo', '~> 1.1'
 
-gem 'ruby-openid'
 gem 'open_id_authentication'
+gem 'protected_attributes_continued', '~> 1.5.0'
+gem 'ruby-openid'
 
-gem 'rack-offline', '>=0.6.4'
+gem 'rack-offline', '>= 0.6.4'
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'

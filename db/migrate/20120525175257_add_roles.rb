@@ -1,6 +1,8 @@
-class AddRoles < ActiveRecord::Migration
+# frozen_string_literal: true
+
+class AddRoles < ActiveRecord::Migration[5.2]
   def self.up
-    add_column :users, :role, :string, :default => "basic", :null => false
+    add_column :users, :role, :string, default: 'basic', null: false
   end
 
   def self.down

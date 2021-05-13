@@ -1,9 +1,11 @@
-class AddIndexTagSpectrumId < ActiveRecord::Migration
+# frozen_string_literal: true
+
+class AddIndexTagSpectrumId < ActiveRecord::Migration[5.2]
   def up
-    add_index("tags", "spectrum_id")
+    add_index('tags', 'spectrum_id')
   end
 
   def down
-    remove_index("tags", "spectrum_id")
+    remove_index('tags', 'spectrum_id')
   end
 end

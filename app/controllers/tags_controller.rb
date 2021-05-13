@@ -1,31 +1,31 @@
+# frozen_string_literal: true
+
 class TagsController < ApplicationController
-
-  before_filter :require_login, :only => [ :create, :destroy, :change_reference ]
-
+  before_action :require_login, only: %i(create destroy change_reference)
 
   # FYI, we've stopped accepting requests with multiple comma-delimited tags
-  # so, if we edit SpectralWorkbench.Tag.js, we can ditch the 'errors' and 
-  # 'saved' hashes in the response. 
+  # so, if we edit SpectralWorkbench.Tag.js, we can ditch the 'errors' and
+  # 'saved' hashes in the response.
   def create
-    @response = { 
-      :errors => [],
-      :saved => {},
+    @response = {
+      errors: [],
+      saved: {}
     }
-    @spectrum = Spectrum.select("id, title, created_at, user_id, author, calibrated")
+    @spectrum = Spectrum.select('id, title, created_at, user_id, author, calibrated')
                         .where(id: params[:tag][:spectrum_id])
                         .limit(1)
                         .first
     # is it a powertag? only owners or admins can make those:
-    if params[:tag][:name].match(':').nil? || @spectrum.user_id == current_user.id || current_user.role == "admin"
+    if params[:tag][:name].match(':').nil? || @spectrum.user_id == current_user.id || current_user.role == 'admin'
       name = params[:tag][:name].strip # clean whitespace
       tag = Tag.new({
-        :name => name,
-        :spectrum_id => params[:tag][:spectrum_id],
-        :user_id => current_user.id
+        name: name,
+        spectrum_id: params[:tag][:spectrum_id],
+        user_id: current_user.id
       })
       tag.created_at = DateTime.parse(params[:tag][:created_at]) if params[:tag][:created_at]
       if tag.valid?
-        # look for enclosed data in the tag request if 
+        # look for enclosed data in the tag request if
         # it's the kind of powertag that should create a snapshot
         # the enclosed data is not required; but the client side will do it automatically
         old_name = tag.name.split('#')[0]
@@ -39,55 +39,51 @@ class TagsController < ApplicationController
           @response[:saved][old_name][:snapshot_id] = snapshot.id # add it to the response even though it's not part of the record
         end
       else
-        @response[:errors] << "Error: tags "+tag.errors[:name].first
+        @response[:errors] << 'Error: tags ' + tag.errors[:name].first
       end
     else
-      @response[:errors] << "Error: You must own the spectrum to add powertags"
+      @response[:errors] << 'Error: You must own the spectrum to add powertags'
     end
     respond_to do |format|
-      if request.xhr? # ajax
-        format.json { render :json => @response }
-      else
+      unless request.xhr? # ajax
         format.html do
           flash[:notice] = "Tag(s) added."
-          redirect_to "/spectrums/"+params[:tag][:spectrum_id]
+          redirect_to "/spectrums/" + params[:tag][:spectrum_id]
         end
-        format.json { render :json => @response }
       end
+      format.json { render json: @response }
     end
   end
 
-
   def show
-    @spectrums = Spectrum.select("spectrums.id, spectrums.title, spectrums.created_at, spectrums.user_id, spectrums.author, spectrums.calibrated, spectrums.lat, spectrums.lon, spectrums.photo_file_name, spectrums.like_count")
+    @spectrums = Spectrum.select('spectrums.id, spectrums.title, spectrums.created_at, spectrums.user_id, spectrums.author, spectrums.calibrated, spectrums.lat, spectrums.lon, spectrums.photo_file_name, spectrums.like_count')
                          .joins(:tags)
                          .where('tags.name = (?)', params[:id])
-                         .order("spectrums.id DESC")
-                         .paginate(:page => params[:page], :per_page => 24)
+                         .order('spectrums.id DESC')
+                         .paginate(page: params[:page], per_page: 24)
 
     respond_to do |format|
-      format.html { # show.html.erb
+      format.html do # show.html.erb
         @mappable = []
         @spectrums.each do |spectrum|
           @mappable << spectrum if spectrum.lat != 0.0 && spectrum.lon != 0.0
         end
-      }
-      format.xml  { render :xml => @spectrums }
-      format.json  { render :json => @spectrums }
+      end
+      format.xml { render xml: @spectrums }
+      format.json { render json: @spectrums }
     end
   end
-
 
   def destroy
     @tag = Tag.find(params[:id])
     if @tag
-      if @tag.user_id == current_user.id || current_user.role == "admin"
+      if @tag.user_id == current_user.id || current_user.role == 'admin'
         if @tag.is_deletable?
           @tag.destroy
           respond_to do |format|
             format.html do
               if request.xhr?
-                render :json => { :message => "success" }
+                render json: { message: 'success' }
               else
                 flash[:notice] = "Tag '#{@tag.name}' deleted."
                 redirect_to spectrum_path(@tag.spectrum_id)
@@ -95,17 +91,18 @@ class TagsController < ApplicationController
             end
           end
         else
+
           respond_to do |format|
             format.html do
               if request.xhr?
-                render :json => { has_dependent_spectra: @tag.snapshot.has_dependent_spectra?, 
-                                  dependent_spectra: @tag.dependent_spectrum_ids,
-                                  has_subsequent_depended_on_snapshots: @tag.snapshot.has_subsequent_depended_on_snapshots?,
-                                  is_latest: @tag.snapshot.is_latest?
-                                },
-                       :status => :unprocessable_entity
+                render json: { has_dependent_spectra: @tag.snapshot.has_dependent_spectra?,
+                               dependent_spectra: @tag.dependent_spectrum_ids,
+                               has_subsequent_depended_on_snapshots: @tag.snapshot.has_subsequent_depended_on_snapshots?,
+                               is_latest: @tag.snapshot.is_latest? },
+                       status: :unprocessable_entity
               else
-                flash[:error] = "Powertags/operations may not be deleted if other data relies upon it."
+                raise 'Powertags/operations may not be deleted if other data relies upon it.'
+                flash[:error] = 'Powertags/operations may not be deleted if other data relies upon it.' # rubocop:disable Lint/UnreachableCode
                 # OMG, without status 303, some browsers will redirect with request method DELETE and delete the spectrum!
                 # http://api.rubyonrails.org/classes/ActionController/Redirecting.html
                 redirect_to spectrum_path(@tag.spectrum_id), status: :see_other # i.e. 303 to force GET. VERY DANGEROUS, RAILS!
@@ -114,15 +111,14 @@ class TagsController < ApplicationController
           end
         end
       else
-        flash[:error] = "You must have authored a tag or own its spectrum to delete it."
+        flash[:error] = 'You must have authored a tag or own its spectrum to delete it.'
         redirect_to spectrum_path(@tag.spectrum_id)
       end
     else
       flash[:error] = "That tag didn't exist."
-      redirect_to "/dashboard"
+      redirect_to '/dashboard'
     end
   end
-
 
   # resourceful request for a spectrum's or set's tag list:
   def index
@@ -138,7 +134,7 @@ class TagsController < ApplicationController
         # may be able to append this information in the model, tuck it away
         hash[:refers_to_latest_snapshot] = tag.has_reference? && tag.reference.is_latest?
         if tag.needs_reference?
-          ids = tag.reference_spectrum.snapshots.select("id, spectrum_id").collect(&:id)
+          ids = tag.reference_spectrum.snapshots.select('id, spectrum_id').collect(&:id)
           hash[:reference_spectrum_snapshots] = ids
         end
         if tag.snapshot
@@ -154,13 +150,13 @@ class TagsController < ApplicationController
         @tags << hash
       end
       if request.xhr?
-        render :json => @tags
+        render json: @tags
       else
         render partial: 'tags/inlineList', locals: { datum: @spectrum }, layout: false
       end
     else
       # this is dumb, get rid of it:
-      @tags = Tag.order("id DESC").where(created_at: Time.now-1.month..Time.now).limit(100)
+      @tags = Tag.order('id DESC').where(created_at: Time.now - 1.month..Time.now).limit(100)
       count = {}
       @tagnames = @tags.collect(&:name).each do |tag|
         if count[tag]
@@ -169,7 +165,7 @@ class TagsController < ApplicationController
           count[tag] = 1
         end
       end
-      @tagnames = count.sort_by {|k,v| v }.reverse
+      @tagnames = count.sort_by { |_k, v| v }.reverse
     end
   end
 
@@ -177,15 +173,12 @@ class TagsController < ApplicationController
   # ensure that this cannot be done for tags that are referred to
   # and TEST it
   def change_reference
-
     @tag = Tag.find params[:id]
-    
-    if (@tag.user_id == current_user.id || current_user.role == "admin") && @tag.change_reference(params[:snapshot_id])
-      render :json => @tag
+
+    if (@tag.user_id == current_user.id || current_user.role == 'admin') && @tag.change_reference(params[:snapshot_id])
+      render json: @tag
     else
-      render :json => { error: 'Cannot change reference of tag with dependent spectra.' }, :status => 422
+      render json: { error: 'Cannot change reference of tag with dependent spectra.' }, status: 422
     end
-
   end
-
 end

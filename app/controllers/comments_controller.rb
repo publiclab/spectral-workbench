@@ -1,85 +1,88 @@
-class CommentsController < ApplicationController
+# frozen_string_literal: true
 
-  before_filter :require_login, :only => [:spectrum, :spectra_set, :delete]
+class CommentsController < ApplicationController
+  before_action :require_login, only: %i(spectrum spectra_set delete)
 
   def index
-    @comments = Comment.find :all, :order => "id DESC"
+    @comments = Comment.all.order(id: :desc)
   end
 
   def spectrum
     @spectrum = Spectrum.find(params[:id])
-    @comment = @spectrum.comments.new({
-	    :body => params[:comment][:body],
-	    :user_id => current_user.id
-    })
+    @comment = @spectrum.comments.new(
+      body: params[:comment][:body],
+      user_id: current_user.id
+    )
 
     if @comment.save
-      UserMailer.comment_notification( @spectrum,
-                                       @comment,
-                                       User.find(@spectrum.user_id)
-      ) if current_user.id != @spectrum.user_id
-      @spectrum.notify_commenters(@comment,current_user)
+      if current_user.id != @spectrum.user_id
+        UserMailer.comment_notification(@spectrum,
+                                        @comment,
+                                        User.find(@spectrum.user_id))
+      end
+      @spectrum.notify_commenters(@comment, current_user)
 
       respond_to do |format|
-        format.html {
-          flash[:notice] = "Comment saved."
-          redirect_to spectrum_path(@spectrum)+"#c"+@comment.id.to_s
-        }
-        format.json  {
+        format.html do
+          flash[:notice] = 'Comment saved.'
+          redirect_to spectrum_path(@spectrum) + '#c' + @comment.id.to_s
+        end
+        format.json do
           @comment.body = RDiscount.new(@comment.body).to_html
-          render :json => @comment
-        }
+          flash[:notice] = 'Comment saved.'
+          render json: @comment
+        end
       end
 
     else
-      flash[:error] == "There was an error creating your comment."
+      flash[:error] = 'There was an error creating your comment.'
       redirect_to spectrum_path(@spectrum)
     end
   end
 
   def spectraset
     @set = SpectraSet.find(params[:id])
-    @comment = Comment.new({
-	spectra_set_id: @set.id,
-	body:           params[:comment][:body],
-	user_id:        current_user.id,
-	email:          current_user.email})
+    @comment = Comment.new(
+      spectra_set_id: @set.id,
+      body: params[:comment][:body],
+      user_id: current_user.id,
+      email: current_user.email
+    )
     if @comment.save
-      UserMailer.set_comment_notification(@set,@comment,User.find(@set.user_id)) if (!logged_in? || current_user.id != @set.user_id)
-      @set.notify_commenters(@comment,current_user) if logged_in?
-      @set.notify_commenters(@comment,false) unless logged_in?
+      UserMailer.set_comment_notification(@set, @comment, User.find(@set.user_id)) if !logged_in? || current_user.id != @set.user_id
+      @set.notify_commenters(@comment, current_user) if logged_in?
+      @set.notify_commenters(@comment, false) unless logged_in?
 
       respond_to do |format|
-        format.html {
-          flash[:notice] == "Comment saved."
-          redirect_to sets_path(@set)+"#c"+@comment.id.to_s
-        }
-        format.json  {
+        format.html do
+          flash[:notice] = 'Comment saved.'
+          redirect_to sets_path(@set) + '#c' + @comment.id.to_s
+        end
+        format.json do
           @comment.body = RDiscount.new(@comment.body).to_html
-          render :json => @comment
-        }
+          flash[:notice] = 'Comment saved.'
+          render json: @comment
+        end
       end
     else
-      flash[:error] == "There was an error creating your comment."
-      render :action => "show", :id => params[:id]
+      flash[:error] = 'There was an error creating your comment.'
+      render action: 'show', id: params[:id]
     end
   end
 
   def delete
     @comment = Comment.find(params[:id])
-    if @comment.can_delete(current_user) || params[:password].to_i == APP_CONFIG["password"]
+    if @comment.can_delete(current_user) || params[:password].to_i == APP_CONFIG['password']
       @comment.destroy
-      flash[:notice] = "Comment deleted."
+      flash[:notice] = 'Comment deleted.'
     end
 
     if params[:index]
-      redirect_to "/comments"
+      redirect_to '/comments'
     elsif @comment.has_spectrum?
       redirect_to "/spectrums/#{@comment.spectrum_id}"
     else
       redirect_to "/sets/#{@comment.spectra_set_id}"
     end
-    
   end
-
 end

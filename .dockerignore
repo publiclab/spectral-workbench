@@ -1,0 +1,9 @@
+*.md
+.github/
+.git/
+.gitignore
+LICENSE
+README_RAILS.rdoc
+docker-compose.yml
+Dockerfile
+.travis.yml

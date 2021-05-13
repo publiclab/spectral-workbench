@@ -36,7 +36,7 @@
   <% i = 0 %>
   <div class="row tags">
   <% @tagnames.each do |name,count| %>
-    <% if tag = Tag.find_by_name(name, :order => "id DESC") %>
+    <% if tag = Tag.order(id: :desc).find_by_name(name) %>
       <% if tag.spectrum %>
         <div class="span3">
         <a href="<%= tag_path(tag.name) %>">

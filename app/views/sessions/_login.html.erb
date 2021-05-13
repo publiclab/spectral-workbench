@@ -8,13 +8,16 @@
       <%= hidden_field_tag :authenticity_token, form_authenticity_token -%>
       <%= hidden_field_tag :back_to, (params[:back_to] || request.env['PATH_INFO']) -%>
       <input type="hidden" name="return_to" value="<%= params[:back_to] || request.env['PATH_INFO'] %>" />
-
-      <div style="display: flex;flex-direction: row;justify-content: space-around;width: 400px;margin-top: 30px;">
-        <button tabindex="2" type="submit" style="background-color: #EDEDEE"> <img src="https://i.publiclab.org/system/images/photos/000/000/354/medium/Boots-ground-02.png" style="width: 50px; height: 50px;"></button>
-        <button tabindex="2" class="btn btn-large btn-danger" type="submit" name="subaction", value="google_oauth2"><i class="fa fa-google fa-fw" style="font-size:20px;color:white;"></i></button>
-        <button tabindex="2" class="btn btn-large btn-info" type="submit" name="subaction", value="twitter"><i class="fa fa-twitter fa-fw" style="font-size:20px;color:white;margin-left:2px;"></i></button>
-        <button tabindex="2" class="btn btn-large btn-primary" type="submit" name="subaction", value="facebook"><i class="fa fa-facebook fa-fw" style="font-size:20px;color:white;"></i></button>
-        <button tabindex="2" class="btn btn-large btn-dark" type="submit" name="subaction", value="github"><i class="fa fa-github fa-fw" style="font-size:20px;color:black;"></i></button>
+      <button tabindex="2" type="submit" style="margin: auto; display: block; background-color: transparent; border: none;"> <img src="https://i.publiclab.org/system/images/photos/000/000/354/medium/Boots-ground-02.png" style="width: 50px; height: 50px;"></button>
+      <br>
+      <p style="text-align: center;font-family:'Junction Light','lucida grande','lucida sans console',sans-serif;font-size: 20px; margin-top: 10px;">
+        Or through one of these accounts:
+      </p>
+      <div style="display: flex; flex-wrap: wrap; flex-direction: row;justify-content: space-around;width: 400px;margin-top: 30px;">
+        <button tabindex="2" class="btn btn-large btn-danger" type="submit" name="subaction", value="google_oauth2"><i class="fa fa-google fa-fw" style="font-size:25px;color:white;"></i></button>
+        <button tabindex="2" class="btn btn-large btn-info" type="submit" name="subaction", value="twitter"><i class="fa fa-twitter fa-fw" style="font-size:25px;color:white;"></i></button>
+        <button tabindex="2" class="btn btn-large btn-primary" type="submit" name="subaction", value="facebook"><i class="fa fa-facebook fa-fw" style="font-size:25px;color:white;"></i></button>
+        <button tabindex="2" style="background: #333;" class="btn btn-large" type="submit" name="subaction", value="github"><i class="fa fa-github fa-fw" style="font-size:25px;color:white;"></i></button>
       </div>
       &nbsp;
       <label class="checkbox inline" for="remember_me">
@@ -22,4 +25,7 @@
       </label>
     </form>
   </div>
+  <p>
+    Having trouble logging in? <a href="https://publiclab.org/n/26489">Read more</a>
+  </p>
 </div>

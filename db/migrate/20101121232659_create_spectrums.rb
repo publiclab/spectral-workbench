@@ -1,4 +1,6 @@
-class CreateSpectrums < ActiveRecord::Migration
+# frozen_string_literal: true
+
+class CreateSpectrums < ActiveRecord::Migration[5.2]
   def self.up
     create_table :spectrums do |t|
       t.string :title

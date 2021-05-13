@@ -1,6 +1,8 @@
-class AddPhotoPosition < ActiveRecord::Migration
+# frozen_string_literal: true
+
+class AddPhotoPosition < ActiveRecord::Migration[5.2]
   def self.up
-    add_column :spectrums, :photo_position, :string, :default => 'false' # x,y,scale,rotation,amplification
+    add_column :spectrums, :photo_position, :string, default: 'false' # x,y,scale,rotation,amplification
   end
 
   def self.down

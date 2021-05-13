@@ -1,5 +1,7 @@
-# Load the rails application
-require File.expand_path('../application', __FILE__)
+# frozen_string_literal: true
 
-# Initialize the rails application
-SpectralWorkbench::Application.initialize!
+# Load the Rails application.
+require_relative 'application'
+
+# Initialize the Rails application.
+Rails.application.initialize!

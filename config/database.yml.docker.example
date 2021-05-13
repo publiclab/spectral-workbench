@@ -1,0 +1,32 @@
+default: &default
+  encoding: utf8
+  adapter: mysql2
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  port: 3306
+  socket: /var/run/mysqld/mysqld.sock
+  init_command: "SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));"
+
+development:
+  <<: *default
+  host: db
+  username: root
+  password: root
+  database: swbench_development
+
+production:
+  encoding: utf8
+  adapter: mysql2
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  host: <%= ENV['MYSQL_HOST'] || 'db' %>
+  username: <%= ENV['MYSQL_USER'] || 'root' %>
+  password: <%= ENV['MYSQL_PASSWORD'] || 'root' %>
+  database: <%= ENV['MYSQL_DATABASE'] || 'root' %>
+  socket: <%= ENV['MYSQL_SOCKET'] || '/var/run/mysqld/mysqld.sock' %>
+  init_command: "SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));"
+
+test:
+  <<: *default
+  host: db
+  username: root 
+  password: root
+  database: swbench_test

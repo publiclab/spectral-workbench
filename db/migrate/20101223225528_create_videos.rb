@@ -1,4 +1,6 @@
-class CreateVideos < ActiveRecord::Migration
+# frozen_string_literal: true
+
+class CreateVideos < ActiveRecord::Migration[5.2]
   def self.up
     create_table :videos do |t|
       t.string :title

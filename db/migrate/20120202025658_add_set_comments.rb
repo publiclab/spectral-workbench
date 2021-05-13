@@ -1,13 +1,14 @@
-class AddSetComments < ActiveRecord::Migration
+# frozen_string_literal: true
+
+class AddSetComments < ActiveRecord::Migration[5.2]
   def self.up
-      add_column :spectrums, :client_code, :string, :default => '', :null => false
-      add_column :spectra_sets, :notes, :text, :default => "", :null => false 
-      add_column :comments, :spectra_set_id, :integer, :default => 0, :null => false 
+    add_column :spectrums, :client_code, :string, default: '', null: false
+    add_column :comments, :spectra_set_id, :integer, default: 0, null: false
   end
 
   def self.down
-      remove_column :spectrums, :client_code
-      remove_column :spectra_sets, :notes
-      remove_column :comments, :spectra_set_id
+    remove_column :spectrums, :client_code
+    remove_column :spectra_sets, :notes
+    remove_column :comments, :spectra_set_id
   end
 end

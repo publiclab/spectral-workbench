@@ -1,21 +1,27 @@
-#db:
-#  image: mysql:5.6
-#  environment:
-#    - MYSQL_DATABASE=swbench
-#    - MYSQL_USER=swbench
-#    - MYSQL_PASSWORD=swbench
-#    - MYSQL_RANDOM_ROOT_PASSWORD=true
-#  volumes:
-#    - /srv/ci-spectralworkbench/sw_database:/var/lib/mysql
-web:
-  build: .
-  command: /bin/bash -c "sleep 5 && bundle exec rails s -p 5000 -b '0.0.0.0'"
-  environment:
-    - RAILS_ENV=test
-  volumes:
-    - ./:/app
-  ports:
-    - "127.0.0.1:5000:5000"
-    - "127.0.0.1:8888:8888"
-#  links:
-#    - db
+version: '3.5'
+services:
+
+  db:
+    image: mysql:5.7
+    env_file:
+      - spectral.env
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  web:
+    build: .
+    volumes:
+      - .:/app
+      - bundle_cache:/usr/local/bundle
+    env_file:
+      - spectral.env
+    environment:
+      - PORT=${PORT}    
+    ports:
+      - 127.0.0.1:${PORT:-5000}:${PORT:-5000}
+    depends_on:
+      - db
+
+volumes:
+  mysql_data:
+  bundle_cache:

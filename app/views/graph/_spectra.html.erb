@@ -22,7 +22,7 @@
         </td>
         <td><%= spectrum.id %></td>
         <td>
-          <% if spectrum.snapshots.count > 0 %>
+          <% if spectrum.snapshots.count.positive? %>
             <%= "##{spectrum.snapshots.last.id}" %>
           <% else %>
             none

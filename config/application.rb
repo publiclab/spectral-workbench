@@ -1,19 +1,23 @@
-require File.expand_path('../boot', __FILE__)
+# frozen_string_literal: true
 
+require_relative 'boot'
 require 'rails/all'
+
+# Require the gems listed in Gemfile, including any gems
+# you've limited to :test, :development, or :production.
+Bundler.require(*Rails.groups)
 
 if defined?(Bundler)
   # If you precompile assets before deploying to production, use this line
-  Bundler.require(*Rails.groups(:assets => %w(development test)))
+  Bundler.require(*Rails.groups(assets: %w(development test)))
   # If you want your assets lazily compiled in production, use this line
   # Bundler.require(:default, :assets, Rails.env)
 end
 
 module SpectralWorkbench
   class Application < Rails::Application
-    # Settings in config/environments/* take precedence over those specified here.
-    # Application configuration should go into files in config/initializers
-    # -- all .rb files in that directory are automatically loaded.
+    # Initialize configuration defaults for originally generated Rails version.
+    config.load_defaults 5.0
 
     # Custom directories with classes and modules you want to be autoloadable.
     # config.autoload_paths += %W(#{config.root}/extras)
@@ -35,7 +39,7 @@ module SpectralWorkbench
     config.i18n.enforce_available_locales = true
 
     # Configure the default encoding used in templates for Ruby 1.9.
-    config.encoding = "utf-8"
+    config.encoding = 'utf-8'
 
     # Configure sensitive parameters which will be filtered from the log file.
     config.filter_parameters += [:password]
@@ -48,25 +52,14 @@ module SpectralWorkbench
     # like if you have constraints or database-specific column types
     # config.active_record.schema_format = :sql
 
-    # Enforce whitelist mode for mass assignment.
-    # This will create an empty whitelist of attributes available for mass-assignment for all models
-    # in your app. As such, your models will need to explicitly whitelist or blacklist accessible
-    # parameters by using an attr_accessible or attr_protected declaration.
-    config.active_record.whitelist_attributes = true
-
     # Enable the asset pipeline
     config.assets.enabled = true
-
-    # Version of your assets, change this if you want to expire all your assets
-    config.assets.version = '1.1'
-    config.assets.paths << Rails.root.join("public","lib")
-    config.assets.precompile += ['capture.js','analyze.js']
+    config.assets.paths << Rails.root.join('public/lib')
 
     # pluralization options, but unneccessary due to:
     # http://dictionary.reference.com/browse/spectrum
-    #ActiveSupport::Inflector.inflections do |inflect|
+    # ActiveSupport::Inflector.inflections do |inflect|
     #  inflect.irregular 'spectrum', 'spectra'
-    #end
-
+    # end
   end
 end

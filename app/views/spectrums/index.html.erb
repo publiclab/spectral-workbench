@@ -23,7 +23,7 @@
 
     <h3>Recent authors</h3>
     <ul class="nav">
-    <% User.find_all_by_login(@spectrums.collect(&:author).uniq).each do |user| %>
+    <% User.where(login: @spectrums.collect(&:author).uniq).each do |user| %>
       <li><a href="<%= profile_path(user.login) %>"><i class="fa fa-user"></i> <%= user.login %></a></li>
     <% end %>
     </ul>
@@ -46,26 +46,26 @@
     <div class="row-fluid">
 
       <div class="span3">
-        <a class="image hidden-phone" href="/tags/sky"><img src="/system/photos/913/thumb/capture.png" class="image" style="background:#ccc;"></a>
-        <a class="image visible-phone" style="float:left;width:50%;margin-right:10px;" href="/tags/sky"><img src="/system/photos/913/thumb/capture.png" class="image" style="background:#ccc;"></a>
+        <a class="image hidden-phone" href="/tags/sky"><img src="/images/sky.png" class="image" style="background:#ccc;"></a>
+        <a class="image visible-phone" style="float:left;width:50%;margin-right:10px;" href="/tags/sky"><img src="/images/sky.png" class="image" style="background:#ccc;"></a>
         <h3><a href="/tags/sky">Sky</a></h3>
       </div>
 
       <div class="span3">
-        <a class="image hidden-phone" href="/tags/led"><img src="/system/photos/11898/thumb/capture.png" class="image" style="background:#ccc;"></a>
-        <a class="image visible-phone" style="float:left;width:50%;margin-right:10px;" href="/tags/led"><img src="/system/photos/11898/thumb/capture.png" class="image" style="background:#ccc;"></a>
+        <a class="image hidden-phone" href="/tags/led"><img src="/images/led.png" class="image" style="background:#ccc;"></a>
+        <a class="image visible-phone" style="float:left;width:50%;margin-right:10px;" href="/tags/led"><img src="/images/led.png" class="image" style="background:#ccc;"></a>
         <h3><a href="/tags/led">LED</a></h3>
       </div>
 
       <div class="span3">
-        <a class="image hidden-phone" href="/tags/sodium"><img src="/system/photos/8559/thumb/capture.png" class="image" style="background:#ccc;"></a>
-        <a class="image visible-phone" style="float:left;width:50%;margin-right:10px;" href="/tags/sodium"><img src="/system/photos/8559/thumb/capture.png" class="image" style="background:#ccc;"></a>
+        <a class="image hidden-phone" href="/tags/sodium"><img src="/images/sodium.png" class="image" style="background:#ccc;"></a>
+        <a class="image visible-phone" style="float:left;width:50%;margin-right:10px;" href="/tags/sodium"><img src="/images/sodium.png" class="image" style="background:#ccc;"></a>
         <h3><a href="/tags/sodium">Sodium</a></h3>
       </div>
 
       <div class="span3">
-        <a class="image hidden-phone" href="/tags/laser"><img src="/system/photos/8198/thumb/capture.png" class="image" style="background:#ccc;"></a>
-        <a class="image visible-phone" style="float:left;width:50%;margin-right:10px;" href="/tags/laser"><img src="/system/photos/8198/thumb/capture.png" class="image" style="background:#ccc;"></a>
+        <a class="image hidden-phone" href="/tags/laser"><img src="/images/laser.png" class="image" style="background:#ccc;"></a>
+        <a class="image visible-phone" style="float:left;width:50%;margin-right:10px;" href="/tags/laser"><img src="/images/laser.png" class="image" style="background:#ccc;"></a>
         <h3><a href="/tags/laser">Laser</a></h3>
       </div>
 
