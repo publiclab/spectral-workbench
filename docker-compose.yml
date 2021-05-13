@@ -2,7 +2,6 @@ version: '3.5'
 services:
 
   db:
-    container_name: spectral-db
     image: mysql:5.7
     env_file:
       - spectral.env
@@ -10,7 +9,6 @@ services:
       - mysql_data:/var/lib/mysql
 
   web:
-    container_name: spectral-web
     build: .
     volumes:
       - .:/app
