@@ -23,8 +23,10 @@ class SpectrumsController < ApplicationController
                            .where('user_id != 0')
                            .paginate(page: params[:page], per_page: 24)
 
-      @sets = SpectraSet.all
-      @comments = Comment.all
+      @sets = SpectraSet.limit(4)
+        .order('created_at DESC')
+      @comments = Comment.limit(12)
+        .order('id DESC')
 
       respond_with(@spectrums) do |format|
         format.html do
