@@ -1,0 +1,108 @@
+name: tests
+on: [pull_request]
+jobs:
+
+  models-tests:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 2.6.6 # Not needed with a .ruby-version file
+        bundler-cache: true # runs 'bundle install' and caches installed gems automatically (not working?)
+    - uses: ./.github/actions/setup-test-environment
+    - name: "Models (unit) Tests"
+      env:
+        RAILS_ENV: test
+        DB_PASSWORD: root
+        DB_PORT: ${{ job.services.mysql.ports[3306] }}
+      run: bundle exec rails test:models
+
+  helpers-tests:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 2.6.6 # Not needed with a .ruby-version file
+        bundler-cache: true # runs 'bundle install' and caches installed gems automatically (not working?)
+    - uses: ./.github/actions/setup-test-environment
+    - name: Install JavaScript dependencies with Yarn
+      run: yarn check || yarn install --frozen-lockfile;
+    - name: "Helpers Tests"
+      env:
+        RAILS_ENV: test
+        DB_PASSWORD: root
+        DB_PORT: ${{ job.services.mysql.ports[3306] }}
+      run: bundle exec ruby -I test test/models/helpers/*.rb
+
+  controllers-tests:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 2.6.6 # Not needed with a .ruby-version file
+        bundler-cache: true # runs 'bundle install' and caches installed gems automatically (not working?)
+    - uses: ./.github/actions/setup-test-environment
+    - name: Install JavaScript dependencies with Yarn
+      run: yarn check || yarn install --frozen-lockfile;
+    - name: "Controllers (functional) Tests"
+      env:
+        RAILS_ENV: test
+        DB_PASSWORD: root
+        DB_PORT: ${{ job.services.mysql.ports[3306] }}
+      run: bundle exec rails test:controllers
+
+  integration-tests:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 2.6.6 # Not needed with a .ruby-version file
+        bundler-cache: true # runs 'bundle install' and caches installed gems automatically (not working?)
+    - uses: ./.github/actions/setup-test-environment
+    - name: Install JavaScript dependencies with Yarn
+      run: yarn check || yarn install --frozen-lockfile;
+    - name: "Integration Tests"
+      env:
+        RAILS_ENV: test
+        DB_PASSWORD: root
+        DB_PORT: ${{ job.services.mysql.ports[3306] }}
+      run: bundle exec rails test:integration
+
+  system-tests:
+    runs-on: ubuntu-latest
+    services:
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 2.6.6 # Not needed with a .ruby-version file
+        bundler-cache: true # runs 'bundle install' and caches installed gems automatically (not working?)
+    - uses: nanasess/setup-chromedriver@v1.0.1
+    - uses: ./.github/actions/setup-test-environment
+    - name: Install JavaScript dependencies with Yarn
+      run: yarn check || yarn install --frozen-lockfile;
+    - name: "System Tests"
+      env:
+        RAILS_ENV: test
+        DB_PASSWORD: root
+        DB_PORT: ${{ job.services.mysql.ports[3306] }}
+        REDIS_HOST: localhost
+        REDIS_PORT: 6379
+      run: |
+        export DISPLAY=:99
+        chromedriver --url-base=/wd/hub &
+        bundle exec rails test:system
+
+  docker-builds:
+    - name: "Docker Builds"
+      run: docker build -t swbench .
+
+  asset-precompilation:
+    - name: "Asset Precompilation"
+      env:
+        RAILS_ENV: production
+      run: bundle exec rake assets:precompile
