@@ -20,7 +20,7 @@ runs:
       DB_PASSWORD: root
       # tell Rails to use proper port for MySQL
       DB_PORT: ${{ job.services.mysql.ports[3306] }}
-      DISABLE_BOOTSNAP_COMPILE_CACHE: true # bootsnap cache failing when multiple parallel builds try to access it at the same time
+      DISABLE_BOOTSNAP: true # bootsnap cache failing when multiple parallel builds try to access it at the same time
     run: |
       cp config/database.yml.example config/database.yml
       cp db/schema.rb.example db/schema.rb
