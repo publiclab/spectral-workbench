@@ -96,15 +96,20 @@ jobs:
         chromedriver --url-base=/wd/hub &
         bundle exec rails test:system
 
-  docker-builds:
-    runs-on: ubuntu-latest
-    steps:
-    - name: "Docker Builds"
-      run: docker build -t swbench .
+#   docker-builds:
+#     runs-on: ubuntu-latest
+#     steps:
+#     - name: "Docker Builds"
+#       run: docker build -t swbench .
 
   asset-precompilation:
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v2
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 2.6.6 # Not needed with a .ruby-version file
+        bundler-cache: true # runs 'bundle install' and caches installed gems automatically (not working?)
     - name: "Asset Precompilation"
       env:
         RAILS_ENV: production
