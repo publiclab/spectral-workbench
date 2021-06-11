@@ -74,7 +74,6 @@ jobs:
 
   system-tests:
     runs-on: ubuntu-latest
-    services:
     steps:
     - uses: actions/checkout@v2
     - uses: ruby/setup-ruby@v1
