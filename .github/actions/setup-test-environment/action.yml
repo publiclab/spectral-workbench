@@ -24,6 +24,7 @@ runs:
     run: |
       cp config/database.yml.example config/database.yml
       cp db/schema.rb.example db/schema.rb
+      cp config/config.yml.example config/config.yml
       sudo systemctl start mysql
       mysql -uroot -proot -e "CREATE DATABASE swbench;"
       bundle exec rake db:schema:load db:migrate --trace
