@@ -98,10 +98,14 @@ jobs:
         bundle exec rails test:system
 
   docker-builds:
+    runs-on: ubuntu-latest
+    steps:
     - name: "Docker Builds"
       run: docker build -t swbench .
 
   asset-precompilation:
+    runs-on: ubuntu-latest
+    steps:
     - name: "Asset Precompilation"
       env:
         RAILS_ENV: production
