@@ -14,6 +14,7 @@ runs:
   steps:
 
   - name: Install JavaScript dependencies with Yarn
+    shell: bash
     run: yarn check || yarn install --frozen-lockfile;
   - name: Setup database
     shell: bash
