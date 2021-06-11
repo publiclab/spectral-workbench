@@ -16,6 +16,7 @@ jobs:
         RAILS_ENV: test
         DB_PASSWORD: root
         DB_PORT: ${{ job.services.mysql.ports[3306] }}
+        DISABLE_BOOTSNAP: true # bootsnap cache failing when multiple parallel builds try to access it at the same time
       run: bundle exec rails test:models
 
   helpers-tests:
@@ -34,6 +35,7 @@ jobs:
         RAILS_ENV: test
         DB_PASSWORD: root
         DB_PORT: ${{ job.services.mysql.ports[3306] }}
+        DISABLE_BOOTSNAP: true # bootsnap cache failing when multiple parallel builds try to access it at the same time
       run: bundle exec ruby -I test test/models/helpers/*.rb
 
   controllers-tests:
@@ -52,6 +54,7 @@ jobs:
         RAILS_ENV: test
         DB_PASSWORD: root
         DB_PORT: ${{ job.services.mysql.ports[3306] }}
+        DISABLE_BOOTSNAP: true # bootsnap cache failing when multiple parallel builds try to access it at the same time
       run: bundle exec rails test:controllers
 
   integration-tests:
@@ -70,6 +73,7 @@ jobs:
         RAILS_ENV: test
         DB_PASSWORD: root
         DB_PORT: ${{ job.services.mysql.ports[3306] }}
+        DISABLE_BOOTSNAP: true # bootsnap cache failing when multiple parallel builds try to access it at the same time
       run: bundle exec rails test:integration
 
   system-tests:
@@ -89,8 +93,7 @@ jobs:
         RAILS_ENV: test
         DB_PASSWORD: root
         DB_PORT: ${{ job.services.mysql.ports[3306] }}
-        REDIS_HOST: localhost
-        REDIS_PORT: 6379
+        DISABLE_BOOTSNAP: true # bootsnap cache failing when multiple parallel builds try to access it at the same time
       run: |
         export DISPLAY=:99
         chromedriver --url-base=/wd/hub &
