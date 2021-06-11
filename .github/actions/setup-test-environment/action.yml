@@ -1,5 +1,5 @@
 name: 'Set up test environment'
-description: 'Set up test environment for spectral-workbench, except yarn'
+description: 'Set up test environment for spectral-workbench'
 
 services:
   mysql:
