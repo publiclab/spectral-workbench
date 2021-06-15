@@ -22,7 +22,7 @@ runs:
     env:
       RAILS_ENV: test
       DB_USER: root
-      DB_PASSWORD: root
+      DB_PASS: root
       # tell Rails to use proper port for MySQL
       DB_PORT: ${{ job.services.mysql.ports[3306] }}
       DISABLE_BOOTSNAP: true # bootsnap cache failing when multiple parallel builds try to access it at the same time
