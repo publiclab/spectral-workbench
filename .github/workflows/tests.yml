@@ -1,0 +1,124 @@
+name: tests
+on: [pull_request]
+jobs:
+
+  models-tests:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 2.6.6 # Not needed with a .ruby-version file
+        bundler-cache: true # runs 'bundle install' and caches installed gems automatically (not working?)
+    - uses: ./.github/actions/setup-test-environment
+    - name: Install JavaScript dependencies with Yarn
+      run: yarn check || yarn install --frozen-lockfile;
+    - name: "Models (unit) Tests"
+      env:
+        RAILS_ENV: test
+        DB_PASSWORD: root
+        DB_PORT: ${{ job.services.mysql.ports[3306] }}
+        DISABLE_BOOTSNAP: true # bootsnap cache failing when multiple parallel builds try to access it at the same time
+      run: bundle exec rails test:models
+
+  helpers-tests:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 2.6.6 # Not needed with a .ruby-version file
+        bundler-cache: true # runs 'bundle install' and caches installed gems automatically (not working?)
+    - uses: ./.github/actions/setup-test-environment
+    - name: Install JavaScript dependencies with Yarn
+      run: yarn check || yarn install --frozen-lockfile;
+    - name: "Helpers Tests"
+      env:
+        RAILS_ENV: test
+        DB_PASSWORD: root
+        DB_PORT: ${{ job.services.mysql.ports[3306] }}
+        DISABLE_BOOTSNAP: true # bootsnap cache failing when multiple parallel builds try to access it at the same time
+      run: bundle exec ruby -I test test/models/helpers/*.rb
+
+  controllers-tests:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 2.6.6 # Not needed with a .ruby-version file
+        bundler-cache: true # runs 'bundle install' and caches installed gems automatically (not working?)
+    - uses: ./.github/actions/setup-test-environment
+    - name: Install JavaScript dependencies with Yarn
+      run: yarn check || yarn install --frozen-lockfile;
+    - name: "Controllers (functional) Tests"
+      env:
+        RAILS_ENV: test
+        DB_PASSWORD: root
+        DB_PORT: ${{ job.services.mysql.ports[3306] }}
+        DISABLE_BOOTSNAP: true # bootsnap cache failing when multiple parallel builds try to access it at the same time
+      run: bundle exec rails test:controllers
+
+  integration-tests:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 2.6.6 # Not needed with a .ruby-version file
+        bundler-cache: true # runs 'bundle install' and caches installed gems automatically (not working?)
+    - uses: ./.github/actions/setup-test-environment
+    - name: Install JavaScript dependencies with Yarn
+      run: yarn check || yarn install --frozen-lockfile;
+    - name: "Integration Tests"
+      env:
+        RAILS_ENV: test
+        DB_PASSWORD: root
+        DB_PORT: ${{ job.services.mysql.ports[3306] }}
+        DISABLE_BOOTSNAP: true # bootsnap cache failing when multiple parallel builds try to access it at the same time
+      run: bundle exec rails test:integration
+
+  system-tests:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 2.6.6 # Not needed with a .ruby-version file
+        bundler-cache: true # runs 'bundle install' and caches installed gems automatically (not working?)
+    - uses: nanasess/setup-chromedriver@v1.0.1
+    - uses: ./.github/actions/setup-test-environment
+    - name: Install JavaScript dependencies with Yarn
+      run: yarn check || yarn install --frozen-lockfile;
+    - name: "System Tests"
+      env:
+        RAILS_ENV: test
+        DB_PASSWORD: root
+        DB_PORT: ${{ job.services.mysql.ports[3306] }}
+        DISABLE_BOOTSNAP: true # bootsnap cache failing when multiple parallel builds try to access it at the same time
+      run: |
+        export DISPLAY=:99
+        chromedriver --url-base=/wd/hub &
+        sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 & # optional
+        bundle exec rails test:system
+
+#   docker-builds:
+#     runs-on: ubuntu-latest
+#     steps:
+#     - name: "Docker Builds"
+#       run: docker build -t swbench .
+
+  asset-precompilation:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 2.6.6 # Not needed with a .ruby-version file
+        bundler-cache: true # runs 'bundle install' and caches installed gems automatically (not working?)
+    - uses: ./.github/actions/setup-test-environment
+    - name: "Asset Precompilation"
+      env:
+        RAILS_ENV: production
+      run: |
+        bundle exec rake assets:precompile

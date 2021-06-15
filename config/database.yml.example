@@ -23,3 +23,5 @@ test:
   <<: *default
   host: 127.0.0.1
   database: swbench_test
+  username: <%= ENV['DB_USER'] || 'root' %>
+  password: <%= ENV['DB_PASS'] || 'root' %>
