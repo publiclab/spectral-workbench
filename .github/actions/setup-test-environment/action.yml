@@ -16,6 +16,7 @@ runs:
   - name: Install JavaScript dependencies with Yarn
     shell: bash
     run: yarn check || yarn install --frozen-lockfile;
+
   - name: Setup database
     shell: bash
     env:
@@ -29,6 +30,6 @@ runs:
       cp db/schema.rb.example db/schema.rb
       cp config/config.yml.example config/config.yml
       sudo systemctl start mysql
-      bundle exec rake db:create;
+      mysql -uroot -proot -e "CREATE DATABASE swbench_test;"
       bundle exec rake db:schema:load;
       bundle exec rake db:migrate; # --trace
