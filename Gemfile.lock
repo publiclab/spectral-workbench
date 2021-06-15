@@ -212,7 +212,7 @@ GEM
       climate_control (>= 0.0.3, < 1.0)
     thor (1.0.1)
     thread_safe (0.3.6)
-    tzinfo (1.2.7)
+    tzinfo (1.2.9)
       thread_safe (~> 0.1)
     uglifier (4.2.0)
       execjs (>= 0.3.0, < 3)
@@ -257,7 +257,7 @@ DEPENDENCIES
   simplecov
   skylight
   terrapin (~> 0.6.0)
-  tzinfo (~> 1.1)
+  tzinfo (~> 1.2)
   uglifier (>= 1.0.3)
   will_paginate (~> 3.3.0)
   will_paginate-bootstrap (~> 1.0.2)
