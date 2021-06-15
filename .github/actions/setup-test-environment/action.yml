@@ -32,5 +32,6 @@ runs:
       cp config/config.yml.example config/config.yml
       sudo systemctl start mysql
       mysql -uroot -proot -e "CREATE DATABASE swbench_test;"
+      mysql -uroot -proot -e "SET @@global.sql_mode=(SELECT REPLACE(@@global.sql_mode, 'ONLY_FULL_GROUP_BY', ''));"
       bundle exec rake db:schema:load;
       bundle exec rake db:migrate; # --trace
