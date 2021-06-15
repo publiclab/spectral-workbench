@@ -98,9 +98,10 @@ class User < ActiveRecord::Base
   # find spectra by user, tagged with <name>
   def tag(name, count)
     tags = Tag.where(user_id: id, name: name)
-      .include(:spectrum)
+      .includes(:spectrum)
+      .references(:spectrums)
       .limit(count)
-      .order('id DESC')
+      .order('spectrums.id DESC')
     spectrum_ids = tags.collect(&:spectrum_id)
     spectra = Spectrum.find spectrum_ids
     spectra.reverse ||= []
