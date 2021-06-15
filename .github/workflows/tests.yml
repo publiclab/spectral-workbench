@@ -99,6 +99,7 @@ jobs:
       run: |
         export DISPLAY=:99
         chromedriver --url-base=/wd/hub &
+        sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 & # optional
         bundle exec rails test:system
 
 #   docker-builds:
@@ -112,10 +113,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - uses: ruby/setup-ruby@v1
-    - uses: ./.github/actions/setup-test-environment
       with:
         ruby-version: 2.6.6 # Not needed with a .ruby-version file
         bundler-cache: true # runs 'bundle install' and caches installed gems automatically (not working?)
+    - uses: ./.github/actions/setup-test-environment
     - name: "Asset Precompilation"
       env:
         RAILS_ENV: production
