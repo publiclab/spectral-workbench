@@ -112,10 +112,12 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - uses: ruby/setup-ruby@v1
+    - uses: ./.github/actions/setup-test-environment
       with:
         ruby-version: 2.6.6 # Not needed with a .ruby-version file
         bundler-cache: true # runs 'bundle install' and caches installed gems automatically (not working?)
     - name: "Asset Precompilation"
       env:
         RAILS_ENV: production
-      run: bundle exec rake assets:precompile
+      run: |
+        bundle exec rake assets:precompile
