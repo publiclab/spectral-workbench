@@ -129,6 +129,7 @@ SpectralWorkbench::Application.routes.draw do
   get 'spectrums/search' => 'spectrums#search'
   get 'spectrums/embed' => 'spectrums#embed'
   get 'spectrums/latest' => 'spectrums#latest'
+  get 'spectrums/latest/:id' => 'spectrums#latest'
   get 'spectrums/anonymous' => 'spectrums#anonymous'
   get 'spectrums/plots_rss' => 'spectrums#plots_rss'
   get 'spectrums/clone_search' => 'spectrums#clone_search'
