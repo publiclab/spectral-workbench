@@ -31,6 +31,5 @@ runs:
       cp config/config.yml.example config/config.yml
       sudo systemctl start mysql
       mysql -uroot -proot -e "CREATE DATABASE swbench_test;"
-      mysql -uroot -proot -e "GRANT ALL PRIVILEGES ON *.* TO 'swbench_test'@'%';";
       bundle exec rake db:schema:load;
       bundle exec rake db:migrate; # --trace
