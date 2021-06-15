@@ -1,0 +1,42 @@
+version: 2
+updates:
+- package-ecosystem: bundler
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: rubocop
+    versions:
+    - 1.10.0
+    - 1.11.0
+    - 1.12.0
+    - 1.12.1
+    - 1.9.0
+    - 1.9.1
+  - dependency-name: bootsnap
+    versions:
+    - 1.6.0
+    - 1.7.0
+    - 1.7.1
+    - 1.7.2
+    - 1.7.3
+  - dependency-name: nokogiri
+    versions:
+    - 1.11.1
+    - 1.11.2
+  - dependency-name: protected_attributes_continued
+    versions:
+    - 1.7.0
+    - 1.8.0
+  - dependency-name: rails
+    versions:
+    - 6.0.3.4
+    - 6.0.3.5
+  - dependency-name: puma
+    versions:
+    - 5.2.0
+    - 5.2.1
+  - dependency-name: recaptcha
+    versions:
+    - 5.6.0
