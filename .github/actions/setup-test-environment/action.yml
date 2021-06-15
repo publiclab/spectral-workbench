@@ -21,6 +21,7 @@ runs:
     shell: bash
     env:
       RAILS_ENV: test
+      DB_USER: root
       DB_PASSWORD: root
       # tell Rails to use proper port for MySQL
       DB_PORT: ${{ job.services.mysql.ports[3306] }}
