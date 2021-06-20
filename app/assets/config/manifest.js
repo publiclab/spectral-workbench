@@ -2,6 +2,14 @@
 //= link application.css
 //= link application.js
 //= link capture.css
+//= link new-capture.css
 //= link capture.js
 //= link analyze.js
 //= link upload.js
+//= link jquery.flot.js
+//= link jquery.flot.crosshair.js
+//= link jquery.flot.threshold.js
+//= link d3.js
+//= link nv.d3.js
+//= link nv.d3.min.css
+//= link api.js

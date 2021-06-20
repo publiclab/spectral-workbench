@@ -1,3 +1,12 @@
+<%= javascript_include_tag "jquery.flot" %>
+<%= javascript_include_tag "jquery.flot.crosshair" %>
+<%= javascript_include_tag "jquery.flot.threshold" %>
+<%= javascript_include_tag "d3" %>
+<%= javascript_include_tag "nv.d3" %>
+
+
+<script src="https://cdn.temasys.io/adapterjs/0.15.x/adapter.min.js"></script>
+
 <% unless logged_in? %>
 <div class="modal fade hide" id="login-prompt-modal">
   <div class="modal-header">
@@ -7,10 +16,10 @@
   <div class="modal-body">
     <p>You can use this with some limitations without logging in, but once you set up an account, you'll be able to:</p>
     <ul>
-      <li>save and share data</li>
-      <li>calibrate and process your data</li>
-      <li>use this interface offline -- <a href="http://publiclab.org/wiki/spectral-workbench-usage#Offline">without an internet connection</a></li>
-      <li>contribute to a growing open source database</li>
+      <li>Save and share data</li>
+      <li>Calibrate and process your data</li>
+      <li>Use this interface offline - <a href="http://publiclab.org/wiki/spectral-workbench-usage#Offline">without an internet connection</a></li>
+      <li>Contribute to a growing open source database</li>
     </ul>
   </div>
   <div class="modal-footer">
@@ -68,6 +77,7 @@
 
   <script>
     jQuery(document).ready(function() {
+
       $W.setSampleRowClickListener()
 
       <% if ios? || (mobile? && !opera?) %>
@@ -75,7 +85,12 @@
       <% end %>
 
     })
+
+  // <%= javascript_include_tag "application" %>
+  
   </script>
+
+
 
   <p style="padding-top:5px;">
     <a rel="tooltip" title="" class="btn btn-inverse" onclick="$W.auto_detect_sample_row()" data-original-title="Auto select sample row"><i class="fa fa-white fa-arrows-v"></i> Auto-select Sample Row</a>

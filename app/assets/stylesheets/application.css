@@ -8,12 +8,14 @@
  * You're free to add application-wide styles to this file and they'll appear at the top of the
  * compiled file, but it's generally better to create a new file per style scope.
  *
- *= require bootstrap-css/css/bootstrap.min.css
- *= require bootstrap-css/css/bootstrap-responsive.min.css
- *= require nvd3/build/nv.d3.css
+ *= require bootstrap.min.css
+ *= require bootstrap-responsive.min.css
+ *= require nv.d3.min.css
  *= require style
  *= require graph
  *= require comment
+ *= require spectral-workbench
+ *= require font-awesome
  *
  *= require_self
  *  require_tree .

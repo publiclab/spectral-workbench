@@ -12,15 +12,12 @@
 //
 //= require jquery
 //= require jquery_ujs
-//= require bootstrap-css/js/bootstrap.min.js
-//= require getusermedia.js/dist/getUserMedia.min.js
+//= require jquery-steps.js
+//= require bootstrap.min.js
 //= require basics.js
 //= require api.js
 //= require comment.js
-//= require flot/jquery.flot.js
-//= require flot/jquery.flot.crosshair.js
-//= require flot/jquery.flot.threshold.js
-//= require d3/d3.js
-//= require nvd3/build/nv.d3.js
-//= require moment/moment.js
-//= require spectral-workbench/dist/spectral-workbench.js
+//= require moment.js
+//= require d3.js
+//= require nv.d3.js
+//= require spectral-workbench.js
