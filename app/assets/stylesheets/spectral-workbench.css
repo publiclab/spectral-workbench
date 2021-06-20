@@ -1,0 +1,349 @@
+.swb-graphing {
+  padding: 0 10px 10px;
+}
+
+.swb-graphing h2 {
+  text-align: center;
+}
+
+.swb-graphing h2 a {
+  color: #444;
+}
+
+.swb-graphing #graph {
+  text-align: center;
+}
+
+.swb-graphing #graph .fa-spinner {
+  font-size: 20px;
+  color: #aaa;
+  margin-top: 30px;
+}
+
+/* zoom brushing */
+.swb-graphing #graph .nv-context {
+  display: none !important;
+}
+
+.swb-graphing .zoom {
+  position: absolute; 
+  right: 0;
+}
+
+.swb-graphing .btn-zoom {
+  display: block;
+  margin: 14px 50px;
+}
+
+@media (max-width: 768px) {
+
+  .swb-graphing .btn-zoom {
+    margin: 14px 66px;
+  }
+
+}
+
+.swb-graphing .nvtooltip {
+  padding: 4px;
+}
+
+.swb-graphing .nvtooltip h3 {
+  font-size: 12px;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-weight: bold;
+}
+
+div.swb-spectrum-img-container {
+}
+
+div.swb-spectrum-img-container .alert-zooming {
+  position: absolute;
+  left: 0;
+  height: 100px;
+  background: rgba(255,255,255,0.4);
+  width: 100%;
+  padding: 0;
+  text-align: center;
+}
+
+div.swb-spectrum-img-container .alert-zooming div {
+  position: relative;
+  margin:20px 20%;
+}
+
+div.swb-spectrum-img-container .alert-zooming div a {
+  font-weight: bold;
+}
+
+.swb-graphing a.btn-link {
+  text-decoration: none;
+}
+
+.swb-graphing tr.spectrum-tools {
+  border-top: none;
+}
+
+@media (max-width: 400px) {
+
+  .swb-graphing .credit {
+    float: none;
+  }
+
+  .swb-graphing.embed .credit .spectral-workbench {
+  }
+
+  .swb-graphing .tools {
+    width: 50%;
+  }
+
+}
+
+/*@media (max-height: 300px) and (max-width:500px) {*/
+@media (max-width:500px) {
+
+  .swb-graphing .credit {
+    float: right;
+  }
+
+  .swb-graphing .credit .spectral-workbench .super-tiny {
+    display: inline;
+  }
+
+  .swb-graphing .credit .spectral-workbench .normal {
+    display: none;
+  }
+
+  .swb-graphing .credit .spectral-workbench {
+    display: inline;
+  }
+
+}
+
+.swb-graphing .below {
+  margin-top:20px;
+}
+
+.swb-graphing .tools {
+  padding: 20px 0 0;
+  font-size: 14px;
+}
+
+.swb-graphing .tools a {
+  padding: 0 5px;
+}
+
+.swb-graphing .tools a {
+  text-decoration: none;
+}
+
+.swb-graphing .tools a:hover .icon {
+  color: #88f;
+}
+
+.swb-graphing .tools div.dropup {
+  display: inline;
+}
+
+.swb-graphing table th {
+  border-top: 0;
+}
+
+.swb-graphing table div.key {
+  width: 10px;
+  height: 10px;
+  margin-top: 5px;
+  background: #ddd;
+  -webkit-border-radius: 10px;
+  -moz-border-radius:    10px;
+  border-radius:         10px;
+}
+
+.swb-graphing table tr.highlight {
+  background: #fff8dd;
+}
+
+.swb-graphing table a.btn-link {
+  font-size: 12px;
+  padding: 0 4px;
+}
+
+.swb-graphing table a.btn-link:hover .icon {
+  color: #888;
+}
+
+.swb-graphing table .btn-link.disabled {
+  background: white;
+}
+
+.swb-graphing svg .highlight {
+  stroke: red !important;
+}
+
+.swb-graphing svg .dimmed {
+  stroke-opacity: 0.3 !important;
+}
+
+.swb-graphing .toolbar {
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.swb-graphing .credit, .swb-graphing .tools {
+  display: inline;
+}
+
+.swb-graphing .credit .site {
+  display:none;
+}
+
+/* Embed styles */
+
+.swb-graphing.embed .toolbar {
+  text-align: left;
+}
+
+.swb-graphing.embed .credit {
+  float: right;
+  padding: 20px 10px 0 0;
+}
+
+.swb-graphing.embed .credit .spectral-workbench a {
+  color: #444;
+  font-size: 15px;
+  font-family: Junction Light;
+}
+.swb-graphing.embed .credit .spectral-workbench a:hover {
+  color: #888;
+}
+
+.swb-graphing.embed .credit img {
+  height: 16px;
+  display: inline-block;
+  padding-bottom: 4px;
+}
+
+.swb-graphing.embed .credit .super-tiny {
+  display: none;
+}
+
+.swb-graphing.embed .tools {
+  display:block;
+}
+
+.swb-graphing.embed {
+  font-size: 12px;
+  border: 1px solid #ddd;
+  -webkit-border-radius: 10px;
+  -moz-border-radius:    10px;
+  border-radius:         10px;
+  padding: 30px 10px 10px;
+}
+
+.swb-graphing.embed .credit .site {
+  display: inline;
+}
+
+.swb-graphing.embed .table-scroll-container {
+  height: 200px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  display: block;
+}
+
+/* Hide the embed-only compact title for all 
+   displays, not just the embed */
+.swb-graphing h3.compact {
+  display: none;
+}
+
+.swb-graphing.embed.compact img {
+  display: none;
+}
+
+.swb-graphing.embed.compact h2 {
+  display: none;
+}
+
+.swb-graphing.embed.compact h3.compact {
+  display: block;
+  float: left;
+  margin-top: 12px;
+  padding-right: 12px;
+}
+
+.swb-graphing.embed.compact .table-scroll-container {
+  display: none;
+}
+
+.swb-graphing.embed .settings {
+  margin-left: 4px;
+}
+
+.swb-graphing.embed .settings .icon {
+  color: #aaa;
+}
+
+.datum-set h5#notifications {
+  width: 100%;
+  text-align: center;
+  margin-top:20px;
+}
+
+.swb-embed-modal {
+  position: fixed;
+  top: 50px;
+  right: 50px;
+  left: 50px;
+  width: auto;
+  margin: 0;
+}
+
+.swb-tags span.label {
+  margin-right:4px;
+}
+
+.swb-datum-tool-pane {
+  background: #eee;
+  text-align: center;
+  padding: 14px;
+  -webkit-border-radius: 10px;
+  -moz-border-radius:    10px;
+  border-radius:         10px;
+}
+
+.swb-datum-tool-pane .search {
+  text-align: left;
+}
+
+.swb-datum-tool-pane hr {
+  border-top-color: #ddd;
+}
+
+.swb-datum-tool-pane .description {
+  font-style: italic;
+}
+
+.swb-datum-tool-pane .actions * {
+  margin-right: 6px;
+}
+
+.swb-datum-tool-pane .spectra .spectrum {
+  background: #f8f8f8;
+}
+
+.swb-datum-tool-pane .spectra .spectrum td a.btn-like {
+  text-decoration: none;
+}
+
+.swb-datum-tool-pane .spectra .spectrum.selected {
+  background: #fff8dd;
+}
+
+.swb-flipped {
+  transform: scale(-1, 1);
+  -moz-transform: scale(-1, 1);
+  -webkit-transform: scale(-1, 1);
+  -o-transform: scale(-1, 1);
+  -khtml-transform: scale(-1, 1);
+  -ms-transform: scale(-1, 1);
+}
