@@ -34,6 +34,7 @@ end
 
 gem 'bootsnap', '~> 1.7.5'
 gem 'jquery-rails'
+gem 'font-awesome-rails'
 gem 'listen', '~> 3.2.1'
 gem 'mime-types' # , '1.18'
 gem 'passenger'
