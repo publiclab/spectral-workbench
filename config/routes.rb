@@ -21,6 +21,7 @@ SpectralWorkbench::Application.routes.draw do
   get '/device/claim' => 'device#claim'
 
   get '/capture' => 'capture#index'
+  get '/capture/v2' => 'capture#index2'
   get '/capture/recent_calibrations' => 'capture#recent_calibrations'
 
   # Registered user pages:
@@ -203,11 +204,10 @@ SpectralWorkbench::Application.routes.draw do
     cache '/images/example-cfl.jpg'
     cache '/images/calibration-example.png'
     cache '/images/logo.png'
-    cache '/lib/junction/webfonts/junction-regular.eot'
-    cache '/lib/junction/webfonts/junction-regular.woff'
-    cache '/lib/junction/webfonts/junction-regular.ttf'
-    cache '/lib/junction/webfonts/junction-regular.svg'
-    cache '/lib/fontawesome/css/font-awesome.min.css'
+    cache 'fonts/webfonts/junction-regular.eot'
+    cache 'fonts/webfonts/junction-regular.woff'
+    cache 'fonts/webfonts/junction-regular.ttf'
+    cache 'fonts/webfonts/junction-regular.svg'
 
     network '/'
     fallback '/' => '/offline'

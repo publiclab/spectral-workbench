@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html manifest="/not-existing.appcache">
+<head>
+  <meta charset="utf-8">
+  <title>SpectralWorkbench</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="An open source spectral library and DIY spectrometry community developing environmental testing techniques.">
+  <meta name="author" content="Public Lab contributors">
+
+  <link rel="apple-touch-icon" href="//spectralworkbench.org/images/spectral-workbench-256.png">
+  <link rel="apple-touch-fa-precomposed" href="//spectralworkbench.org/images/spectral-workbench-256.png">
+  <link rel="apple-touch-fa-precomposed apple-touch-icon" href="//spectralworkbench.org/images/spectral-workbench-256.png">
+  <link rel="shortcut icon" href="//spectralworkbench.org/images/spectral-workbench-256.png" />
+
+  <link rel="stylesheet" href="../../node_modules/font-awesome/css/font-awesome.min.css"/>
+  <link rel="stylesheet" href="../../node_modules/bootstrap/dist/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bs-stepper/dist/css/bs-stepper.min.css">
+
+  <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+  <script src="https://cdn.temasys.io/adapterjs/0.15.x/adapter.min.js"></script>
+  <script src="../../node_modules/jquery/dist/jquery.min.js"></script>
+  <script src="../../node_modules/flot/jquery.flot.js"></script>
+  <script src="../../node_modules/flot/jquery.flot.crosshair.js"></script>
+  <script src="../../node_modules/flot/jquery.flot.threshold.js"></script>
+  <script src="../../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+  <script src="../../node_modules/jquery.steps/build/jquery.steps.min.js"></script>
+  <script src="../capture/graph.js" type="text/javascript"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bs-stepper/dist/js/bs-stepper.min.js"></script>
+
+
+  <script src="../capture/capture.js" type="text/javascript"></script>
+  <script src="../../dist/capture.dist.js" type="text/javascript"></script>
+  <script src="../capture/api.js" type="text/javascript"></script>
+
+
+  <script src="../../node_modules/d3/d3.js" type="text/javascript"></script>                                                                              
+  <script src="../../node_modules/nvd3/build/nv.d3.js" type="text/javascript"></script>                                                                              
+  <script src="../../node_modules/moment/moment.js"></script>
+  <script src="../../dist/spectral-workbench.js" type="text/javascript"></script>
+  <link href="../../node_modules/nvd3/build/nv.d3.css" rel="stylesheet">
+  <link href="../../dist/spectral-workbench.css" rel="stylesheet">
+  
+
+  <link href="new-capture.css" media="all" rel="stylesheet" type="text/css" />
+
+  <!--
+      <link href="/assets/application-5135736be98a3c4fdf136cbc62545fd2.css" media="all" rel="stylesheet" type="text/css" />
+      <meta content="Szbc3vBNsTKwYnmFkjg3L2kCBSe8EYSg9Zu7keJJzPs=" name="csrf-token" />
+      <script src="/assets/application-0add8749179623a04221903b025c601c.js" type="text/javascript"></script>
+  -->
+
+  <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+  <!--[if lt IE 9]>
+  <script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+</head>
+
+<body class="full-strecth-block">
+
+  <div class="full-strecth-block bs-stepper">
+
+  <!-- <header id="stepper">
+    <span>Pre Capture Setup</span>
+    <span class="dotted-line"></span>
+    <span>Capturing Phase</span>
+    <span class="dotted-line"></span>
+    <span>Plot and Calibration</span>
+  </header> -->
+
+    <div class="bs-stepper-header" role="tablist">
+      <!-- your steps here -->
+      <div class="step" data-target="#landing-page">
+        <button type="button" class="step-trigger" role="tab" aria-controls="landing-page" id="landing-page-trigger">
+          <span class="bs-stepper-label">Home Page</span>
+        </button>
+      </div>
+      <div class="line"></div>
+      <div class="step" data-target="#settings">
+        <button type="button" class="step-trigger" role="tab" aria-controls="setting" id="setting-trigger">
+          <span class="bs-stepper-label">Settings</span>
+        </button>
+      </div>
+      <div class="line"></div>
+      <div class="step" data-target="#capture">
+        <button type="button" class="step-trigger" role="tab" aria-controls="capture" id="capture-trigger">
+          <span class="bs-stepper-label">Capture</span>
+        </button>
+      </div>
+      <div class="line"></div>
+      <div class="step" data-target="#plotting">
+        <button type="button" class="step-trigger" role="tab" aria-controls="plotting" id="plot-trigger">
+          <span class="bs-stepper-label">Plotting</span>
+        </button>
+      </div>
+    </div>
+
+
+    <div class="capture full-strecth-block bs-stepper-content" id="main-content">
+
+       <!-- step 0 landing Page   -->
+      <div id="landing-page" class="full-strecth-flex-vertical content" role="tabpanel">
+        
+        <div id="landing-page-content">
+          <h1> 
+            <img src="./asset//logo.png">
+            Spectral WorkBench <small>by Public Lab (DEMO)</small></h1>
+          <br><br>
+          <p>What is Spectral Workbench? SpectralWorkbench.org is a web based application to collect, 
+            archive, share, and analyze spectral data, for Public Lab DIY spectrometers and other spectrometers. 
+            With it, you can: connect your USB Desktop Spectrometry Kit. scan and save samples. Try out the 
+            application with upload or capture image.
+          </p>
+          <br><br><br>
+          <button class="demo-button next" id="landing-page-next">Capture Spectra</button>
+          <br><br><br>
+          <span>
+            <a href="https://spectralworkbench.org/dashboard"><i class="fas fa-home"></i></a>
+            <a href="https://github.com/publiclab/spectral-workbench.js"><i class="fab fa-github"></i></a>
+            <a href="https://twitter.com/intent/follow?original_referer=https%3A%2F%2Fspectralworkbench.org%2Fdashboard&ref_src=twsrc%5Etfw&screen_name=SpectralWB&tw_p=followbutton"><i class="fab fa-twitter"></i></a>
+            <a href="https://publiclab.org/wiki/spectral-workbench-help"><i class="fas fa-info-circle"></i></a>
+          </span>
+
+        </div>
+
+      </div>
+
+
+
+
+
+
+
+      <!--  step 2 setup   -->
+      <div id="settings" class="content" role="tabpanel">
+
+
+        <div class="full-strecth-flex-vertical center-content">
+          <!-- <h3>Setup</h3> -->
+
+          <div id="webcam-msg"><p><b>Requesting camera access... <br />(<a href="https://play.google.com/store/apps/details?id=org.mozilla.firefox">Firefox</a>, <a href="https://play.google.com/store/apps/details?id=com.opera.browser">Opera</a> or Chrome on Android, or <a href="https://itunes.apple.com/us/app/bowser/id560478358">Bowser</a> on iOS). Please click "Allow" when prompted, or try the <a href="/upload">Upload interface</a>.</b></p></div>
+          <div id="webcam">
+
+            <div id="heightIndicator" style="display:none;position:absolute;margin:0;z-index:999;border-right:0px solid #ff4;border-bottom:2px solid #ff4;height:1px;margin-top:120px;width:320px;font-weight:bold;">
+              <div class="vertical"   style="margin-top:3px;padding:2px;background:black;float:right;display:none; color: white;">BLUE</div>
+              <div class="horizontal" style="margin-top:3px;padding:2px;background:black;float:right;color: white;">RED</div>
+              <div class="horizontal" style="margin-top:3px;padding:2px;background:black;float:left;color: white;">BLUE</div>
+              <div class="vertical"   style="margin-top:3px;padding:2px;background:black;float:right;margin-top:200px;display:none;color: white;">RED</div>
+            </div>
+          </div>
+
+          <div style="padding-bottom:10px;padding-top:2rem;">
+            <div class="spectrum-example-vertical" style="display:none;">
+              <p style="margin-top:4px;">Point your spectrometer at a light and click on the video above to choose a cross-section to sample. (<a href="http://publiclab.org/wiki/spectral-workbench-usage">Learn more &raquo;</a>)</p>
+              <img src="example-cfl-vertical.png" style="height:200px" />
+            </div>
+            <div class="spectrum-example-horizontal">
+              <p style="margin-top:4px;">Point your spectrometer at a light and click on the video above to choose a cross-section as shown below. (<a href="http://publiclab.org/wiki/spectral-workbench-usage">Learn more &raquo;</a>)</p>
+              <img width="480px" src="calibration-example.png" />
+            </div>
+          </div>
+
+          <script>
+            jQuery(document).ready(function() {
+              $W.setSampleRowClickListener()
+            })
+          </script>
+
+          <p style="padding-top:5px;">
+            <a rel="tooltip" title="" class="btn btn-default" onclick="$W.auto_detect_sample_row()" data-original-title="Auto select sample row"><i class="fa fa-white fa-arrows-v"></i> Auto-select Sample Row</a>
+            <a rel="tooltip" title="Flip video horizontally" class="btn btn-default btn-flip" onClick="$W.flip_horizontal()"><i class="fa fa-white fa-arrows-h"></i> Flip image</a>
+            <a rel="tooltip" title="Rotate video 90 &deg;" class="btn btn-default btn-rotate" onClick="$W.toggle_rotation()"><i class="fa fa-white fa-rotate-right"></i> Rotate</a>
+
+          </p>
+          <p style="padding-top:5px;">
+            Help <a href="http://publiclab.org/wiki/spectral-workbench-usage#Webcam+selection">selecting a camera</a>
+          </p>
+
+
+          <a class="btn btn-large btn-primary" href="#capture" onClick="$('#capture-btn').addClass('active');$('#settings-btn').removeClass('active');" data-toggle="tab" id="setting-page-next">Begin capturing &raquo;</a>
+
+          <hr />
+        </div>
+
+
+        <!-- <p><b>Offline use:</b> To use this interface offline, load the offline capture tool <a href="/capture/offline">by clicking here</a>. Once the page loads, you'll be able to access that page even without internet access; it will be stored in your browser.</p> -->
+
+      </div>
+
+
+
+
+
+
+
+
+
+      <!--     step 3 capturing phasing-->
+      <div id="capture" class="content center-content" role="tabpanel">
+
+        <div class="full-strecth-flex-horizontal center-content">
+          <!-- <h3>Capturing Phase</h3> -->
+          <div style="width: 28em; margin-right: 1em">
+            <div id="sidebar" style="width: 26em; margin: 2em auto 2em auto">
+              <div class="hidden-phone" >
+                <div id="heightIndicatorPrev" style="position:absolute;z-index:999;border-right:0px solid #ff4;border-bottom:2px solid #ff4;height:1px;margin: 50px 0 0;width:100%;"></div>
+                <canvas style="width:100%;height:100px;" id="preview"></canvas>
+              </div>
+              <div class="btn-group toolbar" data-toggle="buttons-checkbox" style="margin-bottom:2em; margin-left: 9em; margin-top: 2em">
+                <a rel="tooltip" title="Rotate video" class="btn btn-default btn-rotate" onClick="$W.toggle_rotation()"><i class="fa fa-white fa-repeat"></i></a>
+                <a rel="tooltip" title="Flip video horizontally" class="btn btn-default btn-flip" onClick="$W.flip_horizontal()"><i class="fa fa-white fa-arrows-h"></i></a>
+                <a rel="tooltip" title="Scale video" class="btn btn-default" onClick="$W.scale_h = parseFloat(prompt('Enter a horizontal scaling factor (default is 1):'))"><i class="fa fa-white fa-expand"></i></a>
+              </div>
+              <p>Note: Use the tools above to make adjustment of the capturing. To adjust the sampling yellow bar location, go back to the previous step.</p>
+              <script>
+                jQuery(document).ready(function() {
+                  $W.observe_contrast(
+                          false,
+                          function() {
+                            $('#cfl-detect i').css('color','red');
+                          },
+                          function() {
+                            $('#cfl-detect i').css('color','white');
+                          }
+                  )
+                })
+  
+              </script>
+            </div>
+          </div>
+          <div id="capture-phase-right" style="width: 50em;">
+            <div style="width: 48em;">
+              <div class="btn-group toolbar" data-toggle="buttons-radio">
+                <a rel="tooltip" title="Default mode" class="btn btn-default btn-sm" onClick="$W.toggle_mode()"><i class="fa fa-white fa-circle-o"></i></a>
+                <a rel="tooltip" title="RGB mode" class="btn btn-default btn-sm" onClick="$W.toggle_mode()"><i class="fa fa-white fa fa-adjust"></i></a>
+                <a rel="tooltip" title="Combined readout" class="btn btn-default btn-sm" onClick="$W.show_combined()"><i class="fa fa-white fa fa-list-ul"></i></a>
+              </div>
+              <div id="graph" style="width: 100%; margin-bottom:2em"></div>
+              <canvas style="background:#333;width:100%;height:100px;width: 96%;margin-left: 1.8em;" id="canvas"></canvas>
+              <p style="margin-left: 1.8em;margin-top:2em;width: 96%;">This display shows the last few seconds of data, descending. The top, newest row of pixels is used by default to generate the graph. This can be changed later.</p>
+            </div>
+          </div>
+        </div>
+
+        <button class="demo-button next" id="capture-page-next">Save Capture</button>
+        <p style="margin-top: 0.5em">Once you save the capture, you cannot go back here.</p>
+        <img style="display:none;background:#333;" id="spectrum-preview" />
+      </div>
+
+
+
+
+      <!--  step 4 Plotting phasing-->
+      <div id="plotting" class="content center-content" role="tabpanel">
+        Here Is the result plot
+        <div class="swb-graphing center-content">
+          <div id="graph1"></div>
+        </div>
+
+        <div id="plotting-note">
+          Use the bottom graph as the navigator to zoom into any section of the plot by dragging
+          to select the target region span. User could also move the span in the navigator
+        </div>
+
+        <button class="demo-button" id="restart" style="margin-top: 1em">Restart</button>
+
+        <script>
+          jQuery(document).ready(function() {
+            $("#restart").on('click', function (params) {
+              location.reload();
+            });
+          })
+
+        </script>
+      </div>
+
+
+
+
+
+    </div>
+
+
+
+
+
+
+
+
+
+  </div>
+
+  <script>
+    (function() {
+
+      $W.initialize({
+        calibrated: false,
+        interface:"capture",
+        mode:"combined",
+        flipped: false,
+        width: 640
+      })
+
+
+      setInterval($W.getRow,100)
+      $W.calibrated = false
+
+      if ($('body').width() > 768) $('#tool-toggle').hide()
+      else $('#tool-pane').hide()
+
+    })();
+  </script>
+</body>
+
+<script>
+  // As a jQuery Plugin for the stepper
+  $(document).ready(function () {
+    var stepper = new Stepper($('.bs-stepper')[0], {
+      linear: false,
+      animation: true,
+      selectors: {
+        steps: '.step',
+        trigger: '.step-trigger',
+        stepper: '.bs-stepper'
+      }
+    });
+    $("#landing-page-trigger").on('click', function (params) {
+      stepper.to(1);
+    });
+    $("#landing-page-next").on('click', function (params) {
+      stepper.to(2);
+    });
+
+    
+    $("#setting-trigger").on('click', function (params) {
+      stepper.to(2);
+    });
+    $("#setting-page-next").on('click', function (params) {
+      stepper.to(3);
+    });
+
+
+    $("#capture-trigger").on('click', function (params) {
+      stepper.to(3);
+    });
+
+    var imageData;
+    $("#plot-trigger").on('click', function (params) {
+      stepper.to(4);stepper.to(4);
+      $("#capture-trigger").prop('disabled', true);
+      $("#setting-trigger").prop('disabled', true);
+      $("#landing-page-trigger").prop('disabled', true);
+
+      $W.saveSpectrum();
+      imageData = $W.full_data;
+      console.log('what is my image data like', JSON.stringify($W.full_data));
+
+      graph = new SpectralWorkbench.Graph({
+        selector: '#graph1' // defaults to "#graph" using jQuery selector syntax
+      });
+
+      var imageDataFormatted = [];
+      imageData.forEach((item, index) => {
+        var formattedItem = [index, item[item.length-1]]
+        imageDataFormatted.push(formattedItem)
+      })
+
+      var spectrum = new SpectralWorkbench.Spectrum(imageDataFormatted, graph);
+      // console.log('spectrum', spectrum.getJSON())
+      graph.load(spectrum);
+    });
+
+
+    $("#capture-page-next").on('click', function (params) {
+      stepper.to(4);
+      $("#capture-trigger").prop('disabled', true);
+      $("#setting-trigger").prop('disabled', true);
+      $("#landing-page-trigger").prop('disabled', true);
+
+      $W.saveSpectrum();
+      imageData = $W.full_data;
+      console.log('what is my image data like', JSON.stringify($W.full_data));
+
+      graph = new SpectralWorkbench.Graph({
+        selector: '#graph1' // defaults to "#graph" using jQuery selector syntax
+      });
+
+      var imageDataFormatted = [];
+      imageData.forEach((item, index) => {
+        var formattedItem = [index, item[item.length-1]]
+        imageDataFormatted.push(formattedItem)
+      })
+
+      var spectrum = new SpectralWorkbench.Spectrum(imageDataFormatted, graph); 
+      // console.log('spectrum', spectrum.getJSON())
+      graph.load(spectrum);
+
+
+    });
+
+
+  })
+</script>
+</html>
