@@ -6,10 +6,10 @@
 //= link capture.js
 //= link analyze.js
 //= link upload.js
-//= link jquery.flot.js
-//= link jquery.flot.crosshair.js
-//= link jquery.flot.threshold.js
-//= link d3.js
-//= link nv.d3.js
-//= link nv.d3.min.css
+//= link flot/jquery.flot.js
+//= link flot/jquery.flot.crosshair.js
+//= link flot/jquery.flot.threshold.js
+//= link d3/d3.js
+//= link nvd3/build/nv.d3.js
+//= link nvd3/build/nv.d3.min.css
 //= link api.js

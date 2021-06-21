@@ -10,11 +10,11 @@
  *
  *= require bootstrap.min.css
  *= require bootstrap-responsive.min.css
- *= require nv.d3.min.css
+ *= require nvd3/build/nv.d3.min.css
  *= require style
  *= require graph
  *= require comment
- *= require spectral-workbench
+ *= require spectral-workbench/dist/spectral-workbench
  *= require font-awesome
  *
  *= require_self
