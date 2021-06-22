@@ -39,5 +39,6 @@ public/assets
 vendor/
 db/schema.rb
 coverage/
+node_modules
 
 yarn-error.log
