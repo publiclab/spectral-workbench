@@ -41,3 +41,6 @@ db/schema.rb
 coverage/
 
 yarn-error.log
+
+# Ignore the node_modules folder
+node_modules
