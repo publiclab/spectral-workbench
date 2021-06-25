@@ -10,6 +10,8 @@ Rails.application do |config|
   # Rails.application.config.assets.paths << Emoji.images_path
   # Version of your assets, change this if you want to expire all your assets
   config.assets.paths << Rails.root.join('public/lib')
+  config.assets.paths << Rails.root.join("node_modules")
+  config.assets.paths << Rails.root.join("app", "assets", "fonts")
   config.assets.precompile += ['capture.js', 'analyze.js']
 
   # Precompile additional assets.
