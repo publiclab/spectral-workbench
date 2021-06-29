@@ -14,7 +14,7 @@
     "jasmine": "pivotal/jasmine#~2",
     "jasmine-ajax": "jasmine/jasmine-ajax#v3.2.0",
     "jfeed": "mattmarcum/jFeed#*",
-    "jquery": "jquery/jquery-dist#~2.1.3",
+    "jquery": "jquery/jquery-dist#~3.5.0",
     "junction": "theleagueof/junction#*",
     "leaflet": "Leaflet/Leaflet#0.7.3",
     "moment": "moment/moment#~2.10.6",
