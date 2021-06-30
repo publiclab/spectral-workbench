@@ -1,9 +1,10 @@
 { 
   "name": "spectral-workbench",
   "version": "1.0.0",
+  "private": "true",
   "repository": "https://github.com/publiclab/spectral-workbench/",
   "author": "Public Lab contributors <web@publiclab.org>",
-  "license": "GPL3",
+  "license": "GPL-3.0",
   "dependencies": {
     "ace-builds": "jywarren/ace-builds#v1.2.4",
     "bootstrap-css": "jozefizso/bower-bootstrap-css#~2.3.2",
