@@ -14,7 +14,6 @@
     "jasmine": "^3.7.0",
     "jasmine-ajax": "^4.0.0",
     "jfeed": "mattmarcum/jFeed#*",
-    "jquery": "jquery/jquery-dist#~2.1.3",
     "junction": "theleagueof/junction#*",
     "leaflet": "^1.7.1",
     "moment": "~2.10.6",
