@@ -1,4 +1,4 @@
-{ 
+{
   "name": "spectral-workbench",
   "version": "1.0.0",
   "private": "true",
@@ -11,12 +11,12 @@
     "d3": "^3.5.4",
     "flot": "~0.8.0-alpha",
     "getusermedia-js": "^1.0.0",
-    "jasmine": "pivotal/jasmine#~2",
+    "jasmine": "^3.7.0",
     "jasmine-ajax": "^4.0.0",
     "jfeed": "mattmarcum/jFeed#*",
     "jquery": "jquery/jquery-dist#~2.1.3",
     "junction": "theleagueof/junction#*",
-    "leaflet": "^1.7.1",    
+    "leaflet": "^1.7.1",
     "moment": "~2.10.6",
     "nvd3": "~1.7.1",
     "spectral-workbench": "^0.2.0"
