@@ -9,7 +9,7 @@
     "ace-builds": "jywarren/ace-builds#v1.2.4",
     "bootstrap-css": "jozefizso/bower-bootstrap-css#~2.3.2",
     "d3": "^3.5.4",
-    "flot": "flot/flot#~0.7",
+    "flot": "~0.8.0-alpha",
     "getusermedia.js": "addyosmani/getUserMedia.js#v1.0rc2",
     "jasmine": "pivotal/jasmine#~2",
     "jasmine-ajax": "jasmine/jasmine-ajax#v3.2.0",
