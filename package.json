@@ -10,7 +10,6 @@
     "bootstrap-css": "jozefizso/bower-bootstrap-css#~2.3.2",
     "d3": "mbostock-bower/d3-bower#~3.3.13",
     "flot": "flot/flot#~0.7",
-    "fontawesome": "FortAwesome/Font-Awesome#~4.5.0",
     "getusermedia.js": "addyosmani/getUserMedia.js#v1.0rc2",
     "jasmine": "pivotal/jasmine#~2",
     "jasmine-ajax": "jasmine/jasmine-ajax#v3.2.0",
