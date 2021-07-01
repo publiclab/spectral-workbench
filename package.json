@@ -16,8 +16,8 @@
     "jfeed": "mattmarcum/jFeed#*",
     "jquery": "jquery/jquery-dist#~2.1.3",
     "junction": "theleagueof/junction#*",
-    "leaflet": "Leaflet/Leaflet#0.7.3",
-    "moment": "moment/moment#~2.10.6",
+    "leaflet": "^1.7.1",    
+    "moment": "~2.10.6",
     "nvd3": "~1.7.1",
     "spectral-workbench": "^0.2.0"
   },
