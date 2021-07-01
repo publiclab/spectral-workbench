@@ -18,7 +18,7 @@
     "junction": "theleagueof/junction#*",
     "leaflet": "Leaflet/Leaflet#0.7.3",
     "moment": "moment/moment#~2.10.6",
-    "nvd3": "novus/nvd3#~1.7.1",
+    "nvd3": "~1.7.1",
     "spectral-workbench": "^0.2.0"
   },
   "engines": {
