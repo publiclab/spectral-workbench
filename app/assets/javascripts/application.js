@@ -13,7 +13,7 @@
 //= require jquery
 //= require jquery_ujs
 //= require bootstrap-css/js/bootstrap.min.js
-//= require getusermedia.js/dist/getUserMedia.min.js
+//= require getusermedia-js/dist/getUserMedia.min.js
 //= require basics.js
 //= require api.js
 //= require comment.js
