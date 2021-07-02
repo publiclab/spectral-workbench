@@ -15,6 +15,7 @@
  *= require graph
  *= require comment
  *= require font-awesome
+ *= require spectral-workbench/dist/spectral-workbench
  *
  *= require_self
  *  require_tree .
