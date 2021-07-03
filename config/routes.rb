@@ -21,6 +21,7 @@ SpectralWorkbench::Application.routes.draw do
   get '/device/claim' => 'device#claim'
 
   get '/capture' => 'capture#index'
+  get '/capture/v2' => 'capture#index2'
   get '/capture/recent_calibrations' => 'capture#recent_calibrations'
 
   # Registered user pages:
