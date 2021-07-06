@@ -176,7 +176,7 @@ GEM
       railties (>= 5.0)
     rexml (3.2.5)
     rmagick (4.1.2)
-    rubocop (1.18.0)
+    rubocop (1.18.3)
       parallel (~> 1.10)
       parser (>= 3.0.0.0)
       rainbow (>= 2.2.2, < 4.0)
@@ -251,7 +251,7 @@ DEPENDENCIES
   redcarpet (~> 3.5.0)
   responders (~> 3.0.1)
   rmagick
-  rubocop (~> 1.18.0)
+  rubocop (~> 1.18.3)
   rubocop-performance
   ruby-openid
   selenium-webdriver (~> 3.12.0)
