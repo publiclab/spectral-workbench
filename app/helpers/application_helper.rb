@@ -13,8 +13,12 @@ module ApplicationHelper
     request.env['HTTP_USER_AGENT']&.match('Opera')
   end
 
+  def safari?
+    request.env['HTTP_USER_AGENT']&.match('Safari')
+  end
+
   def webrtc?
-    request.env['HTTP_USER_AGENT'] && (request.env['HTTP_USER_AGENT'].match('Opera') || request.env['HTTP_USER_AGENT'].match('Firefox') || request.env['HTTP_USER_AGENT'].match('Chrome'))
+    request.env['HTTP_USER_AGENT'] && (request.env['HTTP_USER_AGENT'].match('Opera') || request.env['HTTP_USER_AGENT'].match('Safari') || request.env['HTTP_USER_AGENT'].match('Firefox') || request.env['HTTP_USER_AGENT'].match('Chrome'))
   end
 
   def mobile?
