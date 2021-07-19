@@ -78,7 +78,7 @@
             <span class="bs-stepper-label">Settings</span>
             <script>
             function settingsPage() {
-                      $('html').css('background', '#272727');
+                $('html').css('background', '#272727');
 
                 $("#heightIndicator").removeClass("capture-settings-hide");
                 $("#heightIndicator").show();
@@ -110,8 +110,7 @@
             <span class="bs-stepper-label">Capture</span>
             <script>
             function capturePage() {
-                                    $("html, .full-strecth-block").css('background', '#272727');
-
+                $("html, .full-strecth-block").css('background', '#272727');
                 $("#landing-page-content").hide();
                 $("#capture-option").addClass("capture-settings-hide");
                 $("#heightIndicator").addClass("capture-settings-hide");
@@ -136,9 +135,7 @@
             <span class="bs-stepper-label">Save</span>
             <script>
             function savePage() {
-                                    // $('html').css('background', '#ffffff');
-                                    $("html, .full-strecth-block").css('background', '#ffffff');
-
+               $("html, .full-strecth-block").css('background', '#ffffff');
                $("#landing-page-content").hide();
                $("div#capture-page-content").hide();
                $("div#capture-settings").hide();
@@ -336,10 +333,7 @@
         <% if params[:action] == "match" %>
           $W.set = <%= @set.id %>
         <% end %>
-  
-        // if ($('body').width() > 768) $('#tool-toggle').hide()
-        // else $('#tool-pane').hide()
-  
+    
       })();
     </script>
 </body>
