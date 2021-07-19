@@ -10,6 +10,7 @@
  *
  *= require bootstrap-css/css/bootstrap.min.css
  *= require bootstrap-css/css/bootstrap-responsive.min.css
+ *= require bs-stepper/dist/css/bs-stepper.min.css
  *= require nvd3/build/nv.d3.min.css
  *= require style
  *= require graph
