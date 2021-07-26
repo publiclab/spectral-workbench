@@ -1,5 +1,6 @@
 <script src="https://cdn.temasys.io/adapterjs/0.15.x/adapter.min.js"></script>
-
+<%= javascript_include_tag "spectral-workbench/examples/capture/capture.js" %> 
+<%= javascript_include_tag "spectral-workbench/dist/capture.dist.js" %> 
 <%= javascript_include_tag "new-capture" %>
 
   <link rel="apple-touch-icon" href="//spectralworkbench.org/images/spectral-workbench-256.png">
@@ -57,98 +58,31 @@
         <div class="step" data-target="#landing-page">
           <button type="button" class="step-trigger" role="tab" aria-controls="landing-page" id="homebtn" onclick="homePage()">
             <span class="bs-stepper-label">Home Page</span>
-            <script>
-            function homePage() {
-                if ($("#landing-page-content").hide()) {
-                    $('html').css('background', '#ffffff');
-                    $("#landing-page-content").show();
-
-                    $("div#capture-page-content").hide();
-                    $("div#capture-settings").hide();
-                    $("div#save-page").hide();
-
-                }
-            }
-            </script>
           </button>
         </div>
         <div class="line"></div>
         <div class="step" data-target="#settings">
           <button type="button" class="step-trigger" role="tab" aria-controls="setting" id="settingsbtn" onclick="settingsPage()">
             <span class="bs-stepper-label">Settings</span>
-            <script>
-            function settingsPage() {
-                $('html').css('background', '#272727');
-
-                $("#heightIndicator").removeClass("capture-settings-hide");
-                $("#heightIndicator").show();
-                $("#webcam").css('pointer-events', '');
-                $("#webcam").css('opacity', '1');
-
-                $("#capture-page-content").css('height','100vh');
-                $("#capture-page-content").css('width','auto');
-
-                if (($(window).width() < 391 && $(window).height() < 645) || ((window.matchMedia("(orientation: landscape)").matches) && ($(window).height() < 645)))
-                $("#capture-page-content").css('height','auto');
-
-                $("#spectrum-ex").show();
-                $("#capture-option").show();
-
-                $("#landing-page-content").hide();
-                $("div#capture-page-content").show();
-                $("div#capture-settings").hide();
-
-                $("div#save-page").hide();
-
-            }
-            </script>
           </button>
         </div>
         <div class="line"></div>
         <div class="step" data-target="#capture">
           <button type="button" class="step-trigger" role="tab" aria-controls="capture" id="capturebtn" onclick="capturePage()">
-            <span class="bs-stepper-label">Capture</span>
-            <script>
-            function capturePage() {
-                $("html, .full-strecth-block").css('background', '#272727');
-                $("#landing-page-content").hide();
-                $("#capture-option").addClass("capture-settings-hide");
-                $("#heightIndicator").addClass("capture-settings-hide");
-
-                $("div#capture-page-content").show();
-                $("div#capture-settings").show();
-
-                $("#spectrum-ex").hide();
-                $(".capture-settings-hide").hide();
-
-                $("#capture-page-content").width(1).height(1);
-                $("#webcam").css('pointer-events', 'none');
-                $("#webcam").css('opacity', '0.0');
-                $("div#save-page").hide();
-            }
-            </script>     
+            <span class="bs-stepper-label">Capture</span>   
           </button>
         </div>
         <div class="line"></div>
         <div class="step" data-target="#save">
           <button type="button" class="step-trigger" role="tab" aria-controls="save" id="savebtn" onclick="savePage()">
             <span class="bs-stepper-label">Save</span>
-            <script>
-            function savePage() {
-               $("html, .full-strecth-block").css('background', '#ffffff');
-               $("#landing-page-content").hide();
-               $("div#capture-page-content").hide();
-               $("div#capture-settings").hide();
-               $("div#save-page").show();
-            }
-            </script>
           </button>
         </div>
       </div>
   
   
-    
-<div id="landing-page-content">
+    <%# <!-- step 1 Landing Page --> %>
+    <div id="landing-page-content">
     <h1> 
       <div style="padding-bottom:1rem">
         <img src="/images/logo.png">
@@ -170,11 +104,10 @@
               <a href="https://twitter.com/intent/follow?original_referer=https%3A%2F%2Fspectralworkbench.org%2Fdashboard&ref_src=twsrc%5Etfw&screen_name=SpectralWB&tw_p=followbutton"><i class="fa fa-twitter"></i></a>
               <a href="https://publiclab.org/wiki/spectral-workbench-help"><i class="fa fa-info-circle"></i></a>
             </span>
-</div>
+    </div>
 
-
-<div id="capture-page-content" class="full-strecth-flex-vertical center-content">
-    <!-- <h3>Setup</h3> -->
+    <%# <!-- step 2 Capture Settings --> %>
+    <div id="capture-page-content" class="full-strecth-flex-vertical center-content">
   
             <div id="webcam-msg"><p><b>Requesting camera access... <br />(<a href="https://play.google.com/store/apps/details?id=org.mozilla.firefox">Firefox</a>, <a href="https://play.google.com/store/apps/details?id=com.opera.browser">Opera</a> or Chrome on Android, or <a href="https://itunes.apple.com/us/app/bowser/id560478358">Bowser</a> on iOS). Please click "Allow" when prompted, or try the <a href="/upload">Upload interface</a>.</b></p></div>
             <div id="webcam">
@@ -222,11 +155,10 @@
                <% end %>  
               })
             </script>
-</div>
+    </div>
 
-
-<div id="capture-settings" class="full-strecth-flex-horizontal center-content">
-    <!-- <h3>Capturing Phase</h3> -->
+    <%# <!-- step 3 Capture Settings Graph --> %>
+    <div id="capture-settings" class="full-strecth-flex-horizontal center-content">
           <div class="float-container">
             <div class="float-child-left responsive-hide">
               <div id="sidebar" style="width: 26em;">
@@ -242,7 +174,7 @@
                 <p style="padding: 1rem">Note: Use the tools above to make adjustment of the capturing. To adjust the sampling yellow bar location, go back to the previous step.</p>
 
                 <div>
-                <p><small>Using calibration:</small></p>
+                <p>Using calibration:</p>
                 <select name="spectrum[calibration_id]" class="select-calibration select-calibration-capture span2">
                   <%= render partial: 'capture/calibrations', locals: { calibrations: @calibrations, calibration: @calibration } %>
                 </select>
@@ -260,6 +192,20 @@
                             function() {
                               $('#cfl-detect i').css('color','white');
                             })
+                    
+                    $('#sidebar .hidden-phone').on('click', function () {
+                    $('#settingsbtn').trigger('click');
+                    })
+
+                    //changing route from /capture to /capture/v2
+                    $('.btn-switch-calibration-configure').click(function() {
+                      window.location = "/capture/v2?calibration_id=" + $('.select-calibration-configure').val()
+                    });
+
+                    $('.btn-switch-calibration-capture').click(function() {
+                      window.location = "/capture/v2?calibration_id=" + $('.select-calibration-capture').val()
+                    });
+
                   })
                 </script>
               </div>
@@ -278,33 +224,26 @@
               </div>
               
               <div id="test-save-hide">
-                <button type="button" class="demo-button next" id="capture-page-next">Save Capture</button>
-                <p style="margin-top: 0.5em;text-align: center;">Once you save the capture, you cannot go back here.</p>
+                <button type="button" class="demo-button next" id="json-download" style="float:left" onClick="prompt('Here is an array of the spectral data: ',JSON.stringify($W.full_data))">Get JSON</button>
+                <button type="button" class="demo-button next" id="capture-page-next" style="float:right" onClick="$W.saveSpectrum();">Save Capture</button>
+                <div><p style="margin-top: 0.5em;text-align: center;">Once you save the capture, you cannot go back here.</p></div>
               </div>
-            </div>         
-          </div>
-</div> 
 
-<div id="save-page" class="full-strecth-flex-vertical center-content">
+              <div class="responsive-show" style="padding-top: 20px;">
+                <p><small>Using calibration:</small></p>
+                <select name="spectrum[calibration_id]" class="select-calibration select-calibration-capture span2">
+                  <%= render partial: 'capture/calibrations', locals: { calibrations: @calibrations, calibration: @calibration } %>
+                </select>
+                <a class="btn btn-inverse btn-switch-calibration-capture">Switch calibration</a>
+              </div>
+          </div>         
+        </div>
+      </div> 
 
-<% if @calibration %>
-  <p class="calibration-used">Using spectrum <%= @calibration.id %> "<a target="_blank" href="/spectrums/<%= @calibration.id %>"><%= @calibration.title %></a>" (captured <%= time_ago_in_words(@calibration.created_at) %> ago) as a calibration reference.</p>
-  <p>If that's wrong, you can ignore this, and calibrate later with the correct reference. Or choose a new calibration:</p>
-  <div>
-  <form class="form-inline">
-    <select name="spectrum[calibration_id]" class="select-calibration select-calibration-configure">
-      <%= render partial: 'capture/calibrations', locals: { calibrations: @calibrations, calibration: @calibration } %>
-    </select>
-    <a class="btn btn-inverse btn-switch-calibration-configure">Switch calibration</a>
-  </form>
-  </div>
-<% end %>
-
-
-<%= render :partial => "save" %>
-
-</div>
-
+    <%# <!-- step 4 Saving the data --> %>
+    <div id="save-page" class="full-strecth-flex-vertical center-content">
+    <%= render :partial => "save" %>
+    </div>
   
     <script>
       (function() {
@@ -337,55 +276,3 @@
       })();
     </script>
 </body>
-  
-    <script>
-        $(document).ready(function () {
-
-        $('html').css('background', '#ffffff');
-
-        $("div#capture-page-content").hide();
-        $("div#capture-settings").hide();
-        $("div#save-page").hide();
-
-        $('#testnav .btn-group button').on('click', function () {
-            $('#testnav .btn-group' ).find('button.active').removeClass('active');
-            $(this).addClass('active');
-        });
-
-        $("button#landing-page-next").on('click', function () {
-        $('#settingsbtn').trigger('click');
-        });
-
-        $("button#setting-page-next").on('click', function () {
-        $('#capturebtn').trigger('click');
-        });
-
-        var stepper = new Stepper($('.bs-stepper')[0], {
-        linear: false,
-        animation: true,
-        selectors: {
-            steps: '.step',
-            trigger: '.step-trigger',
-            stepper: '.bs-stepper'
-        }
-        });
-
-        $("#homebtn").on('click', function (params) {
-        stepper.to(1);
-        });
-        $("#landing-page-next").on('click', function (params) {
-        stepper.to(2);
-        });
-        
-        $("#settingsbtn").on('click', function (params) {
-        stepper.to(2);
-        });
-        $("#setting-page-next").on('click', function (params) {
-        stepper.to(3);
-        });
-
-        $("#capturebtn").on('click', function (params) {
-        stepper.to(3);
-        });  
-        })
-    </script>

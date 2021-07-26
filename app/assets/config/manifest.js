@@ -7,3 +7,5 @@
 //= link capture.css
 //= link capture.js
 //= link new-capture.js
+//= link spectral-workbench/examples/capture/capture.js
+//= link spectral-workbench/dist/capture.dist.js
