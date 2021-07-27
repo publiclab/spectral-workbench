@@ -19,6 +19,7 @@ echo "MySQL is up and running!"
 bundle exec rails db:create
 bundle exec rails db:schema:load
 bundle exec rails db:migrate
+bundle exec rake assets:precompile
 # bundle exec rails db:seed
 
 if [ -f $pidfile ] ; then
