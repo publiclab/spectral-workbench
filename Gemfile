@@ -50,7 +50,7 @@ gem 'rdiscount', '2.2.0.2'
 gem 'will_paginate', '~> 3.3.0'
 gem 'will_paginate-bootstrap', '~> 1.0.2'
 
-gem 'tzinfo', '~> 1.1'
+gem 'tzinfo', '~> 1.2'
 
 gem 'open_id_authentication'
 gem 'protected_attributes_continued', '~> 1.8.1'
