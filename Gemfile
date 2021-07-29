@@ -29,7 +29,7 @@ end
 group :development, :test do
   gem 'rack_session_access'
   gem 'capybara'
-  gem 'selenium-webdriver', '~> 3.12.0'
+  gem 'selenium-webdriver', '~> 3.142.7'
 end
 
 gem 'bootsnap', '~> 1.7.6'
