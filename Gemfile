@@ -23,6 +23,12 @@ group :development, :test do
   gem 'selenium-webdriver', '~> 3.142.7'
 end
 
+group :production do
+# See https://github.com/sstephenson/execjs#readme for more supported runtimes
+    gem 'therubyracer', :platforms => :ruby
+    gem 'uglifier', '~> 4.2'
+end
+
 gem 'bootsnap', '~> 1.7.7'
 gem 'jquery-rails'
 gem 'font-awesome-rails'
