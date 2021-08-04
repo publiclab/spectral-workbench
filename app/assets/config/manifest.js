@@ -3,9 +3,10 @@
 //= link application.js
 //= link analyze.js
 //= link upload.js
-//= link new-capture.css
+//= link new-interface.css
 //= link capture.css
 //= link capture.js
-//= link new-capture.js
+//= link new-interface.js
+//= link spectral-workbench/examples/new-capture/new-capture.css
 //= link spectral-workbench/examples/capture/capture.js
 //= link spectral-workbench/dist/capture.dist.js
