@@ -8,6 +8,7 @@
   "dependencies": {
     "ace-builds": "jywarren/ace-builds#v1.2.4",
     "bootstrap-css": "jozefizso/bower-bootstrap-css#~2.3.2",
+    "bs-stepper": "^1.7.0",
     "d3": "^3.5.4",
     "flot": "~0.8.0-alpha",
     "getusermedia-js": "^1.0.0",

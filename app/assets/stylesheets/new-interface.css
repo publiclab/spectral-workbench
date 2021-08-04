@@ -1,0 +1,463 @@
+@import 'spectral-workbench/examples/new-capture/new-capture.css';
+
+* {
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+*:before,
+*:after {
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+html {
+  font-size: 14px;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  background: #272727;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: inherit;
+  font-weight: 500;
+  line-height: 1.1;
+  color: inherit;
+}
+
+#login-status {
+  font-weight: 200;
+  color: white;
+  padding: 10px;
+}
+
+#extra-functions {
+  width:100%;
+  text-align: center;
+}
+
+p {
+  font-size: 14px;
+}
+
+.float-container { 
+  display: flex;
+  margin-top: 4rem;
+}
+
+.float-child-left {
+  flex: 1;
+  padding: 10px; 
+}  
+
+.float-child-right {
+  flex: 3;
+  padding: 10px; 
+}
+
+p.capture-messages {
+  font-size: 14px;
+}
+
+div.float-container {
+  background-color: #353535;
+  height: fit-content;
+  box-shadow: 1px 1px 11px 2px #151515;
+  border-radius: 5px;
+}
+
+body {
+  font-size: 14px;
+}
+
+.full-strecth-block {
+  height: auto;
+}
+
+div.full-strecth-flex-vertical.content, div.full-strecth-flex-vertical {
+  padding-top: 8rem;
+}
+
+div#capture-phase-right {
+  background-color: #353535;
+  height: fit-content;
+  box-shadow: 1px 1px 11px 2px #151515;
+  border-radius: 5px;
+  margin-left: 1.5rem;
+  margin-right: 1.5rem;
+  margin-top: 10rem;
+}
+
+div#canvas-prev-responsive {
+  background-color: #353535;
+  height: fit-content;
+  box-shadow: 1px 1px 11px 2px #151515;
+  border-radius: 5px;
+  margin-top: 1rem;
+  margin-left: 1rem;
+}
+
+div#capture-settings {
+  height: 100vh;
+  width: 100%;
+}
+
+.navbar {
+  border-radius: 0px;
+  z-index: 9999;
+}
+
+@media screen and (max-width: 350px), screen and (max-height: 570px) {
+  p.capture-messages {
+    font-size: 10px;
+  }
+
+  body, p {
+    font-size: 10px;
+  }
+
+  bs-stepper-label {
+    margin: 0rem;
+    font-size: 10px;
+  }
+
+  .tooltip {
+    display: none !important;
+  }
+}
+
+@media only screen and (max-width: 1200px) {
+
+  p.capture-messages {
+    font-size: 10px;
+  }
+
+  div#capture-settings {
+    height: 100vh;
+  }
+
+  .tooltip {
+    display: none !important;
+  }
+}
+
+@media only screen and (max-width: 992px) {
+
+  p.capture-messages {
+    font-size: 10px;
+  }
+
+  body, p {
+    font-size: 10px;
+  }
+
+  div#testnav {
+    padding: 0rem;
+  }
+
+  .full-strecth-block {
+    padding-left: 0rem;
+    padding-right: 0rem;
+  }
+
+  .bs-stepper-header {
+    margin: 0rem;
+  }
+
+  .bs-stepper-label {
+    margin: 0rem;
+    font-size: 10px;
+  }
+
+  div#capture-phase-right {
+    margin-top: 10rem;
+  }
+  
+  div#capture-settings {
+    height: 100vh;
+  }
+  
+  .tooltip {
+    display: none !important;
+  }
+}
+
+@media only screen and (max-width: 767px) {
+
+  p.capture-messages {
+    font-size: 10px;
+  }
+
+  body, p {
+    font-size: 10px;
+  }
+
+  div#testnav {
+    padding: 0rem;
+  }
+
+  .full-strecth-block {
+    padding-left: 0rem;
+    padding-right: 0rem;
+  }
+
+  div#canvas-prev-responsive {
+    display: none;
+  }
+
+  .bs-stepper-header {
+    margin: 0rem;
+  }
+
+  div#capture-phase-right {
+    margin-top: 10rem;
+  }
+
+  div#capture-settings {
+    height: auto;
+  }
+
+  .bs-stepper-label {
+    margin: 0rem;
+    font-size: 10px;
+  }
+
+  .tooltip {
+    display: none !important;
+  }
+}
+
+@media only screen and (max-width: 576px) {
+
+  p.capture-messages {
+    font-size: 10px;
+  }
+
+  body, p {
+    font-size: 10px;
+  }
+
+  .responsive-hide {
+    display: none;
+  }
+  
+  .float-child-right {
+    width: 100%;
+    float: left;
+    padding: 10px;
+  }
+
+  div#testnav {
+    padding: 0rem;
+  }
+
+  .full-strecth-block {
+    padding-left: 0rem;
+    padding-right: 0rem;
+  }
+
+  div#canvas-prev-responsive {
+    display: none;
+  }
+
+  .bs-stepper-header {
+    margin: 0rem;
+  }
+
+  div#capture-phase-right {
+    margin-top: 10rem;
+  }
+  
+  div#capture-settings {
+    height: auto;
+  }
+
+  .bs-stepper-label {
+    margin: 0rem;
+    font-size: 10px;
+  }
+
+  .tooltip {
+    display: none !important;
+  }
+}
+
+@media screen and (min-height: 360px) and (max-height: 600px) {
+
+  p.capture-messages {
+    font-size: 10px;
+  }
+
+  body, p {
+    font-size: 10px;
+  }
+
+  div#capture-settings {
+    height: auto;
+  }
+
+  .bs-stepper-label {
+    margin: 0rem;
+    font-size: 10px;
+  }
+
+  .tooltip {
+    display: none !important;
+  }
+}
+
+@media only screen and (max-width: 1000px) and (orientation:landscape) {
+
+  p.capture-messages {
+    font-size: 10px;
+  }
+
+  body, p {
+    font-size: 10px;
+  }
+
+  div#capture-settings {
+      height: auto;
+      position: absolute;
+  }
+  
+  bs-stepper-label {
+    margin: 0rem;
+    font-size: 10px;
+  }
+
+  .tooltip {
+    display: none !important;
+  }
+}
+
+@media (max-width: 767px) {
+
+  p.capture-messages {
+    font-size: 10px;
+  }
+
+  .float-child-left {
+    display: none;
+  }
+
+  .navbar-inner {
+    margin-right: 0px !important;
+  }
+
+  .navbar {
+    border-radius: 0px;
+    margin-bottom: 0px;
+    z-index: 9999;
+  }
+
+  bs-stepper-label {
+    margin: 0rem;
+    font-size: 10px;
+  }
+  .tooltip {
+    display: none !important;
+  }
+}
+
+/* Individual Component Style -------------------------------------------*/
+
+#landing-page, #landing-page2 {
+  justify-content: center;
+  align-items: center;
+}
+
+#landing-page-content:before {
+  background-image: url('/images/landing-wallpaper.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  content: ' ';
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  opacity: 0.3;
+}
+
+#landing-page-content {
+  max-width: fit-content;
+  width: 100%;
+  justify-content: space-around;
+  text-align: center;
+  align-items: center;
+  padding: 5rem;
+  margin: 0 auto;
+  margin-top: 7rem;
+  margin-bottom: 2rem;
+  position: absolute;
+  z-index: 100;
+}
+
+#landing-page-content h1 {
+  margin-top: 0px;
+}
+
+#stepper, .bs-stepper-header {
+  margin-top: 1rem;
+}
+
+#webcam {
+  position: relative;
+}
+
+.spectrum-example-horizontal {
+  text-align: center;
+}
+
+.spectrum-example-vertical {
+  text-align: center;
+}
+
+#settings, #capture {
+  background: #272727;
+  color: #b7b7b7
+}
+
+#capture .full-strecth-flex-horizontal {
+  margin-top: 6rem;
+}
+
+div#capture-settings {
+    background: #272727;
+    color: #b7b7b7;
+    position: absolute;
+    top: 6rem;
+}
+
+div#capture-page-content {
+  background: #272727;
+  color: #b7b7b7;
+}
+
+#capture-page-next {
+  margin:0 auto;
+  display:block;
+  margin-top: 0rem;
+}
+
+.fade.in {
+  opacity: 1;
+}
+
+#login-prompt-modal, #loginmodal {
+  z-index: 9999;
+}
+
+.navbar-inner {
+  margin-right: 0px !important;
+  border-radius: 0px;
+}
+
+.navbar {
+  margin-bottom: 0px;
+  z-index: 9999;
+}
