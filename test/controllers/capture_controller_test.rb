@@ -18,6 +18,16 @@ class CaptureControllerTest < ActionController::TestCase
     assert_not_nil :spectrums
   end
 
+  test 'should get capture while not logged in' do
+    get :index
+    assert_response :success
+  end
+
+  test 'should get capture/v2 while not logged in' do
+    get :index2
+    assert_response :success
+  end
+
   test 'should get capture while logged in' do
     session[:user_id] = users(:quentin).id # log in
     get :index
