@@ -223,13 +223,13 @@
                 <p style="margin-left: 1.8em;margin-top:0rem;width: 96%;">This display shows the last few seconds of data, descending. The top, newest row of pixels is used by default to generate the graph. This can be changed later.</p>
               </div>
               
-              <div id="test-save-hide">
-                <button type="button" class="demo-button next" id="json-download" style="float:left" onClick="prompt('Here is an array of the spectral data: ',JSON.stringify($W.full_data))">Get JSON</button>
-                <button type="button" class="demo-button next" id="capture-page-next" style="float:right" onClick="$W.saveSpectrum();">Save Capture</button>
-                <div><p style="margin-top: 0.5em;text-align: center;">Once you save the capture, you cannot go back here.</p></div>
+              <div class="btn-group options">
+                <button type="button" class="demo-button next" id="json-download" onClick="prompt('Here is an array of the spectral data: ',JSON.stringify($W.full_data))">Get JSON</button>
+                <button type="button" class="demo-button next" id="capture-page-next" onClick="$W.saveSpectrum();">Save Capture</button>
+                <button type="button" class="demo-button next" id="download-live-spectrum" onClick="$W.downloadSpectrum();">Download</button>
               </div>
 
-              <div class="responsive-show" style="padding-top: 20px;">
+              <div class="responsive-cal" style="padding-top: 20px;">
                 <p><small>Using calibration:</small></p>
                 <select name="spectrum[calibration_id]" class="select-calibration select-calibration-capture span2">
                   <%= render partial: 'capture/calibrations', locals: { calibrations: @calibrations, calibration: @calibration } %>
@@ -242,7 +242,7 @@
 
     <%# <!-- step 4 Saving the data --> %>
     <div id="save-page" class="full-strecth-flex-vertical center-content">
-    <%= render :partial => "save" %>
+    <%= render :partial => "newsave" %>
     </div>
   
     <script>
