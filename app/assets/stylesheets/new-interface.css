@@ -31,11 +31,6 @@ h1, h2, h3, h4, h5, h6 {
   padding: 10px;
 }
 
-#extra-functions {
-  width:100%;
-  text-align: center;
-}
-
 p {
   font-size: 14px;
 }
@@ -102,9 +97,74 @@ div#capture-settings {
   width: 100%;
 }
 
+div#save-page {
+  color: #F5F5F5;
+}
+
+div.input-prepend > .add-on {
+  height: auto;
+}
+
+.options {
+  display: flex;
+  justify-content: space-between;
+}
+
+div.input-prepend {
+  display: flex;
+}
+
+#saveFrom {
+  width: 100%;
+}
+
+#saveForm input[type=text] {
+  height: auto;
+  width: 100%;
+}
+
+#saveForm > textarea#spectrum_notes {
+  width: 100%;
+}
+
+.add-on {
+  height: auto;
+}
+
+div.hidden-phone.span3 {
+  padding: 2rem;
+}
+
+@media screen and (min-width: 768px) and (max-width: 979px) {
+  .span3 {
+    width: 50%;
+  }
+}
+
+div.span9 {
+  padding: 2rem;
+}
+
+div select.select-calibration {
+  width: 100%;
+}
+
+a.btn-switch-calibration-capture {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+select#calibration_id {
+  width: 100%;
+}
+
 .navbar {
   border-radius: 0px;
   z-index: 9999;
+}
+
+.responsive-cal {
+  display: none;
 }
 
 @media screen and (max-width: 350px), screen and (max-height: 570px) {
@@ -124,6 +184,10 @@ div#capture-settings {
   .tooltip {
     display: none !important;
   }
+
+  .responsive-cal {
+    display: block;
+  }
 }
 
 @media only screen and (max-width: 1200px) {
@@ -138,6 +202,10 @@ div#capture-settings {
 
   .tooltip {
     display: none !important;
+  }
+
+  .responsive-cal {
+    display: none;
   }
 }
 
@@ -179,6 +247,10 @@ div#capture-settings {
   
   .tooltip {
     display: none !important;
+  }
+
+  .responsive-cal {
+    display: none;
   }
 }
 
@@ -224,6 +296,10 @@ div#capture-settings {
 
   .tooltip {
     display: none !important;
+  }
+
+  .responsive-cal {
+    display: block;
   }
 }
 
@@ -280,6 +356,10 @@ div#capture-settings {
   .tooltip {
     display: none !important;
   }
+
+  .responsive-cal {
+    display: block;
+  }
 }
 
 @media screen and (min-height: 360px) and (max-height: 600px) {
@@ -303,6 +383,10 @@ div#capture-settings {
 
   .tooltip {
     display: none !important;
+  }
+
+  .responsive-cal {
+    display: block;
   }
 }
 
@@ -329,6 +413,10 @@ div#capture-settings {
   .tooltip {
     display: none !important;
   }
+
+  .responsive-cal {
+    display: none;
+  }
 }
 
 @media (max-width: 767px) {
@@ -339,6 +427,10 @@ div#capture-settings {
 
   .float-child-left {
     display: none;
+  }
+
+  .responsive-cal {
+    display: block;
   }
 
   .navbar-inner {
@@ -403,6 +495,10 @@ div#capture-settings {
 
 #stepper, .bs-stepper-header {
   margin-top: 1rem;
+}
+
+#webcam-msg {
+  position: inherit;
 }
 
 #webcam {
