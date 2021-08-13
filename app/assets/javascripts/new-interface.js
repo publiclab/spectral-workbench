@@ -7,7 +7,7 @@
 */
 function homePage() {
   if ($("#landing-page-content").hide()) {
-      $('html').css('background', '#ffffff');
+      $("html, .full-strecth-block").css('background', '#ffffff');
       $("#landing-page-content").show();
 
       $("div#capture-page-content").hide();
@@ -82,7 +82,7 @@ function savePage() {
 
 
 $(document).ready(function () {
-  $('html').css('background', '#ffffff');
+  $("html, .full-strecth-block").css('background', '#ffffff');
 
   $("div#capture-page-content").hide();
   $("div#capture-settings").hide();
