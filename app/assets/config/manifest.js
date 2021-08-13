@@ -10,3 +10,4 @@
 //= link spectral-workbench/examples/new-capture/new-capture.css
 //= link spectral-workbench/examples/capture/capture.js
 //= link spectral-workbench/dist/capture.dist.js
+//= link adapterjs/publish/adapter.min.js
