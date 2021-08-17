@@ -1,6 +1,6 @@
 # Spectral Workbench
 
-Copyright 2011-2020 Public Lab
+Copyright 2011-2021 Public Lab
 publiclab.org | spectralworkbench.org
 
 [![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/publiclab/spectral-workbench/)
