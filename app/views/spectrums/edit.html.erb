@@ -39,7 +39,7 @@
     <input class="btn-primary btn" type="submit" value="Submit" />
     <% if current_user.role == 'admin' %>
       <%= link_to '<i class="fa fa-trash"></i> Delete'.html_safe, { :action => "destroy", :id => @spectrum.id },
-         :confirm => "Are you sure?", :method => :delete, :class => "btn btn-medium" %>
+         data: { confirm: 'Are you sure?' }, :method => :delete, :class => "btn btn-medium" %>
     <% end %>
     &nbsp; <%= link_to 'Back', spectrums_path %>
   </p>

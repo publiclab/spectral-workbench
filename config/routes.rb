@@ -40,6 +40,12 @@ SpectralWorkbench::Application.routes.draw do
 
   get '/upload' => 'spectrums#new'
   post '/spectrums/create' => 'spectrums#create'
+  get '/spectrums/destroy/:id' => 'spectrums#destroy' 
+  get '/spectrums/:id/edit' => 'spectrums#edit'
+  post '/spectrums/:id/update' => 'spectrums#update'
+  post '/spectrums/fork/:id' => 'spectrums#fork'
+  post '/spectrums/choose/:id' => 'spectrums#choose'
+
   post '/comments/spectrum/:id' => 'comments#spectrum'
 
   get '/tags/change_reference/:id' => 'tags#change_reference'
