@@ -1,6 +1,6 @@
 //= link embed.css
 //= link application.css
-//= link adapter.min.js
+//= link adapter.js
 //= link application.js
 //= link analyze.js
 //= link upload.js
