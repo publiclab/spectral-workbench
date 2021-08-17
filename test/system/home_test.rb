@@ -16,7 +16,9 @@ class HomeTest < ApplicationSystemTestCase
     within find('#headerBtns') do
       first('a.btn.btn-primary.btn-large').click
     end
-    find('a.btn.btn-large').click
+    within find('#login-prompt-modal') do
+      find('a.btn.btn-large.btn-no-thanks').click
+    end
     within find('#settings') do
       assert_selector('a.btn.btn-large.btn-primary', text: 'Begin capturing »')
     end
