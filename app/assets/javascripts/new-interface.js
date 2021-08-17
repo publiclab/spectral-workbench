@@ -7,7 +7,8 @@
 */
 function homePage() {
   if ($("#landing-page-content").hide()) {
-      $('html').css('background', '#ffffff');
+      $("html, .full-strecth-block").css('background', '#f5f5f5');
+      $('.bs-stepper .step-trigger').css('color', '#272727');
       $("#landing-page-content").show();
 
       $("div#capture-page-content").hide();
@@ -18,7 +19,7 @@ function homePage() {
 
 function settingsPage() {
   $('html').css('background', '#272727');
-
+  $('.bs-stepper .step-trigger').css('color', '#f5f5f5');
   $("#heightIndicator").removeClass("capture-settings-hide");
   $("#heightIndicator").show();
   $("#webcam").css('pointer-events', '');
@@ -48,6 +49,7 @@ function settingsPage() {
 
 function capturePage() {
   $("html, .full-strecth-block").css('background', '#272727');
+  $('.bs-stepper .step-trigger').css('color', '#f5f5f5');
   $("#landing-page-content").hide();
   $("#capture-option").addClass("capture-settings-hide");
   $("#heightIndicator").addClass("capture-settings-hide");
@@ -71,6 +73,7 @@ function capturePage() {
 
 function savePage() {
   $("html, .full-strecth-block").css('background', '#272727');
+  $('.bs-stepper .step-trigger').css('color', '#f5f5f5');
   $W.saveSpectrum();
   $("#landing-page-content").hide();
   $("div#capture-page-content").hide();
@@ -82,7 +85,8 @@ function savePage() {
 
 
 $(document).ready(function () {
-  $('html').css('background', '#ffffff');
+  $("html, .full-strecth-block").css('background', '#ffffff');
+  $('.bs-stepper .step-trigger').css('color', '#272727');
 
   $("div#capture-page-content").hide();
   $("div#capture-settings").hide();

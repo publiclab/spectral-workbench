@@ -1,4 +1,5 @@
-<script src="https://cdn.temasys.io/adapterjs/0.15.x/adapter.min.js"></script>
+<html lang="en" role="main">
+<%= javascript_include_tag "adapterjs/publish/adapter.min.js" %> 
 <%= javascript_include_tag "spectral-workbench/examples/capture/capture.js" %> 
 <%= javascript_include_tag "spectral-workbench/dist/capture.dist.js" %> 
 <%= javascript_include_tag "new-interface" %>
@@ -38,10 +39,10 @@
 
 <nav class="navbar navbar-inverse capture-navbar">
   <div class="navbar-inner">
-  <a class="brand" href="/"><img style="padding:-2px;width:20px;" src="/images/logo.png" /></a>
+  <a class="brand" href="/"><img style="padding:-2px;width:20px;" src="/images/logo.png" alt="Spectral Workbench logo" /></a>
     <div class="pull-right">
       <% unless logged_in? %><a onClick="$('#loginmodal').modal('show');" class="btn">Log in</a><% end %>
-      <a class="btn btn-inverse" href="http://publiclab.org/spectral-workbench"><i class="fa fa-white fa-question-circle"></i></a>
+      <a class="btn btn-inverse" href="http://publiclab.org/spectral-workbench" aria-label="Click here to know more about spectral workbench"><i class="fa fa-white fa-question-circle"></i></a>
     </div>
     <% if logged_in? %><p id="login-status">(logged in as <%=h current_user.login %>)<p><% end %>
     <p class="capture-messages" style="float:left;"></p>
@@ -53,28 +54,28 @@
   
     <div class="full-strecth-block bs-stepper">
   
-      <div id="testnav" class="bs-stepper-header" role="tablist" style="z-index:100;">
+      <div id="testnav" class="bs-stepper-header" role="tablist" style="z-index:150;" role="navigation">
         <%# <!-- your steps here --> %>
         <div class="step" data-target="#landing-page">
-          <button type="button" class="step-trigger" role="tab" aria-controls="landing-page" id="homebtn" onclick="homePage()">
+          <button type="button" class="step-trigger" role="tab" id="homebtn" onclick="homePage()">
             <span class="bs-stepper-label">Home Page</span>
           </button>
         </div>
         <div class="line"></div>
         <div class="step" data-target="#settings">
-          <button type="button" class="step-trigger" role="tab" aria-controls="setting" id="settingsbtn" onclick="settingsPage()">
+          <button type="button" class="step-trigger" role="tab" id="settingsbtn" onclick="settingsPage()">
             <span class="bs-stepper-label">Settings</span>
           </button>
         </div>
         <div class="line"></div>
         <div class="step" data-target="#capture">
-          <button type="button" class="step-trigger" role="tab" aria-controls="capture" id="capturebtn" onclick="capturePage()">
+          <button type="button" class="step-trigger" role="tab" id="capturebtn" onclick="capturePage()">
             <span class="bs-stepper-label">Capture</span>   
           </button>
         </div>
         <div class="line"></div>
         <div class="step" data-target="#save">
-          <button type="button" class="step-trigger" role="tab" aria-controls="save" id="savebtn" onclick="savePage()">
+          <button type="button" class="step-trigger" role="tab" id="savebtn" onclick="savePage()">
             <span class="bs-stepper-label">Save</span>
           </button>
         </div>
@@ -85,7 +86,7 @@
     <div id="landing-page-content">
     <h1> 
       <div style="padding-bottom:1rem">
-        <img src="/images/logo.png">
+        <img src="/images/logo.png" alt="Spectral Workbench logo">
       </div>
       Spectral WorkBench <div><small>by Public Lab</small></div>
     </h1>
@@ -99,10 +100,10 @@
             <button class="demo-button next" id="landing-page-next">Capture Spectra</button>
             <br><br><br>
             <span>
-              <a href="https://spectralworkbench.org/dashboard"><i class="fa fa-home"></i></a>
-              <a href="https://github.com/publiclab/spectral-workbench.js"><i class="fa fa-github"></i></a>
-              <a href="https://twitter.com/intent/follow?original_referer=https%3A%2F%2Fspectralworkbench.org%2Fdashboard&ref_src=twsrc%5Etfw&screen_name=SpectralWB&tw_p=followbutton"><i class="fa fa-twitter"></i></a>
-              <a href="https://publiclab.org/wiki/spectral-workbench-help"><i class="fa fa-info-circle"></i></a>
+              <a href="https://spectralworkbench.org/dashboard" aria-label="Go to home"><i class="fa fa-home"></i></a>
+              <a href="https://github.com/publiclab/spectral-workbench.js" aria-label="Checkout the spectral workbench library on github"><i class="fa fa-github"></i></a>
+              <a href="https://twitter.com/intent/follow?original_referer=https%3A%2F%2Fspectralworkbench.org%2Fdashboard&ref_src=twsrc%5Etfw&screen_name=SpectralWB&tw_p=followbutton" aria-label="Follow spectral workbench on twitter"><i class="fa fa-twitter"></i></a>
+              <a href="https://publiclab.org/wiki/spectral-workbench-help" aria-label="Click here in case of help regarding spectral workbench"><i class="fa fa-info-circle"></i></a>
             </span>
     </div>
 
@@ -122,11 +123,11 @@
             <div id="spectrum-ex" style="padding-bottom:0px;padding-top:0.5rem;">
               <div class="spectrum-example-vertical" style="display:none;">
                 <p style="margin-top:4px;">Point your spectrometer at a light and click on the video above to choose a cross-section to sample. (<a href="http://publiclab.org/wiki/spectral-workbench-usage">Learn more &raquo;</a>)</p>
-                <img src="/images/example-cfl-vertical.png" style="height:136px; padding-bottom:1rem" id="cfl-resp"/>
+                <img src="/images/example-cfl-vertical.png" style="height:136px; padding-bottom:1rem" id="cfl-resp" alt="vertical spectrum example image" />
               </div>
               <div class="spectrum-example-horizontal">
                 <p style="margin-top:4px;">Point your spectrometer at a light and click on the video above to choose a cross-section as shown below. (<a href="http://publiclab.org/wiki/spectral-workbench-usage">Learn more &raquo;</a>)</p>
-                <img class="img-rot" width="480px" src="/images/calibration-example.png" />
+                <img class="img-rot" width="480px" src="/images/calibration-example.png" alt="horizontal spectrum example image" />
               </div>
             </div>
   
@@ -175,7 +176,7 @@
 
                 <div>
                 <p>Using calibration:</p>
-                <select name="spectrum[calibration_id]" class="select-calibration select-calibration-capture span2">
+                <select aria-label="Current calibration" name="spectrum[calibration_id]" class="select-calibration select-calibration-capture span2">
                   <%= render partial: 'capture/calibrations', locals: { calibrations: @calibrations, calibration: @calibration } %>
                 </select>
                 <a class="btn btn-inverse btn-switch-calibration-capture">Switch calibration</a>
@@ -231,7 +232,7 @@
 
               <div class="responsive-cal" style="padding-top: 20px;">
                 <p><small>Using calibration:</small></p>
-                <select name="spectrum[calibration_id]" class="select-calibration select-calibration-capture span2">
+                <select aria-label="Current calibration" name="spectrum[calibration_id]" class="select-calibration select-calibration-capture span2">
                   <%= render partial: 'capture/calibrations', locals: { calibrations: @calibrations, calibration: @calibration } %>
                 </select>
                 <a class="btn btn-inverse btn-switch-calibration-capture">Switch calibration</a>
@@ -276,3 +277,4 @@
       })();
     </script>
 </body>
+</html>

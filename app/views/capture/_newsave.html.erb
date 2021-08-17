@@ -5,7 +5,7 @@
 </div>
 
 <div class="span9">
-<img style="display:none;background:#333;" id="spectrum-preview" />
+<img style="display:none;background:#333;" id="spectrum-preview" alt="Spectrum image preview" />
 
 <h3 style="margin-bottom:6px;">Save this spectrum
 <% if logged_in? %>
@@ -62,7 +62,7 @@
   <input name="lon" type="hidden" id="lon" />
   <% if logged_in? %>
   <p><small>Choose a recent reference calibration, or use this as a new calibration.</small></p>
-  <select name="spectrum[calibration_id]" id="calibration_id">
+  <select aria-label="Current calibration" name="spectrum[calibration_id]" id="calibration_id">
     <%= render partial: 'capture/calibrations', locals: { calibrations: @calibrations, calibration: @calibration } %>
   </select>
   <% end %>
