@@ -43,6 +43,8 @@ SpectralWorkbench::Application.routes.draw do
   get '/spectrums/destroy/:id' => 'spectrums#destroy' 
   get '/spectrums/:id/edit' => 'spectrums#edit'
   post '/spectrums/:id/update' => 'spectrums#update'
+  post '/spectrums/fork/:id' => 'spectrums#fork'
+  post '/spectrums/choose/:id' => 'spectrums#choose'
 
   post '/comments/spectrum/:id' => 'comments#spectrum'
 
