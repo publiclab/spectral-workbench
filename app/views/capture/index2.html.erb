@@ -139,9 +139,9 @@
                     <a rel="tooltip" title="Rotate video 90 &deg;" class="btn btn-default btn-rotate" onClick="$W.toggle_rotation()"><i class="fa fa-rotate-right" aria-hidden="true"></i><span class="responsive-hide"> Rotate</span></a>
                 </p>
 
-                <p class="responsive-hide" style="padding-top:5px;">
-                Help <a href="http://publiclab.org/wiki/spectral-workbench-usage#Webcam+selection">selecting a camera</a>
-                </p>
+                <div class="select" style="padding-top:5px;">
+                  <label for="videoSource">Camera source: </label><select id="videoSource"></select>
+                </div>
   
                 <button class="btn btn-large btn-primary" data-toggle="tab" id="setting-page-next">Begin capturing &raquo;</button>
             </div>
