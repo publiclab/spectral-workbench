@@ -15,6 +15,7 @@ class NewcaptureTest < ApplicationSystemTestCase
     #log in 
     page.set_rack_session(:user_id => @user.id)
     visit "/capture/v2"
+    sleep(2) # taking in account modal display transition
 
     # Enable the in browser prompt for accessing the device camera (use-fake-ui-for-media-stream (Not working))
 

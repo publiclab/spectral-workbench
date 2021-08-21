@@ -15,6 +15,7 @@ class CaptureTest < ApplicationSystemTestCase
     #log in 
     page.set_rack_session(:user_id => @user.id)
     visit "/capture"
+    sleep(2) # taking in account modal display transition
 
     page.find('a', text: "Begin capturing »").click()
     page.find('a', text: "Save").click()
