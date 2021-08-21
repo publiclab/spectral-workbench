@@ -19,8 +19,8 @@ end
 
 group :development, :test do
   gem 'rack_session_access'
-  gem 'capybara', '~> 3.18.0'
-  gem 'selenium-webdriver', '~> 3.141.0'
+  gem 'capybara'
+  gem 'selenium-webdriver', '~> 3.142.7'
   gem 'faker', '~> 2.12.0'
 end
 
