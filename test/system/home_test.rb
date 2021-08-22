@@ -1,6 +1,8 @@
 require 'application_system_test_case'
 
 class HomeTest < ApplicationSystemTestCase
+  Capybara.default_max_wait_time = 60
+  
   test 'visiting the index' do
     visit '/'
 

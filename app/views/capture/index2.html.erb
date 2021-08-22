@@ -29,8 +29,8 @@
         </ul>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" onClick="$('#login-prompt-modal').modal('hide');$('#loginmodal').modal('show');">Log in</button>
-        <button type="button" class="btn btn-default" data-dismiss="modal" onClick="$('#login-prompt-modal').modal('hide');">No thanks</button>
+        <button type="button" class="btn btn-primary" id="login-button" onClick="$('#login-prompt-modal').modal('hide');$('#loginmodal').modal('show');">Log in</button>
+        <button type="button" class="btn btn-default" id="login-dismiss" data-dismiss="modal" onClick="$('#login-prompt-modal').modal('hide');">No thanks</button>
       </div>
     </div>
   </div>
@@ -41,8 +41,8 @@
   <div class="navbar-inner">
   <a class="brand" href="/"><img style="padding:-2px;width:20px;" src="/images/logo.png" alt="Spectral Workbench logo" /></a>
     <div class="pull-right">
-      <% unless logged_in? %><a onClick="$('#loginmodal').modal('show');" class="btn">Log in</a><% end %>
-      <a class="btn btn-inverse" href="http://publiclab.org/spectral-workbench" aria-label="Click here to know more about spectral workbench"><i class="fa fa-white fa-question-circle"></i></a>
+      <% unless logged_in? %><a onClick="$('#loginmodal').modal('show');" class="btn" id="login-btn">Log in</a><% end %>
+      <a class="btn btn-inverse" href="http://publiclab.org/spectral-workbench"><i class="fa fa-white fa-question-circle"></i></a>
     </div>
     <% if logged_in? %><p id="login-status">(logged in as <%=h current_user.login %>)<p><% end %>
     <p class="capture-messages" style="float:left;"></p>
