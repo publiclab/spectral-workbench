@@ -37,7 +37,7 @@ gem 'listen', '~> 3.7.0'
 gem 'mime-types' # , '1.18'
 gem 'passenger'
 gem 'recaptcha', '5.8.1', require: 'recaptcha/rails'
-gem 'redcarpet', '~> 3.5.0'
+gem 'redcarpet', '~> 3.5.1'
 gem 'responders', '~> 3.0.1'
 gem 'rmagick' # , :require => "RMagick"
 gem 'skylight' # performance tracking via skylight.io
