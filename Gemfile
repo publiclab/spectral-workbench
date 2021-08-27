@@ -30,7 +30,7 @@ group :production do
     gem 'uglifier', '~> 4.2'
 end
 
-gem 'bootsnap', '~> 1.7.7'
+gem 'bootsnap', '~> 1.8.1'
 gem 'jquery-rails'
 gem 'font-awesome-rails'
 gem 'listen', '~> 3.7.0'
