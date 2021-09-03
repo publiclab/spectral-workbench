@@ -1,6 +1,6 @@
 # Spectral Workbench
 
-Copyright 2011-2020 Public Lab
+Copyright Public Lab
 publiclab.org | spectralworkbench.org
 
 [![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/publiclab/spectral-workbench/)
@@ -29,7 +29,7 @@ Read about how to build and use your own spectrometer with this software here: h
 
 ## Installation
 
-The app now runs on Ruby 1.9.3 up to Ruby 2.1.2 (preferred), and Rails 3.2.x, and uses Bundler for gem management and Bower for static asset management.  
+The app now runs on Ruby 2.6.6 up to Ruby 2.6.x (preferred), and Rails 5.2.x, and uses Bundler for gem management and Yarn for static asset management.  
 
 ### Prerequisites:
 
@@ -54,11 +54,11 @@ Install rvm for Ruby management (http://rvm.io)
 
 **Ubuntu users:** You may need to enable `Run command as a login shell` in Ubuntu's Terminal, under Profile Preferences > Title and Command. Then close the terminal and reopen it.
 
-Then, use RVM to install version 2.1.2 of Ruby:
+Then, use RVM to install version 2.6.6 of Ruby:
 
-`rvm install 2.1.2`
+`rvm install 2.6.6`
 
-You'll also need **bower** which is available through NPM. To install NPM, you can run:
+You'll also need **yarn** which is available through NPM. To install NPM, you can run:
 
 `sudo apt-get install npm`
 
@@ -68,7 +68,9 @@ However, on Ubuntu, you may need to also install the `nodejs-legacy` package, as
 
 Once NPM is installed, you should be able to run:
 
-`sudo npm install -g bower`
+`sudo npm install -g yarn`
+
+* On mac, you can use Homebrew: `brew install yarn`
 
 ### Installation steps:
 
@@ -76,7 +78,7 @@ Once NPM is installed, you should be able to run:
 2. Install gems with `bundle install` from the rails root folder. You may need to run `bundle update` if you have older gems in your environment.
 3. Copy and configure config/database.yml from config/database.yml.example, using a new empty database you've created. Do the same thing for config/config.yml file copying it from config/config.yml.example file.
 4. Initialize database with `bundle exec rake db:setup`
-5. Install static assets (like external javascript libraries, fonts) with `bower install` 
+5. Install static assets (like external javascript libraries, fonts) with `yarn install` 
 6. Start rails with `bundle exec passenger start` from the Rails root and open http://localhost:3000 in a web browser. (For some, just `passenger start` will work; adding `bundle exec` ensures you're using the version of passenger you just installed with Bundler.)
 
 Sign in instructions:
