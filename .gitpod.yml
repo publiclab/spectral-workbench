@@ -17,9 +17,6 @@ tasks:
         rails db:migrate
       command: >
         passenger start --port 5000
-        
-    - command: redis-server
-    - command: rails c
     
 github:
     prebuilds:
