@@ -5,8 +5,6 @@ ports:
       onOpen: open-preview
 tasks:
     - init: >
-        gem install bundler &&
-        bundle config set without 'production' &&
         cp config/database.yml.gitpod config/database.yml &&
         cp config/config.yml.example config/config.yml &&
         cp db/schema.rb.example db/schema.rb &&
