@@ -351,7 +351,7 @@ class SpectrumsController < ApplicationController
 
     @spectrum.title = params[:spectrum][:title] unless params[:spectrum].nil? || params[:spectrum][:title].nil?
     @spectrum.notes = params[:spectrum][:notes] unless params[:spectrum].nil? || params[:spectrum][:notes].nil?
-    @spectrum.data  = params[:spectrum][:data] unless  params[:spectrum].nil? || params[:data].nil?
+    @spectrum.data  = params[:spectrum][:data] unless  params[:spectrum].nil? || params[:spectrum][:data].nil?
 
     # clean this up
     respond_to do |format|
