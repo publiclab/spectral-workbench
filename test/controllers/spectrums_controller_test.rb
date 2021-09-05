@@ -243,6 +243,30 @@ class SpectrumsControllerTest < ActionController::TestCase
     assert_redirected_to spectrum_path(assigns(:spectrum))
   end
 
+  test 'should update spectrum title' do
+    session[:user_id] = User.first.id # log in
+    patch :update, params: { id: spectrums(:one).id, spectrum: { title: "Really cool spectrum" } }
+
+    assert_response :redirect
+    # to check if the new spectrum title was updated
+    assert_equal 'Spectrum was successfully updated.', flash[:notice]
+    assert_equal "Really cool spectrum" , Spectrum.find(spectrums(:one).id).title
+    assert_not_nil :spectrum
+    assert_redirected_to spectrum_path(assigns(:spectrum))
+  end
+
+  test 'should update spectrum notes' do
+    session[:user_id] = User.first.id # log in
+    patch :update, params: { id: spectrums(:one).id, spectrum: { notes: "Neon spectrum info." } }
+
+    assert_response :redirect
+    # to check if the new spectrum notes was updated
+    assert_equal 'Spectrum was successfully updated.', flash[:notice]
+    assert_equal "Neon spectrum info.", Spectrum.find(spectrums(:one).id).notes
+    assert_not_nil :spectrum
+    assert_redirected_to spectrum_path(assigns(:spectrum))
+  end
+
   test 'should calibrate spectrum' do
     session[:user_id] = User.first.id # log in
     # we need a real spectrum with an image to work with:
