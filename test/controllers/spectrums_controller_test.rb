@@ -249,8 +249,8 @@ class SpectrumsControllerTest < ActionController::TestCase
 
     assert_response :redirect
     # to check if the new spectrum title was updated
-    assert_equal flash[:success], 'Spectrum was successfully updated.'
-    assert_equal "Really cool spectrum" , spectrums(:one).title
+    assert_equal 'Spectrum was successfully updated.', flash[:success]
+    assert_equal "Really cool spectrum" , Spectrum.find(spectrums(:one)).title
     assert_not_nil :spectrum
     assert_redirected_to spectrum_path(assigns(:spectrum))
   end
@@ -262,8 +262,8 @@ class SpectrumsControllerTest < ActionController::TestCase
 
     assert_response :redirect
     # to check if the new spectrum notes was updated
-    assert_equal flash[:success], 'Spectrum was successfully updated.'
-    assert_equal "Neon spectrum info", spectrums(:one).notes
+    assert_equal 'Spectrum was successfully updated.', flash[:success]
+    assert_equal "Neon spectrum info", Spectrum.find(spectrums(:one)).notes
     assert_not_nil :spectrum
     assert_redirected_to spectrum_path(assigns(:spectrum))
   end
