@@ -1,7 +1,7 @@
 # Dockerfile # Spectral Workbench 
 # https://github.com/publiclab/spectral-workbench
 
-FROM ruby:2.6.5-stretch
+FROM ruby:2.7.4-buster
 
 LABEL maintainer="Sebastian Silva <sebastian@fuentelibre.org>"
 LABEL description="This image deploys Spectral Workbench!"
