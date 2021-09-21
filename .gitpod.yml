@@ -13,7 +13,8 @@ tasks:
         yarn install &&
         rails db:create &&
         rails db:schema:load &&
-        rails db:migrate
+        rails db:migrate &&
+        rake db:fixtures:load
       command: >
         passenger start --port 5000
         
