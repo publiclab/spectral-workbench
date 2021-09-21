@@ -16,8 +16,8 @@ done
 
 echo "MySQL is up and running!"
 
-bundle exec rails db:create
-bundle exec rails db:schema:load
+#bundle exec rails db:create
+#bundle exec rails db:schema:load
 bundle exec rails db:migrate
 bundle exec rake assets:precompile
 # bundle exec rails db:seed
@@ -29,4 +29,4 @@ fi
 
 echo "Web server started"
 
-bundle exec passenger start --port $PORT
+bundle exec passenger start --port $PORT --max-pool-size $POOL_SIZE --min-instances $POOL_SIZE
