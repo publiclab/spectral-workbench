@@ -11,20 +11,22 @@ tasks:
         cp db/schema.rb.example db/schema.rb &&
         bundle install --without production &&
         yarn install &&
+        gp sync-done bundle && # 'bundle' is an arbitrary name I picked
         rails db:create &&
         rails db:schema:load &&
         rails db:migrate &&
-        rake db:fixtures:load
+        rake db:fixtures:load # load test data into database
       command: >
         passenger start --port 5000
+      openMode: split-left
 
     - name: Redis
-      init: gp sync-await bundle
+      init: gp sync-await bundle # await Rails command
       command: redis-server
-      openMode: tab-before
+      openMode: tab-after
 
     - name: Rails console
-      init: gp sync-await bundle
+      init: gp sync-await bundle # await Rails command
       command: rails c
       openMode: split-right
     
