@@ -38,7 +38,6 @@ SpectralWorkbench::Application.routes.draw do
   get '/popular' => 'likes#index'
   get '/popular/recent' => 'likes#recent'
 
-  get '/match/search/:id' => 'match#search'
   get '/upload' => 'spectrums#new'
   post '/spectrums/create' => 'spectrums#create'
   get '/spectrums/destroy/:id' => 'spectrums#destroy' 
@@ -111,9 +110,13 @@ SpectralWorkbench::Application.routes.draw do
 
   get 'macros/author' => 'macros#author'
 
-  get 'matches/get_conditions' => 'matches#get_conditions'
-  get 'matches/livesearch' => 'matches#livesearch'
-  get 'matches/search' => 'matches#search'
+  # Here comes the matching controller
+  get 'match/livesearch' => 'match#livesearch'
+  get 'match/:id' => 'match#index'
+  get 'match/get_conditions' => 'match#get_conditions'
+  get 'match/livesearch' => 'match#livesearch'
+  get 'match/search' => 'match#search'
+  post 'match/search/:id' => 'match#search'
 
   get 'sessions/local' => 'sessions#local'
   get 'sessions/login' => 'sessions#login'
@@ -187,10 +190,6 @@ SpectralWorkbench::Application.routes.draw do
   get '/spectra/feed/:author' => 'spectrums#rss', defaults: { format: 'xml' }
   get '/spectra/:id' => 'spectrums#show'
   get '/spectra/:action/:id' => 'spectrums'
-
-  # Here comes the matching controller
-  get '/match/livesearch' => 'match#livesearch'
-  get '/match/:id' => 'match#index'
 
   # cache_interval is how often the cache is recalculated
   # but if nothing changes, the checksum will not change
