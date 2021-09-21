@@ -42,7 +42,8 @@ RUN apt-get -y install fonts-liberation libappindicator3-1 libasound2 \
 
 RUN curl -sL https://deb.nodesource.com/setup_13.x | bash - && \
     apt-get install -y nodejs npm && \
-    npm install -g yarn
+    npm install -g yarn && \
+    gem install bundler
 
 # Add the Rails app
 WORKDIR /app
