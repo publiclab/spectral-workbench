@@ -6,8 +6,7 @@ define wait_for_container
 endef
 
 redeploy-container:
-	# docker-compose down --volumes
+	docker-compose down --volumes
 	docker-compose up -d
-	# $(call wait_for_container)
-	sleep 30
+	$(call wait_for_container)
 	docker-compose logs
