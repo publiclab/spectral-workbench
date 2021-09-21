@@ -7,15 +7,16 @@ tasks:
     - name: Redis
       init: gp sync-await bundle # await Rails command
       command: redis-server
-      openMode: split-left
+      openMode: tab-before
 
     - name: Rails
       init: >
+        gem install bundler &&
+        bundle install --without production &&
+        yarn install &&
         cp config/database.yml.gitpod config/database.yml &&
         cp config/config.yml.example config/config.yml &&
         cp db/schema.rb.example db/schema.rb &&
-        bundle install --without production &&
-        yarn install &&
         gp sync-done bundle &&
         rails db:create &&
         rails db:schema:load &&
