@@ -11,7 +11,7 @@ tasks:
         cp db/schema.rb.example db/schema.rb &&
         bundle install --without production &&
         yarn install &&
-        gp sync-done bundle && # 'bundle' is an arbitrary name I picked
+        gp sync-done bundle &&
         rails db:create &&
         rails db:schema:load &&
         rails db:migrate &&
