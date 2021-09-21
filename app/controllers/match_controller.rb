@@ -47,8 +47,13 @@ class MatchController < ApplicationController
     @spectrum = Spectrum.find(id)
 
     unless @spectrum.calibrated
-      flash[:error] = 'The spectrum is not calibrated. If you are the author of this spectrum please calibrate it first'
-      redirect_to spectrum_path(id.to_s)
+      message = 'The spectrum is not calibrated. If you are the author of this spectrum please calibrate it first'
+      if params[:toolPane]
+        render plain: message, layout: false
+      else
+        flash[:error] = message
+        redirect_to spectrum_path(id.to_s)
+      end
       return
     end
 
