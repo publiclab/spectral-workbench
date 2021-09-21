@@ -4,6 +4,11 @@ ports:
     - port: 5000
       onOpen: open-preview
 tasks:
+    - name: Redis
+      init: gp sync-await bundle # await Rails command
+      command: redis-server
+      openMode: split-left
+
     - name: Rails
       init: >
         cp config/database.yml.gitpod config/database.yml &&
@@ -18,11 +23,6 @@ tasks:
         rake db:fixtures:load # load test data into database
       command: >
         passenger start --port 5000
-      openMode: split-left
-
-    - name: Redis
-      init: gp sync-await bundle # await Rails command
-      command: redis-server
       openMode: tab-after
 
     - name: Rails console
