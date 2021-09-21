@@ -29,4 +29,4 @@ fi
 
 echo "Web server started"
 
-bundle exec passenger start --port $PORT
+bundle exec passenger start --port $PORT --max-pool-size $POOL_SIZE --min-instances $POOL_SIZE
