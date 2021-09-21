@@ -7,6 +7,6 @@ endef
 
 redeploy-container:
 	docker-compose down --volumes
-	docker-compose up -d
+	docker-compose up -d --build
 	$(call wait_for_container)
 	docker-compose logs
