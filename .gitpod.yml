@@ -17,10 +17,10 @@ tasks:
         cp config/database.yml.gitpod config/database.yml &&
         cp config/config.yml.example config/config.yml &&
         cp db/schema.rb.example db/schema.rb &&
-        gp sync-done bundle &&
         rails db:create &&
         rails db:schema:load &&
         rails db:migrate &&
+        gp sync-done bundle &&
         rake db:fixtures:load # load test data into database
       command: >
         passenger start --port 5000
