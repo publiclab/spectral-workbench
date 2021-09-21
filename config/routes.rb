@@ -38,6 +38,7 @@ SpectralWorkbench::Application.routes.draw do
   get '/popular' => 'likes#index'
   get '/popular/recent' => 'likes#recent'
 
+  get '/match/search/:id' => 'match#search'
   get '/upload' => 'spectrums#new'
   post '/spectrums/create' => 'spectrums#create'
   get '/spectrums/destroy/:id' => 'spectrums#destroy' 
