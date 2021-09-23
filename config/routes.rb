@@ -51,6 +51,7 @@ SpectralWorkbench::Application.routes.draw do
   get '/tags/change_reference/:id' => 'tags#change_reference'
 
   get '/spectrums/choose' => 'spectrums#choose' # for pagination in adding spectrums to sets, for some reason needed to explicitly set this?
+  post '/spectrums/choose' => 'spectrums#choose' # for pagination in adding spectrums to sets, for some reason needed to explicitly set this?
 
   resources :users do
     resources :spectrums
@@ -130,6 +131,8 @@ SpectralWorkbench::Application.routes.draw do
   delete 'sets/delete' => 'sets#delete'
   get 'sets/embed/:id' => 'sets#embed'
   post 'sets/add' => 'sets#add'
+  get 'sets/new/:id' => 'sets#new'
+  post 'sets/create/:id' => 'sets#create'
   get 'sets/calibrated' => 'sets#calibrated'
   get 'sets/show2' => 'sets#show2'
   get 'sets/find_match' => 'sets#find_match'
