@@ -224,6 +224,7 @@
                 <p style="margin-left: 1.8em;margin-top:0rem;width: 96%;">This display shows the last few seconds of data, descending. The top, newest row of pixels is used by default to generate the graph. This can be changed later.</p>
               </div>
               
+              <input name="dataurl" type="hidden" id="dataurl" />
               <div class="btn-group options">
                 <button type="button" class="demo-button next" id="json-download" onClick="prompt('Here is an array of the spectral data: ',JSON.stringify($W.full_data))">Get JSON</button>
                 <button type="button" class="demo-button next" id="capture-page-next" onClick="$W.saveSpectrum();">Save Capture</button>
