@@ -473,16 +473,6 @@ ecc-jsbn@~0.1.1:
     jsbn "~0.1.0"
     safer-buffer "^2.1.0"
 
-ecstatic@^3.3.2:
-  version "3.3.2"
-  resolved "https://registry.yarnpkg.com/ecstatic/-/ecstatic-3.3.2.tgz#6d1dd49814d00594682c652adb66076a69d46c48"
-  integrity sha512-fLf9l1hnwrHI2xn9mEDT7KIi22UDqA2jaCwyCbSUJh9a1V+LEUSL/JO/6TIz/QyuBURWUHrFL5Kg2TtO1bkkog==
-  dependencies:
-    he "^1.1.1"
-    mime "^1.6.0"
-    minimist "^1.1.0"
-    url-join "^2.0.5"
-
 ee-first@1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/ee-first/-/ee-first-1.0.3.tgz#6c98c4089abecb5a7b85c1ac449aa603d3b3dabe"
@@ -587,9 +577,9 @@ flot@~0.8.0-alpha:
   integrity sha512-xg2otcTJDvS+ERK+my4wxG/ASq90QURXtoM4LhacCq0jQW2jbyjdttbRNqU2cPykrpMvJ6b2uSp6SAgYAzj9tQ==
 
 follow-redirects@^1.0.0:
-  version "1.14.1"
-  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.14.1.tgz#d9114ded0a1cfdd334e164e6662ad02bfd91ff43"
-  integrity sha512-HWqDgT7ZEkqRzBvc2s64vSZ/hfOceEol3ac/7tKwzuvEyWx3/4UegXh5oBOIotkGsObyk3xznnSRVADBgWSQVg==
+  version "1.14.4"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.14.4.tgz#838fdf48a8bbdd79e52ee51fb1c94e3ed98b9379"
+  integrity sha512-zwGkiSXC1MUJG/qmeIFH2HBJx9u0V46QGUe3YR1fXG8bXQxq7fLj0RjLZQ5nubr9qNJUZrH+xUcwXEoXNpfS+g==
 
 font-awesome@~4.7.0:
   version "4.7.0"
@@ -789,7 +779,7 @@ has@^1.0.3:
   dependencies:
     function-bind "^1.1.1"
 
-he@^1.1.1:
+he@^1.1.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/he/-/he-1.2.0.tgz#84ae65fa7eafb165fddb61566ae14baf05664f0f"
   integrity sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==
@@ -819,21 +809,23 @@ http-proxy@^1.18.0:
     follow-redirects "^1.0.0"
     requires-port "^1.0.0"
 
-http-server@^0.12.3:
-  version "0.12.3"
-  resolved "https://registry.yarnpkg.com/http-server/-/http-server-0.12.3.tgz#ba0471d0ecc425886616cb35c4faf279140a0d37"
-  integrity sha512-be0dKG6pni92bRjq0kvExtj/NrrAd28/8fCXkaI/4piTwQMSDSLMhWyW0NI1V+DBI3aa1HMlQu46/HjVLfmugA==
+http-server@^13.0.1:
+  version "13.0.2"
+  resolved "https://registry.yarnpkg.com/http-server/-/http-server-13.0.2.tgz#36f8a8ae0e1b78e7bf30a4dfb01ae89b904904ef"
+  integrity sha512-R8kvPT7qp11AMJWLZsRShvm6heIXdlR/+tL5oAWNG/86A/X+IAFX6q0F9SA2G+dR5aH/759+9PLH0V34Q6j4rg==
   dependencies:
     basic-auth "^1.0.3"
     colors "^1.4.0"
     corser "^2.0.1"
-    ecstatic "^3.3.2"
+    he "^1.1.0"
     http-proxy "^1.18.0"
+    mime "^1.6.0"
     minimist "^1.2.5"
     opener "^1.5.1"
     portfinder "^1.0.25"
     secure-compare "3.0.1"
     union "~0.5.0"
+    url-join "^2.0.5"
 
 http-signature@~1.2.0:
   version "1.2.0"
@@ -1035,10 +1027,10 @@ methods@1.0.1:
   resolved "https://registry.yarnpkg.com/methods/-/methods-1.0.1.tgz#75bc91943dffd7da037cf3eeb0ed73a0037cd14b"
   integrity sha1-dbyRlD3/19oDfPPusO1zoAN80Us=
 
-mime-db@1.48.0:
-  version "1.48.0"
-  resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.48.0.tgz#e35b31045dd7eada3aaad537ed88a33afbef2d1d"
-  integrity sha512-FM3QwxV+TnZYQ2aRqhlKBMHxk10lTbMt3bBkMAp54ddrNeVSfcQYOOKuGuy3Ddrm38I04If834fOUSq1yzslJQ==
+mime-db@1.49.0:
+  version "1.49.0"
+  resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.49.0.tgz#f3dfde60c99e9cf3bc9701d687778f537001cbed"
+  integrity sha512-CIc8j9URtOVApSFCQIF+VBkX1RwXp/oMMOrqdyXSBXq5RWNEsRfyj1kiRnQgmNXmHxPoFIxOroKA3zcU9P+nAA==
 
 mime-types@1.0.0:
   version "1.0.0"
@@ -1046,11 +1038,11 @@ mime-types@1.0.0:
   integrity sha1-antKavLn2S+Xr+A/BHx4AejwAdI=
 
 mime-types@^2.1.12, mime-types@~2.1.19:
-  version "2.1.31"
-  resolved "https://registry.yarnpkg.com/mime-types/-/mime-types-2.1.31.tgz#a00d76b74317c61f9c2db2218b8e9f8e9c5c9e6b"
-  integrity sha512-XGZnNzm3QvgKxa8dpzyhFTHmpP3l5YNusmne07VUOXxou9CqUqYa/HBy124RqtVh/O2pECas/MOcsDgpilPOPg==
+  version "2.1.32"
+  resolved "https://registry.yarnpkg.com/mime-types/-/mime-types-2.1.32.tgz#1d00e89e7de7fe02008db61001d9e02852670fd5"
+  integrity sha512-hJGaVS4G4c9TSMYh2n6SQAGrC4RnfU+daP8G7cSCmaqNjiOoUY0VHCMS42pxnQmVF1GWwFhbHWn3RIxCqTmZ9A==
   dependencies:
-    mime-db "1.48.0"
+    mime-db "1.49.0"
 
 mime@1.2.11, mime@~1.2.11:
   version "1.2.11"
@@ -1093,7 +1085,7 @@ minimatch@~0.2.11:
     lru-cache "2"
     sigmund "~1.0.0"
 
-minimist@^1.1.0, minimist@^1.2.5:
+minimist@^1.2.5:
   version "1.2.5"
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.5.tgz#67d66014b66a6a8aaa0c083c5fd58df4e4e97602"
   integrity sha512-FM9nNUYrRBAELZQT3xeZQ7fmMOBg6nWNmJKTcgsJeaLstP/UODVpGsr5OhXhhXg6f+qtJ8uiZ+PUxkDWcgIXLw==
@@ -1108,6 +1100,11 @@ mkdirp@^0.5.5:
 moment@~2.10.6:
   version "2.10.6"
   resolved "https://codeload.github.com/moment/moment/tar.gz/f3fbef9d9875bbff340b527dbe3f1c447a942f69"
+
+moment@~2.29.1:
+  version "2.29.1"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.1.tgz#b2be769fa31940be9eeea6469c075e35006fa3d3"
+  integrity sha512-kHmoybcPV8Sqy59DwNDY3Jefr64lK/by/da0ViFcuA4DH0vQg5Q6Ze5VimxkfQNSC+Mls/Kx53s7TjP1RhFEDQ==
 
 morgan@1.1.1:
   version "1.1.1"
@@ -1168,9 +1165,9 @@ object-assign@^4.1.0:
   integrity sha1-IQmtx5ZYh8/AXLvUQsrIv7s2CGM=
 
 object-inspect@^1.9.0:
-  version "1.10.3"
-  resolved "https://registry.yarnpkg.com/object-inspect/-/object-inspect-1.10.3.tgz#c2aa7d2d09f50c99375704f7a0adf24c5782d369"
-  integrity sha512-e5mCJlSH7poANfC8z8S9s9S2IN5/4Zb3aZ33f5s8YqoazCFzNLloLU8r5VCG+G7WoqLvAAZoVMcy3tp/3X0Plw==
+  version "1.11.0"
+  resolved "https://registry.yarnpkg.com/object-inspect/-/object-inspect-1.11.0.tgz#9dceb146cedd4148a0d9e51ab88d34cf509922b1"
+  integrity sha512-jp7ikS6Sd3GxQfZJPyH3cjcbJF6GZPClgdV+EFygjFLQ5FmW/dRUnTd9PQ9k0JhoNDabWFbpF1yCdSWCC6gexg==
 
 on-headers@0.0.0:
   version "0.0.0"
@@ -1470,18 +1467,18 @@ source-map@~0.5.1:
   integrity sha1-igOdLRAh0i0eoUyA2OpGi6LvP8w=
 
 spectral-workbench@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/spectral-workbench/-/spectral-workbench-0.2.0.tgz#1af6c2a3705d93c9618498d6bc09f61697f89c82"
-  integrity sha512-rXmGY1DDRpr4UgHJGhzm5nWMp/9X1VaChqoiYjv0wwxDvPykYZv6nGWik1wKsYiKjb1SNDphkcmsyhywR/WDlA==
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/spectral-workbench/-/spectral-workbench-0.2.2.tgz#659eeb2648c54fc972f4044ce878adebecf1d76f"
+  integrity sha512-Kj1g7r08YL72tQU/bCWK9C6sUeErmE9dIQToBPGoNwgjrdIBSl8coitPtmajd4yqxGiPuidoOKNsRgABPAI46Q==
   dependencies:
     bootstrap "~3.4.0"
     d3 "^3.5.4"
     flot "~0.8.0-alpha"
     font-awesome "~4.7.0"
-    http-server "^0.12.3"
+    http-server "^13.0.1"
     jquery "^3.3.1"
     jquery.steps "^1.0.3"
-    moment "~2.10.6"
+    moment "~2.29.1"
     nvd3 "~1.7.1"
     request "~2.88.0"
 
