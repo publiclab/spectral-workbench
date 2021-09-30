@@ -4,10 +4,6 @@ ports:
     - port: 5000
       onOpen: open-preview
 tasks:
-    - name: Redis
-      init: gp sync-await bundle # await Rails command
-      command: redis-server
-      openMode: tab-before
 
     - name: Rails
       init: >
@@ -20,11 +16,16 @@ tasks:
         rails db:create &&
         rails db:schema:load &&
         rails db:migrate &&
-        gp sync-done bundle &&
-        rake db:fixtures:load # load test data into database
+        rake db:fixtures:load &&
+        gp sync-done bundle
       command: >
         passenger start --port 5000
       openMode: tab-after
+
+    - name: Redis
+      init: gp sync-await bundle # await Rails command
+      command: redis-server
+      openMode: tab-before
 
     - name: Rails console
       init: gp sync-await bundle # await Rails command
