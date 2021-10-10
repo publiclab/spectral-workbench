@@ -5,7 +5,7 @@ require 'test_helper'
 class RoutesTest < ActionDispatch::IntegrationTest
   fixtures :all
 
-   "test spectrums choose route" do
+   test "test spectrums choose route" do
     assert_routing({ path: '/spectrums/choose', method: :post }, { controller: 'spectrums', action: 'choose' })
   end
   
