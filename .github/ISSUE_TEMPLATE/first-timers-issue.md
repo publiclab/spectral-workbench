@@ -2,7 +2,7 @@
 name: First Timers Issue
 about: Make an issue to help welcome others to open source!
 title: ''
-labels: good first issue
+labels: first-timers-only
 assignees: ''
 
 ---
