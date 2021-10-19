@@ -4,9 +4,8 @@ Copyright Public Lab
 publiclab.org | spectralworkbench.org
 
 [![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/publiclab/spectral-workbench/)
-
-
-[![tests](https://travis-ci.org/publiclab/spectral-workbench.svg?branch=master)](https://travis-ci.org/publiclab/spectral-workbench) [![View performance data on Skylight](https://badges.skylight.io/typical/Wnv2jzIUWl5x.svg)](https://oss.skylight.io/app/applications/Wnv2jzIUWl5x)
+[![tests](https://github.com/publiclab/spectral-workbench/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/publiclab/spectral-workbench/actions/workflows/tests.yml)
+[![View performance data on Skylight](https://badges.skylight.io/typical/Wnv2jzIUWl5x.svg)](https://oss.skylight.io/app/applications/Wnv2jzIUWl5x)
 
 Spectral Workbench is an open-source tool to perform low-cost spectral analysis and to share those results online. It consists of a Ruby on Rails web application for publishing, archiving, discussing, and analyzing spectra online -- running at http://spectralworkbench.org
 
