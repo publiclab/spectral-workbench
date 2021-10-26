@@ -75,7 +75,7 @@ Once NPM is installed, you should be able to run:
 
 1. Download a copy of the source with `git clone https://github.com/publiclab/spectral-workbench.git` 
 2. Install gems with `bundle install` from the rails root folder. You may need to run `bundle update` if you have older gems in your environment.
-3. Copy and configure config/database.yml from config/database.yml.example, using a new empty database you've created. Do the same thing for config/config.yml file copying it from config/config.yml.example file.
+3. Copy and configure database with `cp config/database.yml.example config/database.yml`. Similarly, configure `cp config/config.yml.example config/config.yml`
 4. Initialize database with `bundle exec rake db:setup`
 5. Install static assets (like external javascript libraries, fonts) with `yarn install` 
 6. Start rails with `bundle exec passenger start` from the Rails root and open http://localhost:3000 in a web browser. (For some, just `passenger start` will work; adding `bundle exec` ensures you're using the version of passenger you just installed with Bundler.)
