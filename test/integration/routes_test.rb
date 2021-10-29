@@ -29,4 +29,7 @@ class RoutesTest < ActionDispatch::IntegrationTest
     assert_routing({ path: '/spectrums/embed/:id', method: 'get' }, {controller: 'spectrums', action: 'embed', id: ':id' })
   end
   
+  test "test get request for sets new" do
+    assert_routing({ path: '/sets/new/:id', method: 'get' }, {controller: 'sets', action: 'new', id: ':id' })
+  end
 end
