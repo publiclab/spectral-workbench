@@ -21,6 +21,10 @@ class RoutesTest < ActionDispatch::IntegrationTest
     assert_routing({ path: '/spectrums/choose', method: :post }, { controller: 'spectrums', action: 'choose' })
   end
 
+  test "test get request for spectrums destroy id" do
+    assert_routing({ path: '/spectrums/destroy/:id', method: 'get' }, {controller: 'spectrums', action: 'destroy', id: ':id' })
+  end
+
   test "test get request for spectrums latest" do
     assert_routing({ path: '/spectrums/latest/:id', method: 'get' }, {controller: 'spectrums', action: 'latest', id: ':id' })
   end
