@@ -30,7 +30,7 @@ class RoutesTest < ActionDispatch::IntegrationTest
   end
   
   test "test post request for spectrums update id" do
-   assert_routing({ path: '/spectrums/:id/update', method: 'post' }, {controller: 'spectrums', action: 'update', id: ':id' })
+    assert_routing({ path: '/spectrums/:id/update', method: 'post' }, {controller: 'spectrums', action: 'update', id: ':id' })
   end
   
   test "test get request for spectrums embed" do
