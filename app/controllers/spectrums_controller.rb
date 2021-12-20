@@ -206,7 +206,6 @@ class SpectrumsController < ApplicationController
   # replacing this with capture/save soon
   def create # rubocop:disable Metrics/AbcSize
     if logged_in? || params[:token] && User.find_by_token(params[:token])
-      puts 'innnnn'
       user = current_user || User.find_by_token(params[:token])
       params[:spectrum][:json] = params[:spectrum][:data] if params[:spectrum] && params[:spectrum][:data]
 
@@ -302,7 +301,6 @@ class SpectrumsController < ApplicationController
       end
 
     else
-      puts 'outttt'
       respond_to do |format|
         if request.xhr?
           format.json  do
