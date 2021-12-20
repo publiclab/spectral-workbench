@@ -9,8 +9,8 @@
         </a>
       <% end %>
       <a class="image visible-phone" style="float:left;width:50%;margin-right:10px;" href="<%= spectrum_path(spectrum.id) %>"><img src="<%= spectrum.photo.url(:thumb) %>" class="image" style="background:#ccc;"></a>
-      <h4><a data-transition="slide" href="<%= spectrum_path(spectrum.id) %>"><%=h truncate(spectrum.title,:length => 18) %></a></h4>
-      <p><a data-transition="slide" href="<%=h profile_path(spectrum.author) %>"><%=h spectrum.author %></a> | <%= time_ago_in_words(spectrum.created_at) %> ago<% if spectrum.like_count.positive? %> <i class="fa fa-star"></i> <%= spectrum.like_count %><% end %></p>
+      <h4><a data-transition="slide" href="<%= spectrum_path(spectrum.id) %>"><%= truncate(spectrum.title,:length => 18) %></a></h4>
+      <p><a data-transition="slide" href="<%= profile_path(spectrum.author) %>"><%= spectrum.author %></a> | <%= time_ago_in_words(spectrum.created_at) %> ago<% if spectrum.like_count.positive? %> <i class="fa fa-star"></i> <%= spectrum.like_count %><% end %></p>
     </div>
     <% if ((i+1)/4.0).to_i == ((i+1)/4.0) %>
     </div>
