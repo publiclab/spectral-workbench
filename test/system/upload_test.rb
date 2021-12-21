@@ -14,7 +14,7 @@ class UploadTest < ApplicationSystemTestCase
   test 'upload a spectrum on upload spectrum page' do 
     #log in 
     page.set_rack_session(:user_id => @user.id)
-    visit "/uplod"
+    visit "/upload"
 
     # Capybara.ignore_hidden_elements = false
 
