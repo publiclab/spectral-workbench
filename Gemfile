@@ -11,7 +11,7 @@ end
 
 group :test do
   gem 'rails-controller-testing', '~> 1.0.5'
-  gem 'rubocop', '~> 1.22.1'
+  gem 'rubocop', '~> 1.23.0'
   gem 'rubocop-performance'
   gem 'simplecov', require: false
   gem 'puma'
