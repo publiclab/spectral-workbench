@@ -3,14 +3,14 @@ require 'application_system_test_case'
 class HomeTest < ApplicationSystemTestCase
   Capybara.default_max_wait_time = 60
   
-  # test 'visiting the index' do
-  #   visit '/'
+  test 'visiting the index' do
+    visit '/'
 
-  #   assert_selector('a.title', text: 'Spectral Workbench')
-  #   assert_selector('div.jumbotron', text: 'DIY material analysis')
-  #   assert_selector('div.span8', text: 'Featured tags ')
-  #   assert_selector('.hidden-phone', text: 'by contributors like you')
-  # end
+    assert_selector('a.title', text: 'Spectral Workbench')
+    assert_selector('div.jumbotron', text: 'DIY material analysis')
+    assert_selector('div.span8', text: 'Featured tags ')
+    assert_selector('.hidden-phone', text: 'by contributors like you')
+  end
 
   # test 'Capture Spectra should redirect' do
   #   visit '/'
