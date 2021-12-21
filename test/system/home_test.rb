@@ -29,7 +29,7 @@ class HomeTest < ApplicationSystemTestCase
   test 'Check author profile link to be correct' do
     visit '/'
 
-    within find('p.author-profil') do
+    within find('p.author-profile') do
       find('a').click
     end
     page.find('a.btn-mini', text: 'RSS')
