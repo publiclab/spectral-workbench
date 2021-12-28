@@ -53,6 +53,8 @@ gem 'tzinfo', '~> 1.2'
 gem 'open_id_authentication'
 gem 'protected_attributes_continued', '~> 1.8.2'
 gem 'ruby-openid'
+gem 'fog-google'
+gem 'fog-local'
 
 gem 'rack-offline', '>= 0.6.4'
 
