@@ -54,7 +54,7 @@ class RoutesTest < ActionDispatch::IntegrationTest
   end
   
   test "test get request for match get_conditions" do
-+   assert_routing({ path: '/match/get_conditions', method: 'get' }, {controller: 'match', action: 'get_conditions' })
-+ end
+    assert_routing({ path: '/match/get_conditions', method: 'get' }, {controller: 'match', action: 'get_conditions' })
+  end
   
 end
