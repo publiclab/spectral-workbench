@@ -47,13 +47,12 @@ class RoutesTest < ActionDispatch::IntegrationTest
 
   test "test post request for match search id" do
     assert_routing({ path: '/match/search/:id', method: 'post' }, {controller: 'match', action: 'search', id: ':id' })
-
   end
   test "test get request for match id" do
     assert_routing({ path: '/match/:id', method: 'get' }, {controller: 'match', action: 'index', id: ':id' })
   end
   test "test get request for match search" do
-	assert_routing({ path: '/match/search', method: 'get' }, {controller: 'match', action: 'search' })
+	  assert_routing({ path: '/match/search', method: 'get' }, {controller: 'match', action: 'index', id: 'search' })
   end
 
 end
