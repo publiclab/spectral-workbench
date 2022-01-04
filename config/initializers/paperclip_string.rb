@@ -6,7 +6,7 @@
 
 Paperclip::Attachment.default_options[:storage] = :fog
 Paperclip::Attachment.default_options[:fog_directory] = ENV["GOOGLE_STORAGE_BUCKET_NAME"] || ''
-Paperclip::Attachment.default_options[:path] = ":rails_root/public/system/public/system/:class/:attachment/:id_partition/:style/:filename"
+Paperclip::Attachment.default_options[:path] = ":rails_root/public/system/:attachment/:id/:style/:filename"
 Paperclip::Attachment.default_options[:fog_credentials] = {
     provider: ENV["FOG_PROVIDER"] || "Local",
     local_root: "#{Rails.root}/public",
