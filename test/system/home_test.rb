@@ -29,9 +29,9 @@ class HomeTest < ApplicationSystemTestCase
   test 'Check author profile link to be correct' do
     visit '/'
 
-    # within find('#author-profile') do
-    #   first('a').click
-    # end
+    within find('#author-profile') do
+      first('a').click
+    end
     first('a.author-profile', minimum: 1).click
     # page.find('a.btn-mini', text: 'RSS')
     assert_selector('a.btn-mini', text: 'RSS')
