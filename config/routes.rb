@@ -28,6 +28,7 @@ SpectralWorkbench::Application.routes.draw do
   get '/profile', to: 'users#show'
   get '/profile/:id', to: 'users#show'
 
+  post '/macros/create' => 'macros#create'
   get '/macro/edit/:id' => 'macros#edit'
   get '/macro/update/:id' => 'macros#update'
   get '/macro/:author/:id' => 'macros#show'
