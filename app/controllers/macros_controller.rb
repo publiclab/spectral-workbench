@@ -2,7 +2,8 @@
 
 class MacrosController < ApplicationController
   def index
-    @macros = Macro.find :all, order: 'id DESC'
+    # @macros = Macro.find :all, order: 'id DESC'
+    @macros = Macro.all.order(id: :desc)
   end
 
   def author
