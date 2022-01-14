@@ -1102,10 +1102,10 @@ mkdirp@^0.5.5:
   dependencies:
     minimist "^1.2.5"
 
-moment@~2.10.6:
-  version "2.10.6"
-  resolved "https://registry.yarnpkg.com/moment/-/moment-2.10.6.tgz#6cb21967c79cba7b0ca5e66644f173662b3efa77"
-  integrity sha1-bLIZZ8ecunsMpeZmRPFzZis++nc=
+moment@~2.19.3:
+  version "2.19.3"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.19.3.tgz#bdb99d270d6d7fda78cc0fbace855e27fe7da69f"
+  integrity sha1-vbmdJw1tf9p4zA+6zoVeJ/59pp8=
 
 moment@~2.29.1:
   version "2.29.1"
