@@ -19,7 +19,7 @@
     "jquery.steps": "^1.0.3",
     "junction": "theleagueof/junction#*",
     "leaflet": "^1.7.1",
-    "moment": "~2.10.6",
+    "moment": "~2.29.1",
     "nvd3": "~1.7.1",
     "spectral-workbench": "^0.2.0"
   },
