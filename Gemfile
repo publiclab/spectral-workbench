@@ -33,7 +33,7 @@ end
 gem 'bootsnap', '~> 1.9.4'
 gem 'jquery-rails'
 gem 'font-awesome-rails'
-gem 'listen', '~> 3.7.0'
+gem 'listen', '~> 3.7.1'
 gem 'mime-types' # , '1.18'
 gem 'passenger'
 gem 'recaptcha', '5.8.1', require: 'recaptcha/rails'
