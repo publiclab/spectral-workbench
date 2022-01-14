@@ -6,7 +6,7 @@
   "author": "Public Lab contributors <web@publiclab.org>",
   "license": "GPL-3.0",
   "dependencies": {
-    "ace-builds": "jywarren/ace-builds#v1.2.4",
+    "ace-builds": "^1.4.13",
     "adapterjs": "^0.15.5",
     "bootstrap-css": "jozefizso/bower-bootstrap-css#~2.3.2",
     "bs-stepper": "^1.7.0",

@@ -15,9 +15,10 @@ accepts@1.0.3:
     mime "~1.2.11"
     negotiator "0.4.6"
 
-ace-builds@jywarren/ace-builds#v1.2.4:
-  version "1.2.3"
-  resolved "https://codeload.github.com/jywarren/ace-builds/tar.gz/48e1f6e7951f0bf6c200853f33ae468ed4a38fca"
+ace-builds@^1.4.13:
+  version "1.4.13"
+  resolved "https://registry.yarnpkg.com/ace-builds/-/ace-builds-1.4.13.tgz#186f42d3849ebcc6a48b93088a058489897514c1"
+  integrity sha512-SOLzdaQkY6ecPKYRDDg+MY1WoGgXA34cIvYJNNoBMGGUswHmlauU2Hy0UL96vW0Fs/LgFbMUjD+6vqzWTldIYQ==
 
 adapterjs@^0.15.5:
   version "0.15.5"
