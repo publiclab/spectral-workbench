@@ -121,9 +121,9 @@
         <input type='hidden' name='authenticity_token' value="<%= form_authenticity_token %>"/>
     
         <input name="upload" type="hidden" id="upload" value="true" />
-        <input name="geotag" type="hidden" id="geotag" />
-        <input name="lat" type="hidden" id="lat" />
-        <input name="lon" type="hidden" id="lon" />
+        <input name="geotag" type="hidden" id="geotag" value="<%= params[:geotag] %>" />
+        <input name="lat" type="hidden" id="lat" value="<%= params[:lat] %>" />
+        <input name="lon" type="hidden" id="lon" value="<%= params[:lon] %>" />
 
         <a href="#" data-loading-text="Saving..." id="uploadBtn" class="btn btn-primary btn-large" onClick="$W.save(true)">Upload with selected calibration</a>
         <a href="#" data-loading-text="Saving..." id="uploadUncalibrated" class="btn btn-large" onClick="$W.save(false)">Upload &amp; calibrate later</a>
