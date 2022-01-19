@@ -15,9 +15,16 @@ accepts@1.0.3:
     mime "~1.2.11"
     negotiator "0.4.6"
 
+<<<<<<< HEAD
 "ace-builds@github:jywarren/ace-builds#v1.2.4":
   version "1.2.3"
   resolved "https://codeload.github.com/jywarren/ace-builds/tar.gz/48e1f6e7951f0bf6c200853f33ae468ed4a38fca"
+=======
+ace-builds@^1.4.13:
+  version "1.4.13"
+  resolved "https://registry.yarnpkg.com/ace-builds/-/ace-builds-1.4.13.tgz#186f42d3849ebcc6a48b93088a058489897514c1"
+  integrity sha512-SOLzdaQkY6ecPKYRDDg+MY1WoGgXA34cIvYJNNoBMGGUswHmlauU2Hy0UL96vW0Fs/LgFbMUjD+6vqzWTldIYQ==
+>>>>>>> main
 
 adapterjs@^0.15.5:
   version "0.15.5"
@@ -587,9 +594,15 @@ flot@~0.8.0-alpha:
   integrity sha512-xg2otcTJDvS+ERK+my4wxG/ASq90QURXtoM4LhacCq0jQW2jbyjdttbRNqU2cPykrpMvJ6b2uSp6SAgYAzj9tQ==
 
 follow-redirects@^1.0.0:
+<<<<<<< HEAD
   version "1.14.6"
   resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.14.6.tgz#8cfb281bbc035b3c067d6cd975b0f6ade6e855cd"
   integrity sha512-fhUl5EwSJbbl8AR+uYL2KQDxLkdSjZGR36xy46AO7cOMTrCMON6Sa28FmAnC2tRTDbd/Uuzz3aJBv7EBN7JH8A==
+=======
+  version "1.14.7"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.14.7.tgz#2004c02eb9436eee9a21446a6477debf17e81685"
+  integrity sha512-+hbxoLbFMbRKDwohX8GkTataGqO6Jb7jGwpAlwgy2bIz25XtRm7KEzJM76R1WiNT5SwZkX4Y75SwBolkpmE7iQ==
+>>>>>>> main
 
 font-awesome@~4.7.0:
   version "4.7.0"
@@ -894,6 +907,7 @@ jasmine-ajax@^4.0.0:
   resolved "https://registry.yarnpkg.com/jasmine-ajax/-/jasmine-ajax-4.0.0.tgz#7d8ba7e47e3f7e780e155fe9aa563faafa7e1a26"
   integrity sha512-htTxNw38BSHxxmd8RRMejocdPqLalGHU6n3HWFbzp/S8AuTQd1MYjkSH3dYDsbZ7EV1Xqx/b94m3tKaVSVBV2A==
 
+<<<<<<< HEAD
 jasmine-core@~3.10.0:
   version "3.10.1"
   resolved "https://registry.yarnpkg.com/jasmine-core/-/jasmine-core-3.10.1.tgz#7aa6fa2b834a522315c651a128d940eca553989a"
@@ -906,12 +920,30 @@ jasmine@^3.7.0:
   dependencies:
     glob "^7.1.6"
     jasmine-core "~3.10.0"
+=======
+jasmine-core@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/jasmine-core/-/jasmine-core-4.0.0.tgz#8299ed38a100c47a1d154af63449a40967a7be5c"
+  integrity sha512-tq24OCqHElgU9KDpb/8O21r1IfotgjIzalfW9eCmRR40LZpvwXT68iariIyayMwi0m98RDt16aljdbwK0sBMmQ==
+
+jasmine@^4.0.2:
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/jasmine/-/jasmine-4.0.2.tgz#6f5ff7fbf6b67f56600235fdb7d299ac52876c4b"
+  integrity sha512-YsrgxJQEggxzByYe4j68eQLOiQeSrPDYGv4sHhGBp3c6HHdq+uPXeAQ73kOAQpdLZ3/0zN7x/TZTloqeE1/qIA==
+  dependencies:
+    glob "^7.1.6"
+    jasmine-core "^4.0.0"
+>>>>>>> main
 
 "jfeed@github:mattmarcum/jFeed#*":
   version "0.0.0"
   resolved "https://codeload.github.com/mattmarcum/jFeed/tar.gz/c3981fa3229339e9c0ac37e41f190aab52ab0638"
 
+<<<<<<< HEAD
 jquery.steps@^1.0.3:
+=======
+jquery.steps@^1.0.3, jquery.steps@^1.1.3:
+>>>>>>> main
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/jquery.steps/-/jquery.steps-1.1.3.tgz#c32cdd2d07ef116b5d9c2449d069f22e039e4021"
   integrity sha512-Z4dKabXu9vV0EwxmjFCZAyHF6h5rx0F8q7ItXGFGiJwjrpvTEqKGr+W69Rcd39Y7IfNCrK6DJCwH1iVQGOrB9Q==
@@ -1107,10 +1139,10 @@ mkdirp@^0.5.5:
   dependencies:
     minimist "^1.2.5"
 
-moment@~2.10.6:
-  version "2.10.6"
-  resolved "https://registry.yarnpkg.com/moment/-/moment-2.10.6.tgz#6cb21967c79cba7b0ca5e66644f173662b3efa77"
-  integrity sha1-bLIZZ8ecunsMpeZmRPFzZis++nc=
+moment@~2.19.3:
+  version "2.19.3"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.19.3.tgz#bdb99d270d6d7fda78cc0fbace855e27fe7da69f"
+  integrity sha1-vbmdJw1tf9p4zA+6zoVeJ/59pp8=
 
 moment@~2.29.1:
   version "2.29.1"
