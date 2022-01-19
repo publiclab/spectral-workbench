@@ -1474,10 +1474,10 @@ source-map@~0.5.1:
   resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.5.7.tgz#8a039d2d1021d22d1ea14c80d8ea468ba2ef3fcc"
   integrity sha1-igOdLRAh0i0eoUyA2OpGi6LvP8w=
 
-spectral-workbench@^0.2.0:
-  version "0.2.2"
-  resolved "https://registry.yarnpkg.com/spectral-workbench/-/spectral-workbench-0.2.2.tgz#659eeb2648c54fc972f4044ce878adebecf1d76f"
-  integrity sha512-Kj1g7r08YL72tQU/bCWK9C6sUeErmE9dIQToBPGoNwgjrdIBSl8coitPtmajd4yqxGiPuidoOKNsRgABPAI46Q==
+spectral-workbench@^0.2.3:
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/spectral-workbench/-/spectral-workbench-0.2.3.tgz#829f566fada335312f4d30b339f696ae93decb4e"
+  integrity sha512-fq6AZtTHztt0GpTDJFWE19fIwEjsI3JTDalN71MQjDlW/nGRno2nhq08oHyWJhOcOhJ3P1e0/9gERgKYJ5zw0A==
   dependencies:
     bootstrap "~3.4.0"
     d3 "^3.5.4"
