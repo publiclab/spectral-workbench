@@ -73,4 +73,8 @@ class RoutesTest < ActionDispatch::IntegrationTest
     assert_routing({ path: '/spectrums/choose/:id', method: 'post' }, {controller: 'spectrums', action: 'choose', id: ':id' })
   end
 
+  test "test get request for profile id" do
+    assert_routing({ path: '/profile/:id', method: 'get' }, {controller: 'users', action: 'show', id: ':id' })
+  end
+
 end
