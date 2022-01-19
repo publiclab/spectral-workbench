@@ -10,7 +10,7 @@ xml.rss 'version' => '2.0', 'xmlns:dc' => 'http://purl.org/dc/elements/1.1/' do
       xml.title       'Recent spectra at SpectralWorkbench.org'
     end
     xml.link        url_for only_path: false, controller: 'spectrums'
-    xml.description 'Recently posted open sourcespectra from SpectralWorkbench.org, a Public Laboratory open source research initiative'
+    xml.description 'Recently posted open source spectra from SpectralWorkbench.org, a Public Laboratory open source research initiative'
 
     @spectrums.each do |spectrum|
       xml.item do
