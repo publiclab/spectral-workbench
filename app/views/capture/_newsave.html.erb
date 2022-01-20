@@ -55,11 +55,11 @@
   <textarea placeholder="Describe your spectrum: light source? Sample preparation? What's your goal?" style="span8" rows="6" name="spectrum[notes]" id="spectrum_notes"></textarea>
   <br />
 
-  <input name="video_row" type="hidden" id="video_row" />
+  <input name="video_row" id="video_row" />
   <input name="dataurl" type="hidden" id="upload" value="<%= params[:dataurl] %>" />
-  <input name="geotag" type="hidden" id="geotag" value="<%= params[:geotag] %>" />
-  <input name="lat" type="hidden" id="lat" value="<%= params[:lat] %>" />
-  <input name="lon" type="hidden" id="lon" value="<%= params[:lon] %>" />
+  <input name="geotag" id="geotag" value="<%= params[:geotag] %>" />
+  <input name="lat" id="lat" value="<%= params[:lat] %>" />
+  <input name="lon" id="lon" value="<%= params[:lon] %>" />
   <% if logged_in? %>
   <p><small>Choose a recent reference calibration, or use this as a new calibration.</small></p>
   <select aria-label="Current calibration" name="spectrum[calibration_id]" id="calibration_id">
