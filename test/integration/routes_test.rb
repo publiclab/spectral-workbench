@@ -81,4 +81,8 @@ class RoutesTest < ActionDispatch::IntegrationTest
     assert_routing({ path: '/sets/show2', method: 'get' }, {controller: 'sets', action: 'show', id: 'show2'})
   end
 
+  test "test get request for spectrums plots_rss" do
+    assert_routing({ path: '/spectrums/plots_rss', method: 'get' }, {controller: 'spectrums', action: 'show', id: 'plots_rss'})
+  end
+
 end
