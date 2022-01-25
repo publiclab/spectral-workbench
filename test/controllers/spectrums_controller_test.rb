@@ -405,17 +405,6 @@ class SpectrumsControllerTest < ActionController::TestCase
     assert_response :redirect
   end
 
-  test 'should set sample row to spectrum' do
-    session[:user_id] = users(:admin).id
-    spectrum = Spectrum.last
-    spectrum.image_from_dataurl('data:image/gif;base64,R0lGODdhMAAwAPAAAAAAAP///ywAAAAAMAAwAAAC8IyPqcvt3wCcDkiLc7C0qwyGHhSWpjQu5yqmCYsapyuvUUlvONmOZtfzgFzByTB10QgxOR0TqBQejhRNzOfkVJ+5YiUqrXF5Y5lKh/DeuNcP5yLWGsEbtLiOSpa/TPg7JpJHxyendzWTBfX0cxOnKPjgBzi4diinWGdkF8kjdfnycQZXZeYGejmJlZeGl9i2icVqaNVailT6F5iJ90m6mvuTS4OK05M0vDk0Q4XUtwvKOzrcd3iq9uisF81M1OIcR7lEewwcLp7tuNNkM3uNna3F2JQFo97Vriy/Xl4/f1cf5VWzXyym7PHhhx4dbgYKAAA7')
-    spectrum.save
-    post :setsamplerow, params: { id: spectrum.id }
-    assert_equal "If this spectrum image is not perfectly vertical, you may need to recalibrate after <a href='//publiclab.org/wiki/spectral-workbench-calibration#Cross+section'>setting a new cross-section</a>.", flash[:warning]
-    assert_response :redirect
-    assert_redirected_to spectrum_path(spectrum)
-  end
-
   test 'should do clone search' do
     get :clone_search, params: {
       id: Spectrum.first.id,
