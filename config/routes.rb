@@ -160,7 +160,6 @@ SpectralWorkbench::Application.routes.draw do
   get 'spectrums/rss' => 'spectrums#rss'
   get 'spectrums/find_brightest_row' => 'spectrums#find_brightest_row'
   get 'spectrums/upload' => 'spectrums#upload'
-  get 'spectrums/setsamplerow' => 'spectrums#setsamplerow'
   get 'spectrums/rotate' => 'spectrums#rotate'
   get 'spectrums/fork' => 'spectrums#fork'
   get 'spectrums/reverse' => 'spectrums#reverse'

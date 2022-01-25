@@ -468,21 +468,6 @@ class SpectrumsController < ApplicationController
     render html: @spectrum.find_match_in_set(params[:set]).to_json
   end
 
-  # Start doing this client side!
-  def setsamplerow
-    require 'rubygems'
-    require 'rmagick'
-    @spectrum = Spectrum.find params[:id]
-    require_ownership(@spectrum)
-    image = Magick::ImageList.new('public' + (@spectrum.photo.url.split('?')[0]).gsub('%20', ' '))
-    @spectrum.sample_row = (params[:row].to_f * image.rows)
-    @spectrum.extract_data
-    @spectrum.save
-    flash[:warning] = "If this spectrum image is not perfectly vertical, you may need to recalibrate after <a href='//publiclab.org/wiki/spectral-workbench-calibration#Cross+section'>setting a new cross-section</a>."
-    redirect_to spectrum_path(@spectrum)
-  end
-
-  # Start doing this client side!
   def find_brightest_row
     @spectrum = Spectrum.find params[:id]
     require_ownership(@spectrum)

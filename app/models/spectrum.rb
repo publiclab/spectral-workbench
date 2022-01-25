@@ -114,7 +114,8 @@ class Spectrum < ActiveRecord::Base
 
   # finds the brightest row of the image and uses that as its sample row
   def find_brightest_row
-    image = Magick::ImageList.new('public' + (photo.url.split('?')[0]).gsub('%20', ' '))
+    photo.copy_to_local_file(:original)
+    image = Magick::ImageList.new(local_photo_path)
     brightest_row = 0
     brightest = 0
     # sum brightness for each row
@@ -140,7 +141,8 @@ class Spectrum < ActiveRecord::Base
   def extract_data
     pixels = []
 
-    image = Magick::ImageList.new('public' + (photo.url.split('?')[0]).gsub('%20', ' '))
+    photo.copy_to_local_file(:original)
+    image = Magick::ImageList.new(local_photo_path)
     # saved sample_row may be greater than image height, so temporarily compensate,
     # but preserve sample_row in case we rotate back or something
     self.sample_row = image.rows - 2 if sample_row > image.rows
@@ -278,7 +280,8 @@ class Spectrum < ActiveRecord::Base
 
   # rotate clockwise
   def rotate
-    image = Magick::ImageList.new('public' + (photo.url.split('?')[0]).gsub('%20', ' '))
+    photo.copy_to_local_file(:original)
+    image = Magick::ImageList.new(local_photo_path)
     image.rotate!(-90)
     image.write('public' + photo.url)
     photo.reprocess!
@@ -286,7 +289,8 @@ class Spectrum < ActiveRecord::Base
 
   # horizontally flips image to match reversed spectrum, toggles 'reversed' flag
   def reverse
-    image = Magick::ImageList.new('public' + (photo.url.split('?')[0]).gsub('%20', ' '))
+    photo.copy_to_local_file(:original)
+    image = Magick::ImageList.new(local_photo_path)
     image.flop!
     image.write('public' + photo.url)
     self.reversed = !reversed
@@ -629,4 +633,9 @@ class Spectrum < ActiveRecord::Base
   def spectrum_params
     params.require(:spectrum).permit(:title, :author, :user_id, :notes, :photo, :video_row, :data)
   end
+
+  def local_photo_path
+    'public' + (photo.url.split('?')[0]).gsub('%20', ' ')
+  end
+
 end

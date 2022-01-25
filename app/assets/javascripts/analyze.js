@@ -290,13 +290,6 @@ $W = {
     f.submit();
   },
 
-  set_sample_row: function() {
-    var rownum = prompt('Enter the percentage from the top edge from which you would like to extract a spectrum.','100')
-    $("#imagelink")[0].onclick = ""
-    $('#imagelink').tooltip('destroy')
-    if (rownum) window.location = '/spectrums/setsamplerow/'+$W.spectrum_id+'?row='+rownum/100.00
-  },
-
   click_to_set_sample_row: function() {
     $("#imagelink")[0].onclick = ""
     $('#imagelink').tooltip('destroy')
