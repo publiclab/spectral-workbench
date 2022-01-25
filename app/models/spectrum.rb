@@ -635,7 +635,8 @@ class Spectrum < ActiveRecord::Base
   end
 
   def local_photo_path
-    'public' + (photo.url.split('?')[0]).gsub('%20', ' ')
+    #'public' + (photo.url.split('?')[0]).gsub('%20', ' ')
+    "/tmp/#{self.id}"
   end
 
 end
