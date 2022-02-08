@@ -42,11 +42,11 @@
   <input type='hidden' name='authenticity_token' value="<%= form_authenticity_token %>"/>
   <button type="submit" class="btn btn-primary btn-large">Save</button>
 
-  <input name="dataurl" id="dataurl" value="<%= params[:dataurl] %>" />
-  <input name="upload" id="upload" value="<%= params[:upload] %>" />
-  <input name="geotag" id="geotag" value="<%= params[:geotag] %>" />
-  <input name="lat" id="lat" value="<%= params[:lat] %>" />
-  <input name="lon" id="lon" value="<%= params[:lon] %>" />
+  <input name="dataurl" type="hidden" id="dataurl" value="<%= params[:dataurl] %>" />
+  <input name="upload" type="hidden" id="upload" value="<%= params[:upload] %>" />
+  <input name="geotag" type="hidden" id="geotag" value="<%= params[:geotag] %>" />
+  <input name="lat" type="hidden" id="lat" value="<%= params[:lat] %>" />
+  <input name="lon" type="hidden" id="lon" value="<%= params[:lon] %>" />
 
 
 <% end %>
