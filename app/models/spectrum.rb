@@ -283,7 +283,7 @@ class Spectrum < ActiveRecord::Base
     photo.copy_to_local_file(:original,local_photo_path)
     image = Magick::ImageList.new(local_photo_path)
     image.rotate!(-90)
-    image.write('public' + photo.url)
+    image.write(local_photo_path)
     photo.reprocess!
   end
 
@@ -292,7 +292,7 @@ class Spectrum < ActiveRecord::Base
     photo.copy_to_local_file(:original,local_photo_path)
     image = Magick::ImageList.new(local_photo_path)
     image.flop!
-    image.write('public' + photo.url)
+    image.write(local_photo_path)
     self.reversed = !reversed
     photo.reprocess!
   end
