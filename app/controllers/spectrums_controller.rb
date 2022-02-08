@@ -259,7 +259,7 @@ class SpectrumsController < ApplicationController
             @spectrum.extract_data if !params[:spectrum][:json] || params[:spectrum][:json].empty?
 
             calibration_param = if params[:spectrum][:calibration_id] && !params[:is_calibration] && params[:spectrum][:calibration_id] != 'calibration' && params[:spectrum][:calibration_id] != 'undefined'
-                                  # @spectrum.clone_calibration(params[:spectrum][:calibration_id])
+                                  # @spectrum.clone_calibration(params[:spectrum][:calibration_id]) 
                                   # instead, append params[:spectrum][:calibration_id] to "#addTag=calibrate:#{params[:spectrum][:calibration_id].to_i}"
                                   "#addTag=calibrate:#{params[:spectrum][:calibration_id].to_i}"
                                 else

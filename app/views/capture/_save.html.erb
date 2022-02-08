@@ -15,7 +15,7 @@
   <p class="alert">You must be <a href="/login">logged in</a> to save spectra.</small></p>
 <% end %>
 
-<form class="form" action="/spectrums" method="post" id="saveForm" target="_blank" onSubmit="$W.cancelSave();window.location='#page1'">
+<form class="form" action="/spectrums" method="post" id="saveForm" target="_blank" onSubmit="window.location='#page1'">
 
   <input id="saveform_title" placeholder="Title (required)" name="spectrum[title]" type="text" /><br />
 
@@ -55,17 +55,21 @@
   <textarea placeholder="Describe your spectrum: light source? Sample preparation? What's your goal?" style="span8" rows="6" name="spectrum[notes]" id="spectrum_notes"></textarea>
   <br />
 
-  <input name="dataurl" type="hidden" id="dataurl" />
   <input name="video_row" type="hidden" id="video_row" />
-  <input name="geotag" type="hidden" id="geotag" />
-  <input name="lat" type="hidden" id="lat" />
-  <input name="lon" type="hidden" id="lon" />
+  <input name="dataurl" type="hidden" id="dataurl" value="<%= params[:dataurl] %>" />
+  <input name="upload" type="hidden" id="upload" value="<%= params[:upload] %>" />
+  <input name="geotag" type="hidden" id="geotag" value="<%= params[:geotag] %>" />
+  <input name="lat" type="hidden" id="lat" value="<%= params[:lat] %>" />
+  <input name="lon" type="hidden" id="lon" value="<%= params[:lon] %>" />
   <% if logged_in? %>
   <p><small>Choose a recent reference calibration, or use this as a new calibration.</small></p>
   <select name="spectrum[calibration_id]" id="calibration_id" style="width:100%;">
     <%= render partial: 'capture/calibrations', locals: { calibrations: @calibrations, calibration: @calibration } %>
   </select>
   <% end %>
+   <label rel="tooltip" title="Detect your location and tag this data?" class="checkbox inline" style="margin-left:10px;">
+          <input type="checkbox" style="display:none;" id="geotagInput" value="geotag" checked="true" /> Geotag
+        </label>
 
 </form>
 
