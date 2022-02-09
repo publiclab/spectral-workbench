@@ -206,6 +206,7 @@ class SpectrumsController < ApplicationController
   # replacing this with capture/save soon
   def create # rubocop:disable Metrics/AbcSize
     if logged_in? || params[:token] && User.find_by_token(params[:token])
+
       user = current_user || User.find_by_token(params[:token])
       params[:spectrum][:json] = params[:spectrum][:data] if params[:spectrum] && params[:spectrum][:data]
 
@@ -258,7 +259,7 @@ class SpectrumsController < ApplicationController
             @spectrum.extract_data if !params[:spectrum][:json] || params[:spectrum][:json].empty?
 
             calibration_param = if params[:spectrum][:calibration_id] && !params[:is_calibration] && params[:spectrum][:calibration_id] != 'calibration' && params[:spectrum][:calibration_id] != 'undefined'
-                                  # @spectrum.clone_calibration(params[:spectrum][:calibration_id])
+                                  # @spectrum.clone_calibration(params[:spectrum][:calibration_id]) 
                                   # instead, append params[:spectrum][:calibration_id] to "#addTag=calibrate:#{params[:spectrum][:calibration_id].to_i}"
                                   "#addTag=calibrate:#{params[:spectrum][:calibration_id].to_i}"
                                 else
