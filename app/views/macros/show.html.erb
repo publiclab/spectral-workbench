@@ -13,7 +13,7 @@
 
 <p><a class="btn btn-small" href="mailto:web@publiclab.org"><i class="fa fa-flag"></i> Report abuse</a>
   <% if logged_in? && (current_user.id == @macro.user_id || current_user.role == "admin") %>
-    <%= link_to '<i class="fa fa-trash"></i> Delete', "/macros/delete/"+@macro.id.to_s, :confirm => 'Are you sure?', :class => "btn btn-small" %>
+    <%= link_to '<i class="fa fa-trash"></i> Delete'.html_safe, "/macros/delete/"+@macro.id.to_s, :confirm => 'Are you sure?', :class => "btn btn-small" %>
     <a class="btn btn-small" href="/macro/edit/<%= @macro.id %>"><i class="fa fa-pencil"></i> Edit macro</a>
   <% end %>
 

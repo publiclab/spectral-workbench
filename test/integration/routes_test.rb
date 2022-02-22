@@ -81,6 +81,22 @@ class RoutesTest < ActionDispatch::IntegrationTest
     assert_routing({ path: '/sets/show2', method: 'get' }, {controller: 'sets', action: 'show', id: 'show2'})
   end
 
+  test "test get request for spectrums plots_rss" do
+    assert_routing({ path: '/spectrums/plots_rss', method: 'get' }, {controller: 'spectrums', action: 'show', id: 'plots_rss'})
+  end
+	
+  test "test get request for spectrums show2" do
+    assert_routing({ path: '/spectrums/show2', method: 'get' }, {controller: 'spectrums', action: 'show', id: 'show2'})
+  end
+
+  test "test get request for spectrums all" do
+    assert_routing({ path: '/spectrums/all', method: 'get' }, {controller: 'spectrums', action: 'show', id: 'all'})
+  end
+
+  test "test get request for spectrums compare_search" do
+    assert_routing({ path: '/spectrums/compare_search', method: 'get' }, {controller: 'spectrums', action: 'show', id: 'compare_search'})
+  end
+  
   test "test get request for spectrums set_search" do
    assert_routing({ path: '/spectrums/set_search', method: 'get' }, {controller: 'spectrums', action: 'show', id: 'set_search'})
   end

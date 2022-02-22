@@ -11,7 +11,7 @@ end
 
 group :test do
   gem 'rails-controller-testing', '~> 1.0.5'
-  gem 'rubocop', '~> 1.25.0'
+  gem 'rubocop', '~> 1.25.1'
   gem 'rubocop-performance'
   gem 'simplecov', require: false
   gem 'puma'
@@ -30,7 +30,7 @@ group :production do
     gem 'uglifier', '~> 4.2'
 end
 
-gem 'bootsnap', '~> 1.10.2'
+gem 'bootsnap', '~> 1.10.3'
 gem 'jquery-rails'
 gem 'font-awesome-rails'
 gem 'listen', '~> 3.7.1'

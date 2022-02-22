@@ -134,6 +134,8 @@
             
             <div style="text-align:center;" id="capture-option" class="capture-settings-hide">
                 <p style="padding-top:5px;">
+                    <a id="geotag-btn" rel="tooltip" title="Geocode" class="btn btn-default" onClick="$('#geotag-btn').button('toggle');$('#geotag').val('true'!=$('#geotag').val());$W.geolocate()"><i class="fa fa-map-marker"></i></a>
+
                     <a rel="tooltip" title="Auto detect cross-section" class="btn btn-default" onclick="$W.auto_detect_sample_row()" data-original-title="Auto select sample row"><i class="fa fa-arrows-v" aria-hidden="true"></i><span class="responsive-hide"> Auto-select Sample Row</span></a>
                     <a rel="tooltip" title="Flip video horizontally" class="btn btn-default btn-flip" onClick="$W.flip_horizontal()"><i class="fa fa-arrows-h" aria-hidden="true"></i><span class="responsive-hide"> Flip image</span></a>
                     <a rel="tooltip" title="Rotate video 90 &deg;" class="btn btn-default btn-rotate" onClick="$W.toggle_rotation()"><i class="fa fa-rotate-right" aria-hidden="true"></i><span class="responsive-hide"> Rotate</span></a>
@@ -168,6 +170,8 @@
                   <canvas style="width:100%;height:273px;" id="preview"></canvas>
                 </div>
                 <div class="btn-group toolbar" data-toggle="buttons-checkbox" style="margin-bottom:2em; margin-left: 9em; margin-top: 2em; padding: 1rem">
+                   <a id="geotag-btn" rel="tooltip" title="Geocode" class="btn btn-default active" onClick="$('#geotag-btn').button('toggle');$('#geotag').val('true'!=$('#geotag').val());$W.geolocate()"><i class="fa fa-map-marker"></i></a>
+
                   <a rel="tooltip" title="Rotate video" class="btn btn-default btn-rotate" onClick="$W.toggle_rotation()"><i class="fa fa-repeat"></i></a>
                   <a rel="tooltip" title="Flip video horizontally" class="btn btn-default btn-flip" onClick="$W.flip_horizontal()"><i class="fa fa-arrows-h"></i></a>
                   <a rel="tooltip" title="Scale video" class="btn btn-default" onClick="$W.scale_h = parseFloat(prompt('Enter a horizontal scaling factor (default is 1):'))"><i class="fa fa-expand"></i></a>
@@ -191,7 +195,7 @@
                               $('#cfl-detect i').css('color','red');
                             },
                             function() {
-                              $('#cfl-detect i').css('color','white');
+                              $('#cfl-detect i').css('color','black');
                             })
                     
                     $('#sidebar .hidden-phone').on('click', function () {
@@ -218,6 +222,7 @@
                   <a rel="tooltip" title="Default mode" class="btn btn-default btn-sm" onClick="$W.toggle_mode()"><i class="fa fa-circle-o"></i></a>
                   <a rel="tooltip" title="RGB mode" class="btn btn-default btn-sm" onClick="$W.toggle_mode()"><i class="fa fa-adjust"></i></a>
                   <a rel="tooltip" title="Combined readout" class="btn btn-default btn-sm" onClick="$W.show_combined()"><i class="fa fa-list-ul"></i></a>
+                  <a rel="tooltip" id="cfl-detect" title="Detected fluorescent light" class="btn btn-default" onClick=""><i class="fa fa-lightbulb-o"></i></a>
                 </div>
                 <div id="graph" style="width: 100%; margin-bottom:2em"></div>
                 <canvas style="background:#333;width:100%;height:100px;width: 96%;margin-left: 1.8em;" id="canvas"></canvas>
