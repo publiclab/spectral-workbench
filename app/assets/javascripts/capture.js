@@ -339,6 +339,7 @@ $W = {
 
   geolocate: function() {
     if (navigator.geolocation) {
+      $('#geotagInput').show();
       navigator.geolocation.getCurrentPosition($W.setGeolocation)
       return true
     }

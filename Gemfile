@@ -11,7 +11,7 @@ end
 
 group :test do
   gem 'rails-controller-testing', '~> 1.0.5'
-  gem 'rubocop', '~> 1.22.1'
+  gem 'rubocop', '~> 1.25.1'
   gem 'rubocop-performance'
   gem 'simplecov', require: false
   gem 'puma'
@@ -30,10 +30,10 @@ group :production do
     gem 'uglifier', '~> 4.2'
 end
 
-gem 'bootsnap', '~> 1.9.1'
+gem 'bootsnap', '~> 1.10.3'
 gem 'jquery-rails'
 gem 'font-awesome-rails'
-gem 'listen', '~> 3.7.0'
+gem 'listen', '~> 3.7.1'
 gem 'mime-types' # , '1.18'
 gem 'passenger'
 gem 'recaptcha', '5.8.1', require: 'recaptcha/rails'

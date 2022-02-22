@@ -25,4 +25,5 @@ class HomeTest < ApplicationSystemTestCase
       assert_selector('a.btn.btn-large.btn-primary', text: 'Begin capturing »')
     end
   end
+
 end

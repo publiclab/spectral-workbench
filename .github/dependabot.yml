@@ -40,3 +40,8 @@ updates:
   - dependency-name: recaptcha
     versions:
     - 5.6.0
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
