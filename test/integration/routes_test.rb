@@ -101,4 +101,8 @@ class RoutesTest < ActionDispatch::IntegrationTest
    assert_routing({ path: '/spectrums/set_search', method: 'get' }, {controller: 'spectrums', action: 'show', id: 'set_search'})
   end
 
+  test "test get request for sets find_match" do
+    assert_routing({path: '/sets/find_match', method: 'get'}, {controller: 'sets', action: 'show', id: 'find_match'})
+  end
+
 end
