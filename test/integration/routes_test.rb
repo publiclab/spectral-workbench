@@ -110,7 +110,7 @@ class RoutesTest < ActionDispatch::IntegrationTest
   end
 
   test "test get request for sets calibrated" do
-    assert_routing({ path: '/sets/calibrated', method: 'get' }, {controller: 'sets', action: 'calibrated', id: 'calibrated'})
+    assert_routing({ path: '/sets/calibrated', method: 'get' }, {controller: 'sets', action: 'show', id: 'calibrated'})
   end
   
 end
