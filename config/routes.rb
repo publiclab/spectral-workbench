@@ -25,8 +25,7 @@ SpectralWorkbench::Application.routes.draw do
   get '/capture/recent_calibrations' => 'capture#recent_calibrations'
 
   # Registered user pages:
-  get '/profile', to: 'users#show'
-  get '/profile/:id', to: 'users#show'
+  get '/profile/:id', to: 'users#show', as: :profile
 
   post '/macros/create' => 'macros#create'
   get '/macro/edit/:id' => 'macros#edit'
