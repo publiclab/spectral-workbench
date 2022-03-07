@@ -112,5 +112,9 @@ class RoutesTest < ActionDispatch::IntegrationTest
   test "test get request for sets calibrated" do
     assert_routing({ path: '/sets/calibrated', method: 'get' }, {controller: 'sets', action: 'show', id: 'calibrated'})
   end
+	
+  test "test get request for spectrums anonymous" do
+    assert_routing({ path: '/spectrums/anonymous', method: 'get' }, {controller: 'spectrums', action: 'show', id: 'anonymous'})
+  end
   
 end
