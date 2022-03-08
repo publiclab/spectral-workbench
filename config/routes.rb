@@ -26,7 +26,7 @@ SpectralWorkbench::Application.routes.draw do
 
   # Registered user pages:
   get '/profile', to: 'users#show'
-  get '/profile/:id', to: 'users#show'
+  get '/profile/:id', to: 'users#show', as: :profile
 
   post '/macros/create' => 'macros#create'
   get '/macro/edit/:id' => 'macros#edit'
