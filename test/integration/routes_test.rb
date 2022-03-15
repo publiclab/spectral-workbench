@@ -116,5 +116,9 @@ class RoutesTest < ActionDispatch::IntegrationTest
   test "test get request for spectrums anonymous" do
     assert_routing({ path: '/spectrums/anonymous', method: 'get' }, {controller: 'spectrums', action: 'show', id: 'anonymous'})
   end
+
+  test "test get request for spectrums clone_search" do
+    assert_routing({ path: '/spectrums/clone_search', method: 'get' }, {controller: 'spectrums', action: 'show', id: 'clone_search'})
+  end
   
 end
