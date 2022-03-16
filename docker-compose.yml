@@ -18,6 +18,11 @@ services:
     environment:
       - PORT=${PORT}    
       - POOL_SIZE=${POOL_SIZE}
+      - MYSQL_DATABASE=${MYSQL_DATABASE:-root}
+      - MYSQL_USER=${MYSQL_USER:-root}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD:-root}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-root}
+      - MYSQL_HOST=${MYSQL_HOST:-db}
     ports:
       - 127.0.0.1:${PORT:-5000}:${PORT:-5000}
     depends_on:
