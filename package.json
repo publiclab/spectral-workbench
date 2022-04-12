@@ -17,7 +17,7 @@
     "d3": "^3.5.4",
     "flot": "~0.8.0-alpha",
     "getusermedia-js": "^1.0.0",
-    "jasmine": "^4.0.2",
+    "jasmine": "^4.1.0",
     "jasmine-ajax": "^4.0.0",
     "jfeed": "mattmarcum/jFeed#*",
     "jquery.steps": "^1.1.3",
