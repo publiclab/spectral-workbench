@@ -115,8 +115,8 @@ GEM
       mime-types
       mimemagic (~> 0.3.0)
       terrapin (~> 0.6.0)
-    parallel (1.22.0)
-    parser (3.1.1.0)
+    parallel (1.22.1)
+    parser (3.1.2.0)
       ast (~> 2.4.1)
     passenger (6.0.12)
       rack
@@ -175,22 +175,22 @@ GEM
       json
     redcarpet (3.5.1)
     ref (2.0.0)
-    regexp_parser (2.2.1)
+    regexp_parser (2.3.0)
     responders (3.0.1)
       actionpack (>= 5.0)
       railties (>= 5.0)
     rexml (3.2.5)
     rmagick (4.2.4)
-    rubocop (1.26.1)
+    rubocop (1.28.1)
       parallel (~> 1.10)
       parser (>= 3.1.0.0)
       rainbow (>= 2.2.2, < 4.0)
       regexp_parser (>= 1.8, < 3.0)
       rexml
-      rubocop-ast (>= 1.16.0, < 2.0)
+      rubocop-ast (>= 1.17.0, < 2.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 1.4.0, < 3.0)
-    rubocop-ast (1.16.0)
+    rubocop-ast (1.17.0)
       parser (>= 3.1.1.0)
     rubocop-performance (1.13.3)
       rubocop (>= 1.7.0, < 2.0)
@@ -263,7 +263,7 @@ DEPENDENCIES
   redcarpet (~> 3.5.1)
   responders (~> 3.0.1)
   rmagick
-  rubocop (~> 1.26.1)
+  rubocop (~> 1.28.1)
   rubocop-performance
   ruby-openid
   selenium-webdriver (~> 3.142.7)
