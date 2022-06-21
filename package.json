@@ -23,7 +23,7 @@
     "jquery.steps": "^1.1.3",
     "junction": "theleagueof/junction#*",
     "leaflet": "^1.7.1",
-    "moment": "~2.19.3",
+    "moment": "~2.29.3",
     "nvd3": "~1.7.1",
     "spectral-workbench": "^0.2.3"
   },
