@@ -6,7 +6,7 @@ gem 'rails', '~> 5.2.4.3'
 
 # Database handling
 group :mysql do
-  gem 'mysql2', '~> 0.5.3'
+  gem 'mysql2', '~> 0.5.4'
 end
 
 group :test do
