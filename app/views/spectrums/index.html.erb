@@ -24,7 +24,7 @@
     <h3>Recent authors</h3>
     <ul class="nav">
     <% User.where(login: @spectrums.collect(&:author).uniq).each do |user| %>
-      <li><a href="<%= profile_path(user.login) %>"><i class="fa fa-user"></i> <%= user.login %></a></li>
+      <li><a href="<%= user_path(user.login) %>"><i class="fa fa-user"></i> <%= user.login %></a></li>
     <% end %>
     </ul>
 

@@ -10,7 +10,7 @@
   <% @comments.each do |comment| %>
   <tr>
     <% if User.find_by_login(comment.author) %>
-    <td><a href="<%= profile_path(comment.author) %>"><%= comment.author %></a></td>
+    <td><a href="<%= user_path(comment.author) %>"><%= comment.author %></a></td>
     <% else %>
     <td><%= comment.author %></td>
     <% end %>
