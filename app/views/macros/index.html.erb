@@ -7,7 +7,7 @@
     <li><a href="/macros">Macros</a> <span class="divider">/</span></li>
     <li><%= @user.login %></li>
   </ul>
-  <h2>Macros by <a href="<%= profile_path(@user.login) %>"><%= @user.login %></a></h2>
+  <h2>Macros by <a href="<%= user_path(@user.login) %>"><%= @user.login %></a></h2>
   <% else %>
   <h2>All Macros</h2>
   <% end %>
