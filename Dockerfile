@@ -40,7 +40,7 @@ RUN apt-get -y install fonts-liberation libappindicator3-1 libasound2 \
     mv chromedriver /usr/local/bin/chromedriver && \
     chmod +x /usr/local/bin/chromedriver
 
-RUN curl -sL https://deb.nodesource.com/setup_13.x | bash - && \
+RUN curl -sL https://deb.nodesource.com/setup_16.x | bash - && \
     apt-get install -y nodejs npm && \
     npm install -g yarn && \
     gem install bundler
