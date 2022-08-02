@@ -2,6 +2,7 @@
 
 pidfile=/app/tmp/pids/server.pid
 
+gem install bundler
 bundle check || bundle install
 yarn install
 
