@@ -2,7 +2,7 @@
 
 source 'https://rubygems.org'
 
-gem 'rails', '~> 5.2.4.3'
+gem 'rails', '~> 7.0.3.1'
 
 # Database handling
 group :mysql do
@@ -48,7 +48,7 @@ gem 'rdiscount', '2.2.0.2'
 gem 'will_paginate', '~> 3.3.1'
 gem 'will_paginate-bootstrap', '0.2.5' # max for Bootstrap v2
 
-gem 'tzinfo', '~> 1.2'
+gem 'tzinfo', '~> 2.0'
 
 gem 'open_id_authentication'
 gem 'protected_attributes_continued', '~> 1.8.2'
