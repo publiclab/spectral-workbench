@@ -65,7 +65,7 @@ GEM
     docile (1.4.0)
     erubi (1.11.0)
     execjs (2.8.1)
-    faker (2.21.0)
+    faker (2.22.0)
       i18n (>= 1.8.11, < 2)
     ffi (1.15.5)
     font-awesome-rails (4.7.0.8)
@@ -244,7 +244,7 @@ PLATFORMS
 DEPENDENCIES
   bootsnap (~> 1.12.0)
   capybara
-  faker (~> 2.21.0)
+  faker (~> 2.22.0)
   font-awesome-rails
   jquery-rails
   listen (~> 3.7.1)
