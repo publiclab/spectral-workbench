@@ -9,7 +9,7 @@
   "author": "Public Lab contributors <web@publiclab.org>",
   "license": "GPL-3.0",
   "dependencies": {
-    "ace-builds": "^1.7.1",
+    "ace-builds": "^1.9.3",
     "adapterjs": "^0.15.5",
     "bootstrap": "^5.1.3",
     "bootstrap-css": "github:jozefizso/bower-bootstrap-css#~2.3.2",
