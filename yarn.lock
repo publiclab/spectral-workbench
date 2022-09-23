@@ -15,10 +15,10 @@ accepts@1.0.3:
     mime "~1.2.11"
     negotiator "0.4.6"
 
-ace-builds@^1.7.1:
-  version "1.7.1"
-  resolved "https://registry.yarnpkg.com/ace-builds/-/ace-builds-1.7.1.tgz#be796fbd98610dda5e138aed98d309cac2ab0872"
-  integrity sha512-1mcbP5kXvr729sJ9dA/8tul0pjuvKbma0LF/ZMRwPEwjoNWNpe/x0OXpaPJo36aRpZCjRZMl5zsME3hAKTiaNw==
+ace-builds@^1.11.1:
+  version "1.11.1"
+  resolved "https://registry.yarnpkg.com/ace-builds/-/ace-builds-1.11.1.tgz#0bcce08e23823d4a42b38fac6e3cf8d72ca0f0be"
+  integrity sha512-br7cF58lrHkkJdGRgxL/ImKBBBAhHk8oImsY/afzdlO4qDgO+MG0dhP4qsPNW2ElhJ+zos7qUt75b7sPd+FrSQ==
 
 adapterjs@^0.15.5:
   version "0.15.5"
