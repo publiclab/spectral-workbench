@@ -21,7 +21,7 @@ group :development, :test do
   gem 'rack_session_access'
   gem 'capybara'
   gem 'selenium-webdriver', '~> 3.142.7'
-  gem 'faker', '~> 2.21.0'
+  gem 'faker', '~> 3.0.0'
 end
 
 group :production do
