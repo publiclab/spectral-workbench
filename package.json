@@ -11,7 +11,7 @@
   "dependencies": {
     "ace-builds": "^1.7.1",
     "adapterjs": "^0.15.5",
-    "bootstrap": "^5.1.3",
+    "bootstrap": "^5.2.3",
     "bootstrap-css": "github:jozefizso/bower-bootstrap-css#~2.3.2",
     "bs-stepper": "^1.7.0",
     "d3": "^3.5.4",
