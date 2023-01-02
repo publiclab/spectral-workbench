@@ -912,17 +912,17 @@ jfeed@mattmarcum/jFeed#*:
   version "0.0.0"
   resolved "https://codeload.github.com/mattmarcum/jFeed/tar.gz/c3981fa3229339e9c0ac37e41f190aab52ab0638"
 
-jquery.steps@^1.0.3, jquery.steps@^1.1.3:
-  version "1.1.3"
-  resolved "https://registry.yarnpkg.com/jquery.steps/-/jquery.steps-1.1.3.tgz#c32cdd2d07ef116b5d9c2449d069f22e039e4021"
-  integrity sha512-Z4dKabXu9vV0EwxmjFCZAyHF6h5rx0F8q7ItXGFGiJwjrpvTEqKGr+W69Rcd39Y7IfNCrK6DJCwH1iVQGOrB9Q==
+jquery.steps@^1.0.3, jquery.steps@^1.1.4:
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/jquery.steps/-/jquery.steps-1.1.4.tgz#3b57c0c194cfc1fe241cedc76bf1973159bbaaef"
+  integrity sha512-DVagGTsiqY4GGohyIzhUbF6KNWcM2x+tMwV3YNkw0J0nRL/NyPRu2wtcRwStBnc6QxA+vOzzwKcrYS730y5mLQ==
   dependencies:
-    jquery "^3.6.0"
+    jquery "^3.6.3"
 
-jquery@^3.3.1, jquery@^3.6.0:
-  version "3.6.0"
-  resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.6.0.tgz#c72a09f15c1bdce142f49dbf1170bdf8adac2470"
-  integrity sha512-JVzAR/AjBvVt2BmYhxRCSYysDsPcssdmTFnzyLEts9qNwmjmu4JTAMYubEfwVOSwpQ1I1sKKFcxhZCI2buerfw==
+jquery@^3.3.1, jquery@^3.6.3:
+  version "3.6.3"
+  resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.6.3.tgz#23ed2ffed8a19e048814f13391a19afcdba160e6"
+  integrity sha512-bZ5Sy3YzKo9Fyc8wH2iIQK4JImJ6R0GWI9kL1/k7Z91ZBNgkRXE6U0JfHIizZbort8ZunhSI3jw9I6253ahKfg==
 
 jsbn@~0.1.0:
   version "0.1.1"
