@@ -20,7 +20,7 @@ end
 group :development, :test do
   gem 'rack_session_access'
   gem 'capybara'
-  gem 'selenium-webdriver', '~> 3.142.7'
+  gem 'selenium-webdriver', '~> 4.8.0'
   gem 'faker', '~> 2.21.0'
 end
 
