@@ -46,7 +46,7 @@ gem 'terrapin', '~> 0.6.0'
 gem 'paperclip', '>= 4.1.1'
 gem 'rdiscount', '2.2.0.2'
 gem 'will_paginate', '~> 3.3.1'
-gem 'will_paginate-bootstrap', '0.2.5' # max for Bootstrap v2
+gem 'will_paginate-bootstrap', '1.0.2' # max for Bootstrap v2
 
 gem 'tzinfo', '~> 1.2'
 
