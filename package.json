@@ -15,7 +15,7 @@
     "bootstrap-css": "github:jozefizso/bower-bootstrap-css#~2.3.2",
     "bs-stepper": "^1.7.0",
     "d3": "^3.5.4",
-    "flot": "~0.8.0-alpha",
+    "flot": "~4.2.3",
     "getusermedia-js": "^1.0.0",
     "jasmine": "^4.2.1",
     "jasmine-ajax": "^4.0.0",
